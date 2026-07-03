@@ -6,224 +6,89 @@ import {
   useMemo,
   useState,
 } from 'react';
-import type {
-  OutlinePageErrors,
-  OutlineActionSelection,
-  SelectionState,
-  XBlock,
-  XBlockActions,
-} from '@src/data/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { useToggle } from '@openedx/paragon';
+import { arrayMove } from '@dnd-kit/sortable';
 
-import { useCourseItemData, useCourseOutlineSavingStatus, useCourseOutlineReindexStatus } from './data';
-
+import { SelectionState, type XBlock } from '@src/data/types';
 import { useToggleWithValue } from '@src/hooks';
-import {
-  useOutlineReorderState,
-  useOutlineStatusState,
-  computeErrorSignature,
-  filterDismissedErrors,
-  pruneDismissedErrorSignatures,
-  EditableSubsection,
-  getLastEditableItem,
-  getLastEditableSubsection,
-} from './state';
+import { getBlockType } from '@src/generic/key-utils';
+import { COURSE_BLOCK_NAMES } from '@src/constants';
 import { useCourseAuthoringContext, type ModalState } from '@src/CourseAuthoringContext';
-
 import {
-  CourseOutline,
-  OutlineLoadingStatus,
-  CourseOutlineStatusBar,
-} from './data';
+  useCreateCourseBlock,
+  useDeleteCourseItem,
+  useDuplicateItem,
+} from './data/apiHooks';
+import { getOutlineIndexData, getSectionsList } from './data/selectors';
+import {
+  fetchCourseOutlineIndexQuery,
+  setSectionOrderListQuery,
+  setSubsectionOrderListQuery,
+  setUnitOrderListQuery,
+} from './data/thunk';
+import { deleteSection, deleteSubsection, deleteUnit } from './data/slice';
 
-type CourseOutlineContextData = {
-  outlineIndexData?: CourseOutline;
-  courseName?: string;
-  courseUsageKey: string;
-  sections: XBlock[];
-  courseActions: XBlockActions;
-  statusBarData: CourseOutlineStatusBar;
-  savingStatus: string;
-  errors: OutlinePageErrors;
-  loadingStatus: OutlineLoadingStatus;
-  isLoading: boolean;
-  isLoadingDenied: boolean;
-  isCustomRelativeDatesActive: boolean;
-  enableProctoredExams?: boolean;
-  enableTimedExams?: boolean;
-  createdOn?: string;
-  currentItemData?: XBlock;
-  lastEditableSection?: XBlock;
-  lastEditableSubsection?: EditableSubsection;
+export type CourseOutlineContextData = {
+  handleAddAndOpenUnit: ReturnType<typeof useCreateCourseBlock>;
+  handleAddBlock: ReturnType<typeof useCreateCourseBlock>;
   currentSelection?: SelectionState;
-  selectContainer: (selection?: SelectionState) => void;
-  clearSelection: () => void;
-  openContainerInfo: (
-    containerId: string,
-    subsectionId?: string,
-    sectionId?: string,
-    index?: number,
-  ) => void;
-
-  previewSections: (nextSections: XBlock[]) => void;
-  cancelReorderPreview: () => void;
-  commitSectionReorder: (sectionListIds: string[]) => Promise<void>;
-  commitSubsectionReorder: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => Promise<void>;
-  commitUnitReorder: (
-    sectionId: string,
-    prevSectionId: string,
-    subsectionId: string,
-    unitListIds: string[],
-  ) => Promise<void>;
-
-  dismissError: (key: string) => void;
-
+  setCurrentSelection: React.Dispatch<React.SetStateAction<SelectionState | undefined>>;
+  sections: XBlock[];
+  restoreSectionList: () => void;
+  setSections: React.Dispatch<React.SetStateAction<XBlock[]>>;
+  isDuplicatingItem: boolean;
   isDeleteModalOpen: boolean;
-  deleteModalData?: OutlineActionSelection;
-  openDeleteModal: (payload: OutlineActionSelection) => void;
+  openDeleteModal: () => void;
   closeDeleteModal: () => void;
+  getHandleDeleteItemSubmit: (callback: () => void) => () => Promise<void>;
+  handleDuplicateSectionSubmit: () => void;
+  handleDuplicateSubsectionSubmit: () => void;
+  handleDuplicateUnitSubmit: () => void;
+  selectContainer: (selection: SelectionState) => void;
+clearSelection: () => void;
+openContainerInfo: (
+  containerId: string,
+  subsectionId?: string,
+  sectionId?: string,
+  index?: number,
+) => void;
   isPublishModalOpen: boolean;
   currentPublishModalData?: ModalState;
   openPublishModal: (value: ModalState) => void;
   closePublishModal: () => void;
+  handleSectionDragAndDrop: (sectionListIds: string[]) => void;
+  handleSubsectionDragAndDrop: (sectionId: string, prevSectionId: string, subsectionListIds: string[]) => void;
+  handleUnitDragAndDrop: (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionId: string,
+    unitListIds: string[],
+  ) => void;
+  updateSectionOrderByIndex: (currentIndex: number, newIndex: number) => void;
+  updateSubsectionOrderByIndex: (section: XBlock, moveDetails: any) => void;
+  updateUnitOrderByIndex: (section: XBlock, moveDetails: any) => void;
 };
 
+/**
+ * Course Outline Context.
+ * Only available within the course outline page.
+ *
+ * Get this using `useCourseOutlineContext()`
+ */
 const CourseOutlineContext = createContext<CourseOutlineContextData | undefined>(undefined);
 
-export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode; }) => {
-  const { courseId } = useCourseAuthoringContext();
+type CourseOutlineProviderProps = {
+  children?: React.ReactNode;
+};
 
-  // Dismissed error signatures: { [errorKey]: signatureAtTimeOfDismissal }
-  // Dismissal applies only while the current error's payload signature matches.
-  const [dismissedErrorSignatures, setDismissedErrorSignatures] = useState<Record<string, string>>({});
-
-  const {
-    effectiveOutlineIndexData,
-    sections,
-    statusBarData,
-    effectiveLoadingStatus,
-    rawErrors,
-    courseActions,
-    isCustomRelativeDatesActive,
-    enableProctoredExams,
-    enableTimedExams,
-    createdOn,
-  } = useOutlineStatusState({
-    courseId,
-  });
-
-  const savingStatus = useCourseOutlineSavingStatus(courseId);
-  const { reindexLoadingStatus: derivedReindexLoadingStatus, reindexError } = useCourseOutlineReindexStatus(courseId);
-
-  const {
-    visibleSections,
-    previewSections: previewSectionsCallback,
-    cancelReorderPreview,
-    commitSectionReorder,
-    commitSubsectionReorder,
-    commitUnitReorder,
-  } = useOutlineReorderState({ courseId, sections });
-
-  const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
-  const { data: currentItemData } = useCourseItemData(currentSelection?.currentId);
-
-  const lastEditableSection = useMemo(() => {
-    if (currentItemData?.category === 'chapter' && currentItemData.actions.childAddable) {
-      return currentItemData as XBlock;
-    }
-    return currentItemData ? undefined : getLastEditableItem(sections);
-  }, [currentItemData, sections]);
-
-  const lastEditableSubsection = useMemo((): EditableSubsection | undefined => {
-    if (currentItemData?.category === 'sequential' && currentItemData.actions.childAddable) {
-      return { data: currentItemData as XBlock, sectionId: currentSelection?.sectionId };
-    }
-    if (currentItemData?.category === 'chapter') {
-      return {
-        data: getLastEditableItem((currentItemData as XBlock).childInfo?.children || []) as XBlock,
-        sectionId: currentSelection?.currentId,
-      };
-    }
-    return currentItemData ? undefined : getLastEditableSubsection(sections);
-  }, [currentItemData, sections, currentSelection]);
-
-  const selectContainer = useCallback((selection?: SelectionState) => {
-    setCurrentSelection(selection);
-  }, []);
-
-  const clearSelection = useCallback(() => {
-    setCurrentSelection(undefined);
-  }, []);
-
-  const openContainerInfo = useCallback((
-    containerId: string,
-    subsectionId?: string,
-    sectionId?: string,
-    index?: number,
-  ) => {
-    setCurrentSelection({
-      currentId: containerId,
-      subsectionId,
-      sectionId,
-      index,
-    });
-  }, []);
-
-  // Preserve reference when no reindex error to avoid unnecessary effect re-fires.
-  const mergedRawErrors = useMemo(() => {
-    if (reindexError != null) {
-      return { ...rawErrors, reindexApi: reindexError };
-    }
-    return rawErrors;
-  }, [rawErrors, reindexError]);
-
-  const mergedErrors = useMemo(() => {
-    return filterDismissedErrors(mergedRawErrors, dismissedErrorSignatures);
-  }, [mergedRawErrors, dismissedErrorSignatures]);
-
-  const mergedLoadingStatus = useMemo(() => ({
-    ...effectiveLoadingStatus,
-    reIndexLoadingStatus: derivedReindexLoadingStatus,
-  }), [effectiveLoadingStatus, derivedReindexLoadingStatus]);
-
-  // Drops entries where the error cleared or its payload changed,
-  // so a new occurrence (even with the same payload) will show.
-  useEffect(() => {
-    setDismissedErrorSignatures(prev => {
-      const pruned = pruneDismissedErrorSignatures(mergedRawErrors, prev);
-      // Return prev (same reference) when pruned is semantically identical
-      // to avoid React re-render loops from `pruneDismissedErrorSignatures`
-      // always returning a new object literal.
-      const prevKeys = Object.keys(prev);
-      const prunedKeys = Object.keys(pruned);
-      if (prevKeys.length === prunedKeys.length && prevKeys.every(k => prev[k] === pruned[k])) {
-        return prev;
-      }
-      return pruned;
-    });
-  }, [mergedRawErrors]);
-
-  // Dismiss error by storing a signature of the current error payload.
-  // The error stays hidden only as long as the payload signature matches.
-  const dismissError = useCallback((key: string) => {
-    const currentError = mergedRawErrors[key];
-    if (currentError == null) {
-      return; // nothing to dismiss
-    }
-    const sig = computeErrorSignature(currentError);
-    setDismissedErrorSignatures(prev => {
-      if (prev[key] === sig) {
-        return prev; // already dismissed with same signature
-      }
-      return { ...prev, [key]: sig };
-    });
-  }, [mergedRawErrors]);
-
-  const [
-    isDeleteModalOpen,
-    deleteModalData,
-    openDeleteModal,
-    closeDeleteModal,
-  ] = useToggleWithValue<OutlineActionSelection>();
+export const CourseOutlineProvider = ({ children }: CourseOutlineProviderProps) => {
+  const { courseId, openUnitPage } = useCourseAuthoringContext();
+  const dispatch = useDispatch();
+  const { courseStructure } = useSelector(getOutlineIndexData);
+  const sectionsList = useSelector(getSectionsList);
+  const [sections, setSections] = useState<XBlock[]>(sectionsList);
+  const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [
     isPublishModalOpen,
     currentPublishModalData,
@@ -231,77 +96,240 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     closePublishModal,
   ] = useToggleWithValue<ModalState>();
 
+  /**
+   * This will hold the state of current item that is being operated on,
+   * For example:
+   *  - the details of container that is being edited.
+   *  - the details of container of which see more dropdown is open.
+   * It is mostly used in modals which should be soon be replaced with its equivalent in sidebar.
+   */
+  const [currentSelection, setCurrentSelection] = useState<SelectionState | undefined>();
+
+  const selectContainer = useCallback((selection: SelectionState) => {
+  setCurrentSelection(selection);
+}, []);
+
+const clearSelection = useCallback(() => {
+  setCurrentSelection(undefined);
+}, []);
+
+const openContainerInfo = useCallback((
+  containerId: string,
+  subsectionId?: string,
+  sectionId?: string,
+  index?: number,
+) => {
+  setCurrentSelection({
+    currentId: containerId,
+    subsectionId,
+    sectionId,
+    index,
+  });
+}, []);
+
+  const restoreSectionList = () => {
+    setSections(() => [...sectionsList]);
+  };
+
+  useEffect(() => {
+    dispatch(fetchCourseOutlineIndexQuery(courseId));
+  }, [courseId]);
+
+  useEffect(() => {
+    setSections(sectionsList);
+  }, [sectionsList]);
+
+  const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
+  const handleAddBlock = useCreateCourseBlock(courseId);
+
+  const {
+    mutate: duplicateItem,
+    isPending: isDuplicatingItem,
+  } = useDuplicateItem(courseId);
+
+  // parentId is required by the API to know where to insert the duplicate.
+  // sectionId/subsectionId are required to invalidate the correct React Query caches after duplication.
+  const handleDuplicateSubmit = (parentId: string | undefined) => {
+    if (currentSelection?.currentId && parentId) {
+      duplicateItem({
+        itemId: currentSelection.currentId,
+        parentId,
+        sectionId: currentSelection.sectionId,
+        subsectionId: currentSelection.subsectionId,
+      });
+    }
+  };
+
+  const handleDuplicateSectionSubmit = () => handleDuplicateSubmit(courseStructure.id);
+  const handleDuplicateSubsectionSubmit = () => handleDuplicateSubmit(currentSelection?.sectionId);
+  const handleDuplicateUnitSubmit = () => handleDuplicateSubmit(currentSelection?.subsectionId);
+
+  const handleSectionDragAndDrop = (sectionListIds: string[]) => {
+    dispatch(setSectionOrderListQuery(courseId, sectionListIds, restoreSectionList));
+  };
+
+  const handleSubsectionDragAndDrop = (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionListIds: string[],
+  ) => {
+    dispatch(setSubsectionOrderListQuery(sectionId, prevSectionId, subsectionListIds, restoreSectionList));
+  };
+
+  const handleUnitDragAndDrop = (
+    sectionId: string,
+    prevSectionId: string,
+    subsectionId: string,
+    unitListIds: string[],
+  ) => {
+    dispatch(setUnitOrderListQuery(sectionId, subsectionId, prevSectionId, unitListIds, restoreSectionList));
+  };
+
+  /** Move section to new index */
+  const updateSectionOrderByIndex = (currentIndex: number, newIndex: number) => {
+    if (currentIndex === newIndex) {
+      return;
+    }
+    setSections((prevSections) => {
+      const newSections = arrayMove(prevSections, currentIndex, newIndex);
+      handleSectionDragAndDrop(newSections.map((section) => section.id));
+      return newSections;
+    });
+  };
+
+  /** Uses details from move information and moves subsection */
+  const updateSubsectionOrderByIndex = (section: XBlock, moveDetails) => {
+    const { fn, args, sectionId } = moveDetails;
+    if (!args) {
+      return;
+    }
+    const [sectionsCopy, newSubsections] = fn(...args);
+    if (newSubsections && sectionId) {
+      setSections(sectionsCopy);
+      handleSubsectionDragAndDrop(sectionId, section.id, newSubsections.map((subsection) => subsection.id));
+    }
+  };
+
+  /** Uses details from move information and moves unit */
+  const updateUnitOrderByIndex = (section: XBlock, moveDetails) => {
+    const { fn, args, sectionId, subsectionId } = moveDetails;
+    if (!args) {
+      return;
+    }
+    const [sectionsCopy, newUnits] = fn(...args);
+    if (newUnits && subsectionId) {
+      setSections(sectionsCopy);
+      handleUnitDragAndDrop(sectionId, section.id, subsectionId, newUnits.map((unit) => unit.id));
+    }
+  };
+
+  const deleteMutation = useDeleteCourseItem();
+
+  const getHandleDeleteItemSubmit = useCallback((callback: () => void) => async () => {
+    // istanbul ignore if
+    if (!currentSelection) {
+      return;
+    }
+    const category = getBlockType(currentSelection.currentId);
+    switch (category) {
+      case COURSE_BLOCK_NAMES.chapter.id:
+        await deleteMutation.mutateAsync(
+          { itemId: currentSelection.currentId },
+          { onSettled: () => dispatch(deleteSection({ itemId: currentSelection.currentId })) },
+        );
+        break;
+      case COURSE_BLOCK_NAMES.sequential.id:
+        await deleteMutation.mutateAsync(
+          { itemId: currentSelection.currentId, sectionId: currentSelection.sectionId },
+          {
+            onSettled: () =>
+              dispatch(deleteSubsection({
+                itemId: currentSelection.currentId,
+                sectionId: currentSelection.sectionId,
+              })),
+          },
+        );
+        break;
+      case COURSE_BLOCK_NAMES.vertical.id:
+        await deleteMutation.mutateAsync(
+          {
+            itemId: currentSelection.currentId,
+            subsectionId: currentSelection.subsectionId,
+            sectionId: currentSelection.sectionId,
+          },
+          {
+            onSettled: () =>
+              dispatch(deleteUnit({
+                itemId: currentSelection.currentId,
+                subsectionId: currentSelection.subsectionId,
+                sectionId: currentSelection.sectionId,
+              })),
+          },
+        );
+        break;
+      default:
+        // istanbul ignore next
+        throw new Error(`Unrecognized category ${category}`);
+    }
+    closeDeleteModal();
+    callback();
+  }, [deleteMutation, closeDeleteModal, currentSelection, dispatch]);
+
   const context = useMemo<CourseOutlineContextData>(() => ({
-    outlineIndexData: effectiveOutlineIndexData as CourseOutline | undefined,
-    courseName: effectiveOutlineIndexData?.courseStructure?.displayName,
-    courseUsageKey: effectiveOutlineIndexData?.courseStructure?.id || courseId,
-    sections: visibleSections,
-    courseActions,
-    statusBarData,
-    savingStatus,
-    errors: mergedErrors,
-    loadingStatus: mergedLoadingStatus,
-    isLoading: mergedLoadingStatus.outlineIndexIsLoading,
-    isLoadingDenied: mergedLoadingStatus.outlineIndexIsDenied,
-    isCustomRelativeDatesActive,
-    enableProctoredExams,
-    enableTimedExams,
-    createdOn,
-    currentItemData: currentItemData as XBlock | undefined,
-    lastEditableSection,
-    lastEditableSubsection,
+    handleAddBlock,
+    handleAddAndOpenUnit,
     currentSelection,
+    setCurrentSelection,
     selectContainer,
     clearSelection,
     openContainerInfo,
-    previewSections: previewSectionsCallback,
-    cancelReorderPreview,
-    commitSectionReorder,
-    commitSubsectionReorder,
-    commitUnitReorder,
-    dismissError,
+    sections,
+    restoreSectionList,
+    setSections,
+    isDuplicatingItem,
     isDeleteModalOpen,
-    deleteModalData,
     openDeleteModal,
     closeDeleteModal,
+    getHandleDeleteItemSubmit,
+    handleDuplicateSectionSubmit,
+    handleDuplicateSubsectionSubmit,
+    handleDuplicateUnitSubmit,
     isPublishModalOpen,
     currentPublishModalData,
     openPublishModal,
     closePublishModal,
+    handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
+    updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
   }), [
-    effectiveOutlineIndexData,
-    courseId,
-    visibleSections,
-    courseActions,
-    statusBarData,
-    savingStatus,
-    mergedErrors,
-    mergedLoadingStatus,
-    isCustomRelativeDatesActive,
-    enableProctoredExams,
-    enableTimedExams,
-    createdOn,
-    currentItemData,
-    lastEditableSection,
-    lastEditableSubsection,
+    handleAddBlock,
+    handleAddAndOpenUnit,
     currentSelection,
-    selectContainer,
-    clearSelection,
-    openContainerInfo,
-    previewSectionsCallback,
-    cancelReorderPreview,
-    commitSectionReorder,
-    commitSubsectionReorder,
-    commitUnitReorder,
-    dismissError,
+    setCurrentSelection,
+    sections,
+    restoreSectionList,
+    setSections,
+    isDuplicatingItem,
     isDeleteModalOpen,
-    deleteModalData,
     openDeleteModal,
     closeDeleteModal,
+    getHandleDeleteItemSubmit,
+    handleDuplicateSectionSubmit,
+    handleDuplicateSubsectionSubmit,
+    handleDuplicateUnitSubmit,
     isPublishModalOpen,
     currentPublishModalData,
     openPublishModal,
     closePublishModal,
+    handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
+    updateSectionOrderByIndex,
+    updateSubsectionOrderByIndex,
+    updateUnitOrderByIndex,
   ]);
 
   return (
@@ -314,6 +342,7 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
 export function useCourseOutlineContext(): CourseOutlineContextData {
   const ctx = useContext(CourseOutlineContext);
   if (ctx === undefined) {
+    /* istanbul ignore next */
     throw new Error('useCourseOutlineContext() was used in a component without a <CourseOutlineProvider> ancestor.');
   }
   return ctx;

@@ -5,12 +5,14 @@ import {
   useMemo,
 } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { useToggleWithValue } from '@src/hooks';
 import { type UnitXBlock, type XBlock } from '@src/data/types';
 import { CourseDetailsData } from './data/api';
 import { useCourseDetails, useWaffleFlags } from './data/apiHooks';
 import { RequestStatusType } from './data/constants';
+import { getOutlineIndexData } from './course-outline/data/selectors';
 
 export type ModalState = {
   value?: XBlock | UnitXBlock;
@@ -21,6 +23,7 @@ export type ModalState = {
 export type CourseAuthoringContextData = {
   /** The ID of the current course */
   courseId: string;
+  courseUsageKey: string;
   courseDetails?: CourseDetailsData;
   courseDetailStatus: RequestStatusType;
   canChangeProviders: boolean;
@@ -53,6 +56,8 @@ export const CourseAuthoringProvider = ({
   const waffleFlags = useWaffleFlags();
   const { data: courseDetails, status: courseDetailStatus } = useCourseDetails(courseId);
   const canChangeProviders = getAuthenticatedUser().administrator || new Date(courseDetails?.start ?? 0) > new Date();
+  const { courseStructure } = useSelector(getOutlineIndexData);
+  const { id: courseUsageKey } = courseStructure || {};
   const [
     isUnlinkModalOpen,
     currentUnlinkModalData,
@@ -83,6 +88,7 @@ export const CourseAuthoringProvider = ({
 
   const context = useMemo<CourseAuthoringContextData>(() => ({
     courseId,
+    courseUsageKey,
     courseDetails,
     courseDetailStatus,
     canChangeProviders,
@@ -94,6 +100,7 @@ export const CourseAuthoringProvider = ({
     currentUnlinkModalData,
   }), [
     courseId,
+    courseUsageKey,
     courseDetails,
     courseDetailStatus,
     canChangeProviders,

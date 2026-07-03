@@ -1,6 +1,5 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { courseIDtoBlockID, pickDefined } from '@src/course-outline/utils';
 import { PUBLISH_TYPES } from '@src/course-unit/constants';
 import { XBlock } from '@src/data/types';
 import {
@@ -14,6 +13,11 @@ import {
 } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
+
+const pickDefined = <T extends Record<string, any>>(obj: T) =>
+  Object.fromEntries(
+    Object.entries(obj).filter(([, value]) => value !== undefined),
+  );
 
 export const getCourseOutlineIndexApiUrl = (
   courseId: string,
@@ -45,8 +49,8 @@ export const getCourseLaunchApiUrl = ({
   `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
 
 export const getCourseBlockApiUrl = (courseId: string) => {
-  const formattedCourseId = courseIDtoBlockID(courseId);
-  return `${getApiBaseUrl()}/xblock/${formattedCourseId}`;
+  const formattedCourseId = courseId.split('course-v1:')[1];
+  return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course+block@course`;
 };
 
 export const getCourseReindexApiUrl = (reindexLink: string) => `${getApiBaseUrl()}${reindexLink}`;
@@ -122,7 +126,7 @@ export async function getCourseBestPractices({
   return camelCaseObject(data);
 }
 
-export interface CourseLaunchData {
+interface CourseLaunchData {
   isSelfPaced: boolean;
   dates: object;
   assignments: object;
@@ -515,7 +519,7 @@ export async function getTagsExportFile(courseId: string, courseName: string) {
     responseType: 'blob',
   });
 
-  /* istanbul ignore next: blob download error path, HTTP client rarely fails */
+  /* istanbul ignore next */
   if (response.status !== 200) {
     throw response.statusText;
   }

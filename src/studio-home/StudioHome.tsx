@@ -13,7 +13,6 @@ import { getConfig } from '@edx/frontend-platform';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useWaffleFlags } from '@src/data/apiHooks';
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Header from '../header';
@@ -49,8 +48,6 @@ const StudioHome = () => {
     librariesV2Enabled,
   } = useStudioHome();
 
-  const waffleFlags = useWaffleFlags();
-  const isAuthzEnabled = waffleFlags?.enableAuthzCourseAuthoring ?? false;
   const adminConsoleUrl = `${getConfig().ADMIN_CONSOLE_URL}/authz`;
 
   const v1LibraryTab = librariesV1Enabled && location?.pathname.split('/').pop() === 'libraries-v1';
@@ -77,22 +74,20 @@ const StudioHome = () => {
       );
     }
 
-    if (isAuthzEnabled && getConfig().ADMIN_CONSOLE_URL) {
-      headerButtons.push(
-        <div className="border-right mr-3 pr-4 py-2">
-          <Button
-            as="a"
-            href={adminConsoleUrl}
-            variant="primary"
-            iconBefore={ManageAccounts}
-            size="sm"
-            target="_blank"
-          >
-            {intl.formatMessage(messages.addRolesPermissionsBtnText)}
-          </Button>
-        </div>,
-      );
-    }
+    headerButtons.push(
+      <div className="border-right mr-3 pr-4 py-2">
+        <Button
+          as="a"
+          href={adminConsoleUrl}
+          variant="primary"
+          iconBefore={ManageAccounts}
+          size="sm"
+          target="_blank"
+        >
+          {intl.formatMessage(messages.addRolesPermissionsBtnText)}
+        </Button>
+      </div>,
+    );
 
     if (hasAbilityToCreateNewCourse) {
       headerButtons.push(
@@ -130,7 +125,7 @@ const StudioHome = () => {
     }
 
     return headerButtons;
-  }, [location, userIsActive, isFailedLoadingPage, isAuthzEnabled]);
+  }, [location, userIsActive, isFailedLoadingPage]);
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
   if (isLoadingPage && !isFiltered) {

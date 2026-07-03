@@ -98,6 +98,7 @@ export const OutlineSidebarProvider = ({ children }: { children?: React.ReactNod
     sectionId?: string,
     index?: number,
   ) => {
+    console.log('CONFIGURE CLICKED', containerId);
     openContainerInfo(containerId, subsectionId, sectionId, index);
     setCurrentPageKey('info');
   }, [openContainerInfo, setCurrentPageKey]);

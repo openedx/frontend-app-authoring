@@ -3,39 +3,12 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { XBlock } from '@src/data/types';
 import { findIndex, findLastIndex } from 'lodash';
 
-/**
- * Move function signature — accepts sections array followed by numeric indices.
- * Returns [modifiedSections, movedChildren].
- */
-export type MoveFn = (prevCopy: XBlock[], ...args: number[]) => [XBlock[], XBlock[]];
-
-/**
- * Move details discriminated by presence of subsectionId.
- * - SubsectionMoveDetails: no subsectionId (moving subsections within/across sections)
- * - UnitMoveDetails: has subsectionId (moving units within/across subsections)
- */
-export type SubsectionMoveDetails = {
-  fn: MoveFn;
-  args: [XBlock[], ...number[]];
-  sectionId: string;
-  subsectionId?: undefined;
-};
-
-export type UnitMoveDetails = {
-  fn: MoveFn;
-  args: [XBlock[], ...number[]];
-  sectionId: string;
-  subsectionId: string;
-};
-
-export type MoveDetails = SubsectionMoveDetails | UnitMoveDetails;
-
 export const dragHelpers = {
   copyBlockChildren: (block: XBlock) => {
     // eslint-disable-next-line no-param-reassign
     block.childInfo = { ...block.childInfo };
     // eslint-disable-next-line no-param-reassign
-    block.childInfo.children = [...(block.childInfo.children || [])];
+    block.childInfo.children = [...block.childInfo.children];
     return block;
   },
   setBlockChildren: (block: XBlock, children: XBlock[]) => {
@@ -65,83 +38,108 @@ export const dragHelpers = {
 };
 
 /**
- * Move an item (subsection or unit) across sections/subsections.
- * 5 arguments = subsection cross‑section move.
- * 7 arguments = unit cross‑subsection move.
+ * This function moves a subsection from one section to another in the copy of blocks.
+ * It updates the copy with the new positions for the sections and their subsections,
+ * while keeping other sections intact.
  */
-export const moveItemOver = (
+export const moveSubsectionOver = (
   prevCopy: XBlock[],
-  parentAIdx: number,
-  childAIdx: number,
-  midArg: number,
-  lastArg: number,
-  overSubsectionIdx?: number,
-  newIndex?: number,
-): [XBlock[], XBlock[]] => {
-  if (overSubsectionIdx === undefined) {
-    let activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[parentAIdx] });
-    let overSection = dragHelpers.copyBlockChildren({ ...prevCopy[midArg] }); // midArg = targetSectionIdx
-    const item = activeSection.childInfo.children[childAIdx];
-    overSection = dragHelpers.insertChild(overSection, item, lastArg); // lastArg = newIndex
-    activeSection = dragHelpers.setBlockChildren(
-      activeSection,
-      activeSection.childInfo.children.filter((i) => i.id !== item.id),
-    );
-    // eslint-disable-next-line no-param-reassign
-    prevCopy[parentAIdx] = activeSection;
-    // eslint-disable-next-line no-param-reassign
-    prevCopy[midArg] = overSection;
-    return [prevCopy, overSection.childInfo.children];
-  }
-  const activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[parentAIdx] });
-  let activeSubsection = dragHelpers.copyBlockChildren(
-    { ...activeSection.childInfo.children[childAIdx] },
+  activeSectionIdx: number,
+  activeSubsectionIdx: number,
+  overSectionIdx: number,
+  newIndex: number,
+) => {
+  let activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[activeSectionIdx] });
+  let overSection = dragHelpers.copyBlockChildren({ ...prevCopy[overSectionIdx] });
+  const subsection = activeSection.childInfo.children[activeSubsectionIdx];
+
+  overSection = dragHelpers.insertChild(overSection, subsection, newIndex);
+
+  activeSection = dragHelpers.setBlockChildren(
+    activeSection,
+    activeSection.childInfo.children.filter((item) => item.id !== subsection.id),
   );
-  let overSection = { ...prevCopy[lastArg] }; // lastArg = overSectionIdx
-  if (overSection.id === activeSection.id) { overSection = activeSection; }
+
+  // eslint-disable-next-line no-param-reassign
+  prevCopy[activeSectionIdx] = activeSection;
+  // eslint-disable-next-line no-param-reassign
+  prevCopy[overSectionIdx] = overSection;
+  return [prevCopy, overSection.childInfo.children];
+};
+
+export const moveUnitOver = (
+  prevCopy: XBlock[],
+  activeSectionIdx: number,
+  activeSubsectionIdx: number,
+  activeUnitIdx: number,
+  overSectionIdx: number,
+  overSubsectionIdx: number,
+  newIndex: number,
+) => {
+  const activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[activeSectionIdx] });
+  let activeSubsection = dragHelpers.copyBlockChildren(
+    { ...activeSection.childInfo.children[activeSubsectionIdx] },
+  );
+
+  let overSection = { ...prevCopy[overSectionIdx] };
+  if (overSection.id === activeSection.id) {
+    overSection = activeSection;
+  }
+
   overSection = dragHelpers.copyBlockChildren(overSection);
   let overSubsection = dragHelpers.copyBlockChildren(
     { ...overSection.childInfo.children[overSubsectionIdx] },
   );
-  const unit = activeSubsection.childInfo.children[midArg]; // midArg = activeUnitIdx
-  overSubsection = dragHelpers.insertChild(overSubsection, unit, newIndex!);
+
+  const unit = activeSubsection.childInfo.children[activeUnitIdx];
+  overSubsection = dragHelpers.insertChild(overSubsection, unit, newIndex);
   overSection = dragHelpers.setBlockChild(overSection, overSubsection, overSubsectionIdx);
+
   activeSubsection = dragHelpers.setBlockChildren(
     activeSubsection,
-    activeSubsection.childInfo.children.filter((i) => i.id !== unit.id),
+    activeSubsection.childInfo.children.filter((item) => item.id !== unit.id),
   );
+
   // eslint-disable-next-line no-param-reassign
-  prevCopy[parentAIdx] = dragHelpers.setBlockChild(activeSection, activeSubsection, childAIdx);
+  prevCopy[activeSectionIdx] = dragHelpers.setBlockChild(activeSection, activeSubsection, activeSubsectionIdx);
   // eslint-disable-next-line no-param-reassign
-  prevCopy[lastArg] = overSection;
+  prevCopy[overSectionIdx] = overSection;
   return [prevCopy, overSubsection.childInfo.children];
 };
 
 /**
- * Move an item within its parent container.
- * 4 arguments = subsection within‑section move.
- * 5 arguments = unit within‑subsection move.
+ * Handles dragging and dropping a subsection within the same section.
  */
-export const moveItem = (
+export const moveSubsection = (
   prevCopy: XBlock[],
   sectionIdx: number,
-  midArg: number,
-  otherArg: number,
-  newIdx?: number,
-): [XBlock[], XBlock[]] => {
-  if (newIdx === undefined) {
-    let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
-    const result = arrayMove(section.childInfo.children, midArg, otherArg);
-    section = dragHelpers.setBlockChildren(section, result);
-    // eslint-disable-next-line no-param-reassign
-    prevCopy[sectionIdx] = section;
-    return [prevCopy, result];
-  }
+  currentIdx: number,
+  newIdx: number,
+) => {
   let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
-  let subsection = dragHelpers.copyBlockChildren({ ...section.childInfo.children[midArg] }); // midArg = subsectionIdx
-  const result = arrayMove(subsection.childInfo.children, otherArg, newIdx); // otherArg = currentIdx
+
+  const result = arrayMove(section.childInfo.children, currentIdx, newIdx);
+  section = dragHelpers.setBlockChildren(section, result);
+
+  // eslint-disable-next-line no-param-reassign
+  prevCopy[sectionIdx] = section;
+  return [prevCopy, result];
+};
+
+export const moveUnit = (
+  prevCopy: XBlock[],
+  sectionIdx: number,
+  subsectionIdx: number,
+  currentIdx: number,
+  newIdx: number,
+) => {
+  let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
+  let subsection = dragHelpers.copyBlockChildren({ ...section.childInfo.children[subsectionIdx] });
+
+  const result = arrayMove(subsection.childInfo.children, currentIdx, newIdx);
   subsection = dragHelpers.setBlockChildren(subsection, result);
-  section = dragHelpers.setBlockChild(section, subsection, midArg);
+  section = dragHelpers.setBlockChild(section, subsection, subsectionIdx);
+
   // eslint-disable-next-line no-param-reassign
   prevCopy[sectionIdx] = section;
   return [prevCopy, result];
@@ -179,14 +177,15 @@ export const possibleSubsectionMoves = (
   sectionIndex: number,
   section: XBlock,
   subsections: XBlock[],
-): (index: number, step: number) => SubsectionMoveDetails | null =>
+) =>
 (index: number, step: number) => {
   if (!subsections[index]?.actions?.draggable) {
-    return null;
+    return {};
   }
   if ((step === -1 && index >= 1) || (step === 1 && subsections.length - index >= 2)) {
+    // move subsection inside its own parent section
     return {
-      fn: moveItem,
+      fn: moveSubsection,
       args: [
         sections,
         sectionIndex,
@@ -197,13 +196,14 @@ export const possibleSubsectionMoves = (
     };
   }
   if (step === -1 && index === 0 && sectionIndex > 0) {
+    // find a section that accepts children above/before the current section
     const newSectionIndex = findLastIndex(sections, { actions: { childAddable: true } }, sectionIndex + step);
     if (newSectionIndex === -1) {
       // return if previous section doesn't allow adding subsections
-      return null;
+      return {};
     }
     return {
-      fn: moveItemOver,
+      fn: moveSubsectionOver,
       args: [
         sections,
         sectionIndex,
@@ -220,10 +220,10 @@ export const possibleSubsectionMoves = (
     // move subsection to first position of next section
     if (newSectionIndex === -1) {
       // return if below sections don't allow adding subsections
-      return null;
+      return {};
     }
     return {
-      fn: moveItemOver,
+      fn: moveSubsectionOver,
       args: [
         sections,
         sectionIndex,
@@ -234,7 +234,7 @@ export const possibleSubsectionMoves = (
       sectionId: sections[newSectionIndex].id,
     };
   }
-  return null;
+  return {};
 };
 
 /**
@@ -283,7 +283,7 @@ const moveToPreviousLocation = (
   sectionIndex: number,
   subsectionIndex: number,
   index: number,
-): UnitMoveDetails | null => {
+) => {
   if (subsectionIndex > 0) {
     // Find the previous childAddable subsection within the same section
     const newSubsectionIndex = findLastIndex(
@@ -295,7 +295,7 @@ const moveToPreviousLocation = (
     // If found a valid subsection within the same section
     if (newSubsectionIndex !== -1) {
       return {
-        fn: moveItemOver,
+        fn: moveUnitOver,
         args: [
           sections,
           sectionIndex,
@@ -315,11 +315,11 @@ const moveToPreviousLocation = (
   const previousLocationResult = findValidSubsectionIndex(sections, sectionIndex, -1, findLastIndex);
 
   if (!previousLocationResult) {
-    return null;
+    return {};
   }
 
   return {
-    fn: moveItemOver,
+    fn: moveUnitOver,
     args: [
       sections,
       sectionIndex,
@@ -346,7 +346,7 @@ const moveToNextLocation = (
   sectionIndex: number,
   subsectionIndex: number,
   index: number,
-): UnitMoveDetails | null => {
+) => {
   // Find the next childAddable subsection within the same section
   const subsections = sections[sectionIndex].childInfo.children;
   if (subsectionIndex < (subsections.length - 1)) {
@@ -359,7 +359,7 @@ const moveToNextLocation = (
     // If found a valid subsection within the same section
     if (newSubsectionIndex !== -1) {
       return {
-        fn: moveItemOver,
+        fn: moveUnitOver,
         args: [
           sections,
           sectionIndex,
@@ -379,11 +379,11 @@ const moveToNextLocation = (
   const nextLocationResult = findValidSubsectionIndex(sections, sectionIndex, 1, findIndex);
 
   if (!nextLocationResult) {
-    return null;
+    return {};
   }
 
   return {
-    fn: moveItemOver,
+    fn: moveUnitOver,
     args: [
       sections,
       sectionIndex,
@@ -411,17 +411,17 @@ export const possibleUnitMoves = (
   section: XBlock,
   subsection: XBlock,
   units: XBlock[],
-): (index: number, step: number) => UnitMoveDetails | null =>
+) =>
 (index: number, step: number) => {
   // Early return if unit is not draggable
   if (!units[index]?.actions?.draggable) {
-    return null;
+    return {};
   }
 
   // Move within current subsection
   if ((step === -1 && index >= 1) || (step === 1 && units.length - index >= 2)) {
     return {
-      fn: moveItem,
+      fn: moveUnit,
       args: [sections, sectionIndex, subsectionIndex, index, index + step],
       sectionId: section.id,
       subsectionId: subsection.id,
@@ -438,57 +438,5 @@ export const possibleUnitMoves = (
     return moveToNextLocation(sections, sectionIndex, subsectionIndex, index);
   }
 
-  return null;
+  return {};
 };
-
-/**
- * Commit callback type for reorder operations.
- * Uses variadic tuple rest to express both call signatures:
- * - 3 params: subsection reorder  (sectionId, prevSectionId, subsectionListIds)
- * - 4 params: unit reorder       (sectionId, prevSectionId, subsectionId, unitListIds)
- */
-type ReorderCommitFn = (
-  sectionId: string,
-  prevSectionId: string,
-  ...rest: [string[]] | [string, string[]]
-) => void | Promise<void>;
-
-/**
- * Apply a reorder from moveDetails and preview + commit.
- *
- * Handles both subsection and unit reorders. If moveDetails contains
- * `subsectionId` the unit commit signature is used; otherwise the
- * subsection commit signature is used.
- */
-export function applyReorderMove(
-  moveDetails: SubsectionMoveDetails | null,
-  currentSection: XBlock,
-  previewSections: (sections: XBlock[]) => void,
-  commitReorder: ReorderCommitFn,
-): void;
-export function applyReorderMove(
-  moveDetails: UnitMoveDetails | null,
-  currentSection: XBlock,
-  previewSections: (sections: XBlock[]) => void,
-  commitReorder: ReorderCommitFn,
-): void;
-export function applyReorderMove(
-  moveDetails: MoveDetails | null,
-  currentSection: XBlock,
-  previewSections: (sections: XBlock[]) => void,
-  commitReorder: ReorderCommitFn,
-): void {
-  if (!moveDetails) { return; }
-  const { fn, args, sectionId, subsectionId } = moveDetails;
-  const [sectionsCopy, newItems] = fn(...args);
-  if (!newItems || !sectionId) { return; }
-  previewSections(sectionsCopy);
-  const ids = newItems.map((s: XBlock) => s.id);
-  if (subsectionId) {
-    // Unit reorder
-    commitReorder(sectionId, currentSection.id, subsectionId, ids);
-  } else {
-    // Subsection reorder
-    commitReorder(sectionId, currentSection.id, ids);
-  }
-}

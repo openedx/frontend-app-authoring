@@ -7,6 +7,7 @@ import { getStudioHomeData } from '@src/studio-home/data/selectors';
 import { ContainerType } from '@src/generic/key-utils';
 import { useOutlineSidebarContext } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { useCourseOutlineContext } from '@src/course-outline/CourseOutlineContext';
+import { getOutlineIndexData } from '@src/course-outline/data/selectors';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCallback } from 'react';
 import {
@@ -95,13 +96,9 @@ const OutlineAddChildButtons = ({
   const intl = useIntl();
   const { courseId, openUnitPage } = useCourseAuthoringContext();
   const handleAddAndOpenUnit = useCreateCourseBlock(courseId, openUnitPage);
-  const { courseUsageKey } = useCourseOutlineContext();
+  const { courseStructure } = useSelector(getOutlineIndexData);
   const { startCurrentFlow, openContainerInfoSidebar } = useOutlineSidebarContext();
-  const { createSection, createSubsection } = useCreateBlockSidebar(
-    courseId,
-    courseUsageKey,
-    openContainerInfoSidebar,
-  );
+  const { createSection, createSubsection } = useCreateBlockSidebar(courseId, courseStructure.id, openContainerInfoSidebar);
 
   // Use global mutation state to track all createBlock mutations,
   // including those triggered from library add flows in other components
