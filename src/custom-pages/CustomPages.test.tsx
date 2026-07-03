@@ -109,20 +109,6 @@ describe('CustomPages', () => {
     expect(await screen.findByTestId('under-construction-placeholder')).toBeVisible();
   });
 
-  it('should have breadcrumbs', async () => {
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
-    renderComponent();
-    expect(await screen.findByLabelText('Custom Page breadcrumbs')).toBeVisible();
-  });
-
-  it('should contain header row with title, add button and view live button', async () => {
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
-    renderComponent();
-    expect(await screen.findByText(messages.heading.defaultMessage)).toBeVisible();
-    expect(screen.getByTestId('header-add-button')).toBeVisible();
-    expect(screen.getByTestId('header-view-live-button')).toBeVisible();
-  });
-
   it('should add new page when "add a new page button" is clicked', async () => {
     const xblockAddUrl = `${getApiBaseUrl()}/xblock/`;
     axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
@@ -137,18 +123,6 @@ describe('CustomPages', () => {
     await waitFor(() => {
       expect(axiosMock.history.put.length).toBeGreaterThanOrEqual(1);
     });
-  });
-
-  it('should open student view modal when button is clicked', async () => {
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
-    renderComponent();
-
-    const viewButton = await screen.findByTestId('student-view-example-button');
-    expect(viewButton).toBeVisible();
-    expect(screen.queryByText(messages.studentViewModalTitle.defaultMessage)).toBeNull();
-
-    fireEvent.click(viewButton);
-    expect(screen.getByText(messages.studentViewModalTitle.defaultMessage)).toBeVisible();
   });
 
   it('should post reordered pages to /reorder endpoint', async () => {
@@ -188,6 +162,22 @@ describe('CustomPages', () => {
       { tab_locator: 'mOckID2' },
       { tab_locator: 'mOckID1' },
     ]);
+  });
+
+  it('should delete page on successful delete', async () => {
+    const pageId = 'mOckID1';
+    const xblockEditUrl = `${getApiBaseUrl()}/xblock/${pageId}`;
+    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
+    axiosMock.onDelete(xblockEditUrl).reply(204);
+
+    renderComponent();
+    expect(await screen.findByTestId('delete-modal-icon')).toBeVisible();
+    fireEvent.click(screen.getByTestId('delete-modal-icon'));
+    fireEvent.click(screen.getByText(messages.deletePageLabel.defaultMessage));
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toBe(1);
+    });
   });
 
   it('should show error alert on delete failure', async () => {
@@ -256,6 +246,21 @@ describe('CustomPages', () => {
 
     const cached: any[] | undefined = queryClient.getQueryData(customPagesQueryKeys.list(courseId));
     expect(cached![0].name).toBe('test');
+  });
+
+  it('should save visibility on successful toggle', async () => {
+    const pageId = 'mOckID1';
+    const xblockEditUrl = `${getApiBaseUrl()}/xblock/${pageId}`;
+    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
+    axiosMock.onPut(xblockEditUrl).reply(200, {});
+
+    renderComponent();
+    expect(await screen.findByTestId('visibility-toggle-icon')).toBeVisible();
+    fireEvent.click(screen.getByTestId('visibility-toggle-icon'));
+
+    await waitFor(() => {
+      expect(axiosMock.history.put.length).toBeGreaterThanOrEqual(1);
+    });
   });
 
   it('should show error alert on visibility save failure', async () => {

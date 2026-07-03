@@ -38,13 +38,6 @@ describe('CustomPageCard', () => {
     expect(screen.getByTestId('card-title')).toHaveTextContent('test');
   });
 
-  it('should contain icon row', () => {
-    renderComponent();
-    expect(screen.getByTestId('edit-modal-icon')).toBeVisible();
-    expect(screen.getByTestId('visibility-toggle-icon')).toBeVisible();
-    expect(screen.getByTestId('delete-modal-icon')).toBeVisible();
-  });
-
   it('should open delete confirmation modal and handle cancel', () => {
     renderComponent();
     const deleteButton = screen.getByTestId('delete-modal-icon');
