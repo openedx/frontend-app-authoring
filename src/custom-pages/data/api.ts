@@ -67,7 +67,7 @@ export async function updateCustomPage({ blockId, htmlString, metadata }: {
 /**
  * Update order of custom pages.
  */
-export async function updateCustomPageOrder(courseId: string, tabs: Array<{ tab_locator: string }>): Promise<void> {
+export async function updateCustomPageOrder(courseId: string, tabs: Array<{ tab_locator: string; }>): Promise<void> {
   await getAuthenticatedHttpClient()
     .post(`${getTabHandlerUrl(courseId)}/reorder`, tabs);
 }
