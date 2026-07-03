@@ -35,7 +35,7 @@ improving code you touch over matching nearby legacy style.
 
 - Use [`src/testUtils.tsx`](src/testUtils.tsx), especially `initializeMocks(...)` and the custom `render()`, to set up providers, the API mock, and routing. Don't reinvent test scaffolding.
 - Prefer `user-event` over `fireEvent`
-- Selectors and queries in tests should follow the React Testing Library [Guiding Principles](https://testing-library.com/docs/guiding-principles/) and [query priority guidelines](https://testing-library.com/docs/queries/about#priority). In particualr, prefer `getByRole` (e.g. `getByRole('button', {name: /submit/i})`), `getByLabelText`, `getByPlaceholderText`, `getByText`, and `getByDisplayValue` over non-user-visible selectors like `getByTestId`.
+- Selectors and queries in tests should follow the React Testing Library [Guiding Principles](https://testing-library.com/docs/guiding-principles/) and [query priority guidelines](https://testing-library.com/docs/queries/about#priority). In particular, prefer `getByRole` (e.g. `getByRole('button', {name: /submit/i})`), `getByLabelText`, `getByPlaceholderText`, `getByText`, and `getByDisplayValue` over non-user-visible selectors like `getByTestId`.
 - Mock HTTP with the provided axios mock adapter; assert on user-visible behavior via Testing Library queries.
 - New code is expected to be covered (see `codecov.yml`).
 
