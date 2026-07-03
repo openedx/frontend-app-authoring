@@ -1,21 +1,13 @@
-import MockAdapter from 'axios-mock-adapter';
 import {
   initializeMocks,
   fireEvent,
   screen,
-  waitFor,
   render,
 } from '@src/testUtils';
-import { getApiBaseUrl } from './data/api';
 import messages from './messages';
 import CustomPageCard from './CustomPageCard';
 
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
-
-const generateUpdateVisibilityApiResponse = (blockId: string, visibility: boolean) => ({
-  id: blockId,
-  metadata: { display_name: 'test', course_staff_only: visibility },
-});
 
 const defaultProps = {
   courseId,
@@ -25,9 +17,10 @@ const defaultProps = {
     courseStaffOnly: false,
   },
   setCurrentPage: jest.fn(),
+  onDelete: jest.fn(),
+  isDeleting: false,
+  onToggleVisibility: jest.fn(),
 };
-
-let axiosMock: MockAdapter;
 
 const renderComponent = (courseStaffOnly = false) => {
   render(
@@ -37,8 +30,7 @@ const renderComponent = (courseStaffOnly = false) => {
 
 describe('CustomPageCard', () => {
   beforeEach(() => {
-    const mocks = initializeMocks();
-    axiosMock = mocks.axiosMock;
+    initializeMocks();
   });
 
   it('should have title', () => {
@@ -63,21 +55,11 @@ describe('CustomPageCard', () => {
     expect(screen.queryByText(messages.deleteConfirmationTitle.defaultMessage)).toBeNull();
   });
 
-  it('should open delete confirmation modal and handle delete', async () => {
-    const xblockEditUrl = `${getApiBaseUrl()}/xblock/mOckID1`;
-    axiosMock.onDelete(xblockEditUrl).reply(204);
-
+  it('should call onDelete with blockId when delete is confirmed', () => {
     renderComponent();
-    const deleteButton = screen.getByTestId('delete-modal-icon');
-    fireEvent.click(deleteButton);
-    expect(screen.getByText(messages.deleteConfirmationTitle.defaultMessage)).toBeVisible();
-
-    const confirmButton = screen.getByText(messages.deletePageLabel.defaultMessage);
-    fireEvent.click(confirmButton);
-
-    await waitFor(() => {
-      expect(axiosMock.history.delete.length).toBeGreaterThanOrEqual(1);
-    });
+    fireEvent.click(screen.getByTestId('delete-modal-icon'));
+    fireEvent.click(screen.getByText(messages.deletePageLabel.defaultMessage));
+    expect(defaultProps.onDelete).toHaveBeenCalledWith('mOckID1', expect.any(Function));
   });
 
   it('should open edit modal', () => {
@@ -87,54 +69,15 @@ describe('CustomPageCard', () => {
     expect(defaultProps.setCurrentPage).toHaveBeenCalledWith('mOckID1');
   });
 
-  it('should update courseStaffOnly to true', async () => {
-    const xblockEditUrl = `${getApiBaseUrl()}/xblock/mOckID1`;
-    axiosMock.onPut(xblockEditUrl).reply(200, generateUpdateVisibilityApiResponse('mOckID1', true));
-
+  it('should call onToggleVisibility when visibility icon is clicked', () => {
     renderComponent(false);
-    const visibilityButton = screen.getByTestId('visibility-toggle-icon');
-    fireEvent.click(visibilityButton);
-
-    await waitFor(() => {
-      expect(axiosMock.history.put.length).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  it('should update courseStaffOnly to false', async () => {
-    const xblockEditUrl = `${getApiBaseUrl()}/xblock/mOckID1`;
-    axiosMock.onPut(xblockEditUrl).reply(200, generateUpdateVisibilityApiResponse('mOckID1', false));
-
-    renderComponent(true);
-    const visibilityButton = screen.getByTestId('visibility-toggle-icon');
-    fireEvent.click(visibilityButton);
-
-    await waitFor(() => {
-      expect(axiosMock.history.put.length).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  it('should show error alert on delete failure', async () => {
-    const xblockEditUrl = `${getApiBaseUrl()}/xblock/mOckID1`;
-    axiosMock.onDelete(xblockEditUrl).reply(500);
-
-    renderComponent();
-    fireEvent.click(screen.getByTestId('delete-modal-icon'));
-    fireEvent.click(screen.getByText(messages.deletePageLabel.defaultMessage));
-
-    await waitFor(() => {
-      expect(screen.getByText('Unable to delete page. Please try again.')).toBeVisible();
-    });
-  });
-
-  it('should show error alert on visibility save failure', async () => {
-    const xblockEditUrl = `${getApiBaseUrl()}/xblock/mOckID1`;
-    axiosMock.onPut(xblockEditUrl).reply(500);
-
-    renderComponent();
     fireEvent.click(screen.getByTestId('visibility-toggle-icon'));
+    expect(defaultProps.onToggleVisibility).toHaveBeenCalledWith('mOckID1', false);
+  });
 
-    await waitFor(() => {
-      expect(screen.getByText('Unable to save page. Please try again.')).toBeVisible();
-    });
+  it('should call onToggleVisibility with true when page is visible', () => {
+    renderComponent(true);
+    fireEvent.click(screen.getByTestId('visibility-toggle-icon'));
+    expect(defaultProps.onToggleVisibility).toHaveBeenCalledWith('mOckID1', true);
   });
 });

@@ -33,8 +33,10 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import {
   useCustomPages,
   useAddCustomPage,
+  useDeleteCustomPage,
   useReorderCustomPages,
   useUpdateCustomPageName,
+  useUpdateCustomPageVisibility,
   type CustomPage,
 } from './data/apiHooks';
 import previewLmsStaticPages from './data/images/previewLmsStaticPages.png';
@@ -57,6 +59,8 @@ const CustomPages = () => {
 
   const { data: pages, isLoading, error, isError } = useCustomPages(courseId);
   const addPageMutation = useAddCustomPage(courseId);
+  const deleteMutation = useDeleteCustomPage(courseId);
+  const visibilityMutation = useUpdateCustomPageVisibility(courseId);
   const reorderMutation = useReorderCustomPages(courseId);
   const updatePageName = useUpdateCustomPageName(courseId);
 
@@ -167,6 +171,12 @@ const CustomPages = () => {
           <ErrorAlert hideHeading isError={reorderMutation.isError}>
             {intl.formatMessage(messages.errorAlertMessage, { actionName: 'save' })}
           </ErrorAlert>
+          <ErrorAlert hideHeading isError={deleteMutation.isError}>
+            {intl.formatMessage(messages.errorAlertMessage, { actionName: 'delete' })}
+          </ErrorAlert>
+          <ErrorAlert hideHeading isError={visibilityMutation.isError}>
+            {intl.formatMessage(messages.errorAlertMessage, { actionName: 'save' })}
+          </ErrorAlert>
           <div className="small gray-700 mb-4">
             <FormattedMessage {...messages.note} />
           </div>
@@ -187,6 +197,13 @@ const CustomPages = () => {
                     page={page}
                     courseId={courseId}
                     setCurrentPage={setCurrentPage}
+                    onDelete={(blockId, onSettled) => deleteMutation.mutate(blockId, { onSettled })}
+                    isDeleting={deleteMutation.isPending}
+                    onToggleVisibility={(blockId, courseStaffOnly) =>
+                      visibilityMutation.mutate({
+                        blockId,
+                        metadata: { course_staff_only: !courseStaffOnly },
+                      })}
                   />
                 }
               />

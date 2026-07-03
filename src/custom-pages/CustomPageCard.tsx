@@ -16,55 +16,43 @@ import {
   Visibility,
   VisibilityOff,
 } from '@openedx/paragon/icons';
-import { useNavigate } from 'react-router-dom';
 import { RequestStatus } from '@src/data/constants';
-import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
-import { useDeleteCustomPage, useUpdateCustomPageVisibility, type CustomPage } from './data/apiHooks';
+import { useNavigate } from 'react-router-dom';
+import { type CustomPage } from './data/apiHooks';
 import messages from './messages';
 
 interface CustomPageCardProps {
   page: CustomPage;
   courseId: string;
   setCurrentPage: (id: string) => void;
+  onDelete: (blockId: string, onSettled?: () => void) => void;
+  isDeleting: boolean;
+  onToggleVisibility: (blockId: string, courseStaffOnly: boolean) => void;
 }
 
 const CustomPageCard = ({
   page,
   courseId,
   setCurrentPage,
+  onDelete,
+  isDeleting,
+  onToggleVisibility,
 }: CustomPageCardProps) => {
   const intl = useIntl();
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
   const navigate = useNavigate();
 
-  const deleteMutation = useDeleteCustomPage(courseId);
-  const visibilityMutation = useUpdateCustomPageVisibility(courseId);
-
   const handleDelete = () => {
-    deleteMutation.mutate(page.id, { onSettled: closeDeleteConfirmation });
+    onDelete(page.id, closeDeleteConfirmation);
   };
 
   const toggleVisibility = () => {
-    visibilityMutation.mutate({
-      blockId: page.id,
-      metadata: { course_staff_only: !page.courseStaffOnly },
-    });
+    onToggleVisibility(page.id, page.courseStaffOnly ?? false);
   };
 
   const handleEditOpen = () => {
     setCurrentPage(page.id);
     navigate(`/course/${courseId}/custom-pages/editor`);
-  };
-
-  const deletePageStateProps = {
-    labels: {
-      default: intl.formatMessage(messages.deletePageLabel),
-      pending: intl.formatMessage(messages.deletingPageBodyLabel),
-    },
-    icons: {
-      pending: <Icon src={SpinnerSimple} className="icon-spin" />,
-    },
-    disabledStates: ['pending'],
   };
 
   return (
@@ -105,12 +93,6 @@ const CustomPageCard = ({
           data-testid="delete-modal-icon"
         />
       </ActionRow>
-      <ErrorAlert hideHeading isError={deleteMutation.isError}>
-        {intl.formatMessage(messages.errorAlertMessage, { actionName: 'delete' })}
-      </ErrorAlert>
-      <ErrorAlert hideHeading isError={visibilityMutation.isError}>
-        {intl.formatMessage(messages.errorAlertMessage, { actionName: 'save' })}
-      </ErrorAlert>
       <AlertModal
         title={intl.formatMessage(messages.deleteConfirmationTitle)}
         isOpen={isDeleteConfirmationOpen}
@@ -122,8 +104,15 @@ const CustomPageCard = ({
             </Button>
             <StatefulButton
               onClick={handleDelete}
-              state={deleteMutation.isPending ? RequestStatus.PENDING : 'default'}
-              {...deletePageStateProps}
+              state={isDeleting ? RequestStatus.PENDING : 'default'}
+              labels={{
+                default: intl.formatMessage(messages.deletePageLabel),
+                pending: intl.formatMessage(messages.deletingPageBodyLabel),
+              }}
+              icons={{
+                pending: <Icon src={SpinnerSimple} className="icon-spin" />,
+              }}
+              disabledStates={['pending']}
             />
           </ActionRow>
         }
