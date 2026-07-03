@@ -1,3 +1,4 @@
+import MockAdapter from 'axios-mock-adapter';
 import {
   initializeMocks,
   fireEvent,
@@ -11,7 +12,7 @@ import CustomPageCard from './CustomPageCard';
 
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
 
-const generateUpdateVisibilityApiResponse = (blockId, visibility) => ({
+const generateUpdateVisibilityApiResponse = (blockId: string, visibility: boolean) => ({
   id: blockId,
   metadata: { display_name: 'test', course_staff_only: visibility },
 });
@@ -26,7 +27,7 @@ const defaultProps = {
   setCurrentPage: jest.fn(),
 };
 
-let axiosMock;
+let axiosMock: MockAdapter;
 
 const renderComponent = (courseStaffOnly = false) => {
   render(

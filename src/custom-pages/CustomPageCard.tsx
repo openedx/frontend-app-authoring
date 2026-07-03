@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -20,14 +19,20 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { RequestStatus } from '@src/data/constants';
 import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
-import { useDeleteCustomPage, useUpdateCustomPageVisibility } from './data/apiHooks';
+import { useDeleteCustomPage, useUpdateCustomPageVisibility, type CustomPage } from './data/apiHooks';
 import messages from './messages';
+
+interface CustomPageCardProps {
+  page: CustomPage;
+  courseId: string;
+  setCurrentPage: (id: string) => void;
+}
 
 const CustomPageCard = ({
   page,
   courseId,
   setCurrentPage,
-}) => {
+}: CustomPageCardProps) => {
   const intl = useIntl();
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
   const navigate = useNavigate();
@@ -127,16 +132,6 @@ const CustomPageCard = ({
       </AlertModal>
     </>
   );
-};
-
-CustomPageCard.propTypes = {
-  page: PropTypes.shape({
-    name: PropTypes.string,
-    id: PropTypes.string.isRequired,
-    courseStaffOnly: PropTypes.bool.isRequired,
-  }).isRequired,
-  courseId: PropTypes.string.isRequired,
-  setCurrentPage: PropTypes.func.isRequired,
 };
 
 export default CustomPageCard;
