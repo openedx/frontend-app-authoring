@@ -20,6 +20,21 @@ jest.mock('@src/generic/DraggableList/verticalSortableList', () => ({
   verticalSortableListCollisionDetection: jest.fn(),
 }));
 
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
+let capturedOnClose: ((...args: any[]) => any) | undefined;
+jest.mock('./EditModal', () => ({
+  __esModule: true,
+  default: ({ onClose }: { onClose: (...args: any[]) => any }) => {
+    capturedOnClose = onClose;
+    return <div data-testid="edit-modal-mock" />;
+  },
+}));
+
 let axiosMock;
 let queryClient;
 // @ts-ignore
@@ -75,6 +90,8 @@ describe('CustomPages', () => {
       data: mockCourseDetails,
       status: 'successful',
     });
+    capturedOnClose = undefined;
+    mockNavigate.mockClear();
   });
 
   it('should render placeholder on 403', async () => {
@@ -187,6 +204,58 @@ describe('CustomPages', () => {
     await waitFor(() => {
       expect(screen.getByText('Unable to delete page. Please try again.')).toBeVisible();
     });
+  });
+
+  it('should navigate back and update cached name when editor closes with metadata', async () => {
+    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
+    queryClient.setQueryData(customPagesQueryKeys.list(courseId), generateFetchPageApiResponse());
+
+    render(
+      <CourseAuthoringProvider courseId={courseId}>
+        <CustomPages />
+      </CourseAuthoringProvider>,
+      { routerProps: { initialEntries: ['/editor'] } },
+    );
+
+    const editIcon = await screen.findByTestId('edit-modal-icon');
+    fireEvent.click(editIcon);
+
+    expect(screen.getByTestId('edit-modal-mock')).toBeVisible();
+
+    const closeHandler = capturedOnClose!();
+    closeHandler({ metadata: { display_name: 'Updated Name' } });
+
+    expect(mockNavigate).toHaveBeenCalledWith(`/course/${courseId}/custom-pages`);
+
+    await waitFor(() => {
+      const cached: any[] | undefined = queryClient.getQueryData(customPagesQueryKeys.list(courseId));
+      expect(cached![0].name).toBe('Updated Name');
+    });
+  });
+
+  it('should navigate back and leave name unchanged when editor closes without metadata', async () => {
+    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
+    queryClient.setQueryData(customPagesQueryKeys.list(courseId), generateFetchPageApiResponse());
+
+    render(
+      <CourseAuthoringProvider courseId={courseId}>
+        <CustomPages />
+      </CourseAuthoringProvider>,
+      { routerProps: { initialEntries: ['/editor'] } },
+    );
+
+    const editIcon = await screen.findByTestId('edit-modal-icon');
+    fireEvent.click(editIcon);
+
+    expect(screen.getByTestId('edit-modal-mock')).toBeVisible();
+
+    const closeHandler = capturedOnClose!();
+    closeHandler({});
+
+    expect(mockNavigate).toHaveBeenCalledWith(`/course/${courseId}/custom-pages`);
+
+    const cached: any[] | undefined = queryClient.getQueryData(customPagesQueryKeys.list(courseId));
+    expect(cached![0].name).toBe('test');
   });
 
   it('should show error alert on visibility save failure', async () => {
