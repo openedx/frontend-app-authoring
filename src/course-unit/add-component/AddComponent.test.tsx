@@ -158,7 +158,7 @@ describe('<AddComponent />', () => {
     });
   });
 
-  it('handleCreateNewCourseXblock does\'t call with custom component create button is clicked', async () => {
+  it('calls handleCreateNewCourseXblock with correct parameters when custom component create button is clicked', async () => {
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
@@ -181,7 +181,11 @@ describe('<AddComponent />', () => {
     });
 
     await user.click(customComponentButton);
-    expect(handleCreateNewCourseXBlockMock).not.toHaveBeenCalled();
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
+      type: 'custom',
+      category: 'custom',
+      parentLocator: blockId,
+    });
   });
 
   it('calls handleCreateNewCourseXblock with correct parameters when Discussion xblock create button is clicked', async () => {
