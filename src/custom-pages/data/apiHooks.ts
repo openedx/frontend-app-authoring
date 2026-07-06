@@ -1,19 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  type CustomPage,
   getCustomPages,
   deleteCustomPage,
   addCustomPage,
   updateCustomPage,
   updateCustomPageOrder,
 } from './api';
-
-export interface CustomPage {
-  id: string;
-  name?: string;
-  courseStaffOnly?: boolean;
-  tabId?: string;
-  [key: string]: unknown;
-}
 
 export const customPagesQueryKeys = {
   all: ['customPages'] as const,

@@ -1,6 +1,6 @@
-import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
+import { makeQueryClientWrapper } from '@src/testUtils';
 import {
   useReorderCustomPages,
   useUpdateCustomPageName,
@@ -25,10 +25,7 @@ const createWrapper = () => {
       mutations: { retry: false },
     },
   });
-  const wrapper = ({ children }: { children: React.ReactNode; }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-  return { wrapper, queryClient };
+  return { wrapper: makeQueryClientWrapper(queryClient), queryClient };
 };
 
 describe('useReorderCustomPages', () => {

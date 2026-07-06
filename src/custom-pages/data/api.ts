@@ -1,7 +1,7 @@
 import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-export interface CustomPageData {
+export interface CustomPage {
   id: string;
   name?: string;
   courseStaffOnly?: boolean;
@@ -19,10 +19,10 @@ export const getTabHandlerUrl = (courseId: string): string => `${getApiBaseUrl()
 /**
  * Fetches the course custom pages for provided course.
  */
-export async function getCustomPages(courseId: string): Promise<CustomPageData[]> {
+export async function getCustomPages(courseId: string): Promise<CustomPage[]> {
   const { data } = await getAuthenticatedHttpClient()
     .get(`${getTabHandlerUrl(courseId)}`);
-  return camelCaseObject(data) as CustomPageData[];
+  return camelCaseObject(data) as CustomPage[];
 }
 
 /**

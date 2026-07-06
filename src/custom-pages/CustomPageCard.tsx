@@ -18,7 +18,7 @@ import {
 } from '@openedx/paragon/icons';
 import { RequestStatus } from '@src/data/constants';
 import { useNavigate } from 'react-router-dom';
-import { type CustomPage } from './data/apiHooks';
+import type { CustomPage } from './data/api';
 import messages from './messages';
 
 interface CustomPageCardProps {

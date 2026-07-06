@@ -37,8 +37,8 @@ import {
   useReorderCustomPages,
   useUpdateCustomPageName,
   useUpdateCustomPageVisibility,
-  type CustomPage,
 } from './data/apiHooks';
+import type { CustomPage } from './data/api';
 import previewLmsStaticPages from './data/images/previewLmsStaticPages.png';
 import CustomPageCard from './CustomPageCard';
 import messages from './messages';
@@ -122,10 +122,13 @@ const CustomPages = () => {
           linkAs={Link}
           links={[
             {
-              label: 'Content',
+              label: intl.formatMessage(messages.contentBreadcrumbLabel),
               to: `/course/${courseId}`,
             },
-            { label: 'Pages and Resources', to: getPagePath(courseId, 'true', 'tabs') },
+            {
+              label: intl.formatMessage(messages.pagesAndResourcesBreadcrumbLabel),
+              to: getPagePath(courseId, 'true', 'tabs'),
+            },
           ]}
         />
       </div>
