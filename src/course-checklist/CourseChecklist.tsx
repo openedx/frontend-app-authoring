@@ -3,12 +3,16 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
 import { Container, Stack } from '@openedx/paragon';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getChecklistsPermissions } from '@src/authz/permissionHelpers';
 
 import SubHeader from '../generic/sub-header/SubHeader';
 import messages from './messages';
 import AriaLiveRegion from './AriaLiveRegion';
 import ChecklistSection from './ChecklistSection';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
+import Loading from '@src/generic/Loading';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import { useCourseBestPractices, useCourseLaunch } from './data/apiHooks';
 
 const CourseChecklist = () => {
@@ -28,6 +32,19 @@ const CourseChecklist = () => {
   } = useCourseLaunch({ courseId });
 
   const isLoadingDenied = launchError?.response?.status === 403;
+
+  const {
+    isLoading: isLoadingUserPermissions,
+    canViewChecklists,
+  } = useCourseUserPermissions(courseId, getChecklistsPermissions(courseId));
+
+  if (isLoadingUserPermissions) {
+    return <Loading />;
+  }
+
+  if (!canViewChecklists) {
+    return <PermissionDeniedAlert />;
+  }
 
   if (isLoadingDenied) {
     return (

@@ -14,6 +14,10 @@ import EditVideoAlertsSlot from '@src/plugin-slots/EditVideoAlertsSlot';
 
 import { DeprecatedReduxState } from '@src/store';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getFilesPermissions } from '@src/authz/permissionHelpers';
+import Loading from '@src/generic/Loading';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import { EditFileErrors } from '../generic';
 import { fetchVideos, resetErrors } from './data/thunks';
 import messages from './messages';
@@ -31,11 +35,24 @@ const VideosPage = () => {
     errors: errorMessages,
   } = useSelector((state: DeprecatedReduxState) => state.videos);
 
+  const {
+    isLoading: isLoadingPermissions,
+    canViewFiles,
+  } = useCourseUserPermissions(courseId, getFilesPermissions(courseId));
+
   const handleErrorReset = (error) => dispatch(resetErrors(error));
 
   useEffect(() => {
     dispatch(fetchVideos(courseId));
   }, [courseId]);
+
+  if (isLoadingPermissions) {
+    return <Loading />;
+  }
+
+  if (!canViewFiles) {
+    return <PermissionDeniedAlert />;
+  }
 
   if (loadingStatus === RequestStatus.DENIED) {
     return (

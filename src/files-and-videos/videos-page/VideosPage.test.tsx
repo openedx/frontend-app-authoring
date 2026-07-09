@@ -15,6 +15,7 @@ import { executeThunk } from '@src/utils';
 import { RequestStatus } from '@src/data/constants';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import VideosPage from './VideosPage';
 import {
   generateFetchVideosApiResponse,
@@ -44,6 +45,16 @@ let axiosUnauthenticateMock;
 let store;
 let file;
 jest.mock('file-saver');
+
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn().mockReturnValue({
+    isLoading: false,
+    canViewFiles: true,
+    canEditFiles: true,
+    canDeleteFiles: true,
+    canCreateFiles: true,
+  }),
+}));
 
 const renderComponent = () => {
   render(
@@ -753,6 +764,52 @@ describe('Videos page', () => {
 
         expect(screen.getByText('Error')).toBeVisible();
       });
+    });
+  });
+
+  describe('permissions', () => {
+    beforeEach(async () => {
+      const mocks = initializeMocks({
+        initialState: {
+          ...initialState,
+          videos: {
+            ...initialState.videos,
+            videoIds: [],
+          },
+          models: {},
+        },
+      });
+      store = mocks.reduxStore;
+      axiosMock = mocks.axiosMock;
+      global.localStorage.clear();
+    });
+
+    it('should render loading spinner when permissions are loading', async () => {
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
+        isLoading: true,
+        isAuthzEnabled: true,
+        canViewFiles: false,
+        canEditFiles: false,
+        canDeleteFiles: false,
+        canCreateFiles: false,
+      } as ReturnType<typeof useCourseUserPermissions>);
+      renderComponent();
+      expect(screen.getByRole('status')).toBeInTheDocument();
+      expect(screen.queryByText(videoMessages.heading.defaultMessage)).not.toBeInTheDocument();
+    });
+
+    it('should render permission alert when the user is not authorized to view files', async () => {
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
+        isLoading: false,
+        isAuthzEnabled: true,
+        canViewFiles: false,
+        canEditFiles: true,
+        canDeleteFiles: true,
+        canCreateFiles: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
+      await emptyMockStore(RequestStatus.SUCCESSFUL);
+      expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+      expect(screen.queryByText(videoMessages.heading.defaultMessage)).not.toBeInTheDocument();
     });
   });
 });

@@ -19,8 +19,12 @@ import { SpinnerSimple } from '@openedx/paragon/icons';
 import { Helmet } from 'react-helmet';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getCourseOutlinePermissions } from '@src/authz/permissionHelpers';
 import CourseStepper from '../generic/course-stepper';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
+import Loading from '@src/generic/Loading';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import AlertMessage from '../generic/alert-message';
 import { RequestFailureStatuses } from '../data/constants';
 import { RERUN_LINK_UPDATE_STATUSES } from './data/constants';
@@ -104,6 +108,10 @@ const CourseOptimizerPage = () => {
   const interval = useRef<number | undefined>(undefined);
   const rerunUpdateInterval = useRef<number | undefined>(undefined);
   const { courseId, courseDetails } = useCourseAuthoringContext();
+  const {
+    isLoading: isLoadingUserPermissions,
+    canViewCourse,
+  } = useCourseUserPermissions(courseId, getCourseOutlinePermissions(courseId));
   const linkCheckPresent = currentStage != null ? currentStage >= 0 : !!currentStage;
   const [showStepper, setShowStepper] = useState(false);
   const [scanResultsError, setScanResultsError] = useState<string | null>(null);
@@ -177,6 +185,14 @@ const CourseOptimizerPage = () => {
 
     return () => clearTimeout(timeout);
   }, [stepperVisibleCondition]);
+
+  if (isLoadingUserPermissions) {
+    return <Loading />;
+  }
+
+  if (!canViewCourse) {
+    return <PermissionDeniedAlert />;
+  }
 
   if (isLoadingDenied || isSavingDenied) {
     if (interval.current) { clearInterval(interval.current); }

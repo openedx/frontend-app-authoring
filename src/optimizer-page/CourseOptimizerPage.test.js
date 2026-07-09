@@ -25,6 +25,7 @@ import {
 } from './mocks/mockApiResponse';
 import * as thunks from './data/thunks';
 import { useWaffleFlags } from '../data/apiHooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 
 let axiosMock;
 const courseId = '123';
@@ -36,6 +37,18 @@ jest.mock('../data/apiHooks', () => ({
     enableCourseOptimizerCheckPrevRunLinks: false,
   })),
 }));
+
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
+}));
+
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canViewCourse: true,
+    ...overrides,
+  });
 
 const OptimizerPage = () => (
   <CourseAuthoringProvider courseId={courseId}>
@@ -130,6 +143,22 @@ describe('CourseOptimizerPage', () => {
       axiosMock
         .onGet(getLinkCheckStatusApiUrl(courseId))
         .reply(200, mockApiResponse);
+      mockPermissions();
+    });
+
+    it('shows PermissionDeniedAlert when user lacks view course permission', async () => {
+      mockPermissions({ canViewCourse: false });
+      render(<OptimizerPage />);
+      expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+      expect(screen.queryByText(messages.headingTitle.defaultMessage)).not.toBeInTheDocument();
+    });
+
+    it('shows a loading spinner while permissions are loading', async () => {
+      mockPermissions({ isLoading: true, canViewCourse: false });
+      render(<OptimizerPage />);
+      expect(await screen.findByRole('status')).toBeInTheDocument();
+      expect(screen.queryByTestId('permissionDeniedAlert')).not.toBeInTheDocument();
+      expect(screen.queryByText(messages.headingTitle.defaultMessage)).not.toBeInTheDocument();
     });
 
     it('should render the component', () => {

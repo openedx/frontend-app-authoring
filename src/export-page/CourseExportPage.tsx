@@ -12,7 +12,11 @@ import { Helmet } from 'react-helmet';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import Loading from '@src/generic/Loading';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import SubHeader from '@src/generic/sub-header/SubHeader';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getImportExportPermissions } from '@src/authz/permissionHelpers';
 
 import messages from './messages';
 import ExportSidebar from './export-sidebar/ExportSidebar';
@@ -24,7 +28,7 @@ import { useCourseExportContext } from './CourseExportContext';
 
 const CourseExportPage = () => {
   const intl = useIntl();
-  const { courseDetails } = useCourseAuthoringContext();
+  const { courseId, courseDetails } = useCourseAuthoringContext();
   const {
     currentStage,
     exportTriggered,
@@ -36,6 +40,19 @@ const CourseExportPage = () => {
   } = useCourseExportContext();
 
   const isShowExportButton = !exportTriggered || fetchExportErrorMessage || currentStage === EXPORT_STAGES.SUCCESS;
+
+  const {
+    isLoading: isLoadingUserPermissions,
+    canExportCourse,
+  } = useCourseUserPermissions(courseId, getImportExportPermissions(courseId));
+
+  if (isLoadingUserPermissions) {
+    return <Loading />;
+  }
+
+  if (!canExportCourse) {
+    return <PermissionDeniedAlert />;
+  }
 
   if (isLoadingDenied) {
     return (

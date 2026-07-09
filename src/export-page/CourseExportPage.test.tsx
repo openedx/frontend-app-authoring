@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import Cookies from 'universal-cookie';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getCourseDetailsUrl } from '@src/data/api';
 import {
   initializeMocks,
@@ -33,6 +34,20 @@ jest.mock('universal-cookie', () => {
   return jest.fn(() => mCookie);
 });
 
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
+}));
+
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canImportCourse: true,
+    canExportCourse: true,
+    canExportTags: true,
+    ...overrides,
+  } as ReturnType<typeof useCourseUserPermissions>);
+
 const renderComponent = () =>
   render(
     <CourseAuthoringProvider courseId={courseId}>
@@ -61,6 +76,7 @@ describe('<CourseExportPage />', () => {
       .reply(200, { exportStatus: EXPORT_STAGES.PREPARING });
     cookies = new Cookies();
     cookies.get.mockReturnValue(null);
+    mockPermissions();
   });
 
   it('should render page title correctly', async () => {
@@ -170,5 +186,20 @@ describe('<CourseExportPage />', () => {
     await user.click(startExportButton);
     expect(screen.getByText(stepperMessages.stepperPreparingDescription.defaultMessage)).toBeInTheDocument();
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('shows PermissionDeniedAlert when user lacks export permission', async () => {
+    mockPermissions({ canExportCourse: false });
+    renderComponent();
+    expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+    expect(screen.queryByText(messages.headingSubtitle.defaultMessage)).not.toBeInTheDocument();
+  });
+
+  it('shows a loading spinner while permissions are loading', async () => {
+    mockPermissions({ isLoading: true, canExportCourse: false });
+    renderComponent();
+    expect(await screen.findByRole('status')).toBeInTheDocument();
+    expect(screen.queryByTestId('permissionDeniedAlert')).not.toBeInTheDocument();
+    expect(screen.queryByText(messages.headingSubtitle.defaultMessage)).not.toBeInTheDocument();
   });
 });

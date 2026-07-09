@@ -1,5 +1,6 @@
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { CertificatesProvider } from '@src/certificates/context';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import { initializeMocks, render, screen, userEvent } from '../testUtils';
 import { getCertificatesApiUrl } from './data/api';
 import { certificatesDataMock } from './__mocks__';
@@ -8,6 +9,18 @@ import messages from './messages';
 
 let axiosMock;
 const courseId = 'course-123';
+
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
+}));
+
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canManageCertificates: true,
+    ...overrides,
+  } as ReturnType<typeof useCourseUserPermissions>);
 
 const renderComponent = () =>
   render(
@@ -21,6 +34,17 @@ const renderComponent = () =>
 describe('Certificates', () => {
   beforeEach(() => {
     ({ axiosMock } = initializeMocks());
+    mockPermissions();
+  });
+
+  it('shows PermissionDeniedAlert when user lacks manage certificates permission', async () => {
+    mockPermissions({ canManageCertificates: false });
+    axiosMock
+      .onGet(getCertificatesApiUrl(courseId))
+      .reply(200, certificatesDataMock);
+    renderComponent();
+    expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+    expect(screen.queryByText(messages.withoutModesText.defaultMessage)).not.toBeInTheDocument();
   });
 
   it('renders WithoutModes when there are certificates but no certificate modes', async () => {
