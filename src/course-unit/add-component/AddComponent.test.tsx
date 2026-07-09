@@ -570,7 +570,12 @@ describe('<AddComponent />', () => {
   });
 
   it('renders add component strip when isGenericContainerType is true', () => {
-    const { getByRole } = renderComponent({ isGenericContainerType: true, isUnitVerticalType: false, parentLocator: blockId, handleCreateNewCourseXBlock: handleCreateNewCourseXBlockMock });
+    const { getByRole } = renderComponent({
+      isGenericContainerType: true,
+      isUnitVerticalType: false,
+      parentLocator: blockId,
+      handleCreateNewCourseXBlock: handleCreateNewCourseXBlockMock,
+    });
 
     expect(getByRole('heading', { name: messages.title.defaultMessage })).toBeInTheDocument();
   });
@@ -699,12 +704,14 @@ describe('<AddComponent />', () => {
     const user = userEvent.setup();
     renderComponent();
     act(() => {
-      window.dispatchEvent(new MessageEvent('message', {
-        data: {
-          type: messageTypes.showSingleComponentPicker,
-          payload: { usageId: 'block-v1:test+type@vertical+block@abc' },
-        },
-      }));
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          data: {
+            type: messageTypes.showSingleComponentPicker,
+            payload: { usageId: 'block-v1:test+type@vertical+block@abc' },
+          },
+        }),
+      );
     });
 
     // The single component picker modal should open
