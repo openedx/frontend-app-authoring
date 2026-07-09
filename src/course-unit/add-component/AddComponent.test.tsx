@@ -580,6 +580,16 @@ describe('<AddComponent />', () => {
     expect(getByRole('heading', { name: messages.title.defaultMessage })).toBeInTheDocument();
   });
 
+  it('returns null when no container type prop is set', () => {
+    const { queryByRole } = renderComponent({
+      isUnitVerticalType: false,
+      parentLocator: blockId,
+      handleCreateNewCourseXBlock: handleCreateNewCourseXBlockMock,
+    });
+
+    expect(queryByRole('heading', { name: messages.title.defaultMessage })).not.toBeInTheDocument();
+  });
+
   it('disables button and shows tooltip when singleInstance block already exists in vertical', async () => {
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
