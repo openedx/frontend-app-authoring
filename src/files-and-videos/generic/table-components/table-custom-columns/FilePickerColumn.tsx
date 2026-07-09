@@ -5,10 +5,10 @@ import React from 'react';
 interface FilePickerColumnProps {
   row: {
     original: Record<string, any>;
-  }
+  };
 }
 
-export const FilePickerColumn = ({ row }:FilePickerColumnProps) => (
+export const FilePickerColumn = ({ row }: FilePickerColumnProps) => (
   <Button
     variant="link"
     onClick={async () => {

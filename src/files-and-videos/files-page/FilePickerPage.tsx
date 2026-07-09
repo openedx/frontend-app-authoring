@@ -3,13 +3,15 @@ import { type FilePickerOptions } from '@src/files-and-videos/generic/FilesPageC
 import { useLocation, useParams } from 'react-router-dom';
 import FilesPage from './FilesPage';
 
+export const FILE_TYPES = ['video', 'audio', 'document', 'image', 'code', 'other'] as const;
+
 export const FilePickerPage = () => {
-  const { courseId } = useParams<{ courseId: string }>();
+  const { courseId } = useParams<{ courseId: string; }>();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const fileTypes = params.get('fileTypes')?.split(',').map(_type => {
-    const type = _type.trim();
-    if (['video', 'audio', 'document', 'image', 'code', 'other'].includes(type)) {
+    const type = _type.trim() as typeof FILE_TYPES[number];
+    if (FILE_TYPES.includes(type)) {
       return type;
     }
     return 'other';

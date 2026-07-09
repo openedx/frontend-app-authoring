@@ -1,7 +1,10 @@
 import { FilesPageContext } from '@src/files-and-videos/generic/FilesPageContext';
 import { filePickerSubmitFiles } from '@src/files-and-videos/generic/table-components/utils';
 import React, {
-  useCallback, useContext, useEffect, useState,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
 } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -71,7 +74,9 @@ const FileTable = ({
   const [selectedRows, setSelectedRows] = useState([]);
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
   const [initialState, setInitialState] = useState({
-    filters: filePickerOptions.fileTypes.length > 0 ? [{ id: 'wrapperType', value: filePickerOptions.fileTypes }] : [],
+    filters: filePickerOptions?.fileTypes?.length > 0
+      ? [{ id: 'wrapperType', value: filePickerOptions.fileTypes }]
+      : [],
     hiddenColumns: [],
     pageIndex: 0,
     pageSize: 50,
@@ -248,15 +253,16 @@ const FileTable = ({
         tableActions={headerActions}
         bulkActions={headerActions}
         columns={tableColumns}
-        additionalColumns={
-          (filePickerMode && !filePickerOptions.multiSelect && !filePickerOptions.embedded) ? [filePickerColumn] : []
-        }
+        additionalColumns={(filePickerMode && !filePickerOptions.multiSelect && !filePickerOptions.embedded)
+          ? [filePickerColumn]
+          : []}
         itemCount={files.length}
         pageCount={pageCount}
         data={files}
         FilterStatusComponent={FilterStatus}
         RowStatusComponent={RowStatus}
         onSelectedRowsChanged={async (selected) => {
+          if (!filePickerMode) { return; }
           const filesData = Object.entries(selected).map(([key, value]) => value && files[key]).filter(Boolean);
           await filePickerSubmitFiles(filesData);
         }}

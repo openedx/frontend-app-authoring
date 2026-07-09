@@ -1,7 +1,10 @@
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, DataTableContext, Dropdown, useToggle,
+  Button,
+  DataTableContext,
+  Dropdown,
+  useToggle,
 } from '@openedx/paragon';
 import { Add, Tune } from '@openedx/paragon/icons';
 import { FilesPageContext } from '@src/files-and-videos/generic/FilesPageContext';
@@ -29,12 +32,13 @@ const TableActions = ({
   const intl = useIntl();
   const [isSortOpen, openSort, closeSort] = useToggle(false);
   const {
-    state, clearSelection,
+    state,
+    clearSelection,
   } = useContext(DataTableContext);
 
   const { filePickerMode, filePickerOptions } = useContext(FilesPageContext);
   // If window.opener is not available, show the user some error message.
-  const showFilePicker = filePickerMode; // && Boolean(window.opener);
+  const showFilePicker = filePickerMode && Boolean(window.parent);
   // This useEffect saves DataTable state so it can persist after table re-renders due to data reload.
   useEffect(() => {
     setInitialState(state);

@@ -3,6 +3,7 @@ import { configureStore, Reducer } from '@reduxjs/toolkit';
 // FIXME: because the 'live' plugin is using Redux, we have to hard-code a reference to it here.
 // If this app + the plugin were using React-query, there'd be no issues.
 import { reducer as liveReducer } from '@openedx-plugins/course-app-live/data/slice';
+import { RequestStatusType } from '@src/data/constants';
 
 import { reducer as modelsReducer } from './generic/model-store';
 import { reducer as discussionsReducer } from './pages-and-resources/discussions/data/slice';
@@ -40,8 +41,7 @@ export interface DeprecatedReduxState {
       lock: string[];
       download: string[];
       usageMetrics: string[];
-      loading:string;
-
+      loading: string;
     };
   };
   pagesAndResources: Record<string, any>;
@@ -52,7 +52,6 @@ export interface DeprecatedReduxState {
   courseOptimizer: Record<string, any>;
   generic: Record<string, any>;
   videos: Record<string, any>;
-
   courseUnit: Record<string, any>;
 }
 
