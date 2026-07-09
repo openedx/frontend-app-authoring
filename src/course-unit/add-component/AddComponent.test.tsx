@@ -13,8 +13,8 @@ import {
   initializeMocks,
 } from '../../testUtils';
 import { executeThunk } from '../../utils';
-import { fetchCourseSectionVerticalData } from '../data/thunk';
-import { getCourseSectionVerticalApiUrl } from '../data/api';
+import { fetchCourseSectionVerticalData, fetchCourseVerticalChildrenData } from '../data/thunk';
+import { getCourseSectionVerticalApiUrl, getCourseVerticalChildrenApiUrl } from '../data/api';
 import { courseSectionVerticalMock } from '../__mocks__';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import AddComponent, { AddComponentProps } from './AddComponent';
@@ -567,6 +567,153 @@ describe('<AddComponent />', () => {
         usageKey,
       }],
     });
+  });
+
+  it('renders add component strip when isGenericContainerType is true', () => {
+    const { getByRole } = renderComponent({ isGenericContainerType: true, isUnitVerticalType: false, parentLocator: blockId, handleCreateNewCourseXBlock: handleCreateNewCourseXBlockMock });
+
+    expect(getByRole('heading', { name: messages.title.defaultMessage })).toBeInTheDocument();
+  });
+
+  it('disables button and shows tooltip when singleInstance block already exists in vertical', async () => {
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        component_templates: [
+          {
+            type: 'custom',
+            templates: [{ display_name: 'Custom', category: 'custom', single_instance: true }],
+            display_name: 'Custom',
+            support_legend: {},
+          },
+        ],
+      });
+    axiosMock
+      .onGet(getCourseVerticalChildrenApiUrl(blockId))
+      .reply(200, {
+        children: [{ block_type: 'custom', id: 'block-v1:test', name: 'Custom Block' }],
+        is_published: false,
+        can_paste_component: false,
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+    await executeThunk(fetchCourseVerticalChildrenData(blockId, false), store.dispatch);
+
+    const user = userEvent.setup();
+    const { getByRole } = renderComponent();
+
+    const customBtn = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Custom`, 'i'),
+    });
+    expect(customBtn).toBeDisabled();
+
+    await user.hover(customBtn.closest('span') ?? customBtn);
+    expect(await screen.findByText('Only one instance of this component is allowed.')).toBeInTheDocument();
+  });
+
+  it('does not disable singleInstance button when block does not yet exist in vertical', async () => {
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        component_templates: [
+          {
+            type: 'custom',
+            templates: [{ display_name: 'Custom', category: 'custom', single_instance: true }],
+            display_name: 'Custom',
+            support_legend: {},
+          },
+        ],
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+
+    const { getByRole } = renderComponent();
+
+    const customBtn = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Custom`, 'i'),
+    });
+    expect(customBtn).not.toBeDisabled();
+  });
+
+  it('disables button without tooltip when template is disabled but has no disabledReason', async () => {
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        component_templates: [
+          {
+            type: 'custom',
+            templates: [{ display_name: 'Custom', category: 'custom', disabled: true }],
+            display_name: 'Custom',
+            support_legend: {},
+          },
+        ],
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+
+    const user = userEvent.setup();
+    const { getByRole } = renderComponent();
+
+    const customBtn = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Custom`, 'i'),
+    });
+    expect(customBtn).toBeDisabled();
+
+    // No OverlayTrigger wraps the button, so hovering shows no tooltip
+    await user.hover(customBtn);
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('disables the modal trigger button when all templates of a component type are disabled', async () => {
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        component_templates: [
+          {
+            type: 'html',
+            templates: [
+              {
+                display_name: 'Text',
+                category: 'html',
+                disabled: true,
+                disabledReason: 'Text components are not allowed here.',
+              },
+            ],
+            display_name: 'Text',
+            support_legend: {},
+          },
+        ],
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+
+    const { getByRole } = renderComponent();
+
+    const textBtn = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Text`, 'i'),
+    });
+    expect(textBtn).toBeDisabled();
+  });
+
+  it('opens single component picker on showSingleComponentPicker window message', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', {
+        data: {
+          type: messageTypes.showSingleComponentPicker,
+          payload: { usageId: 'block-v1:test+type@vertical+block@abc' },
+        },
+      }));
+    });
+
+    // The single component picker modal should open
+    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
+    await user.click(dummyBtn);
+
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith(
+      expect.objectContaining({ type: COMPONENT_TYPES.libraryV2 }),
+    );
   });
 
   describe('component support label', () => {

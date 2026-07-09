@@ -2546,6 +2546,33 @@ describe('<CourseUnit />', () => {
     it('opens legacy edit modal on edit button click', checkLegacyEditModalOnEditMessage);
   });
 
+  describe('Generic Container XBlock page', () => {
+    beforeEach(async () => {
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          xblock: {
+            ...courseSectionVerticalMock.xblock,
+            category: 'custom_container',
+          },
+          xblock_info: {
+            ...courseSectionVerticalMock.xblock_info,
+            category: 'custom_container',
+          },
+        });
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+    });
+
+    it('renders the add-component strip for a generic container XBlock type', async () => {
+      render(<RootWrapper />);
+
+      expect(
+        await screen.findByRole('heading', { name: addComponentMessages.title.defaultMessage }),
+      ).toBeInTheDocument();
+    });
+  });
+
   it('renders and navigates to the new HTML XBlock editor after xblock duplicating', async () => {
     const updatedCourseVerticalChildrenMock = JSON.parse(JSON.stringify(courseVerticalChildrenMock));
     // Convert the second child from drag and drop to HTML:
