@@ -83,6 +83,9 @@ const Header = ({
     ];
   }
 
+  // Hide dropdowns whose items were all filtered out by permissions.
+  mainMenuDropdowns = mainMenuDropdowns.filter((dropdown) => dropdown.items.length > 0);
+
   const getOutlineLink = () => {
     if (isLibrary) {
       return `/library/${contextId}`;
