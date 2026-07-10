@@ -1,5 +1,4 @@
-import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -17,49 +16,43 @@ import {
   Visibility,
   VisibilityOff,
 } from '@openedx/paragon/icons';
+import { RequestStatus } from '@src/data/constants';
 import { useNavigate } from 'react-router-dom';
-import { deleteSingleCustomPage, updateCustomPageVisibility } from './data/thunks';
+import type { CustomPage } from './data/api';
 import messages from './messages';
-import { CustomPagesContext } from './CustomPagesProvider';
+
+interface CustomPageCardProps {
+  page: CustomPage;
+  courseId: string;
+  setCurrentPage: (id: string) => void;
+  onDelete: (blockId: string, onSettled?: () => void) => void;
+  isDeleting: boolean;
+  onToggleVisibility: (blockId: string, courseStaffOnly: boolean) => void;
+}
 
 const CustomPageCard = ({
   page,
-  dispatch,
-  deletePageStatus,
+  courseId,
   setCurrentPage,
-}) => {
+  onDelete,
+  isDeleting,
+  onToggleVisibility,
+}: CustomPageCardProps) => {
   const intl = useIntl();
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
-  const { path: customPagesPath } = useContext(CustomPagesContext);
   const navigate = useNavigate();
 
   const handleDelete = () => {
-    dispatch(deleteSingleCustomPage({
-      blockId: page.id,
-      closeConfirmation: closeDeleteConfirmation,
-    }));
+    onDelete(page.id, closeDeleteConfirmation);
   };
 
   const toggleVisibility = () => {
-    dispatch(updateCustomPageVisibility({
-      blockId: page.id,
-      metadata: { course_staff_only: !page.courseStaffOnly },
-    }));
-  };
-  const handleEditOpen = () => {
-    setCurrentPage(page.id);
-    navigate(`${customPagesPath}/editor`);
+    onToggleVisibility(page.id, page.courseStaffOnly ?? false);
   };
 
-  const deletePageStateProps = {
-    labels: {
-      default: intl.formatMessage(messages.deletePageLabel),
-      pending: intl.formatMessage(messages.deletingPageBodyLabel),
-    },
-    icons: {
-      pending: <Icon src={SpinnerSimple} className="icon-spin" />,
-    },
-    disabledStates: ['pending'],
+  const handleEditOpen = () => {
+    setCurrentPage(page.id);
+    navigate(`/course/${courseId}/custom-pages/editor`);
   };
 
   return (
@@ -109,7 +102,18 @@ const CustomPageCard = ({
             <Button variant="tertiary" onClick={closeDeleteConfirmation}>
               {intl.formatMessage(messages.cancelButtonLabel)}
             </Button>
-            <StatefulButton onClick={handleDelete} state={deletePageStatus} {...deletePageStateProps} />
+            <StatefulButton
+              onClick={handleDelete}
+              state={isDeleting ? RequestStatus.PENDING : 'default'}
+              labels={{
+                default: intl.formatMessage(messages.deletePageLabel),
+                pending: intl.formatMessage(messages.deletingPageBodyLabel),
+              }}
+              icons={{
+                pending: <Icon src={SpinnerSimple} className="icon-spin" />,
+              }}
+              disabledStates={['pending']}
+            />
           </ActionRow>
         }
       >
@@ -117,17 +121,6 @@ const CustomPageCard = ({
       </AlertModal>
     </>
   );
-};
-
-CustomPageCard.propTypes = {
-  page: PropTypes.shape({
-    name: PropTypes.string,
-    id: PropTypes.string.isRequired,
-    courseStaffOnly: PropTypes.bool.isRequired,
-  }).isRequired,
-  dispatch: PropTypes.func.isRequired,
-  deletePageStatus: PropTypes.string.isRequired,
-  setCurrentPage: PropTypes.func.isRequired,
 };
 
 export default CustomPageCard;
