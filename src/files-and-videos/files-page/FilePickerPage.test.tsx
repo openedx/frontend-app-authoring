@@ -21,7 +21,7 @@ import {
 } from './factories/mockApiResponses';
 import { fetchAssets } from './data/thunks';
 import { getAssetsUrl } from './data/api';
-import messages from "../generic/messages";
+import messages from '../generic/messages';
 
 let axiosMock;
 let store;
