@@ -74,8 +74,8 @@ describe('<UpdateForm />', () => {
     expect(getByText(messages.addNewUpdateTitle.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.updateFormDate.defaultMessage)).toBeInTheDocument();
     expect(getByDisplayValue(formattedDate)).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.cancelButton.defaultMessage }));
-    expect(getByRole('button', { name: messages.postButton.defaultMessage }));
+    expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.postButton.defaultMessage })).toBeInTheDocument();
   });
 
   it('render Edit update form correctly', async () => {
@@ -84,8 +84,8 @@ describe('<UpdateForm />', () => {
     expect(getByText(messages.editUpdateTitle.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.updateFormDate.defaultMessage)).toBeInTheDocument();
     expect(getByDisplayValue(formattedDateMock)).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.cancelButton.defaultMessage }));
-    expect(getByRole('button', { name: messages.postButton.defaultMessage }));
+    expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.postButton.defaultMessage })).toBeInTheDocument();
   });
 
   it('render Edit handouts form correctly', async () => {
@@ -99,8 +99,8 @@ describe('<UpdateForm />', () => {
     expect(getByText(messages.editHandoutsTitle.defaultMessage)).toBeInTheDocument();
     expect(queryByText(messages.updateFormDate.defaultMessage)).not.toBeInTheDocument();
     expect(queryByTestId('course-updates-datepicker')).not.toBeInTheDocument();
-    expect(getByRole('button', { name: messages.cancelButton.defaultMessage }));
-    expect(getByRole('button', { name: messages.saveButton.defaultMessage }));
+    expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
   });
 
   it('calls closeMock when clicking cancel button', () => {

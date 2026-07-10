@@ -249,14 +249,14 @@ describe('<LibrarySectionPage / LibrarySubsectionPage />', () => {
 
       // Select the child
       fireEvent.click(child);
-      expect((await screen.findAllByText(`${childType} block 0`)).length === 2);
+      expect(await screen.findAllByText(`${childType} block 0`)).toHaveLength(1);
 
       // Because the Preview show/hide is dependent on the selected item
       // being in the URL, and because our test router doesn't change
       // paths, we have to explicitly navigate to the child page to check
       // the Preview tab is shown. Boo.
       renderLibrarySectionPage(undefined, undefined, cType, childId);
-      expect((await screen.findAllByText(`${childType} block 0`)).length === 2);
+      expect(await screen.findAllByText(`${childType} block 0`)).toHaveLength(2);
       expect(await screen.findByText('Preview')).toBeInTheDocument();
     });
 

@@ -33,7 +33,7 @@ describe('<CourseRerun />', () => {
 
   it('should render successfully', () => {
     const { getByText, getAllByRole } = render(<CourseRerun />);
-    expect(getByText(messages.rerunTitle.defaultMessage));
+    expect(getByText(messages.rerunTitle.defaultMessage)).toBeInTheDocument();
     expect(getAllByRole('button', { name: messages.cancelButton.defaultMessage }).length).toBe(2);
   });
 

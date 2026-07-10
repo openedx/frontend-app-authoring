@@ -14,8 +14,8 @@ describe('problem reducer', () => {
   const testValue = 'roll for initiative';
 
   describe('handling actions', () => {
-    const setterTest = (action, target) => {
-      describe(action, () => {
+    const setterTest = (action: string, target: any) => {
+      describe(`action ${action}`, () => {
         it(`load ${target} from payload`, () => {
           expect(reducer(testingState, actions[action](testValue))).toEqual({
             ...testingState,
@@ -143,7 +143,7 @@ describe('problem reducer', () => {
       });
     });
     describe('updateAnswer', () => {
-      it('sets answers, as well as setting the correctAnswerCount ', () => {
+      it('sets answers, as well as setting the correctAnswerCount', () => {
         const answer = { id: 'A', correct: true };
         expect(reducer(
           {

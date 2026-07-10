@@ -191,7 +191,7 @@ describe('useEditActions', () => {
     } = buildActions();
     deleteTagMutation.mutateAsync.mockResolvedValue(undefined);
 
-    actions.handleDeleteRow({
+    await actions.handleDeleteRow({
       original: {
         id: 1,
         value: 'tag to delete',
@@ -226,7 +226,7 @@ describe('useEditActions', () => {
     } = buildActions();
     deleteTagMutation.mutateAsync.mockRejectedValue(new Error('server failed'));
 
-    actions.handleDeleteRow({
+    await actions.handleDeleteRow({
       original: {
         id: 1,
         value: 'tag to delete',

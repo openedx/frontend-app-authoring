@@ -68,7 +68,7 @@ describe('TranscriptWidget', () => {
 
   describe('hooks', () => {
     describe('transcriptLanguages', () => {
-      test('empty list of transcripts returns ', () => {
+      test('empty list of transcripts returns', () => {
         expect(hooks.transcriptLanguages([])).toEqual('None');
       });
       test('unset gives none', () => {
@@ -82,7 +82,7 @@ describe('TranscriptWidget', () => {
       });
     });
     describe('hasTranscripts', () => {
-      test('null returns false ', () => {
+      test('null returns false', () => {
         expect(hooks.hasTranscripts(null)).toEqual(false);
       });
       test('empty list returns false', () => {
@@ -94,11 +94,11 @@ describe('TranscriptWidget', () => {
     });
     describe('onAddNewTranscript', () => {
       const mockUpdateField = jest.fn();
-      test('null returns [empty string] ', () => {
+      test('null returns [empty string]', () => {
         hooks.onAddNewTranscript({ transcripts: null, updateField: mockUpdateField });
         expect(mockUpdateField).toHaveBeenCalledWith({ transcripts: [''] });
       });
-      test(' transcripts return list with blank added', () => {
+      test('transcripts return list with blank added', () => {
         const mocklist = ['en', 'fr', 3];
         hooks.onAddNewTranscript({ transcripts: mocklist, updateField: mockUpdateField });
 

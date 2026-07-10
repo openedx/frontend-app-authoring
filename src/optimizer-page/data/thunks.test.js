@@ -51,7 +51,7 @@ describe('startLinkCheck thunk', () => {
     });
   });
 
-  describe('failed request should set stage and request ', () => {
+  describe('failed request should set stage and request', () => {
     it('should set request status to failed', async () => {
       mockGetStartLinkCheck.mockRejectedValue(new Error('error'));
 

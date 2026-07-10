@@ -110,7 +110,7 @@ describe('<CourseExportPage />', () => {
       screen.getByText(
         /There has been a failure to export to XML at least one component. It is recommended that you go to the edit page and repair the error before attempting another export. Please check that all components on the page are valid and do not display any error messages. The raw error message is: test error/i,
       ),
-    );
+    ).toBeInTheDocument();
     const closeModalWindowButton = screen.getByText('Return to export');
     await user.click(closeModalWindowButton);
     expect(screen.queryByText(modalErrorMessages.errorCancelButtonUnit.defaultMessage)).not.toBeInTheDocument();

@@ -36,7 +36,7 @@ describe('request selectors', () => {
     });
     describe('state selectors', () => {
       const testStateSelector = (selector, expected) => {
-        describe(selector, () => {
+        describe(`selector ${selector}`, () => {
           it(`returns true iff the request status equals ${expected}`, () => {
             expect(selectors[selector]({ status: expected })).toEqual(true);
             expect(selectors[selector]({ status: 'other' })).toEqual(false);
@@ -104,7 +104,7 @@ describe('request selectors', () => {
         selectors.statusSelector = statusSelector;
       });
       const testStatusSelector = (name) => {
-        describe(name, () => {
+        describe(`${name} selector`, () => {
           it(`returns a status selector keyed to the ${name} selector`, () => {
             expect(connectedSelectors[name].statusSelector).toEqual(selectors[name]);
           });

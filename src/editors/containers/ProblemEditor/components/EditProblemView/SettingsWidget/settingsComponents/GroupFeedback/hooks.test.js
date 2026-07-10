@@ -35,10 +35,10 @@ describe('groupFeedbackCardHooks', () => {
     beforeEach(() => {
       output = hooks.groupFeedbackCardHooks(groupFeedbacks, updateSettings);
     });
-    test('test default state is false', () => {
+    test('default state is false', () => {
       expect(output.summary.message).toEqual(messages.noGroupFeedbackSummary);
     });
-    test('test Event adds a new feedback ', () => {
+    test('Event adds a new feedback', () => {
       output.handleAdd();
       expect(updateSettings).toHaveBeenCalledWith({ groupFeedbackList: [{ id: 0, answers: [], feedback: '' }] });
     });
@@ -66,20 +66,20 @@ describe('groupFeedbackRowHooks', () => {
     beforeEach(() => {
       output = hooks.groupFeedbackRowHooks({ id: mockId, groupFeedbacks, updateSettings });
     });
-    test('test associate an answer with the feedback object', () => {
+    test('associate an answer with the feedback object', () => {
       const mockNewAnswer = 'nEw VAluE';
       output.handleAnswersSelectedChange({ target: { checked: true, value: mockNewAnswer } });
       expect(updateSettings).toHaveBeenCalledWith(
         { groupFeedbackList: [{ id: mockId, answers: [mockAnswer, mockNewAnswer], feedback: mockFeedback }] },
       );
     });
-    test('test unassociate an answer with the feedback object', () => {
+    test('unassociate an answer with the feedback object', () => {
       output.handleAnswersSelectedChange({ target: { checked: false, value: mockAnswer } });
       expect(updateSettings).toHaveBeenCalledWith(
         { groupFeedbackList: [{ id: mockId, answers: [], feedback: mockFeedback }] },
       );
     });
-    test('test update feedback text with a groupfeedback', () => {
+    test('update feedback text with a groupfeedback', () => {
       const mockNewFeedback = 'nEw fEedBack';
       output.handleFeedbackChange({ target: { checked: false, value: mockNewFeedback } });
       expect(updateSettings).toHaveBeenCalledWith(

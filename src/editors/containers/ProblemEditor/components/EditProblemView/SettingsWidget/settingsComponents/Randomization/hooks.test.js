@@ -35,10 +35,10 @@ describe('Problem settings hooks', () => {
     beforeEach(() => {
       output = hooks.useRandomizationSettingStatus({ randomization, updateSettings });
     });
-    test('test default state is false', () => {
+    test('default state is false', () => {
       expect(output.summary).toEqual({ message: RandomizationTypes[RandomizationTypesKeys.NEVER], values: {} });
     });
-    test('test showAdvancedCards sets state to true', () => {
+    test('showAdvancedCards sets state to true', () => {
       const mockEvent = { target: { value: 'sOmE_otheR_ValUe' } };
       output.handleChange(mockEvent);
       expect(updateSettings).toHaveBeenCalledWith({ randomization: mockEvent.target.value });

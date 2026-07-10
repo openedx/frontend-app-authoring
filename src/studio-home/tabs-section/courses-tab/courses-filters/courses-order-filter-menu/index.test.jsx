@@ -71,7 +71,7 @@ describe('CoursesTypesFilterMenu', () => {
     expect(oldestCoursesMenuItem).toBeInTheDocument();
   });
 
-  it('should show an icon when a menu item is selected ', () => {
+  it('should show an icon when a menu item is selected', () => {
     renderComponent();
     const courseOrderMenu = screen.getByTestId('dropdown-toggle-courses-order-menu');
     fireEvent.click(courseOrderMenu);
@@ -81,7 +81,7 @@ describe('CoursesTypesFilterMenu', () => {
     expect(screen.getByTestId('menu-item-icon')).toBeInTheDocument();
   });
 
-  it('should call onCourseTypeSelected function when a menu item is selected ', () => {
+  it('should call onCourseTypeSelected function when a menu item is selected', () => {
     renderComponent();
     const courseOrderMenu = screen.getByTestId('dropdown-toggle-courses-order-menu');
     fireEvent.click(courseOrderMenu);

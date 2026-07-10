@@ -40,7 +40,7 @@ const tabSectionComponent = (overrideProps) => (
   />
 );
 
-export const LocationDisplay = () => {
+const LocationDisplay = () => {
   const location = useLocation();
 
   return <div data-testid="location-display">{location.pathname}</div>;

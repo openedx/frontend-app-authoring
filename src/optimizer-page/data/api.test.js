@@ -93,7 +93,7 @@ describe('Course Optimizer API', () => {
       const url = api.postLinkCheckCourseApiUrl(courseId);
       axiosMock.onPost(url).reply(500, { error: 'Internal Server Error' });
 
-      await expect(api.postLinkCheck(courseId)).rejects.toThrow();
+      await expect(api.postLinkCheck(courseId)).rejects.toThrow('Request failed with status code 500');
     });
 
     it('should handle 404 errors', async () => {
@@ -102,7 +102,7 @@ describe('Course Optimizer API', () => {
       const url = api.postLinkCheckCourseApiUrl(courseId);
       axiosMock.onPost(url).reply(404, { error: 'Not Found' });
 
-      await expect(api.postLinkCheck(courseId)).rejects.toThrow();
+      await expect(api.postLinkCheck(courseId)).rejects.toThrow('Request failed with status code 404');
     });
   });
 
@@ -123,7 +123,7 @@ describe('Course Optimizer API', () => {
       const url = api.getLinkCheckStatusApiUrl(courseId);
       axiosMock.onGet(url).reply(500, { error: 'Internal Server Error' });
 
-      await expect(api.getLinkCheckStatus(courseId)).rejects.toThrow();
+      await expect(api.getLinkCheckStatus(courseId)).rejects.toThrow('Request failed with status code 500');
     });
 
     it('should handle 403 errors', async () => {
@@ -132,7 +132,7 @@ describe('Course Optimizer API', () => {
       const url = api.getLinkCheckStatusApiUrl(courseId);
       axiosMock.onGet(url).reply(403, { error: 'Forbidden' });
 
-      await expect(api.getLinkCheckStatus(courseId)).rejects.toThrow();
+      await expect(api.getLinkCheckStatus(courseId)).rejects.toThrow('Request failed with status code 403');
     });
   });
 
@@ -153,7 +153,7 @@ describe('Course Optimizer API', () => {
       const url = api.postRerunLinkUpdateApiUrl(courseId);
       axiosMock.onPost(url).reply(500, { error: 'Update failed' });
 
-      await expect(api.postRerunLinkUpdateAll(courseId)).rejects.toThrow();
+      await expect(api.postRerunLinkUpdateAll(courseId)).rejects.toThrow('Request failed with status code 500');
     });
   });
 
@@ -176,7 +176,9 @@ describe('Course Optimizer API', () => {
       const url = api.postRerunLinkUpdateApiUrl(courseId);
       axiosMock.onPost(url).reply(500, { error: 'Update failed' });
 
-      await expect(api.postRerunLinkUpdateSingle(courseId, 'https://test.com', 'block-1')).rejects.toThrow();
+      await expect(api.postRerunLinkUpdateSingle(courseId, 'https://test.com', 'block-1')).rejects.toThrow(
+        'Request failed with status code 500',
+      );
     });
 
     it('should use default contentType when not provided', async () => {
@@ -237,7 +239,7 @@ describe('Course Optimizer API', () => {
       const url = api.getRerunLinkUpdateStatusApiUrl(courseId);
       axiosMock.onGet(url).reply(500, { error: 'Internal Server Error' });
 
-      await expect(api.getRerunLinkUpdateStatus(courseId)).rejects.toThrow();
+      await expect(api.getRerunLinkUpdateStatus(courseId)).rejects.toThrow('Request failed with status code 500');
     });
   });
 

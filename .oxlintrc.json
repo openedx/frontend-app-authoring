@@ -3,7 +3,15 @@
   "categories": {
     "correctness": "warn"
   },
-  "plugins": ["react"],
+  "plugins": [
+    "react",
+    "typescript",
+    "oxc",
+    "unicorn",
+    "jest"
+    // TODO: enable this plugin and fix the a11y lint issues
+    // "jsx-a11y"
+  ],
   "rules": {
     "eslint/no-unused-vars": ["warn", {
       // Allow using {ignoredProp, ...keepTheRest} to omit a prop like 'ignoredProp' from an object.
@@ -23,7 +31,17 @@
         // want to await this.
         "invalidateQueries"
       ]
-    }]
+    }],
+    // no-conditional-expect is disabled because the existing code had a lot of violations. Enable in the future?
+    "jest/no-conditional-expect": "off",
+    // unbound-method is disabled since it's noisy and our existing code has lots of violations.
+    "typescript/unbound-method": "off",
+    // Don't require expect() assertions in each test case; this repo currently uses a pattern where the test
+    // passes if it doesn't raise any exceptions, and/or put assertions into helper functions.
+    "jest/expect-expect": "off",
+    // It's OK to use `expect()` in `beforeEach()` - it does properly assert. However, it seems we can't configure that
+    // so for now this whole rule is disabled.
+    "jest/no-standalone-expect": ["off"]
   },
   "ignorePatterns": [
     "webpack.dev-tutor.config.js"

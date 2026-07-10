@@ -70,7 +70,7 @@ describe('<ImportDetailsPage />', () => {
 
   it('should render In Progress state', async () => {
     render(mockGetMigrationStatus.migrationIdInProgress);
-    expect(await screen.findByText(/test course is being imported/i));
+    expect(await screen.findByText(/test course is being imported/i)).toBeInTheDocument();
     expect(screen.getByRole('button', {
       name: /view imported content/i,
     })).toBeDisabled();
@@ -81,8 +81,8 @@ describe('<ImportDetailsPage />', () => {
     const url = bulkModulestoreMigrateUrl();
     axiosMock.onPost(url).reply(200);
     render(mockGetMigrationStatus.migrationIdFailed);
-    expect(await screen.findByText(/test course was not imported into your Library/i));
-    expect(screen.getByText(/import failed for the following reasons:/i));
+    expect(await screen.findByText(/test course was not imported into your Library/i)).toBeInTheDocument();
+    expect(screen.getByText(/import failed for the following reasons:/i)).toBeInTheDocument();
     const retryImport = screen.getByRole('button', {
       name: /re-try import/i,
     });
@@ -98,7 +98,7 @@ describe('<ImportDetailsPage />', () => {
       await screen.findByText(
         /test course has been imported to your library in a collection called test collection/i,
       ),
-    );
+    ).toBeInTheDocument();
     expect(await screen.findByText(/Total Blocks/i)).toBeInTheDocument();
     expect(await screen.findByText('4')).toBeInTheDocument();
 

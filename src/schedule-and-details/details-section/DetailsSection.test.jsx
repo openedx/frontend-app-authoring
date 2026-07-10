@@ -42,7 +42,7 @@ describe('<DetailsSection />', () => {
       name: courseSettingsMock.languageOptions[0][1],
     });
 
-    await waitFor(() => expect(anotherOption));
+    await waitFor(() => expect(anotherOption).toBeInTheDocument());
     fireEvent.click(anotherOption);
     expect(onChangeMock).toHaveBeenCalledWith(
       courseSettingsMock.languageOptions[0][0],

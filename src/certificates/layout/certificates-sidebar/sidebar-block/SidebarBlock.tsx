@@ -15,8 +15,9 @@ const SidebarBlock = ({
     <h4 className="help-sidebar-about-title">
       {title}
     </h4>
-    {paragraphs.map((text) => (
-      <p key={text.toString()} className="help-sidebar-about-descriptions">
+    {paragraphs.map((text, index) => (
+      // eslint-disable-next-line react/no-array-index-key
+      <p key={index} className="help-sidebar-about-descriptions">
         {text}
       </p>
     ))}

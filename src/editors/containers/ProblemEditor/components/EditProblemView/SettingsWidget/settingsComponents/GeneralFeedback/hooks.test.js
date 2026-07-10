@@ -35,10 +35,10 @@ describe('Problem settings hooks', () => {
     beforeEach(() => {
       output = hooks.generalFeedbackHooks(generalFeedback, updateSettings);
     });
-    test('test default state is false', () => {
+    test('default state is false', () => {
       expect(output.summary.message).toEqual(messages.noGeneralFeedbackSummary);
     });
-    test('test showAdvancedCards sets state to true', () => {
+    test('showAdvancedCards sets state to true', () => {
       const mockEvent = { target: { value: 'sOmE_otheR_ValUe' } };
       output.handleChange(mockEvent);
       expect(updateSettings).toHaveBeenCalledWith({ generalFeedback: mockEvent.target.value });

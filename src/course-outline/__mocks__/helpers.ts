@@ -140,7 +140,7 @@ function buildNode(spec: NodeSpec, category: string): Record<string, unknown> {
     displayName,
     category,
     hasChildren: children.length > 0,
-    ...(spec.overrides || {}),
+    ...spec.overrides,
   };
 
   // Every node gets childInfo — leaf nodes get empty children array.

@@ -191,7 +191,9 @@ describe('buildSelectionState', () => {
 
   it('throws on depth 2 when subsection is missing', () => {
     const badAncestors: OutlineNodeAncestors = { section: sectionBlock, subsection: undefined };
-    expect(() => buildSelectionState(unitBlock, 2, 0, badAncestors)).toThrow();
+    expect(
+      () => buildSelectionState(unitBlock, 2, 0, badAncestors),
+    ).toThrow('outline-level: subsection ancestor required at depth 2');
   });
 });
 
@@ -250,7 +252,9 @@ describe('buildOutlineActionSelection', () => {
 
   it('throws on depth 2 when subsection is missing', () => {
     const badAncestors: OutlineNodeAncestors = { section: sectionBlock, subsection: undefined };
-    expect(() => buildOutlineActionSelection(unitBlock, 2, 0, badAncestors)).toThrow();
+    expect(
+      () => buildOutlineActionSelection(unitBlock, 2, 0, badAncestors),
+    ).toThrow('outline-level: subsection ancestor required at depth 2');
   });
 });
 
@@ -272,7 +276,9 @@ describe('buildPublishPayload', () => {
 
   it('throws on depth 2 when subsection is missing', () => {
     const badAncestors: OutlineNodeAncestors = { section: sectionBlock, subsection: undefined };
-    expect(() => buildPublishPayload(unitBlock, 2, badAncestors)).toThrow();
+    expect(
+      () => buildPublishPayload(unitBlock, 2, badAncestors),
+    ).toThrow('outline-level: subsection ancestor required at depth 2');
   });
 });
 
@@ -293,7 +299,9 @@ describe('buildUnlinkPayload', () => {
 
   it('throws on depth 2 when subsection is missing', () => {
     const badAncestors: OutlineNodeAncestors = { section: sectionBlock, subsection: undefined };
-    expect(() => buildUnlinkPayload(unitBlock, 2, badAncestors)).toThrow();
+    expect(
+      () => buildUnlinkPayload(unitBlock, 2, badAncestors),
+    ).toThrow('outline-level: subsection ancestor required at depth 2');
   });
 });
 
@@ -324,7 +332,9 @@ describe('buildDuplicateParams', () => {
 
   it('throws on depth 2 when subsection is missing', () => {
     const badAncestors: OutlineNodeAncestors = { section: sectionBlock, subsection: undefined };
-    expect(() => buildDuplicateParams(unitBlock, 2, COURSE_ID, badAncestors)).toThrow();
+    expect(
+      () => buildDuplicateParams(unitBlock, 2, COURSE_ID, badAncestors),
+    ).toThrow('outline-level: subsection ancestor required at depth 2');
   });
 });
 

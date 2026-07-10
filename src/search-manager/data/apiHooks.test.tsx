@@ -38,7 +38,7 @@ describe('search manager api hooks', () => {
     fetchMock.reset();
   });
 
-  it('it should return block types facet', async () => {
+  it('should return block types facet', async () => {
     fetchMockResponse();
     const { result } = renderHook(() => useGetBlockTypes('filter'), { wrapper });
     await waitFor(() => {

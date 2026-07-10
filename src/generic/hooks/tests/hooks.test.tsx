@@ -233,6 +233,5 @@ describe('useLoadBearingHook', () => {
     rerender({ id: 'new-id' });
 
     expect(setValue).toHaveBeenCalledWith(expect.any(Function));
-    expect(setValue.mock.calls);
   });
 });

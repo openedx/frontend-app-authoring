@@ -82,7 +82,7 @@ describe('create library api', () => {
 
     axiosMock.onPost().reply(400, 'Bad Request');
 
-    await expect(createLibraryV2(libraryData)).rejects.toThrow();
+    await expect(createLibraryV2(libraryData)).rejects.toThrow('Request failed with status code 400');
   });
 
   it('should throw error when createLibraryRestore fails', async () => {
@@ -90,7 +90,7 @@ describe('create library api', () => {
 
     axiosMock.onPost().reply(400, 'Bad Request');
 
-    await expect(createLibraryRestore(file)).rejects.toThrow();
+    await expect(createLibraryRestore(file)).rejects.toThrow('Request failed with status code 400');
   });
 
   it('should throw error when getLibraryRestoreStatus fails', async () => {
@@ -98,17 +98,17 @@ describe('create library api', () => {
 
     axiosMock.onGet().reply(404, 'Not Found');
 
-    await expect(getLibraryRestoreStatus(taskId)).rejects.toThrow();
+    await expect(getLibraryRestoreStatus(taskId)).rejects.toThrow('Request failed with status code 404');
   });
 
   it('should handle invalid parameters', async () => {
     // @ts-expect-error - testing invalid input
-    await expect(createLibraryV2(null)).rejects.toThrow();
+    await expect(createLibraryV2(null)).rejects.toThrow('Request failed with status code 404');
 
     // @ts-expect-error - testing invalid input
-    await expect(createLibraryRestore(null)).rejects.toThrow();
+    await expect(createLibraryRestore(null)).rejects.toThrow('Request failed with status code 404');
 
     // @ts-expect-error - testing invalid input
-    await expect(getLibraryRestoreStatus(null)).rejects.toThrow();
+    await expect(getLibraryRestoreStatus(null)).rejects.toThrow('Request failed with status code 404');
   });
 });

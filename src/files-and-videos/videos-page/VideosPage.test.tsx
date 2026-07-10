@@ -119,7 +119,7 @@ describe('Videos page', () => {
 
     it('should not render transcript settings button', async () => {
       await emptyMockStore(RequestStatus.SUCCESSFUL);
-      expect(screen.queryByText(videoMessages.transcriptSettingsButtonLabel.defaultMessage));
+      expect(screen.queryByText(videoMessages.transcriptSettingsButtonLabel.defaultMessage)).not.toBeInTheDocument();
     });
 
     it('should have Video uploads title', async () => {

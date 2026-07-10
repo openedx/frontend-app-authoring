@@ -5,7 +5,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { ToastContext, ToastProvider } from '.';
 import initializeStore from '../../store';
 
-export interface WraperProps {
+interface WraperProps {
   children: React.ReactNode;
 }
 

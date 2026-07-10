@@ -788,6 +788,7 @@ describe('<TagListTable />', () => {
   ];
 
   tagDepthScenarios.forEach(({ description, tagName }) => {
+    // oxlint-disable-next-line jest/valid-title
     describe(description, () => {
       beforeEach(async () => {
         axiosMock.resetHistory();
@@ -964,6 +965,7 @@ describe('<TagListTable />', () => {
     ];
 
     tagDepthScenarios.forEach(({ description, tagName }) => {
+      // oxlint-disable-next-line jest/valid-title
       describe(description, () => {
         beforeEach(async () => {
           axiosMock.resetHistory();

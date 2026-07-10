@@ -37,7 +37,7 @@ describe('CourseChecklistPage', () => {
   });
   describe('renders', () => {
     describe('if enable_quality prop is true', () => {
-      it('two checklist components ', async () => {
+      it('two checklist components', async () => {
         await mockStore(200);
         renderComponent();
 
@@ -79,7 +79,7 @@ describe('CourseChecklistPage', () => {
         });
       });
 
-      it('one checklist components ', async () => {
+      it('one checklist components', async () => {
         renderComponent();
         await mockStore(200);
 

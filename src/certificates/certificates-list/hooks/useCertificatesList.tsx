@@ -33,7 +33,7 @@ const useCertificatesList = () => {
   }));
 
   const handleSubmit = async (values) => {
-    await updateCertificateMutation.mutate(values);
+    await updateCertificateMutation.mutateAsync(values);
     setEditModes({});
     setComponentMode(MODE_STATES.view);
   };

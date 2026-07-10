@@ -25,7 +25,7 @@ const useCertificateDetails = (certificateId) => {
 
   const handleDeleteCard = () => {
     if (certificateId) {
-      deleteCertificateMutation.mutateAsync(certificateId);
+      void deleteCertificateMutation.mutateAsync(certificateId);
     }
   };
 

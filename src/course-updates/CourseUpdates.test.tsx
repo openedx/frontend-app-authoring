@@ -239,7 +239,7 @@ describe('<CourseUpdates />', () => {
       render(<RootWrapper />);
 
       const newButton = await screen.findByRole('button', { name: messages.newUpdateButton.defaultMessage });
-      expect(screen.getByText(messages.loadingUpdatesErrorTitle.defaultMessage));
+      expect(screen.getByText(messages.loadingUpdatesErrorTitle.defaultMessage)).toBeInTheDocument();
       expect(newButton).toBeDisabled();
       expect(screen.getByText(messages.noCourseUpdates.defaultMessage)).toBeVisible();
       expect(screen.queryByTestId('course-update')).toBeNull();
@@ -256,7 +256,7 @@ describe('<CourseUpdates />', () => {
       render(<RootWrapper />);
 
       await waitFor(() => {
-        expect(screen.getByText(messages.loadingHandoutsErrorTitle.defaultMessage));
+        expect(screen.getByText(messages.loadingHandoutsErrorTitle.defaultMessage)).toBeInTheDocument();
       });
       expect(screen.getByTestId('course-handouts-edit-button')).toBeDisabled();
     });
@@ -360,7 +360,7 @@ describe('<CourseUpdates />', () => {
       await executeThunk(editCourseHandoutsQuery(courseId, data), store.dispatch);
       expect(screen.queryByText('Some handouts 1')).toBeNull();
       expect(screen.getByText(courseHandoutsMock.data)).toBeVisible();
-      expect(await screen.findByText(messages.savingHandoutsErrorDescription.defaultMessage));
+      expect(await screen.findByText(messages.savingHandoutsErrorDescription.defaultMessage)).toBeInTheDocument();
     });
   });
 

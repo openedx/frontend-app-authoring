@@ -3017,7 +3017,7 @@ describe('<CourseUnit />', () => {
       await screen.findByText(
         /access to some content in this unit is restricted to specific groups of learners\./i,
       ),
-    );
+    ).toBeInTheDocument();
   });
 
   it('should render never published state in the unit sidebar', async () => {
@@ -3270,8 +3270,10 @@ describe('<CourseUnit />', () => {
 
       // Moving to the add sidebar
       const sidebarToggle = await screen.findByTestId('sidebar-toggle');
+      // oxlint-disable-next-line jest/no-standalone-expect - expect() does work correctly inside beforeEach()
       expect(sidebarToggle).toBeInTheDocument();
       const addButton = within(sidebarToggle).getByRole('button', { name: 'Add' });
+      // oxlint-disable-next-line jest/no-standalone-expect - expect() does work correctly inside beforeEach()
       expect(addButton).toBeInTheDocument();
       await user.click(addButton);
     });
@@ -3291,26 +3293,26 @@ describe('<CourseUnit />', () => {
 
       // Check text templates
       await user.click(within(textCollapsible).getByText(/text/i));
-      expect(within(textCollapsible).getByText('Raw HTML'));
-      expect(within(textCollapsible).getByText('IFrame Tool'));
-      expect(within(textCollapsible).getByText('Anonymous User ID'));
-      expect(within(textCollapsible).getByText('Announcement'));
+      expect(within(textCollapsible).getByText('Raw HTML')).toBeInTheDocument();
+      expect(within(textCollapsible).getByText('IFrame Tool')).toBeInTheDocument();
+      expect(within(textCollapsible).getByText('Anonymous User ID')).toBeInTheDocument();
+      expect(within(textCollapsible).getByText('Announcement')).toBeInTheDocument();
 
       // Check Open response templates
       await user.click(within(openResponseCollapsible).getByText(/open response/i));
-      expect(within(openResponseCollapsible).getByText('Peer Assessment Only'));
-      expect(within(openResponseCollapsible).getByText('Self Assessment Only'));
-      expect(within(openResponseCollapsible).getByText('Staff Assessment Only'));
-      expect(within(openResponseCollapsible).getByText('Self Assessment to Peer Assessment'));
-      expect(within(openResponseCollapsible).getByText('Self Assessment to Staff Assessment'));
+      expect(within(openResponseCollapsible).getByText('Peer Assessment Only')).toBeInTheDocument();
+      expect(within(openResponseCollapsible).getByText('Self Assessment Only')).toBeInTheDocument();
+      expect(within(openResponseCollapsible).getByText('Staff Assessment Only')).toBeInTheDocument();
+      expect(within(openResponseCollapsible).getByText('Self Assessment to Peer Assessment')).toBeInTheDocument();
+      expect(within(openResponseCollapsible).getByText('Self Assessment to Staff Assessment')).toBeInTheDocument();
 
       // Check problem templates
       await user.click(within(problemCollapsible).getByText(/problem/i));
-      expect(within(problemCollapsible).getByText('Single select'));
-      expect(within(problemCollapsible).getByText('Multi-select'));
-      expect(within(problemCollapsible).getByText('Dropdown'));
-      expect(within(problemCollapsible).getByText('Text input'));
-      expect(within(problemCollapsible).getByText('Advanced Problem'));
+      expect(within(problemCollapsible).getByText('Single select')).toBeInTheDocument();
+      expect(within(problemCollapsible).getByText('Multi-select')).toBeInTheDocument();
+      expect(within(problemCollapsible).getByText('Dropdown')).toBeInTheDocument();
+      expect(within(problemCollapsible).getByText('Text input')).toBeInTheDocument();
+      expect(within(problemCollapsible).getByText('Advanced Problem')).toBeInTheDocument();
 
       // Check Advanced blocks
       const advancedButton = screen.getByRole('button', { name: 'Advanced' });
