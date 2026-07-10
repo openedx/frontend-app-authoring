@@ -59,6 +59,10 @@ export const getCourseOutlinePermissions = (courseId: string) => ({
     action: COURSE_PERMISSIONS.VIEW_COURSE,
     scope: courseId,
   },
+  canEditCourseContent: {
+    action: COURSE_PERMISSIONS.EDIT_COURSE_CONTENT,
+    scope: courseId,
+  },
 });
 
 export const getLibraryUpdatesPermissions = (courseId: string) => ({

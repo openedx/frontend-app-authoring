@@ -184,7 +184,7 @@ export const useToolsMenuItems = (courseId: string) => {
   const waffleFlags = useWaffleFlags();
 
   const {
-    canViewCourse,
+    canEditCourseContent,
     canViewChecklists,
     canImportCourse,
     canExportCourse,
@@ -220,7 +220,7 @@ export const useToolsMenuItems = (courseId: string) => {
         title: intl.formatMessage(messages['header.links.checklists']),
       }]
       : []),
-    ...(waffleFlags.enableCourseOptimizer && canViewCourse ?
+    ...(waffleFlags.enableCourseOptimizer && canEditCourseContent ?
       [{
         href: `/course/${courseId}/optimizer`,
         title: (

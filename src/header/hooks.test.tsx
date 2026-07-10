@@ -519,7 +519,7 @@ describe('header utils', () => {
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: false,
-        canViewCourse: true,
+        canEditCourseContent: true,
         canViewChecklists: true,
         canImportCourse: true,
         canExportCourse: true,
@@ -587,7 +587,7 @@ describe('header utils', () => {
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: true,
-        canViewCourse: false,
+        canEditCourseContent: false,
         canViewChecklists: false,
         canImportCourse: false,
         canExportCourse: false,

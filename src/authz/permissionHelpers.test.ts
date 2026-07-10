@@ -151,12 +151,16 @@ describe('permissionHelpers', () => {
   });
 
   describe('getCourseOutlinePermissions', () => {
-    it('returns VIEW_COURSE permission with the correct action and scope', () => {
+    it('returns VIEW_COURSE and EDIT_COURSE_CONTENT permissions with the correct actions and scope', () => {
       const result = getCourseOutlinePermissions(courseId);
 
       expect(result).toEqual({
         canViewCourse: {
           action: COURSE_PERMISSIONS.VIEW_COURSE,
+          scope: courseId,
+        },
+        canEditCourseContent: {
+          action: COURSE_PERMISSIONS.EDIT_COURSE_CONTENT,
           scope: courseId,
         },
       });

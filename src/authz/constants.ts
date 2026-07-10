@@ -17,6 +17,7 @@ export const CONTENT_LIBRARY_PERMISSIONS = {
 
 export const COURSE_PERMISSIONS = {
   VIEW_COURSE: 'courses.view_course',
+  EDIT_COURSE_CONTENT: 'courses.edit_course_content',
 
   MANAGE_ADVANCED_SETTINGS: 'courses.manage_advanced_settings',
 

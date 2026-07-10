@@ -110,8 +110,9 @@ const CourseOptimizerPage = () => {
   const { courseId, courseDetails } = useCourseAuthoringContext();
   const {
     isLoading: isLoadingUserPermissions,
-    canViewCourse,
+    canEditCourseContent,
   } = useCourseUserPermissions(courseId, getCourseOutlinePermissions(courseId));
+  const hasEditAccess = !isLoadingUserPermissions && canEditCourseContent;
   const linkCheckPresent = currentStage != null ? currentStage >= 0 : !!currentStage;
   const [showStepper, setShowStepper] = useState(false);
   const [scanResultsError, setScanResultsError] = useState<string | null>(null);
@@ -142,21 +143,30 @@ const CourseOptimizerPage = () => {
   ];
 
   useEffect(() => {
-    // when first entering the page, fetch any existing scan results
-    dispatch(fetchLinkCheckStatus(courseId));
-  }, []);
+    // when first entering the page, fetch any existing scan results,
+    // but only once the user permissions have been validated
+    if (hasEditAccess) {
+      dispatch(fetchLinkCheckStatus(courseId));
+    }
+  }, [hasEditAccess]);
 
   useEffect(() => {
     // when a scan starts, start polling for the results as long as the scan status fetched
     // signals it is still in progress
+    if (!hasEditAccess) {
+      return undefined;
+    }
     pollLinkCheckDuringScan(linkCheckInProgress, interval, dispatch, courseId);
 
     return () => {
       if (interval.current) { clearInterval(interval.current); }
     };
-  }, [linkCheckInProgress, linkCheckResult]);
+  }, [linkCheckInProgress, linkCheckResult, hasEditAccess]);
 
   useEffect(() => {
+    if (!hasEditAccess) {
+      return undefined;
+    }
     pollRerunLinkUpdateDuringUpdate(
       rerunLinkUpdateInProgress,
       rerunLinkUpdateResult,
@@ -168,7 +178,7 @@ const CourseOptimizerPage = () => {
     return () => {
       if (rerunUpdateInterval.current) { clearInterval(rerunUpdateInterval.current); }
     };
-  }, [rerunLinkUpdateInProgress, rerunLinkUpdateResult]);
+  }, [rerunLinkUpdateInProgress, rerunLinkUpdateResult, hasEditAccess]);
 
   const stepperVisibleCondition = linkCheckPresent && ((!linkCheckResult || linkCheckInProgress) && currentStage !== 2);
   useEffect(() => {
@@ -190,7 +200,7 @@ const CourseOptimizerPage = () => {
     return <Loading />;
   }
 
-  if (!canViewCourse) {
+  if (!canEditCourseContent) {
     return <PermissionDeniedAlert />;
   }
 

@@ -46,7 +46,7 @@ const mockPermissions = (overrides = {}) =>
   jest.mocked(useCourseUserPermissions).mockReturnValue({
     isLoading: false,
     isAuthzEnabled: true,
-    canViewCourse: true,
+    canEditCourseContent: true,
     ...overrides,
   });
 
@@ -146,19 +146,29 @@ describe('CourseOptimizerPage', () => {
       mockPermissions();
     });
 
-    it('shows PermissionDeniedAlert when user lacks view course permission', async () => {
-      mockPermissions({ canViewCourse: false });
+    it('shows PermissionDeniedAlert when user lacks edit course content permission', async () => {
+      mockPermissions({ canEditCourseContent: false });
       render(<OptimizerPage />);
       expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
       expect(screen.queryByText(messages.headingTitle.defaultMessage)).not.toBeInTheDocument();
     });
 
     it('shows a loading spinner while permissions are loading', async () => {
-      mockPermissions({ isLoading: true, canViewCourse: false });
+      mockPermissions({ isLoading: true, canEditCourseContent: false });
       render(<OptimizerPage />);
       expect(await screen.findByRole('status')).toBeInTheDocument();
       expect(screen.queryByTestId('permissionDeniedAlert')).not.toBeInTheDocument();
       expect(screen.queryByText(messages.headingTitle.defaultMessage)).not.toBeInTheDocument();
+    });
+
+    it('does not fetch the link check status when user lacks edit course content permission', async () => {
+      mockPermissions({ canEditCourseContent: false });
+      render(<OptimizerPage />);
+      expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+      const linkCheckRequests = axiosMock.history.get.filter(
+        (request) => request.url === getLinkCheckStatusApiUrl(courseId),
+      );
+      expect(linkCheckRequests).toHaveLength(0);
     });
 
     it('should render the component', () => {
