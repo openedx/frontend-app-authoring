@@ -109,7 +109,7 @@ const TableActions = ({
           onClick={handleFilePickerSubmit}
           disabled={selectedFlatRows.length === 0}
         >
-          Use File(s)
+          {intl.formatMessage(messages.useFilesButton)}
         </Button>
       )}
       <SortAndFilterModal {...{ isSortOpen, closeSort, handleSort }} />
