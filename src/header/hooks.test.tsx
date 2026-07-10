@@ -238,7 +238,14 @@ describe('header utils', () => {
       });
     });
     it('when authz enabled and user has no permissions should return an empty menu', () => {
-      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      mockWaffleFlags({
+        enableAuthzCourseAuthoring: true,
+        useNewVideoUploadsPage: false,
+      });
+      setConfig({
+        ...getConfig(),
+        ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'false',
+      });
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: true,
