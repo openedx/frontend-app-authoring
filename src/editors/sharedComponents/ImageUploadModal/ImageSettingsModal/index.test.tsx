@@ -108,6 +108,43 @@ describe('ImageSettingsModal', () => {
       expect(props.saveToEditor).toHaveBeenCalled();
     });
 
+    test('Preserve dimensions when reediting', async () => {
+      render(
+        <ImageSettingsModal
+          {...props}
+          selection={{ ...props.selection, width: '1280', height: '720' }}
+        />,
+      );
+      mockImageLoad(1920, 1080);
+      const widthInput = await screen.findByRole('textbox', { name: /width/i });
+      const heightInput = screen.getByRole('textbox', { name: /height/i });
+      expect(widthInput).toHaveValue('1280');
+      expect(heightInput).toHaveValue('720');
+    });
+
+    test('Use original dimensions for new images', async () => {
+      render(<ImageSettingsModal {...props} />);
+      mockImageLoad(1920, 1080);
+      const widthInput = await screen.findByRole('textbox', { name: /width/i });
+      const heightInput = screen.getByRole('textbox', { name: /height/i });
+      expect(widthInput).toHaveValue('1920');
+      expect(heightInput).toHaveValue('1080');
+    });
+
+    test('Use original dimensions when selection dimensions are null', async () => {
+      render(
+        <ImageSettingsModal
+          {...props}
+          selection={{ ...props.selection, width: null, height: null }}
+        />,
+      );
+      mockImageLoad(1920, 1080);
+      const widthInput = await screen.findByRole('textbox', { name: /width/i });
+      const heightInput = screen.getByRole('textbox', { name: /height/i });
+      expect(widthInput).toHaveValue('1920');
+      expect(heightInput).toHaveValue('1080');
+    });
+
     describe('Dimension Locking', () => {
       test('When dimensions are locked it maintains the original ratio', async () => {
         render(<ImageSettingsModal {...props} />);
