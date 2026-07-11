@@ -29,6 +29,8 @@ interface ImageSettingsModalCommonProps {
     externalUrl: string;
     url: string;
     classList: string[];
+    width?: string | number | null;
+    height?: string | number | null;
   };
 }
 
@@ -61,12 +63,17 @@ const ImageSettingsModalBase = ({
   const intl = useIntl();
   const formik = useFormikContext<ImageConfig>();
 
-  const setOriginalDimensions = React.useCallback(async (event: React.ChangeEvent<HTMLImageElement>) => {
-    const img = event.currentTarget as HTMLImageElement;
-    setImgDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-    await formik.setFieldValue('width', img.naturalWidth, false);
-    await formik.setFieldValue('height', img.naturalHeight, false);
-  }, [formik]);
+  const setOriginalDimensions = React.useCallback(
+    async (event: React.ChangeEvent<HTMLImageElement>) => {
+      const img = event.currentTarget as HTMLImageElement;
+      setImgDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+      if (!selection.width || !selection.height) {
+        await formik.setFieldValue('width', img.naturalWidth, false);
+        await formik.setFieldValue('height', img.naturalHeight, false);
+      }
+    },
+    [formik, selection.width, selection.height],
+  );
 
   const handleDismissError = React.useCallback(() => formik.setFieldError('altText', ''), [formik]);
 
@@ -176,8 +183,8 @@ const ImageSettingsModal = ({
   const [imgDimensions, setImgDimensions] = React.useState<OrigImageDimensions>({ width: 0, height: 0 });
   const initialValues: ImageConfig = {
     isLocked: true,
-    width: imgDimensions.width,
-    height: imgDimensions.height,
+    width: selection.width ?? imgDimensions.width,
+    height: selection.height ?? imgDimensions.height,
     isDecorative: !selection.altText,
     altText: selection.altText || '',
     classList: selection.classList,
