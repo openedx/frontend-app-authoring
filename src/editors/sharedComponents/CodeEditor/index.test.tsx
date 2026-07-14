@@ -116,7 +116,7 @@ describe('CodeEditor', () => {
         initializeMocks();
       });
       let useRefSpy;
-      test('Renders and calls Hooks ', () => {
+      test('Renders and calls Hooks', () => {
         const props = {
           intl: { formatMessage },
           innerRef: {

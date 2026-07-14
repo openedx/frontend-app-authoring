@@ -87,7 +87,7 @@ describe('CoursesFilterMenu', () => {
     expect(screen.getByTestId('menu-item-icon')).toBeInTheDocument();
   });
 
-  it('should call onCourseTypeSelected function when a menu item is selected ', () => {
+  it('should call onCourseTypeSelected function when a menu item is selected', () => {
     renderComponent();
     const courseFilterMenuToggle = screen.getByTestId('course-filter-menu-toggle');
     expect(courseFilterMenuToggle).toBeInTheDocument();

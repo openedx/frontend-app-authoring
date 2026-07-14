@@ -1,7 +1,7 @@
 import { ContainerChildBase, CourseContainerChildBase } from './types';
 import { diffPreviewContainerChildren } from './utils';
 
-export const getMockCourseContainerData = (
+const getMockCourseContainerData = (
   type: 'added|deleted' | 'moved|deleted' | 'all' | 'locallyEdited',
 ): [CourseContainerChildBase[], ContainerChildBase[]] => {
   switch (type) {

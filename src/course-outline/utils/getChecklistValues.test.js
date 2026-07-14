@@ -49,7 +49,7 @@ describe('getChecklistValues utility function', () => {
       expect(
         item.pacingTypeFilter === CHECKLIST_FILTERS.ALL
           || item.pacingTypeFilter === CHECKLIST_FILTERS.SELF_PACED,
-      )
+      ).toBeTruthy()
     );
 
     expect(filteredChecklist.filter(item => item.pacingTypeFilter === CHECKLIST_FILTERS.ALL).length)
@@ -66,7 +66,7 @@ describe('getChecklistValues utility function', () => {
       expect(
         item.pacingTypeFilter === CHECKLIST_FILTERS.ALL
           || item.pacingTypeFilter === CHECKLIST_FILTERS.INSTRUCTOR_PACED,
-      )
+      ).toBeTruthy()
     );
 
     expect(filteredChecklist.filter(item => item.pacingTypeFilter === CHECKLIST_FILTERS.ALL).length)

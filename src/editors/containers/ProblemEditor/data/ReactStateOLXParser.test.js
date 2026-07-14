@@ -72,7 +72,7 @@ describe('Check React State OLXParser problem', () => {
     });
   });
 
-  describe('with label and em tag wrapped in div: ', () => {
+  describe('with label and em tag wrapped in div:', () => {
     const olxparser = new OLXParser(multipleChoiceWithFeedbackAndHintsOLX.rawOLX);
     const problem = olxparser.getParsedOLXData();
     const stateParser = new ReactStateOLXParser({

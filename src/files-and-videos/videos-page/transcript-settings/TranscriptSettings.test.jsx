@@ -240,7 +240,7 @@ describe('TranscriptSettings', () => {
     });
 
     describe('api succeeds', () => {
-      it('should update cielo24 credentials ', async () => {
+      it('should update cielo24 credentials', async () => {
         const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
         await user.click(cielo24Button);
 

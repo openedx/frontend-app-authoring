@@ -107,7 +107,7 @@ describe('BBB Settings', () => {
   );
 
   test(
-    'Connect to support and PII sharing message is visible and plans selection is disabled, When pii sharing is disabled, ',
+    'Connect to support and PII sharing message is visible and plans selection is disabled, When pii sharing is disabled',
     async () => {
       await mockStore({ piiSharingAllowed: false });
       renderComponent();

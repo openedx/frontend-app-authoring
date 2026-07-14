@@ -160,7 +160,7 @@ describe('<CourseTeam />', () => {
     expect(deleteButton).toBeInTheDocument();
     await user.click(deleteButton);
 
-    expect(await screen.findByText('Delete course team member'));
+    expect(await screen.findByText('Delete course team member')).toBeInTheDocument();
     const confirmDelete = screen.getByRole('button', { name: /delete/i });
     expect(confirmDelete).toBeInTheDocument();
     await user.click(confirmDelete);

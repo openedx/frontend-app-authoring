@@ -17,7 +17,7 @@ describe('SupportedFeature', () => {
     container = wrapper.container;
   });
 
-  test('displays a check icon ', () => {
+  test('displays a check icon', () => {
     expect(container.querySelector('svg')).toHaveAttribute('id', 'check-icon');
   });
 

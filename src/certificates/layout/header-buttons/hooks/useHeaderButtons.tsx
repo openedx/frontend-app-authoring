@@ -25,6 +25,7 @@ const useHeaderButtons = () => {
   const handleActivationStatus = () => {
     const status = !isCertificateActive;
 
+    // oxlint-disable-next-line typescript/no-floating-promises
     activationStatusMutation.mutateAsync({
       path: certificateActivationHandlerUrl ?? '',
       activationStatus: status,

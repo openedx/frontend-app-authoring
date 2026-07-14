@@ -17,6 +17,6 @@ describe('<TagCount>', () => {
     render(<TagCount count={17} onClick={() => {}} />);
     expect(screen.getByRole('button', {
       name: /17/i,
-    }));
+    })).toBeInTheDocument();
   });
 });

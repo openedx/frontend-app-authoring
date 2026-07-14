@@ -19,7 +19,7 @@ const useCertificateCreateForm = () => {
   const handleCertificateSubmit = (values) => {
     const signatoriesWithoutIds = values.signatories.map(({ id, ...rest }) => rest);
     const newValues = { ...values, signatories: signatoriesWithoutIds };
-    createCertificateMutation.mutateAsync(newValues);
+    void createCertificateMutation.mutateAsync(newValues);
   };
 
   const handleFormCancel = (resetForm) => {

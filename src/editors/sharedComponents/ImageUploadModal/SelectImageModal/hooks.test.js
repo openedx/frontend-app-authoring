@@ -222,7 +222,7 @@ describe('SelectImageModal hooks', () => {
     const selectedFileSuccess = { value: testValue, size: 2000 };
     const clearSelection = jest.fn();
     const onSizeFail = jest.fn();
-    it('returns false for valid file size ', () => {
+    it('returns false for valid file size', () => {
       hook = hooks.checkValidFileSize({ selectedFile: selectedFileFail, clearSelection, onSizeFail });
       expect(clearSelection).toHaveBeenCalled();
       expect(onSizeFail).toHaveBeenCalled();

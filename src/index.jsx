@@ -156,6 +156,7 @@ subscribe(APP_INIT_ERROR, (error) => {
   );
 });
 
+// oxlint-disable-next-line typescript/no-floating-promises
 initialize({
   handlers: {
     config: () => {

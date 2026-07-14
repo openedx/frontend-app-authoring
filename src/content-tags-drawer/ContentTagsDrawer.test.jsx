@@ -112,8 +112,8 @@ describe('<ContentTagsDrawer />', () => {
   it('should be read only on first render on drawer variant', async () => {
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /close/i }));
-    expect(screen.getByRole('button', { name: /edit tags/i }));
+    expect(screen.getByRole('button', { name: /close/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /edit tags/i })).toBeInTheDocument();
 
     // Not show delete tag buttons
     expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
@@ -131,7 +131,7 @@ describe('<ContentTagsDrawer />', () => {
   it('should be read only on first render on component variant', async () => {
     renderDrawer(stagedTagsId, { variant: 'component' });
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /manage tags/i }));
+    expect(screen.getByRole('button', { name: /manage tags/i })).toBeInTheDocument();
 
     // Not show delete tag buttons
     expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();

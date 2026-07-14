@@ -187,6 +187,7 @@ describe('requests thunkActions module', () => {
       expect(dispatchedAction.networkRequest.onSuccess).toEqual(onSuccess);
       expect(dispatchedAction.networkRequest.onFailure).toEqual(onFailure);
     });
+    // oxlint-disable-next-line jest/valid-title
     test(expectedString, () => {
       expect(dispatchedAction.networkRequest).toEqual({
         ...expectedData,

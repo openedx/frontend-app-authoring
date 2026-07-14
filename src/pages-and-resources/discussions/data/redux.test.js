@@ -270,7 +270,7 @@ describe('Data layer integration tests', () => {
   });
 
   describe('updateValidationStatus', () => {
-    test.each([true, false])('sets hasValidationError value to %s ', (hasError) => {
+    test.each([true, false])('sets hasValidationError value to %s', (hasError) => {
       store.dispatch(updateValidationStatus({ hasError }));
 
       expect(store.getState().discussions.hasValidationError).toEqual(hasError);

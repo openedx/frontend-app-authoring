@@ -32,7 +32,7 @@ describe('app reducer', () => {
       });
     });
     const setterTest = (action, target) => {
-      describe(action, () => {
+      describe(`action ${action}`, () => {
         it(`load ${target} from payload`, () => {
           expect(reducer(testingState, actions[action](testValue))).toEqual({
             ...testingState,

@@ -130,7 +130,7 @@ describe('<ScheduleAndDetails />', () => {
     ).toBe(0);
   });
 
-  it('should show save alert onChange ', async () => {
+  it('should show save alert onChange', async () => {
     renderComponent();
     const inputs = await screen.findAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
     // @ts-ignore

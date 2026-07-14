@@ -295,7 +295,7 @@ describe('DiscussionsSettings', () => {
       await user.click(getByRole(container, 'button', { name: 'Cancel' }));
 
       expect(queryByRole(container, 'dialog', { name: 'Confirm' })).not.toBeInTheDocument();
-      expect(queryByRole(container, 'dialog', { name: 'Configure discussion' }));
+      expect(queryByRole(container, 'dialog', { name: 'Configure discussion' })).not.toBeInTheDocument();
     });
   });
 

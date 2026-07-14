@@ -486,9 +486,9 @@ export function applyReorderMove(
   const ids = newItems.map((s: XBlock) => s.id);
   if (subsectionId) {
     // Unit reorder
-    commitReorder(sectionId, currentSection.id, subsectionId, ids);
+    void commitReorder(sectionId, currentSection.id, subsectionId, ids);
   } else {
     // Subsection reorder
-    commitReorder(sectionId, currentSection.id, ids);
+    void commitReorder(sectionId, currentSection.id, ids);
   }
 }

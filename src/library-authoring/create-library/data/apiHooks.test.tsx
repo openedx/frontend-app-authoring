@@ -92,7 +92,7 @@ describe('create library apiHooks', () => {
 
       const { result } = renderHook(() => useCreateLibraryRestore(), { wrapper });
 
-      await expect(result.current.mutateAsync(file)).rejects.toThrow();
+      await expect(result.current.mutateAsync(file)).rejects.toThrow('Request failed with status code 400');
     });
   });
 

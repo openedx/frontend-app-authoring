@@ -40,7 +40,7 @@ describe('HintsCard', () => {
   beforeEach(() => initializeMocks());
 
   describe('behavior', () => {
-    it(' calls groupFeedbacksCardHooks when initialized', () => {
+    it('calls groupFeedbacksCardHooks when initialized', () => {
       const groupFeedbacksCardHooksProps = {
         summary: { message: messages.noGroupFeedbackSummary },
         handleAdd: jest.fn().mockName('groupFeedbacksCardHooks.handleAdd'),

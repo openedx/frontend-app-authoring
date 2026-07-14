@@ -159,7 +159,7 @@ function describeSidebarMenus(config: SidebarMenuConfig): void {
       const user = userEvent.setup();
       const withUpstream = {
         ...config.defaultData,
-        actions: { ...(config.defaultData.actions as Record<string, unknown> || {}), unlinkable: true },
+        actions: { ...(config.defaultData.actions as Record<string, unknown>), unlinkable: true },
         upstreamInfo: { upstreamRef: config.upstreamRef },
       };
       await renderMenu(withUpstream);

@@ -38,7 +38,7 @@ const useCertificateEditForm = () => {
       signatories: signatoriesWithoutLocalIds,
     };
 
-    updateCertificateMutation.mutateAsync(newValues);
+    void updateCertificateMutation.mutateAsync(newValues);
   };
 
   const handleCertificateUpdateCancel = (resetForm) => {

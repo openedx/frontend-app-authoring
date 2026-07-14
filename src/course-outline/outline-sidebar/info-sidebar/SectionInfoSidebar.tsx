@@ -67,7 +67,7 @@ export const SectionSidebar = () => {
       const nextSections = arrayMove(sections, index, index + step);
       const sectionListIds = nextSections.map((s: any) => s.id);
       previewSections(nextSections);
-      commitSectionReorder(sectionListIds);
+      void commitSectionReorder(sectionListIds);
       setSelectedContainerState(
         selectedContainerState ? { ...selectedContainerState, index: index + step } : undefined,
       );

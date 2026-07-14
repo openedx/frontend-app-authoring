@@ -76,7 +76,7 @@ describe('SocialShareWidget', () => {
 
   describe('rendered with videoSharingEnabled true', () => {
     describe('and allowVideoSharing value equals true', () => {
-      describe(' with level equal to course', () => {
+      describe('with level equal to course', () => {
         it('should have setting location message', () => {
           render(
             <SocialShareWidget
@@ -106,7 +106,7 @@ describe('SocialShareWidget', () => {
           expect(checkbox).toBeDisabled();
         });
       });
-      describe(' with level equal to block', () => {
+      describe('with level equal to block', () => {
         it('should not have setting location message', () => {
           render(
             <SocialShareWidget
@@ -216,7 +216,7 @@ describe('SocialShareWidget', () => {
     });
 
     describe('and allowVideoSharing value equals false', () => {
-      describe(' with level equal to course', () => {
+      describe('with level equal to course', () => {
         it('should have setting location message', () => {
           render(
             <SocialShareWidget
@@ -247,7 +247,7 @@ describe('SocialShareWidget', () => {
         });
       });
 
-      describe(' with level equal to block', () => {
+      describe('with level equal to block', () => {
         it('should not have setting location message', () => {
           render(
             <SocialShareWidget

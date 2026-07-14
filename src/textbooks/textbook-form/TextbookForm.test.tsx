@@ -57,9 +57,9 @@ describe('<TextbookForm />', () => {
     expect(screen.getByTestId('chapter-upload-button')).toBeInTheDocument();
     expect(screen.getByTestId('chapter-delete-button')).toBeInTheDocument();
 
-    expect(screen.getByRole('button', { name: messages.addChapterButton.defaultMessage }));
-    expect(screen.getByRole('button', { name: messages.cancelButton.defaultMessage }));
-    expect(screen.getByRole('button', { name: messages.saveButton.defaultMessage }));
+    expect(screen.getByRole('button', { name: messages.addChapterButton.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
   });
 
   it('calls onSubmit when the "Save" button is clicked with a valid form', async () => {
