@@ -5,6 +5,7 @@
     margin-top: 8.75rem;
   }
 
+
   .setting-items-policies {
     .setting-items-deprecated-setting {
       float: right;
@@ -18,13 +19,25 @@
     }
   }
 
-  .setting-card {
-    margin-bottom: 1.75rem;
+}
 
-    .pgn__card-header .pgn__card-header-title-md {
-      font-size: 1.125rem;
-    }
+.settings-section-trigger {
+  cursor: pointer;
+  border-bottom: 1px solid var(--pgn-color-gray-200);
+
+  &:hover {
+    background-color: var(--pgn-color-gray-100);
   }
+
+  // When collapsed, no border below the trigger
+  &[aria-expanded="false"] {
+    border-bottom-color: transparent;
+  }
+}
+
+
+.settings-section-icon {
+  color: var(--pgn-color-gray-500);
 }
 
 .alert-toast {
@@ -40,28 +53,27 @@
 }
 
 .setting-items-list {
-  li {
-    list-style: none;
+  list-style: none;
+}
+
+.subcategory-header {
+  .subcategory-header-title {
+    color: var(--pgn-color-headings-base);
   }
 
-  .form-control {
-    min-height: 2.75rem;
-    flex-grow: 1;
-  }
-
-  .pgn__card-header {
-    padding: 0 0 0 1.5rem;
-  }
-
-  .pgn__card-status {
-    padding: .625rem;
-  }
-
-  .pgn__card-header-content {
-    margin-top: 1.438rem;
-    margin-bottom: 1.438rem;
+  .subcategory-header-divider {
+    border-color: var(--pgn-color-gray-200);
   }
 }
+
+.display-overrides-nested-fields {
+  border-left: 3px solid var(--pgn-color-primary-300);
+}
+
+.display-overrides-blocked-message {
+  color: var(--pgn-color-danger-500);
+}
+
 
 .setting-sidebar-supplementary {
   .setting-sidebar-supplementary-about {

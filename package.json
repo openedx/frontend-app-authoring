@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@codemirror/lang-html": "^6.0.0",
+    "@codemirror/lang-json": "^6.0.2",
     "@codemirror/lang-markdown": "^6.0.0",
     "@codemirror/lang-xml": "^6.0.0",
     "@codemirror/lint": "^6.2.1",
