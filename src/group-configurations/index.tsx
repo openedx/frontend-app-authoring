@@ -7,7 +7,10 @@ import {
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getGroupConfigurationsPermissions } from '@src/authz/permissionHelpers';
 import { LoadingSpinner } from '@src/generic/Loading';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import getPageHeadTitle from '@src/generic/utils';
 import { SavingErrorAlert } from '@src/generic/saving-error-alert';
@@ -34,6 +37,11 @@ const GroupConfigurations = () => {
     isLoadingDenied,
   } = useGroupConfigurations();
 
+  const {
+    isLoading: isLoadingUserPermissions,
+    canManageGroupConfigurations,
+  } = useCourseUserPermissions(courseId, getGroupConfigurationsPermissions(courseId));
+
   document.title = getPageHeadTitle(
     courseDetails?.name ?? '',
     formatMessage(messages.headingTitle),
@@ -44,6 +52,10 @@ const GroupConfigurations = () => {
     experimentGroupConfigurations = [],
     allGroupConfigurations = [],
   } = groupConfigurations ?? {};
+
+  if (!isLoadingUserPermissions && !canManageGroupConfigurations) {
+    return <PermissionDeniedAlert />;
+  }
 
   if (isLoadingDenied) {
     return (

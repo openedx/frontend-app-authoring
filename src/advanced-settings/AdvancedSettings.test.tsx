@@ -191,4 +191,18 @@ describe('<AdvancedSettings />', () => {
     render();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
   });
+
+  it('should show permission denied alert when the user is not authorized', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    jest.mocked(useUserPermissions).mockReturnValue({
+      isLoading: false,
+      data: { canManageAdvancedSettings: false },
+    } as unknown as ReturnType<typeof useUserPermissions>);
+    axiosMock
+      .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
+      .reply(403);
+    render();
+    expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+    expect(screen.queryByText(/Under Construction/i)).not.toBeInTheDocument();
+  });
 });

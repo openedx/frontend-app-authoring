@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/react';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import {
   initializeMocks,
   render,
@@ -18,6 +19,18 @@ const enrollmentTrackGroups = groupConfigurationResponseMock.allGroupConfigurati
 const contentGroups = groupConfigurationResponseMock.allGroupConfigurations[1];
 const teamGroups = groupConfigurationResponseMock.allGroupConfigurations[2];
 
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
+}));
+
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canManageGroupConfigurations: true,
+    ...overrides,
+  } as ReturnType<typeof useCourseUserPermissions>);
+
 const renderComponent = () =>
   render(
     <CourseAuthoringProvider courseId={courseId}>
@@ -32,6 +45,14 @@ describe('<GroupConfigurations />', () => {
     axiosMock
       .onGet(getContentStoreApiUrl(courseId))
       .reply(200, groupConfigurationResponseMock);
+    mockPermissions();
+  });
+
+  it('shows PermissionDeniedAlert when user lacks manage group configurations permission', async () => {
+    mockPermissions({ canManageGroupConfigurations: false });
+    renderComponent();
+    expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+    expect(screen.queryByText(messages.headingSubtitle.defaultMessage)).not.toBeInTheDocument();
   });
 
   it('renders component correctly', async () => {

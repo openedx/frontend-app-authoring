@@ -9,7 +9,11 @@ import { Helmet } from 'react-helmet';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import Loading from '@src/generic/Loading';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getImportExportPermissions } from '@src/authz/permissionHelpers';
 
 import ImportStepper from './import-stepper/ImportStepper';
 import ImportSidebar from './import-sidebar/ImportSidebar';
@@ -19,13 +23,26 @@ import { useCourseImportContext } from './CourseImportContext';
 
 const CourseImportPage = () => {
   const intl = useIntl();
-  const { courseDetails } = useCourseAuthoringContext();
+  const { courseId, courseDetails } = useCourseAuthoringContext();
   const {
     importTriggered,
     anyRequestFailed,
     anyRequestInProgress,
     isLoadingDenied,
   } = useCourseImportContext();
+
+  const {
+    isLoading: isLoadingUserPermissions,
+    canImportCourse,
+  } = useCourseUserPermissions(courseId, getImportExportPermissions(courseId));
+
+  if (isLoadingUserPermissions) {
+    return <Loading />;
+  }
+
+  if (!canImportCourse) {
+    return <PermissionDeniedAlert />;
+  }
 
   if (isLoadingDenied) {
     return (

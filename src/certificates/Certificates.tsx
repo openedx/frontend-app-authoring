@@ -1,6 +1,9 @@
 import { Helmet } from 'react-helmet';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getCertificatesPermissions } from '@src/authz/permissionHelpers';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import Placeholder from '../editors/Placeholder';
 import { RequestStatus } from '../data/constants';
 import Loading from '../generic/Loading';
@@ -31,6 +34,15 @@ const Certificates = () => {
     pageHeadTitle,
     hasCertificateModes,
   } = useCertificates({ courseId });
+
+  const {
+    isLoading: isLoadingUserPermissions,
+    canManageCertificates,
+  } = useCourseUserPermissions(courseId, getCertificatesPermissions(courseId));
+
+  if (!isLoadingUserPermissions && !canManageCertificates) {
+    return <PermissionDeniedAlert />;
+  }
 
   if (isLoading) {
     return <Loading />;
