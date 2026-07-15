@@ -29,11 +29,14 @@ import {
 import sumBy from 'lodash/sumBy';
 import { useSearchParams } from 'react-router-dom';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getLibraryUpdatesPermissions } from '@src/authz/permissionHelpers';
 import { useStudioHome } from '@src/studio-home/hooks';
 import NewsstandIcon from '@src/generic/NewsstandIcon';
 import getPageHeadTitle from '@src/generic/utils';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import Loading from '@src/generic/Loading';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import messages from './messages';
 import { useEntityLinksSummaryByDownstreamContext } from './data/apiHooks';
 import type { PublishableEntityLinkSummary } from './data/api';
@@ -119,6 +122,11 @@ export const CourseLibraries = () => {
     librariesV2Enabled,
   } = useStudioHome();
 
+  const {
+    isLoading: isLoadingUserPermissions,
+    canManageLibraryUpdates,
+  } = useCourseUserPermissions(courseId, getLibraryUpdatesPermissions(courseId));
+
   const onAlertReview = () => {
     setTabKey(CourseLibraryTabs.review);
   };
@@ -185,6 +193,14 @@ export const CourseLibraries = () => {
     }
     return <ReviewTabContent courseId={courseId} />;
   }, [outOfSyncCount, isLoading, tabKey]);
+
+  if (isLoadingUserPermissions) {
+    return <Loading />;
+  }
+
+  if (!canManageLibraryUpdates) {
+    return <PermissionDeniedAlert />;
+  }
 
   if (!isLoadingStudioHome && (!librariesV2Enabled || isFailedLoadingStudioHome)) {
     return (

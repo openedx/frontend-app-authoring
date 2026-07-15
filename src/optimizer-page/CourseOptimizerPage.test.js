@@ -25,6 +25,7 @@ import {
 } from './mocks/mockApiResponse';
 import * as thunks from './data/thunks';
 import { useWaffleFlags } from '../data/apiHooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 
 let axiosMock;
 const courseId = '123';
@@ -36,6 +37,18 @@ jest.mock('../data/apiHooks', () => ({
     enableCourseOptimizerCheckPrevRunLinks: false,
   })),
 }));
+
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
+}));
+
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canEditCourseContent: true,
+    ...overrides,
+  });
 
 const OptimizerPage = () => (
   <CourseAuthoringProvider courseId={courseId}>
@@ -130,6 +143,32 @@ describe('CourseOptimizerPage', () => {
       axiosMock
         .onGet(getLinkCheckStatusApiUrl(courseId))
         .reply(200, mockApiResponse);
+      mockPermissions();
+    });
+
+    it('shows PermissionDeniedAlert when user lacks edit course content permission', async () => {
+      mockPermissions({ canEditCourseContent: false });
+      render(<OptimizerPage />);
+      expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+      expect(screen.queryByText(messages.headingTitle.defaultMessage)).not.toBeInTheDocument();
+    });
+
+    it('shows a loading spinner while permissions are loading', async () => {
+      mockPermissions({ isLoading: true, canEditCourseContent: false });
+      render(<OptimizerPage />);
+      expect(await screen.findByRole('status')).toBeInTheDocument();
+      expect(screen.queryByTestId('permissionDeniedAlert')).not.toBeInTheDocument();
+      expect(screen.queryByText(messages.headingTitle.defaultMessage)).not.toBeInTheDocument();
+    });
+
+    it('does not fetch the link check status when user lacks edit course content permission', async () => {
+      mockPermissions({ canEditCourseContent: false });
+      render(<OptimizerPage />);
+      expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+      const linkCheckRequests = axiosMock.history.get.filter(
+        (request) => request.url === getLinkCheckStatusApiUrl(courseId),
+      );
+      expect(linkCheckRequests).toHaveLength(0);
     });
 
     it('should render the component', () => {
