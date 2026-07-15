@@ -14,6 +14,7 @@ import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
 import { type ToastActionData } from '@src/generic/toast-context';
 import { libraryBlockChangesUrl } from '@src/course-unit/data/api';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import { CourseLibraries } from './CourseLibraries';
 import {
   mockGetEntityLinks,
@@ -48,6 +49,18 @@ jest.mock('react-router-dom', () => ({
   }],
 }));
 
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
+}));
+
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canManageLibraryUpdates: true,
+    ...overrides,
+  } as ReturnType<typeof useCourseUserPermissions>);
+
 describe('<CourseLibraries />', () => {
   beforeEach(() => {
     initializeMocks();
@@ -55,6 +68,7 @@ describe('<CourseLibraries />', () => {
     mockFetchIndexDocuments.applyMock();
     localStorage.clear();
     searchParamsGetMock.mockReturnValue('all');
+    mockPermissions();
   });
 
   const renderCourseLibrariesPage = async (courseKey?: string) => {
@@ -77,6 +91,21 @@ describe('<CourseLibraries />', () => {
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKeyEmpty);
     const emptyMsg = await screen.findByText('This course does not use any content from libraries.');
     expect(emptyMsg).toBeInTheDocument();
+  });
+
+  it('shows PermissionDeniedAlert when user lacks manage library updates permission', async () => {
+    mockPermissions({ canManageLibraryUpdates: false });
+    await renderCourseLibrariesPage();
+    expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+    expect(screen.queryByText('Libraries')).not.toBeInTheDocument();
+  });
+
+  it('shows a loading spinner while permissions are loading', async () => {
+    mockPermissions({ isLoading: true, canManageLibraryUpdates: false });
+    await renderCourseLibrariesPage();
+    expect(await screen.findByRole('status')).toBeInTheDocument();
+    expect(screen.queryByTestId('permissionDeniedAlert')).not.toBeInTheDocument();
+    expect(screen.queryByText('Libraries')).not.toBeInTheDocument();
   });
 
   it('shows alert when out of sync components are present', async () => {

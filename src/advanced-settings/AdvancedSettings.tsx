@@ -106,6 +106,16 @@ const AdvancedSettings = () => {
       </div>
     );
   }
+
+  // Show permission denied alert when authz is enabled and user doesn't have permission
+  const authzIsEnabledAndNoPermission = isAuthzEnabled
+    && !isLoadingUserPermissions
+    && !userPermissions?.canManageAdvancedSettings;
+
+  if (authzIsEnabledAndNoPermission) {
+    return <PermissionDeniedAlert />;
+  }
+
   if (settingsStatusError?.response?.status === 403) {
     return (
       <div className="row justify-content-center m-6">
@@ -147,15 +157,6 @@ const AdvancedSettings = () => {
     showErrorModal(setToState);
     showSaveSettingsPrompt(true);
   };
-
-  // Show permission denied alert when authz is enabled and user doesn't have permission
-  const authzIsEnabledAndNoPermission = isAuthzEnabled
-    && !isLoadingUserPermissions
-    && !userPermissions?.canManageAdvancedSettings;
-
-  if (authzIsEnabledAndNoPermission) {
-    return <PermissionDeniedAlert />;
-  }
 
   return (
     <>

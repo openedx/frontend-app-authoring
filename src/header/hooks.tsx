@@ -11,48 +11,51 @@ import { SidebarActions } from '@src/library-authoring/common/context/SidebarCon
 import { LibQueryParamKeys } from '@src/library-authoring/routes';
 
 import { useCourseUserPermissions } from '@src/authz/hooks';
-import {
-  getAdvancedSettingsPermissions,
-  getGradingPermissions,
-  getPagesAndResourcesPermissions,
-  getScheduleAndDetailsPermissions,
-  getFilesPermissions,
-} from '@src/authz/permissionHelpers';
+import * as permissionHelpers from '@src/authz/permissionHelpers';
 import messages from './messages';
-import { getCourseUpdatesPermissions } from '@src/authz/permissionHelpers';
 
 export const useContentMenuItems = (courseId: string) => {
   const intl = useIntl();
   const waffleFlags = useWaffleFlags(courseId);
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
 
-  const { canViewCourseUpdates, canViewPagesAndResources, canViewFiles } = useCourseUserPermissions(
+  const perms = useCourseUserPermissions(
     courseId,
     {
-      ...getPagesAndResourcesPermissions(courseId),
-      ...getCourseUpdatesPermissions(courseId),
-      ...getFilesPermissions(courseId),
+      ...permissionHelpers.getCourseOutlinePermissions(courseId),
+      ...permissionHelpers.getLibraryUpdatesPermissions(courseId),
+      ...permissionHelpers.getPagesAndResourcesPermissions(courseId),
+      ...permissionHelpers.getCourseUpdatesPermissions(courseId),
+      ...permissionHelpers.getFilesPermissions(courseId),
     },
   );
 
   const items = [
-    {
-      href: `/course/${courseId}`,
-      title: intl.formatMessage(messages['header.links.outline']),
-    },
-    ...(canViewCourseUpdates ?
+    ...(perms.canViewCourse
+      ? [{
+        href: `/course/${courseId}`,
+        title: intl.formatMessage(messages['header.links.outline']),
+      }]
+      : []),
+    ...(librariesV2Enabled && perms.canManageLibraryUpdates
+      ? [{
+        href: `/course/${courseId}/libraries`,
+        title: intl.formatMessage(messages['header.links.libraries']),
+      }]
+      : []),
+    ...(perms.canViewCourseUpdates ?
       [{
         href: `/course/${courseId}/course_info`,
         title: intl.formatMessage(messages['header.links.updates']),
       }] :
       []),
-    ...(canViewPagesAndResources
+    ...(perms.canViewPagesAndResources
       ? [{
         href: getPagePath(courseId, 'true', 'tabs'),
         title: intl.formatMessage(messages['header.links.pages']),
       }]
       : []),
-    ...(canViewFiles
+    ...(perms.canViewFiles
       ? [{
         href: `/course/${courseId}/assets`,
         title: intl.formatMessage(messages['header.links.filesAndUploads']),
@@ -64,13 +67,6 @@ export const useContentMenuItems = (courseId: string) => {
     items.push({
       href: `/course/${courseId}/videos`,
       title: intl.formatMessage(messages['header.links.videoUploads']),
-    });
-  }
-
-  if (librariesV2Enabled) {
-    items.splice(1, 0, {
-      href: `/course/${courseId}/libraries`,
-      title: intl.formatMessage(messages['header.links.libraries']),
     });
   }
 
@@ -86,47 +82,54 @@ export const useSettingMenuItems = (courseId: string) => {
     If authz.enable_course_authoring flag is enabled, validate permissions using AuthZ API.
     Otherwise, fallback to existing logic.
   */
-  const {
-    isAuthzEnabled,
-    canManageAdvancedSettings,
-    canViewGradingSettings,
-    canViewScheduleAndDetails,
-  } = useCourseUserPermissions(courseId, {
-    ...getAdvancedSettingsPermissions(courseId),
-    ...getGradingPermissions(courseId),
-    ...getScheduleAndDetailsPermissions(courseId),
+  const perms = useCourseUserPermissions(courseId, {
+    ...permissionHelpers.getAdvancedSettingsPermissions(courseId),
+    ...permissionHelpers.getGradingPermissions(courseId),
+    ...permissionHelpers.getScheduleAndDetailsPermissions(courseId),
+    ...permissionHelpers.getCourseTeamPermissions(courseId),
+    ...permissionHelpers.getGroupConfigurationsPermissions(courseId),
+    ...permissionHelpers.getCertificatesPermissions(courseId),
   });
 
-  const canAccessAdvancedSettings = isAuthzEnabled
-    ? canManageAdvancedSettings
-    : legacyCanAccessAdvancedSettings;
+  // While permissions (or the authz waffle flag) are loading, don't fall back to the
+  // legacy value: it would briefly show the link (and the Settings dropdown) to users
+  // that authz then denies.
+  const canAccessAdvancedSettings = perms.isAuthzEnabled
+    ? perms.canManageAdvancedSettings
+    : !perms.isLoading && legacyCanAccessAdvancedSettings;
 
   const items = [
-    ...(canViewScheduleAndDetails
+    ...(perms.canViewScheduleAndDetails
       ? [{
         href: `/course/${courseId}/settings/details`,
         title: intl.formatMessage(messages['header.links.scheduleAndDetails']),
       }]
       : []),
-    ...(canViewGradingSettings
+    ...(perms.canViewGradingSettings
       ? [{
         href: `/course/${courseId}/settings/grading`,
         title: intl.formatMessage(messages['header.links.grading']),
       }]
       : []),
-    ...(isAuthzEnabled
+    ...(perms.canViewCourseTeam
+      ? [
+        perms.isAuthzEnabled
+          ? {
+            href: `${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`,
+            title: intl.formatMessage(messages['header.links.roles.permissions']),
+          }
+          : {
+            href: `/course/${courseId}/course_team`,
+            title: intl.formatMessage(messages['header.links.courseTeam']),
+          },
+      ]
+      : []),
+    ...(perms.canManageGroupConfigurations
       ? [{
-        href: `${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`,
-        title: intl.formatMessage(messages['header.links.roles.permissions']),
+        href: `/course/${courseId}/group_configurations`,
+        title: intl.formatMessage(messages['header.links.groupConfigurations']),
       }]
-      : [{
-        href: `/course/${courseId}/course_team`,
-        title: intl.formatMessage(messages['header.links.courseTeam']),
-      }]),
-    {
-      href: `/course/${courseId}/group_configurations`,
-      title: intl.formatMessage(messages['header.links.groupConfigurations']),
-    },
+      : []),
     ...(canAccessAdvancedSettings
       ? [{
         href: `/course/${courseId}/settings/advanced`,
@@ -134,7 +137,7 @@ export const useSettingMenuItems = (courseId: string) => {
       }] :
       []),
   ];
-  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true') {
+  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true' && perms.canManageCertificates) {
     items.push({
       href: `/course/${courseId}/certificates`,
       title: intl.formatMessage(messages['header.links.certificates']),
@@ -148,26 +151,38 @@ export const useToolsMenuItems = (courseId: string) => {
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const waffleFlags = useWaffleFlags();
 
+  const perms = useCourseUserPermissions(courseId, {
+    ...permissionHelpers.getCourseOutlinePermissions(courseId),
+    ...permissionHelpers.getChecklistsPermissions(courseId),
+    ...permissionHelpers.getImportExportPermissions(courseId),
+  });
+
   const items = [
-    {
-      href: `/course/${courseId}/import`,
-      title: intl.formatMessage(messages['header.links.import']),
-    },
-    {
-      href: `/course/${courseId}/export`,
-      title: intl.formatMessage(messages['header.links.exportCourse']),
-    },
-    ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
+    ...(perms.canImportCourse
+      ? [{
+        href: `/course/${courseId}/import`,
+        title: intl.formatMessage(messages['header.links.import']),
+      }]
+      : []),
+    ...(perms.canExportCourse
+      ? [{
+        href: `/course/${courseId}/export`,
+        title: intl.formatMessage(messages['header.links.exportCourse']),
+      }]
+      : []),
+    ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && perms.canExportTags
       ? [{
         href: `${studioBaseUrl}/course/${courseId}#export-tags`,
         title: intl.formatMessage(messages['header.links.exportTags']),
       }] :
       []),
-    {
-      href: `/course/${courseId}/checklists`,
-      title: intl.formatMessage(messages['header.links.checklists']),
-    },
-    ...(waffleFlags.enableCourseOptimizer ?
+    ...(perms.canViewChecklists
+      ? [{
+        href: `/course/${courseId}/checklists`,
+        title: intl.formatMessage(messages['header.links.checklists']),
+      }]
+      : []),
+    ...(waffleFlags.enableCourseOptimizer && perms.canEditCourseContent ?
       [{
         href: `/course/${courseId}/optimizer`,
         title: (

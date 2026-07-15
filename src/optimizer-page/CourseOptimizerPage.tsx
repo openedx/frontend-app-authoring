@@ -19,8 +19,12 @@ import { SpinnerSimple } from '@openedx/paragon/icons';
 import { Helmet } from 'react-helmet';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getCourseOutlinePermissions } from '@src/authz/permissionHelpers';
 import CourseStepper from '../generic/course-stepper';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
+import Loading from '@src/generic/Loading';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import AlertMessage from '../generic/alert-message';
 import { RequestFailureStatuses } from '../data/constants';
 import { RERUN_LINK_UPDATE_STATUSES } from './data/constants';
@@ -104,6 +108,11 @@ const CourseOptimizerPage = () => {
   const interval = useRef<number | undefined>(undefined);
   const rerunUpdateInterval = useRef<number | undefined>(undefined);
   const { courseId, courseDetails } = useCourseAuthoringContext();
+  const {
+    isLoading: isLoadingUserPermissions,
+    canEditCourseContent,
+  } = useCourseUserPermissions(courseId, getCourseOutlinePermissions(courseId));
+  const hasEditAccess = !isLoadingUserPermissions && canEditCourseContent;
   const linkCheckPresent = currentStage != null ? currentStage >= 0 : !!currentStage;
   const [showStepper, setShowStepper] = useState(false);
   const [scanResultsError, setScanResultsError] = useState<string | null>(null);
@@ -134,21 +143,30 @@ const CourseOptimizerPage = () => {
   ];
 
   useEffect(() => {
-    // when first entering the page, fetch any existing scan results
-    dispatch(fetchLinkCheckStatus(courseId));
-  }, []);
+    // when first entering the page, fetch any existing scan results,
+    // but only once the user permissions have been validated
+    if (hasEditAccess) {
+      dispatch(fetchLinkCheckStatus(courseId));
+    }
+  }, [hasEditAccess]);
 
   useEffect(() => {
     // when a scan starts, start polling for the results as long as the scan status fetched
     // signals it is still in progress
+    if (!hasEditAccess) {
+      return undefined;
+    }
     pollLinkCheckDuringScan(linkCheckInProgress, interval, dispatch, courseId);
 
     return () => {
       if (interval.current) { clearInterval(interval.current); }
     };
-  }, [linkCheckInProgress, linkCheckResult]);
+  }, [linkCheckInProgress, linkCheckResult, hasEditAccess]);
 
   useEffect(() => {
+    if (!hasEditAccess) {
+      return undefined;
+    }
     pollRerunLinkUpdateDuringUpdate(
       rerunLinkUpdateInProgress,
       rerunLinkUpdateResult,
@@ -160,7 +178,7 @@ const CourseOptimizerPage = () => {
     return () => {
       if (rerunUpdateInterval.current) { clearInterval(rerunUpdateInterval.current); }
     };
-  }, [rerunLinkUpdateInProgress, rerunLinkUpdateResult]);
+  }, [rerunLinkUpdateInProgress, rerunLinkUpdateResult, hasEditAccess]);
 
   const stepperVisibleCondition = linkCheckPresent && ((!linkCheckResult || linkCheckInProgress) && currentStage !== 2);
   useEffect(() => {
@@ -177,6 +195,14 @@ const CourseOptimizerPage = () => {
 
     return () => clearTimeout(timeout);
   }, [stepperVisibleCondition]);
+
+  if (isLoadingUserPermissions) {
+    return <Loading />;
+  }
+
+  if (!canEditCourseContent) {
+    return <PermissionDeniedAlert />;
+  }
 
   if (isLoadingDenied || isSavingDenied) {
     if (interval.current) { clearInterval(interval.current); }
