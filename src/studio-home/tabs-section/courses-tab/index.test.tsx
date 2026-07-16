@@ -156,4 +156,39 @@ describe('<CoursesTab />', () => {
     const state = store.getState();
     expect(state.studioHome.studioHomeCoursesRequestParams).toStrictEqual(studioHomeCoursesRequestParamsDefault);
   });
+
+  it('should render displayNumber in the card subtitle when it is provided', () => {
+    const courseWithDisplayNumber = {
+      ...studioHomeMock.courses[0],
+      number: '123',
+      displayNumber: 'DISP-999',
+    };
+    const customStoreData = {
+      studioHomeData: {
+        courses: [courseWithDisplayNumber],
+        numPages: 1,
+        coursesCount: 1,
+      },
+    };
+    renderComponent({}, customStoreData);
+    expect(screen.getByText(/DISP-999/)).toBeInTheDocument();
+    expect(screen.queryByText(/\/ 123 \//)).not.toBeInTheDocument();
+  });
+
+  it('should fall back to number in the card subtitle when displayNumber is empty', () => {
+    const courseWithEmptyDisplayNumber = {
+      ...studioHomeMock.courses[0],
+      number: '123',
+      displayNumber: '',
+    };
+    const customStoreData = {
+      studioHomeData: {
+        courses: [courseWithEmptyDisplayNumber],
+        numPages: 1,
+        coursesCount: 1,
+      },
+    };
+    renderComponent({}, customStoreData);
+    expect(screen.getByText(/\/ 123 \//)).toBeInTheDocument();
+  });
 });

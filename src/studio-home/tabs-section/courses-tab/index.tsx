@@ -85,6 +85,7 @@ const CardList = ({
                 org,
                 rerunLink,
                 number,
+                displayNumber,
                 run,
                 url,
               }) => (
@@ -97,7 +98,7 @@ const CardList = ({
                   lmsLink={lmsLink}
                   rerunLink={rerunLink}
                   org={org}
-                  number={number}
+                  number={displayNumber || number}
                   run={run}
                   url={url}
                   selectMode={inSelectMode ? 'single' : undefined}
