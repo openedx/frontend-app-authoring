@@ -14,23 +14,18 @@ export async function getStudioHomeData(): Promise<object> {
   return camelCaseObject(data);
 }
 
-/** Get list of courses from the deprecated non-paginated API */
-export async function getStudioHomeCourses(search: string) {
-  const { data } = await getAuthenticatedHttpClient().get(
-    `${getApiBaseUrl()}/api/contentstore/v1/home/courses${search}`,
-  );
-  return camelCaseObject(data);
-}
 /**
  * Get's studio home courses.
- * Note: We are changing /api/contentstore/v1 to /api/contentstore/v2 due to upcoming breaking changes.
- * Features such as pagination, filtering, and ordering are better handled in the new version.
- * Please refer to this PR for further details: https://github.com/openedx/edx-platform/pull/34173
+ *
+ * FC-0118 (ADR 0028/0037): migrated to the standardized v4 `home/courses`
+ * endpoint. The trailing slash is required by the DRF DefaultRouter that serves
+ * the v4 ViewSet. The deprecated non-paginated v1 `home/courses` fallback has
+ * been dropped; pagination, filtering, and ordering are handled natively by v4.
  */
 export async function getStudioHomeCoursesV2(search: string, customParams: object): Promise<object> {
   const customParamsFormat = snakeCaseObject(customParams);
   const { data } = await getAuthenticatedHttpClient().get(
-    `${getApiBaseUrl()}/api/contentstore/v2/home/courses${search}`,
+    `${getApiBaseUrl()}/api/contentstore/v4/home/courses/${search}`,
     { params: customParamsFormat },
   );
   return camelCaseObject(data);
