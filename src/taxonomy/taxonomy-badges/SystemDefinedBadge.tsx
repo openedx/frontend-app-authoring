@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Badge,
@@ -8,7 +6,7 @@ import {
 } from '@openedx/paragon';
 import messages from './messages';
 
-const SystemDefinedBadge = ({ taxonomyId }) => {
+export const SystemDefinedBadge = ({ taxonomyId }: { taxonomyId: number }) => {
   const intl = useIntl();
   const getToolTip = () => (
     <Popover id={`system-defined-tooltip-${taxonomyId}`} className="mw-300px">
@@ -27,15 +25,9 @@ const SystemDefinedBadge = ({ taxonomyId }) => {
       placement="top"
       overlay={getToolTip()}
     >
-      <Badge variant="light" className="p-1.5 font-weight-normal system-defined-badge">
+      <Badge variant="light" className="p-1.5 font-weight-normal">
         {intl.formatMessage(messages.systemDefinedBadge)}
       </Badge>
     </OverlayTrigger>
   );
 };
-
-SystemDefinedBadge.propTypes = {
-  taxonomyId: PropTypes.number.isRequired,
-};
-
-export default SystemDefinedBadge;
