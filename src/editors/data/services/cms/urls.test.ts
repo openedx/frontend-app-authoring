@@ -3,6 +3,7 @@ import {
   unit,
   libraryV1,
   block,
+  blockV1,
   blockAncestor,
   blockStudioView,
   courseAssets,
@@ -115,10 +116,20 @@ describe('cms url methods', () => {
         .toEqual(`${studioEndpointUrl}/api/xblock/v2/xblocks/${v2BlockId}/fields/`);
     });
   });
+  describe('blockV1', () => {
+    it('returns v1 REST url with studioEndpointUrl and blockId', () => {
+      expect(blockV1({ studioEndpointUrl, blockId }))
+        .toEqual(`${studioEndpointUrl}/api/contentstore/v1/xblock/${blockId}/`);
+    });
+    it('returns v2 url with studioEndpointUrl and v2BlockId', () => {
+      expect(blockV1({ studioEndpointUrl, blockId: v2BlockId }))
+        .toEqual(`${studioEndpointUrl}/api/xblock/v2/xblocks/${v2BlockId}/fields/`);
+    });
+  });
   describe('blockAncestor', () => {
     it('returns url with studioEndpointUrl, blockId and ancestor query', () => {
       expect(blockAncestor({ studioEndpointUrl, blockId }))
-        .toEqual(`${block({ studioEndpointUrl, blockId })}?fields=ancestorInfo`);
+        .toEqual(`${blockV1({ studioEndpointUrl, blockId })}?fields=ancestorInfo`);
     });
     it('throws error with studioEndpointUrl, v2 blockId and ancestor query', () => {
       expect(() => {
