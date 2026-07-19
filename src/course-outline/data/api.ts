@@ -46,13 +46,19 @@ export const getCourseLaunchApiUrl = ({
 
 export const getCourseBlockApiUrl = (courseId: string) => {
   const formattedCourseId = courseIDtoBlockID(courseId);
-  return `${getApiBaseUrl()}/xblock/${formattedCourseId}`;
+  // FC-0118: v1 xblock REST detail URL for the course's root block.
+  return `${getApiBaseUrl()}/api/contentstore/v1/xblock/${formattedCourseId}/`;
 };
 
 export const getCourseReindexApiUrl = (reindexLink: string) => `${getApiBaseUrl()}${reindexLink}`;
-export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
-export const getCourseItemApiUrl = (itemId: string) => `${getXBlockBaseApiUrl()}${itemId}`;
-export const getXBlockApiUrl = (blockId: string) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
+// FC-0118 (ADR 0028/0037): standardized v1 xblock REST endpoint. Collection URL
+// (POST here creates a block); detail URLs carry the trailing slash the DRF
+// DefaultRouter requires.
+export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/xblock/`;
+export const getCourseItemApiUrl = (itemId: string) => `${getXBlockBaseApiUrl()}${itemId}/`;
+// The outline handler (`/xblock/outline/{id}`) is a separate legacy Studio route,
+// NOT part of the v1 REST viewset, so it keeps the legacy `/xblock/` base.
+export const getXBlockApiUrl = (blockId: string) => `${getApiBaseUrl()}/xblock/outline/${blockId}`;
 export const exportTags = (courseId: string) =>
   `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
 export const createDiscussionsTopicsUrl = (courseId: string) =>
@@ -163,7 +169,7 @@ export async function getCourseLaunch({
  */
 export async function enableCourseHighlightsEmails(courseId: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseBlockApiUrl(courseId), {
+    .patch(getCourseBlockApiUrl(courseId), {
       publish: 'republish',
       metadata: {
         highlights_enabled_for_messaging: true,
@@ -205,7 +211,7 @@ export async function updateCourseSectionHighlights(
   highlights: Array<string>,
 ): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(sectionId), {
+    .patch(getCourseItemApiUrl(sectionId), {
       publish: 'republish',
       metadata: {
         highlights,
@@ -220,7 +226,7 @@ export async function updateCourseSectionHighlights(
  */
 export async function publishCourseItem(itemId: string): Promise<CourseItemUpdateResult> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(itemId), {
+    .patch(getCourseItemApiUrl(itemId), {
       publish: 'make_public',
     });
 
@@ -232,7 +238,7 @@ export async function publishCourseItem(itemId: string): Promise<CourseItemUpdat
  */
 export async function configureCourseSection(variables: ConfigureSectionData): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(variables.sectionId), {
+    .patch(getCourseItemApiUrl(variables.sectionId), {
       publish: 'republish',
       metadata: {
         // The backend expects metadata.visible_to_staff_only to either true or null
@@ -304,7 +310,7 @@ export async function configureCourseSubsection(
   });
 
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(itemId), body);
+    .patch(getCourseItemApiUrl(itemId), body);
 
   return data;
 }
@@ -329,7 +335,8 @@ export async function configureCourseUnit(variables: ConfigureUnitData): Promise
   };
   const url = getCourseItemApiUrl(variables.unitId);
   const { data } = await getAuthenticatedHttpClient()
-    .post(url, body);
+    // FC-0118: legacy POST-as-update becomes PATCH (partial_update) on v1.
+    .patch(url, body);
 
   return camelCaseObject(data);
 }
@@ -342,7 +349,7 @@ export async function editItemDisplayName({ itemId, displayName }: {
   displayName: string;
 }): Promise<CourseItemUpdateResult> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseItemApiUrl(itemId), {
+    .patch(getCourseItemApiUrl(itemId), {
       metadata: {
         display_name: displayName,
       },
@@ -405,7 +412,9 @@ export async function createCourseXblock({
   libraryContentKey,
 }: CreateCourseXBlockType) {
   const body = {
-    type,
+    // FC-0118: `type` is intentionally not sent — the v1 strict serializer does
+    // not accept it and the backend only reads `category` (which falls back to
+    // `type` here). `library_content_key` is accepted by the v1 serializer.
     boilerplate,
     category: category || type,
     parent_locator: parentLocator,
@@ -461,7 +470,7 @@ export async function setVideoSharingOption(
   videoSharingOption: string,
 ): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getCourseBlockApiUrl(courseId), {
+    .patch(getCourseBlockApiUrl(courseId), {
       metadata: {
         video_sharing_options: videoSharingOption,
       },

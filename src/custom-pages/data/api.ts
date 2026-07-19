@@ -29,8 +29,10 @@ export async function getCustomPages(courseId: string): Promise<CustomPage[]> {
  * Delete custom page for provided block.
  */
 export async function deleteCustomPage(blockId: string): Promise<void> {
+  // FC-0118 (ADR 0028/0037): standardized v1 xblock REST endpoint (trailing
+  // slash required by the DRF DefaultRouter).
   await getAuthenticatedHttpClient()
-    .delete(`${getApiBaseUrl()}/xblock/${blockId}`);
+    .delete(`${getApiBaseUrl()}/api/contentstore/v1/xblock/${blockId}/`);
 }
 
 /**
@@ -40,7 +42,9 @@ export async function addCustomPage(courseId: string): Promise<Record<string, un
   const v1CourseId = courseId.substring(7);
   const courseBlockId = `block-${v1CourseId}+type@course+block@course`;
   const { data } = await getAuthenticatedHttpClient()
-    .put(`${getApiBaseUrl()}/xblock/`, {
+    // FC-0118: creating a block is POST on the v1 collection endpoint (the
+    // legacy route accepted PUT here).
+    .post(`${getApiBaseUrl()}/api/contentstore/v1/xblock/`, {
       category: 'static_tab',
       parent_locator: courseBlockId,
     });
@@ -56,7 +60,8 @@ export async function updateCustomPage({ blockId, htmlString, metadata }: {
   metadata?: Record<string, unknown>;
 }): Promise<Record<string, unknown>> {
   const { data } = await getAuthenticatedHttpClient()
-    .put(`${getApiBaseUrl()}/xblock/${blockId}`, {
+    // FC-0118: PUT (full update) on the v1 detail endpoint (trailing slash).
+    .put(`${getApiBaseUrl()}/api/contentstore/v1/xblock/${blockId}/`, {
       id: blockId,
       data: htmlString,
       metadata,
