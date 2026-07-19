@@ -19,7 +19,10 @@ export const getCourseOutlineIndexApiUrl = (
   courseId: string,
 ) => `${getApiBaseUrl()}/api/contentstore/v1/course_index/${courseId}`;
 
-export const getCourseDetailsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_details/${courseId}`;
+// FC-0118 (ADR 0037): standardized v3 endpoint. The trailing slash is required
+// by the DRF DefaultRouter that serves the v3 ViewSet (unlike the v1 APIView).
+export const getCourseDetailsApiUrl = (courseId) =>
+  `${getApiBaseUrl()}/api/contentstore/v3/course_details/${courseId}/`;
 
 export const getCourseBestPracticesApiUrl = ({
   courseId,
