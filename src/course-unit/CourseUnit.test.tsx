@@ -391,7 +391,7 @@ describe('<CourseUnit />', () => {
     await user.click(deleteButton);
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.makePublic,
       })
       .reply(200, { dummy: 'value' });
@@ -553,7 +553,7 @@ describe('<CourseUnit />', () => {
       .replyOnce(200, { locator: '1234567890' });
 
     axiosMock
-      .onPost(getCourseItemApiUrl(blockId), {
+      .onPatch(getCourseItemApiUrl(blockId), {
         publish: PUBLISH_TYPES.makePublic,
       })
       .reply(200, { dummy: 'value' });
@@ -677,7 +677,7 @@ describe('<CourseUnit />', () => {
     const newDisplayName = `${unitDisplayName} new`;
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         metadata: {
           display_name: newDisplayName,
         },
@@ -734,7 +734,7 @@ describe('<CourseUnit />', () => {
     const user = userEvent.setup();
     const { courseKey, locator } = courseCreateXblockMock;
     axiosMock
-      .onPost(postXBlockBaseApiUrl(), { type: 'video', category: 'video', parent_locator: blockId })
+      .onPost(postXBlockBaseApiUrl(), { category: 'video', parent_locator: blockId })
       .reply(500, {});
     render(<RootWrapper />);
 
@@ -749,12 +749,12 @@ describe('<CourseUnit />', () => {
   it('handle creating Problem xblock and showing editor modal', async () => {
     const user = userEvent.setup();
     axiosMock
-      .onPost(postXBlockBaseApiUrl(), { type: 'problem', category: 'problem', parent_locator: blockId })
+      .onPost(postXBlockBaseApiUrl(), { category: 'problem', parent_locator: blockId })
       .reply(200, courseCreateXblockMock);
     render(<RootWrapper />);
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.makePublic,
       })
       .reply(200, { dummy: 'value' });
@@ -914,7 +914,7 @@ describe('<CourseUnit />', () => {
     const newDisplayName = `${unitDisplayName} new`;
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         metadata: {
           display_name: newDisplayName,
         },
@@ -963,7 +963,7 @@ describe('<CourseUnit />', () => {
     const waffleSpy = mockWaffleFlags({ useVideoGalleryFlow: true });
 
     axiosMock
-      .onPost(postXBlockBaseApiUrl(), { type: 'video', category: 'video', parent_locator: blockId })
+      .onPost(postXBlockBaseApiUrl(), { category: 'video', parent_locator: blockId })
       .reply(200, courseCreateXblockMock);
     render(<RootWrapper />);
 
@@ -973,7 +973,7 @@ describe('<CourseUnit />', () => {
     await user.click(publishButton);
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.makePublic,
       })
       .reply(200, { dummy: 'value' });
@@ -1054,7 +1054,7 @@ describe('<CourseUnit />', () => {
 
   it('handles creating Video xblock and showing editor modal', async () => {
     axiosMock
-      .onPost(postXBlockBaseApiUrl(), { type: 'video', category: 'video', parent_locator: blockId })
+      .onPost(postXBlockBaseApiUrl(), { category: 'video', parent_locator: blockId })
       .reply(200, courseCreateXblockMock);
     const user = userEvent.setup();
     render(<RootWrapper />);
@@ -1064,7 +1064,7 @@ describe('<CourseUnit />', () => {
     );
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.makePublic,
       })
       .reply(200, { dummy: 'value' });
@@ -1247,7 +1247,7 @@ describe('<CourseUnit />', () => {
     expect(visibilityCheckbox).not.toBeChecked();
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.republish,
         metadata: { visible_to_staff_only: true },
       })
@@ -1302,7 +1302,7 @@ describe('<CourseUnit />', () => {
     await user.click(makeVisibilityBtn);
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.republish,
         metadata: { visible_to_staff_only: null },
       })
@@ -1346,7 +1346,7 @@ describe('<CourseUnit />', () => {
     });
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.makePublic,
       })
       .reply(200, { dummy: 'value' });
@@ -1428,7 +1428,7 @@ describe('<CourseUnit />', () => {
     });
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.discardChanges,
       })
       .reply(200, { dummy: 'value' });
@@ -1505,7 +1505,7 @@ describe('<CourseUnit />', () => {
     expect(group1Checkbox).toBeChecked();
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(courseSectionVerticalMock.xblock_info.id), {
+      .onPatch(getXBlockBaseApiUrl(courseSectionVerticalMock.xblock_info.id), {
         publish: 'republish',
         metadata: { visible_to_staff_only: true, group_access: { 50: [2] }, discussion_enabled: true },
       })
@@ -1996,7 +1996,7 @@ describe('<CourseUnit />', () => {
       render(<RootWrapper />);
 
       axiosMock
-        .onPatch(postXBlockBaseApiUrl())
+        .onPatch(getXBlockBaseApiUrl(blockId))
         .reply(200, {});
 
       axiosMock
@@ -2060,7 +2060,7 @@ describe('<CourseUnit />', () => {
       render(<RootWrapper />);
 
       axiosMock
-        .onPatch(postXBlockBaseApiUrl())
+        .onPatch(getXBlockBaseApiUrl(blockId))
         .reply(200, {});
 
       await executeThunk(
@@ -2114,7 +2114,7 @@ describe('<CourseUnit />', () => {
       render(<RootWrapper />);
 
       axiosMock
-        .onPatch(postXBlockBaseApiUrl())
+        .onPatch(getXBlockBaseApiUrl(blockId))
         .reply(200, {});
 
       await executeThunk(
@@ -2197,7 +2197,7 @@ describe('<CourseUnit />', () => {
     it('handles submit xblock restrict access data when save button is clicked', async () => {
       const user = userEvent.setup();
       axiosMock
-        .onPost(getXBlockBaseApiUrl(id), {
+        .onPatch(getXBlockBaseApiUrl(id), {
           publish: PUBLISH_TYPES.republish,
           metadata: { visible_to_staff_only: false, group_access: { 970807507: [1959537066] } },
         })
@@ -2251,8 +2251,8 @@ describe('<CourseUnit />', () => {
       await user.click(saveModalBtnText);
 
       await waitFor(() => {
-        expect(axiosMock.history.post.length).toBeGreaterThan(0);
-        expect(axiosMock.history.post[0].url).toBe(getXBlockBaseApiUrl(id));
+        expect(axiosMock.history.patch.length).toBeGreaterThan(0);
+        expect(axiosMock.history.patch[0].url).toBe(getXBlockBaseApiUrl(id));
       });
 
       expect(screen.queryByTestId('configure-modal')).not.toBeInTheDocument();
@@ -2698,7 +2698,7 @@ describe('<CourseUnit />', () => {
     await user.click(settingsTab);
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.republish,
         metadata: { visible_to_staff_only: true, discussion_enabled: true },
       })
@@ -2730,7 +2730,7 @@ describe('<CourseUnit />', () => {
     expect(await screen.findByRole('heading', { name: /visible to staff only/i })).toBeInTheDocument();
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.republish,
         metadata: { visible_to_staff_only: null, discussion_enabled: true },
       })
@@ -2798,7 +2798,7 @@ describe('<CourseUnit />', () => {
     await user.click(settingsTab);
 
     axiosMock
-      .onPost(getXBlockBaseApiUrl(blockId), {
+      .onPatch(getXBlockBaseApiUrl(blockId), {
         publish: PUBLISH_TYPES.republish,
         metadata: {
           visible_to_staff_only: null,
@@ -2839,7 +2839,7 @@ describe('<CourseUnit />', () => {
         ...courseSectionVerticalMock,
       });
     axiosMock
-      .onPost(getXBlockBaseApiUrl(courseSectionVerticalMock.xblock_info.id))
+      .onPatch(getXBlockBaseApiUrl(courseSectionVerticalMock.xblock_info.id))
       .reply(200, {
         ...courseSectionVerticalMock,
       });
@@ -2898,11 +2898,11 @@ describe('<CourseUnit />', () => {
 
     // Check that the group access is being updated
     await waitFor(() => {
-      expect(axiosMock.history.post.length).toBeGreaterThan(0);
+      expect(axiosMock.history.patch.length).toBeGreaterThan(0);
     });
 
-    expect(axiosMock.history.post[0].url).toBe(getXBlockBaseApiUrl(courseSectionVerticalMock.xblock_info.id));
-    expect(axiosMock.history.post[0].data).toMatch(/"group_access":\{"10":\[1,2\]\}/);
+    expect(axiosMock.history.patch[0].url).toBe(getXBlockBaseApiUrl(courseSectionVerticalMock.xblock_info.id));
+    expect(axiosMock.history.patch[0].data).toMatch(/"group_access":\{"10":\[1,2\]\}/);
   });
 
   it('should one group in the visibility field in the unit sidebar', async () => {
@@ -3360,7 +3360,6 @@ describe('<CourseUnit />', () => {
         expect(JSON.parse(axiosMock.history.post[0].data)).toMatchObject({
           category: blockType,
           parent_locator: blockId,
-          type: blockType,
         });
       });
     });
@@ -3432,7 +3431,6 @@ describe('<CourseUnit />', () => {
             category: blockType,
             parent_locator: blockId,
             boilerplate: template.boilerplate,
-            ...(blockType !== 'openassessment' ? { type: blockType } : {}),
           });
         });
       });
@@ -3464,7 +3462,6 @@ describe('<CourseUnit />', () => {
         expect(JSON.parse(axiosMock.history.post[0].data)).toMatchObject({
           category: blockType,
           parent_locator: blockId,
-          type: blockType,
         });
       });
     });
@@ -3489,7 +3486,6 @@ describe('<CourseUnit />', () => {
         category: 'html',
         parent_locator: blockId,
         library_content_key: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
-        type: 'library_v2',
       });
     });
   });

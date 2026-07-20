@@ -708,7 +708,7 @@ describe('<CourseOutline />', () => {
     const { findByLabelText } = renderComponent();
 
     axiosMock
-      .onPost(getCourseBlockApiUrl(courseId), {
+      .onPatch(getCourseBlockApiUrl(courseId), {
         metadata: {
           video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
         },
@@ -721,7 +721,7 @@ describe('<CourseOutline />', () => {
 
     // The video sharing POST is the one with the expected data.
     // Find it by data content rather than assuming a fixed index.
-    const videoSharingPost = axiosMock.history.post.find(
+    const videoSharingPost = axiosMock.history.patch.find(
       (entry: any) => entry.data && entry.data.includes('video_sharing_options'),
     );
     expect(videoSharingPost).toBeDefined();
@@ -738,7 +738,7 @@ describe('<CourseOutline />', () => {
     renderComponent();
 
     axiosMock
-      .onPost(getCourseBlockApiUrl(courseId), {
+      .onPatch(getCourseBlockApiUrl(courseId), {
         metadata: {
           video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
         },
@@ -749,7 +749,7 @@ describe('<CourseOutline />', () => {
       async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
 
-    const videoSharingPost = axiosMock.history.post.find(
+    const videoSharingPost = axiosMock.history.patch.find(
       (entry: any) => entry.data && entry.data.includes('video_sharing_options'),
     );
     expect(videoSharingPost).toBeDefined();
@@ -955,7 +955,6 @@ describe('<CourseOutline />', () => {
     );
     expect(newUnitPost).toBeDefined();
     expect(JSON.parse(newUnitPost!.data)).toEqual({
-      type: COURSE_BLOCK_NAMES.vertical.id,
       category: COURSE_BLOCK_NAMES.vertical.id,
       parent_locator: subsection.id,
       display_name: COURSE_BLOCK_NAMES.vertical.name,
@@ -1065,7 +1064,7 @@ describe('<CourseOutline />', () => {
 
     axiosMock.reset();
     axiosMock
-      .onPost(getCourseBlockApiUrl(courseId), {
+      .onPatch(getCourseBlockApiUrl(courseId), {
         publish: 'republish',
         metadata: {
           highlights_enabled_for_messaging: true,
@@ -1178,7 +1177,7 @@ describe('<CourseOutline />', () => {
         .reply(200, courseLaunchMock);
       // Rename-specific handlers
       axiosMock
-        .onPost(getCourseItemApiUrl(item.id))
+        .onPatch(getCourseItemApiUrl(item.id))
         .reply(200, { dummy: 'value' });
 
       // mock section, subsection and unit name and check within the elements.
@@ -1213,7 +1212,7 @@ describe('<CourseOutline />', () => {
       fireEvent.change(editField, { target: { value: newName } });
       await user.keyboard('{enter}');
       expect(
-        axiosMock.history.post[axiosMock.history.post.length - 1].data,
+        axiosMock.history.patch[axiosMock.history.patch.length - 1].data,
       ).toBe(JSON.stringify({
         metadata: {
           display_name: newName,
@@ -1432,7 +1431,7 @@ describe('<CourseOutline />', () => {
       ).toHaveTextContent(cardHeaderMessages.statusBadgeDraft.defaultMessage);
 
       axiosMock
-        .onPost(getCourseItemApiUrl(item.id), {
+        .onPatch(getCourseItemApiUrl(item.id), {
           publish: 'make_public',
         })
         .reply(200, { dummy: 'value' });
@@ -1500,7 +1499,7 @@ describe('<CourseOutline />', () => {
     expect(releaseDatePicker).toHaveValue('08/10/2023');
 
     axiosMock
-      .onPost(getCourseItemApiUrl(section.id), {
+      .onPatch(getCourseItemApiUrl(section.id), {
         publish: 'republish',
         metadata: {
           visible_to_staff_only: true,
@@ -1521,7 +1520,7 @@ describe('<CourseOutline />', () => {
     const saveButton = await findByTestId('configure-save-button');
     await act(async () => fireEvent.click(saveButton));
 
-    const sectionCfgPost = axiosMock.history.post.find(
+    const sectionCfgPost = axiosMock.history.patch.find(
       (entry: any) => entry.data && entry.data.includes('visible_to_staff_only'),
     );
     expect(sectionCfgPost).toBeDefined();
@@ -1571,7 +1570,7 @@ describe('<CourseOutline />', () => {
     };
 
     axiosMock
-      .onPost(getCourseItemApiUrl(subsection.id), expectedRequestData)
+      .onPatch(getCourseItemApiUrl(subsection.id), expectedRequestData)
       .reply(200, { dummy: 'value' });
 
     const [currentSection] = await findAllByTestId('section-card');
@@ -1630,7 +1629,7 @@ describe('<CourseOutline />', () => {
     await user.click(saveButton);
 
     // verify request
-    const subCfgPost = axiosMock.history.post.find(
+    const subCfgPost = axiosMock.history.patch.find(
       (entry: any) => entry.data && entry.data.includes(expectedRequestData.graderType),
     );
     expect(subCfgPost).toBeDefined();
@@ -1698,7 +1697,7 @@ describe('<CourseOutline />', () => {
     };
 
     axiosMock
-      .onPost(getCourseItemApiUrl(subsection.id), expectedRequestData)
+      .onPatch(getCourseItemApiUrl(subsection.id), expectedRequestData)
       .reply(200, { dummy: 'value' });
 
     const [currentSection] = await findAllByTestId('section-card');
@@ -1775,7 +1774,7 @@ describe('<CourseOutline />', () => {
     await user.click(saveButton);
 
     // verify request
-    const cfgPosta = axiosMock.history.post.find(
+    const cfgPosta = axiosMock.history.patch.find(
       (entry: any) => entry.data && entry.data.includes(expectedRequestData.graderType),
     );
     expect(cfgPosta).toBeDefined();
@@ -1849,7 +1848,7 @@ describe('<CourseOutline />', () => {
     };
 
     axiosMock
-      .onPost(getCourseItemApiUrl(subsection.id), expectedRequestData)
+      .onPatch(getCourseItemApiUrl(subsection.id), expectedRequestData)
       .reply(200, { dummy: 'value' });
 
     const [currentSection] = await findAllByTestId('section-card');
@@ -1904,7 +1903,7 @@ describe('<CourseOutline />', () => {
     await user.click(saveButton);
 
     // verify request
-    const cfgPostb = axiosMock.history.post.find(
+    const cfgPostb = axiosMock.history.patch.find(
       (entry: any) => entry.data && entry.data.includes(expectedRequestData.graderType),
     );
     expect(cfgPostb).toBeDefined();
@@ -1960,7 +1959,7 @@ describe('<CourseOutline />', () => {
     };
 
     axiosMock
-      .onPost(getCourseItemApiUrl(subsection.id), expectedRequestData)
+      .onPatch(getCourseItemApiUrl(subsection.id), expectedRequestData)
       .reply(200, { dummy: 'value' });
 
     const [currentSection] = await findAllByTestId('section-card');
@@ -2016,7 +2015,7 @@ describe('<CourseOutline />', () => {
     await user.click(saveButton);
 
     // verify request
-    const cfgPostc = axiosMock.history.post.find(
+    const cfgPostc = axiosMock.history.patch.find(
       (entry: any) => entry.data && entry.data.includes(expectedRequestData.graderType),
     );
     expect(cfgPostc).toBeDefined();
@@ -2071,7 +2070,7 @@ describe('<CourseOutline />', () => {
     };
 
     axiosMock
-      .onPost(getCourseItemApiUrl(subsection.id), expectedRequestData)
+      .onPatch(getCourseItemApiUrl(subsection.id), expectedRequestData)
       .reply(200, { dummy: 'value' });
 
     const [, currentSection] = await findAllByTestId('section-card');
@@ -2125,7 +2124,7 @@ describe('<CourseOutline />', () => {
     await user.click(saveButton);
 
     // verify request
-    const noSpecialPost = axiosMock.history.post.find(
+    const noSpecialPost = axiosMock.history.patch.find(
       (entry: any) => entry.data && entry.data.includes(expectedRequestData.graderType),
     );
     expect(noSpecialPost).toBeDefined();
@@ -2169,7 +2168,7 @@ describe('<CourseOutline />', () => {
     const isVisibleToStaffOnly = true;
 
     axiosMock
-      .onPost(getCourseItemApiUrl(unit.id), {
+      .onPatch(getCourseItemApiUrl(unit.id), {
         publish: 'republish',
         metadata: {
           visible_to_staff_only: isVisibleToStaffOnly,
@@ -2297,7 +2296,7 @@ describe('<CourseOutline />', () => {
     ];
 
     axiosMock
-      .onPost(getCourseItemApiUrl(section.id), {
+      .onPatch(getCourseItemApiUrl(section.id), {
         publish: 'republish',
         metadata: {
           highlights,

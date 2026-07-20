@@ -42,15 +42,28 @@ export const returnUrl = ({
   return '';
 };
 
+// Legacy Studio xblock detail base. Kept for the handler/view sub-routes
+// (`/studio_view`, `/handler/...`) that are NOT served by the v1 REST viewset
+// and are appended onto this URL by `blockStudioView` / `videoTranscripts`.
 export const block = (({ studioEndpointUrl, blockId }) => (
   blockId.startsWith('lb:')
     ? `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/fields/`
     : `${studioEndpointUrl}/xblock/${blockId}`
 )) satisfies UrlFunction;
 
+// FC-0118 (ADR 0028/0037): standardized v1 xblock REST detail URL, for CRUD
+// (retrieve/update/delete). The trailing slash is required by the DRF
+// DefaultRouter. `lb:` library blocks keep the v2 library xblock API.
+export const blockV1 = (({ studioEndpointUrl, blockId }) => (
+  blockId.startsWith('lb:')
+    ? `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/fields/`
+    : `${studioEndpointUrl}/api/contentstore/v1/xblock/${blockId}/`
+)) satisfies UrlFunction;
+
 export const blockAncestor = (({ studioEndpointUrl, blockId }) => {
   if (blockId.includes('block-v1')) {
-    return `${block({ studioEndpointUrl, blockId })}?fields=ancestorInfo`;
+    // v1 retrieve honours the legacy `?fields=ancestorInfo` pass-through.
+    return `${blockV1({ studioEndpointUrl, blockId })}?fields=ancestorInfo`;
   }
   throw new Error('Block ancestor not available (and not needed) for V2 blocks');
 }) satisfies UrlFunction;

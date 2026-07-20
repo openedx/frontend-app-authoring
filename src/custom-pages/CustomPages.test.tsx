@@ -110,9 +110,9 @@ describe('CustomPages', () => {
   });
 
   it('should add new page when "add a new page button" is clicked', async () => {
-    const xblockAddUrl = `${getApiBaseUrl()}/xblock/`;
+    const xblockAddUrl = `${getApiBaseUrl()}/api/contentstore/v1/xblock/`;
     axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
-    axiosMock.onPut(xblockAddUrl).reply(200, generateNewPageApiResponse());
+    axiosMock.onPost(xblockAddUrl).reply(200, generateNewPageApiResponse());
 
     renderComponent();
     const addButton = await screen.findByTestId('body-add-button');
@@ -121,7 +121,7 @@ describe('CustomPages', () => {
     fireEvent.click(addButton);
 
     await waitFor(() => {
-      expect(axiosMock.history.put.length).toBeGreaterThanOrEqual(1);
+      expect(axiosMock.history.post.length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -166,7 +166,7 @@ describe('CustomPages', () => {
 
   it('should delete page on successful delete', async () => {
     const pageId = 'mOckID1';
-    const xblockEditUrl = `${getApiBaseUrl()}/xblock/${pageId}`;
+    const xblockEditUrl = `${getApiBaseUrl()}/api/contentstore/v1/xblock/${pageId}/`;
     axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
     axiosMock.onDelete(xblockEditUrl).reply(204);
 
@@ -182,7 +182,7 @@ describe('CustomPages', () => {
 
   it('should show error alert on delete failure', async () => {
     const pageId = 'mOckID1';
-    const xblockEditUrl = `${getApiBaseUrl()}/xblock/${pageId}`;
+    const xblockEditUrl = `${getApiBaseUrl()}/api/contentstore/v1/xblock/${pageId}/`;
     axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
     axiosMock.onDelete(xblockEditUrl).reply(500);
 
@@ -250,7 +250,7 @@ describe('CustomPages', () => {
 
   it('should save visibility on successful toggle', async () => {
     const pageId = 'mOckID1';
-    const xblockEditUrl = `${getApiBaseUrl()}/xblock/${pageId}`;
+    const xblockEditUrl = `${getApiBaseUrl()}/api/contentstore/v1/xblock/${pageId}/`;
     axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
     axiosMock.onPut(xblockEditUrl).reply(200, {});
 
@@ -265,7 +265,7 @@ describe('CustomPages', () => {
 
   it('should show error alert on visibility save failure', async () => {
     const pageId = 'mOckID1';
-    const xblockEditUrl = `${getApiBaseUrl()}/xblock/${pageId}`;
+    const xblockEditUrl = `${getApiBaseUrl()}/api/contentstore/v1/xblock/${pageId}/`;
     axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
     axiosMock.onPut(xblockEditUrl).reply(500);
 
