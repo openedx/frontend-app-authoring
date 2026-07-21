@@ -83,6 +83,7 @@ const CardList = ({
                 displayName,
                 lmsLink,
                 org,
+                displayOrg,
                 rerunLink,
                 number,
                 displayNumber,
@@ -97,7 +98,7 @@ const CardList = ({
                   displayName={displayName}
                   lmsLink={lmsLink}
                   rerunLink={rerunLink}
-                  org={org}
+                  org={displayOrg || org}
                   number={displayNumber || number}
                   run={run}
                   url={url}

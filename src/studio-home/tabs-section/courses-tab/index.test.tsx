@@ -191,4 +191,39 @@ describe('<CoursesTab />', () => {
     renderComponent({}, customStoreData);
     expect(screen.getByText(/\/ 123 \//)).toBeInTheDocument();
   });
+
+  it('should render displayOrg in the card subtitle when it is provided', () => {
+    const courseWithDisplayOrg = {
+      ...studioHomeMock.courses[0],
+      org: 'HarvardX',
+      displayOrg: 'Harvard University',
+    };
+    const customStoreData = {
+      studioHomeData: {
+        courses: [courseWithDisplayOrg],
+        numPages: 1,
+        coursesCount: 1,
+      },
+    };
+    renderComponent({}, customStoreData);
+    expect(screen.getByText(/Harvard University \//)).toBeInTheDocument();
+    expect(screen.queryByText(/HarvardX \//)).not.toBeInTheDocument();
+  });
+
+  it('should fall back to org in the card subtitle when displayOrg is empty', () => {
+    const courseWithEmptyDisplayOrg = {
+      ...studioHomeMock.courses[0],
+      org: 'HarvardX',
+      displayOrg: '',
+    };
+    const customStoreData = {
+      studioHomeData: {
+        courses: [courseWithEmptyDisplayOrg],
+        numPages: 1,
+        coursesCount: 1,
+      },
+    };
+    renderComponent({}, customStoreData);
+    expect(screen.getByText(/HarvardX \//)).toBeInTheDocument();
+  });
 });
