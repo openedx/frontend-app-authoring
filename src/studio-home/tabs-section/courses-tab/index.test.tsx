@@ -138,14 +138,7 @@ describe('<CoursesTab />', () => {
       number: '123',
       displayNumber: 'DISP-999',
     };
-    const customStoreData = {
-      studioHomeData: {
-        courses: [courseWithDisplayNumber],
-        numPages: 1,
-        coursesCount: 1,
-      },
-    };
-    renderComponent({}, customStoreData);
+    renderComponent({ coursesDataItems: [courseWithDisplayNumber] });
     expect(screen.getByText(/DISP-999/)).toBeInTheDocument();
     expect(screen.queryByText(/\/ 123 \//)).not.toBeInTheDocument();
   });
@@ -156,14 +149,7 @@ describe('<CoursesTab />', () => {
       number: '123',
       displayNumber: '',
     };
-    const customStoreData = {
-      studioHomeData: {
-        courses: [courseWithEmptyDisplayNumber],
-        numPages: 1,
-        coursesCount: 1,
-      },
-    };
-    renderComponent({}, customStoreData);
+    renderComponent({ coursesDataItems: [courseWithEmptyDisplayNumber] });
     expect(screen.getByText(/\/ 123 \//)).toBeInTheDocument();
   });
 
@@ -173,14 +159,7 @@ describe('<CoursesTab />', () => {
       org: 'HarvardX',
       displayOrg: 'Harvard University',
     };
-    const customStoreData = {
-      studioHomeData: {
-        courses: [courseWithDisplayOrg],
-        numPages: 1,
-        coursesCount: 1,
-      },
-    };
-    renderComponent({}, customStoreData);
+    renderComponent({ coursesDataItems: [courseWithDisplayOrg] });
     expect(screen.getByText(/Harvard University \//)).toBeInTheDocument();
     expect(screen.queryByText(/HarvardX \//)).not.toBeInTheDocument();
   });
@@ -191,14 +170,7 @@ describe('<CoursesTab />', () => {
       org: 'HarvardX',
       displayOrg: '',
     };
-    const customStoreData = {
-      studioHomeData: {
-        courses: [courseWithEmptyDisplayOrg],
-        numPages: 1,
-        coursesCount: 1,
-      },
-    };
-    renderComponent({}, customStoreData);
+    renderComponent({ coursesDataItems: [courseWithEmptyDisplayOrg] });
     expect(screen.getByText(/HarvardX \//)).toBeInTheDocument();
   });
 });

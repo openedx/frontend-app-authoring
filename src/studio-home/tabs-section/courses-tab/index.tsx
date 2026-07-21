@@ -31,7 +31,9 @@ interface Props {
     displayName: string;
     lmsLink: string | null;
     number: string;
+    displayNumber?: string | null;
     org: string;
+    displayOrg?: string | null;
     rerunLink: string | null;
     run: string;
     url: string;
