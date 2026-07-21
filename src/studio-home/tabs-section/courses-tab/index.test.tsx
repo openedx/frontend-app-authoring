@@ -156,4 +156,74 @@ describe('<CoursesTab />', () => {
     const state = store.getState();
     expect(state.studioHome.studioHomeCoursesRequestParams).toStrictEqual(studioHomeCoursesRequestParamsDefault);
   });
+
+  it('should render displayNumber in the card subtitle when it is provided', () => {
+    const courseWithDisplayNumber = {
+      ...studioHomeMock.courses[0],
+      number: '123',
+      displayNumber: 'DISP-999',
+    };
+    const customStoreData = {
+      studioHomeData: {
+        courses: [courseWithDisplayNumber],
+        numPages: 1,
+        coursesCount: 1,
+      },
+    };
+    renderComponent({}, customStoreData);
+    expect(screen.getByText(/DISP-999/)).toBeInTheDocument();
+    expect(screen.queryByText(/\/ 123 \//)).not.toBeInTheDocument();
+  });
+
+  it('should fall back to number in the card subtitle when displayNumber is empty', () => {
+    const courseWithEmptyDisplayNumber = {
+      ...studioHomeMock.courses[0],
+      number: '123',
+      displayNumber: '',
+    };
+    const customStoreData = {
+      studioHomeData: {
+        courses: [courseWithEmptyDisplayNumber],
+        numPages: 1,
+        coursesCount: 1,
+      },
+    };
+    renderComponent({}, customStoreData);
+    expect(screen.getByText(/\/ 123 \//)).toBeInTheDocument();
+  });
+
+  it('should render displayOrg in the card subtitle when it is provided', () => {
+    const courseWithDisplayOrg = {
+      ...studioHomeMock.courses[0],
+      org: 'HarvardX',
+      displayOrg: 'Harvard University',
+    };
+    const customStoreData = {
+      studioHomeData: {
+        courses: [courseWithDisplayOrg],
+        numPages: 1,
+        coursesCount: 1,
+      },
+    };
+    renderComponent({}, customStoreData);
+    expect(screen.getByText(/Harvard University \//)).toBeInTheDocument();
+    expect(screen.queryByText(/HarvardX \//)).not.toBeInTheDocument();
+  });
+
+  it('should fall back to org in the card subtitle when displayOrg is empty', () => {
+    const courseWithEmptyDisplayOrg = {
+      ...studioHomeMock.courses[0],
+      org: 'HarvardX',
+      displayOrg: '',
+    };
+    const customStoreData = {
+      studioHomeData: {
+        courses: [courseWithEmptyDisplayOrg],
+        numPages: 1,
+        coursesCount: 1,
+      },
+    };
+    renderComponent({}, customStoreData);
+    expect(screen.getByText(/HarvardX \//)).toBeInTheDocument();
+  });
 });
