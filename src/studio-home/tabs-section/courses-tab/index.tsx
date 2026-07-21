@@ -138,8 +138,10 @@ const CoursesTab: React.FC<Props> = ({
                 displayName,
                 lmsLink,
                 org,
+                displayOrg,
                 rerunLink,
                 number,
+                displayNumber,
                 run,
                 url,
               }) => (
@@ -149,8 +151,8 @@ const CoursesTab: React.FC<Props> = ({
                   displayName={displayName}
                   lmsLink={lmsLink}
                   rerunLink={rerunLink}
-                  org={org}
-                  number={number}
+                  org={displayOrg || org}
+                  number={displayNumber || number}
                   run={run}
                   url={url}
                 />
