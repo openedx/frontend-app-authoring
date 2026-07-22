@@ -1,6 +1,7 @@
 import * as reactRedux from 'react-redux';
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
 
 import {
   fireEvent,
@@ -26,6 +27,18 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
 }));
 
+jest.mock('@src/authz/data/apiHooks', () => ({
+  useUserPermissions: jest.fn(),
+}));
+
+/** Set the result of the scope-less "can view any team" permission check. */
+const mockViewTeamPermissions = (data: Record<string, boolean>) => {
+  jest.mocked(useUserPermissions).mockReturnValue({
+    isLoading: false,
+    data,
+  } as unknown as ReturnType<typeof useUserPermissions>);
+};
+
 /** Helper function to get the Studio header in the rendered HTML */
 function getHeaderElement(): HTMLElement {
   const header = screen.getByRole('banner');
@@ -39,6 +52,7 @@ describe('<StudioHome />', () => {
       const mocks = initializeMocks();
       mocks.axiosMock.onGet(getStudioHomeApiUrl()).reply(404);
       mockUseSelector.mockReturnValue({ studioHomeLoadingStatus: RequestStatus.FAILED });
+      mockViewTeamPermissions({});
     });
 
     it('should render fetch error', async () => {
@@ -59,6 +73,7 @@ describe('<StudioHome />', () => {
       const mocks = initializeMocks();
       mocks.axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
       mockUseSelector.mockReturnValue(studioHomeMock);
+      mockViewTeamPermissions({});
     });
 
     it('should render page and page title correctly', async () => {
@@ -90,17 +105,37 @@ describe('<StudioHome />', () => {
       within(header).getByRole('button', { name: 'New course' }); // will error if not found
     });
 
-    it('should render roles and permissions button when authz is enabled', async () => {
+    it.each([
+      ['course', { canViewCourseTeam: true, canViewLibraryTeam: false }],
+      ['library', { canViewCourseTeam: false, canViewLibraryTeam: true }],
+    ])('should render roles and permissions button when authz is enabled and the user can view a %s team', async (
+      _team,
+      permissions,
+    ) => {
       setConfig({
         ...getConfig(),
         ADMIN_CONSOLE_URL: 'https://admin-console.example.com',
       });
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      mockViewTeamPermissions(permissions);
 
       render(<StudioHome />, { path: '/home' });
       const header = getHeaderElement();
       const rolesButton = within(header).getByRole('link', { name: 'Roles and permissions' });
       expect(rolesButton).toHaveAttribute('href', 'https://admin-console.example.com/authz');
+    });
+
+    it('should not render roles and permissions button when authz is enabled but the user cannot manage any team', async () => {
+      setConfig({
+        ...getConfig(),
+        ADMIN_CONSOLE_URL: 'https://admin-console.example.com',
+      });
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      mockViewTeamPermissions({ canViewCourseTeam: false, canViewLibraryTeam: false });
+
+      render(<StudioHome />, { path: '/home' });
+      const header = getHeaderElement();
+      expect(within(header).queryByRole('link', { name: 'Roles and permissions' })).not.toBeInTheDocument();
     });
 
     it('should not render roles and permissions button when authz is disabled', async () => {
@@ -109,6 +144,7 @@ describe('<StudioHome />', () => {
         ADMIN_CONSOLE_URL: 'https://admin-console.example.com',
       });
       mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+      mockViewTeamPermissions({ canViewCourseTeam: true, canViewLibraryTeam: true });
 
       render(<StudioHome />, { path: '/home' });
       const header = getHeaderElement();
