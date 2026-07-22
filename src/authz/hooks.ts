@@ -44,11 +44,12 @@ export const useCourseUserPermissions = <Query extends PermissionValidationQuery
   const waffleFlags = useWaffleFlags(courseId);
   const isWaffleFlagsLoading: boolean = waffleFlags?.isLoading ?? true;
   const isAuthzEnabled: boolean = waffleFlags?.enableAuthzCourseAuthoring ?? false;
+  const shouldValidatePermissions = isAuthzEnabled && !!courseId;
 
   const {
     isLoading: isLoadingUserPermissions,
     data: userPermissions,
-  } = useUserPermissions(permissions, isAuthzEnabled);
+  } = useUserPermissions(permissions, shouldValidatePermissions);
 
   const isLoading = isWaffleFlagsLoading || (isAuthzEnabled && isLoadingUserPermissions);
 
