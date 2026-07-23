@@ -121,7 +121,7 @@ const CardTitle: React.FC<CardTitleProps> = ({
   return getTitle();
 };
 
-const ExportButton = ({ exportUrl, itemId }: { exportUrl: string; itemId?: string }) => {
+const ExportButton = ({ exportUrl, itemId }: { exportUrl: string; itemId?: string; }) => {
   const intl = useIntl();
   const label = intl.formatMessage(messages.exportLibraryBtnText);
   return (
@@ -339,9 +339,7 @@ export const CardItem: React.FC<Props> = ({
               />
             ) :
             exportUrl ?
-            (
-              <ExportButton exportUrl={exportUrl} itemId={itemId} />
-            ) :
+            <ExportButton exportUrl={exportUrl} itemId={itemId} /> :
             (
               <CardMenu
                 showMenu={showActionsMenu}
