@@ -19,6 +19,7 @@ import { useLibrariesV1Data } from '@src/studio-home/data/apiHooks';
 import { CardItem, MakeLinkOrSpan, PrevToNextName } from '@src/studio-home/card-item';
 import SearchFilterWidget from '@src/search-manager/SearchFilterWidget';
 import type { LibraryV1Data } from '@src/studio-home/data/api';
+import { getLibraryV1ExportUrl } from '@src/studio-home/data/api';
 import { parseLibraryKey } from '@src/generic/key-utils';
 
 import messages from '../messages';
@@ -75,6 +76,7 @@ const CardList = ({
           selectMode={inSelectMode ? 'multiple' : undefined}
           selectPosition={inSelectMode ? 'title' : undefined}
           isSelected={selectedIds?.includes(libraryKey)}
+          exportUrl={getLibraryV1ExportUrl(libraryKey)}
           subtitleWrapper={isMigrated ? subtitleWrapper : null}
           titleSecondaryLink={(isMigrated && migratedToTitle) ?
             (
