@@ -214,6 +214,16 @@ const messages = defineMessages({
     defaultMessage: 'Upload a file',
     description: 'Accessible (screen reader) label for file input',
   },
+  fileSelectButton: {
+    id: 'course-authoring.files-and-uploads.fileSelectButton.label',
+    defaultMessage: 'Select',
+    description: 'Label on button to select a file in file picker',
+  },
+  useFilesButton: {
+    id: 'course-authoring.files-and-uploads.useFilesButton.label',
+    defaultMessage: 'Use file(s)',
+    description: 'Label for button to select one or more files in file picker',
+  },
 });
 
 export default messages;

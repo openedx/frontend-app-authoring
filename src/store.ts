@@ -3,6 +3,7 @@ import { configureStore, Reducer } from '@reduxjs/toolkit';
 // FIXME: because the 'live' plugin is using Redux, we have to hard-code a reference to it here.
 // If this app + the plugin were using React-query, there'd be no issues.
 import { reducer as liveReducer } from '@openedx-plugins/course-app-live/data/slice';
+import { RequestStatusType } from '@src/data/constants';
 
 import { reducer as modelsReducer } from './generic/model-store';
 import { reducer as discussionsReducer } from './pages-and-resources/discussions/data/slice';
@@ -24,7 +25,23 @@ type InferState<ReducerType> = ReducerType extends Reducer<infer T> ? T : never;
  */
 export interface DeprecatedReduxState {
   discussions: Record<string, any>;
-  assets: Record<string, any>;
+  assets: {
+    assetIds: string[];
+    loadingStatus: RequestStatusType;
+    duplicateFiles: string[];
+    updatingStatus: string;
+    addingStatus: string;
+    deletingStatus: string;
+    usageStatus: string;
+    errors: {
+      add: string[];
+      delete: string[];
+      lock: string[];
+      download: string[];
+      usageMetrics: string[];
+      loading: string;
+    };
+  };
   pagesAndResources: Record<string, any>;
   studioHome: InferState<typeof studioHomeReducer>;
   models: Record<string, any>;
@@ -33,7 +50,6 @@ export interface DeprecatedReduxState {
   courseOptimizer: Record<string, any>;
   generic: Record<string, any>;
   videos: Record<string, any>;
-
   courseUnit: Record<string, any>;
 }
 

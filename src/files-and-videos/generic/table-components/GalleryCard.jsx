@@ -1,7 +1,10 @@
-import React from 'react';
+import { FilesPageContext } from '@src/files-and-videos/generic/FilesPageContext';
+import { filePickerSubmitFiles } from '@src/files-and-videos/generic/table-components/utils';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   ActionRow,
+  Button,
   Icon,
   Card,
   Chip,
@@ -29,9 +32,18 @@ const GalleryCard = ({
     const { locked, id } = original;
     handleLockFile(id, !locked);
   };
+  const { filePickerMode, filePickerOptions } = useContext(FilesPageContext);
+
+  const handleFilePickerSubmit = React.useCallback(async () => {
+    await filePickerSubmitFiles([original]);
+    window.close();
+  }, [original]);
 
   return (
-    <Card className={`${className} w-100 gallery-card`} data-testid={`grid-card-${original.id}`}>
+    <Card
+      className={`${className} w-100 gallery-card`}
+      data-testid={`grid-card-${original.id}`}
+    >
       <Card.Header
         className="pr-0 pt-2 pb-2"
         actions={
@@ -82,6 +94,11 @@ const GalleryCard = ({
           {original.wrapperType}
         </Chip>
         {original.transcripts?.length > 0 && <Icon size="lg" src={ClosedCaption} className="m-0 text-primary-500" />}
+        {(filePickerMode && !filePickerOptions.multiSelect) && (
+          <Button onClick={handleFilePickerSubmit} className="mt-2 mx-0 w-100">
+            Select
+          </Button>
+        )}
       </Card.Footer>
     </Card>
   );

@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
+import { FilesPageContext } from '@src/files-and-videos/generic/FilesPageContext';
+import { filePickerSubmitFiles } from '@src/files-and-videos/generic/table-components/utils';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
@@ -11,7 +18,7 @@ import {
   useToggle,
 } from '@openedx/paragon';
 
-import { RequestStatus } from '../../data/constants';
+import { RequestStatus } from '@src/data/constants';
 import { sortFiles } from './utils';
 import messages from './messages';
 
@@ -24,6 +31,7 @@ import {
   MoreInfoColumn,
   FilterStatus,
   Footer,
+  FilePickerColumn,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
@@ -57,6 +65,7 @@ const FileTable = ({
     lg: 3,
     xl: 2,
   };
+  const { filePickerMode, filePickerOptions } = useContext(FilesPageContext);
   const { defaultView } = useSelector((state) => state.videos);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
   const [isDownloadOpen, setDownloadOpen, setDownloadClose] = useToggle(false);
@@ -65,7 +74,9 @@ const FileTable = ({
   const [selectedRows, setSelectedRows] = useState([]);
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
   const [initialState, setInitialState] = useState({
-    filters: [],
+    filters: filePickerOptions?.fileTypes?.length > 0
+      ? [{ id: 'wrapperType', value: filePickerOptions.fileTypes }]
+      : [],
     hiddenColumns: [],
     pageIndex: 0,
     pageSize: 50,
@@ -202,10 +213,16 @@ const FileTable = ({
       }),
   };
 
+  const filePickerColumn = {
+    id: 'select-file',
+    Cell: FilePickerColumn,
+  };
+
   const hasMoreInfoColumn = tableColumns.filter(col => col.id === 'moreInfo').length === 1;
   if (!hasMoreInfoColumn) {
     tableColumns.push({ ...moreInfoColumn });
   }
+  const maxSelectedRows = filePickerOptions?.multiSelect === false ? 1 : undefined;
 
   return (
     <div className="files-table">
@@ -215,6 +232,7 @@ const FileTable = ({
         isSortable
         isSelectable
         isPaginated
+        maxSelectedRows={maxSelectedRows}
         defaultColumnValues={{ Filter: TextFilter }}
         dataViewToggleOptions={{
           isDataViewToggleEnabled: true,
@@ -235,11 +253,19 @@ const FileTable = ({
         tableActions={headerActions}
         bulkActions={headerActions}
         columns={tableColumns}
+        additionalColumns={(filePickerMode && !filePickerOptions.multiSelect && !filePickerOptions.embedded)
+          ? [filePickerColumn]
+          : []}
         itemCount={files.length}
         pageCount={pageCount}
         data={files}
         FilterStatusComponent={FilterStatus}
         RowStatusComponent={RowStatus}
+        onSelectedRowsChanged={async (selected) => {
+          if (!filePickerMode) { return; }
+          const filesData = Object.entries(selected).map(([key, value]) => value && files[key]).filter(Boolean);
+          await filePickerSubmitFiles(filesData);
+        }}
       >
         {permissions.canCreateFiles && isEmpty(files) && loadingStatus !== RequestStatus.IN_PROGRESS ?
           (
