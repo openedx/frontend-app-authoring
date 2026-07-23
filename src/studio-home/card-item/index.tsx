@@ -6,14 +6,17 @@ import React, {
 } from 'react';
 import { useSelector } from 'react-redux';
 import {
+  Button,
   Card,
   Dropdown,
   Icon,
   Form,
   IconButton,
+  OverlayTrigger,
   Stack,
+  Tooltip,
 } from '@openedx/paragon';
-import { ArrowForward, MoreHoriz } from '@openedx/paragon/icons';
+import { ArrowForward, Download, MoreHoriz } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import { Link } from 'react-router-dom';
@@ -118,6 +121,26 @@ const CardTitle: React.FC<CardTitleProps> = ({
   return getTitle();
 };
 
+const ExportButton = ({ exportUrl, itemId }: { exportUrl: string; itemId?: string }) => {
+  const intl = useIntl();
+  const label = intl.formatMessage(messages.exportLibraryBtnText);
+  return (
+    <OverlayTrigger
+      placement="top"
+      overlay={<Tooltip id={`export-${itemId}`}>{label}</Tooltip>}
+    >
+      <Button
+        variant="tertiary"
+        size="sm"
+        href={exportUrl}
+        aria-label={label}
+      >
+        <Icon src={Download} />
+      </Button>
+    </OverlayTrigger>
+  );
+};
+
 interface CardMenuProps {
   showMenu: boolean;
   isShowRerunLink?: boolean;
@@ -204,6 +227,7 @@ interface BaseProps {
   isSelected?: boolean;
   itemId?: string;
   scrollIntoView?: boolean;
+  exportUrl?: string;
 }
 
 type Props =
@@ -241,6 +265,7 @@ export const CardItem: React.FC<Props> = ({
   titleSecondaryLink,
   cardStatusWidget,
   scrollIntoView = false,
+  exportUrl,
 }) => {
   const {
     allowCourseReruns,
@@ -312,6 +337,10 @@ export const CardItem: React.FC<Props> = ({
                 selectMode={selectMode}
                 title={title}
               />
+            ) :
+            exportUrl ?
+            (
+              <ExportButton exportUrl={exportUrl} itemId={itemId} />
             ) :
             (
               <CardMenu

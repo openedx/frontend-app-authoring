@@ -73,6 +73,20 @@ describe('<CardItem />', () => {
     expect(screen.queryByText(messages.viewLiveBtnText.defaultMessage)).not.toBeInTheDocument();
   });
 
+  it('should render export button for library card when exportUrl is provided', async () => {
+    const props = { ...studioHomeMock.archivedCourses[0], isLibraries: true };
+    const exportUrl = 'http://localhost:18010/export/library-v1:LSE+123';
+    render(<CardItem {...props} exportUrl={exportUrl} />);
+    const exportBtn = screen.getByRole('link', { name: messages.exportLibraryBtnText.defaultMessage });
+    expect(exportBtn).toHaveAttribute('href', exportUrl);
+  });
+
+  it('should not render export button when exportUrl is not provided', () => {
+    const props = { ...studioHomeMock.archivedCourses[0], isLibraries: true };
+    render(<CardItem {...props} />);
+    expect(screen.queryByRole('link', { name: messages.exportLibraryBtnText.defaultMessage })).not.toBeInTheDocument();
+  });
+
   it('should render course key if displayname is empty', () => {
     const props = studioHomeMock.courses[1];
     const courseKeyTest = 'course-key';

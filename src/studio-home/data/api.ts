@@ -59,6 +59,9 @@ export async function getStudioHomeLibraries(): Promise<LibrariesV1ListData> {
   return camelCaseObject(data);
 }
 
+export const getLibraryV1ExportUrl = (libraryKey: string) =>
+  new URL(`export/${libraryKey}`, getApiBaseUrl()).href;
+
 /**
  * Handle course notification requests.
  */

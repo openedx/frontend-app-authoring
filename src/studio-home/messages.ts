@@ -58,6 +58,11 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.btn.view-live.text',
     defaultMessage: 'View live',
   },
+  exportLibraryBtnText: {
+    id: 'course-authoring.studio-home.btn.export-library.text',
+    defaultMessage: 'Export',
+    description: 'Aria-label and tooltip text for the export button on legacy library cards.',
+  },
   organizationTitle: {
     id: 'course-authoring.studio-home.organization.title',
     defaultMessage: 'Organization and library settings',
