@@ -23,7 +23,7 @@ import { messageTypes } from '../constants';
 import messages from './messages';
 import AddComponentButton from './add-component-btn';
 import ComponentModalView from './add-component-modals/ComponentModalView';
-import { getCourseSectionVertical, getCourseUnitData } from '../data/selectors';
+import { getCourseSectionVertical, getCourseUnitData, getCourseVerticalChildren } from '../data/selectors';
 
 type ComponentTemplateData = {
   displayName: string;
@@ -35,6 +35,9 @@ type ComponentTemplateData = {
     category?: string;
     displayName: string;
     supportLevel?: string | boolean;
+    disabled?: boolean;
+    disabledReason?: string;
+    singleInstance?: boolean;
   }>;
   supportLegend: {
     allowUnsupportedXblocks?: boolean;
@@ -46,6 +49,12 @@ type ComponentTemplateData = {
 export interface AddComponentProps {
   isSplitTestType?: boolean;
   isUnitVerticalType?: boolean;
+  /**
+   * True for generic container XBlocks that are not one of the specially-handled types
+   * (vertical, split_test, problem bank, or legacy library content). These containers
+   * can host the native add-component strip rendered by the MFE.
+   */
+  isGenericContainerType?: boolean;
   parentLocator: string;
   handleCreateNewCourseXBlock: (
     args: object,
@@ -64,6 +73,7 @@ const AddComponent = ({
   isSplitTestType,
   isUnitVerticalType,
   isProblemBankType,
+  isGenericContainerType,
   addComponentTemplateData,
   handleCreateNewCourseXBlock,
 }: AddComponentProps) => {
@@ -74,6 +84,12 @@ const AddComponent = ({
   const [isOpenHtml, openHtml, closeHtml] = useToggle(false);
   const [isOpenOpenAssessment, openOpenAssessment, closeOpenAssessment] = useToggle(false);
   const { componentTemplates = {} } = useSelector(getCourseSectionVertical);
+  const courseVerticalChildren = useSelector(getCourseVerticalChildren);
+  const existingBlockTypes = new Set(
+    (courseVerticalChildren?.children ?? []).map((child: { blockType?: string; category?: string; }) =>
+      child.blockType ?? child.category
+    ),
+  );
   const blockId = addComponentTemplateData?.parentLocator || parentLocator;
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
@@ -212,13 +228,17 @@ const AddComponent = ({
         });
         break;
       default:
+        // Generic handler for container-specific block types declared via
+        // StudioContainerWithNestedXBlocksMixin.allowed_nested_blocks that are
+        // not one of the MFE's built-in component types (html, video, problem…).
+        handleCreateNewCourseXBlock({ type, category: type, parentLocator: blockId });
     }
   };
 
-  if (isUnitVerticalType || isSplitTestType || isProblemBankType) {
+  if (isUnitVerticalType || isSplitTestType || isProblemBankType || isGenericContainerType) {
     return (
       <div className="py-4">
-        {Object.keys(componentTemplates).length && isUnitVerticalType ?
+        {Object.keys(componentTemplates).length && (isUnitVerticalType || isGenericContainerType) ?
           (
             <>
               <h5 className="h3 mb-4 text-center">{intl.formatMessage(messages.title)}</h5>
@@ -253,7 +273,13 @@ const AddComponent = ({
                         isOpen: isOpenOpenAssessment,
                       };
                       break;
-                    default:
+                    default: {
+                      const firstTemplate = component.templates[0];
+                      const isSingleInstanceSatisfied = !!firstTemplate?.singleInstance
+                        && existingBlockTypes.has(firstTemplate.category ?? type);
+                      const isDisabled = !!firstTemplate?.disabled || isSingleInstanceSatisfied;
+                      const disabledReason = firstTemplate?.disabledReason
+                        ?? (isSingleInstanceSatisfied ? 'Only one instance of this component is allowed.' : undefined);
                       return (
                         <li key={type}>
                           <AddComponentButton
@@ -261,17 +287,26 @@ const AddComponent = ({
                             displayName={displayName}
                             type={type}
                             beta={beta}
+                            disabled={isDisabled}
+                            disabledReason={disabledReason}
                           />
                         </li>
                       );
+                    }
                   }
 
+                  const allTemplatesDisabled = component.templates.every(
+                    (t) => !!t.disabled,
+                  );
+                  const firstDisabledReason = component.templates.find((t) => t.disabledReason)?.disabledReason;
                   return (
                     <ComponentModalView
                       key={type}
                       component={component}
                       handleCreateNewXBlock={handleCreateNewXBlock}
                       modalParams={modalParams}
+                      disabled={allTemplatesDisabled}
+                      disabledReason={allTemplatesDisabled ? firstDisabledReason : undefined}
                     />
                   );
                 })}
