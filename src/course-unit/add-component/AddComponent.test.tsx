@@ -18,6 +18,7 @@ import { getCourseSectionVerticalApiUrl, getCourseVerticalChildrenApiUrl } from 
 import { courseSectionVerticalMock } from '../__mocks__';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import AddComponent, { AddComponentProps } from './AddComponent';
+import AddComponentButton from './add-component-btn';
 import messages from './messages';
 import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
 import { messageTypes } from '../constants';
@@ -731,6 +732,17 @@ describe('<AddComponent />', () => {
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith(
       expect.objectContaining({ type: COMPONENT_TYPES.libraryV2 }),
     );
+  });
+
+  it('renders AddComponentButton as enabled by default when disabled prop is omitted', () => {
+    render(
+      <AddComponentButton
+        type="html"
+        displayName="Text"
+        onClick={() => {}}
+      />,
+    );
+    expect(screen.getByRole('button')).not.toBeDisabled();
   });
 
   describe('component support label', () => {
