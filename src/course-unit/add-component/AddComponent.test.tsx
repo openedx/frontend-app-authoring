@@ -745,6 +745,37 @@ describe('<AddComponent />', () => {
     expect(screen.getByRole('button')).not.toBeDisabled();
   });
 
+  it('passes boilerplate name when clicking a generic container block button', async () => {
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        component_templates: [
+          {
+            type: 'pb-message',
+            display_name: 'Message (complete)',
+            templates: [{ display_name: 'Message (complete)', category: 'pb-message', boilerplate_name: 'pb-message-complete' }],
+            support_legend: { show_legend: false },
+          },
+        ],
+      });
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+
+    const user = userEvent.setup();
+    renderComponent();
+
+    await user.click(screen.getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Message \\(complete\\)`, 'i'),
+    }));
+
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
+      type: 'pb-message',
+      category: 'pb-message',
+      boilerplate: 'pb-message-complete',
+      parentLocator: blockId,
+    });
+  });
+
   describe('component support label', () => {
     it('component support label is hidden if component support legend is disabled', async () => {
       const supportLevels = ['fs', 'ps'];

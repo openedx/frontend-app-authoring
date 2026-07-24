@@ -231,7 +231,11 @@ const AddComponent = ({
         // Generic handler for container-specific block types declared via
         // StudioContainerWithNestedXBlocksMixin.allowed_nested_blocks that are
         // not one of the MFE's built-in component types (html, video, problem…).
-        handleCreateNewCourseXBlock({ type, category: type, parentLocator: blockId });
+        // Pass boilerplate so that blocks with multiple templates (e.g. pb-message)
+        // get initialised with the correct template content instead of the default.
+        handleCreateNewCourseXBlock({
+          type, category: type, boilerplate: moduleName, parentLocator: blockId,
+        });
     }
   };
 
@@ -283,7 +287,7 @@ const AddComponent = ({
                       return (
                         <li key={type}>
                           <AddComponentButton
-                            onClick={() => handleCreateNewXBlock(type)}
+                            onClick={() => handleCreateNewXBlock(type, firstTemplate?.boilerplateName)}
                             displayName={displayName}
                             type={type}
                             beta={beta}
