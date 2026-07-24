@@ -1,3 +1,4 @@
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Tab,
@@ -6,10 +7,10 @@ import {
 } from '@openedx/paragon';
 import { SchoolOutline, Tag } from '@openedx/paragon/icons';
 
-import { useUserPermissions } from '@src/authz/data/apiHooks';
-import { COURSE_PERMISSIONS } from '@src/authz/constants';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import * as permissionHelpers from '@src/authz/permissionHelpers';
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
-import { useCourseSettings, useWaffleFlags } from '@src/data/apiHooks';
+import { useCourseSettings } from '@src/data/apiHooks';
 import { ComponentCountSnippet } from '@src/generic/block-type-utils';
 import { HelpSidebarLink, otherLinkURLParams, messages as helpSidebarMessages } from '@src/generic/help-sidebar';
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
@@ -73,60 +74,76 @@ const SettingsTab = () => {
     scheduleAndDetails,
     groupConfigurations,
   } = otherLinkURLParams;
-  const waffleFlags = useWaffleFlags(courseId);
-
   const proctoredExamSettingsUrl = courseSettingsData?.mfeProctoredExamSettingsUrl;
 
   /*
     AuthZ for Course Authoring
     If authz.enable_course_authoring flag is enabled, validate permissions using AuthZ API.
   */
-  const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
-  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
-    canManageAdvancedSettings: {
-      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
-      scope: courseId,
-    },
-  }, isAuthzEnabled);
-
-  // If it's still loading, don't show the Advanced Settings link, otherwise, use the permission to decide
-  const authzCanManageAdvancedSettings = isLoadingUserPermissions
-    ? false
-    : !!userPermissions?.canManageAdvancedSettings;
-
-  // When authz is enabled, use permission, otherwise it's always allowed (legacy behavior)
-  const canManageAdvancedSettings = isAuthzEnabled ? authzCanManageAdvancedSettings : true;
+  const {
+    isAuthzEnabled,
+    canViewScheduleAndDetails,
+    canViewGradingSettings,
+    canViewCourseTeam,
+    canManageGroupConfigurations,
+    canManageAdvancedSettings,
+  } = useCourseUserPermissions(courseId, {
+    ...permissionHelpers.getScheduleAndDetailsPermissions(courseId),
+    ...permissionHelpers.getGradingPermissions(courseId),
+    ...permissionHelpers.getCourseTeamPermissions(courseId),
+    ...permissionHelpers.getGroupConfigurationsPermissions(courseId),
+    ...permissionHelpers.getAdvancedSettingsPermissions(courseId),
+  });
 
   return (
     <SidebarSection
       title={intl.formatMessage(messages.settingsTabText)}
     >
-      <HelpSidebarLink
-        as="span"
-        pathToPage={`/course/${courseId}/${scheduleAndDetails}`}
-        title={intl.formatMessage(
-          helpSidebarMessages.sidebarLinkToScheduleAndDetails,
-        )}
-        isNewPage
-      />
-      <HelpSidebarLink
-        as="span"
-        pathToPage={`/course/${courseId}/${grading}`}
-        title={intl.formatMessage(helpSidebarMessages.sidebarLinkToGrading)}
-        isNewPage
-      />
-      <HelpSidebarLink
-        as="span"
-        pathToPage={`/course/${courseId}/${courseTeam}`}
-        title={intl.formatMessage(helpSidebarMessages.sidebarLinkToCourseTeam)}
-        isNewPage
-      />
-      <HelpSidebarLink
-        as="span"
-        pathToPage={`/course/${courseId}/${groupConfigurations}`}
-        title={intl.formatMessage(helpSidebarMessages.sidebarLinkToGroupConfigurations)}
-        isNewPage
-      />
+      {canViewScheduleAndDetails && (
+        <HelpSidebarLink
+          as="span"
+          pathToPage={`/course/${courseId}/${scheduleAndDetails}`}
+          title={intl.formatMessage(
+            helpSidebarMessages.sidebarLinkToScheduleAndDetails,
+          )}
+          isNewPage
+        />
+      )}
+      {canViewGradingSettings && (
+        <HelpSidebarLink
+          as="span"
+          pathToPage={`/course/${courseId}/${grading}`}
+          title={intl.formatMessage(helpSidebarMessages.sidebarLinkToGrading)}
+          isNewPage
+        />
+      )}
+      {canViewCourseTeam && (
+        isAuthzEnabled ?
+          (
+            <HelpSidebarLink
+              as="span"
+              pathToPage={`${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`}
+              title={intl.formatMessage(helpSidebarMessages.sidebarLinkToRolesAndPermissions)}
+              isNewPage={false}
+            />
+          ) :
+          (
+            <HelpSidebarLink
+              as="span"
+              pathToPage={`/course/${courseId}/${courseTeam}`}
+              title={intl.formatMessage(helpSidebarMessages.sidebarLinkToCourseTeam)}
+              isNewPage
+            />
+          )
+      )}
+      {canManageGroupConfigurations && (
+        <HelpSidebarLink
+          as="span"
+          pathToPage={`/course/${courseId}/${groupConfigurations}`}
+          title={intl.formatMessage(helpSidebarMessages.sidebarLinkToGroupConfigurations)}
+          isNewPage
+        />
+      )}
       {canManageAdvancedSettings && (
         <HelpSidebarLink
           as="span"

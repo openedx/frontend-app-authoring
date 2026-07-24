@@ -1,14 +1,13 @@
 import { waitFor } from '@testing-library/react';
 
-import { mockWaffleFlags } from '@src/data/apiHooks.mock';
-import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import { initializeMocks, render } from '@src/testUtils';
 
 import messages from './messages';
 import { HelpSidebar } from '.';
 
-jest.mock('@src/authz/data/apiHooks', () => ({
-  useUserPermissions: jest.fn(),
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
 }));
 
 const mockPathname = '/foo-bar';
@@ -27,14 +26,23 @@ const props = {
   proctoredExamSettingsUrl: '',
 };
 
+/**
+ * Set the result of the course-scoped Advanced Settings permission check.
+ * HelpSidebar only reads `canManageAdvancedSettings`; the loading / authz-disabled
+ * fallbacks are owned (and tested) by useCourseUserPermissions itself.
+ */
+const mockAdvancedSettingsPermission = (canManageAdvancedSettings: boolean, isLoading = false) => {
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading,
+    isAuthzEnabled: true,
+    canManageAdvancedSettings,
+  } as unknown as ReturnType<typeof useCourseUserPermissions>);
+};
+
 describe('HelpSidebar', () => {
   beforeEach(() => {
     initializeMocks();
-    // @ts-ignore
-    jest.mocked(useUserPermissions).mockReturnValue({
-      isLoading: false,
-      data: undefined,
-    });
+    mockAdvancedSettingsPermission(true);
   });
 
   it('renders children correctly', () => {
@@ -70,39 +78,20 @@ describe('HelpSidebar', () => {
     expect(getByText(messages.sidebarLinkToProctoredExamSettings.defaultMessage)).toBeTruthy();
   });
 
-  it('should render the advanced settings sidebar link when authz.enable_course_authoring flag is enabled and the user is authorized', async () => {
-    // Mock feature flag
-    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
-    // @ts-ignore
-    jest.mocked(useUserPermissions).mockReturnValue({
-      isLoading: false,
-      data: { canManageAdvancedSettings: true },
-    });
+  it('should render the advanced settings sidebar link when the user can manage advanced settings', async () => {
+    mockAdvancedSettingsPermission(true);
     const { queryByText } = renderHelpSidebar(props);
     await waitFor(() => expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeTruthy());
   });
-  it('should not render the advanced settings sidebar link when authz.enable_course_authoring flag is enabled and the user is not authorized', async () => {
-    // Mock feature flag
-    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
-    // @ts-ignore
-    jest.mocked(useUserPermissions).mockReturnValue({
-      isLoading: false,
-      data: { canManageAdvancedSettings: false },
-    });
+
+  it('should not render the advanced settings sidebar link when the user cannot manage advanced settings', async () => {
+    mockAdvancedSettingsPermission(false);
     const { queryByText } = renderHelpSidebar(props);
     await waitFor(() => expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeFalsy());
   });
-  it('should not render the advanced settings sidebar link when authz.enable_course_authoring flag is enabled and the permissions are still loading', async () => {
-    // Mock feature flag
-    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
-    // @ts-ignore
-    jest.mocked(useUserPermissions).mockReturnValue({
-      isLoading: true,
-      data: undefined,
-    });
+
+  it('should not render the advanced settings sidebar link while the permission check is loading', async () => {
+    mockAdvancedSettingsPermission(false, true);
     const { queryByText } = renderHelpSidebar(props);
     await waitFor(() => expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeFalsy());
   });

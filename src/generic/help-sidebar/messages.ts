@@ -20,6 +20,11 @@ const messages = defineMessages({
     defaultMessage: 'Course team',
     description: 'Link to Studio Course Team page',
   },
+  sidebarLinkToRolesAndPermissions: {
+    id: 'course-authoring.help-sidebar.links.roles-and-permissions',
+    defaultMessage: 'Roles and Permissions',
+    description: 'Link to Studio Roles and Permissions page',
+  },
   sidebarLinkToGroupConfigurations: {
     id: 'course-authoring.help-sidebar.links.group-configurations',
     defaultMessage: 'Group configurations',
