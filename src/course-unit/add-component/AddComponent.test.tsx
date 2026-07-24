@@ -754,7 +754,11 @@ describe('<AddComponent />', () => {
           {
             type: 'pb-message',
             display_name: 'Message (complete)',
-            templates: [{ display_name: 'Message (complete)', category: 'pb-message', boilerplate_name: 'pb-message-complete' }],
+            templates: [{
+              display_name: 'Message (complete)',
+              category: 'pb-message',
+              boilerplate_name: 'pb-message-complete',
+            }],
             support_legend: { show_legend: false },
           },
         ],

@@ -234,7 +234,10 @@ const AddComponent = ({
         // Pass boilerplate so that blocks with multiple templates (e.g. pb-message)
         // get initialised with the correct template content instead of the default.
         handleCreateNewCourseXBlock({
-          type, category: type, boilerplate: moduleName, parentLocator: blockId,
+          type,
+          category: type,
+          boilerplate: moduleName,
+          parentLocator: blockId,
         });
     }
   };
