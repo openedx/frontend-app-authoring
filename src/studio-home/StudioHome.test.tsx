@@ -33,10 +33,12 @@ jest.mock('@src/authz/data/apiHooks', () => ({
 
 /** Set the result of the scope-less "can view any team" permission check. */
 const mockViewTeamPermissions = (data: Record<string, boolean>) => {
-  jest.mocked(useUserPermissions).mockReturnValue({
+  // Mirror production: the query is skipped (data undefined) unless it is enabled,
+  // which happens only when authz is on and the admin console URL is configured.
+  jest.mocked(useUserPermissions).mockImplementation((_permissions, enabled = true) => ({
     isLoading: false,
-    data,
-  } as unknown as ReturnType<typeof useUserPermissions>);
+    data: enabled ? data : undefined,
+  } as unknown as ReturnType<typeof useUserPermissions>));
 };
 
 /** Helper function to get the Studio header in the rendered HTML */

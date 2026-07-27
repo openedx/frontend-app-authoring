@@ -84,7 +84,7 @@ const StudioHome = () => {
       );
     }
 
-    if (isAuthzEnabled && adminConsoleBaseUrl && canViewConsoleTeams) {
+    if (canViewConsoleTeams) {
       headerButtons.push(
         <div className="border-right mr-3 pr-4 py-2">
           <Button
@@ -130,7 +130,7 @@ const StudioHome = () => {
     }
 
     return headerButtons;
-  }, [location, userIsActive, isFailedLoadingPage, isAuthzEnabled, adminConsoleBaseUrl, canViewConsoleTeams]);
+  }, [location, userIsActive, isFailedLoadingPage, canViewConsoleTeams]);
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
   if (isLoadingPage && !isFiltered) {

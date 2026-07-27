@@ -45,7 +45,6 @@ const AdvancedSettings = () => {
 
   const {
     isLoading: isLoadingUserPermissions,
-    isAuthzEnabled,
     canManageAdvancedSettings,
   } = useCourseUserPermissions(courseId, getAdvancedSettingsPermissions(courseId));
 
@@ -103,10 +102,7 @@ const AdvancedSettings = () => {
     );
   }
 
-  // Show permission denied alert when authz is enabled and user doesn't have permission
-  const authzIsEnabledAndNoPermission = isAuthzEnabled && !canManageAdvancedSettings;
-
-  if (authzIsEnabledAndNoPermission) {
+  if (!canManageAdvancedSettings) {
     return <PermissionDeniedAlert />;
   }
 
