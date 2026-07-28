@@ -118,13 +118,17 @@ const SettingsTab = () => {
         />
       )}
       {canViewCourseTeam && (
+        /*
+          canViewCourseTeam is true both with the AuthZ permission and with the flag off (permissions
+          fall back to true), so isAuthzEnabled picks the destination: Admin Console or legacy Course Team.
+        */
         isAuthzEnabled ?
           (
             <HelpSidebarLink
               as="span"
               pathToPage={`${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`}
               title={intl.formatMessage(helpSidebarMessages.sidebarLinkToRolesAndPermissions)}
-              isNewPage={false}
+              isNewPage
             />
           ) :
           (
