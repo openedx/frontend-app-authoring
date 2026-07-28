@@ -37,6 +37,7 @@ const SearchUI: React.FC<{
         ...(searchThisCourse ? [`context_key = "${props.courseId}"`] : []),
       ]}
       closeSearchModal={props.closeSearchModal}
+      skipUrlUpdate
     >
       {
         /* We need to override z-index here or the <Dropdown.Menu> appears behind the <ModalDialog.Body>
