@@ -270,21 +270,12 @@ describe('<AddComponent />', () => {
     }, expect.any(Function));
   });
 
-  it('creates new "Library" xblock on click', async () => {
-    const user = userEvent.setup();
-    const { getByRole } = renderComponent();
-
-    const libraryButton = getByRole('button', {
+  it('does not render the legacy Library button', () => {
+    const { queryByRole } = renderComponent();
+    const libraryButton = queryByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Legacy Library Content`, 'i'),
     });
-
-    await user.click(libraryButton);
-    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
-    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
-      parentLocator: '123',
-      category: 'library_content',
-      type: COMPONENT_TYPES.library,
-    });
+    expect(libraryButton).not.toBeInTheDocument();
   });
 
   it('verifies modal behavior on button click', async () => {
