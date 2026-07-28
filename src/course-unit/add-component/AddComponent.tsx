@@ -247,11 +247,6 @@ const AddComponent = ({
                   }
 
                   switch (type) {
-                    case COMPONENT_TYPES.library:
-                      // Suppress the legacy library button on the frontend.
-                      // TODO: Remove this case once edx-platform stops returning
-                      //  the 'library' template in the component templates response.
-                      return null;
                     case COMPONENT_TYPES.advanced:
                       modalParams = {
                         open: openAdvanced,
