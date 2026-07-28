@@ -89,6 +89,11 @@ describe('<AddComponent />', () => {
 
     expect(getByRole('heading', { name: messages.title.defaultMessage })).toBeInTheDocument();
     Object.keys(componentTemplates).forEach((component) => {
+      // TODO: Remove this skip once edx-platform stops returning the 'library'
+      // template in the component templates response.
+      if (componentTemplates[component].type === COMPONENT_TYPES.library) {
+        return;
+      }
       const btn = getByRole('button', {
         name: new RegExp(
           `${componentTemplates[component].type} ${messages.buttonText.defaultMessage} ${
@@ -143,6 +148,14 @@ describe('<AddComponent />', () => {
 
     Object.keys(componentTemplates).map((component) => {
       if (componentTemplates[component].type === COMPONENT_TYPES.discussion) {
+        return expect(queryByRole('button', {
+          name: new RegExp(`${messages.buttonText.defaultMessage} ${componentTemplates[component].display_name}`, 'i'),
+        })).not.toBeInTheDocument();
+      }
+
+      // TODO: Remove this skip once edx-platform stops returning the 'library'
+      // template in the component templates response.
+      if (componentTemplates[component].type === COMPONENT_TYPES.library) {
         return expect(queryByRole('button', {
           name: new RegExp(`${messages.buttonText.defaultMessage} ${componentTemplates[component].display_name}`, 'i'),
         })).not.toBeInTheDocument();
