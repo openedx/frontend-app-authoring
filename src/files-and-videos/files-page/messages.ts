@@ -6,6 +6,11 @@ const messages = defineMessages({
     defaultMessage: 'Files',
     description: 'Title for the page',
   },
+  filePickerHeading: {
+    id: 'course-authoring.files-and-uploads.file-picker.heading',
+    defaultMessage: 'Select {multiSelect, select, true {files} other {a file}}',
+    description: 'Title for the page, multiSelect determines if a user can select a single file or multiple files.',
+  },
   thumbnailAltMessage: {
     id: 'course-authoring.files-and-uploads.thumbnail.alt',
     defaultMessage: '{displayName} file preview',

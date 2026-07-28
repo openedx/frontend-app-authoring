@@ -1,8 +1,5 @@
-import React, { useContext, useEffect } from 'react';
-import { isEmpty } from 'lodash';
-import { PropTypes } from 'prop-types';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
   DataTableContext,
@@ -10,6 +7,11 @@ import {
   useToggle,
 } from '@openedx/paragon';
 import { Add, Tune } from '@openedx/paragon/icons';
+import { FilesPageContext } from '@src/files-and-videos/generic/FilesPageContext';
+import { filePickerSubmitFiles } from '@src/files-and-videos/generic/table-components/utils';
+import { isEmpty } from 'lodash';
+import { PropTypes } from 'prop-types';
+import React, { useContext, useEffect } from 'react';
 import messages from '../messages';
 import SortAndFilterModal from './sort-and-filter-modal';
 
@@ -29,8 +31,14 @@ const TableActions = ({
 }) => {
   const intl = useIntl();
   const [isSortOpen, openSort, closeSort] = useToggle(false);
-  const { state, clearSelection } = useContext(DataTableContext);
+  const {
+    state,
+    clearSelection,
+  } = useContext(DataTableContext);
 
+  const { filePickerMode, filePickerOptions } = useContext(FilesPageContext);
+  // If window.opener is not available, show the user some error message.
+  const showFilePicker = filePickerMode && Boolean(window.parent);
   // This useEffect saves DataTable state so it can persist after table re-renders due to data reload.
   useEffect(() => {
     setInitialState(state);
@@ -40,6 +48,10 @@ const TableActions = ({
     fileInputControl.click();
     clearSelection();
   };
+
+  const handleFilePickerSubmit = React.useCallback(async () => {
+    await filePickerSubmitFiles(selectedFlatRows.map(({ original }) => original));
+  }, [selectedFlatRows]);
 
   return (
     <>
@@ -89,6 +101,15 @@ const TableActions = ({
       {permissions.canCreateFiles && (
         <Button iconBefore={Add} onClick={handleOpenFileSelector}>
           {intl.formatMessage(messages.addFilesButtonLabel, { fileType })}
+        </Button>
+      )}
+      {showFilePicker && !filePickerOptions.embedded && (
+        <Button
+          className="ml-2"
+          onClick={handleFilePickerSubmit}
+          disabled={selectedFlatRows.length === 0}
+        >
+          {intl.formatMessage(messages.useFilesButton)}
         </Button>
       )}
       <SortAndFilterModal {...{ isSortOpen, closeSort, handleSort }} />

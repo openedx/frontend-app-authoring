@@ -10,6 +10,7 @@ import {
   StatusColumn,
   ThumbnailColumn,
   TranscriptColumn,
+  FilePickerColumn,
 } from './table-custom-columns';
 
 export {
@@ -24,4 +25,5 @@ export {
   StatusColumn,
   ThumbnailColumn,
   TranscriptColumn,
+  FilePickerColumn,
 };
