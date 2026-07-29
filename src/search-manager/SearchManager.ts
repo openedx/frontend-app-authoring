@@ -164,7 +164,7 @@ export const SearchContextProvider: React.FC<{
     || !!usageKey;
   const isFiltered = canClearFilters || (searchKeywords !== '');
   const clearFilters = React.useCallback(() => {
-    setTypesFilter((types) => types.clear());
+    setTypesFilter(new TypesFilterData());
     setTagsFilter([]);
     setPublishStatusFilter([]);
     if (usageKey !== '') {
