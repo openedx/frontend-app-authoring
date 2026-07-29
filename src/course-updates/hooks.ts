@@ -5,6 +5,7 @@ import { useToggle } from '@openedx/paragon';
 import { COMMA_SEPARATED_DATE_FORMAT } from '../constants';
 import { convertToDateFromString } from '../utils';
 import { REQUEST_TYPES } from './constants';
+import type { ValueOf } from '../types';
 import {
   useCourseHandoutsQuery,
   useCourseUpdatesQuery,
@@ -15,9 +16,10 @@ import {
 } from './data/apiHooks';
 import type { CourseHandouts, CourseUpdate } from './data/api';
 
-type RequestType = (typeof REQUEST_TYPES)[keyof typeof REQUEST_TYPES];
-type UpdateFormData = Omit<CourseUpdate, 'date'> & CourseHandouts & { date: string | Date; };
-type CurrentUpdate = Omit<CourseUpdate, 'date'> & { date: string | Date; };
+type EditableUpdate = Omit<CourseUpdate, 'date'> & { date: string | Date; };
+type RequestType = ValueOf<typeof REQUEST_TYPES>;
+type UpdateFormData = EditableUpdate & CourseHandouts;
+type CurrentUpdate = EditableUpdate;
 
 const useCourseUpdates = ({ courseId }: { courseId: string; }) => {
   const initialUpdate: CurrentUpdate = { id: 0, date: moment().utc().toDate(), content: '' };
