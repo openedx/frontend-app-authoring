@@ -4,11 +4,13 @@ import {
   get,
   post,
   put,
+  patch,
   deleteObject,
 } from './utils';
 
 jest.mock('./urls', () => ({
   block: jest.fn().mockReturnValue('urls.block'),
+  blockV1: jest.fn().mockReturnValue('urls.blockV1'),
   blockAncestor: jest.fn().mockReturnValue('urls.blockAncestor'),
   blockStudioView: jest.fn().mockReturnValue('urls.StudioView'),
   courseAssets: jest.fn().mockReturnValue('urls.courseAssets'),
@@ -34,6 +36,7 @@ jest.mock('./utils', () => ({
   get: jest.fn().mockName('get'),
   post: jest.fn().mockName('post'),
   put: jest.fn().mockName('put'),
+  patch: jest.fn().mockName('patch'),
   deleteObject: jest.fn().mockName('deleteObject'),
 }));
 
@@ -53,7 +56,7 @@ describe('cms api', () => {
     describe('fetchBlockId', () => {
       it('should call get with url.blocks', async () => {
         await apiMethods.fetchBlockById({ blockId, studioEndpointUrl });
-        expect(get).toHaveBeenCalledWith(urls.block({ blockId, studioEndpointUrl }));
+        expect(get).toHaveBeenCalledWith(urls.blockV1({ blockId, studioEndpointUrl }));
       });
     });
 
@@ -175,11 +178,9 @@ describe('cms api', () => {
           blockId,
           blockType: 'html',
           content,
-          learningContextId,
           title,
         })).toEqual({
           category: 'html',
-          courseKey: learningContextId,
           data: content,
           has_changes: true,
           id: blockId,
@@ -221,11 +222,9 @@ describe('cms api', () => {
           blockId,
           blockType: 'video',
           content,
-          learningContextId,
           title,
         })).toEqual({
           category: 'video',
-          courseKey: learningContextId,
           display_name: title,
           id: blockId,
           metadata: {
@@ -259,22 +258,20 @@ describe('cms api', () => {
     describe('saveBlock', () => {
       const content =
         'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
-      it('should call post with urls.block and normalizeContent', async () => {
+      it('should call patch with urls.blockV1 and normalizeContent', async () => {
         await apiMethods.saveBlock({
           blockId,
           blockType: 'html',
           content,
-          learningContextId,
           studioEndpointUrl,
           title,
         });
-        expect(post).toHaveBeenCalledWith(
-          urls.block({ studioEndpointUrl }),
+        expect(patch).toHaveBeenCalledWith(
+          urls.blockV1({ studioEndpointUrl, blockId }),
           apiMethods.normalizeContent({
             blockType: 'html',
             content,
             blockId,
-            learningContextId,
             title,
           }),
         );

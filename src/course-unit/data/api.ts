@@ -6,13 +6,18 @@ import { isUnitImportedFromLib, normalizeCourseSectionVerticalData, updateXBlock
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getXBlockBaseApiUrl = (itemId: string) => `${getStudioBaseUrl()}/xblock/${itemId}`;
+// FC-0118 (ADR 0028/0037): standardized v1 xblock REST endpoint. The trailing
+// slash is required by the DRF DefaultRouter that serves the v1 XblockViewSet
+// (the legacy `/xblock/{id}` route had none). Detail actions: GET (retrieve),
+// PUT/PATCH (update), DELETE (destroy).
+export const getXBlockBaseApiUrl = (itemId: string) => `${getStudioBaseUrl()}/api/contentstore/v1/xblock/${itemId}/`;
 export const getCourseSectionVerticalApiUrl = (itemId: string) =>
   `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
 export const getCourseVerticalChildrenApiUrl = (itemId: string, getUpstreamInfo: boolean = false) =>
   `${getStudioBaseUrl()}/api/contentstore/v1/container/${itemId}/children?get_upstream_info=${getUpstreamInfo}`;
 export const getCourseOutlineInfoUrl = (courseId: string) => `${getStudioBaseUrl()}/course/${courseId}?format=concise`;
-export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
+// FC-0118: v1 xblock collection endpoint — POST here creates a block.
+export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/api/contentstore/v1/xblock/`;
 export const libraryBlockChangesUrl = (blockId: string) =>
   `${getStudioBaseUrl()}/api/contentstore/v2/downstreams/${blockId}/sync`;
 
@@ -21,7 +26,8 @@ export const libraryBlockChangesUrl = (blockId: string) =>
  */
 export async function editUnitDisplayName(unitId: string, displayName: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
-    .post(getXBlockBaseApiUrl(unitId), {
+    // FC-0118: legacy POST-as-update becomes PATCH (partial_update) on v1.
+    .patch(getXBlockBaseApiUrl(unitId), {
       metadata: {
         display_name: displayName,
       },
@@ -94,8 +100,13 @@ export async function getCourseOutlineInfo(courseId: string): Promise<CourseOutl
  * Move a unit item to new unit.
  */
 export async function patchUnitItem(sourceLocator: string, targetParentLocator: string): Promise<MoveInfoData> {
+  // FC-0118: the move used to PATCH the legacy collection URL (`/xblock/`); the
+  // v1 REST viewset only exposes PATCH on the detail route, so we PATCH the
+  // source block's detail URL. `update_xblock_response` still routes to the
+  // move-item path off `move_source_locator` in the body (the URL key is used
+  // only to derive the course for the permission check).
   const { data } = await getAuthenticatedHttpClient()
-    .patch(postXBlockBaseApiUrl(), {
+    .patch(getXBlockBaseApiUrl(sourceLocator), {
       parent_locator: targetParentLocator,
       move_source_locator: sourceLocator,
     });

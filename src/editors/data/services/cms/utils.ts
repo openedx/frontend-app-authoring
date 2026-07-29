@@ -24,6 +24,14 @@ export const post: Axios['post'] = (...args) => client().post(...args);
 export const put: Axios['put'] = (...args) => client().put(...args);
 
 /**
+ * patch(url, data)
+ * simple wrapper providing an authenticated Http client patch action
+ * @param {string} url - target url
+ * @param {object|string} data - patch payload
+ */
+export const patch: Axios['patch'] = (...args) => client().patch(...args);
+
+/**
  * delete(url, data)
  * simple wrapper providing an authenticated Http client delete action
  * @param {string} url - target url

@@ -7,7 +7,10 @@ export const updateCourseUpdatesApiUrl = (courseId, updateId) =>
   `${getApiBaseUrl()}/course_info_update/${courseId}/${updateId}`;
 export const getCourseHandoutApiUrl = (courseId) => {
   const formattedCourseId = courseId.split('course-v1:')[1];
-  return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course_info+block@handouts`;
+  // FC-0118 (ADR 0028/0037): standardized v1 xblock REST detail endpoint for the
+  // course handouts block. Trailing slash required by the DRF DefaultRouter;
+  // used by GET (retrieve) and PUT (full update).
+  return `${getApiBaseUrl()}/api/contentstore/v1/xblock/block-v1:${formattedCourseId}+type@course_info+block@handouts/`;
 };
 
 /**

@@ -298,21 +298,18 @@ describe('AddSidebar', () => {
     const unit = await screen.findByRole('button', { name: 'Unit' });
     await user.click(section);
     expect(axiosMock.history.post[0].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'chapter',
       category: 'chapter',
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
       displayName: 'Section',
     })));
     await user.click(subsection);
     expect(axiosMock.history.post[1].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'sequential',
       category: 'sequential',
       parentLocator: lastSection.id,
       displayName: 'Subsection',
     })));
     await user.click(unit);
     expect(axiosMock.history.post[2].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'vertical',
       category: 'vertical',
       parentLocator: lastSubsection.id,
       displayName: 'Unit',
@@ -337,14 +334,12 @@ describe('AddSidebar', () => {
     await waitFor(() => expect(axiosMock.history.post.length).toBeGreaterThan(1));
     // should add a section first
     expect(axiosMock.history.post[0].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'chapter',
       category: 'chapter',
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
       displayName: 'Section',
     })));
     // then subsection
     expect(axiosMock.history.post[1].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'sequential',
       category: 'sequential',
       parentLocator: sectionId,
       displayName: 'Subsection',
@@ -365,19 +360,16 @@ describe('AddSidebar', () => {
     const subsectionId = 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@sequential234';
     const unitId = 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@vertical2133';
     const sectionBody = snakeCaseKeys({
-      type: 'chapter',
       category: 'chapter',
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
       displayName: 'Section',
     });
     const subsectionBody = snakeCaseKeys({
-      type: 'sequential',
       category: 'sequential',
       parentLocator: sectionId,
       displayName: 'Subsection',
     });
     const unitBody = snakeCaseKeys({
-      type: 'vertical',
       category: 'vertical',
       parentLocator: subsectionId,
       displayName: 'Unit',
@@ -421,7 +413,6 @@ describe('AddSidebar', () => {
     // first one is unit as per mock
     await user.click(addBtns[0]);
     expect(axiosMock.history.post[0].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'library_v2',
       category: 'vertical',
       parentLocator: lastSubsection.id,
       libraryContentKey: searchResult.results[0].hits[0].usage_key,
@@ -429,7 +420,6 @@ describe('AddSidebar', () => {
     // second one is subsection as per mock
     await user.click(addBtns[1]);
     expect(axiosMock.history.post[1].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'library_v2',
       category: 'sequential',
       parentLocator: lastSection.id,
       libraryContentKey: searchResult.results[0].hits[1].usage_key,
@@ -437,7 +427,6 @@ describe('AddSidebar', () => {
     // third one is section as per mock
     await user.click(addBtns[2]);
     expect(axiosMock.history.post[2].data).toEqual(JSON.stringify(snakeCaseKeys({
-      type: 'library_v2',
       category: 'chapter',
       parentLocator: 'block-v1:UNIX+UX1+2025_T3+type@course+block@course',
       libraryContentKey: searchResult.results[0].hits[2].usage_key,

@@ -115,7 +115,7 @@ describe('PdfEditor', () => {
     expect(screen.queryAllByLabelText(downloadMessages.allowDownloadLabel.defaultMessage)).toEqual([]);
   });
   it('submits changes to the cms', async () => {
-    axiosMock.onPost('https://studio.local/xblock/pdf-block-id').reply(200, {
+    axiosMock.onPatch('https://studio.local/api/contentstore/v1/xblock/pdf-block-id/').reply(200, {
       data: {
         id: 'pdf-block-id',
         data: null,
@@ -136,8 +136,10 @@ describe('PdfEditor', () => {
     fireEvent.change(field, { target: { value: 'https://somewhere.com/stuff.pdf' } });
     const saveButton = screen.getByLabelText(editorMessages.saveButtonAriaLabel.defaultMessage);
     await user.click(saveButton);
-    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual('https://studio.local/xblock/pdf-block-id'));
-    const request = axiosMock.history.post[0];
+    await waitFor(() =>
+      expect(axiosMock.history.patch[0].url).toEqual('https://studio.local/api/contentstore/v1/xblock/pdf-block-id/')
+    );
+    const request = axiosMock.history.patch[0];
     expect(JSON.parse(request.data).metadata.url).toEqual('https://somewhere.com/stuff.pdf');
   });
 });

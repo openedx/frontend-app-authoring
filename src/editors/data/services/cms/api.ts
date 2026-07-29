@@ -6,6 +6,7 @@ import {
   get,
   post,
   put,
+  patch,
   deleteObject,
 } from './utils';
 import { durationStringFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
@@ -113,7 +114,7 @@ export const processLicense = (licenseType, licenseDetails) => {
 export const apiMethods = {
   fetchBlockById: ({ blockId, studioEndpointUrl }): Promise<{ data: FieldsResponse; }> =>
     get(
-      urls.block({ blockId, studioEndpointUrl }),
+      urls.blockV1({ blockId, studioEndpointUrl }),
     ),
   /** A better name for this would be 'get ancestors of block' */
   fetchByUnitId: ({ blockId, studioEndpointUrl }): Promise<{ data: AncestorsResponse; }> =>
@@ -301,20 +302,17 @@ export const apiMethods = {
     blockId,
     blockType,
     content,
-    learningContextId,
     title,
   }: {
     blockId: string;
     blockType: string;
     content: any; // string for 'html' blocks, otherwise Record<string, any>
-    learningContextId: string;
     title: string;
   }) => {
     let response = {};
     if (blockType === 'html') {
       response = {
         category: blockType,
-        courseKey: learningContextId,
         data: content,
         has_changes: true,
         id: blockId,
@@ -324,7 +322,6 @@ export const apiMethods = {
       response = {
         data: content.olx,
         category: blockType,
-        courseKey: learningContextId,
         has_changes: true,
         id: blockId,
         metadata: { display_name: title, ...content.settings },
@@ -341,7 +338,6 @@ export const apiMethods = {
       });
       response = {
         category: blockType,
-        courseKey: learningContextId,
         display_name: title,
         id: blockId,
         metadata: {
@@ -364,7 +360,6 @@ export const apiMethods = {
     } else if (blockType === 'pdf') {
       response = {
         category: blockType,
-        courseKey: learningContextId,
         has_changes: true,
         id: blockId,
         metadata: { ...snakeCaseKeys(content), display_name: title },
@@ -378,17 +373,17 @@ export const apiMethods = {
     blockId,
     blockType,
     content,
-    learningContextId,
     studioEndpointUrl,
     title,
   }) =>
-    post(
-      urls.block({ studioEndpointUrl, blockId }),
+    // FC-0118: legacy POST-as-update becomes PATCH (partial_update) on the v1
+    // xblock REST detail endpoint.
+    patch(
+      urls.blockV1({ studioEndpointUrl, blockId }),
       apiMethods.normalizeContent({
         blockType,
         content,
         blockId,
-        learningContextId,
         title,
       }),
     ),
