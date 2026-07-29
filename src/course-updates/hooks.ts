@@ -97,6 +97,7 @@ const useCourseUpdates = ({ courseId }: { courseId: string; }) => {
     savingHandouts: handoutsMutation.isError,
   };
   const anyStatusFailed = updatesQuery.isError || handoutsQuery.isError || Object.values(mutationErrors).some(Boolean);
+  // Keep 403 separate from generic failures because the UI renders a dedicated denied state.
   const anyStatusDenied = [updatesQuery.error, handoutsQuery.error].some(error => error?.response?.status === 403);
   const anyStatusInProgress = updatesQuery.isFetching || handoutsQuery.isFetching;
   const anyStatusPending = [createMutation, editMutation, deleteMutation, handoutsMutation]

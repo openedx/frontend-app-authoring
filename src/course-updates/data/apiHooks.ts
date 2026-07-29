@@ -25,12 +25,14 @@ export const useCourseUpdatesQuery = (courseId: string) =>
   useQuery<CourseUpdate[], AxiosError>({
     queryKey: courseUpdatesQueryKeys.updates(courseId),
     queryFn: () => getCourseUpdates(courseId),
+    retry: false, // surface page-load failures immediately; no duplicate requests
   });
 
 export const useCourseHandoutsQuery = (courseId: string) =>
   useQuery<CourseHandouts, AxiosError>({
     queryKey: courseUpdatesQueryKeys.handouts(courseId),
     queryFn: () => getCourseHandouts(courseId),
+    retry: false, // surface page-load failures immediately; no duplicate requests
   });
 
 const useSavingMutation = <TData, TVariables>(

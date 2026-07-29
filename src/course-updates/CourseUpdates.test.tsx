@@ -24,11 +24,12 @@ let axiosMock;
 const mockPathname = '/foo-bar';
 const courseId = '123';
 
-const mockMutationGets = (updates = courseUpdatesMock) => {
+const mockMutationGets = (updates = courseUpdatesMock, handouts = courseHandoutsMock) => {
   axiosMock.resetHandlers();
   axiosMock.onGet(getCourseUpdatesApiUrl(courseId)).replyOnce(200, courseUpdatesMock);
   axiosMock.onGet(getCourseUpdatesApiUrl(courseId)).reply(200, updates);
-  axiosMock.onGet(getCourseHandoutApiUrl(courseId)).reply(200, courseHandoutsMock);
+  axiosMock.onGet(getCourseHandoutApiUrl(courseId)).replyOnce(200, courseHandoutsMock);
+  axiosMock.onGet(getCourseHandoutApiUrl(courseId)).reply(200, handouts);
 };
 
 const setEditorValue = (value: string) => {
@@ -162,9 +163,7 @@ describe('<CourseUpdates />', () => {
 
     it('should edit course handouts', async () => {
       const data = { ...courseHandoutsMock, data: '<p>Some handouts 1</p>' };
-      mockMutationGets();
-      axiosMock.onGet(getCourseHandoutApiUrl(courseId)).replyOnce(200, courseHandoutsMock)
-        .onGet(getCourseHandoutApiUrl(courseId)).reply(200, data);
+      mockMutationGets(courseUpdatesMock, data);
       axiosMock.onPut(getCourseHandoutApiUrl(courseId)).reply(200, data);
 
       render(<RootWrapper />);

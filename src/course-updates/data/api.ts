@@ -19,6 +19,7 @@ export const getCourseUpdatesApiUrl = (courseId: string) => `${getApiBaseUrl()}/
 export const updateCourseUpdatesApiUrl = (courseId: string, updateId: number) =>
   `${getApiBaseUrl()}/course_info_update/${courseId}/${updateId}`;
 export const getCourseHandoutApiUrl = (courseId: string) => {
+  // Handouts are served by the block-v1 XBlock endpoint, so transform the course-v1 ID.
   const formattedCourseId = courseId.split('course-v1:')[1];
   return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course_info+block@handouts`;
 };
