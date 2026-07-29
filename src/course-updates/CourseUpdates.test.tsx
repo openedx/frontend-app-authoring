@@ -1,6 +1,4 @@
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { executeThunk } from '@src/utils';
-import { RequestStatus } from '@src/data/constants';
 import {
   initializeMocks,
   render,
@@ -18,20 +16,24 @@ import {
   getCourseHandoutApiUrl,
   updateCourseUpdatesApiUrl,
 } from './data/api';
-import {
-  createCourseUpdateQuery,
-  deleteCourseUpdateQuery,
-  editCourseHandoutsQuery,
-  editCourseUpdateQuery,
-} from './data/thunk';
 import { courseUpdatesMock, courseHandoutsMock } from './__mocks__';
 import CourseUpdates from './CourseUpdates';
 import messages from './messages';
 
 let axiosMock;
-let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
+
+const mockMutationGets = (updates = courseUpdatesMock) => {
+  axiosMock.resetHandlers();
+  axiosMock.onGet(getCourseUpdatesApiUrl(courseId)).replyOnce(200, courseUpdatesMock);
+  axiosMock.onGet(getCourseUpdatesApiUrl(courseId)).reply(200, updates);
+  axiosMock.onGet(getCourseHandoutApiUrl(courseId)).reply(200, courseHandoutsMock);
+};
+
+const setEditorValue = (value: string) => {
+  fireEvent.change(screen.getByTestId('course-updates-wisiwyg-editor'), { target: { value } });
+};
 
 jest.mock('@src/authz/data/apiHooks', () => ({
   ...jest.requireActual('@src/authz/data/apiHooks'),
@@ -63,8 +65,24 @@ jest.mock('@tinymce/tinymce-react', () => {
 });
 
 jest.mock('../editors/sharedComponents/TinyMceWidget', () => ({
-  __esModule: true, // Required to mock a default export
-  default: () => <div>Widget</div>,
+  __esModule: true,
+  default: ({ onChange, textValue }: {
+    onChange: (value: string, editor: object) => void;
+    textValue: string;
+  }) => {
+    const editor = {
+      selection: { getBookmark: () => ({}), moveToBookmark: jest.fn() },
+      getContent: () => textValue,
+      setContent: jest.fn(),
+    };
+    return (
+      <textarea
+        data-testid="course-updates-wisiwyg-editor"
+        defaultValue={textValue}
+        onChange={(event) => onChange(event.target.value, editor)}
+      />
+    );
+  },
   prepareEditorRef: jest.fn(() => ({
     refReady: true,
     setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
@@ -82,7 +100,6 @@ describe('<CourseUpdates />', () => {
     beforeEach(() => {
       const mocks = initializeMocks();
 
-      store = mocks.reduxStore;
       axiosMock = mocks.axiosMock;
       axiosMock
         .onGet(getCourseUpdatesApiUrl(courseId))
@@ -98,73 +115,64 @@ describe('<CourseUpdates />', () => {
       expect(screen.getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
       expect(screen.getByText(messages.sectionInfo.defaultMessage)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: messages.newUpdateButton.defaultMessage })).toBeInTheDocument();
-      expect(screen.getAllByTestId('course-update')).toHaveLength(3);
+      expect(await screen.findAllByTestId('course-update')).toHaveLength(3);
       expect(screen.getByTestId('course-handouts')).toBeInTheDocument();
     });
 
     it('should create course update', async () => {
-      const data = {
-        content: '<p>Some text</p>',
-        date: 'August 29, 2023',
-      };
-
-      axiosMock
-        .onPost(getCourseUpdatesApiUrl(courseId))
-        .reply(200, data);
+      const data = { content: '<p>Some text</p>', date: 'August 29, 2023' };
+      mockMutationGets([{ id: 4, ...data }]);
+      axiosMock.onPost(getCourseUpdatesApiUrl(courseId)).reply(200, data);
 
       render(<RootWrapper />);
+      await userEvent.click(await screen.findByRole('button', { name: messages.newUpdateButton.defaultMessage }));
+      setEditorValue(data.content);
+      await userEvent.click(screen.getByRole('button', { name: 'Post' }));
 
-      await executeThunk(createCourseUpdateQuery(courseId, data), store.dispatch);
-      expect(screen.getByText('Some text')).toBeInTheDocument();
+      expect(await screen.findByText('Some text')).toBeInTheDocument();
       expect(screen.getByText(data.date)).toBeInTheDocument();
     });
 
     it('should edit course update', async () => {
-      const data = {
-        id: courseUpdatesMock[0].id,
-        content: '<p>Some text</p>',
-        date: 'August 29, 2023',
-      };
-
-      axiosMock
-        .onPut(updateCourseUpdatesApiUrl(courseId, courseUpdatesMock[0].id))
-        .reply(200, data);
+      const data = { ...courseUpdatesMock[0], content: '<p>Some text</p>', date: 'August 29, 2023' };
+      mockMutationGets([data, ...courseUpdatesMock.slice(1)]);
+      axiosMock.onPut(updateCourseUpdatesApiUrl(courseId, data.id)).reply(200, data);
 
       render(<RootWrapper />);
+      await userEvent.click((await screen.findAllByTestId('course-update-edit-button'))[0]);
+      setEditorValue(data.content);
+      await userEvent.click(screen.getByRole('button', { name: 'Post' }));
 
-      await executeThunk(editCourseUpdateQuery(courseId, data), store.dispatch);
-      expect(screen.getByText('Some text')).toBeInTheDocument();
+      expect(await screen.findByText('Some text')).toBeInTheDocument();
       expect(screen.getByText(data.date)).toBeInTheDocument();
       expect(screen.queryByText(courseUpdatesMock[0].date)).not.toBeInTheDocument();
-      expect(screen.queryByText(courseUpdatesMock[0].content)).not.toBeInTheDocument();
     });
 
     it('should delete course update', async () => {
-      axiosMock
-        .onDelete(updateCourseUpdatesApiUrl(courseId, courseUpdatesMock[0].id))
-        .reply(200);
+      mockMutationGets(courseUpdatesMock.slice(1));
+      axiosMock.onDelete(updateCourseUpdatesApiUrl(courseId, courseUpdatesMock[0].id)).reply(200);
 
       render(<RootWrapper />);
+      await userEvent.click((await screen.findAllByTestId('course-update-delete-button'))[0]);
+      await userEvent.click(screen.getByRole('button', { name: 'Delete' }));
 
-      await executeThunk(deleteCourseUpdateQuery(courseId, courseUpdatesMock[0].id), store.dispatch);
-      expect(screen.queryByText(courseUpdatesMock[0].date)).not.toBeInTheDocument();
+      await waitFor(() => expect(screen.queryByText(courseUpdatesMock[0].date)).not.toBeInTheDocument());
       expect(screen.queryByText(courseUpdatesMock[0].content)).not.toBeInTheDocument();
     });
 
     it('should edit course handouts', async () => {
-      const data = {
-        ...courseHandoutsMock,
-        data: '<p>Some handouts 1</p>',
-      };
-
-      axiosMock
-        .onPut(getCourseHandoutApiUrl(courseId))
-        .reply(200, data);
+      const data = { ...courseHandoutsMock, data: '<p>Some handouts 1</p>' };
+      mockMutationGets();
+      axiosMock.onGet(getCourseHandoutApiUrl(courseId)).replyOnce(200, courseHandoutsMock)
+        .onGet(getCourseHandoutApiUrl(courseId)).reply(200, data);
+      axiosMock.onPut(getCourseHandoutApiUrl(courseId)).reply(200, data);
 
       render(<RootWrapper />);
+      await userEvent.click(await screen.findByTestId('course-handouts-edit-button'));
+      setEditorValue(data.data);
+      await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
-      await executeThunk(editCourseHandoutsQuery(courseId, data), store.dispatch);
-      expect(screen.getByText('Some handouts 1')).toBeInTheDocument();
+      expect(await screen.findByText('Some handouts 1')).toBeInTheDocument();
       expect(screen.queryByText(courseHandoutsMock.data)).not.toBeInTheDocument();
     });
 
@@ -216,7 +224,7 @@ describe('<CourseUpdates />', () => {
       editUpdateButtons.forEach((button) => expect(button).toBeDisabled());
       editHandoutsButtons.forEach((button) => expect(button).toBeDisabled());
       deleteButtons.forEach((button) => expect(button).toBeDisabled());
-      expect(screen.queryByText(courseUpdatesMock[0].content)).not.toBeInTheDocument();
+      expect(screen.getByTestId('course-updates-wisiwyg-editor')).toHaveValue(courseUpdatesMock[0].content);
     });
   });
 
@@ -224,7 +232,6 @@ describe('<CourseUpdates />', () => {
     beforeEach(() => {
       const mocks = initializeMocks();
 
-      store = mocks.reduxStore;
       axiosMock = mocks.axiosMock;
     });
 
@@ -239,7 +246,7 @@ describe('<CourseUpdates />', () => {
       render(<RootWrapper />);
 
       const newButton = await screen.findByRole('button', { name: messages.newUpdateButton.defaultMessage });
-      expect(screen.getByText(messages.loadingUpdatesErrorTitle.defaultMessage)).toBeInTheDocument();
+      expect(await screen.findByText(messages.loadingUpdatesErrorTitle.defaultMessage)).toBeInTheDocument();
       expect(newButton).toBeDisabled();
       expect(screen.getByText(messages.noCourseUpdates.defaultMessage)).toBeVisible();
       expect(screen.queryByTestId('course-update')).toBeNull();
@@ -255,9 +262,7 @@ describe('<CourseUpdates />', () => {
 
       render(<RootWrapper />);
 
-      await waitFor(() => {
-        expect(screen.getByText(messages.loadingHandoutsErrorTitle.defaultMessage)).toBeInTheDocument();
-      });
+      expect(await screen.findByText(messages.loadingHandoutsErrorTitle.defaultMessage)).toBeInTheDocument();
       expect(screen.getByTestId('course-handouts-edit-button')).toBeDisabled();
     });
 
@@ -271,12 +276,7 @@ describe('<CourseUpdates />', () => {
 
       render(<RootWrapper />);
 
-      await waitFor(() => {
-        const { loadingStatuses } = store.getState().courseUpdates;
-        Object.values(loadingStatuses)
-          .some(status => expect(status).toEqual(RequestStatus.DENIED));
-      });
-      expect(screen.getByTestId('connectionErrorAlert')).toBeInTheDocument();
+      expect(await screen.findByTestId('connectionErrorAlert')).toBeInTheDocument();
     });
   });
 
@@ -284,7 +284,6 @@ describe('<CourseUpdates />', () => {
     beforeEach(() => {
       const mocks = initializeMocks();
 
-      store = mocks.reduxStore;
       axiosMock = mocks.axiosMock;
       axiosMock
         .onGet(getCourseUpdatesApiUrl(courseId))
@@ -305,10 +304,11 @@ describe('<CourseUpdates />', () => {
         .onPost(getCourseUpdatesApiUrl(courseId), data)
         .reply(404);
 
-      await executeThunk(createCourseUpdateQuery(courseId, data), store.dispatch);
-      expect(screen.getByText(messages.savingNewUpdateErrorAlertDescription.defaultMessage)).toBeVisible();
+      await userEvent.click(await screen.findByRole('button', { name: messages.newUpdateButton.defaultMessage }));
+      setEditorValue(data.content);
+      await userEvent.click(screen.getByRole('button', { name: 'Post' }));
+      expect(await screen.findByText(messages.savingNewUpdateErrorAlertDescription.defaultMessage)).toBeVisible();
       expect(screen.queryByText('Some text')).toBeNull();
-      expect(screen.queryByText(data.date)).toBeNull();
     });
 
     it('editing course update should show saving error alert', async () => {
@@ -324,12 +324,12 @@ describe('<CourseUpdates />', () => {
         .onPut(updateCourseUpdatesApiUrl(courseId, courseUpdatesMock[0].id))
         .reply(404);
 
-      await executeThunk(editCourseUpdateQuery(courseId, data), store.dispatch);
-      expect(screen.queryByText('Some text')).toBeNull();
-      expect(screen.queryByText(data.date)).toBeNull();
+      await userEvent.click((await screen.findAllByTestId('course-update-edit-button'))[0]);
+      setEditorValue(data.content);
+      await userEvent.click(screen.getByRole('button', { name: 'Post' }));
+      expect(await screen.findByText(messages.savingUpdatesErrorDescription.defaultMessage)).toBeVisible();
       expect(screen.getByText(courseUpdatesMock[0].date)).toBeVisible();
       expect(screen.getByText(courseUpdatesMock[0].content)).toBeVisible();
-      expect(screen.getByText(messages.savingUpdatesErrorDescription.defaultMessage)).toBeVisible();
     });
 
     it('deleting course update should show delete saving error alert', async () => {
@@ -339,10 +339,11 @@ describe('<CourseUpdates />', () => {
         .onDelete(updateCourseUpdatesApiUrl(courseId, courseUpdatesMock[0].id))
         .reply(404);
 
-      await executeThunk(deleteCourseUpdateQuery(courseId, courseUpdatesMock[0].id), store.dispatch);
+      await userEvent.click((await screen.findAllByTestId('course-update-delete-button'))[0]);
+      await userEvent.click(screen.getByRole('button', { name: 'Delete' }));
+      expect(await screen.findByText(messages.deletingUpdatesErrorDescription.defaultMessage)).toBeVisible();
       expect(screen.getByText(courseUpdatesMock[0].date)).toBeVisible();
       expect(screen.getByText(courseUpdatesMock[0].content)).toBeVisible();
-      expect(screen.getByText(messages.deletingUpdatesErrorDescription.defaultMessage)).toBeVisible();
     });
 
     it('editing course handouts should show saving error alert', async () => {
@@ -357,10 +358,11 @@ describe('<CourseUpdates />', () => {
         .onPut(getCourseHandoutApiUrl(courseId))
         .reply(404);
 
-      await executeThunk(editCourseHandoutsQuery(courseId, data), store.dispatch);
-      expect(screen.queryByText('Some handouts 1')).toBeNull();
-      expect(screen.getByText(courseHandoutsMock.data)).toBeVisible();
+      await userEvent.click(await screen.findByTestId('course-handouts-edit-button'));
+      setEditorValue(data.data);
+      await userEvent.click(screen.getByRole('button', { name: 'Save' }));
       expect(await screen.findByText(messages.savingHandoutsErrorDescription.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(courseHandoutsMock.data)).toBeVisible();
     });
   });
 
@@ -368,7 +370,6 @@ describe('<CourseUpdates />', () => {
     describe('when user has permission to manage course updates', () => {
       beforeEach(() => {
         const mocks = initializeMocks();
-        store = mocks.reduxStore;
         axiosMock = mocks.axiosMock;
 
         (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true, isLoading: false });
@@ -418,7 +419,6 @@ describe('<CourseUpdates />', () => {
     describe('when user does NOT have permission to manage course updates and enableAuthzCourseAuthoring is enabled', () => {
       beforeEach(() => {
         const mocks = initializeMocks();
-        store = mocks.reduxStore;
         axiosMock = mocks.axiosMock;
 
         (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true, isLoading: false });
@@ -461,7 +461,6 @@ describe('<CourseUpdates />', () => {
     describe('when enableAuthzCourseAuthoring is disabled', () => {
       beforeEach(() => {
         const mocks = initializeMocks();
-        store = mocks.reduxStore;
         axiosMock = mocks.axiosMock;
 
         (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: false, isLoading: false });
@@ -492,7 +491,6 @@ describe('<CourseUpdates />', () => {
     describe('when permissions are still loading', () => {
       beforeEach(() => {
         const mocks = initializeMocks();
-        store = mocks.reduxStore;
         axiosMock = mocks.axiosMock;
 
         (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true, isLoading: false });
@@ -521,7 +519,6 @@ describe('<CourseUpdates />', () => {
     describe('when user does NOT have permission to view course updates', () => {
       beforeEach(() => {
         const mocks = initializeMocks();
-        store = mocks.reduxStore;
         axiosMock = mocks.axiosMock;
 
         (apiHooks.useWaffleFlags as jest.Mock).mockReturnValue({ enableAuthzCourseAuthoring: true, isLoading: false });

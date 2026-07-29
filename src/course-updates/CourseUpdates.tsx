@@ -7,12 +7,9 @@ import {
   Layout,
 } from '@openedx/paragon';
 import { Add as AddIcon, ErrorOutline as ErrorIcon } from '@openedx/paragon/icons';
-import { useSelector } from 'react-redux';
-
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
-import { RequestStatus } from '@src/data/constants';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import CourseHandouts from './course-handouts/CourseHandouts';
@@ -22,12 +19,6 @@ import UpdateForm from './update-form/UpdateForm';
 import { REQUEST_TYPES } from './constants';
 import messages from './messages';
 import { useCourseUpdates } from './hooks';
-import {
-  getErrors,
-  getLoadingStatuses,
-  getSavingStatuses,
-} from './data/selectors';
-import { matchesAnyStatus } from './utils';
 import getPageHeadTitle from '../generic/utils';
 import AlertMessage from '../generic/alert-message';
 import { getCourseUpdatesPermissions } from '@src/authz/permissionHelpers';
@@ -53,6 +44,11 @@ const CourseUpdates = () => {
     handleOpenUpdateForm,
     handleOpenDeleteForm,
     handleDeleteUpdateSubmit,
+    errors,
+    anyStatusFailed,
+    anyStatusDenied,
+    anyStatusInProgress,
+    anyStatusPending,
   } = useCourseUpdates({ courseId });
 
   const {
@@ -60,15 +56,6 @@ const CourseUpdates = () => {
     canViewCourseUpdates,
     canManageCourseUpdates,
   } = useCourseUserPermissions(courseId, getCourseUpdatesPermissions(courseId));
-
-  const loadingStatuses = useSelector(getLoadingStatuses);
-  const savingStatuses = useSelector(getSavingStatuses);
-  const errors = useSelector(getErrors);
-
-  const anyStatusFailed = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.FAILED);
-  const anyStatusDenied = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.DENIED);
-  const anyStatusInProgress = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.IN_PROGRESS);
-  const anyStatusPending = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.PENDING);
 
   if (!isLoadingPermissions && !canManageCourseUpdates && !canViewCourseUpdates) {
     return <PermissionDeniedAlert />;
