@@ -110,11 +110,11 @@ const messages = defineMessages({
     defaultMessage: 'This tag does not allow deletion',
   },
   tagEditForbidden: {
-    id: 'course-authoring.tag-list.system-defined-tag-edit-disabled',
+    id: 'course-authoring.tag-list.read-only-tag-edit-disabled',
     defaultMessage: 'Disabled because this is not allowed to be changed',
   },
   tagDeleteForbidden: {
-    id: 'course-authoring.tag-list.system-defined-tag-delete-disabled',
+    id: 'course-authoring.tag-list.read-only-tag-delete-disabled',
     defaultMessage: 'Disabled because this is not allowed to be deleted',
   },
   hasOpenDraft: {

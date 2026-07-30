@@ -27,12 +27,12 @@ const mockSetToastMessage = jest.fn();
  */
 const TaxonomyMenuComponent: React.FC<{
   iconMenu: boolean;
-  systemDefined?: boolean;
+  readOnly?: boolean;
   canChangeTaxonomy?: boolean;
   canDeleteTaxonomy?: boolean;
 }> = ({
   iconMenu,
-  systemDefined = false,
+  readOnly = false,
   canChangeTaxonomy = true,
   canDeleteTaxonomy = true,
 }) => {
@@ -50,7 +50,7 @@ const TaxonomyMenuComponent: React.FC<{
           id: taxonomyId,
           name: taxonomyName,
           tagsCount: 0,
-          systemDefined,
+          readOnly,
           canChangeTaxonomy,
           canDeleteTaxonomy,
         }}
@@ -120,7 +120,7 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', (iconMenu) => {
     const { findByTestId, queryByTestId } = render(
       <TaxonomyMenuComponent
         iconMenu={iconMenu}
-        systemDefined={false}
+        readOnly={false}
         canChangeTaxonomy={false}
         canDeleteTaxonomy={false}
       />,
@@ -136,12 +136,12 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', (iconMenu) => {
     expect(queryByTestId('taxonomy-menu-delete')).not.toBeInTheDocument();
   });
 
-  test('Hides import/delete actions for system-defined taxonomies', () => {
-    const systemDefined = true;
+  test('Hides import/delete actions for read-only taxonomies', () => {
+    const readOnly = true;
     const { getByTestId, queryByTestId } = render(
       <TaxonomyMenuComponent
         iconMenu={iconMenu}
-        systemDefined={systemDefined}
+        readOnly={readOnly}
       />,
     );
 

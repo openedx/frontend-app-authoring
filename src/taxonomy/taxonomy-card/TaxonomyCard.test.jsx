@@ -15,7 +15,7 @@ const data = {
   id: taxonomyId,
   name: 'Taxonomy 1',
   description: 'This is a description',
-  systemDefined: false,
+  readOnly: false,
   canChangeTaxonomy: true,
   canDeleteTaxonomy: true,
   tagsCount: 0,
@@ -83,17 +83,19 @@ describe('<TaxonomyCard />', () => {
     expect(getByTestId('taxonomy-menu-button')).toBeVisible();
   });
 
-  it('not show the system-defined badge with normal taxonomies', () => {
+  const readOnlyBadgeText = 'Read only';
+
+  it('not show the read-only badge with normal taxonomies', () => {
     const { queryByText } = render(<TaxonomyCardComponent original={data} />);
-    expect(queryByText('System-level')).not.toBeInTheDocument();
+    expect(queryByText(readOnlyBadgeText)).not.toBeInTheDocument();
   });
 
-  it('shows the system-defined badge with system taxonomies', () => {
+  it('shows the read-only badge with system taxonomies', () => {
     const cardData = { ...data };
-    cardData.systemDefined = true;
+    cardData.readOnly = true;
 
     const { getByText } = render(<TaxonomyCardComponent original={cardData} />);
-    expect(getByText('System-level')).toBeInTheDocument();
+    expect(getByText(readOnlyBadgeText)).toBeInTheDocument();
   });
 
   it('not show org count with taxonomies without orgs', () => {
