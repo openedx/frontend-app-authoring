@@ -11,7 +11,7 @@ import { fetchAssets } from './data/thunks';
 import { getAssetsUrl } from './data/api';
 import { courseId, initialState } from './factories/mockApiResponses';
 import FilesPage from './FilesPage';
-import messages from '../generic/messages';
+import messages from '@src/files-and-videos/generic/messages';
 
 let axiosMock;
 let store;

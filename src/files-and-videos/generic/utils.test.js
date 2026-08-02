@@ -11,7 +11,7 @@ describe('sortFiles', () => {
     { id: 'file3', displayName: 'c.txt', dateAdded: 'Jul 08, 2026, 12:15 AM' }, // unique, newer
   ];
 
-  it('keeps tied files in a consistent relative order across sort directions', () => {
+  it('flips tied files consistently along with the sort direction', () => {
     // Run the function once for "Newest first" and once for "Oldest first."
     const newest = sortFiles(files, 'dateAdded,desc');
     const oldest = sortFiles(files, 'dateAdded,asc');

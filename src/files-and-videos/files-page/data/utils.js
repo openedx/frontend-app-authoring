@@ -33,7 +33,6 @@ export const updateFileValues = (files) => {
     // const utcDateTime = new Date(utcDateString).toString(); "This is the old code"
     // Added this new line to convert the date string to a timestamp for easier sorting and comparison 
     // This will use the getTime() method to convert the date string to a timestamp in milliseconds since the Unix epoch (January 1, 1970).
-    //
     const utcDateTime = new Date(utcDateString).getTime();
     const lockStatus = locked ? 'locked' : 'public';
     const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
