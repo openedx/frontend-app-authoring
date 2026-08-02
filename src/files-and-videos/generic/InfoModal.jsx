@@ -101,7 +101,7 @@ InfoModal.propTypes = {
     thumbnail: PropTypes.string,
     id: PropTypes.string.isRequired,
     portableUrl: PropTypes.string,
-    dateAdded: PropTypes.string.isRequired,
+    dateAdded: PropTypes.number.isRequired,
     fileSize: PropTypes.number.isRequired,
     usageLocations: PropTypes.arrayOf(PropTypes.string),
     status: PropTypes.string,
