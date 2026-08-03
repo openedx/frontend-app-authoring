@@ -19,7 +19,17 @@ const geUpdateFormSettings = (requestType, courseUpdatesInitialValues, intl) => 
   const updatesValidationSchema = Yup.object().shape({
     id: Yup.number().required(),
     date: Yup.date().required(),
-    content: Yup.string(),
+    content: Yup.string()
+      .required(intl.formatMessage(messages.updateFormContentRequired))
+      .test(
+        'content-not-empty-html',
+        intl.formatMessage(messages.updateFormContentRequired),
+        (value) =>
+          (value || '')
+            .replace(/<[^>]*>/g, '')
+            .replace(/&(nbsp|#160|#xA0);/gi, '')
+            .trim().length > 0,
+      ),
   });
 
   switch (requestType) {

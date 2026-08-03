@@ -57,6 +57,7 @@ const UpdateForm = ({
       >
         {({
           values,
+          errors,
           handleSubmit,
           isValid,
           setFieldValue,
@@ -64,10 +65,10 @@ const UpdateForm = ({
           <>
             <h3 className="update-form-title">{formTitle}</h3>
             {(requestType !== REQUEST_TYPES.edit_handouts) && (
-              <Form.Group className="mb-4 datepicker-field datepicker-custom">
-                <Form.Control.Feedback className="datepicker-float-labels">
+              <Form.Group controlId="course-updates-date" className="mb-4 datepicker-field datepicker-custom">
+                <Form.Label htmlFor="course-updates-date" className="datepicker-float-labels">
                   {intl.formatMessage(messages.updateFormDate)}
-                </Form.Control.Feedback>
+                </Form.Label>
                 <div className="position-relative">
                   <Icon
                     src={CalendarIcon}
@@ -75,12 +76,13 @@ const UpdateForm = ({
                     alt={intl.formatMessage(messages.updateFormCalendarAltText)}
                   />
                   <DatePicker
+                    id="course-updates-date"
                     name="date"
                     data-testid="course-updates-datepicker"
                     selected={isValidDate(values.date) ? convertToDateFromString(values.date) : undefined}
                     dateFormat={DATE_FORMAT}
                     className={classNames('datepicker-custom-control', {
-                      'datepicker-custom-control_isInvalid': !isValid,
+                      'datepicker-custom-control_isInvalid': Boolean(errors.date),
                     })}
                     autoComplete="off"
                     selectsStart
@@ -95,8 +97,8 @@ const UpdateForm = ({
                     }}
                   />
                 </div>
-                {!isValid && (
-                  <div className="datepicker-field-error">
+                {errors.date && (
+                  <div className="datepicker-field-error" role="alert">
                     <Icon
                       src={ErrorIcon}
                       className="text-danger-500"
@@ -117,6 +119,11 @@ const UpdateForm = ({
                   await setFieldValue(contentFieldName, value || DEFAULT_EMPTY_WYSIWYG_VALUE);
                 }}
               />
+              {errors[contentFieldName] && (
+                <div id="course-updates-content-error" className="message-error" role="alert">
+                  {errors[contentFieldName]}
+                </div>
+              )}
             </Form.Group>
             <ActionRow>
               <Button variant="tertiary" type="button" onClick={close}>
