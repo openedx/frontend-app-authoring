@@ -43,9 +43,17 @@ const useCourseUpdates = ({ courseId }: { courseId: string; }) => {
 
   const handleOpenUpdateForm = (type: RequestType, courseUpdate?: CourseUpdate) => {
     setRequestType(type);
-    if (type === REQUEST_TYPES.add_new_update) { setCurrentUpdate(initialUpdate); }
-    if (type === REQUEST_TYPES.edit_update && courseUpdate) { setCurrentUpdate(courseUpdate); }
-    if (type === REQUEST_TYPES.edit_handouts) { window.scrollTo(0, 0); }
+    switch (type) {
+      case REQUEST_TYPES.add_new_update:
+        setCurrentUpdate(initialUpdate);
+        break;
+      case REQUEST_TYPES.edit_update:
+        if (courseUpdate) { setCurrentUpdate(courseUpdate); }
+        break;
+      case REQUEST_TYPES.edit_handouts:
+        window.scrollTo(0, 0);
+        break;
+    }
     openUpdateForm();
   };
 

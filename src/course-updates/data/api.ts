@@ -1,5 +1,6 @@
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { courseIDtoBlockID } from '@src/course-outline/utils';
 
 export interface CourseUpdate {
   id: number;
@@ -17,7 +18,7 @@ export type CourseUpdateInput = Omit<CourseUpdate, 'id'> & { id?: number; };
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getCourseUpdatesApiUrl = (courseId: string) => `${getApiBaseUrl()}/course_info_update/${courseId}/`;
 export const updateCourseUpdatesApiUrl = (courseId: string, updateId: number) =>
-  `${getApiBaseUrl()}/course_info_update/${courseId}/${updateId}`;
+  `${getCourseUpdatesApiUrl(courseId)}${updateId}`;
 export const getCourseHandoutApiUrl = (courseId: string) => {
   // Handouts are served by the block-v1 XBlock endpoint, so transform the course-v1 ID.
   const formattedCourseId = courseId.split('course-v1:')[1];
