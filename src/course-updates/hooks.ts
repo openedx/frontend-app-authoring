@@ -63,6 +63,13 @@ const useCourseUpdates = ({ courseId }: { courseId: string; }) => {
     openDeleteModal();
   };
 
+  const resetMutationErrors = () => {
+    createMutation.reset();
+    editMutation.reset();
+    deleteMutation.reset();
+    handoutsMutation.reset();
+  };
+
   const handleUpdatesSubmit = (data: UpdateFormData) => {
     resetMutationErrors();
     const dateWithoutTimezone = data.date instanceof Date ? data.date : convertToDateFromString(data.date);
@@ -91,13 +98,6 @@ const useCourseUpdates = ({ courseId }: { courseId: string; }) => {
     deleteMutation.mutate(currentUpdate.id);
     setCurrentUpdate(initialUpdate);
     closeDeleteModal();
-  };
-
-  const resetMutationErrors = () => {
-    createMutation.reset();
-    editMutation.reset();
-    deleteMutation.reset();
-    handoutsMutation.reset();
   };
 
   const mutationErrors = {
