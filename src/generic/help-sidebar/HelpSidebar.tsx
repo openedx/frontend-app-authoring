@@ -1,10 +1,11 @@
 import { type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import classNames from 'classnames';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { useCourseUserPermissions } from '@src/authz/hooks';
-import { getAdvancedSettingsPermissions } from '@src/authz/permissionHelpers';
+import * as permissionHelpers from '@src/authz/permissionHelpers';
 import { otherLinkURLParams } from './constants';
 import messages from './messages';
 import HelpSidebarLink from './HelpSidebarLink';
@@ -37,11 +38,15 @@ const HelpSidebar = ({
 
   /*
     AuthZ for Course Authoring
+    If authz.enable_course_authoring flag is enabled, validate permissions using AuthZ API.
   */
-  const { canManageAdvancedSettings } = useCourseUserPermissions(
-    courseId,
-    getAdvancedSettingsPermissions(courseId),
-  );
+  const perms = useCourseUserPermissions(courseId, {
+    ...permissionHelpers.getScheduleAndDetailsPermissions(courseId),
+    ...permissionHelpers.getGradingPermissions(courseId),
+    ...permissionHelpers.getCourseTeamPermissions(courseId),
+    ...permissionHelpers.getGroupConfigurationsPermissions(courseId),
+    ...permissionHelpers.getAdvancedSettingsPermissions(courseId),
+  });
 
   return (
     <aside className={classNames('help-sidebar', className)}>
@@ -58,7 +63,7 @@ const HelpSidebar = ({
               aria-label={intl.formatMessage(messages.sidebarTitleOther)}
             >
               <ul className="p-0 mb-0">
-                {showOtherLink(scheduleAndDetails) && (
+                {showOtherLink(scheduleAndDetails) && perms.canViewScheduleAndDetails && (
                   <HelpSidebarLink
                     pathToPage={`/course/${courseId}/${scheduleAndDetails}`}
                     title={intl.formatMessage(
@@ -67,21 +72,35 @@ const HelpSidebar = ({
                     isNewPage
                   />
                 )}
-                {showOtherLink(grading) && (
+                {showOtherLink(grading) && perms.canViewGradingSettings && (
                   <HelpSidebarLink
                     pathToPage={`/course/${courseId}/${grading}`}
                     title={intl.formatMessage(messages.sidebarLinkToGrading)}
                     isNewPage
                   />
                 )}
-                {showOtherLink(courseTeam) && (
-                  <HelpSidebarLink
-                    pathToPage={`/course/${courseId}/${courseTeam}`}
-                    title={intl.formatMessage(messages.sidebarLinkToCourseTeam)}
-                    isNewPage
-                  />
+                {showOtherLink(courseTeam) && perms.canViewCourseTeam && (
+                  /*
+                    canViewCourseTeam is true both with the AuthZ permission and with the flag off (permissions
+                    fall back to true), so isAuthzEnabled picks the destination: Admin Console or legacy Course Team.
+                  */
+                  perms.isAuthzEnabled ?
+                    (
+                      <HelpSidebarLink
+                        pathToPage={`${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`}
+                        title={intl.formatMessage(messages.sidebarLinkToRolesAndPermissions)}
+                        isNewPage
+                      />
+                    ) :
+                    (
+                      <HelpSidebarLink
+                        pathToPage={`/course/${courseId}/${courseTeam}`}
+                        title={intl.formatMessage(messages.sidebarLinkToCourseTeam)}
+                        isNewPage
+                      />
+                    )
                 )}
-                {showOtherLink(groupConfigurations) && (
+                {showOtherLink(groupConfigurations) && perms.canManageGroupConfigurations && (
                   <HelpSidebarLink
                     pathToPage={`/course/${courseId}/${groupConfigurations}`}
                     title={intl.formatMessage(
@@ -90,7 +109,7 @@ const HelpSidebar = ({
                     isNewPage
                   />
                 )}
-                {showOtherLink(advancedSettings) && canManageAdvancedSettings && (
+                {showOtherLink(advancedSettings) && perms.canManageAdvancedSettings && (
                   <HelpSidebarLink
                     pathToPage={`/course/${courseId}/${advancedSettings}`}
                     title={intl.formatMessage(messages.sidebarLinkToAdvancedSettings)}

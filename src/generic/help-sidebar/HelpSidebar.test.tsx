@@ -27,22 +27,30 @@ const props = {
 };
 
 /**
- * Set the result of the course-scoped Advanced Settings permission check.
- * HelpSidebar only reads `canManageAdvancedSettings`; the loading / authz-disabled
- * fallbacks are owned (and tested) by useCourseUserPermissions itself.
+ * Set the result of the course-scoped permission checks used by the "Other course settings" links.
+ * The loading / authz-disabled fallbacks are owned (and tested) by useCourseUserPermissions itself,
+ * so tests state the resolved answers directly.
  */
-const mockAdvancedSettingsPermission = (canManageAdvancedSettings: boolean, isLoading = false) => {
+const mockCoursePermissions = (
+  permissions: Record<string, boolean> = {},
+  { isLoading = false, isAuthzEnabled = true } = {},
+) => {
   jest.mocked(useCourseUserPermissions).mockReturnValue({
     isLoading,
-    isAuthzEnabled: true,
-    canManageAdvancedSettings,
+    isAuthzEnabled,
+    canViewScheduleAndDetails: true,
+    canViewGradingSettings: true,
+    canViewCourseTeam: true,
+    canManageGroupConfigurations: true,
+    canManageAdvancedSettings: true,
+    ...permissions,
   } as unknown as ReturnType<typeof useCourseUserPermissions>);
 };
 
 describe('HelpSidebar', () => {
   beforeEach(() => {
     initializeMocks();
-    mockAdvancedSettingsPermission(true);
+    mockCoursePermissions({}, { isAuthzEnabled: false });
   });
 
   it('renders children correctly', () => {
@@ -78,21 +86,61 @@ describe('HelpSidebar', () => {
     expect(getByText(messages.sidebarLinkToProctoredExamSettings.defaultMessage)).toBeTruthy();
   });
 
-  it('should render the advanced settings sidebar link when the user can manage advanced settings', async () => {
-    mockAdvancedSettingsPermission(true);
-    const { queryByText } = renderHelpSidebar(props);
-    await waitFor(() => expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeTruthy());
-  });
+  describe('authz validation', () => {
+    it.each([
+      ['canViewScheduleAndDetails', messages.sidebarLinkToScheduleAndDetails],
+      ['canViewGradingSettings', messages.sidebarLinkToGrading],
+      ['canManageGroupConfigurations', messages.sidebarLinkToGroupConfigurations],
+      ['canManageAdvancedSettings', messages.sidebarLinkToAdvancedSettings],
+    ])('renders the %s link only when the permission is granted', async (permission, message) => {
+      mockCoursePermissions({ [permission]: true });
+      const { queryByText, unmount } = renderHelpSidebar(props);
+      await waitFor(() => expect(queryByText(message.defaultMessage)).toBeTruthy());
+      unmount();
 
-  it('should not render the advanced settings sidebar link when the user cannot manage advanced settings', async () => {
-    mockAdvancedSettingsPermission(false);
-    const { queryByText } = renderHelpSidebar(props);
-    await waitFor(() => expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeFalsy());
-  });
+      mockCoursePermissions({ [permission]: false });
+      const { queryByText: queryWithoutPermission } = renderHelpSidebar(props);
+      await waitFor(() => expect(queryWithoutPermission(message.defaultMessage)).toBeFalsy());
+    });
 
-  it('should not render the advanced settings sidebar link while the permission check is loading', async () => {
-    mockAdvancedSettingsPermission(false, true);
-    const { queryByText } = renderHelpSidebar(props);
-    await waitFor(() => expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeFalsy());
+    it('should render the roles and permissions link instead of course team when authz is enabled', async () => {
+      mockCoursePermissions({ canViewCourseTeam: true });
+      const { queryByText } = renderHelpSidebar(props);
+      await waitFor(() => expect(queryByText(messages.sidebarLinkToRolesAndPermissions.defaultMessage)).toBeTruthy());
+      expect(queryByText(messages.sidebarLinkToCourseTeam.defaultMessage)).toBeFalsy();
+    });
+
+    it('should render the course team link when authz is disabled', async () => {
+      mockCoursePermissions({}, { isAuthzEnabled: false });
+      const { queryByText } = renderHelpSidebar(props);
+      await waitFor(() => expect(queryByText(messages.sidebarLinkToCourseTeam.defaultMessage)).toBeTruthy());
+      expect(queryByText(messages.sidebarLinkToRolesAndPermissions.defaultMessage)).toBeFalsy();
+    });
+
+    it('should not render the team link when the user cannot view the course team', async () => {
+      mockCoursePermissions({ canViewCourseTeam: false });
+      const { queryByText } = renderHelpSidebar(props);
+      await waitFor(() => expect(queryByText(messages.sidebarLinkToRolesAndPermissions.defaultMessage)).toBeFalsy());
+      expect(queryByText(messages.sidebarLinkToCourseTeam.defaultMessage)).toBeFalsy();
+    });
+
+    it('should not render any of the gated links while the permission check is loading', async () => {
+      mockCoursePermissions({
+        canViewScheduleAndDetails: false,
+        canViewGradingSettings: false,
+        canViewCourseTeam: false,
+        canManageGroupConfigurations: false,
+        canManageAdvancedSettings: false,
+      }, { isLoading: true });
+      const { queryByText } = renderHelpSidebar(props);
+
+      await waitFor(() => {
+        expect(queryByText(messages.sidebarLinkToScheduleAndDetails.defaultMessage)).toBeFalsy();
+      });
+      expect(queryByText(messages.sidebarLinkToGrading.defaultMessage)).toBeFalsy();
+      expect(queryByText(messages.sidebarLinkToRolesAndPermissions.defaultMessage)).toBeFalsy();
+      expect(queryByText(messages.sidebarLinkToGroupConfigurations.defaultMessage)).toBeFalsy();
+      expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeFalsy();
+    });
   });
 });

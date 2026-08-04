@@ -80,14 +80,7 @@ const SettingsTab = () => {
     AuthZ for Course Authoring
     If authz.enable_course_authoring flag is enabled, validate permissions using AuthZ API.
   */
-  const {
-    isAuthzEnabled,
-    canViewScheduleAndDetails,
-    canViewGradingSettings,
-    canViewCourseTeam,
-    canManageGroupConfigurations,
-    canManageAdvancedSettings,
-  } = useCourseUserPermissions(courseId, {
+  const perms = useCourseUserPermissions(courseId, {
     ...permissionHelpers.getScheduleAndDetailsPermissions(courseId),
     ...permissionHelpers.getGradingPermissions(courseId),
     ...permissionHelpers.getCourseTeamPermissions(courseId),
@@ -99,7 +92,7 @@ const SettingsTab = () => {
     <SidebarSection
       title={intl.formatMessage(messages.settingsTabText)}
     >
-      {canViewScheduleAndDetails && (
+      {perms.canViewScheduleAndDetails && (
         <HelpSidebarLink
           as="span"
           pathToPage={`/course/${courseId}/${scheduleAndDetails}`}
@@ -109,7 +102,7 @@ const SettingsTab = () => {
           isNewPage
         />
       )}
-      {canViewGradingSettings && (
+      {perms.canViewGradingSettings && (
         <HelpSidebarLink
           as="span"
           pathToPage={`/course/${courseId}/${grading}`}
@@ -117,12 +110,12 @@ const SettingsTab = () => {
           isNewPage
         />
       )}
-      {canViewCourseTeam && (
+      {perms.canViewCourseTeam && (
         /*
           canViewCourseTeam is true both with the AuthZ permission and with the flag off (permissions
           fall back to true), so isAuthzEnabled picks the destination: Admin Console or legacy Course Team.
         */
-        isAuthzEnabled ?
+        perms.isAuthzEnabled ?
           (
             <HelpSidebarLink
               as="span"
@@ -140,7 +133,7 @@ const SettingsTab = () => {
             />
           )
       )}
-      {canManageGroupConfigurations && (
+      {perms.canManageGroupConfigurations && (
         <HelpSidebarLink
           as="span"
           pathToPage={`/course/${courseId}/${groupConfigurations}`}
@@ -148,7 +141,7 @@ const SettingsTab = () => {
           isNewPage
         />
       )}
-      {canManageAdvancedSettings && (
+      {perms.canManageAdvancedSettings && (
         <HelpSidebarLink
           as="span"
           pathToPage={`/course/${courseId}/${advancedSettings}`}
