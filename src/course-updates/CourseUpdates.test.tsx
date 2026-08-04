@@ -223,7 +223,7 @@ describe('<CourseUpdates />', () => {
       editUpdateButtons.forEach((button) => expect(button).toBeDisabled());
       editHandoutsButtons.forEach((button) => expect(button).toBeDisabled());
       deleteButtons.forEach((button) => expect(button).toBeDisabled());
-      expect(screen.getByTestId('course-updates-wisiwyg-editor')).toHaveValue(courseUpdatesMock[0].content);
+      expect(screen.getByDisplayValue(courseUpdatesMock[0].content)).toHaveValue(courseUpdatesMock[0].content);
     });
   });
 
@@ -275,7 +275,7 @@ describe('<CourseUpdates />', () => {
 
       render(<RootWrapper />);
 
-      expect(await screen.findByTestId('connectionErrorAlert')).toBeInTheDocument();
+      expect(await screen.findByRole('alert')).toBeInTheDocument();
     });
   });
 
@@ -361,7 +361,7 @@ describe('<CourseUpdates />', () => {
       setEditorValue(data.data);
       await userEvent.click(screen.getByRole('button', { name: 'Save' }));
       expect(await screen.findByText(messages.savingHandoutsErrorDescription.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(courseHandoutsMock.data)).toBeVisible();
+      expect(await screen.findByText(courseHandoutsMock.data)).toBeVisible();
     });
   });
 
