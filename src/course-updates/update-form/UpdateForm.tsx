@@ -20,12 +20,10 @@ import {
   isValidDate,
 } from '../../utils';
 import { DATE_FORMAT, DEFAULT_EMPTY_WYSIWYG_VALUE } from '../../constants';
-import { WysiwygEditor } from '../../generic/WysiwygEditor';
+import { SUPPORTED_TEXT_EDITORS, WysiwygEditor } from '../../generic/WysiwygEditor';
 import { REQUEST_TYPES } from '../constants';
 import { geUpdateFormSettings } from './utils';
 import messages from './messages';
-
-const LegacyWysiwygEditor = WysiwygEditor as React.ComponentType<any>;
 
 type RequestType = ValueOf<typeof REQUEST_TYPES>;
 type UpdateFormProps = {
@@ -125,10 +123,9 @@ const UpdateForm = ({
               </Form.Group>
             )}
             <Form.Group className="m-0 mb-3">
-              <LegacyWysiwygEditor
+              <WysiwygEditor
                 initialValue={currentContent}
-                data-testid="course-updates-wisiwyg-editor"
-                name={contentFieldName}
+                editorType={SUPPORTED_TEXT_EDITORS.text}
                 minHeight={300}
                 onChange={/* istanbul ignore next: we can't test WYSIWYG editors */ async (value) => {
                   await setFieldValue(contentFieldName, value || DEFAULT_EMPTY_WYSIWYG_VALUE);
