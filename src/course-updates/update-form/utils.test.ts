@@ -1,11 +1,12 @@
+import type { IntlShape } from 'react-intl';
 import { REQUEST_TYPES } from '../constants';
 import { geUpdateFormSettings } from './utils';
 
 const intl = {
-  formatMessage: (message) => message.defaultMessage,
-};
+  formatMessage: (message: { defaultMessage: string; }) => message.defaultMessage,
+} as unknown as IntlShape;
 
-const values = (content) => ({ id: 1, date: 'July 11, 2023', content });
+const values = (content: string) => ({ id: 1, date: 'July 11, 2023', content });
 const validationSchema = geUpdateFormSettings(
   REQUEST_TYPES.add_new_update,
   values('Real content'),

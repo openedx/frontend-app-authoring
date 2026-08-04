@@ -11,6 +11,9 @@ import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { REQUEST_TYPES } from '../constants';
 import { courseHandoutsMock, courseUpdatesMock } from '../__mocks__';
 import UpdateForm from './UpdateForm';
+import type { ValueOf } from '../../types';
+import type { CourseHandouts } from '../data/api';
+import type { UpdateFormValues } from './utils';
 import messages from './messages';
 
 const closeMock = jest.fn();
@@ -38,7 +41,9 @@ jest.mock('../../editors/sharedComponents/TinyMceWidget', () => ({
   })),
 }));
 
-const courseUpdatesInitialValues = (requestType) => {
+type RequestType = ValueOf<typeof REQUEST_TYPES>;
+
+const courseUpdatesInitialValues = (requestType: RequestType): UpdateFormValues | CourseHandouts => {
   switch (requestType) {
     case REQUEST_TYPES.add_new_update:
       return addNewUpdateMock;
@@ -49,7 +54,13 @@ const courseUpdatesInitialValues = (requestType) => {
   }
 };
 
-const renderComponent = ({ requestType, initialValues }) =>
+const renderComponent = ({
+  requestType,
+  initialValues,
+}: {
+  requestType: RequestType;
+  initialValues?: UpdateFormValues | CourseHandouts;
+}) =>
   render(
     <CourseAuthoringProvider courseId="1">
       <UpdateForm
@@ -70,7 +81,7 @@ describe('<UpdateForm />', () => {
     const { getByText, getByLabelText, getByRole } = renderComponent({
       requestType: REQUEST_TYPES.add_new_update,
     });
-    const { date } = courseUpdatesInitialValues(REQUEST_TYPES.add_new_update);
+    const { date } = courseUpdatesInitialValues(REQUEST_TYPES.add_new_update) as UpdateFormValues;
     const formattedDate = moment(date).utc().format('MM/DD/yyyy');
 
     expect(getByText(messages.addNewUpdateTitle.defaultMessage)).toBeInTheDocument();

@@ -1,21 +1,26 @@
 import * as Yup from 'yup';
+import type { IntlShape } from 'react-intl';
 
 import { REQUEST_TYPES } from '../constants';
+import type { ValueOf } from '../../types';
+import type { CourseHandouts, CourseUpdate } from '../data/api';
 import messages from './messages';
 
-/**
- * Get Update form settings depending on requestType
- * @param {typeof REQUEST_TYPES} requestType - one of REQUEST_TYPES
- * @param {object} courseUpdatesInitialValues - form initial values depending on requestType
- * @returns {{
- *  currentContent: string,
- *  validationSchema: object,
- *  formTitle: string,
- *  submitButtonText: string,
- *  contentFieldName: string
- *  }}
- */
-const geUpdateFormSettings = (requestType, courseUpdatesInitialValues, intl) => {
+export type UpdateFormValues = Omit<CourseUpdate, 'date'> & { date: string | Date; } & CourseHandouts;
+type RequestType = ValueOf<typeof REQUEST_TYPES>;
+type UpdateFormSettings = {
+  currentContent: string;
+  validationSchema: Yup.AnyObjectSchema;
+  formTitle: string;
+  submitButtonText: string;
+  contentFieldName: 'data' | 'content';
+};
+
+const geUpdateFormSettings = (
+  requestType: RequestType,
+  courseUpdatesInitialValues: UpdateFormValues | CourseHandouts,
+  intl: IntlShape,
+): UpdateFormSettings => {
   const updatesValidationSchema = Yup.object().shape({
     id: Yup.number().required(),
     date: Yup.date().required(),
@@ -35,15 +40,15 @@ const geUpdateFormSettings = (requestType, courseUpdatesInitialValues, intl) => 
   switch (requestType) {
     case REQUEST_TYPES.edit_handouts:
       return {
-        currentContent: courseUpdatesInitialValues.data,
+        currentContent: courseUpdatesInitialValues.data || '',
         formTitle: intl.formatMessage(messages.editHandoutsTitle),
-        validationSchema: Yup.object().shape(),
+        validationSchema: Yup.object().shape({}),
         contentFieldName: 'data',
         submitButtonText: intl.formatMessage(messages.saveButton),
       };
     case REQUEST_TYPES.add_new_update:
       return {
-        currentContent: courseUpdatesInitialValues.content,
+        currentContent: (courseUpdatesInitialValues as UpdateFormValues).content,
         formTitle: intl.formatMessage(messages.addNewUpdateTitle),
         validationSchema: updatesValidationSchema,
         contentFieldName: 'content',
@@ -51,14 +56,14 @@ const geUpdateFormSettings = (requestType, courseUpdatesInitialValues, intl) => 
       };
     case REQUEST_TYPES.edit_update:
       return {
-        currentContent: courseUpdatesInitialValues.content,
+        currentContent: (courseUpdatesInitialValues as UpdateFormValues).content,
         formTitle: intl.formatMessage(messages.editUpdateTitle),
         validationSchema: updatesValidationSchema,
         contentFieldName: 'content',
         submitButtonText: intl.formatMessage(messages.postButton),
       };
     default:
-      return '';
+      return '' as unknown as UpdateFormSettings;
   }
 };
 

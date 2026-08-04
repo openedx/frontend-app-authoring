@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   ActionRow,
   Button,
@@ -10,7 +9,10 @@ import classNames from 'classnames';
 import DatePicker from 'react-datepicker';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Calendar as CalendarIcon, Error as ErrorIcon } from '@openedx/paragon/icons';
-import { Formik } from 'formik';
+import { Formik, FormikConfig } from 'formik';
+import type { CourseHandouts } from '../data/api';
+import type { ValueOf } from '../../types';
+import type { UpdateFormValues } from './utils';
 
 import {
   convertToStringFromDate,
@@ -23,14 +25,27 @@ import { REQUEST_TYPES } from '../constants';
 import { geUpdateFormSettings } from './utils';
 import messages from './messages';
 
+const LegacyWysiwygEditor = WysiwygEditor as React.ComponentType<any>;
+
+type RequestType = ValueOf<typeof REQUEST_TYPES>;
+type UpdateFormProps = {
+  close: () => void;
+  requestType: RequestType;
+  onSubmit: FormikConfig<UpdateFormValues>['onSubmit'];
+  courseUpdatesInitialValues: UpdateFormValues | CourseHandouts;
+  isInnerForm?: boolean;
+  isFirstUpdate?: boolean;
+  isOpen?: boolean;
+};
+
 const UpdateForm = ({
   close,
   requestType,
   onSubmit,
   courseUpdatesInitialValues,
-  isInnerForm,
-  isFirstUpdate,
-}) => {
+  isInnerForm = false,
+  isFirstUpdate = false,
+}: UpdateFormProps) => {
   const intl = useIntl();
 
   const {
@@ -48,8 +63,8 @@ const UpdateForm = ({
         'update-form__inner-first': isFirstUpdate,
       })}
     >
-      <Formik
-        initialValues={courseUpdatesInitialValues}
+      <Formik<UpdateFormValues>
+        initialValues={courseUpdatesInitialValues as UpdateFormValues}
         validationSchema={validationSchema}
         validateOnMount
         validateOnBlur
@@ -73,13 +88,13 @@ const UpdateForm = ({
                   <Icon
                     src={CalendarIcon}
                     className="datepicker-custom-control-icon"
-                    alt={intl.formatMessage(messages.updateFormCalendarAltText)}
+                    screenReaderText={intl.formatMessage(messages.updateFormCalendarAltText)}
                   />
                   <DatePicker
                     id="course-updates-date"
                     name="date"
                     data-testid="course-updates-datepicker"
-                    selected={isValidDate(values.date) ? convertToDateFromString(values.date) : undefined}
+                    selected={isValidDate(values.date) ? convertToDateFromString(values.date as string) : undefined}
                     dateFormat={DATE_FORMAT}
                     className={classNames('datepicker-custom-control', {
                       'datepicker-custom-control_isInvalid': Boolean(errors.date),
@@ -102,7 +117,7 @@ const UpdateForm = ({
                     <Icon
                       src={ErrorIcon}
                       className="text-danger-500"
-                      alt={intl.formatMessage(messages.updateFormErrorAltText)}
+                      screenReaderText={intl.formatMessage(messages.updateFormErrorAltText)}
                     />
                     <span className="message-error">{intl.formatMessage(messages.updateFormInValid)}</span>
                   </div>
@@ -110,7 +125,7 @@ const UpdateForm = ({
               </Form.Group>
             )}
             <Form.Group className="m-0 mb-3">
-              <WysiwygEditor
+              <LegacyWysiwygEditor
                 initialValue={currentContent}
                 data-testid="course-updates-wisiwyg-editor"
                 name={contentFieldName}
@@ -129,7 +144,7 @@ const UpdateForm = ({
               <Button variant="tertiary" type="button" onClick={close}>
                 {intl.formatMessage(messages.cancelButton)}
               </Button>
-              <Button onClick={handleSubmit} type="submit" disabled={!isValid}>
+              <Button onClick={() => handleSubmit()} type="submit" disabled={!isValid}>
                 {submitButtonText}
               </Button>
             </ActionRow>
@@ -138,21 +153,6 @@ const UpdateForm = ({
       </Formik>
     </div>
   );
-};
-
-UpdateForm.defaultProps = {
-  isInnerForm: false,
-  isFirstUpdate: false,
-};
-
-UpdateForm.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  courseUpdatesInitialValues: PropTypes.object.isRequired,
-  close: PropTypes.func.isRequired,
-  requestType: PropTypes.string.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  isInnerForm: PropTypes.bool,
-  isFirstUpdate: PropTypes.bool,
 };
 
 export default UpdateForm;
