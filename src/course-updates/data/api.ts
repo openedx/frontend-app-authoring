@@ -1,6 +1,5 @@
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { courseIDtoBlockID } from '@src/course-outline/utils';
 
 export interface CourseUpdate {
   id: number;
