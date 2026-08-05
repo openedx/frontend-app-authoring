@@ -1,11 +1,11 @@
 import { type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import classNames from 'classnames';
-import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import * as permissionHelpers from '@src/authz/permissionHelpers';
+import { getAdminConsoleScopeUrl } from '@src/authz/urls';
 import { otherLinkURLParams } from './constants';
 import messages from './messages';
 import HelpSidebarLink from './HelpSidebarLink';
@@ -87,7 +87,7 @@ const HelpSidebar = ({
                   perms.isAuthzEnabled ?
                     (
                       <HelpSidebarLink
-                        pathToPage={`${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`}
+                        pathToPage={getAdminConsoleScopeUrl(courseId)}
                         title={intl.formatMessage(messages.sidebarLinkToRolesAndPermissions)}
                         isNewPage
                       />

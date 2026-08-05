@@ -1,4 +1,3 @@
-import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Tab,
@@ -9,6 +8,7 @@ import { SchoolOutline, Tag } from '@openedx/paragon/icons';
 
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import * as permissionHelpers from '@src/authz/permissionHelpers';
+import { getAdminConsoleScopeUrl } from '@src/authz/urls';
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
 import { useCourseSettings } from '@src/data/apiHooks';
 import { ComponentCountSnippet } from '@src/generic/block-type-utils';
@@ -119,7 +119,7 @@ const SettingsTab = () => {
           (
             <HelpSidebarLink
               as="span"
-              pathToPage={`${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`}
+              pathToPage={getAdminConsoleScopeUrl(courseId)}
               title={intl.formatMessage(helpSidebarMessages.sidebarLinkToRolesAndPermissions)}
               isNewPage
             />

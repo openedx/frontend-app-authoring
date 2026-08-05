@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -11,6 +10,7 @@ import { Add as IconAdd } from '@openedx/paragon/icons';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getCourseTeamPermissions } from '@src/authz/permissionHelpers';
+import { getAdminConsoleScopeUrl } from '@src/authz/urls';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import { USER_ROLES } from '@src/constants';
@@ -72,8 +72,7 @@ const CourseTeam = () => {
 
   useEffect(() => {
     if (shouldRedirectToAdminConsole) {
-      const adminConsoleBaseUrl = getConfig().ADMIN_CONSOLE_URL;
-      window.location.replace(`${adminConsoleBaseUrl}/authz?scope=${encodeURIComponent(courseId)}`);
+      window.location.replace(getAdminConsoleScopeUrl(courseId));
     }
   }, [shouldRedirectToAdminConsole, courseId]);
 
