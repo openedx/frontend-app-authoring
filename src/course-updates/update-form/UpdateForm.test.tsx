@@ -4,6 +4,7 @@ import {
   waitFor,
   act,
   initializeMocks,
+  screen,
 } from '@src/testUtils';
 import moment from 'moment/moment';
 
@@ -11,7 +12,7 @@ import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { REQUEST_TYPES } from '../constants';
 import { courseHandoutsMock, courseUpdatesMock } from '../__mocks__';
 import UpdateForm from './UpdateForm';
-import type { ValueOf } from '../../types';
+import type { ValueOf } from '@src/types';
 import type { CourseHandouts } from '../data/api';
 import type { UpdateFormValues } from './utils';
 import messages from './messages';
@@ -32,7 +33,7 @@ jest.mock('@tinymce/tinymce-react', () => {
   };
 });
 
-jest.mock('../../editors/sharedComponents/TinyMceWidget', () => ({
+jest.mock('@src/editors/sharedComponents/TinyMceWidget', () => ({
   __esModule: true, // Required to mock a default export
   default: () => <div>Widget</div>,
   prepareEditorRef: jest.fn(() => ({
@@ -78,56 +79,51 @@ describe('<UpdateForm />', () => {
     initializeMocks();
   });
   it('render Add new update form correctly', async () => {
-    const { getByText, getByLabelText, getByRole } = renderComponent({
+    renderComponent({
       requestType: REQUEST_TYPES.add_new_update,
     });
     const { date } = courseUpdatesInitialValues(REQUEST_TYPES.add_new_update) as UpdateFormValues;
     const formattedDate = moment(date).utc().format('MM/DD/yyyy');
 
-    expect(getByText(messages.addNewUpdateTitle.defaultMessage)).toBeInTheDocument();
-    expect(getByText(messages.updateFormDate.defaultMessage)).toBeInTheDocument();
-    expect(getByLabelText(messages.updateFormDate.defaultMessage)).toHaveValue(formattedDate);
-    expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.postButton.defaultMessage })).toBeInTheDocument();
+    expect(await screen.findByText(messages.addNewUpdateTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(messages.updateFormDate.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByLabelText(messages.updateFormDate.defaultMessage)).toHaveValue(formattedDate);
+    expect(await screen.findByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: messages.postButton.defaultMessage })).toBeInTheDocument();
   });
 
   it('render Edit update form correctly', async () => {
-    const { getByText, getByLabelText, getByRole } = renderComponent({ requestType: REQUEST_TYPES.edit_update });
+    renderComponent({ requestType: REQUEST_TYPES.edit_update });
 
-    expect(getByText(messages.editUpdateTitle.defaultMessage)).toBeInTheDocument();
-    expect(getByText(messages.updateFormDate.defaultMessage)).toBeInTheDocument();
-    expect(getByLabelText(messages.updateFormDate.defaultMessage)).toHaveValue(formattedDateMock);
-    expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.postButton.defaultMessage })).toBeInTheDocument();
+    expect(await screen.findByText(messages.editUpdateTitle.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(messages.updateFormDate.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByLabelText(messages.updateFormDate.defaultMessage)).toHaveValue(formattedDateMock);
+    expect(await screen.findByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: messages.postButton.defaultMessage })).toBeInTheDocument();
   });
 
   it('render Edit handouts form correctly', async () => {
-    const {
-      getByText,
-      getByRole,
-      queryByTestId,
-      queryByText,
-    } = renderComponent({ requestType: REQUEST_TYPES.edit_handouts });
+    renderComponent({ requestType: REQUEST_TYPES.edit_handouts });
 
-    expect(getByText(messages.editHandoutsTitle.defaultMessage)).toBeInTheDocument();
-    expect(queryByText(messages.updateFormDate.defaultMessage)).not.toBeInTheDocument();
-    expect(queryByTestId('course-updates-datepicker')).not.toBeInTheDocument();
-    expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
+    expect(await screen.findByText(messages.editHandoutsTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText(messages.updateFormDate.defaultMessage)).not.toBeInTheDocument();
+    expect(screen.queryByTestId('course-updates-datepicker')).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
   });
 
-  it('calls closeMock when clicking cancel button', () => {
-    const { getByRole } = renderComponent({ requestType: REQUEST_TYPES.add_new_update });
+  it('calls closeMock when clicking cancel button', async () => {
+    renderComponent({ requestType: REQUEST_TYPES.add_new_update });
 
-    const cancelButton = getByRole('button', { name: messages.cancelButton.defaultMessage });
+    const cancelButton = await screen.findByRole('button', { name: messages.cancelButton.defaultMessage });
     fireEvent.click(cancelButton);
     expect(closeMock).toHaveBeenCalledTimes(1);
   });
 
   it('calls onSubmitMock with correct values when clicking post button', async () => {
-    const { getByDisplayValue, getByRole } = renderComponent({ requestType: REQUEST_TYPES.edit_update });
-    const datePicker = getByDisplayValue(formattedDateMock);
-    const postButton = getByRole('button', { name: messages.postButton.defaultMessage });
+    renderComponent({ requestType: REQUEST_TYPES.edit_update });
+    const datePicker = await screen.findByDisplayValue(formattedDateMock);
+    const postButton = await screen.findByRole('button', { name: messages.postButton.defaultMessage });
 
     fireEvent.change(datePicker, { target: { value: formattedDateMock } });
 
@@ -149,38 +145,34 @@ describe('<UpdateForm />', () => {
   });
 
   it('does not show a date error for a valid date when content is blank', async () => {
-    const { queryByText, getByRole } = renderComponent({
+    renderComponent({
       requestType: REQUEST_TYPES.add_new_update,
       initialValues: { ...addNewUpdateMock, content: '' },
     });
 
     await waitFor(() => {
-      expect(queryByText(messages.updateFormInValid.defaultMessage)).not.toBeInTheDocument();
-      expect(getByRole('button', { name: messages.postButton.defaultMessage })).toBeDisabled();
+      expect(screen.queryByText(messages.updateFormInValid.defaultMessage)).not.toBeInTheDocument();
     });
+    expect(await screen.findByRole('button', { name: messages.postButton.defaultMessage })).toBeDisabled();
   });
 
   it('shows the required content error and disables Post when content is blank', async () => {
-    const { getByRole } = renderComponent({
+    renderComponent({
       requestType: REQUEST_TYPES.add_new_update,
       initialValues: { ...addNewUpdateMock, content: '' },
     });
 
-    await waitFor(() => {
-      expect(getByRole('alert')).toHaveTextContent(messages.updateFormContentRequired.defaultMessage);
-      expect(getByRole('button', { name: messages.postButton.defaultMessage })).toBeDisabled();
-    });
+    expect(await screen.findByRole('alert')).toHaveTextContent(messages.updateFormContentRequired.defaultMessage);
+    expect(await screen.findByRole('button', { name: messages.postButton.defaultMessage })).toBeDisabled();
   });
 
   it('shows the date error when the date is invalid', async () => {
-    const { getByDisplayValue, getByText, getByRole } = renderComponent({ requestType: REQUEST_TYPES.edit_update });
-    const datePicker = getByDisplayValue(formattedDateMock);
+    renderComponent({ requestType: REQUEST_TYPES.edit_update });
+    const datePicker = await screen.findByDisplayValue(formattedDateMock);
 
     fireEvent.change(datePicker, { target: { value: '' } });
 
-    await waitFor(() => {
-      expect(getByText(messages.updateFormInValid.defaultMessage)).toBeInTheDocument();
-      expect(getByRole('button', { name: messages.postButton.defaultMessage })).toBeDisabled();
-    });
+    expect(await screen.findByText(messages.updateFormInValid.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: messages.postButton.defaultMessage })).toBeDisabled();
   });
 });

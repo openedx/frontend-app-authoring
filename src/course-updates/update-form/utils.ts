@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 import type { IntlShape } from 'react-intl';
 
 import { REQUEST_TYPES } from '../constants';
-import type { ValueOf } from '../../types';
+import type { ValueOf } from '@src/types';
 import type { CourseHandouts, CourseUpdate } from '../data/api';
 import messages from './messages';
 
