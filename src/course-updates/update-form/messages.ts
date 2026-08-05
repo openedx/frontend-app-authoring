@@ -9,6 +9,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-updates.update-form.inValid',
     defaultMessage: 'Action required: Enter a valid date.',
   },
+  updateFormContentRequired: {
+    id: 'course-authoring.course-updates.update-form.content-required',
+    defaultMessage: 'Action required: Enter update content.',
+  },
   updateFormCalendarAltText: {
     id: 'course-authoring.course-updates.update-form.calendar-alt-text',
     defaultMessage: 'Calendar for datepicker input',

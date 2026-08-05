@@ -3,4 +3,4 @@ export const REQUEST_TYPES = {
   edit_update: 'edit_update',
   edit_handouts: 'edit_handouts',
   delete_update: 'delete_update',
-};
+} as const;
