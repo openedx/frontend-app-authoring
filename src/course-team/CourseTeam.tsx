@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -7,11 +9,15 @@ import {
 import { Add as IconAdd } from '@openedx/paragon/icons';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getCourseTeamPermissions } from '@src/authz/permissionHelpers';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import { USER_ROLES } from '@src/constants';
 import getPageHeadTitle from '@src/generic/utils';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
+import Loading from '@src/generic/Loading';
 
 import messages from './messages';
 import CourseTeamSideBar from './course-team-sidebar/CourseTeamSidebar';
@@ -52,7 +58,35 @@ const CourseTeam = () => {
     handleChangeRoleUserSubmit,
   } = useCourseTeam();
 
+  /*
+  With authz enabled the team is managed in the admin console. Reaching
+  this page by direct URL redirects there for users with view team permissions.
+  */
+  const {
+    isLoading: isLoadingPermissions,
+    isAuthzEnabled,
+    canViewCourseTeam,
+  } = useCourseUserPermissions(courseId, getCourseTeamPermissions(courseId));
+
+  const shouldRedirectToAdminConsole = isAuthzEnabled && canViewCourseTeam;
+
+  useEffect(() => {
+    if (shouldRedirectToAdminConsole) {
+      const adminConsoleBaseUrl = getConfig().ADMIN_CONSOLE_URL;
+      window.location.replace(`${adminConsoleBaseUrl}/authz?scope=${encodeURIComponent(courseId)}`);
+    }
+  }, [shouldRedirectToAdminConsole, courseId]);
+
   document.title = getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle));
+
+  // The redirect is fired from the effect above, so keep the spinner up while the browser leaves.
+  if (isLoadingPermissions || shouldRedirectToAdminConsole) {
+    return <Loading />;
+  }
+
+  if (!canViewCourseTeam) {
+    return <PermissionDeniedAlert />;
+  }
 
   if (isLoadingDenied) {
     return (
