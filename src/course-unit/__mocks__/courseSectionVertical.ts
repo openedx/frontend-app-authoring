@@ -128,26 +128,6 @@ export default {
       beta: false,
     },
     {
-      type: 'library',
-      templates: [
-        {
-          display_name: 'Randomized Content Block',
-          category: 'library_content',
-          boilerplate_name: null,
-          hinted: false,
-          tab: 'common',
-          support_level: true,
-        },
-      ],
-      display_name: 'Legacy Library Content',
-      support_legend: {
-        show_legend: false,
-        allow_unsupported_xblocks: false,
-        documentation_label: 'Your Platform Name Here Support Levels:',
-      },
-      beta: false,
-    },
-    {
       type: 'html',
       templates: [
         {

@@ -177,11 +177,6 @@ const AddComponent = ({
           },
         );
         break;
-        // TODO: The library functional will be a bit different of current legacy (CMS)
-        //  behaviour and this ticket is on hold (blocked by other development team).
-      case COMPONENT_TYPES.library:
-        handleCreateNewCourseXBlock({ type, category: 'library_content', parentLocator: blockId });
-        break;
       case COMPONENT_TYPES.itembank:
         handleCreateNewCourseXBlock({ type, category: 'itembank', parentLocator: blockId });
         break;
