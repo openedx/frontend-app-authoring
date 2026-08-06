@@ -16,6 +16,43 @@ import * as tinyMCE from '../../data/constants/tinyMCE';
 import { getRelativeUrl, getStaticUrl, parseAssetName } from './utils';
 import { isLibraryKey } from '../../../generic/key-utils';
 
+/**
+ * Dark-theme content styles for the TinyMCE editing surface.
+ *
+ * The editor renders inside its own same-origin <iframe>, so the Paragon dark
+ * variant / theme CSS cannot reach it — its only styling is `content_style`
+ * (see `tinyMCEStyles`, which hard-codes a white "paper" body with #3c3c3c
+ * text). In dark mode that paper is a glaring white block on the dark page.
+ *
+ * We append a dark override (so it wins by source order) when the shared
+ * `theme-variant` cookie is `dark`. Evaluated each time the editor mounts, so a
+ * reload after toggling picks up the change. Mirrors the LMS dark surface
+ * (#1b1b1b) so authors see content close to how learners see it in dark mode.
+ */
+export const darkContentStyle = (): string => {
+  if (
+    typeof document === 'undefined'
+    || !/(?:^|;\s*)theme-variant=dark/.test(document.cookie)
+  ) {
+    return '';
+  }
+  return `
+    .mce-content-body { background-color: #1b1b1b; color: #e8e8e8; }
+    .mce-content-body h1, .mce-content-body .hd-1,
+    .mce-content-body h3, .mce-content-body .hd-3,
+    .mce-content-body h4, .mce-content-body .hd-4,
+    .mce-content-body h5, .mce-content-body .hd-5,
+    .mce-content-body h6, .mce-content-body .hd-6,
+    .mce-content-body p, .mce-content-body li,
+    .mce-content-body ol, .mce-content-body ul,
+    .mce-content-body pre, .mce-content-body code { color: #e8e8e8; }
+    .mce-content-body h2, .mce-content-body .hd-2 { color: #c9c9c9; }
+    .mce-content-body a, .mce-content-body a:link, .mce-content-body a:visited,
+    .mce-content-body a:hover, .mce-content-body a:active { color: #5badec; }
+    .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before { color: #adadad; }
+  `;
+};
+
 export const state = StrictDict({
   // eslint-disable-next-line react-hooks/rules-of-hooks
   isImageModalOpen: (val) => useState(val),
@@ -459,7 +496,7 @@ export const editorConfig = ({
       ...config,
       skin: false,
       content_css: false,
-      content_style: tinyMCEStyles + a11ycheckerCss,
+      content_style: tinyMCEStyles + a11ycheckerCss + darkContentStyle(),
       min_height: minHeight,
       max_height: maxHeight,
       contextmenu: 'link table',

@@ -12,6 +12,7 @@ and this project adheres to customized Semantic Versioning e.g.: `verawood-rg.1`
 Added:
 ======
 * ``TextEditorPluginSlot`` and ``ProblemEditorPluginSlot`` so plugins can inject UI into the HTML and Problem editors (AILab-146)
+* Apply dark-theme content styles to the TinyMCE editing surface when the shared ``theme-variant`` cookie is ``dark`` (ENG-63)
 
 Removed:
 ========
