@@ -1,14 +1,13 @@
 import { waitFor } from '@testing-library/react';
 
-import { mockWaffleFlags } from '@src/data/apiHooks.mock';
-import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import { initializeMocks, render } from '@src/testUtils';
 
 import messages from './messages';
 import { HelpSidebar } from '.';
 
-jest.mock('@src/authz/data/apiHooks', () => ({
-  useUserPermissions: jest.fn(),
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
 }));
 
 const mockPathname = '/foo-bar';
@@ -27,14 +26,31 @@ const props = {
   proctoredExamSettingsUrl: '',
 };
 
+/**
+ * Set the result of the course-scoped permission checks used by the "Other course settings" links.
+ * The loading / authz-disabled fallbacks are owned (and tested) by useCourseUserPermissions itself,
+ * so tests state the resolved answers directly.
+ */
+const mockCoursePermissions = (
+  permissions: Record<string, boolean> = {},
+  { isLoading = false, isAuthzEnabled = true } = {},
+) => {
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading,
+    isAuthzEnabled,
+    canViewScheduleAndDetails: true,
+    canViewGradingSettings: true,
+    canViewCourseTeam: true,
+    canManageGroupConfigurations: true,
+    canManageAdvancedSettings: true,
+    ...permissions,
+  } as unknown as ReturnType<typeof useCourseUserPermissions>);
+};
+
 describe('HelpSidebar', () => {
   beforeEach(() => {
     initializeMocks();
-    // @ts-ignore
-    jest.mocked(useUserPermissions).mockReturnValue({
-      isLoading: false,
-      data: undefined,
-    });
+    mockCoursePermissions({}, { isAuthzEnabled: false });
   });
 
   it('renders children correctly', () => {
@@ -70,40 +86,61 @@ describe('HelpSidebar', () => {
     expect(getByText(messages.sidebarLinkToProctoredExamSettings.defaultMessage)).toBeTruthy();
   });
 
-  it('should render the advanced settings sidebar link when authz.enable_course_authoring flag is enabled and the user is authorized', async () => {
-    // Mock feature flag
-    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
-    // @ts-ignore
-    jest.mocked(useUserPermissions).mockReturnValue({
-      isLoading: false,
-      data: { canManageAdvancedSettings: true },
+  describe('authz validation', () => {
+    it.each([
+      ['canViewScheduleAndDetails', messages.sidebarLinkToScheduleAndDetails],
+      ['canViewGradingSettings', messages.sidebarLinkToGrading],
+      ['canManageGroupConfigurations', messages.sidebarLinkToGroupConfigurations],
+      ['canManageAdvancedSettings', messages.sidebarLinkToAdvancedSettings],
+    ])('renders the %s link only when the permission is granted', async (permission, message) => {
+      mockCoursePermissions({ [permission]: true });
+      const { queryByText, unmount } = renderHelpSidebar(props);
+      await waitFor(() => expect(queryByText(message.defaultMessage)).toBeTruthy());
+      unmount();
+
+      mockCoursePermissions({ [permission]: false });
+      const { queryByText: queryWithoutPermission } = renderHelpSidebar(props);
+      await waitFor(() => expect(queryWithoutPermission(message.defaultMessage)).toBeFalsy());
     });
-    const { queryByText } = renderHelpSidebar(props);
-    await waitFor(() => expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeTruthy());
-  });
-  it('should not render the advanced settings sidebar link when authz.enable_course_authoring flag is enabled and the user is not authorized', async () => {
-    // Mock feature flag
-    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
-    // @ts-ignore
-    jest.mocked(useUserPermissions).mockReturnValue({
-      isLoading: false,
-      data: { canManageAdvancedSettings: false },
+
+    it('should render the roles and permissions link instead of course team when authz is enabled', async () => {
+      mockCoursePermissions({ canViewCourseTeam: true });
+      const { queryByText } = renderHelpSidebar(props);
+      await waitFor(() => expect(queryByText(messages.sidebarLinkToRolesAndPermissions.defaultMessage)).toBeTruthy());
+      expect(queryByText(messages.sidebarLinkToCourseTeam.defaultMessage)).toBeFalsy();
     });
-    const { queryByText } = renderHelpSidebar(props);
-    await waitFor(() => expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeFalsy());
-  });
-  it('should not render the advanced settings sidebar link when authz.enable_course_authoring flag is enabled and the permissions are still loading', async () => {
-    // Mock feature flag
-    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    // Mock the useUserPermissions hook to return true for the authz.enable_course_authoring permission
-    // @ts-ignore
-    jest.mocked(useUserPermissions).mockReturnValue({
-      isLoading: true,
-      data: undefined,
+
+    it('should render the course team link when authz is disabled', async () => {
+      mockCoursePermissions({}, { isAuthzEnabled: false });
+      const { queryByText } = renderHelpSidebar(props);
+      await waitFor(() => expect(queryByText(messages.sidebarLinkToCourseTeam.defaultMessage)).toBeTruthy());
+      expect(queryByText(messages.sidebarLinkToRolesAndPermissions.defaultMessage)).toBeFalsy();
     });
-    const { queryByText } = renderHelpSidebar(props);
-    await waitFor(() => expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeFalsy());
+
+    it('should not render the team link when the user cannot view the course team', async () => {
+      mockCoursePermissions({ canViewCourseTeam: false });
+      const { queryByText } = renderHelpSidebar(props);
+      await waitFor(() => expect(queryByText(messages.sidebarLinkToRolesAndPermissions.defaultMessage)).toBeFalsy());
+      expect(queryByText(messages.sidebarLinkToCourseTeam.defaultMessage)).toBeFalsy();
+    });
+
+    it('should not render any of the gated links while the permission check is loading', async () => {
+      mockCoursePermissions({
+        canViewScheduleAndDetails: false,
+        canViewGradingSettings: false,
+        canViewCourseTeam: false,
+        canManageGroupConfigurations: false,
+        canManageAdvancedSettings: false,
+      }, { isLoading: true });
+      const { queryByText } = renderHelpSidebar(props);
+
+      await waitFor(() => {
+        expect(queryByText(messages.sidebarLinkToScheduleAndDetails.defaultMessage)).toBeFalsy();
+      });
+      expect(queryByText(messages.sidebarLinkToGrading.defaultMessage)).toBeFalsy();
+      expect(queryByText(messages.sidebarLinkToRolesAndPermissions.defaultMessage)).toBeFalsy();
+      expect(queryByText(messages.sidebarLinkToGroupConfigurations.defaultMessage)).toBeFalsy();
+      expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeFalsy();
+    });
   });
 });

@@ -639,7 +639,7 @@ describe('header utils', () => {
           .current;
       expect(items).toContainEqual({
         title: 'Library Team',
-        href: 'http://admin-console.com/authz/libraries/library-123',
+        href: 'http://admin-console.com/authz?scope=library-123',
       });
     });
     it('should contain admin console url if set and readOnly is true', () => {
@@ -651,7 +651,7 @@ describe('header utils', () => {
         renderHook(() => useLibrarySettingsMenuItems('library-123', true), { wrapper: createWrapper() }).result.current;
       expect(items).toContainEqual({
         title: 'Library Team',
-        href: 'http://admin-console.com/authz/libraries/library-123',
+        href: 'http://admin-console.com/authz?scope=library-123',
       });
     });
   });

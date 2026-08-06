@@ -12,6 +12,7 @@ import { LibQueryParamKeys } from '@src/library-authoring/routes';
 
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import * as permissionHelpers from '@src/authz/permissionHelpers';
+import { getAdminConsoleScopeUrl, isAdminConsoleEnabled } from '@src/authz/urls';
 import messages from './messages';
 
 export const useContentMenuItems = (courseId: string) => {
@@ -118,7 +119,7 @@ export const useSettingMenuItems = (courseId: string) => {
       ? [
         perms.isAuthzEnabled
           ? {
-            href: `${getConfig().ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(courseId)}`,
+            href: getAdminConsoleScopeUrl(courseId),
             title: intl.formatMessage(messages['header.links.roles.permissions']),
           }
           : {
@@ -225,12 +226,11 @@ export const useLibrarySettingsMenuItems = (itemId: string, readOnly: boolean) =
   const intl = useIntl();
 
   const openTeamAccessModalUrl = () => {
-    const adminConsoleUrl = getConfig().ADMIN_CONSOLE_URL;
     // always show link to admin console MFE if it is being used
-    const shouldShowAdminConsoleLink = !!adminConsoleUrl;
+    const shouldShowAdminConsoleLink = isAdminConsoleEnabled();
 
     // if the admin console MFE isn't being used, show team modal button for non–read-only users
-    const shouldShowTeamModalButton = !adminConsoleUrl && !readOnly;
+    const shouldShowTeamModalButton = !shouldShowAdminConsoleLink && !readOnly;
     if (shouldShowTeamModalButton) {
       if (!window.location.href) {
         return null;
@@ -241,7 +241,7 @@ export const useLibrarySettingsMenuItems = (itemId: string, readOnly: boolean) =
       return url.toString();
     }
     if (shouldShowAdminConsoleLink) {
-      return `${adminConsoleUrl}/authz/libraries/${itemId}`;
+      return getAdminConsoleScopeUrl(itemId);
     }
     return null;
   };

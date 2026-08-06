@@ -11,8 +11,9 @@ import {
   getCertificatesPermissions,
   getChecklistsPermissions,
   getImportExportPermissions,
+  getViewTeamPermissions,
 } from './permissionHelpers';
-import { COURSE_PERMISSIONS } from './constants';
+import { CONTENT_LIBRARY_PERMISSIONS, COURSE_PERMISSIONS } from './constants';
 
 const courseId = 'course-v1:org+course+run';
 
@@ -249,6 +250,31 @@ describe('permissionHelpers', () => {
           action: COURSE_PERMISSIONS.EXPORT_TAGS,
           scope: courseId,
         },
+      });
+    });
+  });
+
+  describe('getViewTeamPermissions', () => {
+    it('returns course and library view-team permissions with the correct actions', () => {
+      const result = getViewTeamPermissions();
+
+      expect(result).toEqual({
+        canViewCourseTeam: {
+          action: COURSE_PERMISSIONS.VIEW_COURSE_TEAM,
+        },
+        canViewLibraryTeam: {
+          action: CONTENT_LIBRARY_PERMISSIONS.VIEW_LIBRARY_TEAM,
+        },
+      });
+    });
+
+    it('is scope-less so it validates the permissions across any course or library', () => {
+      const result = getViewTeamPermissions();
+
+      // A scope of '' would be rejected by the AuthZ API as a bad request; the scope key
+      // must be absent entirely so the check applies to any object.
+      Object.values(result).forEach((permission) => {
+        expect(permission).not.toHaveProperty('scope');
       });
     });
   });
