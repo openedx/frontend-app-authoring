@@ -26,7 +26,7 @@ describe('fetchStudioHomeData thunk', () => {
     dispatch = jest.fn();
 
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
-    axiosMock.onGet(new RegExp(`${getApiBaseUrl()}/api/contentstore/v2/home/courses.*`))
+    axiosMock.onGet(new RegExp(`${getApiBaseUrl()}/api/contentstore/v4/home/courses.*`))
       .reply(200, generateGetStudioCoursesApiResponseV2());
   });
 
