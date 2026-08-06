@@ -301,8 +301,8 @@ export interface CreateCourseXBlockParams {
   /** If we're linking in a block from a library, this is the upstream usage key in that library */
   libraryContentKey?: string;
   /** Specify this to paste from clipboard rather than creating a blank component. */
-  stagedContent?: "clipboard";
-};
+  stagedContent?: 'clipboard';
+}
 
 export const useHandleCreateNewCourseXBlock = ({ blockId }: { blockId: string; }) => {
   const dispatch = useDispatch();
