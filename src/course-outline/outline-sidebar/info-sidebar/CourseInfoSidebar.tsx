@@ -6,10 +6,11 @@ import {
 } from '@openedx/paragon';
 import { SchoolOutline, Tag } from '@openedx/paragon/icons';
 
-import { useUserPermissions } from '@src/authz/data/apiHooks';
-import { COURSE_PERMISSIONS } from '@src/authz/constants';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import * as permissionHelpers from '@src/authz/permissionHelpers';
+import { getAdminConsoleScopeUrl } from '@src/authz/urls';
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
-import { useCourseSettings, useWaffleFlags } from '@src/data/apiHooks';
+import { useCourseSettings } from '@src/data/apiHooks';
 import { ComponentCountSnippet } from '@src/generic/block-type-utils';
 import { HelpSidebarLink, otherLinkURLParams, messages as helpSidebarMessages } from '@src/generic/help-sidebar';
 import { SidebarContent, SidebarSection, SidebarTitle } from '@src/generic/sidebar';
@@ -73,61 +74,74 @@ const SettingsTab = () => {
     scheduleAndDetails,
     groupConfigurations,
   } = otherLinkURLParams;
-  const waffleFlags = useWaffleFlags(courseId);
-
   const proctoredExamSettingsUrl = courseSettingsData?.mfeProctoredExamSettingsUrl;
 
   /*
     AuthZ for Course Authoring
     If authz.enable_course_authoring flag is enabled, validate permissions using AuthZ API.
   */
-  const isAuthzEnabled = waffleFlags.enableAuthzCourseAuthoring;
-  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions({
-    canManageAdvancedSettings: {
-      action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
-      scope: courseId,
-    },
-  }, isAuthzEnabled);
-
-  // If it's still loading, don't show the Advanced Settings link, otherwise, use the permission to decide
-  const authzCanManageAdvancedSettings = isLoadingUserPermissions
-    ? false
-    : !!userPermissions?.canManageAdvancedSettings;
-
-  // When authz is enabled, use permission, otherwise it's always allowed (legacy behavior)
-  const canManageAdvancedSettings = isAuthzEnabled ? authzCanManageAdvancedSettings : true;
+  const perms = useCourseUserPermissions(courseId, {
+    ...permissionHelpers.getScheduleAndDetailsPermissions(courseId),
+    ...permissionHelpers.getGradingPermissions(courseId),
+    ...permissionHelpers.getCourseTeamPermissions(courseId),
+    ...permissionHelpers.getGroupConfigurationsPermissions(courseId),
+    ...permissionHelpers.getAdvancedSettingsPermissions(courseId),
+  });
 
   return (
     <SidebarSection
       title={intl.formatMessage(messages.settingsTabText)}
     >
-      <HelpSidebarLink
-        as="span"
-        pathToPage={`/course/${courseId}/${scheduleAndDetails}`}
-        title={intl.formatMessage(
-          helpSidebarMessages.sidebarLinkToScheduleAndDetails,
-        )}
-        isNewPage
-      />
-      <HelpSidebarLink
-        as="span"
-        pathToPage={`/course/${courseId}/${grading}`}
-        title={intl.formatMessage(helpSidebarMessages.sidebarLinkToGrading)}
-        isNewPage
-      />
-      <HelpSidebarLink
-        as="span"
-        pathToPage={`/course/${courseId}/${courseTeam}`}
-        title={intl.formatMessage(helpSidebarMessages.sidebarLinkToCourseTeam)}
-        isNewPage
-      />
-      <HelpSidebarLink
-        as="span"
-        pathToPage={`/course/${courseId}/${groupConfigurations}`}
-        title={intl.formatMessage(helpSidebarMessages.sidebarLinkToGroupConfigurations)}
-        isNewPage
-      />
-      {canManageAdvancedSettings && (
+      {perms.canViewScheduleAndDetails && (
+        <HelpSidebarLink
+          as="span"
+          pathToPage={`/course/${courseId}/${scheduleAndDetails}`}
+          title={intl.formatMessage(
+            helpSidebarMessages.sidebarLinkToScheduleAndDetails,
+          )}
+          isNewPage
+        />
+      )}
+      {perms.canViewGradingSettings && (
+        <HelpSidebarLink
+          as="span"
+          pathToPage={`/course/${courseId}/${grading}`}
+          title={intl.formatMessage(helpSidebarMessages.sidebarLinkToGrading)}
+          isNewPage
+        />
+      )}
+      {perms.canViewCourseTeam && (
+        /*
+          canViewCourseTeam is true both with the AuthZ permission and with the flag off (permissions
+          fall back to true), so isAuthzEnabled picks the destination: Admin Console or legacy Course Team.
+        */
+        perms.isAuthzEnabled ?
+          (
+            <HelpSidebarLink
+              as="span"
+              pathToPage={getAdminConsoleScopeUrl(courseId)}
+              title={intl.formatMessage(helpSidebarMessages.sidebarLinkToRolesAndPermissions)}
+              isNewPage
+            />
+          ) :
+          (
+            <HelpSidebarLink
+              as="span"
+              pathToPage={`/course/${courseId}/${courseTeam}`}
+              title={intl.formatMessage(helpSidebarMessages.sidebarLinkToCourseTeam)}
+              isNewPage
+            />
+          )
+      )}
+      {perms.canManageGroupConfigurations && (
+        <HelpSidebarLink
+          as="span"
+          pathToPage={`/course/${courseId}/${groupConfigurations}`}
+          title={intl.formatMessage(helpSidebarMessages.sidebarLinkToGroupConfigurations)}
+          isNewPage
+        />
+      )}
+      {perms.canManageAdvancedSettings && (
         <HelpSidebarLink
           as="span"
           pathToPage={`/course/${courseId}/${advancedSettings}`}

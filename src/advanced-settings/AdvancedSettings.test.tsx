@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import {
   render as baseRender,
@@ -26,8 +26,9 @@ jest.mock('react-textarea-autosize', () =>
     />
   )));
 
-jest.mock('@src/authz/data/apiHooks', () => ({
-  useUserPermissions: jest.fn(),
+jest.mock('@src/authz/hooks', () => ({
+  ...jest.requireActual('@src/authz/hooks'),
+  useCourseUserPermissions: jest.fn(),
 }));
 
 const render = () =>
@@ -46,10 +47,13 @@ describe('<AdvancedSettings />', () => {
       .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
       .reply(200, advancedSettingsMock);
 
-    jest.mocked(useUserPermissions).mockReturnValue({
+    mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
-      data: { canManageAdvancedSettings: true },
-    } as unknown as ReturnType<typeof useUserPermissions>);
+      isAuthzEnabled: false,
+      canManageAdvancedSettings: true,
+    } as ReturnType<typeof useCourseUserPermissions>);
   });
 
   it('should render placeholder when settings fetch returns 403', async () => {
@@ -168,10 +172,11 @@ describe('<AdvancedSettings />', () => {
 
   it('should render without errors when authz.enable_course_authoring flag is enabled and the user is authorized', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    jest.mocked(useUserPermissions).mockReturnValue({
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
-      data: { canManageAdvancedSettings: true },
-    } as unknown as ReturnType<typeof useUserPermissions>);
+      isAuthzEnabled: true,
+      canManageAdvancedSettings: true,
+    } as ReturnType<typeof useCourseUserPermissions>);
     render();
     expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.headingTitle.defaultMessage, {
@@ -184,20 +189,22 @@ describe('<AdvancedSettings />', () => {
 
   it('should show permission alert when authz.enable_course_authoring flag is enabled and the user is not authorized', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    jest.mocked(useUserPermissions).mockReturnValue({
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
-      data: { canManageAdvancedSettings: false },
-    } as unknown as ReturnType<typeof useUserPermissions>);
+      isAuthzEnabled: true,
+      canManageAdvancedSettings: false,
+    } as ReturnType<typeof useCourseUserPermissions>);
     render();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
   });
 
   it('should show permission denied alert when the user is not authorized', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-    jest.mocked(useUserPermissions).mockReturnValue({
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
-      data: { canManageAdvancedSettings: false },
-    } as unknown as ReturnType<typeof useUserPermissions>);
+      isAuthzEnabled: true,
+      canManageAdvancedSettings: false,
+    } as ReturnType<typeof useCourseUserPermissions>);
     axiosMock
       .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
       .reply(403);

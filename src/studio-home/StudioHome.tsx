@@ -9,11 +9,13 @@ import {
 } from '@openedx/paragon';
 import { Add as AddIcon, Error, ManageAccounts } from '@openedx/paragon/icons';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { getConfig } from '@edx/frontend-platform';
 import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { Link, useLocation } from 'react-router-dom';
 
 import { useWaffleFlags } from '@src/data/apiHooks';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { getViewTeamPermissions } from '@src/authz/permissionHelpers';
+import { getAdminConsoleUrl, isAdminConsoleEnabled } from '@src/authz/urls';
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Header from '../header';
@@ -49,7 +51,18 @@ const StudioHome = () => {
 
   const waffleFlags = useWaffleFlags();
   const isAuthzEnabled = waffleFlags?.enableAuthzCourseAuthoring ?? false;
-  const adminConsoleUrl = `${getConfig().ADMIN_CONSOLE_URL}/authz`;
+  const adminConsoleUrl = getAdminConsoleUrl();
+
+  // The "Roles & Permissions" button links to the admin console, so only show it to users
+  // who can view a team somewhere: on any course (view_course_team) or any library
+  // (view_library_team).
+  const { data: viewTeamPermissions } = useUserPermissions(
+    getViewTeamPermissions(),
+    isAuthzEnabled && isAdminConsoleEnabled(),
+  );
+  const canViewConsoleTeams = Boolean(
+    viewTeamPermissions?.canViewCourseTeam || viewTeamPermissions?.canViewLibraryTeam,
+  );
 
   const {
     userIsActive,
@@ -70,7 +83,7 @@ const StudioHome = () => {
       );
     }
 
-    if (isAuthzEnabled && getConfig().ADMIN_CONSOLE_URL) {
+    if (canViewConsoleTeams) {
       headerButtons.push(
         <div className="border-right mr-3 pr-4 py-2">
           <Button
@@ -116,7 +129,7 @@ const StudioHome = () => {
     }
 
     return headerButtons;
-  }, [location, userIsActive, isFailedLoadingPage, isAuthzEnabled]);
+  }, [location, userIsActive, isFailedLoadingPage, canViewConsoleTeams]);
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
   if (isLoadingPage && !isFiltered) {

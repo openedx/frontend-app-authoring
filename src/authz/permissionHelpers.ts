@@ -1,4 +1,16 @@
-import { COURSE_PERMISSIONS } from './constants';
+import { CONTENT_LIBRARY_PERMISSIONS, COURSE_PERMISSIONS } from './constants';
+
+// It validates whether the user can view a team on *any* course or
+// library, to decide if the "Roles & Permissions" button (which links to the admin
+// console in Studio Home) should be shown.
+export const getViewTeamPermissions = () => ({
+  canViewCourseTeam: {
+    action: COURSE_PERMISSIONS.VIEW_COURSE_TEAM,
+  },
+  canViewLibraryTeam: {
+    action: CONTENT_LIBRARY_PERMISSIONS.VIEW_LIBRARY_TEAM,
+  },
+});
 
 export const getScheduleAndDetailsPermissions = (courseId: string) => ({
   canViewScheduleAndDetails: {

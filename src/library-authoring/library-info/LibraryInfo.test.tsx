@@ -284,7 +284,10 @@ describe('<LibraryInfo />', () => {
     render();
     const manageTeam = await screen.findByText('Manage Access');
     expect(manageTeam).toBeInTheDocument();
-    expect(manageTeam).toHaveAttribute('href', `${ADMIN_CONSOLE_URL}/authz?scope=${libraryData.id}`);
+    expect(manageTeam).toHaveAttribute(
+      'href',
+      `${ADMIN_CONSOLE_URL}/authz?scope=${encodeURIComponent(libraryData.id)}`,
+    );
   });
 
   it('renders settings section title', () => {
