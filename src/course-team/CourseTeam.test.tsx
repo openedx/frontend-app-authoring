@@ -1,4 +1,5 @@
 import userEvent from '@testing-library/user-event';
+import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
   screen,
   initializeMocks,
@@ -7,6 +8,7 @@ import {
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { USER_ROLES } from '@src/constants';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 
 import { courseTeamMock, courseTeamWithOneUser, courseTeamWithoutUsers } from './__mocks__';
 import { getCourseTeamApiUrl, updateCourseTeamUserApiUrl } from './data/api';
@@ -15,8 +17,10 @@ import messages from './messages';
 import addUserFormMessages from './add-user-form/messages';
 
 let axiosMock;
+let validateUserPermissionsMock;
 const mockPathname = '/foo-bar';
 const courseId = '123';
+const adminConsoleUrl = 'https://admin-console.example.com';
 
 const render = () =>
   baseRender(
@@ -27,9 +31,28 @@ const render = () =>
   );
 
 describe('<CourseTeam />', () => {
+  const originalLocation = window.location;
+  const mockLocationReplace = jest.fn();
+
+  beforeAll(() => {
+    // jsdom's window.location is read-only, so swap it for one whose replace() we can assert on.
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: Object.assign(Object.create(Object.getPrototypeOf(originalLocation)), originalLocation, {
+        replace: mockLocationReplace,
+      }),
+    });
+  });
+
+  afterAll(() => {
+    Object.defineProperty(window, 'location', { configurable: true, value: originalLocation });
+  });
+
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    mockWaffleFlags();
   });
 
   it('render CourseTeam component with 3 team members correctly', async () => {
@@ -239,5 +262,53 @@ describe('<CourseTeam />', () => {
     render();
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
+  });
+
+  describe('when authz is enabled for the course', () => {
+    beforeEach(() => {
+      setConfig({ ...getConfig(), ADMIN_CONSOLE_URL: adminConsoleUrl });
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      axiosMock
+        .onGet(getCourseTeamApiUrl(courseId))
+        .reply(200, courseTeamMock);
+    });
+
+    it('redirects to the admin console instead of rendering the course team page', async () => {
+      validateUserPermissionsMock.mockResolvedValue({ canViewCourseTeam: true });
+
+      render();
+
+      await waitFor(() => {
+        expect(window.location.replace).toHaveBeenCalledWith(
+          `${adminConsoleUrl}/authz?scope=${encodeURIComponent(courseId)}`,
+        );
+      });
+      expect(screen.queryByText(messages.headingTitle.defaultMessage)).not.toBeInTheDocument();
+    });
+
+    it('denies access without redirecting when the user cannot view the course team', async () => {
+      // The CMS denies the legacy API too, so the permission check must win over the 403 alert.
+      axiosMock
+        .onGet(getCourseTeamApiUrl(courseId))
+        .reply(403);
+      validateUserPermissionsMock.mockResolvedValue({ canViewCourseTeam: false });
+
+      render();
+
+      expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+      expect(window.location.replace).not.toHaveBeenCalled();
+    });
+  });
+
+  it('renders the course team page when authz is disabled', async () => {
+    setConfig({ ...getConfig(), ADMIN_CONSOLE_URL: adminConsoleUrl });
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(200, courseTeamMock);
+
+    render();
+
+    expect(await screen.findByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
+    expect(window.location.replace).not.toHaveBeenCalled();
   });
 });

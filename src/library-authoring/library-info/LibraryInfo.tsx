@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { Button, Hyperlink, Stack } from '@openedx/paragon';
-import { getConfig } from '@edx/frontend-platform';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 
 import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { getAdminConsoleScopeUrl, isAdminConsoleEnabled } from '@src/authz/urls';
 import messages from './messages';
 import LibraryPublishStatus from './LibraryPublishStatus';
 import { useLibraryContext } from '../common/context/LibraryContext';
@@ -21,13 +21,11 @@ const LibraryInfo = () => {
       scope: libraryId,
     },
   }, typeof libraryId !== 'undefined');
-  const adminConsoleUrl = getConfig().ADMIN_CONSOLE_URL;
-
   // always show link to admin console MFE if it is being used
-  const shouldShowAdminConsoleLink = !!adminConsoleUrl;
+  const shouldShowAdminConsoleLink = isAdminConsoleEnabled();
 
   // if the admin console MFE isn't being used, show team modal button for non–read-only users
-  const shouldShowTeamModalButton = !adminConsoleUrl && !readOnly;
+  const shouldShowTeamModalButton = !shouldShowAdminConsoleLink && !readOnly;
 
   const openLibraryTeamModal = useCallback(() => {
     setSidebarAction(SidebarActions.ManageTeam);
@@ -49,7 +47,7 @@ const LibraryInfo = () => {
             as={Hyperlink}
             variant="outline-primary"
             className="my-3"
-            destination={`${adminConsoleUrl}/authz?scope=${libraryId}`}
+            destination={getAdminConsoleScopeUrl(libraryId)}
             target="_blank"
           >
             {intl.formatMessage(messages.libraryTeamButtonTitle)}

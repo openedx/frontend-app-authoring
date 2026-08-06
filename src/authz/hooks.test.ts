@@ -76,4 +76,15 @@ describe('useCourseUserPermissions', () => {
     expect(result.current.canView).toBe(false);
     expect(result.current.canEdit).toBe(false);
   });
+
+  it('does not validate permissions when courseId is empty, even if authz is enabled', () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+
+    const { result } = renderHook(() => useCourseUserPermissions('', permissions));
+
+    // The validation query must be disabled when there is no course context.
+    expect(useUserPermissions).toHaveBeenCalledWith(permissions, false);
+    expect(result.current.canView).toBe(false);
+    expect(result.current.canEdit).toBe(false);
+  });
 });
