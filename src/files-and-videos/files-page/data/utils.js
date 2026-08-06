@@ -10,6 +10,10 @@ ensureConfig([
   'STUDIO_BASE_URL',
 ], 'Course Apps API service');
 
+// Changed one line in this function to convert the dateAdded string to a timestamp (milliseconds since epoch) for easier sorting and comparison. 
+// This was done to fix a bug where dateAdded was being treated as a string, leading to incorrect sorting behavior. 
+// The change uses the getTime() method to convert the date string to a numeric value.
+
 export const updateFileValues = (files) => {
   const updatedFiles = [];
   files.forEach(file => {
@@ -26,7 +30,10 @@ export const updateFileValues = (files) => {
 
     const { dateAdded, locked, usageLocations } = file;
     const utcDateString = dateAdded.replace(/\bat\b/g, '');
-    const utcDateTime = new Date(utcDateString).toString();
+    // const utcDateTime = new Date(utcDateString).toString(); "This is the old code"
+    // Added this new line to convert the date string to a timestamp for easier sorting and comparison 
+    // This will use the getTime() method to convert the date string to a timestamp in milliseconds since the Unix epoch (January 1, 1970).
+    const utcDateTime = new Date(utcDateString).getTime();
     const lockStatus = locked ? 'locked' : 'public';
     const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
 
