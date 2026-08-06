@@ -285,12 +285,31 @@ export const useCourseUnit = ({
   };
 };
 
+export interface CreateCourseXBlockParams {
+  /** The usage key string of the parent that will contain this new block */
+  parentLocator: string;
+  /** The XBlock type to create. Note: a "type" field is ignored - don't add that here. */
+  category?: string;
+  /**
+   * The XBlock type to create. Ignored on the backend, but our frontend code accepts it instead of `category` and
+   * sets `category` to this value.
+   * @deprecated
+   */
+  type?: string;
+  /** Template to use for the XBlock's initial content */
+  boilerplate?: string | null;
+  /** If we're linking in a block from a library, this is the upstream usage key in that library */
+  libraryContentKey?: string;
+  /** Specify this to paste from clipboard rather than creating a blank component. */
+  stagedContent?: "clipboard";
+};
+
 export const useHandleCreateNewCourseXBlock = ({ blockId }: { blockId: string; }) => {
   const dispatch = useDispatch();
   const { sendMessageToIframe } = useIframe();
 
   // oxlint-disable typescript-eslint(await-thenable)
-  return async (body: object, callback?: (args: { courseKey: string; locator: string; }) => void) => (
+  return async (body: CreateCourseXBlockParams, callback?: (args: { courseKey: string; locator: string; }) => void) => (
     // eslint-disable-next-line @typescript-eslint/return-await
     await dispatch(createNewCourseXBlock(body, callback, blockId, sendMessageToIframe))
   );

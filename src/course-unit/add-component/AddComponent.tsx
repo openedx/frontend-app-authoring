@@ -18,6 +18,7 @@ import { useEventListener } from '@src/generic/hooks';
 import VideoSelectorPage from '@src/editors/VideoSelectorPage';
 import EditorPage from '@src/editors/EditorPage';
 import { SelectedComponent } from '@src/library-authoring';
+import { type CreateCourseXBlockParams } from '@src/course-unit/hooks';
 import { fetchCourseSectionVerticalData } from '../data/thunk';
 import { messageTypes } from '../constants';
 import messages from './messages';
@@ -31,7 +32,7 @@ type ComponentTemplateData = {
   type: string;
   beta?: boolean;
   templates: Array<{
-    boilerplateName?: string;
+    boilerplateName?: string | null;
     category?: string;
     displayName: string;
     supportLevel?: string | boolean;
@@ -57,7 +58,7 @@ export interface AddComponentProps {
   isGenericContainerType?: boolean;
   parentLocator: string;
   handleCreateNewCourseXBlock: (
-    args: object,
+    args: CreateCourseXBlockParams,
     callback?: (args: { courseKey: string; locator: string; }) => void,
   ) => void;
   isProblemBankType?: boolean;
@@ -148,7 +149,7 @@ const AddComponent = ({
     closeAddLibraryContentModal();
   }, [usageId]);
 
-  const handleCreateNewXBlock = (type: string, moduleName?: string) => {
+  const handleCreateNewXBlock = (type: string, moduleName?: string | null) => {
     switch (type) {
       case COMPONENT_TYPES.discussion:
       case COMPONENT_TYPES.dragAndDrop:
@@ -209,7 +210,7 @@ const AddComponent = ({
             },
           );
         } else {
-          handleCreateNewCourseXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
+          handleCreateNewCourseXBlock({ type: moduleName!, category: moduleName!, parentLocator: blockId });
         }
         break;
       case COMPONENT_TYPES.openassessment:

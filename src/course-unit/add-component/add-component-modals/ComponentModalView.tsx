@@ -10,7 +10,7 @@ import messages from '../messages';
 import ModalContainer from './ModalContainer';
 
 interface ComponentTemplate {
-  boilerplateName?: string;
+  boilerplateName?: string | null;
   category?: string;
   displayName: string;
   supportLevel?: string | boolean;
