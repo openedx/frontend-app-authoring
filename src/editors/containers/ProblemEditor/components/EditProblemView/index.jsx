@@ -16,7 +16,9 @@ import SettingsWidget from './SettingsWidget';
 import QuestionWidget from './QuestionWidget';
 import EditorContainer from '../../../EditorContainer';
 import RawEditor from '../../../../sharedComponents/RawEditor';
+import { ProblemEditorPluginSlot } from '../../../../../plugin-slots/ProblemEditorPluginSlot';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
+import { blockTypes } from '../../../../data/constants/app';
 
 import {
   checkIfEditorsDirty,
@@ -133,6 +135,7 @@ const EditProblemView = ({ returnFunction }) => {
             ) :
             (
               <span className="flex-grow-1 mb-5">
+                <ProblemEditorPluginSlot blockType={problemType || blockTypes.problem} />
                 <QuestionWidget />
                 <ExplanationWidget />
                 <AnswerWidget problemType={problemType} />

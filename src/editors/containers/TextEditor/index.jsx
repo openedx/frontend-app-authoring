@@ -10,6 +10,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { getConfig } from '@edx/frontend-platform';
 import { actions, selectors } from '../../data/redux';
+import { blockTypes } from '../../data/constants/app';
 import { RequestKeys } from '../../data/constants/requests';
 
 import EditorContainer from '../EditorContainer';
@@ -18,6 +19,7 @@ import * as hooks from './hooks';
 import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
+import { TextEditorPluginSlot } from '../../../plugin-slots/TextEditorPluginSlot';
 
 const TextEditor = ({
   onClose,
@@ -98,7 +100,12 @@ const TextEditor = ({
               />
             </div>
           ) :
-          (selectEditor())}
+          (
+            <>
+              <TextEditorPluginSlot blockType={blockTypes.html} />
+              {selectEditor()}
+            </>
+          )}
       </div>
     </EditorContainer>
   );
