@@ -15,6 +15,7 @@ import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
 import BlockTypeLabel from './BlockTypeLabel';
 import { useSearchContext } from './SearchManager';
+import { TypesFilterData } from './hooks';
 
 interface ProblemFilterItemProps {
   count: number;
@@ -53,21 +54,22 @@ const ProblemFilterItem = ({ count, handleCheckboxChange }: ProblemFilterItemPro
 
   const handleProblemCheckboxChange = React.useCallback((e) => {
     setTypesFilter((types) => {
+      const next = new TypesFilterData(types.toString());
       if (e.target.checked) {
-        types.problems.add(e.target.value);
+        next.problems.add(e.target.value);
       } else {
-        types.problems.delete(e.target.value);
+        next.problems.delete(e.target.value);
       }
 
-      if (types.problems.size === problemTypesLength) {
+      if (next.problems.size === problemTypesLength) {
         // Add 'problem' to block type filter if all problem types are selected.
-        types.blocks.add(blockType);
+        next.blocks.add(blockType);
       } else {
         // Delete 'problem' filter if its selected.
-        types.blocks.delete(blockType);
+        next.blocks.delete(blockType);
       }
 
-      return types;
+      return next;
     });
   }, [setTypesFilter, problemTypesLength]);
 
@@ -150,20 +152,21 @@ const FilterItem = ({ blockType, count }: FilterItemProps) => {
 
   const handleCheckboxChange = React.useCallback((e) => {
     setTypesFilter((types) => {
+      const next = new TypesFilterData(types.toString());
       if (e.target.checked) {
-        types.blocks.add(e.target.value);
+        next.blocks.add(e.target.value);
       } else {
-        types.blocks.delete(e.target.value);
+        next.blocks.delete(e.target.value);
       }
       // The "problem" block type also selects/clears all the problem types
       if (blockType === 'problem') {
         if (e.target.checked) {
-          types.union({ problems: Object.keys(problemTypes) });
+          next.union({ problems: Object.keys(problemTypes) });
         } else {
-          types.problems.clear();
+          next.problems.clear();
         }
       }
-      return types;
+      return next;
     });
   }, [setTypesFilter]);
 

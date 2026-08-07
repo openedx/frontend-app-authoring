@@ -196,9 +196,12 @@ describe('<SearchUI />', () => {
     });
     // Enter a keyword - search for 'giraffe':
     fireEvent.change(getByRole('searchbox'), { target: { value: 'giraffe' } });
-    // Wait for the new search request to load all the results:
+    // Wait for the keyword search request. SearchUI uses skipUrlUpdate, so search state is
+    // managed by React.useState and updated asynchronously via a 400ms debounce.
+    // We wait for the 2nd fetch (initial render = 1st, keyword search = 2nd) to ensure
+    // the debounce has fired and the results are from the 'giraffe' query, not the initial render.
     await waitFor(() => {
-      expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+      expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post');
     });
     // And make sure the request was limited to this course:
     expect(fetchMock).toHaveLastFetched((_url, req) => {
@@ -393,23 +396,28 @@ describe('<SearchUI />', () => {
           <SearchUI {...defaults} />
         </Wrap>,
       );
-      const { getByRole, getByText } = rendered;
       // Wait for the initial search request that loads all the filter options:
       await waitFor(() => {
         expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
       });
+    });
+
+    it('can do a keyword search and see results', async () => {
+      const { getByRole, getByText } = rendered;
       // Enter a keyword - search for 'giraffe':
       fireEvent.change(getByRole('searchbox'), { target: { value: 'giraffe' } });
-      // Wait for the new search request to load all the results and the filter options, based on the search so far:
+      // Wait for the keyword search request. SearchUI uses skipUrlUpdate, so search state is
+      // managed by React.useState and updated asynchronously via a 400ms debounce.
+      // We wait for the 2nd fetch (initial render = 1st, keyword search = 2nd) to ensure
+      // the debounce has fired and results reflect the 'giraffe' query.
       await waitFor(() => {
-        expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post');
+        expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post');
       });
       // And make sure the request was limited to this course:
       expect(fetchMock).toHaveLastFetched((_url, req) => {
         const requestData = JSON.parse((req.body ?? '') as string);
         const requestedFilter = requestData?.queries[0].filter;
-        // the filter is:
-        // ['', 'type = "course_block"', 'context_key = "course-v1:org+test+123"']
+        // the filter is: ['', 'type = "course_block"', 'context_key = "course-v1:org+test+123"']
         return (requestedFilter?.length === 3);
       });
       // Now we should see the results:
@@ -418,8 +426,7 @@ describe('<SearchUI />', () => {
     });
 
     afterEach(async () => {
-      // Clear any search filters applied by the previous test.
-      // We need to do this because search filters are stored in the URL, and so they can leak between tests.
+      // Clear any search filters applied by the previous test so they don't leak into the next one.
       const { queryByRole } = rendered;
       const clearFilters = queryByRole('button', { name: /clear filters/i });
       if (clearFilters) {
@@ -444,7 +451,7 @@ describe('<SearchUI />', () => {
       await waitFor(() => {
         expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post');
       });
-      // Because we're mocking the results, there's no actual changes to the mock results,
+      // Because we're mocking the results, there are no actual changes to the mock results,
       // but we can verify that the filter was sent in the request
       expect(fetchMock).toHaveLastFetched((_url, req) => {
         const requestData = JSON.parse((req.body ?? '') as string);
@@ -461,6 +468,48 @@ describe('<SearchUI />', () => {
           'type = "course_block"',
           'context_key = "course-v1:org+test+123"',
         ]);
+      });
+    });
+
+    it('adds the problem block type filter when all problem subtypes are selected', async () => {
+      const { getByRole, getByTestId } = rendered;
+
+      // Open the Type filter dropdown:
+      fireEvent.click(getByRole('button', { name: 'Type' }), {});
+      await waitFor(() => {
+        expect(getByRole('group')).toBeInTheDocument();
+      });
+
+      // Open the Problem subtypes submenu via the arrow button:
+      fireEvent.click(getByTestId('open-problem-item-button'), {});
+
+      // Click every individual problem subtype. The mock result has exactly these 5 types.
+      // When the last one is clicked, problems.size === problemTypesLength and
+      // 'problem' is auto-added to the blocks filter (the branch under test).
+      const problemTypes = [
+        'choiceresponse',
+        'multiplechoiceresponse',
+        'numericalresponse',
+        'optionresponse',
+        'stringresponse',
+      ];
+      for (const problemType of problemTypes) {
+        // eslint-disable-next-line no-await-in-loop
+        const checkbox = await waitFor(
+          () => document.querySelector(`input[value="${problemType}"]`) as HTMLInputElement,
+        );
+        fireEvent.click(checkbox);
+      }
+
+      // After all subtypes are selected, the search should include block_type = problem:
+      await waitFor(() => {
+        expect(fetchMock).toHaveLastFetched((_url, req) => {
+          const requestData = JSON.parse((req.body ?? '') as string);
+          const filter = requestData?.queries[0]?.filter;
+          return Array.isArray(filter) && filter.some(
+            (f: unknown) => Array.isArray(f) && f.includes('block_type = problem'),
+          );
+        });
       });
     });
 
