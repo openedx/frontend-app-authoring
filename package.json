@@ -17,7 +17,7 @@
     "lint:fix": "dprint fmt && dprint --config dprint.messages.json fmt --excludes-override none && oxlint --type-aware --fix",
     "start": "fedx-scripts webpack-dev-server --progress",
     "start:with-theme": "paragon install-theme && npm start && npm install",
-    "dev": "PUBLIC_PATH=/authoring/ MFE_CONFIG_API_URL='http://localhost:8000/api/mfe_config/v1' fedx-scripts webpack-dev-server --progress --host apps.local.openedx.io",
+    "dev": "PUBLIC_PATH=/authoring/ MFE_CONFIG_API_URL='http://local.openedx.io:8000/api/mfe_config/v1' fedx-scripts webpack-dev-server --progress --host apps.local.openedx.io",
     "test": "TZ=UTC fedx-scripts jest --coverage --passWithNoTests",
     "test:dev": "TZ=UTC fedx-scripts jest --coverage --watch --passWithNoTests",
     "test:ci": "TZ=UTC fedx-scripts jest --silent --coverage --passWithNoTests",
