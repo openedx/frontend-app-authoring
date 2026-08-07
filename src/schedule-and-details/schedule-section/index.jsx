@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Alert } from '@openedx/paragon';
-import { Lock as LockIcon } from '@openedx/paragon/icons';
+
+import ViewOnlyPermissionsAlert from '@src/generic/ViewOnlyPermissionsAlert';
 
 import SectionSubHeader from '../../generic/section-sub-header';
 import { ScheduleRow, SCHEDULE_ROW_TYPES } from './schedule-row';
@@ -123,9 +123,9 @@ const ScheduleSection = ({
         description={intl.formatMessage(messages.scheduleDescription)}
       />
       {showReadOnlyAlert && (
-        <Alert variant="info" icon={LockIcon}>
+        <ViewOnlyPermissionsAlert>
           {intl.formatMessage(messages.scheduleReadOnlyAlert)}
-        </Alert>
+        </ViewOnlyPermissionsAlert>
       )}
       <ul className="schedule-date-list">
         {propsForScheduleFields
