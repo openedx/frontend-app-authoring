@@ -819,5 +819,33 @@ describe('FilesAndUploads', () => {
 
       expect(screen.queryByText(messages.deleteTitle.defaultMessage)).toBeInTheDocument();
     });
+
+    it('should not render actions dropdown nor row selection when is only authorized to view files', async () => {
+      useCourseUserPermissions.mockReturnValue({
+        isLoading: false,
+        canViewFiles: true,
+        canEditFiles: false,
+        canDeleteFiles: false,
+        canCreateFiles: false,
+      });
+      await mockStore(RequestStatus.SUCCESSFUL);
+
+      expect(screen.queryByText(messages.actionsButtonLabel.defaultMessage)).toBeNull();
+      expect(screen.queryAllByTestId('datatable-select-column-checkbox-cell')).toHaveLength(0);
+    });
+
+    it('should render row selection when is authorized to edit or delete files', async () => {
+      useCourseUserPermissions.mockReturnValue({
+        isLoading: false,
+        canViewFiles: true,
+        canEditFiles: false,
+        canDeleteFiles: true,
+        canCreateFiles: false,
+      });
+      await mockStore(RequestStatus.SUCCESSFUL);
+
+      expect(screen.getByText(messages.actionsButtonLabel.defaultMessage)).toBeInTheDocument();
+      expect(screen.getAllByTestId('datatable-select-column-checkbox-cell').length).toBeGreaterThan(0);
+    });
   });
 });
