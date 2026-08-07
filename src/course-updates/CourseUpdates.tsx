@@ -2,7 +2,6 @@ import { Helmet } from 'react-helmet';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
-  Alert,
   Button,
   Container,
   Layout,
@@ -13,6 +12,7 @@ import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
+import ViewOnlyPermissionsAlert from '@src/generic/ViewOnlyPermissionsAlert';
 import CourseHandouts from './course-handouts/CourseHandouts';
 import CourseUpdate from './course-update/CourseUpdate';
 import DeleteModal from './delete-modal/DeleteModal';
@@ -156,13 +156,9 @@ const CourseUpdates = () => {
                         </Button>
                       ) :
                       null}
-					hideBorder={canViewCourseUpdates &&!canManageCourseUpdates}
+                    hideBorder={!canManageCourseUpdates}
                   />
-				  {canViewCourseUpdates && !canManageCourseUpdates && (
-                    <Alert variant="info" icon={LockIcon}>
-                      {intl.formatMessage(messages.viewOnlyAlert)}
-                    </Alert>
-                  )}
+                  {!canManageCourseUpdates && <ViewOnlyPermissionsAlert />}
                   <section className="updates-section">
                     {isMainFormOpen && (
                       <UpdateForm
