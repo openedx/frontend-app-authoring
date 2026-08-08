@@ -215,8 +215,8 @@ export const TaxonomyListPage = () => {
                   accessor: 'description',
                 },
                 {
-                  Header: 'systemDefined',
-                  accessor: 'systemDefined',
+                  Header: 'readOnly',
+                  accessor: 'readOnly',
                 },
                 {
                   Header: '',

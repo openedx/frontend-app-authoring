@@ -7,7 +7,7 @@ export interface TaxonomyData {
   enabled: boolean;
   allowMultiple: boolean;
   allowFreeText: boolean;
-  systemDefined: boolean;
+  readOnly: boolean;
   visibleToAuthors: boolean;
   tagsCount: number;
   orgs: string[];
