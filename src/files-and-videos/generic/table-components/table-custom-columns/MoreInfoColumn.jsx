@@ -55,64 +55,68 @@ const MoreInfoColumn = ({
         onEscapeKey={close}
       >
         <Menu className="more-info-menu">
-          {fileType === 'video'
-            ? permissions.canEditFiles && (
+          {permissions.canEditFiles && (
+            <>
+              {fileType === 'video' ?
+                (
+                  <MenuItem
+                    as={Button}
+                    variant="tertiary"
+                    onClick={() => {
+                      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                      navigator.clipboard.writeText(id);
+                      close();
+                    }}
+                  >
+                    {intl.formatMessage(messages.copyVideoIdTitle)}
+                  </MenuItem>
+                ) :
+                (
+                  <>
+                    <MenuItem
+                      as={Button}
+                      variant="tertiary"
+                      onClick={() => {
+                        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                        navigator.clipboard.writeText(portableUrl);
+                        close();
+                      }}
+                    >
+                      {intl.formatMessage(messages.copyStudioUrlTitle)}
+                    </MenuItem>
+                    <MenuItem
+                      as={Button}
+                      variant="tertiary"
+                      onClick={() => {
+                        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                        navigator.clipboard.writeText(externalUrl);
+                        close();
+                      }}
+                    >
+                      {intl.formatMessage(messages.copyWebUrlTitle)}
+                    </MenuItem>
+                    <MenuItem
+                      as={Button}
+                      variant="tertiary"
+                      onClick={() => handleLock(id, !locked)}
+                    >
+                      {locked
+                        ? intl.formatMessage(messages.unlockMenuTitle)
+                        : intl.formatMessage(messages.lockMenuTitle)}
+                    </MenuItem>
+                  </>
+                )}
               <MenuItem
                 as={Button}
                 variant="tertiary"
-                onClick={() => {
-                  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                  navigator.clipboard.writeText(id);
-                  close();
-                }}
+                onClick={() =>
+                  handleBulkDownload(
+                    [{ original: { id, displayName, downloadLink } }],
+                  )}
               >
-                {intl.formatMessage(messages.copyVideoIdTitle)}
+                {intl.formatMessage(messages.downloadTitle)}
               </MenuItem>
-            )
-            : permissions.canEditFiles && (
-              <>
-                <MenuItem
-                  as={Button}
-                  variant="tertiary"
-                  onClick={() => {
-                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                    navigator.clipboard.writeText(portableUrl);
-                    close();
-                  }}
-                >
-                  {intl.formatMessage(messages.copyStudioUrlTitle)}
-                </MenuItem>
-                <MenuItem
-                  as={Button}
-                  variant="tertiary"
-                  onClick={() => {
-                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                    navigator.clipboard.writeText(externalUrl);
-                    close();
-                  }}
-                >
-                  {intl.formatMessage(messages.copyWebUrlTitle)}
-                </MenuItem>
-                <MenuItem
-                  as={Button}
-                  variant="tertiary"
-                  onClick={() => handleLock(id, !locked)}
-                >
-                  {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
-                </MenuItem>
-              </>
-            )}
-          {permissions.canEditFiles && (
-            <MenuItem
-              as={Button}
-              variant="tertiary"
-              onClick={() =>
-                handleBulkDownload(
-                  [{ original: { id, displayName, downloadLink } }],
-                )}
-            >
-              {intl.formatMessage(messages.downloadTitle)}
-            </MenuItem>
+            </>
           )}
           <MenuItem
             as={Button}
