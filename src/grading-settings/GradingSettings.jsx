@@ -1,12 +1,11 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Alert,
   Button,
   Container,
   Layout,
   StatefulButton,
 } from '@openedx/paragon';
-import { Add as IconAdd, CheckCircle, Lock as LockIcon, Warning } from '@openedx/paragon/icons';
+import { Add as IconAdd, CheckCircle, Warning } from '@openedx/paragon/icons';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 
@@ -19,6 +18,7 @@ import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import SectionSubHeader from '@src/generic/section-sub-header';
 import SubHeader from '@src/generic/sub-header/SubHeader';
+import ViewOnlyPermissionsAlert from '@src/generic/ViewOnlyPermissionsAlert';
 import AlertMessage from '@src/generic/alert-message';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import getPageHeadTitle from '@src/generic/utils';
@@ -180,11 +180,7 @@ const GradingSettings = () => {
                     subtitle={intl.formatMessage(messages.headingSubtitle)}
                     contentTitle={intl.formatMessage(messages.policy)}
                     description={intl.formatMessage(messages.policiesDescription)}
-                    banner={!isEditable ? (
-                      <Alert variant="info" icon={LockIcon}>
-                        {intl.formatMessage(messages.viewOnlyAlert)}
-                      </Alert>
-                    ) : null}
+                    banner={!isEditable ? <ViewOnlyPermissionsAlert /> : null}
                   />
                   <section>
                     <GradingScale
