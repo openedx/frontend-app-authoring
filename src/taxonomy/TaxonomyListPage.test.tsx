@@ -14,7 +14,7 @@ const taxonomies = [{
   id: 1,
   name: 'Taxonomy',
   description: 'This is a description',
-  showSystemBadge: false,
+  showReadOnlyBadge: false,
   canChangeTaxonomy: true,
   canDeleteTaxonomy: true,
   tagsCount: 0,
@@ -115,7 +115,7 @@ describe('<TaxonomyListPage />', () => {
         id: 1,
         name: 'Taxonomy',
         description: 'This is a description',
-        showSystemBadge: false,
+        showReadOnlyBadge: false,
         canChangeTaxonomy: false,
         canDeleteTaxonomy: false,
         tagsCount: 0,
@@ -157,7 +157,7 @@ describe('<TaxonomyListPage />', () => {
     axiosMock.onGet(listTaxonomiesUrl).reply(200, { results: taxonomies, canAddTaxonomy: false });
     const defaults = {
       id: 1,
-      showSystemBadge: false,
+      showReadOnlyBadge: false,
       canChangeTaxonomy: true,
       canDeleteTaxonomy: true,
       tagsCount: 0,

@@ -85,7 +85,7 @@ describe('<TaxonomyDetailPage />', () => {
       id: 1,
       name: 'Test taxonomy',
       description: 'This is a description',
-      system_defined: false,
+      read_only: false,
       can_change_taxonomy: true,
       can_delete_taxonomy: true,
       tagsCount: 0,
@@ -108,12 +108,14 @@ describe('<TaxonomyDetailPage />', () => {
     expect(getByTestId('taxonomy-menu-delete')).toBeVisible();
   });
 
-  it('should show system defined badge', async () => {
+  const readOnlyBadgeText = 'Read only';
+
+  it('should show "read-only" badge if the taxonomy is read-only', async () => {
     axiosMock.onGet(apiUrls.taxonomy(1)).replyOnce(200, {
       id: 1,
       name: 'Test taxonomy',
       description: 'This is a description',
-      system_defined: true,
+      read_only: true,
       can_change_taxonomy: false,
       can_delete_taxonomy: false,
     });
@@ -121,15 +123,15 @@ describe('<TaxonomyDetailPage />', () => {
     const { findByRole, getByText } = render(<RootWrapper />);
 
     expect(await findByRole('heading')).toHaveTextContent('Test taxonomy');
-    expect(getByText('System-level')).toBeInTheDocument();
+    expect(getByText(readOnlyBadgeText)).toBeInTheDocument();
   });
 
-  it('should not show system defined badge', async () => {
+  it('should not show "read-only" badge if the taxonomy is not read-only', async () => {
     axiosMock.onGet(apiUrls.taxonomy(1)).replyOnce(200, {
       id: 1,
       name: 'Test taxonomy',
       description: 'This is a description',
-      system_defined: false,
+      read_only: false,
       can_change_taxonomy: false,
       can_delete_taxonomy: false,
     });
@@ -137,6 +139,6 @@ describe('<TaxonomyDetailPage />', () => {
     const { findByRole, queryByText } = render(<RootWrapper />);
 
     expect(await findByRole('heading')).toHaveTextContent('Test taxonomy');
-    expect(queryByText('System-level')).not.toBeInTheDocument();
+    expect(queryByText(readOnlyBadgeText)).not.toBeInTheDocument();
   });
 });

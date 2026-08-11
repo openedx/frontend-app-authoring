@@ -11,20 +11,19 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { TaxonomyMenu } from '../taxonomy-menu';
 import messages from './messages';
-import SystemDefinedBadge from '../system-defined-badge';
+import { ReadOnlyBadge } from '../read-only-badge';
 
 const orgsCountEnabled = (orgsCount) => orgsCount !== undefined && orgsCount !== 0;
 
 const HeaderSubtitle = ({
-  id,
-  showSystemBadge,
+  showReadOnlyBadge,
   orgsCount,
 }) => {
   const intl = useIntl();
 
   // Show system defined badge
-  if (showSystemBadge) {
-    return <SystemDefinedBadge taxonomyId={id} />;
+  if (showReadOnlyBadge) {
+    return <ReadOnlyBadge />;
   }
 
   // Or show orgs count
@@ -46,7 +45,7 @@ HeaderSubtitle.defaultProps = {
 
 HeaderSubtitle.propTypes = {
   id: PropTypes.number.isRequired,
-  showSystemBadge: PropTypes.bool.isRequired,
+  showReadOnlyBadge: PropTypes.bool.isRequired,
   orgsCount: PropTypes.number,
 };
 
@@ -96,11 +95,9 @@ const TaxonomyCard = ({ className, original }) => {
     id,
     name,
     description,
-    systemDefined,
+    readOnly,
     orgsCount,
   } = original;
-
-  const intl = useIntl();
 
   const getHeaderActions = () => (
     <TaxonomyMenu
@@ -122,17 +119,16 @@ const TaxonomyCard = ({ className, original }) => {
         subtitle={
           <HeaderSubtitle
             id={id}
-            showSystemBadge={systemDefined}
+            showReadOnlyBadge={readOnly}
             orgsCount={orgsCount}
-            intl={intl}
           />
         }
         actions={getHeaderActions()}
       />
       <Card.Body
         className={classNames('taxonomy-card-body', {
-          'taxonomy-card-body-overflow-m': !systemDefined && !orgsCountEnabled(orgsCount),
-          'taxonomy-card-body-overflow-sm': systemDefined || orgsCountEnabled(orgsCount),
+          'taxonomy-card-body-overflow-m': !readOnly && !orgsCountEnabled(orgsCount),
+          'taxonomy-card-body-overflow-sm': readOnly || orgsCountEnabled(orgsCount),
         })}
       >
         <Card.Section>
@@ -153,7 +149,7 @@ TaxonomyCard.propTypes = {
     id: PropTypes.number,
     name: PropTypes.string,
     description: PropTypes.string,
-    systemDefined: PropTypes.bool,
+    readOnly: PropTypes.bool,
     orgsCount: PropTypes.number,
     tagsCount: PropTypes.number,
     canChangeTaxonomy: PropTypes.bool,
