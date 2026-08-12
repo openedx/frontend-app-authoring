@@ -264,6 +264,7 @@ const ScheduleAndDetails = () => {
                     lmsLinkForAboutPage={lmsLinkForAboutPage}
                     courseDisplayName={courseDisplayName}
                     platformName={platformName}
+                    isEditable={canEdit}
                   />
                   {showCreditSection && (
                     <CreditSection
