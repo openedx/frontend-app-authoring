@@ -37,6 +37,7 @@ export const COURSE_PERMISSIONS = {
   DELETE_FILES: 'courses.delete_files',
   EDIT_FILES: 'courses.edit_files',
 
+  VIEW_LIBRARY_UPDATES: 'courses.view_library_updates',
   MANAGE_LIBRARY_UPDATES: 'courses.manage_library_updates',
 
   VIEW_COURSE_TEAM: 'courses.view_course_team',

@@ -13,7 +13,9 @@ import {
   Card,
   Hyperlink,
   Icon,
+  OverlayTrigger,
   Stack,
+  Tooltip,
   useToggle,
 } from '@openedx/paragon';
 
@@ -44,9 +46,11 @@ import DeleteModal from '../generic/delete-modal/DeleteModal';
 import { PublishableEntityLink } from './data/api';
 import AlertError from '../generic/alert-error';
 import NewsstandIcon from '../generic/NewsstandIcon';
+import genericMessages from '../generic/messages';
 
 interface Props {
   courseId: string;
+  readOnly?: boolean;
 }
 
 interface ItemCardProps {
@@ -137,8 +141,10 @@ const ItemCard: React.FC<ItemCardProps> = ({
 
 const ItemReviewList = ({
   outOfSyncItems,
+  readOnly = false,
 }: {
   outOfSyncItems: PublishableEntityLink[];
+  readOnly?: boolean;
 }) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
@@ -258,6 +264,60 @@ const ItemReviewList = ({
     }
   }, [blockData]);
 
+  const readOnlyMessage = intl.formatMessage(genericMessages.readOnlyTooltip);
+
+  const wrapDisabledActionWithTooltip = useCallback((id: string, action: React.ReactNode) => (
+    <OverlayTrigger
+      placement="top"
+      overlay={<Tooltip id={id}>{readOnlyMessage}</Tooltip>}
+    >
+      <span>{action}</span>
+    </OverlayTrigger>
+  ), [readOnlyMessage]);
+
+  const renderActions = useCallback((info: ContentHit) => {
+    const ignoreButton = (
+      <Button
+        variant="tertiary"
+        size="sm"
+        onClick={() => onIgnoreClick(info)}
+        disabled={readOnly}
+      >
+        {intl.formatMessage(messages.cardIgnoreContentBtn)}
+      </Button>
+    );
+    const updateButton = (
+      <LoadingButton
+        label={intl.formatMessage(messages.cardUpdateContentBtn)}
+        variant="primary"
+        size="sm"
+        onClick={() => updateBlock(info)}
+        className="rounded-0"
+        disabled={readOnly}
+      />
+    );
+    return (
+      <ActionRow>
+        <Button
+          size="sm"
+          variant="outline-primary border-light-300"
+          onClick={() => onReview(info)}
+          iconBefore={Loop}
+          className="mr-2"
+        >
+          {intl.formatMessage(messages.cardReviewContentBtn)}
+        </Button>
+        <span className="border border-dark py-3 ml-4 mr-3" />
+        {readOnly
+          ? wrapDisabledActionWithTooltip(`disabled-ignore-${info.usageKey}`, ignoreButton)
+          : ignoreButton}
+        {readOnly
+          ? wrapDisabledActionWithTooltip(`disabled-update-${info.usageKey}`, updateButton)
+          : updateButton}
+      </ActionRow>
+    );
+  }, [onIgnoreClick, readOnly, updateBlock, wrapDisabledActionWithTooltip]);
+
   if (isIndexDataPending) {
     return <Loading />;
   }
@@ -274,34 +334,7 @@ const ItemReviewList = ({
           info={info}
           itemType={outOfSyncItemsByKey[info.usageKey]?.upstreamType}
           libraryName={outOfSyncItemsByKey[info.usageKey]?.upstreamContextTitle}
-          actions={
-            <ActionRow>
-              <Button
-                size="sm"
-                variant="outline-primary border-light-300"
-                onClick={() => onReview(info)}
-                iconBefore={Loop}
-                className="mr-2"
-              >
-                {intl.formatMessage(messages.cardReviewContentBtn)}
-              </Button>
-              <span className="border border-dark py-3 ml-4 mr-3" />
-              <Button
-                variant="tertiary"
-                size="sm"
-                onClick={() => onIgnoreClick(info)}
-              >
-                {intl.formatMessage(messages.cardIgnoreContentBtn)}
-              </Button>
-              <LoadingButton
-                label={intl.formatMessage(messages.cardUpdateContentBtn)}
-                variant="primary"
-                size="sm"
-                onClick={() => updateBlock(info)}
-                className="rounded-0"
-              />
-            </ActionRow>
-          }
+          actions={renderActions(info)}
         />
       ))}
       {blockData && (
@@ -310,6 +343,7 @@ const ItemReviewList = ({
           isModalOpen={isPreviewModalOpen}
           closeModal={closePreviewModal}
           postChange={postChange}
+          readOnly={readOnly}
         />
       )}
       <DeleteModal
@@ -325,7 +359,7 @@ const ItemReviewList = ({
   );
 };
 
-const ReviewTabContent = ({ courseId }: Props) => {
+const ReviewTabContent = ({ courseId, readOnly = false }: Props) => {
   const intl = useIntl();
   const {
     data: outOfSyncItems,
@@ -373,6 +407,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
       </ActionRow>
       <ItemReviewList
         outOfSyncItems={outOfSyncItems}
+        readOnly={readOnly}
       />
     </SearchContextProvider>
   );

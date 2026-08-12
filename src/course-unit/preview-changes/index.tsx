@@ -9,6 +9,8 @@ import {
   Button,
   Icon,
   ModalDialog,
+  OverlayTrigger,
+  Tooltip,
   useToggle,
 } from '@openedx/paragon';
 import { Info } from '@openedx/paragon/icons';
@@ -20,6 +22,7 @@ import CompareChangesWidget from '@src/library-authoring/component-comparison/Co
 import AlertMessage from '@src/generic/alert-message';
 import LoadingButton from '@src/generic/loading-button';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import genericMessages from '@src/generic/messages';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { useEventListener } from '@src/generic/hooks';
 import { getItemIcon } from '@src/generic/block-type-utils';
@@ -120,6 +123,7 @@ export interface PreviewLibraryXBlockChangesProps {
   isModalOpen: boolean;
   closeModal: () => void;
   postChange: (accept: boolean) => void;
+  readOnly?: boolean;
 }
 
 /**
@@ -131,6 +135,7 @@ export const PreviewLibraryXBlockChanges = ({
   isModalOpen,
   closeModal,
   postChange,
+  readOnly = false,
 }: PreviewLibraryXBlockChangesProps) => {
   const { showToast } = useContext(ToastContext);
   const intl = useIntl();
@@ -192,6 +197,54 @@ export const PreviewLibraryXBlockChanges = ({
   }, [blockData]);
 
   const itemIcon = getItemIcon(blockData.blockType || '');
+
+  const readOnlyMessage = intl.formatMessage(genericMessages.readOnlyTooltip);
+
+  const wrapActionWithTooltip = (id: string, action: React.ReactNode) => (
+    <OverlayTrigger
+      placement="top"
+      overlay={<Tooltip id={id}>{readOnlyMessage}</Tooltip>}
+    >
+      <span>{action}</span>
+    </OverlayTrigger>
+  );
+
+  const acceptButton = isTextWithLocalChanges
+    ? (
+      <Button
+        variant="tertiary"
+        onClick={() => setConfirmationModalType('update')}
+        disabled={readOnly}
+      >
+        <FormattedMessage {...messages.updateToPublishedLibraryContentButton} />
+      </Button>
+    )
+    : (
+      <LoadingButton
+        onClick={() => updateAndRefresh(true, false)}
+        label={intl.formatMessage(messages.acceptChangesBtn)}
+        disabled={readOnly}
+      />
+    );
+
+  const ignoreButton = isTextWithLocalChanges
+    ? (
+      <Button
+        onClick={() => setConfirmationModalType('keep')}
+        disabled={readOnly}
+      >
+        <FormattedMessage {...messages.keepCourseContentButton} />
+      </Button>
+    )
+    : (
+      <Button
+        variant="tertiary"
+        onClick={() => setConfirmationModalType('ignore')}
+        disabled={readOnly}
+      >
+        <FormattedMessage {...messages.ignoreChangesBtn} />
+      </Button>
+    );
 
   // Build title
   const defaultTitle = intl.formatMessage(
@@ -256,37 +309,12 @@ export const PreviewLibraryXBlockChanges = ({
       </ModalDialog.Body>
       <ModalDialog.Footer>
         <ActionRow>
-          {isTextWithLocalChanges ?
-            (
-              <Button
-                variant="tertiary"
-                onClick={() => setConfirmationModalType('update')}
-              >
-                <FormattedMessage {...messages.updateToPublishedLibraryContentButton} />
-              </Button>
-            ) :
-            (
-              <LoadingButton
-                onClick={() => updateAndRefresh(true, false)}
-                label={intl.formatMessage(messages.acceptChangesBtn)}
-              />
-            )}
-          {isTextWithLocalChanges ?
-            (
-              <Button
-                onClick={() => setConfirmationModalType('keep')}
-              >
-                <FormattedMessage {...messages.keepCourseContentButton} />
-              </Button>
-            ) :
-            (
-              <Button
-                variant="tertiary"
-                onClick={() => setConfirmationModalType('ignore')}
-              >
-                <FormattedMessage {...messages.ignoreChangesBtn} />
-              </Button>
-            )}
+          {readOnly
+            ? wrapActionWithTooltip('readonly-accept-changes', acceptButton)
+            : acceptButton}
+          {readOnly
+            ? wrapActionWithTooltip('readonly-ignore-changes', ignoreButton)
+            : ignoreButton}
         </ActionRow>
       </ModalDialog.Footer>
       <ConfirmationModal

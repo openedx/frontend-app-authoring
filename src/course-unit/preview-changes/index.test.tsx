@@ -10,7 +10,7 @@ import {
 } from '@src/testUtils';
 import { ToastActionData } from '@src/generic/toast-context';
 
-import IframePreviewLibraryXBlockChanges, { LibraryChangesMessageData } from '.';
+import IframePreviewLibraryXBlockChanges, { PreviewLibraryXBlockChanges, LibraryChangesMessageData } from '.';
 import { messageTypes } from '../constants';
 import { libraryBlockChangesUrl } from '../data/api';
 
@@ -65,6 +65,31 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     expect(await screen.findByRole('button', { name: 'Ignore changes' })).toBeInTheDocument();
     expect(await screen.findByRole('tab', { name: 'New version' })).toBeInTheDocument();
     expect(await screen.findByRole('tab', { name: 'Old version' })).toBeInTheDocument();
+  });
+
+  it('disables accept and ignore changes buttons with read-only tooltip when readOnly', async () => {
+    const user = userEvent.setup();
+    baseRender(
+      <PreviewLibraryXBlockChanges
+        blockData={defaultEventData}
+        isModalOpen
+        closeModal={jest.fn()}
+        postChange={jest.fn()}
+        readOnly
+      />,
+    );
+
+    const acceptBtn = await screen.findByRole('button', { name: 'Accept changes' });
+    expect(acceptBtn).toHaveAttribute('aria-disabled', 'true');
+    const ignoreBtn = await screen.findByRole('button', { name: 'Ignore changes' });
+    expect(ignoreBtn).toBeDisabled();
+
+    await user.hover(acceptBtn.closest('span') ?? acceptBtn);
+    expect(
+      await screen.findByText(
+        'Your role doesn\'t include permission to do this. Contact your org admin to request access',
+      ),
+    ).toBeInTheDocument();
   });
 
   it('renders default displayName for units with no displayName', async () => {
