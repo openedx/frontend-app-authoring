@@ -188,6 +188,16 @@ jest.mock('./data/api', () => ({
   getTagsCount: () => jest.fn().mockResolvedValue({}),
 }));
 
+jest.mock('@src/authz/hooks', () => ({
+  ...jest.requireActual('@src/authz/hooks'),
+  useCourseUserPermissions: jest.fn().mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: false,
+    canEditCourseContent: true,
+    canPublishCourseContent: true,
+  }),
+}));
+
 jest.mock('@edx/frontend-platform/logging', () => ({
   logError: jest.fn(),
 }));

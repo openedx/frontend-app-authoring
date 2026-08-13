@@ -10,6 +10,8 @@ import { type UnitXBlock, type XBlock } from '@src/data/types';
 import { CourseDetailsData } from './data/api';
 import { useCourseDetails } from './data/apiHooks';
 import { RequestStatusType } from './data/constants';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getCourseOutlinePermissions } from '@src/authz/permissionHelpers';
 
 export type ModalState = {
   value?: XBlock | UnitXBlock;
@@ -29,6 +31,9 @@ export type CourseAuthoringContextData = {
   currentUnlinkModalData?: ModalState;
   openUnlinkModal: (value: ModalState) => void;
   closeUnlinkModal: () => void;
+  isLoading: boolean;
+  canEditCourseContent: boolean;
+  canPublishCourseContent: boolean;
 };
 
 /**
@@ -58,7 +63,14 @@ export const CourseAuthoringProvider = ({
     closeUnlinkModal,
   ] = useToggleWithValue<ModalState>();
 
+  const {
+    canEditCourseContent,
+    canPublishCourseContent,
+    isLoading: isUserPermissionsLoading,
+  } = useCourseUserPermissions(courseId, getCourseOutlinePermissions(courseId));
+
   const getUnitUrl = (locator: string) => `/course/${courseId}/container/${locator}`;
+  const isLoading = isUserPermissionsLoading;
 
   /**
    * Open the unit page for a given locator.
@@ -78,6 +90,9 @@ export const CourseAuthoringProvider = ({
     openUnlinkModal,
     closeUnlinkModal,
     currentUnlinkModalData,
+    isLoading,
+    canEditCourseContent,
+    canPublishCourseContent,
   }), [
     courseId,
     courseDetails,
@@ -89,6 +104,9 @@ export const CourseAuthoringProvider = ({
     openUnlinkModal,
     closeUnlinkModal,
     currentUnlinkModalData,
+    canEditCourseContent,
+    canPublishCourseContent,
+    isLoading,
   ]);
 
   return (

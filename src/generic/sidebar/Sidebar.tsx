@@ -88,12 +88,17 @@ export function Sidebar<T extends SidebarPages>({
 }: SidebarProps<T>) {
   const intl = useIntl();
 
+  // currentPageKey may point to a page that isn't currently available (e.g. one hidden by
+  // permissions or a stale value coming from the URL). Fall back to the first available page
+  // so the sidebar renders instead of crashing on an undefined page.
+  const [fallbackPageKey] = Object.keys(pages) as (keyof T)[];
+  const effectivePageKey = pages[currentPageKey] ? currentPageKey : fallbackPageKey;
   const {
     component: SidebarComponent,
     icon: SidebarIcon,
     title,
-  } = pages[currentPageKey];
-  const activeKey = isOpen ? currentPageKey : undefined;
+  } = pages[effectivePageKey];
+  const activeKey = isOpen ? effectivePageKey : undefined;
 
   return (
     <Stack direction="horizontal" className="align-items-baseline flex-fill overflow-hidden" gap={2}>

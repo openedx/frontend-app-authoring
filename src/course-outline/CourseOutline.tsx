@@ -51,6 +51,8 @@ const CourseOutline = () => {
   const location = useLocation();
   const {
     courseId,
+    canEditCourseContent,
+    isLoading: isLoadingAuthoringContext,
   } = useCourseAuthoringContext();
   const {
     courseUsageKey,
@@ -94,7 +96,14 @@ const CourseOutline = () => {
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
   const isInternetConnectionAlertFailed = savingStatus === RequestStatus.FAILED;
-  const isReIndexShow = Boolean(reindexLink);
+  const isReIndexShow = canEditCourseContent && Boolean(reindexLink);
+
+  // The header's "+ Add" button creates course content, so gate its visibility behind the
+  // edit permission. This is scoped to the header actions and leaves the outline tree unaffected.
+  const headerCourseActions = useMemo(
+    () => ({ ...courseActions, childAddable: canEditCourseContent && courseActions.childAddable }),
+    [courseActions, canEditCourseContent],
+  );
 
   const handleAddBlock = useCreateCourseBlock(courseId);
   const pasteMutation = usePasteItem(courseId);
@@ -169,7 +178,7 @@ const CourseOutline = () => {
     }
   }, [location, courseId, courseName]);
 
-  if (isLoading) {
+  if (isLoading || isLoadingAuthoringContext) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return (
       <Row className="m-0 mt-4 justify-content-center">
@@ -249,7 +258,7 @@ const CourseOutline = () => {
                 headerNavigationsActions={headerNavigationsActions}
                 isDisabledReindexButton={isDisabledReindexButton}
                 hasSections={Boolean(sections.length)}
-                courseActions={courseActions}
+                courseActions={headerCourseActions}
                 errors={errors}
                 sections={sections}
               />
