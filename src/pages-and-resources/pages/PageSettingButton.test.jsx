@@ -54,7 +54,7 @@ describe('PageSettingButton', () => {
     expect(linkElement).toHaveAttribute('href', `/course/${defaultProps.courseId}/page-id`);
   });
 
-  it('renders no icon button when is not editable', () => {
+  it('does not render an icon button when not editable', () => {
     renderComponent({ legacyLink: null }, { isEditable: false });
 
     const button = screen.queryByRole('button');
