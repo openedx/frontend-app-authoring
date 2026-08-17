@@ -426,6 +426,19 @@ describe('<CourseUpdates />', () => {
         ).toBeInTheDocument();
       });
 
+      it('should open the update form when clicking the "Add first update" button', async () => {
+        axiosMock.resetHandlers();
+        axiosMock.onGet(getCourseUpdatesApiUrl(courseId)).reply(200, []);
+        axiosMock.onGet(getCourseHandoutApiUrl(courseId)).reply(200, courseHandoutsMock);
+
+        render(<RootWrapper />);
+        await userEvent.click(
+          await screen.findByRole('button', { name: messages.firstUpdateButton.defaultMessage }),
+        );
+
+        expect(screen.getByText('Add new update')).toBeInTheDocument();
+      });
+
       it('should NOT render the view-only alert', async () => {
         render(<RootWrapper />);
 
