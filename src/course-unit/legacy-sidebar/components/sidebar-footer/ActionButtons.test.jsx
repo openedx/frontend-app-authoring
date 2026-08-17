@@ -1,11 +1,17 @@
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { render } from '@testing-library/react';
+import {
+  initializeMocks,
+  render,
+  screen,
+} from '@src/testUtils';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import userEvent from '@testing-library/user-event';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 
 import initializeStore from '../../../../store';
 import { executeThunk } from '../../../../utils';
@@ -22,19 +28,28 @@ let axiosMock;
 let queryClient;
 const courseId = '123';
 
-const renderComponent = (props = {}) =>
-  render(
-    <AppProvider store={store}>
+const renderComponent = (props = {}) => {
+  const WrapperProvider = ({ children }) => (
+    <CourseAuthoringProvider courseId={'courseId'}>{children}</CourseAuthoringProvider>
+  );
+  return render(
+    <AppProvider store={store} wrapWithRouter={false}>
       <IntlProvider locale="en">
         <QueryClientProvider client={queryClient}>
           <ActionButtons {...props} />
         </QueryClientProvider>
       </IntlProvider>
     </AppProvider>,
+    {
+      extraWrapper: WrapperProvider,
+    },
   );
+};
 
 describe('<ActionButtons />', () => {
+  let validateUserPermissionsMock;
   beforeEach(async () => {
+    const mocks = initializeMocks();
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -42,6 +57,13 @@ describe('<ActionButtons />', () => {
         administrator: true,
         roles: [],
       },
+    });
+
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    validateUserPermissionsMock.mockResolvedValue({
+      canEditCourseContent: true,
+      canPublishCourseContent: true,
     });
 
     store = initializeStore();
@@ -67,24 +89,58 @@ describe('<ActionButtons />', () => {
     await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
   });
 
-  it('render ActionButtons component with Copy to clipboard', () => {
-    const { getByRole } = renderComponent();
+  it('render ActionButtons component with Copy to clipboard', async () => {
+    renderComponent();
 
-    const copyXBlockBtn = getByRole('button', { name: messages.actionButtonCopyUnitTitle.defaultMessage });
+    const copyXBlockBtn = await screen.findByRole('button', {
+      name: messages.actionButtonCopyUnitTitle.defaultMessage,
+    });
     expect(copyXBlockBtn).toBeInTheDocument();
   });
 
   it('click on the Copy to clipboard button updates clipboardData', async () => {
     const user = userEvent.setup();
-    const { getByRole } = renderComponent();
+    renderComponent();
 
-    const copyXBlockBtn = getByRole('button', { name: messages.actionButtonCopyUnitTitle.defaultMessage });
+    const copyXBlockBtn = await screen.findByRole('button', {
+      name: messages.actionButtonCopyUnitTitle.defaultMessage,
+    });
 
     await user.click(copyXBlockBtn);
     expect(axiosMock.history.post.length).toBe(1);
     expect(axiosMock.history.post[0].data).toBe(
       JSON.stringify({ usage_key: courseSectionVerticalMock.xblock_info.id }),
     );
-    jest.resetAllMocks();
+  });
+
+  it('hides the Publish button when the user cannot publish course content', async () => {
+    validateUserPermissionsMock.mockResolvedValue({
+      canEditCourseContent: true,
+      canPublishCourseContent: false,
+    });
+    renderComponent();
+    expect(
+      await screen.findByRole('button', { name: messages.actionButtonCopyUnitTitle.defaultMessage }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: messages.actionButtonPublishTitle.defaultMessage }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('hides the Discard changes and Copy buttons when the user cannot edit course content', async () => {
+    validateUserPermissionsMock.mockResolvedValue({
+      canEditCourseContent: false,
+      canPublishCourseContent: true,
+    });
+    renderComponent();
+    expect(
+      await screen.findByRole('button', { name: messages.actionButtonPublishTitle.defaultMessage }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: messages.actionButtonDiscardChangesTitle.defaultMessage }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: messages.actionButtonCopyUnitTitle.defaultMessage }),
+    ).not.toBeInTheDocument();
   });
 });

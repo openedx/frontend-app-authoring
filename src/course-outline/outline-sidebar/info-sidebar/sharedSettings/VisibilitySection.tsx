@@ -7,6 +7,7 @@ import { SidebarSection } from '@src/generic/sidebar';
 import { useFieldDraft } from '@src/hooks/useFieldDraft';
 import { useMemo } from 'react';
 import messages from '../messages';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 interface Props<T = Partial<ConfigureSubsectionData>> {
   itemId: string;
@@ -22,6 +23,7 @@ interface State {
 export const VisibilitySection = ({ itemId, isSubsection, onChange }: Props) => {
   const intl = useIntl();
   const { data: itemData } = useCourseItemData(itemId);
+  const { canEditCourseContent } = useCourseAuthoringContext();
 
   const serverState = useMemo<State>(() => ({
     isVisibleToStaffOnly: itemData?.visibilityState === VisibilityTypes.STAFF_ONLY,
@@ -42,12 +44,14 @@ export const VisibilitySection = ({ itemId, isSubsection, onChange }: Props) => 
     >
       <ButtonGroup toggle>
         <Button
+          disabled={!canEditCourseContent}
           variant={localState?.isVisibleToStaffOnly ? 'outline-primary' : 'primary'}
           onClick={() => setLocalState((prev) => ({ ...prev, isVisibleToStaffOnly: false }))}
         >
           <FormattedMessage {...messages.subsectionVisibilityStudentVisible} />
         </Button>
         <Button
+          disabled={!canEditCourseContent}
           variant={localState?.isVisibleToStaffOnly ? 'primary' : 'outline-primary'}
           onClick={() =>
             setLocalState((prev) => ({
@@ -61,6 +65,7 @@ export const VisibilitySection = ({ itemId, isSubsection, onChange }: Props) => 
       </ButtonGroup>
       {isSubsection && !localState?.isVisibleToStaffOnly && (
         <Form.Checkbox
+          disabled={!canEditCourseContent}
           checked={localState?.hideAfterDue}
           className="mt-2"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

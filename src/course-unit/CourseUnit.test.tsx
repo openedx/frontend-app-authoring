@@ -1,5 +1,7 @@
 import fetchMock from 'fetch-mock-jest';
 import userEvent from '@testing-library/user-event';
+import MockAdapter from 'axios-mock-adapter';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import {
   camelCaseObject,
   getConfig,
@@ -57,7 +59,7 @@ import {
   clipboardMockResponse,
   courseOutlineInfoMock,
 } from './__mocks__';
-import { clipboardUnit } from '../__mocks__';
+import { clipboardUnit, clipboardXBlock } from '../__mocks__';
 import { executeThunk } from '../utils';
 import pasteNotificationsMessages from './clipboard/paste-notification/messages';
 import headerTitleMessages from './header-title/messages';
@@ -84,6 +86,7 @@ let axiosMock;
 let store;
 let mockShowToast;
 let mockCloseToast;
+let validateUserPermissionsMock;
 const courseId = '123';
 const blockId = courseSectionVerticalMock.xblock_info.id;
 const sequenceId = 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5';
@@ -156,6 +159,14 @@ describe('<CourseUnit />', () => {
     mockShowToast = mocks.mockShowToast;
     mockCloseToast = mocks.mockCloseToast;
     axiosMock = mocks.axiosMock;
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    validateUserPermissionsMock.mockResolvedValue({
+      isLoading: false,
+      canViewCourse: true,
+      canEditCourseContent: true,
+      canPublishCourseContent: true,
+    });
     axiosMock
       .onGet(getClipboardUrl())
       .reply(200, clipboardUnit);
@@ -939,7 +950,7 @@ describe('<CourseUnit />', () => {
 
     const unitHeaderTitle = screen.getByTestId('unit-header-title');
 
-    const editTitleButton = within(unitHeaderTitle).getByRole('button', {
+    const editTitleButton = await within(unitHeaderTitle).findByRole('button', {
       name: headerTitleMessages.altButtonEdit.defaultMessage,
     });
     await user.click(editTitleButton);
@@ -1589,7 +1600,7 @@ describe('<CourseUnit />', () => {
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
       await user.click(
-        screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
+        await screen.findByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
       );
       await user.click(screen.getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
@@ -1650,7 +1661,7 @@ describe('<CourseUnit />', () => {
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
       await user.click(
-        screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
+        await screen.findByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
       );
 
       await waitFor(() => {
@@ -1716,7 +1727,7 @@ describe('<CourseUnit />', () => {
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
       await user.click(
-        screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
+        await screen.findByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
       );
       await user.click(screen.getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
@@ -1777,7 +1788,7 @@ describe('<CourseUnit />', () => {
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
       await user.click(
-        screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
+        await screen.findByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
       );
       await user.click(screen.getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
@@ -1840,7 +1851,7 @@ describe('<CourseUnit />', () => {
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
       await user.click(
-        screen.getByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
+        await screen.findByRole('button', { name: legacySidebarMessages.actionButtonCopyUnitTitle.defaultMessage }),
       );
       await user.click(screen.getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
@@ -2573,6 +2584,92 @@ describe('<CourseUnit />', () => {
     });
   });
 
+  describe('Add component authorization (authz)', () => {
+    let waffleFlagsSpy;
+
+    beforeEach(() => {
+      // Enable authz so `canEditCourseContent` is driven by the mocked permissions API
+      // rather than falling back to `true`.
+      waffleFlagsSpy = mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    });
+
+    afterEach(() => {
+      // Restore the real `useWaffleFlags` so the spy doesn't leak into later tests
+      // (jest is not configured to restore mocks automatically).
+      waffleFlagsSpy?.mockRestore();
+    });
+
+    it('renders the add-component strip when authz grants edit permission', async () => {
+      validateUserPermissionsMock.mockResolvedValue({
+        canViewCourse: true,
+        canEditCourseContent: true,
+        canPublishCourseContent: true,
+      });
+
+      render(<RootWrapper />);
+
+      expect(
+        await screen.findByRole('heading', { name: addComponentMessages.title.defaultMessage }),
+      ).toBeInTheDocument();
+    });
+
+    it('hides the add-component strip when authz denies edit permission', async () => {
+      validateUserPermissionsMock.mockResolvedValue({
+        canViewCourse: true,
+        canEditCourseContent: false,
+        canPublishCourseContent: false,
+      });
+
+      render(<RootWrapper />);
+
+      // Wait for the unit to finish rendering (the xblock iframe is always present)...
+      await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      // ...then confirm the add-component strip is gated out by the missing permission.
+      expect(
+        screen.queryByRole('heading', { name: addComponentMessages.title.defaultMessage }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('renders the paste-component button when authz grants edit permission', async () => {
+      validateUserPermissionsMock.mockResolvedValue({
+        canViewCourse: true,
+        canEditCourseContent: true,
+        canPublishCourseContent: true,
+      });
+      // Put a component (a non-structural block) on the clipboard so the paste button can appear.
+      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      axiosMock.onGet(getClipboardUrl()).reply(200, clipboardXBlock);
+      axiosMock.onGet(getCourseSectionVerticalApiUrl(blockId)).reply(200, courseSectionVerticalMock);
+      axiosMock.onGet(getCourseVerticalChildrenApiUrl(blockId)).reply(200, courseVerticalChildrenMock);
+
+      render(<RootWrapper />);
+
+      expect(
+        await screen.findByRole('button', { name: messages.pasteButtonText.defaultMessage }),
+      ).toBeInTheDocument();
+    });
+
+    it('hides the paste-component button when authz denies edit permission', async () => {
+      validateUserPermissionsMock.mockResolvedValue({
+        canViewCourse: true,
+        canEditCourseContent: false,
+        canPublishCourseContent: false,
+      });
+      // Same clipboard setup as the granted case, so only the missing permission can hide the button.
+      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      axiosMock.onGet(getClipboardUrl()).reply(200, clipboardXBlock);
+      axiosMock.onGet(getCourseSectionVerticalApiUrl(blockId)).reply(200, courseSectionVerticalMock);
+      axiosMock.onGet(getCourseVerticalChildrenApiUrl(blockId)).reply(200, courseVerticalChildrenMock);
+
+      render(<RootWrapper />);
+
+      await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      expect(
+        screen.queryByRole('button', { name: messages.pasteButtonText.defaultMessage }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
   it('renders and navigates to the new HTML XBlock editor after xblock duplicating', async () => {
     const updatedCourseVerticalChildrenMock = JSON.parse(JSON.stringify(courseVerticalChildrenMock));
     // Convert the second child from drag and drop to HTML:
@@ -2636,7 +2733,7 @@ describe('<CourseUnit />', () => {
 
     // Edit button should be enabled even for library imported units
     const unitHeaderTitle = screen.getByTestId('unit-header-title');
-    const editButton = within(unitHeaderTitle).getByRole(
+    const editButton = await within(unitHeaderTitle).findByRole(
       'button',
       { name: 'Edit' },
     );

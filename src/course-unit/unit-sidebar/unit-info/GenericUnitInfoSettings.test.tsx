@@ -5,6 +5,8 @@ import {
   waitFor,
 } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { GenericUnitInfoSettings } from './GenericUnitInfoSettings';
 
 // Mock UnitTab subcomponents: Access is irrelevant here; Discussion becomes a simple
@@ -33,16 +35,31 @@ const baseProps = {
   configureHook: useFakeConfigure as any,
 };
 
+const WrapperProvider = ({ children }) => (
+  <CourseAuthoringProvider courseId={'courseId'}>{children}</CourseAuthoringProvider>
+);
+
+const renderWithWrapper = (children) =>
+  render(children, {
+    extraWrapper: WrapperProvider,
+  });
+
 describe('GenericUnitInfoSettings', () => {
+  let validateUserPermissionsMock;
+
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
     mutate.mockClear();
+    // Leave authz disabled by default so `canEditCourseContent` synchronously falls back to
+    // `true` and the visibility buttons are enabled/clickable. Gating tests re-enable authz.
+    mockWaffleFlags();
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
   });
 
   it('commits staff-only visibility when "Staff Only" is clicked', async () => {
     const user = userEvent.setup();
     const updateCallback = jest.fn();
-    render(<GenericUnitInfoSettings {...baseProps} updateCallback={updateCallback} />);
+    renderWithWrapper(<GenericUnitInfoSettings {...baseProps} updateCallback={updateCallback} />);
 
     await user.click(screen.getByRole('button', { name: 'Staff Only' }));
 
@@ -57,7 +74,7 @@ describe('GenericUnitInfoSettings', () => {
 
   it('opens the confirmation modal and commits student-visible on confirm', async () => {
     const user = userEvent.setup();
-    render(<GenericUnitInfoSettings {...baseProps} visibilityState="staff_only" />);
+    renderWithWrapper(<GenericUnitInfoSettings {...baseProps} visibilityState="staff_only" />);
 
     await user.click(screen.getByRole('button', { name: 'Student Visible' }));
     // Modal opens; confirm.
@@ -73,7 +90,7 @@ describe('GenericUnitInfoSettings', () => {
 
   it('does not commit when the confirmation modal is cancelled', async () => {
     const user = userEvent.setup();
-    render(<GenericUnitInfoSettings {...baseProps} visibilityState="staff_only" />);
+    renderWithWrapper(<GenericUnitInfoSettings {...baseProps} visibilityState="staff_only" />);
 
     await user.click(screen.getByRole('button', { name: 'Student Visible' }));
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
@@ -83,7 +100,7 @@ describe('GenericUnitInfoSettings', () => {
 
   it('commits the discussion toggle', async () => {
     const user = userEvent.setup();
-    render(<GenericUnitInfoSettings {...baseProps} />);
+    renderWithWrapper(<GenericUnitInfoSettings {...baseProps} />);
 
     await user.click(screen.getByRole('checkbox', { name: 'discussion' }));
 
@@ -93,5 +110,23 @@ describe('GenericUnitInfoSettings', () => {
         expect.anything(),
       )
     );
+  });
+
+  it('disables both visibility buttons when the user cannot edit course content', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent: false });
+    renderWithWrapper(<GenericUnitInfoSettings {...baseProps} />);
+
+    expect(await screen.findByRole('button', { name: 'Student Visible' })).toBeDisabled();
+    expect(await screen.findByRole('button', { name: 'Staff Only' })).toBeDisabled();
+  });
+
+  it('enables both visibility buttons when the user can edit course content', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent: true });
+    renderWithWrapper(<GenericUnitInfoSettings {...baseProps} />);
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Student Visible' })).not.toBeDisabled());
+    expect(screen.getByRole('button', { name: 'Staff Only' })).not.toBeDisabled();
   });
 });

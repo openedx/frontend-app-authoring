@@ -1,5 +1,7 @@
 import { render, screen, initializeMocks } from '@src/testUtils';
 import { IframeProvider } from '@src/generic/hooks/context/iFrameContext';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { UnitAlignSidebar } from './UnitAlignSidebar';
 import { UnitSidebarProvider } from './UnitSidebarContext';
 
@@ -18,16 +20,19 @@ jest.mock('react-router-dom', () => ({
 
 const renderComponent = () =>
   render(
-    <IframeProvider>
-      <UnitSidebarProvider readOnly={false}>
-        <UnitAlignSidebar />
-      </UnitSidebarProvider>
-    </IframeProvider>,
+    <CourseAuthoringProvider courseId={'courseId'}>
+      <IframeProvider>
+        <UnitSidebarProvider readOnly={false}>
+          <UnitAlignSidebar />
+        </UnitSidebarProvider>
+      </IframeProvider>
+    </CourseAuthoringProvider>,
   );
 
 describe('OutlineAlignSidebar', () => {
   beforeEach(() => {
     initializeMocks();
+    mockWaffleFlags();
   });
 
   it('renders ContentTagsDrawer with the correct id and variant', () => {

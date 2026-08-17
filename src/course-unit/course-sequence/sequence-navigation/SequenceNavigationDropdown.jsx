@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import { Button, Dropdown } from '@openedx/paragon';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Plus as PlusIcon, ContentPasteGo as ContentPasteGoIcon } from '@openedx/paragon/icons/';
 
 import messages from '../messages';
 import UnitButton from './UnitButton';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 const SequenceNavigationDropdown = ({
   unitId,
@@ -14,6 +15,7 @@ const SequenceNavigationDropdown = ({
   showPasteUnit,
 }) => {
   const intl = useIntl();
+  const { canEditCourseContent } = useCourseAuthoringContext();
 
   return (
     <Dropdown className="sequence-navigation-dropdown">
@@ -34,22 +36,25 @@ const SequenceNavigationDropdown = ({
             unitId={buttonUnitId}
           />
         ))}
-        <Button
-          as={Dropdown.Item}
-          variant="outline-primary"
-          iconBefore={PlusIcon}
-          onClick={handleAddNewSequenceUnit}
-        >
-          {intl.formatMessage(messages.newUnitBtnText)}
-        </Button>
-        {showPasteUnit && (
+        {canEditCourseContent &&
+          (
+            <Button
+              as={Dropdown.Item}
+              variant="outline-primary"
+              iconBefore={PlusIcon}
+              onClick={handleAddNewSequenceUnit}
+            >
+              <FormattedMessage {...messages.newUnitBtnText} />
+            </Button>
+          )}
+        {canEditCourseContent && showPasteUnit && (
           <Button
             as={Dropdown.Item}
             variant="outline-primary"
             iconBefore={ContentPasteGoIcon}
             onClick={handlePasteNewSequenceUnit}
           >
-            {intl.formatMessage(messages.pasteAsNewUnitLink)}
+            <FormattedMessage {...messages.pasteAsNewUnitLink} />
           </Button>
         )}
       </Dropdown.Menu>

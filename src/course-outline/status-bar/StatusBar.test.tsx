@@ -1,6 +1,8 @@
 import { VIDEO_SHARING_OPTIONS } from '@src/course-outline/constants';
 import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { initializeMocks, render, screen } from '@src/testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { StatusBar, StatusBarProps } from './StatusBar';
 import messages from './messages';
 
@@ -41,19 +43,22 @@ const mockHandleVideoSharingOptionChange = jest.fn();
 
 const renderComponent = (props?: Partial<StatusBarProps>) =>
   render(
-    <StatusBar
-      courseId={courseId}
-      isLoading={isLoading}
-      statusBarData={statusBarData}
-      openEnableHighlightsModal={mockOpenEnableHighlightsModal}
-      handleVideoSharingOptionChange={mockHandleVideoSharingOptionChange}
-      {...props}
-    />,
+    <CourseAuthoringProvider courseId={courseId}>
+      <StatusBar
+        courseId={courseId}
+        isLoading={isLoading}
+        statusBarData={statusBarData}
+        openEnableHighlightsModal={mockOpenEnableHighlightsModal}
+        handleVideoSharingOptionChange={mockHandleVideoSharingOptionChange}
+        {...props}
+      />
+    </CourseAuthoringProvider>,
   );
 
 describe('<StatusBar />', () => {
   beforeEach(() => {
     initializeMocks();
+    mockWaffleFlags();
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2013-03-05'));
   });
