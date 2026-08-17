@@ -54,11 +54,18 @@ describe('PageSettingButton', () => {
     expect(linkElement).toHaveAttribute('href', `/course/${defaultProps.courseId}/page-id`);
   });
 
-  it('renders disabled icon button in read-only mode with legacy link', () => {
-    renderComponent({ legacyLink: 'http://legacylink.com/textbooks' }, { isEditable: false });
+  it('does not render an icon button when not editable', () => {
+    renderComponent({ legacyLink: null }, { isEditable: false });
+
+    const button = screen.queryByRole('button');
+    expect(button).not.toBeInTheDocument();
+  });
+
+  it('renders icon button when is editable', () => {
+    renderComponent({ legacyLink: null }, { isEditable: true });
 
     const button = screen.getByRole('button');
-    expect(button).toBeDisabled();
+    expect(button).toBeInTheDocument();
   });
 
   it('renders arrow link when user is editable', () => {

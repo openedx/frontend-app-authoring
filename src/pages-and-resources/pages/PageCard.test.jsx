@@ -69,17 +69,17 @@ describe('LiveSettings', () => {
     });
   });
 
-  it('disables legacy-link arrow buttons in readOnly mode, but keeps settings gear accessible', async () => {
+  it('disables legacy-link arrow buttons in readOnly mode,', async () => {
     render(
       <PagesAndResourcesProvider courseId={courseId} isEditable={false}>
         <PageGrid pages={mockPageConfig} />
       </PagesAndResourcesProvider>,
     );
     await waitFor(() => {
-      // Arrow buttons for legacy-link pages must be disabled so auditors
+      // Arrow buttons for legacy-link pages must be hidden so auditors
       // can't navigate to external Studio pages that bypass isEditable.
       const disabledButtons = screen.queryAllByRole('button').filter((btn) => btn.disabled);
-      expect(disabledButtons.length).toBeGreaterThan(0);
+      expect(disabledButtons.length).toBe(0);
     });
   });
 
