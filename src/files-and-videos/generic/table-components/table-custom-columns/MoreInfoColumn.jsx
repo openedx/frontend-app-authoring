@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PropTypes } from 'prop-types';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Button,
   Icon,
@@ -26,7 +26,6 @@ const MoreInfoColumn = ({
     canDeleteFiles: true,
   },
 }) => {
-  const intl = useIntl();
   const [isOpen, , close, toggle] = useToggle();
   const [target, setTarget] = useState(null);
 
@@ -82,7 +81,7 @@ const MoreInfoColumn = ({
                         close();
                       }}
                     >
-                      {intl.formatMessage(messages.copyStudioUrlTitle)}
+                      <FormattedMessage {...messages.copyStudioUrlTitle} />
                     </MenuItem>
                     <MenuItem
                       as={Button}
@@ -93,7 +92,7 @@ const MoreInfoColumn = ({
                         close();
                       }}
                     >
-                      {intl.formatMessage(messages.copyWebUrlTitle)}
+                      <FormattedMessage {...messages.copyWebUrlTitle} />
                     </MenuItem>
                     <MenuItem
                       as={Button}
@@ -101,8 +100,8 @@ const MoreInfoColumn = ({
                       onClick={() => handleLock(id, !locked)}
                     >
                       {locked
-                        ? intl.formatMessage(messages.unlockMenuTitle)
-                        : intl.formatMessage(messages.lockMenuTitle)}
+                        ? <FormattedMessage {...messages.unlockMenuTitle} />
+                        : <FormattedMessage {...messages.lockMenuTitle} />}
                     </MenuItem>
                   </>
                 )}
@@ -114,7 +113,7 @@ const MoreInfoColumn = ({
                     [{ original: { id, displayName, downloadLink } }],
                   )}
               >
-                {intl.formatMessage(messages.downloadTitle)}
+                <FormattedMessage {...messages.downloadTitle} />
               </MenuItem>
             </>
           )}
@@ -123,7 +122,7 @@ const MoreInfoColumn = ({
             variant="tertiary"
             onClick={() => handleOpenFileInfo(row.original)}
           >
-            {intl.formatMessage(messages.infoTitle)}
+            <FormattedMessage {...messages.infoTitle} />
           </MenuItem>
 
           {permissions.canDeleteFiles && (
@@ -138,7 +137,7 @@ const MoreInfoColumn = ({
                   close();
                 }}
               >
-                {intl.formatMessage(messages.deleteTitle)}
+                <FormattedMessage {...messages.deleteTitle} />
               </MenuItem>
             </>
           )}
