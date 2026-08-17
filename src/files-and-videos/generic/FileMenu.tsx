@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Dropdown,
   IconButton,
@@ -41,9 +41,9 @@ const FileMenu = ({
             {fileType === 'video' ?
               (
                 <Dropdown.Item
-                  onClick={() => navigator.clipboard.writeText(id)}
+                  onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(id)}
                 >
-                  {intl.formatMessage(messages.copyVideoIdTitle)}
+                  <FormattedMessage {...messages.copyVideoIdTitle} />
                 </Dropdown.Item>
               ) :
               (

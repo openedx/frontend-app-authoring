@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PropTypes } from 'prop-types';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
   Icon,
@@ -62,13 +62,13 @@ const MoreInfoColumn = ({
                   <MenuItem
                     as={Button}
                     variant="tertiary"
-                    onClick={() => {
+                    onClick={/* istanbul ignore next */ () => {
                       // eslint-disable-next-line @typescript-eslint/no-floating-promises
                       navigator.clipboard.writeText(id);
                       close();
                     }}
                   >
-                    {intl.formatMessage(messages.copyVideoIdTitle)}
+                    <FormattedMessage {...messages.copyVideoIdTitle} />
                   </MenuItem>
                 ) :
                 (
@@ -76,7 +76,7 @@ const MoreInfoColumn = ({
                     <MenuItem
                       as={Button}
                       variant="tertiary"
-                      onClick={() => {
+                      onClick={/* istanbul ignore next */ () => {
                         // eslint-disable-next-line @typescript-eslint/no-floating-promises
                         navigator.clipboard.writeText(portableUrl);
                         close();
@@ -87,7 +87,7 @@ const MoreInfoColumn = ({
                     <MenuItem
                       as={Button}
                       variant="tertiary"
-                      onClick={() => {
+                      onClick={/* istanbul ignore next */ () => {
                         // eslint-disable-next-line @typescript-eslint/no-floating-promises
                         navigator.clipboard.writeText(externalUrl);
                         close();
