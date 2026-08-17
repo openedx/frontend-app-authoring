@@ -124,6 +124,62 @@ describe('MoreInfoColumn', () => {
     });
   });
 
+  describe('Copy url and Download visibility based on canEditFiles permission', () => {
+    it('hides copy url and download options when canEditFiles is false', async () => {
+      const user = userEvent.setup();
+      renderComponent({ permissions: { canEditFiles: false, canDeleteFiles: true } });
+
+      const iconButton = screen.getByRole('button', { name: /more info/i });
+      await user.click(iconButton);
+
+      expect(screen.queryByText('Copy Studio Url')).not.toBeInTheDocument();
+      expect(screen.queryByText('Copy Web Url')).not.toBeInTheDocument();
+      expect(screen.queryByText('Download')).not.toBeInTheDocument();
+      expect(screen.getByText('Info')).toBeInTheDocument();
+      expect(screen.getByTestId('open-delete-confirmation-button')).toBeInTheDocument();
+    });
+
+    it('shows copy video id option for videos when canEditFiles is true', async () => {
+      const user = userEvent.setup();
+      renderComponent({ fileType: 'video', permissions: { canEditFiles: true, canDeleteFiles: true } });
+
+      const iconButton = screen.getByRole('button', { name: /more info/i });
+      await user.click(iconButton);
+
+      expect(screen.getByText('Copy video ID')).toBeInTheDocument();
+      expect(screen.getByText('Download')).toBeInTheDocument();
+    });
+
+    it('hides copy video id option for videos when canEditFiles is false', async () => {
+      const user = userEvent.setup();
+      renderComponent({ fileType: 'video', permissions: { canEditFiles: false, canDeleteFiles: true } });
+
+      const iconButton = screen.getByRole('button', { name: /more info/i });
+      await user.click(iconButton);
+
+      expect(screen.queryByText('Copy video ID')).not.toBeInTheDocument();
+      expect(screen.queryByText('Download')).not.toBeInTheDocument();
+      expect(screen.getByText('Info')).toBeInTheDocument();
+    });
+
+    it('calls handleBulkDownload when Download is clicked', async () => {
+      const user = userEvent.setup();
+      renderComponent({ permissions: { canEditFiles: true, canDeleteFiles: true } });
+
+      const iconButton = screen.getByRole('button', { name: /more info/i });
+      await user.click(iconButton);
+      await user.click(screen.getByText('Download'));
+
+      expect(mockHandlers.handleBulkDownload).toHaveBeenCalledWith([{
+        original: {
+          id: 'test-file-id',
+          displayName: 'test-file.png',
+          downloadLink: 'https://example.com/download/test-file.png',
+        },
+      }]);
+    });
+  });
+
   describe('Delete button based on canDeleteFiles permission', () => {
     it('calls handleOpenDeleteConfirmation and closes menu when Delete is clicked', async () => {
       const user = userEvent.setup();

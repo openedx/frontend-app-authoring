@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Dropdown,
   IconButton,
@@ -24,7 +24,6 @@ const FileMenu = ({
     canDeleteFiles: true,
   },
 }) => {
-  const intl = useIntl();
   return (
     <Dropdown data-testid={`file-menu-dropdown-${id}`}>
       <Dropdown.Toggle
@@ -36,38 +35,42 @@ const FileMenu = ({
         alt="file-menu-toggle"
       />
       <Dropdown.Menu>
-        {fileType === 'video' ?
-          (
-            <Dropdown.Item
-              onClick={() => navigator.clipboard.writeText(id)}
-            >
-              {intl.formatMessage(messages.copyVideoIdTitle)}
-            </Dropdown.Item>
-          ) :
-          (
-            <>
-              <Dropdown.Item
-                onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(portableUrl)}
-              >
-                {intl.formatMessage(messages.copyStudioUrlTitle)}
-              </Dropdown.Item>
-              <Dropdown.Item
-                onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(externalUrl)}
-              >
-                {intl.formatMessage(messages.copyWebUrlTitle)}
-              </Dropdown.Item>
-              {permissions.canEditFiles && (
-                <Dropdown.Item onClick={handleLock}>
-                  {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
+        {permissions.canEditFiles && (
+          <>
+            {fileType === 'video' ?
+              (
+                <Dropdown.Item
+                  onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(id)}
+                >
+                  <FormattedMessage {...messages.copyVideoIdTitle} />
                 </Dropdown.Item>
+              ) :
+              (
+                <>
+                  <Dropdown.Item
+                    onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(portableUrl)}
+                  >
+                    <FormattedMessage {...messages.copyStudioUrlTitle} />
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={/* istanbul ignore next */ () => navigator.clipboard.writeText(externalUrl)}
+                  >
+                    <FormattedMessage {...messages.copyWebUrlTitle} />
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleLock}>
+                    {locked
+                      ? <FormattedMessage {...messages.unlockMenuTitle} />
+                      : <FormattedMessage {...messages.lockMenuTitle} />}
+                  </Dropdown.Item>
+                </>
               )}
-            </>
-          )}
-        <Dropdown.Item onClick={onDownload}>
-          {intl.formatMessage(messages.downloadTitle)}
-        </Dropdown.Item>
+            <Dropdown.Item onClick={onDownload}>
+              <FormattedMessage {...messages.downloadTitle} />
+            </Dropdown.Item>
+          </>
+        )}
         <Dropdown.Item onClick={openAssetInfo}>
-          {intl.formatMessage(messages.infoTitle)}
+          <FormattedMessage {...messages.infoTitle} />
         </Dropdown.Item>
         {permissions.canDeleteFiles && (
           <>
@@ -76,7 +79,7 @@ const FileMenu = ({
               data-testid="open-delete-confirmation-button"
               onClick={openDeleteConfirmation}
             >
-              {intl.formatMessage(messages.deleteTitle)}
+              <FormattedMessage {...messages.deleteTitle} />
             </Dropdown.Item>
           </>
         )}

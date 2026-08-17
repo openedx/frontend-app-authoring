@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PropTypes } from 'prop-types';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Button,
   Icon,
@@ -26,7 +26,6 @@ const MoreInfoColumn = ({
     canDeleteFiles: true,
   },
 }) => {
-  const intl = useIntl();
   const [isOpen, , close, toggle] = useToggle();
   const [target, setTarget] = useState(null);
 
@@ -55,71 +54,75 @@ const MoreInfoColumn = ({
         onEscapeKey={close}
       >
         <Menu className="more-info-menu">
-          {fileType === 'video' ?
-            (
-              <MenuItem
-                as={Button}
-                variant="tertiary"
-                onClick={() => {
-                  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                  navigator.clipboard.writeText(id);
-                  close();
-                }}
-              >
-                {intl.formatMessage(messages.copyVideoIdTitle)}
-              </MenuItem>
-            ) :
-            (
-              <>
-                <MenuItem
-                  as={Button}
-                  variant="tertiary"
-                  onClick={() => {
-                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                    navigator.clipboard.writeText(portableUrl);
-                    close();
-                  }}
-                >
-                  {intl.formatMessage(messages.copyStudioUrlTitle)}
-                </MenuItem>
-                <MenuItem
-                  as={Button}
-                  variant="tertiary"
-                  onClick={() => {
-                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                    navigator.clipboard.writeText(externalUrl);
-                    close();
-                  }}
-                >
-                  {intl.formatMessage(messages.copyWebUrlTitle)}
-                </MenuItem>
-                {permissions.canEditFiles && (
+          {permissions.canEditFiles && (
+            <>
+              {fileType === 'video' ?
+                (
                   <MenuItem
                     as={Button}
                     variant="tertiary"
-                    onClick={() => handleLock(id, !locked)}
+                    onClick={/* istanbul ignore next */ () => {
+                      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                      navigator.clipboard.writeText(id);
+                      close();
+                    }}
                   >
-                    {locked ? intl.formatMessage(messages.unlockMenuTitle) : intl.formatMessage(messages.lockMenuTitle)}
+                    <FormattedMessage {...messages.copyVideoIdTitle} />
                   </MenuItem>
+                ) :
+                (
+                  <>
+                    <MenuItem
+                      as={Button}
+                      variant="tertiary"
+                      onClick={/* istanbul ignore next */ () => {
+                        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                        navigator.clipboard.writeText(portableUrl);
+                        close();
+                      }}
+                    >
+                      <FormattedMessage {...messages.copyStudioUrlTitle} />
+                    </MenuItem>
+                    <MenuItem
+                      as={Button}
+                      variant="tertiary"
+                      onClick={/* istanbul ignore next */ () => {
+                        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                        navigator.clipboard.writeText(externalUrl);
+                        close();
+                      }}
+                    >
+                      <FormattedMessage {...messages.copyWebUrlTitle} />
+                    </MenuItem>
+                    <MenuItem
+                      as={Button}
+                      variant="tertiary"
+                      onClick={() => handleLock(id, !locked)}
+                    >
+                      {locked
+                        ? <FormattedMessage {...messages.unlockMenuTitle} />
+                        : <FormattedMessage {...messages.lockMenuTitle} />}
+                    </MenuItem>
+                  </>
                 )}
-              </>
-            )}
-          <MenuItem
-            as={Button}
-            variant="tertiary"
-            onClick={() =>
-              handleBulkDownload(
-                [{ original: { id, displayName, downloadLink } }],
-              )}
-          >
-            {intl.formatMessage(messages.downloadTitle)}
-          </MenuItem>
+              <MenuItem
+                as={Button}
+                variant="tertiary"
+                onClick={() =>
+                  handleBulkDownload(
+                    [{ original: { id, displayName, downloadLink } }],
+                  )}
+              >
+                <FormattedMessage {...messages.downloadTitle} />
+              </MenuItem>
+            </>
+          )}
           <MenuItem
             as={Button}
             variant="tertiary"
             onClick={() => handleOpenFileInfo(row.original)}
           >
-            {intl.formatMessage(messages.infoTitle)}
+            <FormattedMessage {...messages.infoTitle} />
           </MenuItem>
 
           {permissions.canDeleteFiles && (
@@ -134,7 +137,7 @@ const MoreInfoColumn = ({
                   close();
                 }}
               >
-                {intl.formatMessage(messages.deleteTitle)}
+                <FormattedMessage {...messages.deleteTitle} />
               </MenuItem>
             </>
           )}

@@ -84,4 +84,55 @@ describe('FileMenu', () => {
       expect(screen.getByText('Unlock')).toBeInTheDocument();
     });
   });
+
+  describe('Copy url and Download visibility based on canEditFiles permission', () => {
+    it('shows copy url and download options when canEditFiles is true', async () => {
+      const user = userEvent.setup();
+      renderComponent({ permissions: { canEditFiles: true, canDeleteFiles: true } });
+
+      const toggleButton = screen.getByRole('button', { name: 'file-menu-toggle' });
+      await user.click(toggleButton);
+
+      expect(screen.getByText('Copy Studio Url')).toBeInTheDocument();
+      expect(screen.getByText('Copy Web Url')).toBeInTheDocument();
+      expect(screen.getByText('Download')).toBeInTheDocument();
+    });
+
+    it('hides copy url and download options when canEditFiles is false', async () => {
+      const user = userEvent.setup();
+      renderComponent({ permissions: { canEditFiles: false, canDeleteFiles: true } });
+
+      const toggleButton = screen.getByRole('button', { name: 'file-menu-toggle' });
+      await user.click(toggleButton);
+
+      expect(screen.queryByText('Copy Studio Url')).not.toBeInTheDocument();
+      expect(screen.queryByText('Copy Web Url')).not.toBeInTheDocument();
+      expect(screen.queryByText('Download')).not.toBeInTheDocument();
+      expect(screen.getByText('Info')).toBeInTheDocument();
+      expect(screen.getByText('Delete')).toBeInTheDocument();
+    });
+
+    it('shows copy video id option for videos when canEditFiles is true', async () => {
+      const user = userEvent.setup();
+      renderComponent({ fileType: 'video', permissions: { canEditFiles: true, canDeleteFiles: true } });
+
+      const toggleButton = screen.getByRole('button', { name: 'file-menu-toggle' });
+      await user.click(toggleButton);
+
+      expect(screen.getByText('Copy video ID')).toBeInTheDocument();
+      expect(screen.getByText('Download')).toBeInTheDocument();
+    });
+
+    it('hides copy video id option for videos when canEditFiles is false', async () => {
+      const user = userEvent.setup();
+      renderComponent({ fileType: 'video', permissions: { canEditFiles: false, canDeleteFiles: true } });
+
+      const toggleButton = screen.getByRole('button', { name: 'file-menu-toggle' });
+      await user.click(toggleButton);
+
+      expect(screen.queryByText('Copy video ID')).not.toBeInTheDocument();
+      expect(screen.queryByText('Download')).not.toBeInTheDocument();
+      expect(screen.getByText('Info')).toBeInTheDocument();
+    });
+  });
 });

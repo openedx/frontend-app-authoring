@@ -146,6 +146,7 @@ describe('TableActions', () => {
     const permissions = {
       canCreateFiles: true,
       canDeleteFiles: false,
+      canEditFiles: true,
     };
 
     renderWithContext({
@@ -159,10 +160,32 @@ describe('TableActions', () => {
     expect(screen.getByText(messages.downloadTitle.defaultMessage)).toBeInTheDocument();
   });
 
-  test('does not render create button when canEditFiles permission is false', () => {
+  test('does not render bulk download menu item when canEditFiles permission is false', async () => {
+    const user = userEvent.setup();
+    const permissions = {
+      canCreateFiles: true,
+      canDeleteFiles: true,
+      canEditFiles: false,
+    };
+
+    renderWithContext({
+      permissions,
+      encodingsDownloadUrl: '/some/path/to/encoding.zip',
+      selectedFlatRows: [{ original: { id: '1', displayName: 'Video 1', wrapperType: 'video' } }],
+    });
+
+    await user.click(screen.getByRole('button', { name: messages.actionsButtonLabel.defaultMessage }));
+
+    expect(screen.queryByText(messages.downloadTitle.defaultMessage)).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: messages.downloadEncodingsTitle.defaultMessage })).toBeInTheDocument();
+    expect(screen.getByTestId('open-delete-confirmation-button')).toBeInTheDocument();
+  });
+
+  test('does not render actions dropdown when canEditFiles and canDeleteFiles permissions are false', () => {
     const permissions = {
       canCreateFiles: true,
       canDeleteFiles: false,
+      canEditFiles: false,
     };
 
     renderWithContext({
@@ -170,7 +193,26 @@ describe('TableActions', () => {
       selectedFlatRows: [{ original: { id: '1', displayName: 'Video 1', wrapperType: 'video' } }],
     });
 
+    expect(
+      screen.queryByRole('button', { name: messages.actionsButtonLabel.defaultMessage }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: messages.sortButtonLabel.defaultMessage })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Add videos/ })).toBeInTheDocument();
+  });
+
+  test('does not render create button when canCreateFiles permission is false', () => {
+    const permissions = {
+      canCreateFiles: false,
+      canDeleteFiles: true,
+      canEditFiles: true,
+    };
+
+    renderWithContext({
+      permissions,
+      selectedFlatRows: [{ original: { id: '1', displayName: 'Video 1', wrapperType: 'video' } }],
+    });
+
+    expect(screen.queryByRole('button', { name: /Add videos/ })).not.toBeInTheDocument();
   });
 
   test('renders add videos button and delete menu item with permissions defaults', async () => {
