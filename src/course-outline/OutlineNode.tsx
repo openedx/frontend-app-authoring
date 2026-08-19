@@ -335,7 +335,6 @@ const OutlineNode = ({
                 {...(depth === 2 ?
                   {
                     isVertical: true,
-                    enableCopyPasteUnits: blk.enableCopyPasteUnits ?? false,
                     onClickCopy: () => copyToClipboard(blk.id),
                     discussionEnabled: blk.discussionEnabled,
                     discussionsSettings,
