@@ -3,7 +3,10 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { convertObjectToSnakeCase } from '@src/utils';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-export const getCourseDetailsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_details/${courseId}`;
+// FC-0118 (ADR 0037): standardized v3 endpoint. The trailing slash is required
+// by the DRF DefaultRouter that serves the v3 ViewSet (unlike the v1 APIView).
+export const getCourseDetailsApiUrl = (courseId) =>
+  `${getApiBaseUrl()}/api/contentstore/v3/course_details/${courseId}/`;
 export const getUploadAssetsUrl = (courseId) => `${getApiBaseUrl()}/assets/${courseId}/`;
 
 // TODO: This interface has only basic data, all the rest needs to be added.

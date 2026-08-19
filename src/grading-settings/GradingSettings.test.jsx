@@ -11,7 +11,7 @@ import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 
 import gradingSettings from './__mocks__/gradingSettings';
-import { getGradingSettingsApiUrl } from './data/api';
+import { getGradingSettingsApiUrl, getAuthoringGradingApiUrl } from './data/api';
 import * as apiHooks from './data/apiHooks';
 import GradingSettings from './GradingSettings';
 import messages from './messages';
@@ -45,7 +45,7 @@ describe('<GradingSettings />', () => {
       .onGet(getGradingSettingsApiUrl(courseId))
       .reply(200, gradingSettings);
     axiosMock
-      .onPost(getGradingSettingsApiUrl(courseId))
+      .onPatch(getAuthoringGradingApiUrl(courseId))
       .reply(200, {});
     axiosMock.onGet(getCourseSettingsApiUrl(courseId))
       .reply(200, {});
@@ -147,7 +147,7 @@ describe('<GradingSettings /> permissions', () => {
     Object.defineProperty(window, 'scrollTo', { value: jest.fn(), writable: true });
     const { axiosMock: mock } = mocks;
     mock.onGet(getGradingSettingsApiUrl(courseId)).reply(200, gradingSettings);
-    mock.onPost(getGradingSettingsApiUrl(courseId)).reply(200, {});
+    mock.onPatch(getAuthoringGradingApiUrl(courseId)).reply(200, {});
     mock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, {});
     jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
