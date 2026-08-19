@@ -1,7 +1,7 @@
 import { VIDEO_SHARING_OPTIONS } from '@src/course-outline/constants';
 import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { initializeMocks, render, screen } from '@src/testUtils';
-import { useCourseUserPermissions } from '@src/authz/hooks';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { StatusBar, StatusBarProps } from './StatusBar';
 import messages from './messages';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
@@ -39,19 +39,10 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   }),
 }));
 
-// StatusBar reads canEditCourseContent from useCourseUserPermissions to gate edit affordances.
-jest.mock('@src/authz/hooks', () => ({
-  ...jest.requireActual('@src/authz/hooks'),
-  useCourseUserPermissions: jest.fn(),
-}));
-
-/** Set the resolved course-scoped edit permission used to gate edit affordances in the status bar. */
+let validateUserPermissionsMock;
 const mockPermissions = (canEditCourseContent = true) => {
-  jest.mocked(useCourseUserPermissions).mockReturnValue({
-    isLoading: false,
-    isAuthzEnabled: false,
-    canEditCourseContent,
-  } as unknown as ReturnType<typeof useCourseUserPermissions>);
+  mockWaffleFlags({ enableAuthzCourseAuthoring: !canEditCourseContent });
+  validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent });
 };
 
 const mockOpenEnableHighlightsModal = jest.fn();
@@ -74,7 +65,8 @@ const renderComponent = (props?: Partial<StatusBarProps>) =>
 
 describe('<StatusBar />', () => {
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2013-03-05'));
     mockPermissions(true);

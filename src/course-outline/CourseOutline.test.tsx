@@ -9,6 +9,7 @@ import { getClipboardUrl } from '@src/generic/data/api';
 import { ContainerType } from '@src/generic/key-utils';
 import { getDownstreamApiUrl } from '@src/generic/unlink-modal/data/api';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import {
   act,
   fireEvent,
@@ -186,16 +187,6 @@ jest.mock('@src/help-urls/hooks', () => ({
 jest.mock('./data/api', () => ({
   ...jest.requireActual('./data/api'),
   getTagsCount: () => jest.fn().mockResolvedValue({}),
-}));
-
-jest.mock('@src/authz/hooks', () => ({
-  ...jest.requireActual('@src/authz/hooks'),
-  useCourseUserPermissions: jest.fn().mockReturnValue({
-    isLoading: false,
-    isAuthzEnabled: false,
-    canEditCourseContent: true,
-    canPublishCourseContent: true,
-  }),
 }));
 
 jest.mock('@edx/frontend-platform/logging', () => ({
@@ -562,6 +553,11 @@ const renderComponent = () =>
 describe('<CourseOutline />', () => {
   beforeEach(async () => {
     const mocks = initializeMocks();
+    mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+    mocks.validateUserPermissionsMock.mockResolvedValue({
+      canEditCourseContent: true,
+      canPublishCourseContent: true,
+    });
     selectedContainerId = undefined;
     // restore index mock — use reorder outline spec (section[0] has 2 subsections for configure/drag tests)
     courseOutlineIndexMock = buildTestOutline({

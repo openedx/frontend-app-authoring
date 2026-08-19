@@ -9,7 +9,6 @@ import {
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
-import { useCourseUserPermissions } from '@src/authz/hooks';
 import { courseId } from '@src/schedule-and-details/__mocks__/courseDetails';
 import { userEvent } from '@testing-library/user-event';
 import { renderCard, setupCardTestMocks } from '../__mocks__/testSetup';
@@ -41,14 +40,6 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   useUpdateCourseBlockName: () => useUpdateCourseBlockNameMock,
 }));
 
-jest.mock('@src/authz/hooks', () => ({
-  useCourseUserPermissions: jest.fn().mockReturnValue({
-    isLoading: false,
-    canEditCourseContent: true,
-    canPublishCourseContent: true,
-  }),
-}));
-
 const cardHeaderProps = {
   title: 'Some title',
   status: ITEM_BADGE_STATUS.live,
@@ -76,9 +67,11 @@ const cardHeaderProps = {
   },
 };
 
-const mockPermissions = (mockedPermissions) => {
-  mockWaffleFlags({ enableAuthzCourseAuthoring: !!mockedPermissions });
-  jest.mocked(useCourseUserPermissions).mockReturnValue(mockedPermissions);
+let validateUserPermissionsMock;
+
+const mockPermissions = (canEditCourseContent = true) => {
+  mockWaffleFlags({ enableAuthzCourseAuthoring: !canEditCourseContent });
+  validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent });
 };
 
 const renderComponent = (props?: object, entry = '/') => {
@@ -114,7 +107,9 @@ const renderComponent = (props?: object, entry = '/') => {
 
 describe('<CardHeader />', () => {
   beforeEach(() => {
-    setupCardTestMocks();
+    const mocks = setupCardTestMocks();
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    mockPermissions(true);
     useUpdateCourseBlockNameMock.isPending = false;
     useUpdateCourseBlockNameMock.mutate.mockClear();
     useUpdateCourseBlockNameMock.mutateAsync.mockClear();
@@ -597,14 +592,15 @@ describe('<CardHeader />', () => {
 
   describe('canEditCourseContent permission', () => {
     it('renders the rename button and actions menu when canEditCourseContent is true', async () => {
-      renderComponent({ canEditCourseContent: true });
+      mockPermissions(true);
+      renderComponent();
 
       expect(await screen.findByTestId('subsection-edit-button')).toBeInTheDocument();
       expect(await screen.findByTestId('subsection-card-header__menu')).toBeInTheDocument();
     });
 
     it('does not render the rename button when canEditCourseContent is false', async () => {
-      mockPermissions({ canEditCourseContent: false });
+      mockPermissions(false);
       renderComponent();
 
       expect(await screen.findByText(cardHeaderProps.title)).toBeInTheDocument();
@@ -612,7 +608,7 @@ describe('<CardHeader />', () => {
     });
 
     it('does not render the actions menu when canEditCourseContent is false', async () => {
-      mockPermissions({ canEditCourseContent: false });
+      mockPermissions(false);
       renderComponent();
 
       expect(await screen.findByText(cardHeaderProps.title)).toBeInTheDocument();
