@@ -31,7 +31,8 @@ const messages = defineMessages({
   },
   sourceUrlHint: {
     id: 'authoring.pdfEditor.formGroups.downloadOptions.sourceUrl.hint',
-    defaultMessage: 'Add a link to the original or editable file (e.g. Word or PowerPoint). Appears as a separate link.',
+    defaultMessage: 'Add a link to the original or editable file (e.g. Word or PowerPoint). Appears as a separate '
+      + 'link. You are strongly recommended to include this as PDFs have significant accessibility limitations.',
     description: 'Hint for the field used to specify the URL of a source document a PDF was generated from.',
   },
 });
