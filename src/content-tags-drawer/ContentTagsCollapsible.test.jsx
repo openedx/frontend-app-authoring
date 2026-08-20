@@ -256,6 +256,35 @@ describe('<ContentTagsCollapsible />', () => {
     expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
   });
 
+  it('should not render add tags select in edit mode when not allowed to tag objects', async () => {
+    await getComponent({
+      ...data,
+      taxonomyAndTagsData: {
+        id: 123,
+        name: 'Taxonomy 1',
+        canTagObject: false,
+        contentTags: [
+          {
+            value: 'Tag 1',
+            lineage: ['Tag 1'],
+            canDeleteObjecttag: true,
+          },
+        ],
+      },
+    });
+
+    // Still in edit mode, so delete buttons are shown
+    expect(
+      screen.getAllByRole(
+        'button',
+        { name: /delete/i },
+      ).length,
+    ).toBe(1);
+
+    // But the add tags select is hidden
+    expect(screen.queryByText(/add a tag/i)).not.toBeInTheDocument();
+  });
+
   it('should render "no tags added yet" when expanded in read mode', async () => {
     await getComponent({
       ...data,

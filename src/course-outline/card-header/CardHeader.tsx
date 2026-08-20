@@ -30,6 +30,8 @@ import { useEscapeClick } from '@src/hooks';
 import { XBlockActions } from '@src/data/types';
 import { useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getTagsPermissions } from '@src/authz/permissionHelpers';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
@@ -116,6 +118,7 @@ const CardHeader = ({
     onClickManageTags?.();
   }, [setCurrentPageKey, cardId]);
   const { courseId, canEditCourseContent, canPublishCourseContent } = useCourseAuthoringContext();
+  const { canManageTags } = useCourseUserPermissions(courseId, getTagsPermissions(courseId));
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   // Set true by any Escape keydown handler; checked in handleEditSubmit
   // to prevent blur-after-Escape from saving the dirty titleValue.
@@ -301,7 +304,7 @@ const CardHeader = ({
           {(isVertical || isSequential) && (
             <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge || false} />
           )}
-          {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && !!contentTagCount && (
+          {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && canManageTags && !!contentTagCount && (
             <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
           )}
           {extraActionsComponent}
@@ -354,7 +357,7 @@ const CardHeader = ({
                 >
                   {intl.formatMessage(messages.menuConfigure)}
                 </Dropdown.Item>
-                {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
+                {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && canManageTags && (
                   <Dropdown.Item
                     data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
                     disabled={editMutation.isPending}

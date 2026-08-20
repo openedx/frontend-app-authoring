@@ -1,5 +1,6 @@
 import { render, screen, initializeMocks } from '@src/testUtils';
 
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import * as CourseAuthoringContext from '@src/CourseAuthoringContext';
 import * as CourseOutlineContext from '@src/course-outline/CourseOutlineContext';
 import * as CourseDetailsApi from '@src/data/apiHooks';
@@ -8,11 +9,16 @@ import * as OutlineSidebarContext from './OutlineSidebarContext';
 import { OutlineAlignSidebar } from './OutlineAlignSidebar';
 
 jest.mock('@src/content-tags-drawer', () => ({
-  ContentTagsDrawer: jest.fn(({ id, variant }) => (
+  ContentTagsDrawer: jest.fn(({ id, variant, readOnly }) => (
     <div data-testid="content-tags-drawer">
-      drawer-mock-{id}-{variant}
+      drawer-mock-{id}-{variant}-{String(readOnly)}
     </div>
   )),
+}));
+
+jest.mock('@src/authz/hooks', () => ({
+  ...jest.requireActual('@src/authz/hooks'),
+  useCourseUserPermissions: jest.fn(),
 }));
 
 describe('OutlineAlignSidebar', () => {
@@ -25,6 +31,11 @@ describe('OutlineAlignSidebar', () => {
 
   beforeEach(() => {
     initializeMocks();
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
+      canManageTags: true,
+      isLoading: false,
+      isAuthzEnabled: false,
+    } as ReturnType<typeof useCourseUserPermissions>);
     setCurrentSelection.mockReset();
     clearSelection.mockReset();
     openContainerSidebar.mockReset();
@@ -80,7 +91,20 @@ describe('OutlineAlignSidebar', () => {
 
     expect(drawer).toBeInTheDocument();
     expect(drawer).toHaveTextContent(
-      'drawer-mock-block-v1:test+course+run+type@sequential+block@seq1-component',
+      'drawer-mock-block-v1:test+course+run+type@sequential+block@seq1-component-false',
+    );
+  });
+
+  it('renders ContentTagsDrawer in read-only mode when user cannot manage tags', () => {
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
+      canManageTags: false,
+      isLoading: false,
+      isAuthzEnabled: false,
+    } as ReturnType<typeof useCourseUserPermissions>);
+    render(<OutlineAlignSidebar />);
+
+    expect(screen.getByTestId('content-tags-drawer')).toHaveTextContent(
+      'drawer-mock-block-v1:test+course+run+type@sequential+block@seq1-component-true',
     );
   });
 

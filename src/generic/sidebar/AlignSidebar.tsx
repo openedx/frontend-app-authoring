@@ -14,7 +14,10 @@ export interface AlignSidebarProps {
  * for the given content.
  */
 export const AlignSidebar = ({
-  contentId, title, onBackBtnClick, readOnly = false,
+  contentId,
+  title,
+  onBackBtnClick,
+  readOnly = false,
 }: AlignSidebarProps) => (
   <div>
     <SidebarTitle

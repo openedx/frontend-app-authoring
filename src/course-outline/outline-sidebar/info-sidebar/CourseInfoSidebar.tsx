@@ -44,12 +44,14 @@ const DetailsTab = () => {
         <SidebarSection
           title={intl.formatMessage(messages.sidebarSectionTaxonomy)}
           icon={Tag}
-          actions={canManageTags ? [
-            {
-              label: intl.formatMessage(messages.sidebarSectionTaxonomyManageTags),
-              onClick: openManageTagsDrawer,
-            },
-          ] : undefined}
+          actions={canManageTags ?
+            [
+              {
+                label: intl.formatMessage(messages.sidebarSectionTaxonomyManageTags),
+                onClick: openManageTagsDrawer,
+              },
+            ] :
+            undefined}
         >
           <ContentTagsSnippet contentId={courseId} />
         </SidebarSection>
