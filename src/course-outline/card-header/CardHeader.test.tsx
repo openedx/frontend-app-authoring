@@ -69,9 +69,12 @@ const cardHeaderProps = {
 
 let validateUserPermissionsMock;
 
-const mockPermissions = (canEditCourseContent = true) => {
-  mockWaffleFlags({ enableAuthzCourseAuthoring: !canEditCourseContent });
-  validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent });
+const mockPermissions = (canEditCourseContent = true, canManageTags = true) => {
+  mockWaffleFlags({ enableAuthzCourseAuthoring: !canEditCourseContent || !canManageTags });
+  validateUserPermissionsMock.mockResolvedValue({
+    canEditCourseContent,
+    canManageTags,
+  });
 };
 
 const renderComponent = (props?: object, entry = '/') => {
@@ -523,6 +526,27 @@ describe('<CardHeader />', () => {
     mockGetTagsCount.mockResolvedValue({ 12345: 0 });
     renderComponent();
     expect(screen.queryByText('0')).not.toBeInTheDocument();
+  });
+
+  it('hides Manage tags menu item and tag count when canManageTags is false', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+    });
+    mockGetTagsCount.mockResolvedValue({ 12345: 17 });
+    mockPermissions(true, false);
+    renderComponent();
+
+    // Wait until the permissions have resolved and the menu is available.
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
+
+    // Tag count is not rendered
+    expect(screen.queryByText('17')).not.toBeInTheDocument();
+
+    // Manage tags menu item is not rendered
+    fireEvent.click(menuButton);
+    expect(await screen.findByText(messages.menuConfigure.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText(messages.menuManageTags.defaultMessage)).not.toBeInTheDocument();
   });
 
   it('should render sync button when is ready to sync', () => {

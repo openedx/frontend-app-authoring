@@ -15,9 +15,9 @@ jest.mock('../data/apiHooks', () => ({
 }));
 jest.mock('../ContentTagsDrawer', () => jest.fn(() => <div>Mocked ContentTagsDrawer</div>));
 
-const RootWrapper = () => (
+const RootWrapper = ({ canManageTags = true } = {}) => (
   <IntlProvider locale="en" messages={{}}>
-    <TagsSidebarBody />
+    <TagsSidebarBody canManageTags={canManageTags} />
   </IntlProvider>
 );
 
@@ -51,5 +51,15 @@ describe('<TagSidebarBody>', () => {
     fireEvent.click(manageButton);
 
     expect(screen.getByText('Mocked ContentTagsDrawer')).toBeInTheDocument();
+  });
+
+  it('should not render Manage tags button when canManageTags is false', () => {
+    useContentTaxonomyTagsData.mockReturnValue({
+      isSuccess: true,
+      data: contentTaxonomyTagsMock[contentId],
+    });
+    render(<RootWrapper canManageTags={false} />);
+
+    expect(screen.queryByRole('button', { name: /manage tags/i })).not.toBeInTheDocument();
   });
 });

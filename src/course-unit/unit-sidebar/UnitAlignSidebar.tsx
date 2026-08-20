@@ -2,6 +2,9 @@ import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useContentData } from '@src/content-tags-drawer/data/apiHooks';
 import { AlignSidebar } from '@src/generic/sidebar/AlignSidebar';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getTagsPermissions } from '@src/authz/permissionHelpers';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useUnitSidebarContext } from './UnitSidebarContext';
 
 /**
@@ -9,7 +12,9 @@ import { useUnitSidebarContext } from './UnitSidebarContext';
  */
 export const UnitAlignSidebar = () => {
   const { blockId } = useParams();
+  const { courseId } = useCourseAuthoringContext();
   const { selectedComponentId, setCurrentPageKey } = useUnitSidebarContext();
+  const { canManageTags } = useCourseUserPermissions(courseId, getTagsPermissions(courseId));
 
   const sidebarContentId = selectedComponentId || blockId;
 
@@ -31,6 +36,7 @@ export const UnitAlignSidebar = () => {
         ''}
       contentId={sidebarContentId || ''}
       onBackBtnClick={selectedComponentId ? handleBack : undefined}
+      readOnly={!canManageTags}
     />
   );
 };

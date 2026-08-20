@@ -344,7 +344,9 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
         ];
       } else if (mergedOtherTaxonomies[taxonomyId]) {
         const stagedLineages = globalStagedContentTags[taxonomyId].map((t) => t.lineage.slice(0, -1)).flat();
-        const fetchedTags = mergedOtherTaxonomies[taxonomyId].contentTags.filter((t) => !stagedLineages.includes(t.value));
+        const fetchedTags = mergedOtherTaxonomies[taxonomyId].contentTags.filter((t) =>
+          !stagedLineages.includes(t.value)
+        );
 
         mergedOtherTaxonomies[taxonomyId].contentTags = [
           ...fetchedTags,
