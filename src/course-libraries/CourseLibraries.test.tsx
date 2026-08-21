@@ -208,13 +208,13 @@ describe('<CourseLibraries />', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
-  it('does not show out of sync alert when user lacks manage permission', async () => {
+  it('shows out of sync alert even when user lacks manage permission', async () => {
     const user = userEvent.setup();
     mockPermissions({ canViewLibraryUpdates: true, canManageLibraryUpdates: false });
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
     const allTab = await screen.findByRole('tab', { name: 'Libraries' });
     await user.click(allTab);
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
   });
 
   it('does not show Review Updates button when user lacks manage permission', async () => {

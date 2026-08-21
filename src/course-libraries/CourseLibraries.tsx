@@ -219,14 +219,12 @@ export const CourseLibraries = () => {
         </title>
       </Helmet>
       <Container size="xl" className="px-4 pt-4 mt-3">
-        {canManageLibraryUpdates && (
-          <OutOfSyncAlert
-            courseId={courseId}
-            onReview={onAlertReview}
-            showAlert={showReviewAlert && tabKey === CourseLibraryTabs.all}
-            setShowAlert={setShowReviewAlert}
-          />
-        )}
+        <OutOfSyncAlert
+          courseId={courseId}
+          onReview={onAlertReview}
+          showAlert={showReviewAlert && tabKey === CourseLibraryTabs.all}
+          setShowAlert={setShowReviewAlert}
+        />
         <SubHeader
           title={intl.formatMessage(messages.headingTitle)}
           subtitle={intl.formatMessage(messages.headingSubtitle)}
