@@ -26,7 +26,7 @@ export const updateFileValues = (files) => {
 
     const { dateAdded, locked, usageLocations } = file;
     const utcDateString = dateAdded.replace(/\bat\b/g, '');
-    const utcDateTime = new Date(utcDateString).toString();
+    const utcDateTime = new Date(utcDateString).getTime();
     const lockStatus = locked ? 'locked' : 'public';
     const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
 
