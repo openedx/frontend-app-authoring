@@ -1,21 +1,24 @@
+export interface SortableFile {
+  id: string;
+  displayName: string;
+  dateAdded: string | number;
+  [key: string]: unknown;
+}
+
 // Small helper: a standard three-way comparator.
 // Returns -1 if a should come before b, 1 if a should come after b,
 // and 0 if they're equal (a tie). This method prevents repetition in code for the primary sort and the tiebreaker sort.
 // This is to help in the sorting of files in the sortFiles function below.
-const compareValues = (a, b) => {
+const compareValues = (a: any, b: any) => {
   if (a < b) { return -1; }
   if (a > b) { return 1; }
   return 0;
 };
 
-export const sortFiles = (files, sortType) => {
-  // Same parsing as before(from old code): "dateAdded,desc" -> sort="dateAdded", direction="desc"
+export const sortFiles = (files: SortableFile[], sortType: string): string[] => {
+  // "dateAdded,desc" -> sort="dateAdded", direction="desc"
   const [sort, direction] = sortType.split(',');
 
-  // Instead of hardcoding "always sort descending, then reverse if needed,"
-  // we compute a multiplier that flips the comparator's sign directly.
-  // Ascending (`asc`) uses 1 (normal order), descending uses -1 (inverted).
-  // This means each direction gets its own independent sort
   const directionMultiplier = direction === 'asc' ? 1 : -1;
 
   // [...files] creates a shallow copy before sorting. The original code
@@ -48,8 +51,6 @@ export const sortFiles = (files, sortType) => {
     return compareValues(f1.id, f2.id) * directionMultiplier;
   });
 
-  // Same as in old code: reduce down to just the ordered list of IDs.
+  // Reduce down to just the ordered list of IDs.
   return sortedFiles.map(file => file.id);
-
-  // No reverse() call anymore as both directions were already computed above.
 };
