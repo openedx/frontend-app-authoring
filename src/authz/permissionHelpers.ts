@@ -78,6 +78,10 @@ export const getCourseOutlinePermissions = (courseId: string) => ({
 });
 
 export const getLibraryUpdatesPermissions = (courseId: string) => ({
+  canViewLibraryUpdates: {
+    action: COURSE_PERMISSIONS.VIEW_LIBRARY_UPDATES,
+    scope: courseId,
+  },
   canManageLibraryUpdates: {
     action: COURSE_PERMISSIONS.MANAGE_LIBRARY_UPDATES,
     scope: courseId,

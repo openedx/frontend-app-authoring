@@ -9,6 +9,8 @@ import {
   Button,
   Icon,
   ModalDialog,
+  OverlayTrigger,
+  Popover,
   useToggle,
 } from '@openedx/paragon';
 import { Info } from '@openedx/paragon/icons';
@@ -20,10 +22,14 @@ import CompareChangesWidget from '@src/library-authoring/component-comparison/Co
 import AlertMessage from '@src/generic/alert-message';
 import LoadingButton from '@src/generic/loading-button';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import genericMessages from '@src/generic/messages';
 import { useIframe } from '@src/generic/hooks/context/hooks';
 import { useEventListener } from '@src/generic/hooks';
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { CompareContainersWidget } from '@src/container-comparison/CompareContainersWidget';
+import { getCourseKey } from '@src/generic/key-utils';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getLibraryUpdatesPermissions } from '@src/authz/permissionHelpers';
 
 import { messageTypes } from '../constants';
 import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../data/apiHooks';
@@ -135,6 +141,10 @@ export const PreviewLibraryXBlockChanges = ({
   const { showToast } = useContext(ToastContext);
   const intl = useIntl();
 
+  const courseId = getCourseKey(blockData.downstreamBlockId);
+  const { canManageLibraryUpdates } = useCourseUserPermissions(courseId, getLibraryUpdatesPermissions(courseId));
+  const readOnly = !canManageLibraryUpdates;
+
   const [confirmationModalType, setConfirmationModalType] = useState<ConfirmationModalType>();
 
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
@@ -192,6 +202,61 @@ export const PreviewLibraryXBlockChanges = ({
   }, [blockData]);
 
   const itemIcon = getItemIcon(blockData.blockType || '');
+
+  const readOnlyMessage = intl.formatMessage(genericMessages.readOnlyTooltip);
+
+  const wrapActionWithPopover = (id: string, action: React.ReactNode) => (
+    <OverlayTrigger
+      trigger={['hover', 'focus']}
+      placement="top"
+      overlay={
+        <Popover id={id}>
+          <Popover.Content className="text-left p-2">
+            {readOnlyMessage}
+          </Popover.Content>
+        </Popover>
+      }
+    >
+      <span>{action}</span>
+    </OverlayTrigger>
+  );
+
+  const acceptButton = isTextWithLocalChanges
+    ? (
+      <Button
+        variant="tertiary"
+        onClick={() => setConfirmationModalType('update')}
+        disabled={readOnly}
+      >
+        <FormattedMessage {...messages.updateToPublishedLibraryContentButton} />
+      </Button>
+    )
+    : (
+      <LoadingButton
+        onClick={() => updateAndRefresh(true, false)}
+        label={intl.formatMessage(messages.acceptChangesBtn)}
+        disabled={readOnly}
+      />
+    );
+
+  const ignoreButton = isTextWithLocalChanges
+    ? (
+      <Button
+        onClick={() => setConfirmationModalType('keep')}
+        disabled={readOnly}
+      >
+        <FormattedMessage {...messages.keepCourseContentButton} />
+      </Button>
+    )
+    : (
+      <Button
+        variant="tertiary"
+        onClick={() => setConfirmationModalType('ignore')}
+        disabled={readOnly}
+      >
+        <FormattedMessage {...messages.ignoreChangesBtn} />
+      </Button>
+    );
 
   // Build title
   const defaultTitle = intl.formatMessage(
@@ -256,37 +321,12 @@ export const PreviewLibraryXBlockChanges = ({
       </ModalDialog.Body>
       <ModalDialog.Footer>
         <ActionRow>
-          {isTextWithLocalChanges ?
-            (
-              <Button
-                variant="tertiary"
-                onClick={() => setConfirmationModalType('update')}
-              >
-                <FormattedMessage {...messages.updateToPublishedLibraryContentButton} />
-              </Button>
-            ) :
-            (
-              <LoadingButton
-                onClick={() => updateAndRefresh(true, false)}
-                label={intl.formatMessage(messages.acceptChangesBtn)}
-              />
-            )}
-          {isTextWithLocalChanges ?
-            (
-              <Button
-                onClick={() => setConfirmationModalType('keep')}
-              >
-                <FormattedMessage {...messages.keepCourseContentButton} />
-              </Button>
-            ) :
-            (
-              <Button
-                variant="tertiary"
-                onClick={() => setConfirmationModalType('ignore')}
-              >
-                <FormattedMessage {...messages.ignoreChangesBtn} />
-              </Button>
-            )}
+          {readOnly
+            ? wrapActionWithPopover('readonly-accept-changes', acceptButton)
+            : acceptButton}
+          {readOnly
+            ? wrapActionWithPopover('readonly-ignore-changes', ignoreButton)
+            : ignoreButton}
         </ActionRow>
       </ModalDialog.Footer>
       <ConfirmationModal

@@ -169,10 +169,14 @@ describe('permissionHelpers', () => {
   });
 
   describe('getLibraryUpdatesPermissions', () => {
-    it('returns MANAGE_LIBRARY_UPDATES permission with the correct action and scope', () => {
+    it('returns library updates permissions with the correct actions and scope', () => {
       const result = getLibraryUpdatesPermissions(courseId);
 
       expect(result).toEqual({
+        canViewLibraryUpdates: {
+          action: COURSE_PERMISSIONS.VIEW_LIBRARY_UPDATES,
+          scope: courseId,
+        },
         canManageLibraryUpdates: {
           action: COURSE_PERMISSIONS.MANAGE_LIBRARY_UPDATES,
           scope: courseId,

@@ -9,10 +9,14 @@ import {
 } from '@openedx/paragon';
 import { Email as EmailIcon } from '@openedx/paragon/icons';
 
-import { INVITE_STUDENTS_LINK_ID } from './constants';
 import messages from './messages';
 
-const CoursePromotionCard = ({ lmsLinkForAboutPage, courseDisplayName, platformName }) => {
+const CoursePromotionCard = ({
+  lmsLinkForAboutPage,
+  courseDisplayName,
+  platformName,
+  isEditable = true,
+}) => {
   const intl = useIntl();
 
   const emailSubject = intl.formatMessage(
@@ -42,6 +46,17 @@ const CoursePromotionCard = ({ lmsLinkForAboutPage, courseDisplayName, platformN
     />
   );
 
+  const inviteButton = (
+    <Button
+      variant="outline-primary"
+      iconBefore={EmailIcon}
+      size="sm"
+      disabled={!isEditable}
+    >
+      {intl.formatMessage(messages.basicPromotionButton)}
+    </Button>
+  );
+
   return (
     <Card>
       <Card.Header
@@ -61,16 +76,17 @@ const CoursePromotionCard = ({ lmsLinkForAboutPage, courseDisplayName, platformN
       </Card.Section>
       <Card.Divider />
       <Card.Footer className="p-3 justify-content-start">
-        <MailtoLink
-          to={process.env.INVITE_STUDENTS_EMAIL_TO}
-          subject={emailSubject}
-          body={emailBody}
-          data-testid={INVITE_STUDENTS_LINK_ID}
-        >
-          <Button variant="outline-primary" iconBefore={EmailIcon} size="sm">
-            {intl.formatMessage(messages.basicPromotionButton)}
-          </Button>
-        </MailtoLink>
+        {isEditable ?
+          (
+            <MailtoLink
+              to={process.env.INVITE_STUDENTS_EMAIL_TO}
+              subject={emailSubject}
+              body={emailBody}
+            >
+              {inviteButton}
+            </MailtoLink>
+          ) :
+          inviteButton}
       </Card.Footer>
     </Card>
   );
@@ -80,6 +96,7 @@ CoursePromotionCard.propTypes = {
   lmsLinkForAboutPage: PropTypes.string.isRequired,
   courseDisplayName: PropTypes.string.isRequired,
   platformName: PropTypes.string.isRequired,
+  isEditable: PropTypes.bool,
 };
 
 export default CoursePromotionCard;

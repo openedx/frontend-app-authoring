@@ -47,6 +47,7 @@ import NewsstandIcon from '../generic/NewsstandIcon';
 
 interface Props {
   courseId: string;
+  readOnly?: boolean;
 }
 
 interface ItemCardProps {
@@ -137,8 +138,10 @@ const ItemCard: React.FC<ItemCardProps> = ({
 
 const ItemReviewList = ({
   outOfSyncItems,
+  readOnly = false,
 }: {
   outOfSyncItems: PublishableEntityLink[];
+  readOnly?: boolean;
 }) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
@@ -149,7 +152,6 @@ const ItemReviewList = ({
   const [isPreviewModalOpen, openPreviewModal, closePreviewModal] = useToggle(false);
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
-
   const {
     hits,
     isPending: isIndexDataPending,
@@ -258,6 +260,39 @@ const ItemReviewList = ({
     }
   }, [blockData]);
 
+  const renderActions = useCallback((info: ContentHit) => (
+    <ActionRow>
+      <Button
+        size="sm"
+        variant="outline-primary border-light-300"
+        onClick={() => onReview(info)}
+        iconBefore={Loop}
+        className="mr-2"
+      >
+        {intl.formatMessage(messages.cardReviewContentBtn)}
+      </Button>
+      {!readOnly && (
+        <>
+          <span className="border border-dark py-3 ml-4 mr-3" />
+          <Button
+            variant="tertiary"
+            size="sm"
+            onClick={() => onIgnoreClick(info)}
+          >
+            {intl.formatMessage(messages.cardIgnoreContentBtn)}
+          </Button>
+          <LoadingButton
+            label={intl.formatMessage(messages.cardUpdateContentBtn)}
+            variant="primary"
+            size="sm"
+            onClick={() => updateBlock(info)}
+            className="rounded-0"
+          />
+        </>
+      )}
+    </ActionRow>
+  ), [readOnly, onIgnoreClick, updateBlock]);
+
   if (isIndexDataPending) {
     return <Loading />;
   }
@@ -274,34 +309,7 @@ const ItemReviewList = ({
           info={info}
           itemType={outOfSyncItemsByKey[info.usageKey]?.upstreamType}
           libraryName={outOfSyncItemsByKey[info.usageKey]?.upstreamContextTitle}
-          actions={
-            <ActionRow>
-              <Button
-                size="sm"
-                variant="outline-primary border-light-300"
-                onClick={() => onReview(info)}
-                iconBefore={Loop}
-                className="mr-2"
-              >
-                {intl.formatMessage(messages.cardReviewContentBtn)}
-              </Button>
-              <span className="border border-dark py-3 ml-4 mr-3" />
-              <Button
-                variant="tertiary"
-                size="sm"
-                onClick={() => onIgnoreClick(info)}
-              >
-                {intl.formatMessage(messages.cardIgnoreContentBtn)}
-              </Button>
-              <LoadingButton
-                label={intl.formatMessage(messages.cardUpdateContentBtn)}
-                variant="primary"
-                size="sm"
-                onClick={() => updateBlock(info)}
-                className="rounded-0"
-              />
-            </ActionRow>
-          }
+          actions={renderActions(info)}
         />
       ))}
       {blockData && (
@@ -325,7 +333,7 @@ const ItemReviewList = ({
   );
 };
 
-const ReviewTabContent = ({ courseId }: Props) => {
+const ReviewTabContent = ({ courseId, readOnly = false }: Props) => {
   const intl = useIntl();
   const {
     data: outOfSyncItems,
@@ -373,6 +381,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
       </ActionRow>
       <ItemReviewList
         outOfSyncItems={outOfSyncItems}
+        readOnly={readOnly}
       />
     </SearchContextProvider>
   );
