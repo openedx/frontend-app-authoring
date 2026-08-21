@@ -14,6 +14,10 @@ import IframePreviewLibraryXBlockChanges, { PreviewLibraryXBlockChanges, Library
 import { messageTypes } from '../constants';
 import { libraryBlockChangesUrl } from '../data/api';
 
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(() => ({ canManageLibraryUpdates: true })),
+}));
+
 const usageKey = 'block-v1:UNIX+UX1+2025_T3+type@unit+block@1';
 const defaultEventData: LibraryChangesMessageData = {
   displayName: 'Test block',
@@ -67,7 +71,10 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     expect(await screen.findByRole('tab', { name: 'Old version' })).toBeInTheDocument();
   });
 
-  it('disables accept and ignore changes buttons with read-only tooltip when readOnly', async () => {
+  it('disables accept and ignore changes buttons with read-only tooltip when user lacks manage permission', async () => {
+    const { useCourseUserPermissions } = require('@src/authz/hooks');
+    useCourseUserPermissions.mockReturnValue({ canManageLibraryUpdates: false });
+
     const user = userEvent.setup();
     baseRender(
       <PreviewLibraryXBlockChanges
@@ -75,7 +82,6 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
         isModalOpen
         closeModal={jest.fn()}
         postChange={jest.fn()}
-        readOnly
       />,
     );
 
@@ -90,6 +96,8 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
         'Your role doesn\'t include permission to do this. Contact your org admin to request access',
       ),
     ).toBeInTheDocument();
+
+    useCourseUserPermissions.mockReturnValue({ canManageLibraryUpdates: true });
   });
 
   it('renders default displayName for units with no displayName', async () => {

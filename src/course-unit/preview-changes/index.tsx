@@ -27,6 +27,9 @@ import { useIframe } from '@src/generic/hooks/context/hooks';
 import { useEventListener } from '@src/generic/hooks';
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { CompareContainersWidget } from '@src/container-comparison/CompareContainersWidget';
+import { getCourseKey } from '@src/generic/key-utils';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getLibraryUpdatesPermissions } from '@src/authz/permissionHelpers';
 
 import { messageTypes } from '../constants';
 import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../data/apiHooks';
@@ -123,7 +126,6 @@ export interface PreviewLibraryXBlockChangesProps {
   isModalOpen: boolean;
   closeModal: () => void;
   postChange: (accept: boolean) => void;
-  readOnly?: boolean;
 }
 
 /**
@@ -135,10 +137,13 @@ export const PreviewLibraryXBlockChanges = ({
   isModalOpen,
   closeModal,
   postChange,
-  readOnly = false,
 }: PreviewLibraryXBlockChangesProps) => {
   const { showToast } = useContext(ToastContext);
   const intl = useIntl();
+
+  const courseId = getCourseKey(blockData.downstreamBlockId);
+  const { canManageLibraryUpdates } = useCourseUserPermissions(courseId, getLibraryUpdatesPermissions(courseId));
+  const readOnly = !canManageLibraryUpdates;
 
   const [confirmationModalType, setConfirmationModalType] = useState<ConfirmationModalType>();
 

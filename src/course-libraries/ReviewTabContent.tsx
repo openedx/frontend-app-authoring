@@ -155,7 +155,6 @@ const ItemReviewList = ({
   const [isPreviewModalOpen, openPreviewModal, closePreviewModal] = useToggle(false);
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
-
   const {
     hits,
     isPending: isIndexDataPending,
@@ -343,7 +342,6 @@ const ItemReviewList = ({
           isModalOpen={isPreviewModalOpen}
           closeModal={closePreviewModal}
           postChange={postChange}
-          readOnly={readOnly}
         />
       )}
       <DeleteModal
