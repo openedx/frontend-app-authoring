@@ -13,9 +13,7 @@ import {
   Card,
   Hyperlink,
   Icon,
-  OverlayTrigger,
   Stack,
-  Tooltip,
   useToggle,
 } from '@openedx/paragon';
 
@@ -46,7 +44,6 @@ import DeleteModal from '../generic/delete-modal/DeleteModal';
 import { PublishableEntityLink } from './data/api';
 import AlertError from '../generic/alert-error';
 import NewsstandIcon from '../generic/NewsstandIcon';
-import genericMessages from '../generic/messages';
 
 interface Props {
   courseId: string;
@@ -263,59 +260,38 @@ const ItemReviewList = ({
     }
   }, [blockData]);
 
-  const readOnlyMessage = intl.formatMessage(genericMessages.readOnlyTooltip);
-
-  const wrapDisabledActionWithTooltip = useCallback((id: string, action: React.ReactNode) => (
-    <OverlayTrigger
-      placement="top"
-      overlay={<Tooltip id={id}>{readOnlyMessage}</Tooltip>}
-    >
-      <span>{action}</span>
-    </OverlayTrigger>
-  ), [readOnlyMessage]);
-
-  const renderActions = useCallback((info: ContentHit) => {
-    const ignoreButton = (
+  const renderActions = useCallback((info: ContentHit) => (
+    <ActionRow>
       <Button
-        variant="tertiary"
         size="sm"
-        onClick={() => onIgnoreClick(info)}
-        disabled={readOnly}
+        variant="outline-primary border-light-300"
+        onClick={() => onReview(info)}
+        iconBefore={Loop}
+        className="mr-2"
       >
-        {intl.formatMessage(messages.cardIgnoreContentBtn)}
+        {intl.formatMessage(messages.cardReviewContentBtn)}
       </Button>
-    );
-    const updateButton = (
-      <LoadingButton
-        label={intl.formatMessage(messages.cardUpdateContentBtn)}
-        variant="primary"
-        size="sm"
-        onClick={() => updateBlock(info)}
-        className="rounded-0"
-        disabled={readOnly}
-      />
-    );
-    return (
-      <ActionRow>
-        <Button
-          size="sm"
-          variant="outline-primary border-light-300"
-          onClick={() => onReview(info)}
-          iconBefore={Loop}
-          className="mr-2"
-        >
-          {intl.formatMessage(messages.cardReviewContentBtn)}
-        </Button>
-        <span className="border border-dark py-3 ml-4 mr-3" />
-        {readOnly
-          ? wrapDisabledActionWithTooltip(`disabled-ignore-${info.usageKey}`, ignoreButton)
-          : ignoreButton}
-        {readOnly
-          ? wrapDisabledActionWithTooltip(`disabled-update-${info.usageKey}`, updateButton)
-          : updateButton}
-      </ActionRow>
-    );
-  }, [onIgnoreClick, readOnly, updateBlock, wrapDisabledActionWithTooltip]);
+      {!readOnly && (
+        <>
+          <span className="border border-dark py-3 ml-4 mr-3" />
+          <Button
+            variant="tertiary"
+            size="sm"
+            onClick={() => onIgnoreClick(info)}
+          >
+            {intl.formatMessage(messages.cardIgnoreContentBtn)}
+          </Button>
+          <LoadingButton
+            label={intl.formatMessage(messages.cardUpdateContentBtn)}
+            variant="primary"
+            size="sm"
+            onClick={() => updateBlock(info)}
+            className="rounded-0"
+          />
+        </>
+      )}
+    </ActionRow>
+  ), [readOnly, onIgnoreClick, updateBlock]);
 
   if (isIndexDataPending) {
     return <Loading />;

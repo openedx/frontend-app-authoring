@@ -270,22 +270,17 @@ describe('<CourseLibraries ReviewTab />', () => {
     expect(ignoreBtns.length).toEqual(7);
   });
 
-  it('disables update and ignore buttons with read-only tooltip when user lacks manage permission', async () => {
-    const user = userEvent.setup();
+  it('hides update and ignore buttons when user lacks manage permission', async () => {
     mockPermissions({ canViewLibraryUpdates: true, canManageLibraryUpdates: false });
     await renderCourseLibrariesReviewPage();
-    const readOnlyMessage =
-      'Your role doesn\'t include permission to do this. Contact your org admin to request access';
 
-    const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
-    expect(updateBtns.length).toEqual(7);
-    updateBtns.forEach((btn) => expect(btn).toHaveAttribute('aria-disabled', 'true'));
-    const ignoreBtns = await screen.findAllByRole('button', { name: 'Ignore' });
-    expect(ignoreBtns.length).toEqual(7);
-    ignoreBtns.forEach((btn) => expect(btn).toBeDisabled());
+    const updateBtns = screen.queryAllByRole('button', { name: 'Update' });
+    expect(updateBtns.length).toEqual(0);
+    const ignoreBtns = screen.queryAllByRole('button', { name: 'Ignore' });
+    expect(ignoreBtns.length).toEqual(0);
 
-    await user.hover(updateBtns[0].closest('span') ?? updateBtns[0]);
-    expect(await screen.findByText(readOnlyMessage)).toBeInTheDocument();
+    const reviewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
+    expect(reviewBtns.length).toEqual(7);
   });
 
   it('disables accept and ignore changes buttons in preview modal for read-only users', async () => {
