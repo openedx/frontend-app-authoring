@@ -10,7 +10,7 @@ import {
   Icon,
   ModalDialog,
   OverlayTrigger,
-  Tooltip,
+  Popover,
   useToggle,
 } from '@openedx/paragon';
 import { Info } from '@openedx/paragon/icons';
@@ -205,10 +205,17 @@ export const PreviewLibraryXBlockChanges = ({
 
   const readOnlyMessage = intl.formatMessage(genericMessages.readOnlyTooltip);
 
-  const wrapActionWithTooltip = (id: string, action: React.ReactNode) => (
+  const wrapActionWithPopover = (id: string, action: React.ReactNode) => (
     <OverlayTrigger
+      trigger={['hover', 'focus']}
       placement="top"
-      overlay={<Tooltip id={id}>{readOnlyMessage}</Tooltip>}
+      overlay={
+        <Popover id={id}>
+          <Popover.Content className="text-left p-2">
+            {readOnlyMessage}
+          </Popover.Content>
+        </Popover>
+      }
     >
       <span>{action}</span>
     </OverlayTrigger>
@@ -315,10 +322,10 @@ export const PreviewLibraryXBlockChanges = ({
       <ModalDialog.Footer>
         <ActionRow>
           {readOnly
-            ? wrapActionWithTooltip('readonly-accept-changes', acceptButton)
+            ? wrapActionWithPopover('readonly-accept-changes', acceptButton)
             : acceptButton}
           {readOnly
-            ? wrapActionWithTooltip('readonly-ignore-changes', ignoreButton)
+            ? wrapActionWithPopover('readonly-ignore-changes', ignoreButton)
             : ignoreButton}
         </ActionRow>
       </ModalDialog.Footer>
