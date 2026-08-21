@@ -58,7 +58,7 @@ interface CustomAsset {
 // - fileOlderWeekday / fileNewerWeekday are genuinely different dates that
 //   fall on weekdays whose abbreviations sort "backwards" alphabetically
 //   (Tue vs Mon), covering the weekday-string regression.
-const customAssets = (): { assets: CustomAsset[] } => ({
+const customAssets = (): { assets: CustomAsset[]; } => ({
   assets: [
     {
       id: 'fileTiedA',
@@ -129,8 +129,9 @@ const mockStoreWithCustomAssets = async (): Promise<void> => {
 // by id, in the order they actually appear on screen — this is the
 // integration-test difference from the unit tests: it doesn't call
 // sortFiles() directly, it checks what the USER would actually see.
-const getRenderedCardOrder = (): string[] => screen.getAllByTestId(/^grid-card-/)
-  .map((card) => (card.getAttribute('data-testid') ?? '').replace('grid-card-', ''));
+const getRenderedCardOrder = (): string[] =>
+  screen.getAllByTestId(/^grid-card-/)
+    .map((card) => (card.getAttribute('data-testid') ?? '').replace('grid-card-', ''));
 
 const openSortModalAndApply = async (sortOptionLabel: string): Promise<void> => {
   fireEvent.click(screen.getByText(messages.sortButtonLabel.defaultMessage));

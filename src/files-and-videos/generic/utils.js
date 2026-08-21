@@ -1,6 +1,6 @@
 // Small helper: a standard three-way comparator.
 // Returns -1 if a should come before b, 1 if a should come after b,
-// and 0 if they're equal (a tie). This method prevents repetition in code for the primary sort and the tiebreaker sort. 
+// and 0 if they're equal (a tie). This method prevents repetition in code for the primary sort and the tiebreaker sort.
 // This is to help in the sorting of files in the sortFiles function below.
 const compareValues = (a, b) => {
   if (a < b) { return -1; }
@@ -19,10 +19,10 @@ export const sortFiles = (files, sortType) => {
   const directionMultiplier = direction === 'asc' ? 1 : -1;
 
   // [...files] creates a shallow copy before sorting. The original code
-  // called files.sort() directly, which mutates the array in place, which is 
+  // called files.sort() directly, which mutates the array in place, which is
   // risky since `files` is Redux state passed down as a prop, and
   // mutating props/state directly can cause small, hard-to-trace bugs
-  // somewhere else in the app. So, sorting a copy prevents that. 
+  // somewhere else in the app. So, sorting a copy prevents that.
   const sortedFiles = [...files].sort((f1, f2) => {
     let primaryComparison;
 

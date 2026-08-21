@@ -27,5 +27,5 @@ export declare function getSrc(file: {
 
 export declare function getUploadConflicts(
   filesToUpload: File[],
-  assets: { displayName: string }[]
+  assets: { displayName: string; }[],
 ): [Record<string, File>, File[]];
