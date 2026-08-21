@@ -75,6 +75,10 @@ export const getCourseOutlinePermissions = (courseId: string) => ({
     action: COURSE_PERMISSIONS.EDIT_COURSE_CONTENT,
     scope: courseId,
   },
+  canPublishCourseContent: {
+    action: COURSE_PERMISSIONS.PUBLISH_COURSE_CONTENT,
+    scope: courseId,
+  },
 });
 
 export const getLibraryUpdatesPermissions = (courseId: string) => ({

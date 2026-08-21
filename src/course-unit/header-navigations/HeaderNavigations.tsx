@@ -15,6 +15,7 @@ import { COURSE_BLOCK_NAMES } from '@src/constants';
 import messages from './messages';
 import { isUnitPageNewDesignEnabled } from '../utils';
 import { useUnitSidebarContext } from '../unit-sidebar/UnitSidebarContext';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 export type HeaderNavigationActions = {
   handleViewLive: () => void;
@@ -46,6 +47,8 @@ const HeaderNavigations = ({
     handleEdit,
   } = headerNavigationsActions;
 
+  const { canEditCourseContent } = useCourseAuthoringContext();
+
   const { setCurrentPageKey, readOnly } = useUnitSidebarContext();
 
   const showNewDesignButtons = isUnitPageNewDesignEnabled();
@@ -68,7 +71,7 @@ const HeaderNavigations = ({
               >
                 {intl.formatMessage(messages.infoButton)}
               </Button>
-              {!readOnly && (
+              {canEditCourseContent && !readOnly && (
                 <Button
                   variant="outline-primary"
                   iconBefore={Add}
@@ -103,7 +106,8 @@ const HeaderNavigations = ({
          * Action buttons used in legacy libraries content page and split test page
          */
       }
-      {[COURSE_BLOCK_NAMES.libraryContent.id, COURSE_BLOCK_NAMES.splitTest.id].includes(category) && (
+      {canEditCourseContent &&
+        [COURSE_BLOCK_NAMES.libraryContent.id, COURSE_BLOCK_NAMES.splitTest.id].includes(category) && (
         <Button
           iconBefore={EditIcon}
           variant="outline-primary"
