@@ -110,13 +110,21 @@ describe('<AssignmentSection />', () => {
       expect(getByText(messages.totalNumberErrorMessage.defaultMessage)).toBeInTheDocument();
     });
   });
-  it('should disable all inputs and delete button when isEditable is false', async () => {
-    const { getAllByRole, getByText } = render(<RootWrapper isEditable={false} />);
+  it('removes the assignment when clicking the delete button', () => {
+    const handleRemoveAssignment = jest.fn();
+    const { getByText } = render(<RootWrapper handleRemoveAssignment={handleRemoveAssignment} />);
+
+    fireEvent.click(getByText(messages.assignmentDeleteButton.defaultMessage));
+
+    expect(handleRemoveAssignment).toHaveBeenCalledWith(defaultAssignments.id);
+  });
+
+  it('should disable all inputs and hide delete button when isEditable is false', async () => {
+    const { getAllByRole, queryByText } = render(<RootWrapper isEditable={false} />);
     await waitFor(() => {
       const inputs = getAllByRole('textbox').concat(getAllByRole('spinbutton'));
       inputs.forEach((input) => expect(input).toBeDisabled());
-      const deleteBtn = getByText(messages.assignmentDeleteButton.defaultMessage).closest('button');
-      expect(deleteBtn).toBeDisabled();
+      expect(queryByText(messages.assignmentDeleteButton.defaultMessage)).not.toBeInTheDocument();
     });
   });
 

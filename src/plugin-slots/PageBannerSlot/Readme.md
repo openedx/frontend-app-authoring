@@ -17,6 +17,7 @@ This slot wraps the Paragon `PageBanner` component to allow plugins to replace, 
 - `lmsLinkForAboutPage` - String. URL of the course about page on the LMS.
 - `courseDisplayName` - String. The course's display name.
 - `platformName` - String. The platform name configured for the site.
+- `isEditable` - Boolean. Whether the current user can edit the Schedule & Details page. Pass it to `CoursePromotionCard` to disable the "Invite your students" mailto link for view-only users.
 
 ## Example
 
@@ -69,7 +70,9 @@ mailto button.
 
 If you want to restore that experience, you can use `CoursePromotionCard` — exported from
 `basic-section` — via this slot. The slot passes `lmsLinkForAboutPage`, `courseDisplayName`,
-and `platformName` as plugin props so the card has everything it needs.
+`platformName`, and `isEditable` as plugin props so the card has everything it needs. The
+`isEditable` prop disables the "Invite your students" mailto button for users with view-only
+access to Schedule & Details.
 
 ```jsx
 import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
@@ -88,11 +91,12 @@ const config = {
           widget: {
             id: 'course_promotion_card',
             type: DIRECT_PLUGIN,
-            RenderWidget: ({ lmsLinkForAboutPage, courseDisplayName, platformName }) => (
+            RenderWidget: ({ lmsLinkForAboutPage, courseDisplayName, platformName, isEditable }) => (
               <CoursePromotionCard
                 lmsLinkForAboutPage={lmsLinkForAboutPage}
                 courseDisplayName={courseDisplayName}
                 platformName={platformName}
+                isEditable={isEditable}
               />
             ),
           },
@@ -101,6 +105,4 @@ const config = {
     },
   },
 };
-
-export default config;
 ```

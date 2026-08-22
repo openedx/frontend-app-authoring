@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
+import ViewOnlyPermissionsAlert from '@src/generic/ViewOnlyPermissionsAlert';
+
 import SectionSubHeader from '../../generic/section-sub-header';
 import { ScheduleRow, SCHEDULE_ROW_TYPES } from './schedule-row';
 import { CertificateDisplayRow } from './certificate-display-row';
@@ -20,6 +22,7 @@ const ScheduleSection = ({
   certificatesDisplayBehavior,
   canShowCertificateAvailableDateField,
   isEditable = true,
+  showReadOnlyAlert = false,
   onChange,
 }) => {
   const intl = useIntl();
@@ -119,6 +122,11 @@ const ScheduleSection = ({
         title={intl.formatMessage(messages.scheduleTitle)}
         description={intl.formatMessage(messages.scheduleDescription)}
       />
+      {showReadOnlyAlert && (
+        <ViewOnlyPermissionsAlert>
+          {intl.formatMessage(messages.scheduleReadOnlyAlert)}
+        </ViewOnlyPermissionsAlert>
+      )}
       <ul className="schedule-date-list">
         {propsForScheduleFields
           .filter((field) => !field.skip)
@@ -170,6 +178,7 @@ ScheduleSection.propTypes = {
   certificateAvailableDate: PropTypes.string,
   certificatesDisplayBehavior: PropTypes.string.isRequired,
   canShowCertificateAvailableDateField: PropTypes.bool.isRequired,
+  showReadOnlyAlert: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 

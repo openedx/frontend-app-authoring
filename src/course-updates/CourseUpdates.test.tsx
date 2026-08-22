@@ -413,6 +413,38 @@ describe('<CourseUpdates />', () => {
 
         expect(screen.getByText('Are you sure you want to delete this update?')).toBeInTheDocument();
       });
+
+      it('should render the "Add first update" button when there are no updates', async () => {
+        axiosMock.resetHandlers();
+        axiosMock.onGet(getCourseUpdatesApiUrl(courseId)).reply(200, []);
+        axiosMock.onGet(getCourseHandoutApiUrl(courseId)).reply(200, courseHandoutsMock);
+
+        render(<RootWrapper />);
+
+        expect(
+          await screen.findByRole('button', { name: messages.firstUpdateButton.defaultMessage }),
+        ).toBeInTheDocument();
+      });
+
+      it('should open the update form when clicking the "Add first update" button', async () => {
+        axiosMock.resetHandlers();
+        axiosMock.onGet(getCourseUpdatesApiUrl(courseId)).reply(200, []);
+        axiosMock.onGet(getCourseHandoutApiUrl(courseId)).reply(200, courseHandoutsMock);
+
+        render(<RootWrapper />);
+        await userEvent.click(
+          await screen.findByRole('button', { name: messages.firstUpdateButton.defaultMessage }),
+        );
+
+        expect(screen.getByText('Add new update')).toBeInTheDocument();
+      });
+
+      it('should NOT render the view-only alert', async () => {
+        render(<RootWrapper />);
+
+        expect(await screen.findByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
+        expect(screen.queryByTestId('viewOnlyPermissionsAlert')).not.toBeInTheDocument();
+      });
     });
 
     describe('when user does NOT have permission to manage course updates and enableAuthzCourseAuthoring is enabled', () => {
@@ -454,6 +486,28 @@ describe('<CourseUpdates />', () => {
           expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument();
           expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
         });
+      });
+
+      it('should NOT render the "Add first update" button when there are no updates', async () => {
+        axiosMock.resetHandlers();
+        axiosMock.onGet(getCourseUpdatesApiUrl(courseId)).reply(200, []);
+        axiosMock.onGet(getCourseHandoutApiUrl(courseId)).reply(200, courseHandoutsMock);
+
+        render(<RootWrapper />);
+
+        expect(await screen.findByText(messages.noCourseUpdates.defaultMessage)).toBeVisible();
+        expect(
+          screen.queryByRole('button', { name: messages.firstUpdateButton.defaultMessage }),
+        ).not.toBeInTheDocument();
+      });
+
+      it('should render the view-only alert', async () => {
+        render(<RootWrapper />);
+
+        expect(await screen.findByTestId('viewOnlyPermissionsAlert')).toBeInTheDocument();
+        expect(screen.getByText(
+          'You have view-only access to this page. Contact your organization admin to request editing permissions.',
+        )).toBeInTheDocument();
       });
     });
 

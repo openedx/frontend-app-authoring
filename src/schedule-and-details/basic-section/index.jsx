@@ -17,6 +17,7 @@ const BasicSection = ({
   lmsLinkForAboutPage,
   courseDisplayName,
   platformName,
+  isEditable,
 }) => {
   const intl = useIntl();
   const [showPageBanner, setShowPageBanner] = useState(true);
@@ -53,6 +54,7 @@ const BasicSection = ({
       lmsLinkForAboutPage={lmsLinkForAboutPage}
       courseDisplayName={courseDisplayName}
       platformName={platformName}
+      isEditable={isEditable}
     >
       <h4 className="text-black">{intl.formatMessage(messages.basicBannerTitle, { platformName })}</h4>
       <span className="text text-gray-700 text-left">
@@ -82,6 +84,7 @@ BasicSection.propTypes = {
   lmsLinkForAboutPage: PropTypes.string.isRequired,
   courseDisplayName: PropTypes.string.isRequired,
   platformName: PropTypes.string.isRequired,
+  isEditable: PropTypes.bool,
 };
 
 export default BasicSection;

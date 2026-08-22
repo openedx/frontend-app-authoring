@@ -9,6 +9,7 @@ export interface PageBannerSlotProps {
   lmsLinkForAboutPage?: string;
   courseDisplayName?: string;
   platformName?: string;
+  isEditable?: boolean;
 }
 
 const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
@@ -18,6 +19,7 @@ const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
   lmsLinkForAboutPage,
   courseDisplayName,
   platformName,
+  isEditable,
 }) => (
   <PluginSlot
     id="org.openedx.frontend.authoring.page_banner.v1"
@@ -28,6 +30,7 @@ const PageBannerSlot: React.FC<PageBannerSlotProps> = ({
       lmsLinkForAboutPage,
       courseDisplayName,
       platformName,
+      isEditable,
     }}
   >
     <div className="align-items-start">
