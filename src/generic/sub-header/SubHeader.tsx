@@ -10,6 +10,7 @@ interface SubHeaderProps {
   instruction?: ReactElement | string;
   headerActions?: ReactElement | ReactElement[] | null;
   titleActions?: ReactElement | ReactElement[] | null;
+  banner?: ReactElement | null;
   hideBorder?: boolean;
   withSubHeaderContent?: boolean;
 }
@@ -23,6 +24,7 @@ const SubHeader = ({
   instruction,
   headerActions,
   titleActions,
+  banner = null,
   hideBorder = false,
   withSubHeaderContent = true,
 }: SubHeaderProps) => (
@@ -44,6 +46,7 @@ const SubHeader = ({
         </ActionRow>
       )}
     </header>
+    {banner}
     {contentTitle && withSubHeaderContent && (
       <header className="sub-header-content">
         <h2 className="sub-header-content-title">{contentTitle}</h2>

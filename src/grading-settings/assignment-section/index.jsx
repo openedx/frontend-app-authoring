@@ -188,15 +188,16 @@ const AssignmentSection = ({
                 aria-hidden="true"
               />
             )}
-            <Button
-              className="course-grading-assignment-delete-btn"
-              variant="outline-primary"
-              size="sm"
-              onClick={() => handleRemoveAssignment(gradeField.id)}
-              disabled={!isEditable}
-            >
-              {intl.formatMessage(messages.assignmentDeleteButton)}
-            </Button>
+            {isEditable && (
+              <Button
+                className="course-grading-assignment-delete-btn"
+                variant="outline-primary"
+                size="sm"
+                onClick={() => handleRemoveAssignment(gradeField.id)}
+              >
+                {intl.formatMessage(messages.assignmentDeleteButton)}
+              </Button>
+            )}
           </div>
         );
       })}
