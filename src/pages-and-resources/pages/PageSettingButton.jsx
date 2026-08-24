@@ -30,17 +30,8 @@ const PageSettingButton = ({
 
   const canConfigureOrEnable = allowedOperations?.configure || allowedOperations?.enable;
 
-  if (determineLinkDestination && !isEditable) {
-    return (
-      <IconButton
-        src={ArrowForward}
-        iconAs={Icon}
-        size="inline"
-        alt={formatMessage(messages.settings)}
-        className="text-muted"
-        disabled
-      />
-    );
+  if (!isEditable) {
+    return null;
   }
 
   if (determineLinkDestination) {
