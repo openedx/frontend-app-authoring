@@ -31,8 +31,8 @@ jest.mock('@src/authz/data/apiHooks', () => ({
   useUserPermissions: jest.fn(),
 }));
 
-/** Set the result of the scope-less "can view any team" permission check. */
-const mockViewTeamPermissions = (data: Record<string, boolean>) => {
+/** Set the result of the scope-less "can manage any team" permission check. */
+const mockManageTeamPermissions = (data: Record<string, boolean>) => {
   // Mirror production: the query is skipped (data undefined) unless it is enabled,
   // which happens only when authz is on and the admin console URL is configured.
   jest.mocked(useUserPermissions).mockImplementation((_permissions, enabled = true) => ({
@@ -54,7 +54,7 @@ describe('<StudioHome />', () => {
       const mocks = initializeMocks();
       mocks.axiosMock.onGet(getStudioHomeApiUrl()).reply(404);
       mockUseSelector.mockReturnValue({ studioHomeLoadingStatus: RequestStatus.FAILED });
-      mockViewTeamPermissions({});
+      mockManageTeamPermissions({});
     });
 
     it('should render fetch error', async () => {
@@ -75,7 +75,7 @@ describe('<StudioHome />', () => {
       const mocks = initializeMocks();
       mocks.axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
       mockUseSelector.mockReturnValue(studioHomeMock);
-      mockViewTeamPermissions({});
+      mockManageTeamPermissions({});
     });
 
     it('should render page and page title correctly', async () => {
@@ -108,9 +108,9 @@ describe('<StudioHome />', () => {
     });
 
     it.each([
-      ['course', { canViewCourseTeam: true, canViewLibraryTeam: false }],
-      ['library', { canViewCourseTeam: false, canViewLibraryTeam: true }],
-    ])('should render roles and permissions button when authz is enabled and the user can view a %s team', async (
+      ['course', { canManageCourseTeam: true, canManageLibraryTeam: false }],
+      ['library', { canManageCourseTeam: false, canManageLibraryTeam: true }],
+    ])('should render roles and permissions button when authz is enabled and the user can manage a %s team', async (
       _team,
       permissions,
     ) => {
@@ -119,7 +119,7 @@ describe('<StudioHome />', () => {
         ADMIN_CONSOLE_URL: 'https://admin-console.example.com',
       });
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      mockViewTeamPermissions(permissions);
+      mockManageTeamPermissions(permissions);
 
       render(<StudioHome />, { path: '/home' });
       const header = getHeaderElement();
@@ -133,7 +133,23 @@ describe('<StudioHome />', () => {
         ADMIN_CONSOLE_URL: 'https://admin-console.example.com',
       });
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      mockViewTeamPermissions({ canViewCourseTeam: false, canViewLibraryTeam: false });
+      mockManageTeamPermissions({ canManageCourseTeam: false, canManageLibraryTeam: false });
+
+      render(<StudioHome />, { path: '/home' });
+      const header = getHeaderElement();
+      expect(within(header).queryByRole('link', { name: 'Roles and permissions' })).not.toBeInTheDocument();
+    });
+
+    it('should not render roles and permissions button for users who can only view a team', async () => {
+      // Course Staff / Editor / Auditor hold view_course_team but not manage_course_team. They must
+      // not reach the admin console: the role assignment flow there requires manage_course_team, so
+      // they could complete the whole wizard and only fail on the final step.
+      setConfig({
+        ...getConfig(),
+        ADMIN_CONSOLE_URL: 'https://admin-console.example.com',
+      });
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      mockManageTeamPermissions({ canManageCourseTeam: false, canManageLibraryTeam: false });
 
       render(<StudioHome />, { path: '/home' });
       const header = getHeaderElement();
@@ -146,7 +162,7 @@ describe('<StudioHome />', () => {
         ADMIN_CONSOLE_URL: 'https://admin-console.example.com',
       });
       mockWaffleFlags({ enableAuthzCourseAuthoring: false });
-      mockViewTeamPermissions({ canViewCourseTeam: true, canViewLibraryTeam: true });
+      mockManageTeamPermissions({ canManageCourseTeam: true, canManageLibraryTeam: true });
 
       render(<StudioHome />, { path: '/home' });
       const header = getHeaderElement();

@@ -40,6 +40,7 @@ export const COURSE_PERMISSIONS = {
   MANAGE_LIBRARY_UPDATES: 'courses.manage_library_updates',
 
   VIEW_COURSE_TEAM: 'courses.view_course_team',
+  MANAGE_COURSE_TEAM: 'courses.manage_course_team',
 
   MANAGE_GROUP_CONFIGURATIONS: 'courses.manage_group_configurations',
   MANAGE_CERTIFICATES: 'courses.manage_certificates',

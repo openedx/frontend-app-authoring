@@ -1,14 +1,18 @@
 import { CONTENT_LIBRARY_PERMISSIONS, COURSE_PERMISSIONS } from './constants';
 
-// It validates whether the user can view a team on *any* course or
+// It validates whether the user can manage a team on *any* course or
 // library, to decide if the "Roles & Permissions" button (which links to the admin
 // console in Studio Home) should be shown.
-export const getViewTeamPermissions = () => ({
-  canViewCourseTeam: {
-    action: COURSE_PERMISSIONS.VIEW_COURSE_TEAM,
+// The check is on *manage* rather than *view* on purpose: the admin console's role
+// assignment flow requires manage_course_team / manage_library_team, so users who can
+// only view a team (e.g. Course Staff) would otherwise reach the button, walk the whole
+// assignment wizard and only fail on the final step.
+export const getManageTeamPermissions = () => ({
+  canManageCourseTeam: {
+    action: COURSE_PERMISSIONS.MANAGE_COURSE_TEAM,
   },
-  canViewLibraryTeam: {
-    action: CONTENT_LIBRARY_PERMISSIONS.VIEW_LIBRARY_TEAM,
+  canManageLibraryTeam: {
+    action: CONTENT_LIBRARY_PERMISSIONS.MANAGE_LIBRARY_TEAM,
   },
 });
 

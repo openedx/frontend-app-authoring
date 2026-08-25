@@ -11,7 +11,7 @@ import {
   getCertificatesPermissions,
   getChecklistsPermissions,
   getImportExportPermissions,
-  getViewTeamPermissions,
+  getManageTeamPermissions,
 } from './permissionHelpers';
 import { CONTENT_LIBRARY_PERMISSIONS, COURSE_PERMISSIONS } from './constants';
 
@@ -254,22 +254,22 @@ describe('permissionHelpers', () => {
     });
   });
 
-  describe('getViewTeamPermissions', () => {
-    it('returns course and library view-team permissions with the correct actions', () => {
-      const result = getViewTeamPermissions();
+  describe('getManageTeamPermissions', () => {
+    it('returns course and library manage-team permissions with the correct actions', () => {
+      const result = getManageTeamPermissions();
 
       expect(result).toEqual({
-        canViewCourseTeam: {
-          action: COURSE_PERMISSIONS.VIEW_COURSE_TEAM,
+        canManageCourseTeam: {
+          action: COURSE_PERMISSIONS.MANAGE_COURSE_TEAM,
         },
-        canViewLibraryTeam: {
-          action: CONTENT_LIBRARY_PERMISSIONS.VIEW_LIBRARY_TEAM,
+        canManageLibraryTeam: {
+          action: CONTENT_LIBRARY_PERMISSIONS.MANAGE_LIBRARY_TEAM,
         },
       });
     });
 
     it('is scope-less so it validates the permissions across any course or library', () => {
-      const result = getViewTeamPermissions();
+      const result = getManageTeamPermissions();
 
       // A scope of '' would be rejected by the AuthZ API as a bad request; the scope key
       // must be absent entirely so the check applies to any object.

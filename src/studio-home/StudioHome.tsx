@@ -14,7 +14,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
-import { getViewTeamPermissions } from '@src/authz/permissionHelpers';
+import { getManageTeamPermissions } from '@src/authz/permissionHelpers';
 import { getAdminConsoleUrl, isAdminConsoleEnabled } from '@src/authz/urls';
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
@@ -54,14 +54,14 @@ const StudioHome = () => {
   const adminConsoleUrl = getAdminConsoleUrl();
 
   // The "Roles & Permissions" button links to the admin console, so only show it to users
-  // who can view a team somewhere: on any course (view_course_team) or any library
-  // (view_library_team).
-  const { data: viewTeamPermissions } = useUserPermissions(
-    getViewTeamPermissions(),
+  // who can manage a team somewhere: on any course (manage_course_team) or any library
+  // (manage_library_team).
+  const { data: manageTeamPermissions } = useUserPermissions(
+    getManageTeamPermissions(),
     isAuthzEnabled && isAdminConsoleEnabled(),
   );
-  const canViewConsoleTeams = Boolean(
-    viewTeamPermissions?.canViewCourseTeam || viewTeamPermissions?.canViewLibraryTeam,
+  const canManageConsoleTeams = Boolean(
+    manageTeamPermissions?.canManageCourseTeam || manageTeamPermissions?.canManageLibraryTeam,
   );
 
   const {
@@ -83,7 +83,7 @@ const StudioHome = () => {
       );
     }
 
-    if (canViewConsoleTeams) {
+    if (canManageConsoleTeams) {
       headerButtons.push(
         <div className="border-right mr-3 pr-4 py-2">
           <Button
@@ -129,7 +129,7 @@ const StudioHome = () => {
     }
 
     return headerButtons;
-  }, [location, userIsActive, isFailedLoadingPage, canViewConsoleTeams]);
+  }, [location, userIsActive, isFailedLoadingPage, canManageConsoleTeams]);
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
   if (isLoadingPage && !isFiltered) {
