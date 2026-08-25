@@ -5,7 +5,7 @@ import React, {
   useState,
 } from 'react';
 import { getConfig } from '@edx/frontend-platform';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Breadcrumb,
@@ -270,7 +270,7 @@ const ItemReviewList = ({
         iconBefore={Loop}
         className="mr-2"
       >
-        {intl.formatMessage(messages.cardReviewContentBtn)}
+        <FormattedMessage {...messages.cardReviewContentBtn} />
       </Button>
       {!readOnly && (
         <>
@@ -280,7 +280,7 @@ const ItemReviewList = ({
             size="sm"
             onClick={() => onIgnoreClick(info)}
           >
-            {intl.formatMessage(messages.cardIgnoreContentBtn)}
+            <FormattedMessage {...messages.cardIgnoreContentBtn} />
           </Button>
           <LoadingButton
             label={intl.formatMessage(messages.cardUpdateContentBtn)}
