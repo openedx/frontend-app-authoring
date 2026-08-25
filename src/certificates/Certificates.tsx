@@ -36,10 +36,10 @@ const Certificates = () => {
 
   const {
     isLoading: isLoadingUserPermissions,
-    canManageCertificates,
+    canViewCertificates,
   } = useCourseUserPermissions(courseId, getCertificatesPermissions(courseId));
 
-  if (!isLoadingUserPermissions && !canManageCertificates) {
+  if (!isLoadingUserPermissions && !canViewCertificates) {
     return <PermissionDeniedAlert />;
   }
 

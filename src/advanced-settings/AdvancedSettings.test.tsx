@@ -52,7 +52,7 @@ describe('<AdvancedSettings />', () => {
     jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
       isAuthzEnabled: false,
-      canManageAdvancedSettings: true,
+      canViewAdvancedSettings: true,
     } as ReturnType<typeof useCourseUserPermissions>);
   });
 
@@ -175,7 +175,7 @@ describe('<AdvancedSettings />', () => {
     jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
       isAuthzEnabled: true,
-      canManageAdvancedSettings: true,
+      canViewAdvancedSettings: true,
     } as ReturnType<typeof useCourseUserPermissions>);
     render();
     expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
@@ -192,7 +192,7 @@ describe('<AdvancedSettings />', () => {
     jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
       isAuthzEnabled: true,
-      canManageAdvancedSettings: false,
+      canViewAdvancedSettings: false,
     } as ReturnType<typeof useCourseUserPermissions>);
     render();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
@@ -203,7 +203,7 @@ describe('<AdvancedSettings />', () => {
     jest.mocked(useCourseUserPermissions).mockReturnValue({
       isLoading: false,
       isAuthzEnabled: true,
-      canManageAdvancedSettings: false,
+      canViewAdvancedSettings: false,
     } as ReturnType<typeof useCourseUserPermissions>);
     axiosMock
       .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)

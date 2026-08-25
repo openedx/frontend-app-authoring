@@ -18,7 +18,7 @@ const mockPermissions = (overrides = {}) =>
   jest.mocked(useCourseUserPermissions).mockReturnValue({
     isLoading: false,
     isAuthzEnabled: true,
-    canManageCertificates: true,
+    canViewCertificates: true,
     ...overrides,
   } as ReturnType<typeof useCourseUserPermissions>);
 
@@ -38,7 +38,7 @@ describe('Certificates', () => {
   });
 
   it('shows PermissionDeniedAlert when user lacks manage certificates permission', async () => {
-    mockPermissions({ canManageCertificates: false });
+    mockPermissions({ canViewCertificates: false });
     axiosMock
       .onGet(getCertificatesApiUrl(courseId))
       .reply(200, certificatesDataMock);

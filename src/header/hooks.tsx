@@ -96,7 +96,7 @@ export const useSettingMenuItems = (courseId: string) => {
   // legacy value: it would briefly show the link (and the Settings dropdown) to users
   // that authz then denies.
   const canAccessAdvancedSettings = perms.isAuthzEnabled
-    ? perms.canManageAdvancedSettings
+    ? perms.canViewAdvancedSettings
     : !perms.isLoading && legacyCanAccessAdvancedSettings;
 
   const items = [
@@ -138,7 +138,7 @@ export const useSettingMenuItems = (courseId: string) => {
       }] :
       []),
   ];
-  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true' && perms.canManageCertificates) {
+  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true' && perms.canViewCertificates) {
     items.push({
       href: `/course/${courseId}/certificates`,
       title: intl.formatMessage(messages['header.links.certificates']),

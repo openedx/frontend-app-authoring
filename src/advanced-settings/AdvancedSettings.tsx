@@ -45,7 +45,7 @@ const AdvancedSettings = () => {
 
   const {
     isLoading: isLoadingUserPermissions,
-    canManageAdvancedSettings,
+    canViewAdvancedSettings,
   } = useCourseUserPermissions(courseId, getAdvancedSettingsPermissions(courseId));
 
   const {
@@ -102,7 +102,7 @@ const AdvancedSettings = () => {
     );
   }
 
-  if (!canManageAdvancedSettings) {
+  if (!canViewAdvancedSettings) {
     return <PermissionDeniedAlert />;
   }
 

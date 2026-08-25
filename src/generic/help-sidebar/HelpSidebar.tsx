@@ -109,7 +109,7 @@ const HelpSidebar = ({
                     isNewPage
                   />
                 )}
-                {showOtherLink(advancedSettings) && perms.canManageAdvancedSettings && (
+                {showOtherLink(advancedSettings) && perms.canViewAdvancedSettings && (
                   <HelpSidebarLink
                     pathToPage={`/course/${courseId}/${advancedSettings}`}
                     title={intl.formatMessage(messages.sidebarLinkToAdvancedSettings)}
