@@ -4,6 +4,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { experimentGroupConfigurationsMock } from '../__mocks__';
 import commonMessages from '../common/messages';
+import messages from './messages';
 import ExperimentCard from './ExperimentCard';
 
 const handleCreateMock = jest.fn();
@@ -75,6 +76,20 @@ describe('<ExperimentCard />', () => {
     expect(
       getByTestId('experiment-configuration-card-usage-empty'),
     ).toBeInTheDocument();
+  });
+
+  it('hides the action buttons but keeps the outline link when readOnly', async () => {
+    const user = userEvent.setup();
+    const { queryByTestId, getByTestId, getByRole } = renderComponent({
+      configuration: { ...experimentConfiguration, usage: [] },
+      readOnly: true,
+    });
+    expect(queryByTestId('configuration-card-header-edit')).not.toBeInTheDocument();
+    expect(queryByTestId('configuration-card-header-delete')).not.toBeInTheDocument();
+
+    await user.click(getByTestId('configuration-card-header-button'));
+    expect(getByTestId('experiment-configuration-card-usage-empty')).toBeInTheDocument();
+    expect(getByRole('link', { name: messages.courseOutline.defaultMessage })).toBeInTheDocument();
   });
 
   it('renders usage with validation error message', async () => {

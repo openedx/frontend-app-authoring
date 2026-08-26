@@ -14,6 +14,7 @@ const ExperimentConfigurationsSection = ({
   courseId,
   availableGroups,
   experimentConfigurationActions,
+  readOnly,
 }) => {
   const { formatMessage } = useIntl();
   const [
@@ -43,9 +44,10 @@ const ExperimentConfigurationsSection = ({
                 experimentConfigurationActions={experimentConfigurationActions}
                 isExpandedByDefault={configuration.id === +elementWithHash}
                 onCreate={handleCreateConfiguration}
+                readOnly={readOnly}
               />
             ))}
-            {!isNewConfigurationVisible && (
+            {!readOnly && !isNewConfigurationVisible && (
               <Button
                 className="mt-4"
                 variant="outline-primary"
@@ -63,6 +65,7 @@ const ExperimentConfigurationsSection = ({
             <EmptyPlaceholder
               onCreateNewGroup={openNewConfiguration}
               isExperiment
+              readOnly={readOnly}
             />
           )
         )}
@@ -79,6 +82,7 @@ const ExperimentConfigurationsSection = ({
 
 ExperimentConfigurationsSection.defaultProps = {
   availableGroups: [],
+  readOnly: false,
 };
 
 ExperimentConfigurationsSection.propTypes = {
@@ -114,6 +118,7 @@ ExperimentConfigurationsSection.propTypes = {
     handleDelete: PropTypes.func,
   }).isRequired,
   courseId: PropTypes.string.isRequired,
+  readOnly: PropTypes.bool,
 };
 
 export default ExperimentConfigurationsSection;

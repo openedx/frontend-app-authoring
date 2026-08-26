@@ -6,10 +6,10 @@ import EmptyPlaceholder from '.';
 
 const onCreateNewGroup = jest.fn();
 
-const renderComponent = () =>
+const renderComponent = (props = {}) =>
   render(
     <IntlProvider locale="en">
-      <EmptyPlaceholder onCreateNewGroup={onCreateNewGroup} />
+      <EmptyPlaceholder onCreateNewGroup={onCreateNewGroup} {...props} />
     </IntlProvider>,
   );
 
@@ -19,5 +19,19 @@ describe('<EmptyPlaceholder />', () => {
 
     expect(getByText(messages.title.defaultMessage)).toBeInTheDocument();
     expect(getByRole('button', { name: messages.button.defaultMessage })).toBeInTheDocument();
+  });
+
+  it('renders the read-only message without the create button when readOnly', () => {
+    const { getByText, queryByRole } = renderComponent({ readOnly: true });
+
+    expect(getByText(messages.readOnlyTitle.defaultMessage)).toBeInTheDocument();
+    expect(queryByRole('button', { name: messages.button.defaultMessage })).not.toBeInTheDocument();
+  });
+
+  it('renders the read-only message without the create button when readOnly and isExperiment', () => {
+    const { getByText, queryByRole } = renderComponent({ readOnly: true, isExperiment: true });
+
+    expect(getByText(messages.readOnlyTitle.defaultMessage)).toBeInTheDocument();
+    expect(queryByRole('button', { name: messages.experimentalButton.defaultMessage })).not.toBeInTheDocument();
   });
 });

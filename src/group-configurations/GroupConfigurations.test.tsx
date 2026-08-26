@@ -80,6 +80,25 @@ describe('<GroupConfigurations />', () => {
     expect(screen.getByText(teamGroups.name)).toBeInTheDocument();
   });
 
+  it('hides every action button when the user can view but not manage group configurations', async () => {
+    mockPermissions({ canManageGroupConfigurations: false });
+    renderComponent();
+
+    const mainContent = await screen.findByTestId('group-configurations-main-content-wrapper');
+
+    expect(within(mainContent).getByText(contentGroups.name)).toBeInTheDocument();
+    expect(
+      within(mainContent).queryByText(contentGroupsMessages.addNewGroup.defaultMessage),
+    ).not.toBeInTheDocument();
+    expect(
+      within(mainContent).queryByText(experimentMessages.addNewGroup.defaultMessage),
+    ).not.toBeInTheDocument();
+    expect(within(mainContent).queryAllByTestId('content-group-card-header-edit')).toHaveLength(0);
+    expect(within(mainContent).queryAllByTestId('content-group-card-header-delete')).toHaveLength(0);
+    expect(within(mainContent).queryAllByTestId('configuration-card-header-edit')).toHaveLength(0);
+    expect(within(mainContent).queryAllByTestId('configuration-card-header-delete')).toHaveLength(0);
+  });
+
   it('does not render an empty section for enrollment track groups if it is empty', async () => {
     const shouldNotShowEnrollmentTrackResponse = {
       ...groupConfigurationResponseMock,

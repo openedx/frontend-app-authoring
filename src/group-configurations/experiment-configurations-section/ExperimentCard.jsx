@@ -28,6 +28,7 @@ const ExperimentCard = ({
   experimentConfigurationActions,
   isExpandedByDefault,
   onCreate,
+  readOnly,
 }) => {
   const { formatMessage } = useIntl();
   const { courseId } = useParams();
@@ -112,30 +113,32 @@ const ExperimentCard = ({
                 onTitleClick={() => setIsExpanded((prevState) => !prevState)}
                 isExperiment
               />
-              <ActionRow className="ml-auto d-flex">
-                <IconButtonWithTooltip
-                  tooltipContent={formatMessage(messages.actionEdit)}
-                  alt={formatMessage(messages.actionEdit)}
-                  src={EditOutlineIcon}
-                  iconAs={Icon}
-                  onClick={switchOnEditMode}
-                  data-testid="configuration-card-header-edit"
-                />
-                <IconButtonWithTooltip
-                  className="configuration-card-header__delete-tooltip"
-                  tooltipContent={formatMessage(
-                    isUsedInLocation
-                      ? messages.experimentConfigurationDeleteRestriction
-                      : messages.actionDelete,
-                  )}
-                  alt={formatMessage(messages.actionDelete)}
-                  src={DeleteOutlineIcon}
-                  iconAs={Icon}
-                  onClick={openDeleteModal}
-                  data-testid="configuration-card-header-delete"
-                  disabled={isUsedInLocation}
-                />
-              </ActionRow>
+              {!readOnly && (
+                <ActionRow className="ml-auto d-flex">
+                  <IconButtonWithTooltip
+                    tooltipContent={formatMessage(messages.actionEdit)}
+                    alt={formatMessage(messages.actionEdit)}
+                    src={EditOutlineIcon}
+                    iconAs={Icon}
+                    onClick={switchOnEditMode}
+                    data-testid="configuration-card-header-edit"
+                  />
+                  <IconButtonWithTooltip
+                    className="configuration-card-header__delete-tooltip"
+                    tooltipContent={formatMessage(
+                      isUsedInLocation
+                        ? messages.experimentConfigurationDeleteRestriction
+                        : messages.actionDelete,
+                    )}
+                    alt={formatMessage(messages.actionDelete)}
+                    src={DeleteOutlineIcon}
+                    iconAs={Icon}
+                    onClick={openDeleteModal}
+                    data-testid="configuration-card-header-delete"
+                    disabled={isUsedInLocation}
+                  />
+                </ActionRow>
+              )}
             </div>
             {isExpanded && (
               <div
@@ -177,6 +180,7 @@ ExperimentCard.defaultProps = {
   isExpandedByDefault: false,
   onCreate: null,
   experimentConfigurationActions: {},
+  readOnly: false,
 };
 
 ExperimentCard.propTypes = {
@@ -216,6 +220,7 @@ ExperimentCard.propTypes = {
   }),
   isExpandedByDefault: PropTypes.bool,
   onCreate: PropTypes.func,
+  readOnly: PropTypes.bool,
   experimentConfigurationActions: PropTypes.shape({
     handleCreate: PropTypes.func,
     handleEdit: PropTypes.func,

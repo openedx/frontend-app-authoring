@@ -40,6 +40,7 @@ const GroupConfigurations = () => {
   const {
     isLoading: isLoadingUserPermissions,
     canViewGroupConfigurations,
+    canManageGroupConfigurations,
   } = useCourseUserPermissions(courseId, getGroupConfigurationsPermissions(courseId));
 
   document.title = getPageHeadTitle(
@@ -120,6 +121,7 @@ const GroupConfigurations = () => {
                 <ContentGroupsSection
                   availableGroup={contentGroup}
                   contentGroupActions={contentGroupActions}
+                  readOnly={!canManageGroupConfigurations}
                 />
               )}
               {shouldShowExperimentGroups && (
@@ -127,6 +129,7 @@ const GroupConfigurations = () => {
                   courseId={courseId}
                   availableGroups={experimentGroupConfigurations}
                   experimentConfigurationActions={experimentConfigurationActions}
+                  readOnly={!canManageGroupConfigurations}
                 />
               )}
             </Stack>

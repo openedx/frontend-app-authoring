@@ -64,4 +64,30 @@ describe('<ContentGroupsSection />', () => {
     );
     expect(getByTestId('content-group-form')).toBeInTheDocument();
   });
+
+  describe('when readOnly', () => {
+    it('hides the add group button and the card action buttons', () => {
+      const { queryByRole, queryAllByTestId, getAllByTestId } = renderComponent({ readOnly: true });
+
+      expect(getAllByTestId('content-group-card')).toHaveLength(
+        contentGroupsMock.groups.length,
+      );
+      expect(
+        queryByRole('button', { name: messages.addNewGroup.defaultMessage }),
+      ).not.toBeInTheDocument();
+      expect(queryAllByTestId('content-group-card-header-edit')).toHaveLength(0);
+      expect(queryAllByTestId('content-group-card-header-delete')).toHaveLength(0);
+    });
+
+    it('renders the read-only placeholder without the create button if section is empty', () => {
+      const { getByText, queryByRole } = renderComponent({ availableGroup: {}, readOnly: true });
+
+      expect(
+        getByText(placeholderMessages.readOnlyTitle.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        queryByRole('button', { name: placeholderMessages.button.defaultMessage }),
+      ).not.toBeInTheDocument();
+    });
+  });
 });

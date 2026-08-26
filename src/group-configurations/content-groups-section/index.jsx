@@ -13,6 +13,7 @@ import messages from './messages';
 const ContentGroupsSection = ({
   availableGroup,
   contentGroupActions,
+  readOnly,
 }) => {
   const { formatMessage } = useIntl();
   const [isNewGroupVisible, openNewGroup, hideNewGroup] = useToggle(false);
@@ -52,11 +53,12 @@ const ContentGroupsSection = ({
                 groupNames={groupNames}
                 parentGroupId={parentGroupId}
                 key={group.id}
+                readOnly={readOnly}
                 contentGroupActions={contentGroupActions}
                 handleEditGroup={handleEditContentGroup}
               />
             ))}
-            {!isNewGroupVisible && (
+            {!readOnly && !isNewGroupVisible && (
               <Button
                 className="mt-4"
                 variant="outline-primary"
@@ -70,7 +72,7 @@ const ContentGroupsSection = ({
           </>
         ) :
         (
-          !isNewGroupVisible && <EmptyPlaceholder onCreateNewGroup={openNewGroup} />
+          !isNewGroupVisible && <EmptyPlaceholder onCreateNewGroup={openNewGroup} readOnly={readOnly} />
         )}
       {isNewGroupVisible && (
         <ContentGroupForm
@@ -83,6 +85,10 @@ const ContentGroupsSection = ({
   );
 };
 
+ContentGroupsSection.defaultProps = {
+  readOnly: false,
+};
+
 ContentGroupsSection.propTypes = {
   availableGroup: PropTypes.shape(availableGroupPropTypes).isRequired,
   contentGroupActions: PropTypes.shape({
@@ -90,6 +96,7 @@ ContentGroupsSection.propTypes = {
     handleDelete: PropTypes.func,
     handleEdit: PropTypes.func,
   }).isRequired,
+  readOnly: PropTypes.bool,
 };
 
 export default ContentGroupsSection;
