@@ -1,3 +1,4 @@
+import { snakeCase } from 'lodash/string';
 import { camelCaseObject, getConfig, snakeCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
@@ -262,5 +263,76 @@ export interface CourseSettingsData {
  */
 export async function getCourseSettings(courseId: string): Promise<CourseSettingsData> {
   const { data } = await getAuthenticatedHttpClient().get(getCourseSettingsApiUrl(courseId));
+  return camelCaseObject(data);
+}
+
+export const getCourseAppsApiUrl = () => `${getStudioBaseUrl()}/api/course_apps/v1/apps`;
+export const getCourseAdvancedSettingsApiUrl = () => `${getStudioBaseUrl()}/api/contentstore/v0/advanced_settings`;
+
+export interface CourseAppData {
+  id: string;
+  name: string;
+  description: string;
+  enabled: boolean;
+  documentationLinks: Record<string, string>;
+  allowedOperations: {
+    enable: boolean;
+    configure: boolean;
+  };
+  legacyLink?: string;
+}
+
+/**
+ * Fetches the course apps installed for provided course
+ */
+export async function getCourseApps(courseId: string): Promise<CourseAppData[]> {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(`${getCourseAppsApiUrl()}/${courseId}`);
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Updates the status of a course app.
+ */
+export async function updateCourseApp(courseId: string, appId: string, state: boolean) {
+  await getAuthenticatedHttpClient()
+    .patch(
+      `${getCourseAppsApiUrl()}/${courseId}`,
+      {
+        id: appId,
+        enabled: state,
+      },
+    );
+}
+
+/**
+ * Get's advanced setting for a course.
+ */
+export async function getCourseAdvancedSettings(
+  courseId: string,
+  settings: string[],
+): Promise<any> {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`, {
+      params: {
+        filter_fields: settings.map(snakeCase).join(','),
+      },
+    });
+  
+  return camelCaseObject(data);
+}
+
+/**
+ * Get's advanced setting for a course.
+ */
+export async function updateCourseAdvancedSettings(
+  courseId: string,
+  setting: string,
+  value: any,
+): Promise<Record<string, any>> {
+  const { data } = await getAuthenticatedHttpClient()
+    .patch(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`, { [snakeCase(setting)]: { value } });
+
   return camelCaseObject(data);
 }

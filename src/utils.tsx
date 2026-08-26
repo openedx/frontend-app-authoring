@@ -1,5 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import * as Yup from 'yup';
 import { snakeCase } from 'lodash/string';
@@ -8,10 +7,6 @@ import { getConfig, getPath } from '@edx/frontend-platform';
 
 import type { Dispatch, AnyAction } from 'redux';
 import type { TypeOfShape } from 'yup/lib/object';
-import { RequestStatus } from './data/constants';
-import { getCourseAppSettingValue, getLoadingStatus } from './pages-and-resources/data/selectors';
-import { fetchCourseAppSettings, updateCourseAppSetting } from './pages-and-resources/data/thunks';
-import { PagesAndResourcesContext } from './pages-and-resources/PagesAndResourcesProvider';
 import {
   hasValidDateFormat,
   hasValidTimeFormat,
@@ -20,6 +15,8 @@ import {
   startOfDayTime,
 } from './pages-and-resources/discussions/app-config-form/utils';
 import { DATE_TIME_FORMAT } from './constants';
+import { useCourseAdvancedSettings, useUpdateCourseAdvancedSettings } from './data/apiHooks';
+import { useCourseAuthoringContext } from './CourseAuthoringContext';
 
 export const executeThunk = async (
   thunk: (dispatch: any, state?: any) => Promise<any>,
@@ -132,22 +129,13 @@ export function getPagePath(courseId: string | undefined, isMfePageEnabled: stri
   return `${getConfig().STUDIO_BASE_URL}/${urlParameter}/${courseId}`;
 }
 
-export function useAppSetting(settingName: string) {
-  const dispatch = useDispatch();
-  const { courseId } = useContext(PagesAndResourcesContext);
-  const settingValue = useSelector(getCourseAppSettingValue(settingName));
-  const loadingStatus = useSelector(getLoadingStatus);
-  useEffect(() => {
-    if ([RequestStatus.DENIED, RequestStatus.FAILED].includes(loadingStatus)) {
-      return;
-    }
-    if (settingValue === undefined || settingValue === null) {
-      dispatch(fetchCourseAppSettings(courseId, [settingName]));
-    }
-  }, [courseId]);
+export function useAppSetting(settingName: string): any {
+  const { courseId } = useCourseAuthoringContext();
 
-  const saveSetting = async (value: any) => dispatch(updateCourseAppSetting(courseId, settingName, value));
-  return [settingValue, saveSetting];
+  const {
+    data: settingValue,
+  } = useCourseAdvancedSettings(courseId, [settingName]);
+  return settingValue?.[settingName]?.value;
 }
 
 export const getLabelById = (options: any[], id: any) => {

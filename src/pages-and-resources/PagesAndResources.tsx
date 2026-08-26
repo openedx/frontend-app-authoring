@@ -1,33 +1,32 @@
-import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { PageWrap } from '@edx/frontend-platform/react';
 import { Button, Hyperlink } from '@openedx/paragon';
-import { useModels } from '@src/generic/model-store';
-import { RequestStatus } from '@src/data/constants';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import getPageHeadTitle from '@src/generic/utils';
 import { AdditionalCoursePluginSlot } from '@src/plugin-slots/AdditionalCoursePluginSlot';
 import { AdditionalCourseContentPluginSlot } from '@src/plugin-slots/AdditionalCourseContentPluginSlot';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { DeprecatedReduxState } from '@src/store';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getPagesAndResourcesPermissions } from '@src/authz/permissionHelpers';
 
 import messages from './messages';
 import DiscussionsSettings from './discussions';
 import PageGrid from './pages/PageGrid';
-import { fetchCourseApps } from './data/thunks';
-import { getCourseAppsApiStatus, getLoadingStatus } from './data/selectors';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import SettingsComponent from './SettingsComponent';
+import { RequestStatus } from '@src/data/constants';
 
 const PagesAndResources = () => {
   const intl = useIntl();
-  const { courseId, courseDetails } = useCourseAuthoringContext();
+  const {
+    courseId,
+    courseDetails,
+    courseApps,
+    courseAppsStatus,
+  } = useCourseAuthoringContext();
   document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
 
   const {
@@ -37,41 +36,28 @@ const PagesAndResources = () => {
     canManagePagesAndResources,
   } = useCourseUserPermissions(courseId, getPagesAndResourcesPermissions(courseId));
 
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchCourseApps(courseId));
-  }, [courseId]);
-
-  const courseAppIds = useSelector((state: DeprecatedReduxState) => state.pagesAndResources.courseAppIds);
-  const loadingStatus = useSelector(getLoadingStatus);
-  const courseAppsApiStatus = useSelector(getCourseAppsApiStatus);
-
   const learningCourseURL = `${getConfig().LEARNING_BASE_URL}/course/${courseId}`;
   const redirectUrl = `/course/${courseId}/pages-and-resources`;
-
-  // The pages here are driven by course apps. The list of course app IDs comes from the LMS API.
-  // We display all enabled course apps regardless of whether or not the corresponding frontend plugin is available.
-  const pages = useModels('courseApps', courseAppIds);
 
   // We want the Xpert learning assistant and unit summaries to appear in the "Content Permissions" section instead,
   // so we remove them from pages and add them to contentPermissionsPages.
   const contentPermissionsPages: any[] = [];
 
   ['xpert_unit_summary', 'learning_assistant'].forEach(separateAppId => {
-    const index = pages.findIndex(app => app.id === separateAppId);
+    const index = courseApps.findIndex(app => app.id === separateAppId);
     if (index !== -1) {
-      const [page] = pages.splice(index, 1);
+      const [page] = courseApps.splice(index, 1);
       contentPermissionsPages.push(page);
     }
   });
 
-  if (loadingStatus === RequestStatus.IN_PROGRESS || isLoadingUserPermissions) {
+  if (courseAppsStatus === RequestStatus.PENDING || isLoadingUserPermissions) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
 
   // Gate: if user has neither VIEW nor MANAGE permission, show permission denied
-  const hasNoAccess = (!isAuthzEnabled && courseAppsApiStatus === RequestStatus.DENIED)
+  const hasNoAccess = (!isAuthzEnabled && courseAppsStatus === RequestStatus.DENIED)
     || (isAuthzEnabled && !canViewPagesAndResources && !canManagePagesAndResources);
 
   if (hasNoAccess) {
@@ -132,7 +118,7 @@ const PagesAndResources = () => {
         </Routes>
 
         <PageGrid
-          pages={pages}
+          pages={courseApps}
           pluginSlotComponent={<AdditionalCoursePluginSlot />}
           courseId={courseId}
         />

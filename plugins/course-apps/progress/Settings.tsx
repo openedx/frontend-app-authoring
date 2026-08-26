@@ -1,20 +1,35 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import PropTypes from 'prop-types';
 import React from 'react';
 import * as Yup from 'yup';
 import { getConfig } from '@edx/frontend-platform';
 import FormSwitchGroup from 'CourseAuthoring/generic/FormSwitchGroup';
 import { useAppSetting } from 'CourseAuthoring/utils';
 import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
+import { useUpdateCourseAdvancedSettings } from 'CourseAuthoring/data/apiHooks';
+import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContext';
 import messages from './messages';
 
-const ProgressSettings = ({ onClose }) => {
+const ProgressSettings = ({ onClose }: { onClose: () => void }) => {
   const intl = useIntl();
-  const [disableProgressGraph, saveSetting] = useAppSetting('disableProgressGraph');
+  const { courseId } = useCourseAuthoringContext();
+  const settingsName = 'disableProgressGraph'
+  const disableProgressGraph = useAppSetting(settingsName);
+  const updateCourseAdvancedSettingsMutation = useUpdateCourseAdvancedSettings(courseId);
   const showProgressGraphSetting = getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS.toString().toLowerCase() === 'true';
 
   const handleSettingsSave = async (values) => {
-    if (showProgressGraphSetting) { await saveSetting(!values.enableProgressGraph); }
+    if (showProgressGraphSetting) {
+      try {
+        await updateCourseAdvancedSettingsMutation.mutateAsync({
+          setting: settingsName,
+          value: !values.enableProgressGraph,
+        });
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    return true;
   };
 
   return (
@@ -44,10 +59,6 @@ const ProgressSettings = ({ onClose }) => {
       )}
     </AppSettingsModal>
   );
-};
-
-ProgressSettings.propTypes = {
-  onClose: PropTypes.func.isRequired,
 };
 
 export default ProgressSettings;

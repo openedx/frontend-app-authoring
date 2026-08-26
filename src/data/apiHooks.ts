@@ -26,6 +26,11 @@ import {
   waffleFlagDefaults,
   getCourseSettings,
   CourseSettingsData,
+  CourseAppData,
+  getCourseApps,
+  updateCourseApp,
+  getCourseAdvancedSettings,
+  updateCourseAdvancedSettings,
 } from './api';
 import { RequestStatus, RequestStatusType } from './constants';
 
@@ -237,3 +242,51 @@ export const useCourseSettings = (courseId: string) => (
     queryFn: () => getCourseSettings(courseId),
   })
 );
+
+/**
+ * Fetch the course apps installed for a course.
+ */
+export const useCourseApps = (courseId: string) => (
+  useQuery<CourseAppData[], AxiosError>({
+    queryKey: ['courseApps', courseId],
+    queryFn: () => getCourseApps(courseId),
+  })
+);
+
+/**
+ * Update the enabled status of a course app.
+ * Invalidates the course apps list on success.
+ */
+export const useUpdateCourseAppStatus = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ appId, state }: { appId: string; state: boolean; }) => updateCourseApp(courseId, appId, state),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['courseApps', courseId] }),
+  });
+};
+
+/**
+ * Fetch advanced settings for a course, filtered to the given setting names.
+ */
+export const useCourseAdvancedSettings = (courseId: string, settings: string[]) => (
+  useQuery({
+    queryKey: ['courseSettings', courseId],
+    queryFn: () => getCourseAdvancedSettings(courseId, settings),
+  })
+);
+
+/**
+ * Update a single advanced setting for a course.
+ */
+export const useUpdateCourseAdvancedSettings = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ setting, value }: { setting: string; value: unknown; }) => (
+      updateCourseAdvancedSettings(courseId, setting, value)
+    ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['courseSettings', courseId] });
+      queryClient.invalidateQueries({ queryKey: ['courseApps', courseId] });
+    },
+  });
+};
