@@ -1,8 +1,13 @@
-import { fireEvent, render, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
+import {
+  fireEvent,
+  initializeMocks,
+  render,
+  screen,
+  userEvent,
+  waitFor,
+} from '@src/testUtils';
 
-import SettingCard from './SettingCard';
+import SettingCard, { type SettingCardProps } from './SettingCard';
 import messages from './messages';
 
 const setEdited = jest.fn();
@@ -25,10 +30,9 @@ jest.mock('react-textarea-autosize', () =>
     />
   )));
 
-const RootWrapper = () => (
-  <IntlProvider locale="en">
+const renderComponent = (props: Partial<SettingCardProps> = {}) =>
+  render(
     <SettingCard
-      isOn
       name="settingName"
       setEdited={setEdited}
       setIsEditableState={setIsEditableState}
@@ -37,48 +41,42 @@ const RootWrapper = () => (
       handleBlur={handleBlur}
       isEditableState
       saveSettingsPrompt={false}
-    />
-  </IntlProvider>
-);
+      {...props}
+    />,
+  );
 
 describe('<SettingCard />', () => {
-  afterEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    initializeMocks();
+  });
+
   it('renders the setting card with the provided data', () => {
-    const { getByText, getByLabelText } = render(<RootWrapper />);
-    const cardTitle = getByText(/Setting Name/i);
-    const input = getByLabelText(/Setting Name/i);
+    renderComponent();
+    const cardTitle = screen.getByText(/Setting Name/i);
+    const input = screen.getByLabelText(/Setting Name/i);
     expect(cardTitle).toBeInTheDocument();
     expect(input).toBeInTheDocument();
-    expect(input.value).toBe(JSON.stringify(settingData.value, null, 4));
+    expect(input).toHaveValue(JSON.stringify(settingData.value, null, 4));
   });
+
   it('displays the deprecated status when the setting is deprecated', () => {
-    const deprecatedSettingData = { ...settingData, deprecated: true };
-    const { getByText } = render(
-      <IntlProvider locale="en">
-        <SettingCard
-          isOn
-          name="settingName"
-          setEdited={setEdited}
-          setIsEditableState={setIsEditableState}
-          showSaveSettingsPrompt={showSaveSettingsPrompt}
-          settingData={deprecatedSettingData}
-          handleBlur={handleBlur}
-          isEditable={false}
-          saveSettingsPrompt
-        />
-      </IntlProvider>,
-    );
-    const deprecatedStatus = getByText(messages.deprecated.defaultMessage);
-    expect(deprecatedStatus).toBeInTheDocument();
+    renderComponent({
+      settingData: { ...settingData, deprecated: true },
+      isEditableState: false,
+      saveSettingsPrompt: true,
+    });
+    expect(screen.getByText(messages.deprecated.defaultMessage)).toBeInTheDocument();
   });
+
   it('does not display the deprecated status when the setting is not deprecated', () => {
-    const { queryByText } = render(<RootWrapper />);
-    expect(queryByText(messages.deprecated.defaultMessage)).toBeNull();
+    renderComponent();
+    expect(screen.queryByText(messages.deprecated.defaultMessage)).toBeNull();
   });
+
   it('calls setEdited on blur', async () => {
     const user = userEvent.setup();
-    const { getByLabelText } = render(<RootWrapper />);
-    const inputBox = getByLabelText(/Setting Name/i);
+    renderComponent();
+    const inputBox = screen.getByLabelText(/Setting Name/i);
     fireEvent.focus(inputBox);
     await user.clear(inputBox);
     await user.type(inputBox, '3, 2, 1');
@@ -90,5 +88,10 @@ describe('<SettingCard />', () => {
       expect(setEdited).toHaveBeenCalled();
       expect(handleBlur).toHaveBeenCalled();
     });
+  });
+
+  it('disables the setting input when `disabled` is true', () => {
+    renderComponent({ disabled: true });
+    expect(screen.getByLabelText(/Setting Name/i)).toBeDisabled();
   });
 });

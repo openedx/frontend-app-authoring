@@ -9,12 +9,28 @@ import {
   useToggle,
 } from '@openedx/paragon';
 import { InfoOutline, Warning } from '@openedx/paragon/icons';
-import PropTypes from 'prop-types';
 import { capitalize } from 'lodash';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import messages from './messages';
+
+export interface SettingCardProps {
+  name: string;
+  settingData: {
+    deprecated?: boolean;
+    help?: string;
+    displayName?: string;
+    value?: unknown;
+  };
+  handleBlur: () => void;
+  setEdited: React.Dispatch<React.SetStateAction<Record<string, unknown>>>;
+  showSaveSettingsPrompt: (show: boolean) => void;
+  saveSettingsPrompt: boolean;
+  isEditableState: boolean;
+  setIsEditableState: (isEditable: boolean) => void;
+  disabled?: boolean;
+}
 
 const SettingCard = ({
   name,
@@ -26,7 +42,7 @@ const SettingCard = ({
   isEditableState,
   setIsEditableState,
   disabled = false,
-}) => {
+}: SettingCardProps) => {
   const intl = useIntl();
   const { deprecated, help, displayName } = settingData;
   const initialValue = JSON.stringify(settingData.value, null, 4);
@@ -84,7 +100,7 @@ const SettingCard = ({
                   <div
                     className="p-2 x-small rounded modal-popup-content"
                     // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML={{ __html: help }}
+                    dangerouslySetInnerHTML={{ __html: help ?? '' }}
                   />
                 </ModalPopup>
                 <ActionRow.Spacer />
@@ -113,29 +129,6 @@ const SettingCard = ({
       </Card>
     </li>
   );
-};
-
-SettingCard.propTypes = {
-  settingData: PropTypes.shape({
-    deprecated: PropTypes.bool,
-    help: PropTypes.string,
-    displayName: PropTypes.string,
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.bool,
-      PropTypes.number,
-      PropTypes.object,
-      PropTypes.array,
-    ]),
-  }).isRequired,
-  setEdited: PropTypes.func.isRequired,
-  showSaveSettingsPrompt: PropTypes.func.isRequired,
-  name: PropTypes.string.isRequired,
-  handleBlur: PropTypes.func.isRequired,
-  saveSettingsPrompt: PropTypes.bool.isRequired,
-  isEditableState: PropTypes.bool.isRequired,
-  setIsEditableState: PropTypes.func.isRequired,
-  disabled: PropTypes.bool,
 };
 
 export default SettingCard;
