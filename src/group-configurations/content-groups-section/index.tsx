@@ -1,4 +1,4 @@
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button, useToggle } from '@openedx/paragon';
 import { Add as AddIcon } from '@openedx/paragon/icons';
 
@@ -20,7 +20,6 @@ const ContentGroupsSection = ({
   contentGroupActions,
   readOnly = false,
 }: ContentGroupsSectionProps) => {
-  const { formatMessage } = useIntl();
   const [isNewGroupVisible, openNewGroup, hideNewGroup] = useToggle(false);
   const { id: parentGroupId, groups, name } = availableGroup;
   const groupNames = groups?.map((group) => group.name);
@@ -75,7 +74,7 @@ const ContentGroupsSection = ({
                 iconBefore={AddIcon}
                 block
               >
-                {formatMessage(messages.addNewGroup)}
+                <FormattedMessage {...messages.addNewGroup} />
               </Button>
             )}
           </>

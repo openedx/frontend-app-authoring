@@ -1,5 +1,5 @@
 import { Button, useToggle } from '@openedx/paragon';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Add as AddIcon } from '@openedx/paragon/icons';
 
 import { AvailableGroup, GroupActions } from '@src/group-configurations/types';
@@ -21,7 +21,6 @@ const ExperimentConfigurationsSection = ({
   experimentConfigurationActions,
   readOnly = false,
 }: ExperimentConfigurationsSectionProps) => {
-  const { formatMessage } = useIntl();
   const [
     isNewConfigurationVisible,
     openNewConfiguration,
@@ -37,7 +36,7 @@ const ExperimentConfigurationsSection = ({
   return (
     <div className="mt-2.5">
       <h2 className="lead text-black mb-3 configuration-section-name">
-        {formatMessage(messages.title)}
+        <FormattedMessage {...messages.title} />
       </h2>
       {availableGroups.length ?
         (
@@ -60,7 +59,7 @@ const ExperimentConfigurationsSection = ({
                 iconBefore={AddIcon}
                 block
               >
-                {formatMessage(messages.addNewGroup)}
+                <FormattedMessage {...messages.addNewGroup} />
               </Button>
             )}
           </>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Hyperlink,
@@ -63,7 +63,7 @@ const ExperimentCard = ({
 
   const outlineComponentLink = (
     <Hyperlink destination={outlineUrl}>
-      {formatMessage(messages.courseOutline)}
+      <FormattedMessage {...messages.courseOutline} />
     </Hyperlink>
   );
 
@@ -72,7 +72,7 @@ const ExperimentCard = ({
       className="small text-gray-700"
       data-testid="experiment-configuration-card-usage-empty"
     >
-      {formatMessage(messages.emptyExperimentGroup, { outlineComponentLink })}
+      <FormattedMessage {...messages.emptyExperimentGroup} values={{ outlineComponentLink }} />
     </span>
   );
 
@@ -124,7 +124,7 @@ const ExperimentCard = ({
               {!readOnly && (
                 <ActionRow className="ml-auto d-flex">
                   <IconButtonWithTooltip
-                    tooltipContent={formatMessage(messages.actionEdit)}
+                    tooltipContent={<FormattedMessage {...messages.actionEdit} />}
                     alt={formatMessage(messages.actionEdit)}
                     src={EditOutlineIcon}
                     iconAs={Icon}
@@ -133,11 +133,13 @@ const ExperimentCard = ({
                   />
                   <IconButtonWithTooltip
                     className="configuration-card-header__delete-tooltip"
-                    tooltipContent={formatMessage(
-                      isUsedInLocation
-                        ? messages.experimentConfigurationDeleteRestriction
-                        : messages.actionDelete,
-                    )}
+                    tooltipContent={
+                      <FormattedMessage
+                        {...(isUsedInLocation
+                          ? messages.experimentConfigurationDeleteRestriction
+                          : messages.actionDelete)}
+                      />
+                    }
                     alt={formatMessage(messages.actionDelete)}
                     src={DeleteOutlineIcon}
                     iconAs={Icon}
