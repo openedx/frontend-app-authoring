@@ -86,6 +86,18 @@ const messages = defineMessages({
     id: 'course-authoring.import-tags.wizard.step-populate.desc',
     defaultMessage: 'Taxonomy Description',
   },
+  importWizardStepPopulateTaxonomyType: {
+    id: 'course-authoring.import-tags.wizard.step-populate.type',
+    defaultMessage: 'Taxonomy Type',
+  },
+  importWizardStepPopulateTaxonomyTypeTags: {
+    id: 'course-authoring.import-tags.wizard.step-populate.type.tags',
+    defaultMessage: 'Tags',
+  },
+  importWizardStepPopulateTaxonomyTypeCompetency: {
+    id: 'course-authoring.import-tags.wizard.step-populate.type.competency',
+    defaultMessage: 'Competency',
+  },
   importWizardStepPlanTitle: {
     id: 'course-authoring.import-tags.wizard.step-plan.title',
     defaultMessage: 'Differences between files',

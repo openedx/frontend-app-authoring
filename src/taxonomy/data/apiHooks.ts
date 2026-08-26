@@ -16,6 +16,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { apiUrls, ALL_TAXONOMIES, getApiErrorMessage } from './api';
 import * as api from './api';
 import type { QueryOptions, TagListData } from './types';
+import { TaxonomyType } from '../import-tags/constants';
 
 // Query key patterns. Allows an easy way to clear all data related to a given taxonomy.
 // https://github.com/openedx/frontend-app-admin-portal/blob/2ba315d/docs/decisions/0006-tanstack-react-query.rst
@@ -116,11 +117,13 @@ export const useImportNewTaxonomy = () => {
     mutationFn: async ({
       name,
       description,
+      taxonomyType,
       file,
-    }: { name: string; description: string; file: File; }) => {
+    }: { name: string; description: string; taxonomyType: TaxonomyType; file: File; }) => {
       const formData = new FormData();
       formData.append('taxonomy_name', name);
       formData.append('taxonomy_description', description);
+      formData.append('taxonomy_type', taxonomyType);
       formData.append('file', file);
 
       const { data } = await getAuthenticatedHttpClient().post(apiUrls.createTaxonomyFromImport(), formData);
