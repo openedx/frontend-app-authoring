@@ -17,6 +17,7 @@ import {
   useImportTags,
   useImportNewTaxonomy,
 } from './apiHooks';
+import { TaxonomyType } from '../import-tags/constants';
 
 let axiosMock;
 
@@ -30,13 +31,13 @@ const queryClient = new QueryClient({
 
 const wrapper = ({ children }) => (
   <QueryClientProvider client={queryClient}>
-    <IntlProvider locale="en">
-      {children}
-    </IntlProvider>
+    <IntlProvider locale="en">{children}</IntlProvider>
   </QueryClientProvider>
 );
 
 const emptyFile = new File([], 'empty.csv');
+
+const taxonomyTypes = Object.values(TaxonomyType);
 
 describe('import taxonomy api calls', () => {
   beforeEach(() => {
@@ -55,24 +56,40 @@ describe('import taxonomy api calls', () => {
     jest.clearAllMocks();
   });
 
-  it('should call import new taxonomy', async () => {
-    const mockResult = {
-      id: 8,
-      name: 'Taxonomy name',
-      exportId: 'taxonomy_export_id',
-      description: 'Taxonomy description',
-    };
-    axiosMock.onPost(apiUrls.createTaxonomyFromImport()).reply(201, mockResult);
-    const { result } = renderHook(() => useImportNewTaxonomy(), { wrapper });
-    const mutateResult = await result.current.mutateAsync({
-      name: 'Taxonomy name',
-      description: 'Taxonomy description',
-      file: emptyFile,
-    });
+  it.each(taxonomyTypes)(
+    'should call import new taxonomy with the %s type',
+    async (taxonomyType) => {
+      const mockResult = {
+        id: 8,
+        name: 'Taxonomy name',
+        exportId: 'taxonomy_export_id',
+        description: 'Taxonomy description',
+      };
+      axiosMock
+        .onPost(apiUrls.createTaxonomyFromImport())
+        .reply(201, mockResult);
+      const { result } = renderHook(() => useImportNewTaxonomy(), {
+        wrapper,
+      });
+      const mutateResult = await result.current.mutateAsync({
+        name: 'Taxonomy name',
+        description: 'Taxonomy description',
+        taxonomyType,
+        file: emptyFile,
+      });
 
-    expect(axiosMock.history.post[0].url).toEqual(apiUrls.createTaxonomyFromImport());
-    expect(mutateResult).toEqual(mockResult);
-  });
+      expect(axiosMock.history.post[0].url).toEqual(
+        apiUrls.createTaxonomyFromImport(),
+      );
+      const formData = axiosMock.history.post[0].data;
+      expect(formData.get('taxonomy_name')).toEqual('Taxonomy name');
+      expect(formData.get('taxonomy_description')).toEqual(
+        'Taxonomy description',
+      );
+      expect(formData.get('taxonomy_type')).toEqual(taxonomyType);
+      expect(mutateResult).toEqual(mockResult);
+    },
+  );
 
   it('should call import tags', async () => {
     const taxonomy = { id: 1, name: 'taxonomy name' };

@@ -12,6 +12,8 @@ import {
   Stack,
   Stepper,
   Form,
+  MenuItem,
+  SelectMenu,
 } from '@openedx/paragon';
 import {
   DeleteOutline,
@@ -21,13 +23,16 @@ import {
 } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 
-import LoadingButton from '../../generic/loading-button';
-import { LoadingSpinner } from '../../generic/Loading';
-import { getFileSizeToClosestByte } from '../../utils';
 import { TaxonomyContext } from '../common/context';
 import { getTaxonomyExportFile, apiUrls } from '../data/api';
 import { useImportTags, useImportPlan, useImportNewTaxonomy } from '../data/apiHooks';
 import messages from './messages';
+import { TaxonomyType, TAXONOMY_TYPE_OPTIONS } from './constants';
+import LoadingButton from '@src/generic/loading-button';
+import { LoadingSpinner } from '@src/generic/Loading';
+import { getFileSizeToClosestByte } from '@src/utils';
+
+import './ImportTagsWizard.scss';
 
 const linebreak = (
   <>
@@ -198,6 +203,10 @@ const PopulateStep = ({
     setTaxonomyPopulateData(updatedState);
   };
 
+  const handleTypeChange = (taxonomyType) => {
+    setTaxonomyPopulateData({ ...taxonomyPopulateData, taxonomyType });
+  };
+
   return (
     <Stepper.Step eventKey="populate" title={intl.formatMessage(messages.importWizardStepperPopulateStepTitle)}>
       <Stack gap={3} data-testid="populate-step">
@@ -214,6 +223,32 @@ const PopulateStep = ({
             onChange={handleDescChange}
           />
         </Form.Group>
+        <Form.Group>
+          <Form.Label id="taxonomy-type-label">
+            {intl.formatMessage(messages.importWizardStepPopulateTaxonomyType)}
+          </Form.Label>
+          <SelectMenu
+            role="group"
+            className="taxonomy-type-select"
+            variant="outline-primary"
+            aria-labelledby="taxonomy-type-label"
+            data-testid="taxonomy-type-select"
+          >
+            {TAXONOMY_TYPE_OPTIONS.map(({ value, message }) => {
+              const isSelected = value === taxonomyPopulateData.taxonomyType;
+              return (
+                <MenuItem
+                  key={value}
+                  defaultSelected={isSelected}
+                  data-autofocus={isSelected || undefined}
+                  onClick={() => handleTypeChange(value)}
+                >
+                  {intl.formatMessage(message)}
+                </MenuItem>
+              );
+            })}
+          </SelectMenu>
+        </Form.Group>
       </Stack>
     </Stepper.Step>
   );
@@ -223,6 +258,7 @@ PopulateStep.propTypes = {
   taxonomyPopulateData: PropTypes.shape({
     taxonomyName: PropTypes.string.isRequired,
     taxonomyDesc: PropTypes.string.isRequired,
+    taxonomyType: PropTypes.oneOf(TAXONOMY_TYPE_OPTIONS.map(({ value }) => value)).isRequired,
   }).isRequired,
   setTaxonomyPopulateData: PropTypes.func.isRequired,
 };
@@ -305,6 +341,7 @@ const ImportTagsWizard = ({
   const [taxonomyPopulateData, setTaxonomyPopulateData] = useState({
     taxonomyName: '',
     taxonomyDesc: '',
+    taxonomyType: TaxonomyType.Tags,
   });
 
   const importNewTaxonomyMutation = useImportNewTaxonomy();
@@ -312,11 +349,12 @@ const ImportTagsWizard = ({
   const importNewTaxonomy = async () => {
     disableDialog();
     try {
-      const { taxonomyName, taxonomyDesc } = taxonomyPopulateData;
+      const { taxonomyName, taxonomyDesc, taxonomyType } = taxonomyPopulateData;
       if (file) {
         await importNewTaxonomyMutation.mutateAsync({
           name: taxonomyName,
           description: taxonomyDesc,
+          taxonomyType,
           file,
         });
       }
