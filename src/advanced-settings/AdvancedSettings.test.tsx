@@ -53,6 +53,7 @@ describe('<AdvancedSettings />', () => {
       isLoading: false,
       isAuthzEnabled: false,
       canViewAdvancedSettings: true,
+      canManageAdvancedSettings: true,
     } as ReturnType<typeof useCourseUserPermissions>);
   });
 
@@ -176,6 +177,7 @@ describe('<AdvancedSettings />', () => {
       isLoading: false,
       isAuthzEnabled: true,
       canViewAdvancedSettings: true,
+      canManageAdvancedSettings: true,
     } as ReturnType<typeof useCourseUserPermissions>);
     render();
     expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
@@ -211,5 +213,22 @@ describe('<AdvancedSettings />', () => {
     render();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
     expect(screen.queryByText(/Under Construction/i)).not.toBeInTheDocument();
+  });
+
+  it('should show view-only alert and disable editing when user has view but not manage permission', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
+      isLoading: false,
+      isAuthzEnabled: true,
+      canViewAdvancedSettings: true,
+      canManageAdvancedSettings: false,
+    } as ReturnType<typeof useCourseUserPermissions>);
+    render();
+    expect(await screen.findByTestId('viewOnlyPermissionsAlert')).toBeInTheDocument();
+    expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+    const textarea = screen.getByLabelText(/Advanced Module List/i);
+    expect(textarea).toBeDisabled();
+    expect(screen.queryByText(messages.buttonSaveText.defaultMessage)).not.toBeInTheDocument();
+    expect(screen.queryByText(messages.buttonCancelText.defaultMessage)).not.toBeInTheDocument();
   });
 });
