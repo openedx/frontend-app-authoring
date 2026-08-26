@@ -8,16 +8,18 @@ import {
 
 import messages from '../../messages';
 import useHeaderButtons from './hooks/useHeaderButtons';
+import { useCertificatesContext } from '@src/certificates/context';
 
 const HeaderButtons = () => {
   const intl = useIntl();
+  const { canManageCertificates } = useCertificatesContext();
   const {
     previewUrl,
     courseModes,
     dropdowmItem,
-    isCertificateActive,
     setDropdowmItem,
     handleActivationStatus,
+    isCertificateActive,
   } = useHeaderButtons();
 
   return (
@@ -34,14 +36,16 @@ const HeaderButtons = () => {
       >
         {intl.formatMessage(messages.headingActionsPreview)}
       </Button>
-      <Button
-        variant="outline-primary"
-        onClick={handleActivationStatus}
-      >
-        {isCertificateActive
-          ? intl.formatMessage(messages.headingActionsDeactivate)
-          : intl.formatMessage(messages.headingActionsActivate)}
-      </Button>
+      {canManageCertificates && (
+        <Button
+          variant="outline-primary"
+          onClick={handleActivationStatus}
+        >
+          {isCertificateActive
+            ? intl.formatMessage(messages.headingActionsDeactivate)
+            : intl.formatMessage(messages.headingActionsActivate)}
+        </Button>
+      )}
     </>
   );
 };

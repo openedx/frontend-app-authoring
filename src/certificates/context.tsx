@@ -1,6 +1,8 @@
 import { createContext, useContext, useMemo, useState } from 'react';
 import { MODE_STATES } from './data/constants';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getCertificatesPermissions } from '@src/authz/permissionHelpers';
 import {
   useCreateCertificate,
   useDeleteCertificate,
@@ -16,6 +18,8 @@ export type CertificatesContextData = {
   setComponentMode: (mode: ModeState) => void;
   savingIsSuccess: boolean;
   savingErrorMessage?: string;
+  canViewCertificates: boolean;
+  canManageCertificates: boolean;
   activationStatusMutation: UseMutationResult;
   updateCertificateMutation: UseMutationResult;
   deleteCertificateMutation: UseMutationResult;
@@ -30,6 +34,12 @@ const CertificatesContext = createContext<CertificatesContextData | undefined>(u
 export const CertificatesProvider = ({ children }) => {
   const { courseId } = useCourseAuthoringContext();
   const [componentMode, setComponentMode] = useState<ModeState>(MODE_STATES.noModes);
+
+  const {
+    canViewCertificates,
+    canManageCertificates,
+  } = useCourseUserPermissions(courseId, getCertificatesPermissions(courseId));
+
   const activationStatusMutation = useUpdateCertificateActiveStatus(courseId);
   const updateCertificateMutation = useUpdateCertificate(courseId);
   const deleteCertificateMutation = useDeleteCertificate(courseId);
@@ -49,6 +59,8 @@ export const CertificatesProvider = ({ children }) => {
     const contextValue = {
       componentMode,
       setComponentMode,
+      canViewCertificates,
+      canManageCertificates,
       activationStatusMutation,
       updateCertificateMutation,
       deleteCertificateMutation,
@@ -61,6 +73,8 @@ export const CertificatesProvider = ({ children }) => {
   }, [
     componentMode,
     setComponentMode,
+    canViewCertificates,
+    canManageCertificates,
     activationStatusMutation,
     updateCertificateMutation,
   ]);

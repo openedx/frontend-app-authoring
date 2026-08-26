@@ -1,4 +1,8 @@
 import { initializeMocks, render, screen, userEvent } from '@src/testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { CertificatesProvider } from '@src/certificates/context';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 
 import { signatoriesMock } from '../../__mocks__';
 import commonMessages from '../../messages';
@@ -7,9 +11,26 @@ import Signatory from './Signatory';
 
 const mockHandleEdit = jest.fn();
 
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
+}));
+
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canViewCertificates: true,
+    canManageCertificates: true,
+    ...overrides,
+  } as ReturnType<typeof useCourseUserPermissions>);
+
 const renderSignatory = (props) =>
   render(
-    <Signatory {...props} />,
+    <CourseAuthoringProvider courseId="course-123">
+      <CertificatesProvider>
+        <Signatory {...props} />
+      </CertificatesProvider>
+    </CourseAuthoringProvider>,
   );
 
 const defaultProps = { ...signatoriesMock[0], handleEdit: mockHandleEdit, index: 0 };
@@ -17,6 +38,8 @@ const defaultProps = { ...signatoriesMock[0], handleEdit: mockHandleEdit, index:
 describe('Signatory Component', () => {
   beforeEach(() => {
     initializeMocks();
+    mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+    mockPermissions();
   });
 
   it('renders signatory data in view mode', () => {
@@ -44,5 +67,13 @@ describe('Signatory Component', () => {
     await user.click(editButton);
 
     expect(mockHandleEdit).toHaveBeenCalled();
+  });
+
+  it('hides edit button in view-only mode', () => {
+    mockPermissions({ canManageCertificates: false });
+    renderSignatory(defaultProps);
+
+    expect(screen.queryByRole('button', { name: commonMessages.editTooltip.defaultMessage })).not
+      .toBeInTheDocument();
   });
 });

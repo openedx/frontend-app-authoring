@@ -12,6 +12,7 @@ import { getConfig } from '@edx/frontend-platform';
 
 import commonMessages from '../../messages';
 import messages from '../messages';
+import { useCertificatesContext } from '@src/certificates/context';
 
 interface SignatoryProps {
   name: string;
@@ -31,6 +32,7 @@ const Signatory = ({
   handleEdit,
 }: SignatoryProps) => {
   const intl = useIntl();
+  const { canManageCertificates } = useCertificatesContext();
 
   return (
     <div className="bg-light-200 p-2.5 signatory" data-testid="signatory">
@@ -49,14 +51,16 @@ const Signatory = ({
         </Stack>
       </Stack>
 
-      <IconButtonWithTooltip
-        className="signatory__action-button"
-        src={EditOutlineIcon}
-        iconAs={Icon}
-        alt={intl.formatMessage(commonMessages.editTooltip)}
-        tooltipContent={<div>{intl.formatMessage(commonMessages.editTooltip)}</div>}
-        onClick={handleEdit}
-      />
+      {canManageCertificates && (
+        <IconButtonWithTooltip
+          className="signatory__action-button"
+          src={EditOutlineIcon}
+          iconAs={Icon}
+          alt={intl.formatMessage(commonMessages.editTooltip)}
+          tooltipContent={<div>{intl.formatMessage(commonMessages.editTooltip)}</div>}
+          onClick={handleEdit}
+        />
+      )}
       <div className="signatory__image-container">
         {signatureImagePath && (
           <Image

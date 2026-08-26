@@ -4,6 +4,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { SavingErrorAlert } from '@src/generic/saving-error-alert';
 import SubHeader from '@src/generic/sub-header/SubHeader';
+import ViewOnlyPermissionsAlert from '@src/generic/ViewOnlyPermissionsAlert';
 import messages from '../messages';
 import CertificatesSidebar from './certificates-sidebar/CertificatesSidebar';
 import HeaderButtons from './header-buttons/HeaderButtons';
@@ -20,6 +21,7 @@ const MainLayout = ({ showHeaderButtons = false, children }: MainLayoutProps) =>
   const {
     savingIsSuccess,
     savingErrorMessage,
+    canManageCertificates,
   } = useCertificatesContext();
 
   useEffect(() => {
@@ -39,6 +41,7 @@ const MainLayout = ({ showHeaderButtons = false, children }: MainLayoutProps) =>
           headerActions={showHeaderButtons ?
             <HeaderButtons /> :
             null}
+          banner={!canManageCertificates ? <ViewOnlyPermissionsAlert className="mb-3" /> : null}
         />
         <section>
           <Layout
