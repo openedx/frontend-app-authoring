@@ -3,7 +3,7 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Add as AddIcon } from '@openedx/paragon/icons';
 
 import { AvailableGroup, GroupActions } from '@src/group-configurations/types';
-import { useScrollToHashElement } from '../../hooks';
+import { useScrollToHashElement } from '@src/hooks';
 import EmptyPlaceholder from '../empty-placeholder';
 import ExperimentForm from './ExperimentForm';
 import ExperimentCard from './ExperimentCard';

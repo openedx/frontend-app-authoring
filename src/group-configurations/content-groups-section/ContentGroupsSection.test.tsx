@@ -1,13 +1,17 @@
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import userEvent from '@testing-library/user-event';
-import { render } from '@testing-library/react';
-
+import {
+  initializeMocks,
+  render,
+  screen,
+  userEvent,
+  waitFor,
+} from '@src/testUtils';
 import { AvailableGroup } from '@src/group-configurations/types';
 import { contentGroupsMock } from '../__mocks__';
 import placeholderMessages from '../empty-placeholder/messages';
 import messages from './messages';
 import ContentGroupsSection from '.';
 
+const courseId = 'course-v1:org+101+101';
 const handleCreateMock = jest.fn();
 const handleDeleteMock = jest.fn();
 const handleEditMock = jest.fn();
@@ -19,75 +23,142 @@ const contentGroupActions = {
 
 const renderComponent = (props = {}) =>
   render(
-    <IntlProvider locale="en">
-      <ContentGroupsSection
-        availableGroup={contentGroupsMock as AvailableGroup}
-        contentGroupActions={contentGroupActions}
-        {...props}
-      />
-    </IntlProvider>,
+    <ContentGroupsSection
+      availableGroup={contentGroupsMock as AvailableGroup}
+      contentGroupActions={contentGroupActions}
+      {...props}
+    />,
+    { path: '/course/:courseId/group_configurations', params: { courseId } },
   );
 
 describe('<ContentGroupsSection />', () => {
-  it('renders component correctly', () => {
-    const { getByText, getByRole, getAllByTestId } = renderComponent();
-    expect(getByText(contentGroupsMock.name)).toBeInTheDocument();
-    expect(
-      getByRole('button', { name: messages.addNewGroup.defaultMessage }),
-    ).toBeInTheDocument();
+  beforeEach(() => {
+    initializeMocks();
+  });
 
-    expect(getAllByTestId('content-group-card')).toHaveLength(
-      contentGroupsMock.groups.length,
-    );
+  it('renders component correctly', () => {
+    renderComponent();
+
+    expect(screen.getByText(contentGroupsMock.name)).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: messages.addNewGroup.defaultMessage }),
+    ).toBeInTheDocument();
+    contentGroupsMock.groups.forEach(({ name }) => {
+      expect(screen.getByRole('button', { name: new RegExp(name) })).toBeInTheDocument();
+    });
   });
 
   it('renders empty section', () => {
-    const { getByTestId } = renderComponent({ availableGroup: {} });
-    expect(
-      getByTestId('group-configurations-empty-placeholder'),
-    ).toBeInTheDocument();
+    renderComponent({ availableGroup: {} });
+
+    expect(screen.getByText(placeholderMessages.title.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders container with new group on create click if section is empty', async () => {
     const user = userEvent.setup();
-    const { getByRole, getByTestId } = renderComponent({ availableGroup: {} });
+    renderComponent({ availableGroup: {} });
+
     await user.click(
-      getByRole('button', { name: placeholderMessages.button.defaultMessage }),
+      screen.getByRole('button', { name: placeholderMessages.button.defaultMessage }),
     );
-    expect(getByTestId('content-group-form')).toBeInTheDocument();
+
+    expect(screen.getByText(messages.newGroupHeader.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders container with new group on create click if section has groups', async () => {
     const user = userEvent.setup();
-    const { getByRole, getByTestId } = renderComponent();
+    renderComponent();
+
     await user.click(
-      getByRole('button', { name: messages.addNewGroup.defaultMessage }),
+      screen.getByRole('button', { name: messages.addNewGroup.defaultMessage }),
     );
-    expect(getByTestId('content-group-form')).toBeInTheDocument();
+
+    expect(screen.getByText(messages.newGroupHeader.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('creates a group with the new name appended to the existing ones', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+
+    await user.click(
+      screen.getByRole('button', { name: messages.addNewGroup.defaultMessage }),
+    );
+    await user.type(
+      screen.getByPlaceholderText(messages.newGroupInputPlaceholder.defaultMessage),
+      'Brand new group',
+    );
+    await user.click(
+      screen.getByRole('button', { name: messages.createButton.defaultMessage }),
+    );
+
+    await waitFor(() => {
+      expect(handleCreateMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          groups: [
+            ...contentGroupsMock.groups,
+            expect.objectContaining({ name: 'Brand new group' }),
+          ],
+        }),
+        expect.any(Function),
+      );
+    });
+  });
+
+  it('edits a group by renaming only the matching one', async () => {
+    const user = userEvent.setup();
+    const [editedGroup] = contentGroupsMock.groups;
+    renderComponent();
+
+    await user.click(
+      screen.getAllByRole('button', { name: messages.actionEdit.defaultMessage })[0],
+    );
+    const nameInput = screen.getByPlaceholderText(
+      messages.newGroupInputPlaceholder.defaultMessage,
+    );
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Renamed group');
+    await user.click(
+      screen.getByRole('button', { name: messages.saveButton.defaultMessage }),
+    );
+
+    await waitFor(() => {
+      expect(handleEditMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          groups: expect.arrayContaining([
+            { ...editedGroup, name: 'Renamed group' },
+          ]),
+        }),
+        expect.any(Function),
+      );
+    });
   });
 
   describe('when readOnly', () => {
     it('hides the add group button and the card action buttons', () => {
-      const { queryByRole, queryAllByTestId, getAllByTestId } = renderComponent({ readOnly: true });
+      renderComponent({ readOnly: true });
 
-      expect(getAllByTestId('content-group-card')).toHaveLength(
-        contentGroupsMock.groups.length,
-      );
+      contentGroupsMock.groups.forEach(({ name }) => {
+        expect(screen.getByRole('button', { name: new RegExp(name) })).toBeInTheDocument();
+      });
       expect(
-        queryByRole('button', { name: messages.addNewGroup.defaultMessage }),
+        screen.queryByRole('button', { name: messages.addNewGroup.defaultMessage }),
       ).not.toBeInTheDocument();
-      expect(queryAllByTestId('content-group-card-header-edit')).toHaveLength(0);
-      expect(queryAllByTestId('content-group-card-header-delete')).toHaveLength(0);
+      expect(
+        screen.queryByRole('button', { name: messages.actionEdit.defaultMessage }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: messages.actionDelete.defaultMessage }),
+      ).not.toBeInTheDocument();
     });
 
     it('renders the read-only placeholder without the create button if section is empty', () => {
-      const { getByText, queryByRole } = renderComponent({ availableGroup: {}, readOnly: true });
+      renderComponent({ availableGroup: {}, readOnly: true });
 
       expect(
-        getByText(placeholderMessages.readOnlyTitle.defaultMessage),
+        screen.getByText(placeholderMessages.readOnlyTitle.defaultMessage),
       ).toBeInTheDocument();
       expect(
-        queryByRole('button', { name: placeholderMessages.button.defaultMessage }),
+        screen.queryByRole('button', { name: placeholderMessages.button.defaultMessage }),
       ).not.toBeInTheDocument();
     });
   });

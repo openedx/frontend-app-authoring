@@ -1,7 +1,4 @@
-import { render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-
+import { initializeMocks, render, userEvent } from '@src/testUtils';
 import { AvailableGroup } from '@src/group-configurations/types';
 import { experimentGroupConfigurationsMock } from '../__mocks__';
 import commonMessages from '../common/messages';
@@ -20,19 +17,24 @@ const experimentConfigurationActions = {
 const onCreateMock = jest.fn();
 const experimentConfiguration = experimentGroupConfigurationsMock[0] as AvailableGroup;
 
+const courseId = 'course-v1:org+101+101';
+
 const renderComponent = (props = {}) =>
   render(
-    <IntlProvider locale="en">
-      <ExperimentCard
-        configuration={experimentConfiguration}
-        experimentConfigurationActions={experimentConfigurationActions}
-        onCreate={onCreateMock}
-        {...props}
-      />
-    </IntlProvider>,
+    <ExperimentCard
+      configuration={experimentConfiguration}
+      experimentConfigurationActions={experimentConfigurationActions}
+      onCreate={onCreateMock}
+      {...props}
+    />,
+    { path: '/course/:courseId/group_configurations', params: { courseId } },
   );
 
 describe('<ExperimentCard />', () => {
+  beforeEach(() => {
+    initializeMocks();
+  });
+
   it('renders component correctly', () => {
     const { getByText, getByTestId } = renderComponent();
     expect(getByText(experimentConfiguration.name)).toBeInTheDocument();
