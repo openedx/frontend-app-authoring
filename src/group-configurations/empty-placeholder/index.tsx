@@ -1,11 +1,20 @@
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Add as IconAdd } from '@openedx/paragon/icons';
 import { Button } from '@openedx/paragon';
 
 import messages from './messages';
 
-const EmptyPlaceholder = ({ onCreateNewGroup, isExperiment, readOnly }) => {
+interface EmptyPlaceholderProps {
+  onCreateNewGroup?: () => void;
+  isExperiment?: boolean;
+  readOnly?: boolean;
+}
+
+const EmptyPlaceholder = ({
+  onCreateNewGroup,
+  isExperiment = false,
+  readOnly = false,
+}: EmptyPlaceholderProps) => {
   const { formatMessage } = useIntl();
   // Read-only users cannot create anything here, so the copy states the course has
   // no group configurations instead of inviting them to add the first one.
@@ -32,18 +41,6 @@ const EmptyPlaceholder = ({ onCreateNewGroup, isExperiment, readOnly }) => {
       )}
     </div>
   );
-};
-
-EmptyPlaceholder.defaultProps = {
-  onCreateNewGroup: null,
-  isExperiment: false,
-  readOnly: false,
-};
-
-EmptyPlaceholder.propTypes = {
-  onCreateNewGroup: PropTypes.func,
-  isExperiment: PropTypes.bool,
-  readOnly: PropTypes.bool,
 };
 
 export default EmptyPlaceholder;

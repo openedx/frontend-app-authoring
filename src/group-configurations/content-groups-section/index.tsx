@@ -1,26 +1,31 @@
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, useToggle } from '@openedx/paragon';
 import { Add as AddIcon } from '@openedx/paragon/icons';
 
-import { availableGroupPropTypes } from '../constants';
+import { AvailableGroup, ContentGroupFormValues, GroupActions } from '@src/group-configurations/types';
 import EmptyPlaceholder from '../empty-placeholder';
 import ContentGroupCard from './ContentGroupCard';
 import ContentGroupForm from './ContentGroupForm';
 import { initialContentGroupObject } from './utils';
 import messages from './messages';
 
+interface ContentGroupsSectionProps {
+  availableGroup: AvailableGroup;
+  contentGroupActions: GroupActions;
+  readOnly?: boolean;
+}
+
 const ContentGroupsSection = ({
   availableGroup,
   contentGroupActions,
-  readOnly,
-}) => {
+  readOnly = false,
+}: ContentGroupsSectionProps) => {
   const { formatMessage } = useIntl();
   const [isNewGroupVisible, openNewGroup, hideNewGroup] = useToggle(false);
   const { id: parentGroupId, groups, name } = availableGroup;
   const groupNames = groups?.map((group) => group.name);
 
-  const handleCreateNewGroup = (values) => {
+  const handleCreateNewGroup = (values: ContentGroupFormValues) => {
     const updatedContentGroups = {
       ...availableGroup,
       groups: [
@@ -31,7 +36,11 @@ const ContentGroupsSection = ({
     contentGroupActions.handleCreate(updatedContentGroups, hideNewGroup);
   };
 
-  const handleEditContentGroup = (id, { newGroupName }, callbackToClose) => {
+  const handleEditContentGroup = (
+    id: number,
+    { newGroupName }: ContentGroupFormValues,
+    callbackToClose: () => void,
+  ) => {
     const updatedContentGroups = {
       ...availableGroup,
       groups: availableGroup.groups.map((group) => (group.id === id ? { ...group, name: newGroupName } : group)),
@@ -83,20 +92,6 @@ const ContentGroupsSection = ({
       )}
     </div>
   );
-};
-
-ContentGroupsSection.defaultProps = {
-  readOnly: false,
-};
-
-ContentGroupsSection.propTypes = {
-  availableGroup: PropTypes.shape(availableGroupPropTypes).isRequired,
-  contentGroupActions: PropTypes.shape({
-    handleCreate: PropTypes.func,
-    handleDelete: PropTypes.func,
-    handleEdit: PropTypes.func,
-  }).isRequired,
-  readOnly: PropTypes.bool,
 };
 
 export default ContentGroupsSection;

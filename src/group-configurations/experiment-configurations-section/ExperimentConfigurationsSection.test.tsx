@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
+import { AvailableGroup } from '@src/group-configurations/types';
 import { experimentGroupConfigurationsMock } from '../__mocks__';
 import placeholderMessages from '../empty-placeholder/messages';
 import messages from './messages';
@@ -23,11 +24,11 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-const renderComponent = (props) =>
+const renderComponent = (props = {}) =>
   render(
     <IntlProvider locale="en">
       <ExperimentConfigurationsSection
-        availableGroups={experimentGroupConfigurationsMock}
+        availableGroups={experimentGroupConfigurationsMock as AvailableGroup[]}
         experimentConfigurationActions={experimentConfigurationActions}
         {...props}
       />

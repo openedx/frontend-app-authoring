@@ -126,7 +126,6 @@ const GroupConfigurations = () => {
               )}
               {shouldShowExperimentGroups && (
                 <ExperimentConfigurationsSection
-                  courseId={courseId}
                   availableGroups={experimentGroupConfigurations}
                   experimentConfigurationActions={experimentConfigurationActions}
                   readOnly={!canManageGroupConfigurations}

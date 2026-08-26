@@ -2,6 +2,7 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
+import { AvailableGroup } from '@src/group-configurations/types';
 import { experimentGroupConfigurationsMock } from '../__mocks__';
 import commonMessages from '../common/messages';
 import messages from './messages';
@@ -17,7 +18,7 @@ const experimentConfigurationActions = {
 };
 
 const onCreateMock = jest.fn();
-const experimentConfiguration = experimentGroupConfigurationsMock[0];
+const experimentConfiguration = experimentGroupConfigurationsMock[0] as AvailableGroup;
 
 const renderComponent = (props = {}) =>
   render(
@@ -39,7 +40,7 @@ describe('<ExperimentCard />', () => {
       getByText(
         commonMessages.titleId.defaultMessage.replace(
           '{id}',
-          experimentConfiguration.id,
+          String(experimentConfiguration.id),
         ),
       ),
     ).toBeInTheDocument();

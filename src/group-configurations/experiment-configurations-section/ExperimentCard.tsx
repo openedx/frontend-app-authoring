@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -15,7 +14,8 @@ import {
   EditOutline as EditOutlineIcon,
 } from '@openedx/paragon/icons';
 
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import { AvailableGroup, GroupActions } from '@src/group-configurations/types';
 import TitleButton from '../common/TitleButton';
 import UsageList from '../common/UsageList';
 import ExperimentCardGroup from './ExperimentCardGroup';
@@ -23,13 +23,21 @@ import ExperimentForm from './ExperimentForm';
 import messages from './messages';
 import { initialExperimentConfiguration } from './constants';
 
+interface ExperimentCardProps {
+  configuration: AvailableGroup;
+  experimentConfigurationActions: GroupActions;
+  isExpandedByDefault?: boolean;
+  onCreate?: (configuration: AvailableGroup) => void;
+  readOnly?: boolean;
+}
+
 const ExperimentCard = ({
   configuration,
   experimentConfigurationActions,
-  isExpandedByDefault,
+  isExpandedByDefault = false,
   onCreate,
-  readOnly,
-}) => {
+  readOnly = false,
+}: ExperimentCardProps) => {
   const { formatMessage } = useIntl();
   const { courseId } = useParams();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -83,7 +91,7 @@ const ExperimentCard = ({
     closeDeleteModal();
   };
 
-  const handleEditConfiguration = (values) => {
+  const handleEditConfiguration = (values: AvailableGroup) => {
     experimentConfigurationActions.handleEdit(values, switchOffEditMode);
   };
 
@@ -104,7 +112,7 @@ const ExperimentCard = ({
           <div
             className="configuration-card"
             data-testid="configuration-card"
-            id={id}
+            id={String(id)}
           >
             <div className="configuration-card-header">
               <TitleButton
@@ -168,64 +176,6 @@ const ExperimentCard = ({
       />
     </>
   );
-};
-
-ExperimentCard.defaultProps = {
-  configuration: {
-    id: undefined,
-    name: '',
-    usage: [],
-    version: undefined,
-  },
-  isExpandedByDefault: false,
-  onCreate: null,
-  experimentConfigurationActions: {},
-  readOnly: false,
-};
-
-ExperimentCard.propTypes = {
-  configuration: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    usage: PropTypes.arrayOf(
-      PropTypes.shape({
-        label: PropTypes.string,
-        url: PropTypes.string,
-        validation: PropTypes.shape({
-          type: PropTypes.string,
-          text: PropTypes.string,
-        }),
-      }),
-    ),
-    version: PropTypes.number.isRequired,
-    active: PropTypes.bool,
-    description: PropTypes.string,
-    groups: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number,
-        name: PropTypes.string,
-        usage: PropTypes.arrayOf(
-          PropTypes.shape({
-            label: PropTypes.string,
-            url: PropTypes.string,
-          }),
-        ),
-        version: PropTypes.number,
-      }),
-    ),
-    parameters: PropTypes.shape({
-      courseId: PropTypes.string,
-    }),
-    scheme: PropTypes.string,
-  }),
-  isExpandedByDefault: PropTypes.bool,
-  onCreate: PropTypes.func,
-  readOnly: PropTypes.bool,
-  experimentConfigurationActions: PropTypes.shape({
-    handleCreate: PropTypes.func,
-    handleEdit: PropTypes.func,
-    handleDelete: PropTypes.func,
-  }),
 };
 
 export default ExperimentCard;

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -15,27 +14,41 @@ import {
   EditOutline as EditOutlineIcon,
 } from '@openedx/paragon/icons';
 
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import { ContentGroupFormValues, Group, GroupActions } from '@src/group-configurations/types';
 import TitleButton from '../common/TitleButton';
 import UsageList from '../common/UsageList';
 import ContentGroupForm from './ContentGroupForm';
 import messages from './messages';
 
+interface ContentGroupCardProps {
+  group: Group;
+  groupNames?: string[];
+  parentGroupId?: number;
+  readOnly?: boolean;
+  contentGroupActions?: Partial<GroupActions>;
+  handleEditGroup?: (
+    id: number,
+    values: ContentGroupFormValues,
+    callbackToClose: () => void,
+  ) => void;
+}
+
 const ContentGroupCard = ({
   group,
-  groupNames,
+  groupNames = [],
   parentGroupId,
-  readOnly,
-  contentGroupActions,
+  readOnly = false,
+  contentGroupActions = {},
   handleEditGroup,
-}) => {
+}: ContentGroupCardProps) => {
   const { formatMessage } = useIntl();
   const { courseId } = useParams();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditMode, switchOnEditMode, switchOffEditMode] = useToggle(false);
   const [isOpenDeleteModal, openDeleteModal, closeDeleteModal] = useToggle(false);
   const { id, name, usage } = group;
-  const isUsedInLocation = !!usage.length;
+  const isUsedInLocation = !!usage?.length;
 
   const { href: outlineUrl } = new URL(
     `/course/${courseId}`,
@@ -62,7 +75,9 @@ const ContentGroupCard = ({
   };
 
   const handleDeleteGroup = () => {
-    contentGroupActions.handleDelete(parentGroupId, id);
+    if (parentGroupId !== undefined) {
+      contentGroupActions.handleDelete?.(parentGroupId, id);
+    }
     closeDeleteModal();
   };
 
@@ -76,7 +91,7 @@ const ContentGroupCard = ({
             isUsedInLocation={isUsedInLocation}
             overrideValue={name}
             onCancelClick={switchOffEditMode}
-            onEditClick={(values) => handleEditGroup(id, values, switchOffEditMode)}
+            onEditClick={(values: ContentGroupFormValues) => handleEditGroup?.(id, values, switchOffEditMode)}
           />
         ) :
         (
@@ -124,7 +139,6 @@ const ContentGroupCard = ({
                     <UsageList
                       className="mt-2.5"
                       itemList={usage}
-                      key={usage.label}
                     />
                   ) :
                   guideHowToAdd}
@@ -140,63 +154,6 @@ const ContentGroupCard = ({
       />
     </>
   );
-};
-
-ContentGroupCard.defaultProps = {
-  group: {
-    id: undefined,
-    name: '',
-    usage: [],
-    version: undefined,
-  },
-  readOnly: false,
-  groupNames: [],
-  parentGroupId: null,
-  handleEditGroup: null,
-  contentGroupActions: {},
-};
-
-ContentGroupCard.propTypes = {
-  group: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    usage: PropTypes.arrayOf(
-      PropTypes.shape({
-        label: PropTypes.string,
-        url: PropTypes.string,
-      }),
-    ),
-    version: PropTypes.number.isRequired,
-    active: PropTypes.bool,
-    description: PropTypes.string,
-    groups: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number,
-        name: PropTypes.string,
-        usage: PropTypes.arrayOf(
-          PropTypes.shape({
-            label: PropTypes.string,
-            url: PropTypes.string,
-          }),
-        ),
-        version: PropTypes.number,
-      }),
-    ),
-    parameters: PropTypes.shape({
-      courseId: PropTypes.string,
-    }),
-    readOnly: PropTypes.bool,
-    scheme: PropTypes.string,
-  }),
-  groupNames: PropTypes.arrayOf(PropTypes.string),
-  parentGroupId: PropTypes.number,
-  readOnly: PropTypes.bool,
-  handleEditGroup: PropTypes.func,
-  contentGroupActions: PropTypes.shape({
-    handleCreate: PropTypes.func,
-    handleDelete: PropTypes.func,
-    handleEdit: PropTypes.func,
-  }),
 };
 
 export default ContentGroupCard;

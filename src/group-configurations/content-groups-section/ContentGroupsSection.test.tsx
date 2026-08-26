@@ -2,6 +2,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import userEvent from '@testing-library/user-event';
 import { render } from '@testing-library/react';
 
+import { AvailableGroup } from '@src/group-configurations/types';
 import { contentGroupsMock } from '../__mocks__';
 import placeholderMessages from '../empty-placeholder/messages';
 import messages from './messages';
@@ -20,7 +21,7 @@ const renderComponent = (props = {}) =>
   render(
     <IntlProvider locale="en">
       <ContentGroupsSection
-        availableGroup={contentGroupsMock}
+        availableGroup={contentGroupsMock as AvailableGroup}
         contentGroupActions={contentGroupActions}
         {...props}
       />

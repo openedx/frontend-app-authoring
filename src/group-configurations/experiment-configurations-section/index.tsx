@@ -1,8 +1,8 @@
-import PropTypes from 'prop-types';
 import { Button, useToggle } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Add as AddIcon } from '@openedx/paragon/icons';
 
+import { AvailableGroup, GroupActions } from '@src/group-configurations/types';
 import { useScrollToHashElement } from '../../hooks';
 import EmptyPlaceholder from '../empty-placeholder';
 import ExperimentForm from './ExperimentForm';
@@ -10,12 +10,17 @@ import ExperimentCard from './ExperimentCard';
 import { initialExperimentConfiguration } from './constants';
 import messages from './messages';
 
+interface ExperimentConfigurationsSectionProps {
+  availableGroups?: AvailableGroup[];
+  experimentConfigurationActions: GroupActions;
+  readOnly?: boolean;
+}
+
 const ExperimentConfigurationsSection = ({
-  courseId,
-  availableGroups,
+  availableGroups = [],
   experimentConfigurationActions,
-  readOnly,
-}) => {
+  readOnly = false,
+}: ExperimentConfigurationsSectionProps) => {
   const { formatMessage } = useIntl();
   const [
     isNewConfigurationVisible,
@@ -23,11 +28,11 @@ const ExperimentConfigurationsSection = ({
     hideNewConfiguration,
   ] = useToggle(false);
 
-  const handleCreateConfiguration = (configuration) => {
+  const handleCreateConfiguration = (configuration: AvailableGroup) => {
     experimentConfigurationActions.handleCreate(configuration, hideNewConfiguration);
   };
 
-  const { elementWithHash } = useScrollToHashElement({ courseId, isLoading: true });
+  const { elementWithHash } = useScrollToHashElement({ isLoading: true });
 
   return (
     <div className="mt-2.5">
@@ -42,7 +47,7 @@ const ExperimentConfigurationsSection = ({
                 key={configuration.id}
                 configuration={configuration}
                 experimentConfigurationActions={experimentConfigurationActions}
-                isExpandedByDefault={configuration.id === +elementWithHash}
+                isExpandedByDefault={configuration.id === Number(elementWithHash)}
                 onCreate={handleCreateConfiguration}
                 readOnly={readOnly}
               />
@@ -78,47 +83,6 @@ const ExperimentConfigurationsSection = ({
       )}
     </div>
   );
-};
-
-ExperimentConfigurationsSection.defaultProps = {
-  availableGroups: [],
-  readOnly: false,
-};
-
-ExperimentConfigurationsSection.propTypes = {
-  availableGroups: PropTypes.arrayOf(
-    PropTypes.shape({
-      active: PropTypes.bool,
-      description: PropTypes.string,
-      groups: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.number,
-          name: PropTypes.string,
-          usage: PropTypes.arrayOf(
-            PropTypes.shape({
-              label: PropTypes.string,
-              url: PropTypes.string,
-            }),
-          ),
-          version: PropTypes.number,
-        }).isRequired,
-      ),
-      id: PropTypes.number,
-      name: PropTypes.string,
-      parameters: PropTypes.shape({
-        courseId: PropTypes.string,
-      }),
-      readOnly: PropTypes.bool,
-      scheme: PropTypes.string,
-      version: PropTypes.number,
-    }).isRequired,
-  ),
-  experimentConfigurationActions: PropTypes.shape({
-    handleCreate: PropTypes.func,
-    handleDelete: PropTypes.func,
-  }).isRequired,
-  courseId: PropTypes.string.isRequired,
-  readOnly: PropTypes.bool,
 };
 
 export default ExperimentConfigurationsSection;
