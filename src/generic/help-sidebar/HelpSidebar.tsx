@@ -100,7 +100,7 @@ const HelpSidebar = ({
                       />
                     )
                 )}
-                {showOtherLink(groupConfigurations) && perms.canManageGroupConfigurations && (
+                {showOtherLink(groupConfigurations) && perms.canViewGroupConfigurations && (
                   <HelpSidebarLink
                     pathToPage={`/course/${courseId}/${groupConfigurations}`}
                     title={intl.formatMessage(

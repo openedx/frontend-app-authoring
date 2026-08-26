@@ -39,7 +39,7 @@ const GroupConfigurations = () => {
 
   const {
     isLoading: isLoadingUserPermissions,
-    canManageGroupConfigurations,
+    canViewGroupConfigurations,
   } = useCourseUserPermissions(courseId, getGroupConfigurationsPermissions(courseId));
 
   document.title = getPageHeadTitle(
@@ -53,7 +53,7 @@ const GroupConfigurations = () => {
     allGroupConfigurations = [],
   } = groupConfigurations ?? {};
 
-  if (!isLoadingUserPermissions && !canManageGroupConfigurations) {
+  if (!isLoadingUserPermissions && !canViewGroupConfigurations) {
     return <PermissionDeniedAlert />;
   }
 

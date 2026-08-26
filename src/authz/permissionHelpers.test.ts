@@ -208,10 +208,14 @@ describe('permissionHelpers', () => {
   });
 
   describe('getGroupConfigurationsPermissions', () => {
-    it('returns MANAGE_GROUP_CONFIGURATIONS permission with the correct action and scope', () => {
+    it('returns VIEW_GROUP_CONFIGURATIONS and MANAGE_GROUP_CONFIGURATIONS permissions with the correct actions and scope', () => {
       const result = getGroupConfigurationsPermissions(courseId);
 
       expect(result).toEqual({
+        canViewGroupConfigurations: {
+          action: COURSE_PERMISSIONS.VIEW_GROUP_CONFIGURATIONS,
+          scope: courseId,
+        },
         canManageGroupConfigurations: {
           action: COURSE_PERMISSIONS.MANAGE_GROUP_CONFIGURATIONS,
           scope: courseId,

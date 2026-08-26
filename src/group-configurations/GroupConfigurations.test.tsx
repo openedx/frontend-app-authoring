@@ -27,6 +27,7 @@ const mockPermissions = (overrides = {}) =>
   jest.mocked(useCourseUserPermissions).mockReturnValue({
     isLoading: false,
     isAuthzEnabled: true,
+    canViewGroupConfigurations: true,
     canManageGroupConfigurations: true,
     ...overrides,
   } as ReturnType<typeof useCourseUserPermissions>);
@@ -48,8 +49,8 @@ describe('<GroupConfigurations />', () => {
     mockPermissions();
   });
 
-  it('shows PermissionDeniedAlert when user lacks manage group configurations permission', async () => {
-    mockPermissions({ canManageGroupConfigurations: false });
+  it('shows PermissionDeniedAlert when user lacks view group configurations permission', async () => {
+    mockPermissions({ canViewGroupConfigurations: false, canManageGroupConfigurations: false });
     renderComponent();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
     expect(screen.queryByText(messages.headingSubtitle.defaultMessage)).not.toBeInTheDocument();
