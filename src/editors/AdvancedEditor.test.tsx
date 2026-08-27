@@ -1,4 +1,5 @@
 import { getConfig } from '@edx/frontend-platform';
+import userEvent from '@testing-library/user-event';
 
 import {
   render,
@@ -9,6 +10,7 @@ import {
   fireEvent,
 } from '../testUtils';
 import { LibraryBlock } from '../library-authoring/LibraryBlock';
+import messages from './messages';
 import AdvancedEditor from './AdvancedEditor';
 
 jest.mock('./containers/EditorContainer', () => ({
@@ -105,6 +107,7 @@ describe('AdvancedEditor', () => {
   });
 
   it('lets the block fill the modal only in fullscreen', async () => {
+    const user = userEvent.setup();
     render(<AdvancedEditor usageKey="test" onClose={onCloseMock} />);
 
     expect(LibraryBlock).toHaveBeenLastCalledWith(
@@ -112,7 +115,10 @@ describe('AdvancedEditor', () => {
       expect.anything(),
     );
 
-    fireEvent.click(await screen.findByRole('button', { name: 'Toggle Fullscreen' }));
+    const toggleButton = await screen.findByRole('button', {
+      name: messages.advancedEditorFullscreenButtonAlt.defaultMessage,
+    });
+    await user.click(toggleButton);
 
     expect(LibraryBlock).toHaveBeenLastCalledWith(
       expect.objectContaining({ fillContainer: true }),
