@@ -89,6 +89,7 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
             view="studio_view"
             scrolling="yes"
             minHeight="70vh"
+            fillContainer={isFullscreen}
           />
         </IframeProvider>
       </EditorModalWrapper>
