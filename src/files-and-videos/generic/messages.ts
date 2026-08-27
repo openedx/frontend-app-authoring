@@ -115,6 +115,11 @@ const messages = defineMessages({
     defaultMessage: 'Info',
     description: 'Label for info button in card menu dropdown',
   },
+  infoAndTranscriptsTitle: {
+    id: 'course-authoring.files-and-uploads.cardMenu.infoAndTranscriptsTitle',
+    defaultMessage: 'Info and transcripts',
+    description: 'Label for video info button in card menu dropdown',
+  },
   downloadEncodingsTitle: {
     id: 'course-authoring.files-and-uploads.cardMenu.downloadEncodingsTitle',
     defaultMessage: 'Download video list (.csv)',

@@ -70,7 +70,7 @@ const FileMenu = ({
           </>
         )}
         <Dropdown.Item onClick={openAssetInfo}>
-          <FormattedMessage {...messages.infoTitle} />
+          <FormattedMessage {...(fileType === 'video' ? messages.infoAndTranscriptsTitle : messages.infoTitle)} />
         </Dropdown.Item>
         {permissions.canDeleteFiles && (
           <>
