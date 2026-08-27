@@ -1,3 +1,6 @@
+import { useRef } from 'react';
+import userEvent from '@testing-library/user-event';
+
 import {
   initializeMocks,
   cleanup,
@@ -5,7 +8,7 @@ import {
   render,
   waitFor,
 } from '../testUtils';
-import { useWaffleFlags } from './apiHooks';
+import { createGlobalState, useWaffleFlags } from './apiHooks';
 import { getApiWaffleFlagsUrl } from './api';
 
 // A little component for testing our waffle flag hooks.
@@ -108,5 +111,62 @@ describe('useWaffleFlags', () => {
     });
     expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
     expect(await screen.findByLabelText('useNewCourseOutlinePage')).toHaveTextContent('enabled');
+  });
+});
+
+// A little component for testing the global state hooks.
+const useCounter = createGlobalState<{ count: number; }>(() => ['test', 'counter'], { count: 0 });
+
+const CounterComponent = () => {
+  const { data, setData, resetData } = useCounter();
+  const firstSetData = useRef(setData);
+  const firstResetData = useRef(resetData);
+  const callbacksKeptIdentity = setData === firstSetData.current && resetData === firstResetData.current;
+
+  return (
+    <ul>
+      <li aria-label="count">{data?.count ?? 'none'}</li>
+      <li aria-label="callbacks">{callbacksKeptIdentity ? 'same' : 'recreated'}</li>
+      <li>
+        <button type="button" onClick={() => setData({ count: (data?.count ?? 0) + 1 })}>increment</button>
+      </li>
+      <li>
+        <button
+          type="button"
+          onClick={() => {
+            void resetData();
+          }}
+        >
+          reset
+        </button>
+      </li>
+    </ul>
+  );
+};
+
+describe('createGlobalState', () => {
+  it('keeps its callbacks across renders, so effects depending on them do not re-run', async () => {
+    const user = userEvent.setup();
+    initializeMocks();
+    render(<CounterComponent />);
+    await waitFor(() => expect(screen.getByLabelText('count')).toHaveTextContent('0'));
+
+    await user.click(screen.getByRole('button', { name: 'increment' }));
+    await waitFor(() => expect(screen.getByLabelText('count')).toHaveTextContent('1'));
+
+    expect(screen.getByLabelText('callbacks')).toHaveTextContent('same');
+  });
+
+  it('resets the value it stores', async () => {
+    const user = userEvent.setup();
+    initializeMocks();
+    render(<CounterComponent />);
+    await waitFor(() => expect(screen.getByLabelText('count')).toHaveTextContent('0'));
+
+    await user.click(screen.getByRole('button', { name: 'increment' }));
+    await waitFor(() => expect(screen.getByLabelText('count')).toHaveTextContent('1'));
+
+    await user.click(screen.getByRole('button', { name: 'reset' }));
+    await waitFor(() => expect(screen.getByLabelText('count')).toHaveTextContent('0'));
   });
 });
