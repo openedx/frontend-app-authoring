@@ -12,6 +12,8 @@ import {
 } from '@openedx/paragon';
 import { Close, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
 
+import { ADVANCED_EDITOR_MIN_HEIGHT } from '@src/constants';
+
 import { LibraryBlock } from '../library-authoring/LibraryBlock';
 import { EditorModalWrapper } from './containers/EditorContainer';
 import { ToastContext } from '../generic/toast-context';
@@ -88,7 +90,7 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
             usageKey={usageKey}
             view="studio_view"
             scrolling="yes"
-            minHeight="70vh"
+            minHeight={ADVANCED_EDITOR_MIN_HEIGHT}
             fillContainer={isFullscreen}
           />
         </IframeProvider>
