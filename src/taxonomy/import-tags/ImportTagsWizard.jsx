@@ -27,7 +27,8 @@ import { TaxonomyContext } from '../common/context';
 import { getTaxonomyExportFile, apiUrls } from '../data/api';
 import { useImportTags, useImportPlan, useImportNewTaxonomy } from '../data/apiHooks';
 import messages from './messages';
-import { TaxonomyType, TAXONOMY_TYPE_OPTIONS } from './constants';
+import { TAXONOMY_TYPE_OPTIONS } from './constants';
+import { TaxonomyType } from '@src/taxonomy/data/constants';
 import LoadingButton from '@src/generic/loading-button';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { getFileSizeToClosestByte } from '@src/utils';
@@ -258,7 +259,7 @@ PopulateStep.propTypes = {
   taxonomyPopulateData: PropTypes.shape({
     taxonomyName: PropTypes.string.isRequired,
     taxonomyDesc: PropTypes.string.isRequired,
-    taxonomyType: PropTypes.oneOf(TAXONOMY_TYPE_OPTIONS.map(({ value }) => value)).isRequired,
+    taxonomyType: PropTypes.string.isRequired,
   }).isRequired,
   setTaxonomyPopulateData: PropTypes.func.isRequired,
 };

@@ -1,15 +1,5 @@
+import { TaxonomyType } from '@src/taxonomy/data/constants';
 import messages from './messages';
-
-/**
- * The type of a taxonomy.
- *
- * Note: the backend also has a "system" type, reserved for platform-defined
- * taxonomies. It is intentionally not selectable by users.
- */
-export enum TaxonomyType {
-  Tags = 'tags',
-  Competency = 'competency',
-}
 
 /**
  * The taxonomy types a user can pick when importing a taxonomy.
