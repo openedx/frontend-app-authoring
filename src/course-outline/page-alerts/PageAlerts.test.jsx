@@ -10,7 +10,6 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp, getConfig } from '@edx/frontend-platform';
 
 import { useCourseUserPermissions } from '@src/authz/hooks';
-import courseLibrariesMessages from '@src/course-libraries/messages';
 import PageAlerts from './PageAlerts';
 import messages from './messages';
 import initializeStore from '@src/store';
@@ -271,7 +270,9 @@ describe('<PageAlerts />', () => {
     mockEntityLinksSummary = [{ readyToSyncCount: 7, lastPublishedAt: '2025-05-01T22:20:44.989042Z' }];
     renderComponent();
     expect(
-      await screen.findByText(courseLibrariesMessages.outOfSyncCountAlertTitle.defaultMessage),
+      await screen.findByText(
+        '7 library components are out of sync. Review updates to accept or ignore changes',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -280,7 +281,9 @@ describe('<PageAlerts />', () => {
     mockPermissions({ canManageLibraryUpdates: false });
     renderComponent();
     expect(
-      await screen.findByText(courseLibrariesMessages.outOfSyncCountAlertTitleReadOnly.defaultMessage),
+      await screen.findByText(
+        '7 library components are out of sync. Review updates to see what changed',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -288,8 +291,6 @@ describe('<PageAlerts />', () => {
     mockEntityLinksSummary = [{ readyToSyncCount: 7, lastPublishedAt: '2025-05-01T22:20:44.989042Z' }];
     mockPermissions({ isLoading: true, canManageLibraryUpdates: false });
     renderComponent();
-    expect(
-      screen.queryByText(courseLibrariesMessages.outOfSyncCountAlertTitleReadOnly.defaultMessage),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/library components are out of sync/)).not.toBeInTheDocument();
   });
 });
