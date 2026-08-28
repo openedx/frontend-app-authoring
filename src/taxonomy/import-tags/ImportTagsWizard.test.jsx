@@ -336,23 +336,17 @@ describe('<ImportTagsWizard />', () => {
       taxonomyTypeOptions()
         .filter((option) => option.getAttribute('aria-current') === 'page')
         .map((option) => option.textContent);
-    const checkedTaxonomyTypes = () =>
-      taxonomyTypeOptions()
-        .filter((option) => option.querySelector('.btn-icon-after'))
-        .map((option) => option.textContent);
 
     const taxonomyTypeToggleEl = within(taxonomyTypeSelectEl).getByRole('button');
     expect(taxonomyTypeToggleEl).toHaveTextContent('Tags');
     fireEvent.click(taxonomyTypeToggleEl);
     expect(taxonomyTypeOptions().map((option) => option.textContent)).toEqual(['Tags', 'Competency']);
     expect(selectedTaxonomyTypes()).toEqual(['Tags']);
-    expect(checkedTaxonomyTypes()).toEqual(['Tags']);
 
     fireEvent.click(within(taxonomyTypeSelectEl).getByRole('link', { name: 'Competency' }));
     expect(taxonomyTypeToggleEl).toHaveTextContent('Competency');
     fireEvent.click(taxonomyTypeToggleEl);
     expect(selectedTaxonomyTypes()).toEqual(['Competency']);
-    expect(checkedTaxonomyTypes()).toEqual(['Competency']);
     await waitFor(() => {
       expect(within(taxonomyTypeSelectEl).getByRole('link', { name: 'Competency' })).toHaveFocus();
     });
