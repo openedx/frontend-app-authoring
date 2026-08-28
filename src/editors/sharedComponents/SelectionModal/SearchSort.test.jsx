@@ -71,6 +71,11 @@ describe('SearchSort component', () => {
           .toBeInTheDocument();
       });
   });
+  test('separates "By" from the sort option', () => {
+    getComponent();
+    expect(screen.getByRole('button', { name: /By oldest/i }))
+      .toHaveTextContent('By oldest');
+  });
   test('adds a filter option for each filter key', () => {
     const { getByTestId } = getComponent();
     fireEvent.click(getByTestId('dropdown-filter'));
