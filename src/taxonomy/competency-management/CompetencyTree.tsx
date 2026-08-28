@@ -7,7 +7,7 @@ import { OpenInFull } from '@openedx/paragon/icons';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useTagListData } from '@src/taxonomy/data/apiHooks';
-import { TagTree } from '../tag-list/tagTree';
+import { TagTree } from '@src/taxonomy/tag-list/tagTree';
 import CompetencyExpandIcon from './CompetencyExpandIcon';
 import CompetencyTreeItem from './CompetencyTreeItem';
 import messages from './messages';

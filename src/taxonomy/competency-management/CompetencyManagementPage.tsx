@@ -6,12 +6,12 @@ import {
 import { Helmet } from 'react-helmet';
 import { Link, useParams } from 'react-router-dom';
 
-import ConnectionErrorAlert from '../../generic/ConnectionErrorAlert';
-import Loading from '../../generic/Loading';
-import getPageHeadTitle from '../../generic/utils';
-import SubHeader from '../../generic/sub-header/SubHeader';
-import taxonomyMessages from '../messages';
-import { useTaxonomyDetails } from '../data/apiHooks';
+import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import Loading from '@src/generic/Loading';
+import getPageHeadTitle from '@src/generic/utils';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import taxonomyMessages from '@src/taxonomy/messages';
+import { useTaxonomyDetails } from '@src/taxonomy/data/apiHooks';
 import CompetencyTree from './CompetencyTree';
 import messages from './messages';
 
