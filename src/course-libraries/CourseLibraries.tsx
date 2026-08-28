@@ -224,6 +224,7 @@ export const CourseLibraries = () => {
           onReview={onAlertReview}
           showAlert={showReviewAlert && tabKey === CourseLibraryTabs.all}
           setShowAlert={setShowReviewAlert}
+          readOnly={!canManageLibraryUpdates}
         />
         <SubHeader
           title={intl.formatMessage(messages.headingTitle)}
