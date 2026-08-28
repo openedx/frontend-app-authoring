@@ -328,29 +328,16 @@ describe('<ImportTagsWizard />', () => {
       target: { value: 'New Taxonomy Description' },
     });
 
-    // The taxonomy type dropdown is a `SelectMenu`, whose options are rendered as links.
+    // The taxonomy type dropdown is a native `<select>`, whose options are rendered as `<option>`s.
     const taxonomyTypeSelectEl = screen.getByLabelText('Taxonomy Type');
     expect(taxonomyTypeSelectEl).toBe(getByTestId('taxonomy-type-select'));
-    const taxonomyTypeOptions = () => within(taxonomyTypeSelectEl).getAllByRole('link');
-    const selectedTaxonomyTypes = () =>
-      taxonomyTypeOptions()
-        .filter((option) => option.getAttribute('aria-current') === 'page')
-        .map((option) => option.textContent);
+    const taxonomyTypeOptions = () => within(taxonomyTypeSelectEl).getAllByRole('option');
 
-    const taxonomyTypeToggleEl = within(taxonomyTypeSelectEl).getByRole('button');
-    expect(taxonomyTypeToggleEl).toHaveTextContent('Tags');
-    fireEvent.click(taxonomyTypeToggleEl);
+    expect(taxonomyTypeSelectEl).toHaveValue('tags');
     expect(taxonomyTypeOptions().map((option) => option.textContent)).toEqual(['Tags', 'Competency']);
-    expect(selectedTaxonomyTypes()).toEqual(['Tags']);
 
-    fireEvent.click(within(taxonomyTypeSelectEl).getByRole('link', { name: 'Competency' }));
-    expect(taxonomyTypeToggleEl).toHaveTextContent('Competency');
-    fireEvent.click(taxonomyTypeToggleEl);
-    expect(selectedTaxonomyTypes()).toEqual(['Competency']);
-    await waitFor(() => {
-      expect(within(taxonomyTypeSelectEl).getByRole('link', { name: 'Competency' })).toHaveFocus();
-    });
-    fireEvent.keyDown(taxonomyTypeSelectEl, { key: 'Escape' });
+    fireEvent.change(taxonomyTypeSelectEl, { target: { value: 'competency' } });
+    expect(taxonomyTypeSelectEl).toHaveValue('competency');
 
     // Test back button
     fireEvent.click(getByTestId('back-button'));
@@ -358,7 +345,7 @@ describe('<ImportTagsWizard />', () => {
     fireEvent.click(getByRole('button', { name: 'Continue' }));
 
     expect(getByTestId('populate-step')).toBeInTheDocument();
-    expect(within(getByTestId('taxonomy-type-select')).getByRole('button')).toHaveTextContent('Competency');
+    expect(getByTestId('taxonomy-type-select')).toHaveValue('competency');
 
     if (expectedResult === 'success') {
       axiosMock.onPost(doImportNewTaxonomyUrl).replyOnce(200, {});
