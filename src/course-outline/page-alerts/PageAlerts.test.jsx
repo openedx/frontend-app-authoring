@@ -25,9 +25,10 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   usePasteFileNotices: () => ({ data: mockNotices }),
 }));
 
+let mockEntityLinksSummary = [];
 jest.mock('../../course-libraries/data/apiHooks', () => ({
   useEntityLinksSummaryByDownstreamContext: () => ({
-    data: [],
+    data: mockEntityLinksSummary,
     isLoading: false,
   }),
 }));
@@ -57,6 +58,7 @@ const mockPermissions = (overrides = {}) =>
     isAuthzEnabled: true,
     canManagePagesAndResources: true,
     canManageAdvancedSettings: true,
+    canManageLibraryUpdates: true,
     ...overrides,
   });
 
@@ -279,5 +281,31 @@ describe('<PageAlerts />', () => {
       },
     });
     expect(screen.queryByText('some error')).toBeInTheDocument();
+  });
+
+  it('renders out of sync alert with the manage message', async () => {
+    mockEntityLinksSummary = [{ readyToSyncCount: 7, lastPublishedAt: '2025-05-01T22:20:44.989042Z' }];
+    renderComponent();
+    expect(
+      await screen.findByText(courseLibrariesMessages.outOfSyncCountAlertTitle.defaultMessage),
+    ).toBeInTheDocument();
+  });
+
+  it('renders out of sync alert with the read only message when user cannot manage library updates', async () => {
+    mockEntityLinksSummary = [{ readyToSyncCount: 7, lastPublishedAt: '2025-05-01T22:20:44.989042Z' }];
+    mockPermissions({ canManageLibraryUpdates: false });
+    renderComponent();
+    expect(
+      await screen.findByText(courseLibrariesMessages.outOfSyncCountAlertTitleReadOnly.defaultMessage),
+    ).toBeInTheDocument();
+  });
+
+  it('does not render out of sync alert while permissions are loading', async () => {
+    mockEntityLinksSummary = [{ readyToSyncCount: 7, lastPublishedAt: '2025-05-01T22:20:44.989042Z' }];
+    mockPermissions({ isLoading: true, canManageLibraryUpdates: false });
+    renderComponent();
+    expect(
+      screen.queryByText(courseLibrariesMessages.outOfSyncCountAlertTitleReadOnly.defaultMessage),
+    ).not.toBeInTheDocument();
   });
 });
