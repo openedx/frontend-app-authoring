@@ -1,14 +1,11 @@
 // @ts-check
 import React from 'react'; // Required to use JSX syntax without type errors
 
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import MockAdapter from 'axios-mock-adapter';
-
+import { initializeMocks } from '@src/testUtils';
 import { apiUrls } from './api';
 
 import {
@@ -17,7 +14,7 @@ import {
   useImportTags,
   useImportNewTaxonomy,
 } from './apiHooks';
-import { TaxonomyType } from '../import-tags/constants';
+import { TaxonomyType } from './constants';
 
 let axiosMock;
 
@@ -41,15 +38,7 @@ const taxonomyTypes = Object.values(TaxonomyType);
 
 describe('import taxonomy api calls', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    ({ axiosMock } = initializeMocks());
   });
 
   afterEach(() => {

@@ -6,3 +6,14 @@
  * will be incomplete because the backend only supports a taxonomy size of 10,000 items or fewer.
  */
 export const MAX_TAXONOMY_ITEMS = 10000;
+
+/**
+ * The type of a taxonomy.
+ *
+ * Note: the backend also has a "system" type, reserved for platform-defined
+ * taxonomies. It is intentionally not selectable by users.
+ */
+export enum TaxonomyType {
+  Tags = 'tags',
+  Competency = 'competency',
+}
