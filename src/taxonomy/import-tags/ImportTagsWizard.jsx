@@ -12,8 +12,6 @@ import {
   Stack,
   Stepper,
   Form,
-  MenuItem,
-  SelectMenu,
 } from '@openedx/paragon';
 import {
   DeleteOutline,
@@ -32,8 +30,6 @@ import { TaxonomyType } from '@src/taxonomy/data/constants';
 import LoadingButton from '@src/generic/loading-button';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { getFileSizeToClosestByte } from '@src/utils';
-
-import './ImportTagsWizard.scss';
 
 const linebreak = (
   <>
@@ -204,8 +200,8 @@ const PopulateStep = ({
     setTaxonomyPopulateData(updatedState);
   };
 
-  const handleTypeChange = (taxonomyType) => {
-    setTaxonomyPopulateData({ ...taxonomyPopulateData, taxonomyType });
+  const handleTypeChange = (e) => {
+    setTaxonomyPopulateData({ ...taxonomyPopulateData, taxonomyType: e.target.value });
   };
 
   return (
@@ -225,30 +221,21 @@ const PopulateStep = ({
           />
         </Form.Group>
         <Form.Group>
-          <Form.Label id="taxonomy-type-label">
+          <Form.Label>
             {intl.formatMessage(messages.importWizardStepPopulateTaxonomyType)}
           </Form.Label>
-          <SelectMenu
-            role="group"
-            className="taxonomy-type-select"
-            variant="outline-primary"
-            aria-labelledby="taxonomy-type-label"
+          <Form.Control
+            as="select"
             data-testid="taxonomy-type-select"
+            value={taxonomyPopulateData.taxonomyType}
+            onChange={handleTypeChange}
           >
-            {TAXONOMY_TYPE_OPTIONS.map(({ value, message }) => {
-              const isSelected = value === taxonomyPopulateData.taxonomyType;
-              return (
-                <MenuItem
-                  key={value}
-                  defaultSelected={isSelected}
-                  data-autofocus={isSelected || undefined}
-                  onClick={() => handleTypeChange(value)}
-                >
-                  {intl.formatMessage(message)}
-                </MenuItem>
-              );
-            })}
-          </SelectMenu>
+            {TAXONOMY_TYPE_OPTIONS.map(({ value, message }) => (
+              <option key={value} value={value}>
+                {intl.formatMessage(message)}
+              </option>
+            ))}
+          </Form.Control>
         </Form.Group>
       </Stack>
     </Stepper.Step>
