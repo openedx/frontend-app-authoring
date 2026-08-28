@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button } from '@openedx/paragon';
 import { Loop } from '@openedx/paragon/icons';
 import AlertMessage from '../generic/alert-message';
@@ -34,7 +34,6 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
   onReview,
   readOnly = false,
 }) => {
-  const intl = useIntl();
   const { data, isPending } = useEntityLinksSummaryByDownstreamContext(courseId);
   const outOfSyncCount = data?.reduce((count, lib) => count + (lib.readyToSyncCount || 0), 0);
   const lastPublishedDate = data?.map(lib => new Date(lib.lastPublishedAt || 0).getTime())
@@ -63,10 +62,12 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
 
   return (
     <AlertMessage
-      title={intl.formatMessage(
-        readOnly ? messages.outOfSyncCountAlertTitleReadOnly : messages.outOfSyncCountAlertTitle,
-        { outOfSyncCount },
-      )}
+      title={
+        <FormattedMessage
+          {...(readOnly ? messages.outOfSyncCountAlertTitleReadOnly : messages.outOfSyncCountAlertTitle)}
+          values={{ outOfSyncCount }}
+        />
+      }
       dismissible
       show={showAlert}
       icon={Loop}
@@ -74,7 +75,7 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
       onClose={dismissAlert}
       actions={[
         <Button key="review-btn" onClick={onReview}>
-          {intl.formatMessage(messages.outOfSyncCountAlertReviewBtn)}
+          <FormattedMessage {...messages.outOfSyncCountAlertReviewBtn} />
         </Button>,
       ]}
     />
