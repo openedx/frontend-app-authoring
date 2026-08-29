@@ -27,27 +27,22 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 
-import { RequestStatus } from 'CourseAuthoring/data/constants';
 import ConnectionErrorAlert from 'CourseAuthoring/generic/ConnectionErrorAlert';
 import FormSwitchGroup from 'CourseAuthoring/generic/FormSwitchGroup';
 import Loading from 'CourseAuthoring/generic/Loading';
-import { useModel } from 'CourseAuthoring/generic/model-store';
 import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
 import { useIsMobile } from 'CourseAuthoring/utils';
-import { getLoadingStatus, getSavingStatus, getResetStatus } from 'CourseAuthoring/pages-and-resources/data/selectors';
-import { updateSavingStatus, updateResetStatus } from 'CourseAuthoring/pages-and-resources/data/slice';
 import AppConfigFormDivider from 'CourseAuthoring/pages-and-resources/discussions/app-config-form/apps/shared/AppConfigFormDivider';
 import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 
-import { updateXpertSettings, resetXpertSettings, removeXpertSettings } from '../data/thunks';
 import messages from './messages';
 import appInfo from '../appInfo';
 import ResetIcon from './ResetIcon';
 
 import './SettingsModal.scss';
+import { useDeleteXpertSettings, useUpdateXpertSettings, useXpertSettings } from '../data/apiHooks';
 
 const AppSettingsForm = ({
   formikProps,
@@ -136,30 +131,27 @@ const ResetUnitsButton = ({
   visible,
 }) => {
   const intl = useIntl();
-  const resetStatusRequestStatus = useSelector(getResetStatus);
-  const dispatch = useDispatch();
+  const updateSettingsMutation = useUpdateXpertSettings(courseId);
 
   useEffect(() => {
-    if (resetStatusRequestStatus === RequestStatus.SUCCESSFUL) {
+    if (updateSettingsMutation.isSuccess) {
       setTimeout(() => {
-        dispatch(updateResetStatus({ status: '' }));
+        updateSettingsMutation.reset();
       }, 2000);
     }
-  }, [resetStatusRequestStatus]);
+  }, [updateSettingsMutation]);
 
   const handleResetUnits = () => {
-    dispatch(resetXpertSettings(courseId, { enabled: checked === 'true', reset: true }));
+    updateSettingsMutation.mutate({ enabled: checked === 'true', reset: true });    
   };
 
   const getResetButtonState = () => {
-    switch (resetStatusRequestStatus) {
-      case RequestStatus.PENDING:
-        return 'pending';
-      case RequestStatus.SUCCESSFUL:
-        return 'finish';
-      default:
-        return 'default';
+    if (updateSettingsMutation.isPending) {
+      return 'pending';
+    } else if (updateSettingsMutation.isSuccess) {
+      return 'finish';
     }
+    return 'default';
   };
 
   if (!visible) { return null; }
@@ -229,50 +221,62 @@ const SettingsModal = ({
 }) => {
   const intl = useIntl();
   const { courseId } = useContext(PagesAndResourcesContext);
-  const loadingStatus = useSelector(getLoadingStatus);
-  const updateSettingsRequestStatus = useSelector(getSavingStatus);
   const alertRef = useRef(null);
-  const [saveError, setSaveError] = useState(false);
-  const dispatch = useDispatch();
-  const submitButtonState = updateSettingsRequestStatus === RequestStatus.IN_PROGRESS ? 'pending' : 'default';
+  const [formIsError, setFormIsError] = useState(false);
   const isMobile = useIsMobile();
   const modalVariant = isMobile ? 'dark' : 'default';
 
-  const xpertSettings = useModel('XpertSettings', appId);
+  const {
+    data: xpertSettings,
+    isPending: xpertSettingsIsPending,
+    isError: xpertSettingsIsFailed,
+    isSuccess: xpertSettingsIsSuccess,
+    failureReason: xpertSettingsError,
+  } = useXpertSettings(courseId);
+
+  const updateSettingsMutation = useUpdateXpertSettings(courseId);
+  const deleteSettingsMutation = useDeleteXpertSettings(courseId);
+
+  const saveInProgress = updateSettingsMutation.isPending || deleteSettingsMutation.isPending;
+  const saveIsSuccess = updateSettingsMutation.isSuccess || deleteSettingsMutation.isSuccess;
+  const saveIsError = updateSettingsMutation.isError || deleteSettingsMutation.isError || formIsError;
+
+  const submitButtonState = saveInProgress ? 'pending' : 'default';
 
   useEffect(() => {
-    if (updateSettingsRequestStatus === RequestStatus.SUCCESSFUL) {
-      dispatch(updateSavingStatus({ status: '' }));
+    if (saveIsSuccess) {
+      updateSettingsMutation.reset();
+      deleteSettingsMutation.reset();
       onClose();
+    } else if (saveIsError) {
+      alertRef?.current.scrollIntoView();
     }
-  }, [updateSettingsRequestStatus]);
+  }, [
+    saveIsSuccess,
+    saveIsError,
+    updateSettingsMutation,
+    deleteSettingsMutation
+  ]);
 
   const handleFormSubmit = async ({ enabled, checked, ...rest }) => {
-    let success;
     const values = { ...rest, enabled: enabled ? checked === 'true' : undefined };
-
+    let success = false;
     if (enabled) {
-      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-      success = await dispatch(updateXpertSettings(courseId, values));
+      await updateSettingsMutation.mutateAsync(values);
+      success = updateSettingsMutation.isSuccess;
     } else {
-      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-      success = await dispatch(removeXpertSettings(courseId));
+      await deleteSettingsMutation.mutateAsync();
+      success = updateSettingsMutation.isSuccess;
     }
-
-    if (onSettingsSave) {
-      success = success && await onSettingsSave(values);
+    if (success && onSettingsSave) {
+      await onSettingsSave(values);
     }
-    setSaveError(!success);
-    !success && alertRef?.current.scrollIntoView(); // eslint-disable-line @typescript-eslint/no-unused-expressions
   };
 
   const handleFormikSubmit = ({ handleSubmit, errors }) => async (event) => {
     // If submitting the form with errors, show the alert and scroll to it.
     await handleSubmit(event);
-    if (Object.keys(errors).length > 0) {
-      setSaveError(true);
-      alertRef?.current.scrollIntoView?.(); // eslint-disable-line no-unused-expressions
-    }
+    setFormIsError(Object.keys(errors).length > 0);
   };
 
   const learnMoreLink = appInfo.documentationLinks?.learnMoreConfiguration && (
@@ -301,7 +305,7 @@ const SettingsModal = ({
     </div>
   );
 
-  if (loadingStatus === RequestStatus.SUCCESSFUL) {
+  if (xpertSettingsIsSuccess) {
     return (
       <Formik
         initialValues={{
@@ -341,7 +345,7 @@ const SettingsModal = ({
                 />
               }
             >
-              {saveError && (
+              {saveIsError && (
                 <Alert variant="danger" icon={Info} ref={alertRef}>
                   <Alert.Heading>
                     {formikProps.errors.enabled?.title || intl.formatMessage(messages.errorSavingTitle)}
@@ -428,9 +432,9 @@ const SettingsModal = ({
       isMobile={isMobile}
       isFullscreenOnMobile
     >
-      {loadingStatus === RequestStatus.IN_PROGRESS && <Loading />}
-      {loadingStatus === RequestStatus.FAILED && <ConnectionErrorAlert />}
-      {loadingStatus === RequestStatus.DENIED && <PermissionDeniedAlert />}
+      {xpertSettingsIsPending && <Loading />}
+      {xpertSettingsIsFailed && <ConnectionErrorAlert />}
+      {xpertSettingsError?.response?.status === 403 && <PermissionDeniedAlert />}
     </SettingsModalBase>
   );
 };

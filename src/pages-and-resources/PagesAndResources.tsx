@@ -40,16 +40,12 @@ const PagesAndResources = () => {
   const redirectUrl = `/course/${courseId}/pages-and-resources`;
 
   // We want the Xpert learning assistant and unit summaries to appear in the "Content Permissions" section instead,
-  // so we remove them from pages and add them to contentPermissionsPages.
-  const contentPermissionsPages: any[] = [];
-
-  ['xpert_unit_summary', 'learning_assistant'].forEach(separateAppId => {
-    const index = courseApps.findIndex(app => app.id === separateAppId);
-    if (index !== -1) {
-      const [page] = courseApps.splice(index, 1);
-      contentPermissionsPages.push(page);
-    }
-  });
+  // so we split them out of the regular pages list into contentPermissionsPages.
+  // courseApps is the array reference held by the React Query cache, so it must not be mutated here
+  // (e.g. via splice/sort) or StrictMode's double-render will silently drop entries from the UI.
+  const separateAppIds = ['xpert_unit_summary', 'learning_assistant'];
+  const contentPermissionsPages = courseApps.filter(app => separateAppIds.includes(app.id));
+  const regularPages = courseApps.filter(app => !separateAppIds.includes(app.id));
 
   if (courseAppsStatus === RequestStatus.PENDING || isLoadingUserPermissions) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -118,7 +114,7 @@ const PagesAndResources = () => {
         </Routes>
 
         <PageGrid
-          pages={courseApps}
+          pages={regularPages}
           pluginSlotComponent={<AdditionalCoursePluginSlot />}
           courseId={courseId}
         />
