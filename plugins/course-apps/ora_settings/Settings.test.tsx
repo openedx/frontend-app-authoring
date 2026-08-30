@@ -19,11 +19,12 @@ let axiosMock;
 // @ts-ignore
 ReactDOM.createPortal = jest.fn(node => node);
 
-const renderComponent = () => render(
-  <CourseAuthoringProvider courseId={courseId}>
-    <ORASettings onClose={jest.fn()} />
-  </CourseAuthoringProvider>,
-);
+const renderComponent = () =>
+  render(
+    <CourseAuthoringProvider courseId={courseId}>
+      <ORASettings onClose={jest.fn()} />
+    </CourseAuthoringProvider>,
+  );
 
 const mockCourseApps = ({ apiStatus = 200, enabled = true } = {}) => {
   axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(

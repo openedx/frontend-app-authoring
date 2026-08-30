@@ -319,7 +319,7 @@ export async function getCourseAdvancedSettings(
         filter_fields: settings.map(snakeCase).join(','),
       },
     });
-  
+
   return camelCaseObject(data);
 }
 

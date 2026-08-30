@@ -142,7 +142,7 @@ const ResetUnitsButton = ({
   }, [updateSettingsMutation]);
 
   const handleResetUnits = () => {
-    updateSettingsMutation.mutate({ enabled: checked === 'true', reset: true });    
+    updateSettingsMutation.mutate({ enabled: checked === 'true', reset: true });
   };
 
   const getResetButtonState = () => {
@@ -255,7 +255,7 @@ const SettingsModal = ({
     saveIsSuccess,
     saveIsError,
     updateSettingsMutation,
-    deleteSettingsMutation
+    deleteSettingsMutation,
   ]);
 
   const handleFormSubmit = async ({ enabled, checked, ...rest }) => {

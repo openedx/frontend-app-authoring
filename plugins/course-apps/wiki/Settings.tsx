@@ -8,7 +8,7 @@ import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-m
 import { useUpdateCourseAdvancedSettings } from 'CourseAuthoring/data/apiHooks';
 import messages from './messages';
 
-const WikiSettings = ({ onClose }: { onClose: () => void }) => {
+const WikiSettings = ({ onClose }: { onClose: () => void; }) => {
   const intl = useIntl();
   const settingName = 'allowPublicWikiAccess';
   const enablePublicWiki = useAppSetting(settingName);

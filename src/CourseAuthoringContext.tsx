@@ -98,9 +98,11 @@ export const CourseAuthoringProvider = ({
   // courseApps is the array reference held by the React Query cache; sort a copy
   // so we don't mutate it during render (StrictMode double-renders can otherwise
   // produce inconsistent results between the two passes).
-  const sortedCourseApps = courseApps ? [...courseApps].sort((firstEl, secondEl) => (
-    COURSE_APPS_ORDER.indexOf(firstEl.id) - COURSE_APPS_ORDER.indexOf(secondEl.id)
-  )) : courseApps;
+  const sortedCourseApps = courseApps ?
+    [...courseApps].sort((firstEl, secondEl) => (
+      COURSE_APPS_ORDER.indexOf(firstEl.id) - COURSE_APPS_ORDER.indexOf(secondEl.id)
+    )) :
+    courseApps;
 
   /**
    * Open the unit page for a given locator.

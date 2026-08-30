@@ -19,7 +19,7 @@ setupYupExtensions();
 
 const TeamSettings = ({
   onClose,
-}: { onClose: () => void }) => {
+}: { onClose: () => void; }) => {
   const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();
   const settingName = 'teamsConfiguration';

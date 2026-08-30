@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import SettingsModal from './settings-modal/SettingsModal';
 import messages from './messages';
 
-
 const XpertUnitSummarySettings = () => {
   const intl = useIntl();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);

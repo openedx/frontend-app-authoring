@@ -24,14 +24,13 @@ import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContex
 
 import messages from './messages';
 
-const ORASettings = ({ onClose }: { onClose : () => void}) => {
+const ORASettings = ({ onClose }: { onClose: () => void; }) => {
   const { formatMessage } = useIntl();
   const alertRef = useRef<HTMLDivElement>(null);
   const {
     courseId,
     courseApps,
     courseAppsStatus,
-
   } = useCourseAuthoringContext();
 
   const isMobile = useIsMobile();
@@ -51,14 +50,15 @@ const ORASettings = ({ onClose }: { onClose : () => void}) => {
   }, [enableFlexiblePeerGrade]);
 
   const submitButtonState = updateCourseAdvancedSettingsMutation.isPending ? 'pending' : 'default';
-  const handleSettingsSave = (values) => updateCourseAdvancedSettingsMutation.mutate({
-    setting: settingName,
-    value: values.enableFlexiblePeerGrade,
-  });
+  const handleSettingsSave = (values) =>
+    updateCourseAdvancedSettingsMutation.mutate({
+      setting: settingName,
+      value: values.enableFlexiblePeerGrade,
+    });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await handleSettingsSave(formValues);
+    handleSettingsSave(formValues);
   };
 
   const handleChange = (e) => {

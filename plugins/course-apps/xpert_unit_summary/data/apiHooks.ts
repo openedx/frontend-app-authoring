@@ -42,7 +42,7 @@ export const useXpertSettings = (courseId: string) => (
 export const useUpdateXpertSettings = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (state: { enabled: boolean; reset?: boolean }) => postXpertSettings(courseId, state),
+    mutationFn: (state: { enabled: boolean; reset?: boolean; }) => postXpertSettings(courseId, state),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: xpertUnitSummaryQueryKeys.settings(courseId) }),
   });
 };

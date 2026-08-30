@@ -9,10 +9,10 @@ import { useUpdateCourseAdvancedSettings } from 'CourseAuthoring/data/apiHooks';
 import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContext';
 import messages from './messages';
 
-const ProgressSettings = ({ onClose }: { onClose: () => void }) => {
+const ProgressSettings = ({ onClose }: { onClose: () => void; }) => {
   const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();
-  const settingsName = 'disableProgressGraph'
+  const settingsName = 'disableProgressGraph';
   const disableProgressGraph = useAppSetting(settingsName);
   const updateCourseAdvancedSettingsMutation = useUpdateCourseAdvancedSettings(courseId);
   const showProgressGraphSetting = getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS.toString().toLowerCase() === 'true';

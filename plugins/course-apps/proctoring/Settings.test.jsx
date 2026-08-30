@@ -14,7 +14,7 @@ import StudioApiService from 'CourseAuthoring/data/services/StudioApiService';
 import ExamsApiService from 'CourseAuthoring/data/services/ExamsApiService';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 import { CourseAuthoringProvider } from 'CourseAuthoring/CourseAuthoringContext';
-import { getCourseDetailsUrl } from 'CourseAuthoring/data/api';
+import { getCourseAppsApiUrl, getCourseDetailsUrl } from 'CourseAuthoring/data/api';
 import ProctoredExamSettings from './Settings';
 
 const courseId = 'course-v1%3AedX%2BDemoX%2BDemo_Course';
@@ -47,16 +47,7 @@ describe('ProctoredExamSettings', () => {
       administrator: isAdmin,
       roles: [],
     };
-    const mocks = initializeMocks({
-      user,
-      initialState: {
-        models: {
-          courseApps: {
-            proctoring: {},
-          },
-        },
-      },
-    });
+    const mocks = initializeMocks({ user });
 
     axiosMock = mocks.axiosMock;
     axiosMock
@@ -67,6 +58,23 @@ describe('ProctoredExamSettings', () => {
         start: Date(),
         ...(org ? { org } : {}),
       });
+    axiosMock
+      .onGet(`${getCourseAppsApiUrl()}/${courseId}`)
+      .reply(200, [
+        {
+          id: 'proctoring',
+          name: 'Proctoring',
+          description: 'Maintain exam integrity by enabling a proctoring solution for your course',
+          enabled: true,
+          documentation_links: {
+            learn_more_configuration: 'http://example.com/learn-more-proctoring',
+          },
+          allowed_operations: {
+            enable: false,
+            configure: true,
+          },
+        },
+      ]);
     axiosMock.onGet(`${ExamsApiService.getExamsBaseUrl()}/api/v1/providers`)
       .reply(200, [{ name: 'test_lti', verbose_name: 'LTI Provider' }]);
     if (org) {
@@ -472,7 +480,8 @@ describe('ProctoredExamSettings', () => {
       });
       // (1) for studio settings
       // (2) for course details
-      expect(axiosMock.history.get.length).toBe(2);
+      // (3) for the course apps list (used to read this app's documentation links)
+      expect(axiosMock.history.get.length).toBe(3);
       expect(axiosMock.history.get[0].url.includes('proctored_exam_settings')).toEqual(true);
     });
 

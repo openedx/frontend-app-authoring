@@ -15,7 +15,7 @@ import {
   startOfDayTime,
 } from './pages-and-resources/discussions/app-config-form/utils';
 import { DATE_TIME_FORMAT } from './constants';
-import { useCourseAdvancedSettings, useUpdateCourseAdvancedSettings } from './data/apiHooks';
+import { useCourseAdvancedSettings } from './data/apiHooks';
 import { useCourseAuthoringContext } from './CourseAuthoringContext';
 
 export const executeThunk = async (

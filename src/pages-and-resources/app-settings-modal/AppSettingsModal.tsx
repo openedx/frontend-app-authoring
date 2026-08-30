@@ -113,10 +113,9 @@ const AppSettingsModal = ({
 
   useEffect(() => {
     if (inError) {
-      alertRef?.current?.scrollIntoView()
+      alertRef?.current?.scrollIntoView();
     }
-  }, [inError])
-
+  }, [inError]);
 
   const handleFormikSubmit = ({ handleSubmit, errors }) => async (event) => {
     // Clear any error left over from a previous failed attempt so a successful
