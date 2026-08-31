@@ -1,14 +1,10 @@
-import React from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { render, screen, waitFor } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform/testing';
-
-import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
-import initializeStore from 'CourseAuthoring/store';
-import { RequestStatus } from 'CourseAuthoring/data/constants';
 import userEvent from '@testing-library/user-event';
+
+import { CourseAuthoringProvider } from 'CourseAuthoring/CourseAuthoringContext';
+import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
+import { getCourseAppsApiUrl, getCourseDetailsUrl } from 'CourseAuthoring/data/api';
+import { initializeMocks, render, screen, waitFor } from 'CourseAuthoring/testUtils';
 import SettingsComponent from './SettingsComponent';
 
 jest.mock('react-router-dom', () => ({
@@ -17,36 +13,45 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('CourseAuthoring/utils', () => ({
-  useAppSetting: () => [false, () => undefined],
+  ...jest.requireActual('CourseAuthoring/utils'),
+  // Real useAppSetting() returns a single value (not a [value, setter] tuple).
+  useAppSetting: () => false,
   useIsMobile: () => false,
 }));
 
-let store;
+const courseId = 'course-v1:foo+bar+baz';
 
-// eslint-disable-next-line react/prop-types
 const RequiredProviders = ({ children }) => (
-  <IntlProvider locale="en" messages={{}}>
-    <AppProvider store={store}>
-      <PagesAndResourcesProvider courseId="course-v1:foo+bar+baz">
-        {children}
-      </PagesAndResourcesProvider>
-    </AppProvider>
-  </IntlProvider>
+  <CourseAuthoringProvider courseId={courseId}>
+    <PagesAndResourcesProvider courseId={courseId}>
+      {children}
+    </PagesAndResourcesProvider>
+  </CourseAuthoringProvider>
 );
 
 describe('SettingsComponent', () => {
-  beforeEach(async () => {
-    initializeMockApp();
-    store = initializeStore({
-      models: {
-        courseApps: {
-          wiki: {},
+  beforeEach(() => {
+    const { axiosMock } = initializeMocks();
+
+    axiosMock.onGet(getCourseDetailsUrl(courseId, 'abc123')).reply(200, {
+      courseId,
+      name: 'Course Test',
+      start: Date(),
+    });
+
+    axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(200, [
+      {
+        id: 'wiki',
+        name: 'Wiki',
+        description: 'Wiki description',
+        enabled: false,
+        documentation_links: {},
+        allowed_operations: {
+          enable: true,
+          configure: true,
         },
       },
-      pagesAndResources: {
-        loadingStatus: RequestStatus.SUCCESSFUL,
-      },
-    });
+    ]);
   });
 
   test('renders LazyLoadedComponent when provided with props', async () => {
@@ -54,7 +59,7 @@ describe('SettingsComponent', () => {
 
     render(
       <SettingsComponent url="/some-url" />,
-      { wrapper: RequiredProviders },
+      { extraWrapper: RequiredProviders },
     );
 
     await screen.findByText('Configure wiki');
@@ -77,7 +82,7 @@ describe('SettingsComponent', () => {
         <SettingsComponent url="/some-url" />
         <LocationDisplay />
       </>,
-      { wrapper: RequiredProviders },
+      { extraWrapper: RequiredProviders },
     );
 
     await screen.findByText('Configure wiki');
@@ -98,7 +103,7 @@ describe('SettingsComponent', () => {
 
     const rendered = render(
       <SettingsComponent url="/some-url" />,
-      { wrapper: RequiredProviders },
+      { extraWrapper: RequiredProviders },
     );
 
     const errorMessage = 'An error occurred when loading the configuration UI';
