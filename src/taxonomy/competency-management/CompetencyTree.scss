@@ -96,7 +96,7 @@
     padding-left: 5px;
 
     // The disclosure chevron (visible or invisible placeholder, rendered by
-    // `CompetencyExpandIcon`) shrunk to fit the 25px inset above - see
+    // `ExpandCollapseIconButton`) shrunk to fit the 25px inset above - see
     // `$disclosure-icon-size`.
     .btn-icon-sm {
       // `content-box` (overriding the app-wide `border-box` reset for just
@@ -109,8 +109,8 @@
       // growth's effect on the row's layout with matching negative margins
       // so the glyph and the 25px label inset don't move. The right margin
       // also covers the icon-to-label gap, replacing the `mr-1` utility
-      // removed from `CompetencyExpandIcon.tsx` (its `!important` couldn't
-      // otherwise be overridden here).
+      // this page's disclosure button doesn't apply (`ExpandCollapseIconButton`'s
+      // `!important` couldn't otherwise be overridden here).
       padding: $disclosure-hit-area-inset;
       margin: (-$disclosure-hit-area-inset) 0 (-$disclosure-hit-area-inset) (-$disclosure-hit-area-inset); // top right bottom left
 

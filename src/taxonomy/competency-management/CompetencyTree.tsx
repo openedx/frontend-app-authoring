@@ -5,10 +5,10 @@ import { Button } from '@openedx/paragon';
 import { OpenInFull } from '@openedx/paragon/icons';
 
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import ExpandCollapseIconButton from '@src/generic/ExpandCollapseIconButton';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useTagListData } from '@src/taxonomy/data/apiHooks';
 import { TagTree } from '@src/taxonomy/tag-list/tagTree';
-import CompetencyExpandIcon from './CompetencyExpandIcon';
 import CompetencyTreeItem from './CompetencyTreeItem';
 import messages from './messages';
 // @ts-ignore
@@ -58,10 +58,10 @@ const CompetencyTree = ({ taxonomyId, taxonomyName }: CompetencyTreeProps) => {
     enabled: true,
   });
 
-  // Showing just the root row, collapsed, is this page's deliberate initial
-  // state - not a framework default. Nothing else needs to be expanded for
-  // the page to make sense on first load.
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
+  // The taxonomy root starts expanded so top-level competencies are visible
+  // on first load, matching the existing tag-editing page's precedent of
+  // always showing top-level tags; deeper nodes still start collapsed.
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set([ROOT_ID]));
 
   const treeBuildResult = useMemo((): TreeBuildResult => {
     if (!tagList?.results) {
@@ -142,10 +142,12 @@ const CompetencyTree = ({ taxonomyId, taxonomyName }: CompetencyTreeProps) => {
         (
           <div className="competency-tree__container">
             <div className="competency-row competency-row--root">
-              <CompetencyExpandIcon
+              <ExpandCollapseIconButton
                 canExpand={rootHasChildren}
                 isExpanded={rootIsExpanded}
                 onToggle={() => handleToggle(ROOT_ID)}
+                expandedLabel={intl.formatMessage(messages.expandRowButtonLabel)}
+                collapsedLabel={intl.formatMessage(messages.collapseRowButtonLabel)}
               />
               <span className="competency-row__label">{taxonomyName}</span>
             </div>

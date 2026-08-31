@@ -1,7 +1,7 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Badge } from '@openedx/paragon';
 
-import CompetencyExpandIcon from './CompetencyExpandIcon';
+import ExpandCollapseIconButton from '@src/generic/ExpandCollapseIconButton';
 import type { CompetencyTreeNode } from './CompetencyTree';
 import messages from './messages';
 
@@ -40,10 +40,12 @@ const CompetencyTreeItem = ({ node, expandedIds, onToggle }: CompetencyTreeItemP
   return (
     <li className={hasChildren ? 'competency-group' : undefined}>
       <div className="competency-row">
-        <CompetencyExpandIcon
+        <ExpandCollapseIconButton
           canExpand={hasChildren}
           isExpanded={isExpanded}
           onToggle={() => onToggle(nodeId)}
+          expandedLabel={intl.formatMessage(messages.expandRowButtonLabel)}
+          collapsedLabel={intl.formatMessage(messages.collapseRowButtonLabel)}
         />
         <span className="competency-row__label">{node.value}</span>
         {externalId ?

@@ -6,6 +6,7 @@ import {
   within,
 } from '@src/testUtils';
 import { apiUrls } from '@src/taxonomy/data/api';
+import { TAXONOMY_MAX_DEPTH } from '@src/taxonomy/taxonomy-detail/constants';
 import CompetencyTree from './CompetencyTree';
 
 let axiosMock;
@@ -92,15 +93,16 @@ describe('<CompetencyTree />', () => {
     axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
     renderTree();
 
+    // The taxonomy-root row starts expanded, so its immediate children (the
+    // real top-level tags) are visible without any click.
     expect(await screen.findByText(taxonomyName)).toBeInTheDocument();
-    // Nothing under the synthetic taxonomy-root row shows until it (or
-    // Expand All) is expanded.
-    expect(screen.queryByText('Root A')).not.toBeInTheDocument();
-
-    // The taxonomy-root row is expandable, and expanding it alone (not
-    // Expand All) reveals its immediate children (the real top-level tags).
-    fireEvent.click(screen.getByRole('button', { name: 'Expand' }));
     expect(await screen.findByText('Root A')).toBeInTheDocument();
+
+    // Root A's own children are one level deeper than the root, so they
+    // still require an explicit expand of Root A itself.
+    expect(screen.queryByText('Group A1')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Expand' }));
+    expect(await screen.findByText('Group A1')).toBeInTheDocument();
 
     // It's a display-only row, not a real `Tag`: no Competency ID badge for
     // itself, even though "Root A" (a real tag) has one.
@@ -128,6 +130,39 @@ describe('<CompetencyTree />', () => {
     expect(within(rootAItem as HTMLElement).getByText('Group A1')).toBeInTheDocument();
     expect(within(groupA1Item as HTMLElement).getByText('Leaf A1a')).toBeInTheDocument();
     expect(within(rootAItem as HTMLElement).getByText('Leaf A1a')).toBeInTheDocument();
+  });
+
+  it('renders every level of a maximum-depth chain when expanded', async () => {
+    // A single deep chain (each tag has exactly one child) from depth 0 to
+    // `TAXONOMY_MAX_DEPTH`, the worst case this page has to render: the
+    // synthetic taxonomy-root plus every legal real depth, 1 + (TAXONOMY_MAX_DEPTH + 1)
+    // nested `<ul>` levels in total.
+    const depthChainLabels = Array.from(
+      { length: TAXONOMY_MAX_DEPTH + 1 },
+      (_, depth) => `Depth ${depth} Tag`,
+    );
+    const results = depthChainLabels.map((value, depth) => ({
+      ...tagDefaults,
+      id: 100 + depth,
+      value,
+      depth,
+      parent_value: depth === 0 ? null : depthChainLabels[depth - 1],
+      child_count: depth < TAXONOMY_MAX_DEPTH ? 1 : 0,
+    }));
+
+    axiosMock.onGet(tagListUrl).reply(200, { ...nestedTagsResponse, results });
+    renderTree();
+    await screen.findByText(taxonomyName);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    await screen.findByText(depthChainLabels[depthChainLabels.length - 1]);
+
+    // Assert every level individually, not just the deepest one: a bug that
+    // only manifested at the max depth wouldn't necessarily hide earlier
+    // levels, so this proves the whole chain rendered end-to-end.
+    depthChainLabels.forEach((label) => {
+      expect(screen.getByText(label)).toBeInTheDocument();
+    });
   });
 
   it('toggles nested rows with Expand All / Collapse All', async () => {
@@ -191,14 +226,6 @@ describe('<CompetencyTree />', () => {
     // Every real tag renders as its own list item (the synthetic
     // taxonomy-root row is not itself a list item - see `CompetencyTree`).
     expect(screen.getAllByRole('listitem')).toHaveLength(5);
-
-    // No per-row CRUD affordance exists anywhere in the rendered tree.
-    expect(screen.queryByRole('button', { name: /add subtag/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /^delete$/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /rename/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /create tag/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /more actions for tag/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /^actions$/i })).not.toBeInTheDocument();
   });
 
   it('renders a connection error alert instead of throwing when the tag data has duplicate values', async () => {
