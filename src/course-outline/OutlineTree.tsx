@@ -17,6 +17,7 @@ import {
 } from './drag-helper/utils';
 import { applyReorderMove } from './drag-helper/utils';
 import { type Depth, LEVEL_NAMES } from './outline-level';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 export interface OutlineTreeProps {
   sections: XBlock[];
@@ -80,6 +81,8 @@ const OutlineTree = ({
     previewSections(nextSections);
     await commitSectionReorder(sectionListIds);
   }, [sections, previewSections, commitSectionReorder]);
+
+  const { canEditCourseContent } = useCourseAuthoringContext();
 
   const handleSubsectionOrderChange = useCallback(
     async (section: XBlock, moveDetails: SubsectionMoveDetails | null) => {
@@ -180,7 +183,7 @@ const OutlineTree = ({
                     )}
                   </SortableContext>
                 </DraggableList>
-                {courseActions.childAddable && (
+                {canEditCourseContent && courseActions.childAddable && (
                   <OutlineAddChildButtons
                     childType={ContainerType.Section}
                     parentLocator={courseUsageKey}
@@ -190,7 +193,7 @@ const OutlineTree = ({
             ) :
             (
               <EmptyPlaceholder>
-                {courseActions.childAddable ?
+                {canEditCourseContent && courseActions.childAddable ?
                   (
                     <OutlineAddChildButtons
                       childType={ContainerType.Section}

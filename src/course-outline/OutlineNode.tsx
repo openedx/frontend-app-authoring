@@ -105,7 +105,7 @@ const OutlineNode = ({
 
   const { activeId, overId } = useContext(DragContext);
   const { selectedContainerState, openContainerSidebar, setSelectedContainerState } = useOutlineSidebarContext();
-  const { courseId, openUnlinkModal, getUnitUrl } = useCourseAuthoringContext();
+  const { courseId, openUnlinkModal, getUnitUrl, canEditCourseContent } = useCourseAuthoringContext();
   const duplicateMutation = useDuplicateItem(courseId);
   const { openPublishModal } = useCourseOutlineContext();
   const queryClient = useQueryClient();
@@ -236,7 +236,7 @@ const OutlineNode = ({
     else { onOrderChange(effectiveSection, getPossibleMoves!(index, 1)); }
   };
 
-  const isDraggable = model.isDraggable(actions, isHeaderVisible);
+  const isDraggable = canEditCourseContent && model.isDraggable(actions, isHeaderVisible);
 
   const titleComponent = depth < 2 ?
     (
@@ -335,7 +335,6 @@ const OutlineNode = ({
                 {...(depth === 2 ?
                   {
                     isVertical: true,
-                    enableCopyPasteUnits: blk.enableCopyPasteUnits ?? false,
                     onClickCopy: () => copyToClipboard(blk.id),
                     discussionEnabled: blk.discussionEnabled,
                     discussionsSettings,
@@ -352,7 +351,7 @@ const OutlineNode = ({
                 data-testid={levelConfig.contentTestId}
                 onClick={(e) => onClickCard(e, false)}
               >
-                {depth === 0 && onOpenHighlightsModal && (
+                {canEditCourseContent && depth === 0 && onOpenHighlightsModal && (
                   <div className="outline-section__status mb-1">
                     <Button
                       className="p-0 bg-transparent"
@@ -381,14 +380,14 @@ const OutlineNode = ({
               })}
             >
               {children}
-              {actions.childAddable && (
+              {canEditCourseContent && actions.childAddable && (
                 <OutlineAddChildButtons
                   childType={levelConfig.containerType!}
                   parentLocator={blk.id}
                   grandParentLocator={depth === 1 ? parentSection?.id : undefined}
                 />
               )}
-              {showPaste && (
+              {canEditCourseContent && showPaste && (
                 <PasteComponent
                   className="mt-4 border-gray-500 rounded-0"
                   text={intl.formatMessage(outlineNodeMessages.pasteButton)}

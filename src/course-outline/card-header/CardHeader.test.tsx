@@ -8,6 +8,7 @@ import {
   waitFor,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { courseId } from '@src/schedule-and-details/__mocks__/courseDetails';
 import { userEvent } from '@testing-library/user-event';
 import { renderCard, setupCardTestMocks } from '../__mocks__/testSetup';
@@ -66,6 +67,13 @@ const cardHeaderProps = {
   },
 };
 
+let validateUserPermissionsMock;
+
+const mockPermissions = (canEditCourseContent = true) => {
+  mockWaffleFlags({ enableAuthzCourseAuthoring: !canEditCourseContent });
+  validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent });
+};
+
 const renderComponent = (props?: object, entry = '/') => {
   const titleComponent = (
     <TitleButton
@@ -99,7 +107,9 @@ const renderComponent = (props?: object, entry = '/') => {
 
 describe('<CardHeader />', () => {
   beforeEach(() => {
-    setupCardTestMocks();
+    const mocks = setupCardTestMocks();
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    mockPermissions(true);
     useUpdateCourseBlockNameMock.isPending = false;
     useUpdateCourseBlockNameMock.mutate.mockClear();
     useUpdateCourseBlockNameMock.mutateAsync.mockClear();
@@ -578,5 +588,32 @@ describe('<CardHeader />', () => {
     fireEvent.click(unlinkMenuItem);
     await act(async () => fireEvent.click(unlinkMenuItem));
     expect(onClickUnlinkMock).toHaveBeenCalled();
+  });
+
+  describe('canEditCourseContent permission', () => {
+    it('renders the rename button and actions menu when canEditCourseContent is true', async () => {
+      mockPermissions(true);
+      renderComponent();
+
+      expect(await screen.findByTestId('subsection-edit-button')).toBeInTheDocument();
+      expect(await screen.findByTestId('subsection-card-header__menu')).toBeInTheDocument();
+    });
+
+    it('does not render the rename button when canEditCourseContent is false', async () => {
+      mockPermissions(false);
+      renderComponent();
+
+      expect(await screen.findByText(cardHeaderProps.title)).toBeInTheDocument();
+      expect(screen.queryByTestId('subsection-edit-button')).not.toBeInTheDocument();
+    });
+
+    it('does not render the actions menu when canEditCourseContent is false', async () => {
+      mockPermissions(false);
+      renderComponent();
+
+      expect(await screen.findByText(cardHeaderProps.title)).toBeInTheDocument();
+      expect(screen.queryByTestId('subsection-card-header__menu')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('subsection-card-header__menu-button')).not.toBeInTheDocument();
+    });
   });
 });

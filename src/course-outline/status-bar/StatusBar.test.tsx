@@ -1,8 +1,10 @@
 import { VIDEO_SHARING_OPTIONS } from '@src/course-outline/constants';
 import { CourseOutlineStatusBar } from '@src/course-outline/data/types';
 import { initializeMocks, render, screen } from '@src/testUtils';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { StatusBar, StatusBarProps } from './StatusBar';
 import messages from './messages';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 
 const courseId = 'course-v1:123';
 const isLoading = false;
@@ -36,6 +38,13 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
     isLoading: false,
   }),
 }));
+
+let validateUserPermissionsMock;
+const mockPermissions = (canEditCourseContent = true) => {
+  mockWaffleFlags({ enableAuthzCourseAuthoring: !canEditCourseContent });
+  validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent });
+};
+
 const mockOpenEnableHighlightsModal = jest.fn();
 const mockHandleVideoSharingOptionChange = jest.fn();
 
@@ -49,13 +58,18 @@ const renderComponent = (props?: Partial<StatusBarProps>) =>
       handleVideoSharingOptionChange={mockHandleVideoSharingOptionChange}
       {...props}
     />,
+    {
+      extraWrapper: ({ children }) => <CourseAuthoringProvider courseId={courseId}>{children}</CourseAuthoringProvider>,
+    },
   );
 
 describe('<StatusBar />', () => {
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2013-03-05'));
+    mockPermissions(true);
   });
 
   it('renders StatusBar component correctly', async () => {
@@ -143,6 +157,29 @@ describe('<StatusBar />', () => {
       },
     });
     expect(await screen.findByText(messages.highlightEmailsEnabled.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('does not render the enable highlights button when canEditCourseContent is false', async () => {
+    mockPermissions(false);
+    renderComponent();
+
+    // Wait for the status bar to render, then confirm the enable button is absent.
+    expect(await screen.findByText('Feb 05, 2013 - Apr 09, 2013')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Enable highlights emails' })).not.toBeInTheDocument();
+  });
+
+  it('still shows the enabled highlights message when canEditCourseContent is false', async () => {
+    mockPermissions(false);
+    renderComponent({
+      statusBarData: {
+        ...statusBarData,
+        highlightsEnabledForMessaging: true,
+      },
+    });
+
+    // The "enabled" message is informational (not an edit action), so it renders regardless of permission.
+    expect(await screen.findByText(messages.highlightEmailsEnabled.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Enable highlights emails' })).not.toBeInTheDocument();
   });
 
   it('does render video sharing dropdown if enabled', async () => {

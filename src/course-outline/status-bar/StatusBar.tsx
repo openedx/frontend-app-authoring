@@ -29,6 +29,7 @@ import { useHelpUrls } from '@src/help-urls/hooks';
 
 import messages from './messages';
 import { NotificationStatusIcon } from './NotificationStatusIcon';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 const CourseBadge = ({ startDate, endDate }: { startDate: Moment; endDate: Moment; }) => {
   const now = moment().utc();
@@ -192,19 +193,23 @@ const Highlights = ({ highlightsEnabledForMessaging, openEnableHighlightsModal }
 }) => {
   const intl = useIntl();
 
+  const { canEditCourseContent } = useCourseAuthoringContext();
+
   if (highlightsEnabledForMessaging) {
     return (
       <span data-testid="highlights-enabled-span" className="small">
         {intl.formatMessage(messages.highlightEmailsEnabled)}
       </span>
     );
-  } else {
-    return (
-      <Button data-testid="highlights-enable-button" size="sm" onClick={openEnableHighlightsModal}>
-        {intl.formatMessage(messages.highlightEmailsButton)}
-      </Button>
-    );
   }
+  if (!canEditCourseContent) {
+    return null;
+  }
+  return (
+    <Button data-testid="highlights-enable-button" size="sm" onClick={openEnableHighlightsModal}>
+      {intl.formatMessage(messages.highlightEmailsButton)}
+    </Button>
+  );
 };
 
 const VideoSharingDropdown = ({ handleVideoSharingOptionChange, videoSharingOptions }: {
