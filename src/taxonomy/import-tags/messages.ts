@@ -29,13 +29,16 @@ const messages = defineMessages({
     id: 'course-authoring.import-tags.wizard.step-export.title',
     defaultMessage: 'Update "{name}"',
   },
-  importWizardStepExportBody: {
-    id: 'course-authoring.import-tags.wizard.step-export.body',
+  importWizardStepExportReplaceWarning: {
+    id: 'course-authoring.import-tags.wizard.step-export.replace-warning',
     defaultMessage: 'To update this taxonomy you need to import a new CSV or JSON file. The current taxonomy will '
       + 'be completely replaced by the contents of the imported file (e.g. if a tag in the current taxonomy is not '
       + 'present in the imported file, it will be removed - both from the taxonomy and from any tagged course '
-      + 'content).'
-      + '{br}You may wish to export the taxonomy in its current state before importing the new file.',
+      + 'content).',
+  },
+  importWizardStepExportBackupSuggestion: {
+    id: 'course-authoring.import-tags.wizard.step-export.backup-suggestion',
+    defaultMessage: 'You may wish to export the taxonomy in its current state before importing the new file.',
   },
   importWizardStepExportCSVButton: {
     id: 'course-authoring.import-tags.wizard.step-export.button-csv',
@@ -53,18 +56,21 @@ const messages = defineMessages({
     id: 'course-authoring.import-tags.wizard.step-upload.clear-file',
     defaultMessage: 'Clear file',
   },
-  importWizardStepUploadBody: {
-    id: 'course-authoring.import-tags.wizard.step-upload.body',
+  importWizardStepUploadFormatInfo: {
+    id: 'course-authoring.import-tags.wizard.step-upload.format-info',
     defaultMessage: 'You can upload a CSV or JSON file to create a new taxonomy. You may use any spreadsheet tool '
       + '(for CSV files), or any text editor (for JSON files) to create the file that you wish to import. '
-      + 'For an example of the required format, download the {csvTemplateUrl} or {jsonTemplateUrl}.'
-      + '{br}Once the file is ready to be imported, drag and drop it into the box below, or click to upload.',
+      + 'For an example of the required format, download the <csvLink>{csvTemplateTitle}</csvLink> or '
+      + '<jsonLink>{jsonTemplateTitle}</jsonLink>.',
   },
-  importWizardStepReuploadBody: {
-    id: 'course-authoring.import-tags.wizard.step-reupload.body',
+  importWizardStepReuploadFormatInfo: {
+    id: 'course-authoring.import-tags.wizard.step-reupload.format-info',
     defaultMessage: 'You may use any spreadsheet tool (for CSV files), or any text editor (for JSON files) to create '
-      + 'the file that you wish to import.'
-      + '{br}Once the file is ready to be imported, drag and drop it into the box below, or click to upload.',
+      + 'the file that you wish to import.',
+  },
+  importWizardStepUploadDropInstruction: {
+    id: 'course-authoring.import-tags.wizard.step-upload.drop-instruction',
+    defaultMessage: 'Once the file is ready to be imported, drag and drop it into the box below, or click to upload.',
   },
   csvTemplateTitle: {
     id: 'course-authoring.import-tags.wizard.step-upload.csv-template',
@@ -102,11 +108,14 @@ const messages = defineMessages({
     id: 'course-authoring.import-tags.wizard.step-plan.title',
     defaultMessage: 'Differences between files',
   },
-  importWizardStepPlanBody: {
-    id: 'course-authoring.import-tags.wizard.step-plan.body',
+  importWizardStepPlanSummary: {
+    id: 'course-authoring.import-tags.wizard.step-plan.summary',
     defaultMessage: 'Importing this file will make {changeCount} updates to the existing taxonomy. '
-      + 'The content of the imported file will replace any existing values that do not match the new values.'
-      + '{br}Importing this file will cause the following updates:',
+      + 'The content of the imported file will replace any existing values that do not match the new values.',
+  },
+  importWizardStepPlanListLabel: {
+    id: 'course-authoring.import-tags.wizard.step-plan.list-label',
+    defaultMessage: 'Importing this file will cause the following updates:',
   },
   importWizardStepPlanNoChanges: {
     id: 'course-authoring.import-tags.wizard.step-plan.no-changes',
@@ -116,11 +125,14 @@ const messages = defineMessages({
     id: 'course-authoring.import-tags.wizard.step-confirm.title',
     defaultMessage: 'Import and replace tags',
   },
-  importWizardStepConfirmBody: {
-    id: 'course-authoring.import-tags.wizard.step-confirm.body',
+  importWizardStepConfirmWarning: {
+    id: 'course-authoring.import-tags.wizard.step-confirm.warning',
     defaultMessage: 'Warning! You are about to make {changeCount} changes to the existing taxonomy. Any tags applied '
-      + 'to course content will be updated or removed. This cannot be undone.'
-      + '{br}Are you sure you want to continue importing this file?',
+      + 'to course content will be updated or removed. This cannot be undone.',
+  },
+  importWizardStepConfirmQuestion: {
+    id: 'course-authoring.import-tags.wizard.step-confirm.question',
+    defaultMessage: 'Are you sure you want to continue importing this file?',
   },
   promptTaxonomyName: {
     id: 'course-authoring.import-tags.prompt.taxonomy-name',
