@@ -70,7 +70,12 @@ export const taxonomyQueryKeys = {
    * @param taxonomyId ID of the taxonomy
    * @param fileId Some string to uniquely identify the file we want to upload
    */
-  importPlan: (taxonomyId: number, fileId: string) => [...taxonomyQueryKeys.all, 'importPlan', taxonomyId, fileId],
+  importPlan: (taxonomyId: number | undefined, fileId: string) => [
+    ...taxonomyQueryKeys.all,
+    'importPlan',
+    taxonomyId ?? '',
+    fileId,
+  ],
 } satisfies Record<string, (string | number)[] | ((...args: any[]) => (string | number)[])>;
 
 /**
@@ -168,10 +173,11 @@ export const useImportTags = () => {
 
 /**
  * Preview the results of importing the given file into an existing taxonomy.
- * @param taxonomyId The ID of the taxonomy whose tags we're updating.
+ * @param taxonomyId The ID of the taxonomy whose tags we're updating, or undefined if a new taxonomy is
+ *   being created (in which case there is no plan to preview).
  * @param file The file that we want to import
  */
-export const useImportPlan = (taxonomyId: number, file: File | null) =>
+export const useImportPlan = (taxonomyId: number | undefined, file: File | null) =>
   useQuery({
     queryKey: taxonomyQueryKeys.importPlan(taxonomyId, file ? `${file.name}${file.lastModified}${file.size}` : ''),
     queryFn: async (): Promise<string | null> => {

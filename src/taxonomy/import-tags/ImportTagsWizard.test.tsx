@@ -12,29 +12,30 @@ import {
   screen,
   within,
 } from '@testing-library/react';
-import PropTypes from 'prop-types';
 
-import initializeStore from '../../store';
-import { getTaxonomyExportFile } from '../data/api';
-import { TaxonomyContext } from '../common/context';
+import initializeStore from '@src/store';
+import { getTaxonomyExportFile } from '@src/taxonomy/data/api';
+import { TaxonomyContext } from '@src/taxonomy/common/context';
+import type { TaxonomyContextData } from '@src/taxonomy/common/context';
 import { ImportTagsWizard } from './ImportTagsWizard';
+import type { ImportTaxonomy } from './types';
 
-let store;
+let store: ReturnType<typeof initializeStore>;
 
 const queryClient = new QueryClient();
-let axiosMock;
+let axiosMock: MockAdapter;
 
-jest.mock('../data/api', () => ({
-  ...jest.requireActual('../data/api'),
+jest.mock('@src/taxonomy/data/api', () => ({
+  ...jest.requireActual('@src/taxonomy/data/api'),
   getTaxonomyExportFile: jest.fn(),
 }));
 
 const mockSetToastMessage = jest.fn();
 const mockSetAlertError = jest.fn();
-const context = {
+const context: TaxonomyContextData = {
   toastMessage: null,
   setToastMessage: mockSetToastMessage,
-  alertProps: null,
+  alertError: null,
   setAlertError: mockSetAlertError,
 };
 
@@ -42,12 +43,18 @@ const planImportUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/
 const doImportUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/import/';
 const doImportNewTaxonomyUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/import/';
 
-const sampleTaxonomy = {
+const sampleTaxonomy: ImportTaxonomy = {
   id: 1,
   name: 'Test Taxonomy',
 };
 
-const RootWrapper = ({ onClose, reimport, taxonomy }) => (
+interface RootWrapperProps {
+  onClose: () => void;
+  reimport?: boolean;
+  taxonomy?: ImportTaxonomy | null;
+}
+
+const RootWrapper = ({ onClose, reimport, taxonomy }: RootWrapperProps) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
@@ -58,15 +65,6 @@ const RootWrapper = ({ onClose, reimport, taxonomy }) => (
     </IntlProvider>
   </AppProvider>
 );
-
-RootWrapper.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  reimport: PropTypes.bool.isRequired,
-  taxonomy: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-};
 
 describe('<ImportTagsWizard />', () => {
   beforeEach(() => {
@@ -146,7 +144,7 @@ describe('<ImportTagsWizard />', () => {
     expect(getByTestId('dropzone')).toBeInTheDocument();
     expect(importButton).toHaveAttribute('aria-disabled', 'true');
 
-    const makeJson = (filename) => new File(['{}'], filename, { type: 'application/json' });
+    const makeJson = (filename: string) => new File(['{}'], filename, { type: 'application/json' });
 
     // Correct file type
     axiosMock.onPut(planImportUrl).replyOnce(200, { plan: 'Import plan' });
@@ -281,7 +279,7 @@ describe('<ImportTagsWizard />', () => {
     expect(getByTestId('dropzone')).toBeInTheDocument();
     expect(continueButton).toHaveAttribute('aria-disabled', 'true');
 
-    const makeJson = (filename) => new File(['{}'], filename, { type: 'application/json' });
+    const makeJson = (filename: string) => new File(['{}'], filename, { type: 'application/json' });
 
     // Correct file type
     fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [makeJson('example1.json')], types: ['Files'] } });
