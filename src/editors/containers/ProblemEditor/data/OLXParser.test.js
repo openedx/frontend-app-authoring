@@ -1,3 +1,4 @@
+import dropdownTemplate from '@src/editors/data/constants/basicProblemTemplates/dropdown';
 import { OLXParser } from './OLXParser';
 import {
   checkboxesOLXWithFeedbackAndHintsOLX,
@@ -132,6 +133,13 @@ describe('OLXParser', () => {
       const problemType = numericOlxParser.getProblemType();
       it('should equal ProblemTypeKeys.NUMERIC', () => {
         expect(problemType).toEqual(ProblemTypeKeys.NUMERIC);
+      });
+    });
+    describe('given the blank dropdown template', () => {
+      const olxparser = new OLXParser(dropdownTemplate.olx);
+      const { answers } = olxparser.parseMultipleChoiceAnswers('optionresponse', 'optioninput', 'option');
+      it('should leave every answer empty, so the editor shows its placeholder', () => {
+        expect(answers.map(answer => answer.title)).toEqual(['', '', '']);
       });
     });
     describe('given dropdown olx with feedback and hints', () => {
