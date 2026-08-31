@@ -52,7 +52,7 @@ const CourseOutline = () => {
   const {
     courseId,
     canEditCourseContent,
-    isLoading: isLoadingAuthoringContext,
+    isLoadingPermissions,
   } = useCourseAuthoringContext();
   const {
     courseUsageKey,
@@ -178,7 +178,7 @@ const CourseOutline = () => {
     }
   }, [location, courseId, courseName]);
 
-  if (isLoading || isLoadingAuthoringContext) {
+  if (isLoading || isLoadingPermissions) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return (
       <Row className="m-0 mt-4 justify-content-center">

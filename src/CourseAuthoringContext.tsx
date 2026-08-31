@@ -31,7 +31,7 @@ export type CourseAuthoringContextData = {
   currentUnlinkModalData?: ModalState;
   openUnlinkModal: (value: ModalState) => void;
   closeUnlinkModal: () => void;
-  isLoading: boolean;
+  isLoadingPermissions: boolean;
   canEditCourseContent: boolean;
   canPublishCourseContent: boolean;
 };
@@ -66,11 +66,10 @@ export const CourseAuthoringProvider = ({
   const {
     canEditCourseContent,
     canPublishCourseContent,
-    isLoading: isUserPermissionsLoading,
+    isLoading: isLoadingUserPermissions,
   } = useCourseUserPermissions(courseId, getCourseOutlinePermissions(courseId));
 
   const getUnitUrl = (locator: string) => `/course/${courseId}/container/${locator}`;
-  const isLoading = isUserPermissionsLoading;
 
   /**
    * Open the unit page for a given locator.
@@ -90,7 +89,7 @@ export const CourseAuthoringProvider = ({
     openUnlinkModal,
     closeUnlinkModal,
     currentUnlinkModalData,
-    isLoading,
+    isLoadingPermissions: isLoadingUserPermissions,
     canEditCourseContent,
     canPublishCourseContent,
   }), [
@@ -106,7 +105,7 @@ export const CourseAuthoringProvider = ({
     currentUnlinkModalData,
     canEditCourseContent,
     canPublishCourseContent,
-    isLoading,
+    isLoadingUserPermissions,
   ]);
 
   return (
