@@ -1,6 +1,5 @@
 import {
   screen,
-  waitFor,
   within,
 } from '@testing-library/react';
 import ReactDOM from 'react-dom';
@@ -103,14 +102,10 @@ describe('ORASettings', () => {
 
     const checkbox = await screen.findByRole('checkbox', { name: /Flex Peer Grading/ });
     expect(checkbox).toBeChecked();
-
-    await waitFor(() => {
-      const label = screen.getByText(messages.enableFlexPeerGradeLabel.defaultMessage);
-      const enableBadge = screen.getByTestId('enable-badge');
-
-      expect(label).toBeVisible();
-      expect(enableBadge).toHaveTextContent('Enabled');
-    });
+    const label = await screen.findByText(messages.enableFlexPeerGradeLabel.defaultMessage);
+    const enableBadge = await screen.findByTestId('enable-badge');
+    expect(label).toBeVisible();
+    expect(enableBadge).toHaveTextContent('Enabled');
   });
 
   it('Displays title, helper text and hides badge when flexible peer grading button is disabled', async () => {
