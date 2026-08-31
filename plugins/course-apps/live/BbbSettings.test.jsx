@@ -14,11 +14,11 @@ import { executeThunk } from 'CourseAuthoring/utils';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 
 import { CourseAuthoringProvider } from 'CourseAuthoring/CourseAuthoringContext';
+import { getCourseAppsApiUrl, getCourseDetailsUrl } from 'CourseAuthoring/data/api';
 import LiveSettings from './Settings';
 import {
   generateLiveConfigurationApiResponse,
   courseId,
-  initialState,
   configurationProviders,
 } from './factories/mockApiResponses';
 import { fetchLiveConfiguration, fetchLiveProviders } from './data/thunks';
@@ -78,9 +78,28 @@ const mockStore = async ({
 
 describe('BBB Settings', () => {
   beforeEach(async () => {
-    const mocks = initializeMocks({ initialState });
+    const mocks = initializeMocks();
     store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
+
+    axiosMock.onGet(getCourseDetailsUrl(courseId, 'abc123')).reply(200, {
+      courseId,
+      name: 'Course Test',
+      start: Date(),
+    });
+    axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(200, [
+      {
+        id: 'live',
+        enabled: true,
+        name: 'Live',
+        description: 'Enable in-platform video conferencing by configuring live',
+        allowed_operations: {
+          enable: true,
+          configure: true,
+        },
+        documentation_links: {},
+      },
+    ]);
   });
 
   test('Plan dropdown to be visible and enabled in UI', async () => {
