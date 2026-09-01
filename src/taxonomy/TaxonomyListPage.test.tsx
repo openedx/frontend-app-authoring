@@ -68,6 +68,23 @@ describe('<TaxonomyListPage />', () => {
     expect(getByTestId('taxonomy-card-1')).toBeInTheDocument();
   });
 
+  it('shows the taxonomy type icon of each taxonomy', async () => {
+    axiosMock.onGet(listTaxonomiesUrl).reply(200, {
+      results: [
+        { ...taxonomies[0], id: 1, taxonomy_type: 'competency' },
+        { ...taxonomies[0], id: 2, taxonomy_type: 'tags' },
+      ],
+      canAddTaxonomy: false,
+    });
+    const { getByTestId, queryByText } = render(<TaxonomyListPage />);
+    await waitFor(() => {
+      expect(queryByText('Loading')).toEqual(null);
+    });
+
+    expect(getByTestId('taxonomy-card-1')).toContainElement(getByTestId('taxonomy-type-icon-competency'));
+    expect(getByTestId('taxonomy-card-2')).toContainElement(getByTestId('taxonomy-type-icon-tags'));
+  });
+
   it.each(['csv', 'json'] as const)('downloads the taxonomy template %s', async (fileFormat) => {
     axiosMock.onGet(listTaxonomiesUrl).reply(200, { results: taxonomies, canAddTaxonomy: false });
     const { findByRole, queryByText } = render(<TaxonomyListPage />);

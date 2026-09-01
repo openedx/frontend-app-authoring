@@ -1,9 +1,12 @@
+import type { TaxonomyType } from './constants';
+
 /** Metadata about a taxonomy */
 export interface TaxonomyData {
   id: number;
   name: string;
   description: string;
   exportId: string;
+  taxonomyType: TaxonomyType;
   enabled: boolean;
   allowMultiple: boolean;
   allowFreeText: boolean;
