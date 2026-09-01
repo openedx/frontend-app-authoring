@@ -211,7 +211,7 @@ describe('<CompetencyTree />', () => {
     expect(screen.queryByText(/^null$/)).not.toBeInTheDocument();
   });
 
-  it('renders as a plain list, not a table, with no CRUD affordances anywhere in the tree', async () => {
+  it('renders as a plain list, not a table', async () => {
     axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
     renderTree();
     await screen.findByText(taxonomyName);
