@@ -538,7 +538,7 @@ describe('<CardHeader />', () => {
     renderComponent();
 
     // Wait until the permissions have resolved and the menu is available.
-    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
+    const menuButton = await screen.findByRole('button', { name: 'subsection-card-header__menu' });
 
     // Tag count is not rendered
     expect(screen.queryByText('17')).not.toBeInTheDocument();

@@ -30,6 +30,7 @@ mockContentData.applyMock();
 const {
   stagedTagsId,
   otherTagsId,
+  editableOtherTagsId,
   languageWithTagsId,
   languageWithoutTagsId,
   largeTagsId,
@@ -799,6 +800,29 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.click(cancelButton);
 
     expect(screen.getByText(/tag 3/i)).toBeInTheDocument();
+  });
+
+  it('should show tags staged on an "Other tags" taxonomy', async () => {
+    renderDrawer(editableOtherTagsId);
+    expect(await screen.findByText('Other tags')).toBeInTheDocument();
+
+    // To edit mode
+    fireEvent.click(screen.getByRole('button', { name: /edit tags/i }));
+
+    // The second "Add a tag" select belongs to the taxonomy under "Other tags";
+    // the first one belongs to the regular taxonomy rendered above it.
+    const addTagsSelects = screen.getAllByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    expect(addTagsSelects.length).toBe(2);
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(addTagsSelects[1]);
+
+    // Stage "Tag 1" on the other taxonomy
+    fireEvent.click(await screen.findByText('Tag 1'));
+    fireEvent.click(screen.getByRole('button', { name: /add tags/i }));
+
+    // The staged tag is merged into the other taxonomy's tags, alongside the fetched one
+    expect(screen.getByText('Tag 3')).toBeInTheDocument();
+    expect(screen.getByText('Tag 1')).toBeInTheDocument();
   });
 
   it('should show Language Taxonomy', async () => {
