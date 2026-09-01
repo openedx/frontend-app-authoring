@@ -27,7 +27,7 @@ import { ALL_TAXONOMIES, apiUrls, UNASSIGNED } from './data/api';
 import { useTaxonomyList } from './data/apiHooks';
 import { ImportTagsWizard } from './import-tags';
 import messages from './messages';
-import TaxonomyCard from './taxonomy-card';
+import { TaxonomyCard } from './taxonomy-card';
 
 const TaxonomyListHeaderButtons = (props: { canAddTaxonomy: boolean; }) => {
   const intl = useIntl();

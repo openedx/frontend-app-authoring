@@ -2,6 +2,11 @@
   width: 400px;
   height: 317px;
 
+  .taxonomy-card-title-text {
+    /* Allow the title to shrink (and truncate) next to the taxonomy type icon */
+    min-width: 0;
+  }
+
   .taxonomy-card-body {
     /*
       Set overflow to description

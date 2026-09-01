@@ -6,12 +6,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render } from '@testing-library/react';
 
 import initializeStore from '../../store';
-import TaxonomyCard from '.';
+import { TaxonomyType } from '../data/constants';
+import { TaxonomyCard } from '.';
+import { TaxonomyCardData } from './TaxonomyCard';
 
 let store;
 const taxonomyId = 1;
 
-const data = {
+const data: TaxonomyCardData = {
   id: taxonomyId,
   name: 'Taxonomy 1',
   description: 'This is a description',
@@ -23,7 +25,7 @@ const data = {
 
 const queryClient = new QueryClient();
 
-const TaxonomyCardComponent = ({ original }) => (
+const TaxonomyCardComponent = ({ original }: { original: TaxonomyCardData; }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
@@ -34,8 +36,6 @@ const TaxonomyCardComponent = ({ original }) => (
     </IntlProvider>
   </AppProvider>
 );
-
-TaxonomyCardComponent.propTypes = TaxonomyCard.propTypes;
 
 describe('<TaxonomyCard />', () => {
   beforeEach(async () => {
@@ -110,5 +110,29 @@ describe('<TaxonomyCard />', () => {
     };
     const { getByText } = render(<TaxonomyCardComponent original={cardData} />);
     expect(getByText('Assigned to 6 orgs')).toBeInTheDocument();
+  });
+
+  it('shows the competency type icon with competency taxonomies', () => {
+    const cardData = { ...data, taxonomyType: TaxonomyType.Competency };
+
+    const { getByTestId, queryByTestId } = render(<TaxonomyCardComponent original={cardData} />);
+    expect(getByTestId('taxonomy-type-icon-competency')).toBeInTheDocument();
+    expect(queryByTestId('taxonomy-type-icon-tags')).not.toBeInTheDocument();
+  });
+
+  it('shows the tags type icon with tags taxonomies', () => {
+    const cardData = { ...data, taxonomyType: TaxonomyType.Tags };
+
+    const { getByTestId, queryByTestId } = render(<TaxonomyCardComponent original={cardData} />);
+    expect(getByTestId('taxonomy-type-icon-tags')).toBeInTheDocument();
+    expect(queryByTestId('taxonomy-type-icon-competency')).not.toBeInTheDocument();
+  });
+
+  it('shows a type icon even when the taxonomy has no type, along with the read-only badge', () => {
+    const cardData = { ...data, readOnly: true };
+
+    const { getByText, getByTestId } = render(<TaxonomyCardComponent original={cardData} />);
+    expect(getByTestId('taxonomy-type-icon-tags')).toBeInTheDocument();
+    expect(getByText(readOnlyBadgeText)).toBeInTheDocument();
   });
 });
