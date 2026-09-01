@@ -71,7 +71,7 @@ const SearchSort = ({
           >
             <span className="search-sort-menu-by">
               <FormattedMessage {...messages.sortBy} />
-              <span style={{ whiteSpace: 'pre-wrap' }}></span>
+              <span style={{ whiteSpace: 'pre-wrap' }}>{' '}</span>
             </span>
             <FormattedMessage {...sortMessages[key]} />
           </MenuItem>
