@@ -47,7 +47,7 @@ import NewsstandIcon from '../generic/NewsstandIcon';
 
 interface Props {
   courseId: string;
-  readOnly?: boolean;
+  readOnly: boolean;
 }
 
 interface ItemCardProps {
@@ -138,10 +138,10 @@ const ItemCard: React.FC<ItemCardProps> = ({
 
 const ItemReviewList = ({
   outOfSyncItems,
-  readOnly = false,
+  readOnly,
 }: {
   outOfSyncItems: PublishableEntityLink[];
-  readOnly?: boolean;
+  readOnly: boolean;
 }) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
@@ -334,7 +334,7 @@ const ItemReviewList = ({
   );
 };
 
-const ReviewTabContent = ({ courseId, readOnly = false }: Props) => {
+const ReviewTabContent = ({ courseId, readOnly }: Props) => {
   const intl = useIntl();
   const {
     data: outOfSyncItems,
