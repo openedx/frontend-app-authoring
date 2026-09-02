@@ -5,9 +5,11 @@ import {
   initializeMocks,
   render,
   waitFor,
-} from '../../testUtils';
+  within,
+} from '@src/testUtils';
 import { TaxonomyContext } from '../common/context';
 import { deleteTaxonomy, getTaxonomy, getTaxonomyExportFile } from '../data/api';
+import { TaxonomyType } from '../data/constants';
 import { TaxonomyMenu } from '.';
 
 const taxonomyId = 1;
@@ -20,6 +22,12 @@ jest.mock('../data/api', () => ({
   getTaxonomy: jest.fn(),
 }));
 
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
 const mockSetToastMessage = jest.fn();
 
 /**
@@ -30,11 +38,13 @@ const TaxonomyMenuComponent: React.FC<{
   readOnly?: boolean;
   canChangeTaxonomy?: boolean;
   canDeleteTaxonomy?: boolean;
+  taxonomyType?: TaxonomyType;
 }> = ({
   iconMenu,
   readOnly = false,
   canChangeTaxonomy = true,
   canDeleteTaxonomy = true,
+  taxonomyType = TaxonomyType.Tags,
 }) => {
   const context = useMemo(() => ({
     toastMessage: null,
@@ -53,6 +63,7 @@ const TaxonomyMenuComponent: React.FC<{
           readOnly,
           canChangeTaxonomy,
           canDeleteTaxonomy,
+          taxonomyType,
         }}
         iconMenu={iconMenu}
       />
@@ -153,6 +164,55 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', (iconMenu) => {
     expect(queryByTestId('taxonomy-menu-import')).not.toBeInTheDocument();
     expect(queryByTestId('taxonomy-menu-manageOrgs')).toBeInTheDocument();
     expect(queryByTestId('taxonomy-menu-delete')).not.toBeInTheDocument();
+  });
+
+  test('Shows "Apply Competencies" last for competency taxonomies, and navigates on click', async () => {
+    const { findByTestId, getByTestId } = render(
+      <TaxonomyMenuComponent iconMenu={iconMenu} taxonomyType={TaxonomyType.Competency} />,
+    );
+
+    // Click on the menu button to open
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
+
+    const menuItems = within(getByTestId('taxonomy-menu')).getAllByRole('button');
+    expect(menuItems.map((item) => item.textContent)).toEqual([
+      'Re-import',
+      'Export',
+      'Delete',
+      'Manage Organizations',
+      'Apply Competencies',
+    ]);
+
+    fireEvent.click(getByTestId('taxonomy-menu-applyCompetencies'));
+
+    expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${taxonomyId}/competencies`);
+  });
+
+  test('Hides "Apply Competencies" for tags taxonomies', async () => {
+    const { findByTestId, getByTestId, queryByTestId } = render(
+      <TaxonomyMenuComponent iconMenu={iconMenu} taxonomyType={TaxonomyType.Tags} />,
+    );
+
+    // Click on the menu button to open
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
+
+    expect(queryByTestId('taxonomy-menu-applyCompetencies')).not.toBeInTheDocument();
+    expect(within(getByTestId('taxonomy-menu')).getAllByRole('button')).toHaveLength(4);
+  });
+
+  test('Hides "Apply Competencies" from users who cannot change the taxonomy', async () => {
+    const { findByTestId, queryByTestId } = render(
+      <TaxonomyMenuComponent
+        iconMenu={iconMenu}
+        taxonomyType={TaxonomyType.Competency}
+        canChangeTaxonomy={false}
+      />,
+    );
+
+    // Click on the menu button to open
+    fireEvent.click(await findByTestId('taxonomy-menu-button'));
+
+    expect(queryByTestId('taxonomy-menu-applyCompetencies')).not.toBeInTheDocument();
   });
 
   test('should open export modal on export menu click', async () => {

@@ -1,12 +1,16 @@
-import { Card } from '@openedx/paragon';
-import { NavLink } from 'react-router-dom';
+import type { MouseEvent } from 'react';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { Button, Card } from '@openedx/paragon';
+import { NavLink, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 
 import { TaxonomyMenu } from '../taxonomy-menu';
 import { TaxonomyCardHeaderSubtitle } from './TaxonomyCardHeaderSubtitle';
 import { TaxonomyCardHeaderTitle } from './TaxonomyCardHeaderTitle';
+import messages from './messages';
 import { orgsCountEnabled } from './utils';
 import { TaxonomyType } from '../data/constants';
+import { isCompetencyTaxonomy } from '../data/utils';
 import { TaxonomyData } from '../data/types';
 
 type TaxonomyCardFields = Pick<
@@ -33,7 +37,13 @@ export const TaxonomyCard = ({ className = '', original }: TaxonomyCardProps) =>
     readOnly,
     orgsCount,
     taxonomyType,
+    canChangeTaxonomy,
   } = original;
+
+  const intl = useIntl();
+  const navigate = useNavigate();
+
+  const showApplyCompetencies = canChangeTaxonomy && isCompetencyTaxonomy(original);
 
   return (
     <Card
@@ -68,12 +78,28 @@ export const TaxonomyCard = ({ className = '', original }: TaxonomyCardProps) =>
         className={classNames('taxonomy-card-body', {
           'taxonomy-card-body-overflow-m': !readOnly && !orgsCountEnabled(orgsCount),
           'taxonomy-card-body-overflow-sm': readOnly || orgsCountEnabled(orgsCount),
+          'taxonomy-card-body-with-footer': showApplyCompetencies,
         })}
       >
         <Card.Section>
           {description}
         </Card.Section>
       </Card.Body>
+      {showApplyCompetencies && (
+        <Card.Footer className="justify-content-end">
+          <Button
+            variant="primary"
+            // The whole card is a link, so stop the click here instead of nesting another one inside it.
+            onClick={(e: MouseEvent) => {
+              e.preventDefault();
+              e.stopPropagation();
+              navigate(`/taxonomy/${id}/competencies`);
+            }}
+          >
+            {intl.formatMessage(messages.applyCompetenciesButton)}
+          </Button>
+        </Card.Footer>
+      )}
     </Card>
   );
 };

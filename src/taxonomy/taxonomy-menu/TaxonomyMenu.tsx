@@ -18,11 +18,15 @@ import DeleteDialog from '../delete-dialog';
 import { ImportTagsWizard } from '../import-tags';
 import { ManageOrgsModal } from '../manage-orgs';
 import messages from './messages';
+import { isCompetencyTaxonomy } from '../data/utils';
 import type { TaxonomyData } from '../data/types';
 
 // Note: to make mocking easier for tests, the types below only specify the subset of TaxonomyData that we actually use.
 interface Props {
-  taxonomy: Pick<TaxonomyData, 'id' | 'name' | 'tagsCount' | 'readOnly' | 'canChangeTaxonomy' | 'canDeleteTaxonomy'>;
+  taxonomy:
+    & Pick<TaxonomyData, 'id' | 'name' | 'tagsCount' | 'readOnly' | 'canChangeTaxonomy' | 'canDeleteTaxonomy'>
+    // Taxonomies whose type we don't know are treated as tags taxonomies, like the card type icon does.
+    & Partial<Pick<TaxonomyData, 'taxonomyType'>>;
   iconMenu?: boolean;
 }
 
@@ -88,6 +92,11 @@ const TaxonomyMenu = ({
       title: intl.formatMessage(messages.manageOrgsMenu),
       action: manageOrgsModalOpen,
       show: taxonomy.canChangeTaxonomy,
+    },
+    applyCompetencies: {
+      title: intl.formatMessage(messages.applyCompetenciesMenu),
+      action: () => navigate(`/taxonomy/${taxonomy.id}/competencies`),
+      show: taxonomy.canChangeTaxonomy && isCompetencyTaxonomy(taxonomy),
     },
   };
 

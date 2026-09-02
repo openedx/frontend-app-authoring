@@ -25,6 +25,11 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-menu.delete.label',
     defaultMessage: 'Delete',
   },
+  applyCompetenciesMenu: {
+    id: 'course-authoring.taxonomy-menu.apply-competencies.label',
+    defaultMessage: 'Apply Competencies',
+    description: 'Menu item that opens the competency management page of a competency taxonomy.',
+  },
   taxonomyDeleteToast: {
     id: 'course-authoring.taxonomy-list.toast.delete',
     defaultMessage: '"{name}" deleted',

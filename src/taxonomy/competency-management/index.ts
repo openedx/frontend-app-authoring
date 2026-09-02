@@ -1,0 +1,1 @@
+export { CompetencyManagementPage } from './CompetencyManagementPage';

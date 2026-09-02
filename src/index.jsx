@@ -36,7 +36,12 @@ import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
 import { StudioHome } from './studio-home';
 import CourseRerun from './course-rerun';
-import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy';
+import {
+  CompetencyManagementPage,
+  TaxonomyDetailPage,
+  TaxonomyLayout,
+  TaxonomyListPage,
+} from './taxonomy';
 import { ContentTagsDrawer } from './content-tags-drawer';
 import AccessibilityPage from './accessibility-page';
 import { ToastProvider } from './generic/toast-context';
@@ -110,6 +115,7 @@ const App = () => {
             </Route>
             <Route path="/taxonomy" element={<TaxonomyLayout />}>
               <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPage />} />
+              <Route path="/taxonomy/:taxonomyId/competencies" element={<CompetencyManagementPage />} />
             </Route>
             <Route
               path="/tagging/components/widget/:contentId"
