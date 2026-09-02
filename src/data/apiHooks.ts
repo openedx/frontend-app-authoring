@@ -1,3 +1,5 @@
+import { useCallback, useMemo } from 'react';
+
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { UserAgreement, UserAgreementRecord } from '@src/data/types';
@@ -154,7 +156,7 @@ export function createGlobalState<T>(
 ) {
   return (queryKeyArgs?: any) => {
     const queryClient = useQueryClient();
-    const queryKey = queryKeyFn(queryKeyArgs);
+    const queryKey = useMemo(() => queryKeyFn(queryKeyArgs), [queryKeyArgs]);
 
     const { data } = useQuery({
       queryKey,
@@ -166,15 +168,13 @@ export function createGlobalState<T>(
       refetchIntervalInBackground: false,
     });
 
-    function setData(x: Partial<T>) {
+    const setData = useCallback((x: Partial<T>) => {
       queryClient.setQueryData(queryKey, x);
-    }
+    }, [queryClient, queryKey]);
 
-    async function resetData() {
-      await queryClient.invalidateQueries({
-        queryKey,
-      });
-    }
+    const resetData = useCallback(async () => {
+      await queryClient.invalidateQueries({ queryKey });
+    }, [queryClient, queryKey]);
 
     return { data, setData, resetData };
   };
