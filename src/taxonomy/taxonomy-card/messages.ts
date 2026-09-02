@@ -15,6 +15,11 @@ const messages = defineMessages({
     defaultMessage: 'Tags taxonomy',
     description: 'Screen reader text for the icon on a taxonomy card that indicates the taxonomy is a tags taxonomy.',
   },
+  applyCompetenciesButton: {
+    id: 'course-authoring.taxonomy-list.button.apply-competencies.label',
+    defaultMessage: 'Apply Competencies',
+    description: 'Button on a competency taxonomy card that opens its competency management page.',
+  },
 });
 
 export default messages;
