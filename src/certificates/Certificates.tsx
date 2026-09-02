@@ -1,8 +1,5 @@
 import { Helmet } from 'react-helmet';
 
-import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseUserPermissions } from '@src/authz/hooks';
-import { getCertificatesPermissions } from '@src/authz/permissionHelpers';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
 import Placeholder from '../editors/Placeholder';
 import Loading from '../generic/Loading';
@@ -14,6 +11,7 @@ import CertificateCreateForm from './certificate-create-form/CertificateCreateFo
 import CertificateEditForm from './certificate-edit-form/CertificateEditForm';
 import { MODE_STATES } from './data/constants';
 import MainLayout from './layout/MainLayout';
+import { useCertificatesContext } from './context';
 
 const MODE_COMPONENTS = {
   [MODE_STATES.noModes]: CertificateWithoutModes,
@@ -24,7 +22,6 @@ const MODE_COMPONENTS = {
 };
 
 const Certificates = () => {
-  const { courseId } = useCourseAuthoringContext();
   const {
     certificates,
     componentMode,
@@ -34,12 +31,9 @@ const Certificates = () => {
     hasCertificateModes,
   } = useCertificatesData();
 
-  const {
-    isLoading: isLoadingUserPermissions,
-    canManageCertificates,
-  } = useCourseUserPermissions(courseId, getCertificatesPermissions(courseId));
+  const { canViewCertificates } = useCertificatesContext();
 
-  if (!isLoadingUserPermissions && !canManageCertificates) {
+  if (!canViewCertificates) {
     return <PermissionDeniedAlert />;
   }
 

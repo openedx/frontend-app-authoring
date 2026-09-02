@@ -1,4 +1,7 @@
 import { initializeMocks, render, screen, within, userEvent } from '@src/testUtils';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { CertificatesProvider } from '@src/certificates/context';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 
 import { signatoriesMock } from '../__mocks__';
 import commonMessages from '../messages';
@@ -20,7 +23,11 @@ const mockArrayHelpers = {
 
 const renderComponent = (props) =>
   render(
-    <CertificateSignatories {...props} />,
+    <CourseAuthoringProvider courseId="course-123">
+      <CertificatesProvider>
+        <CertificateSignatories {...props} />
+      </CertificatesProvider>
+    </CourseAuthoringProvider>,
   );
 
 const defaultProps = {
@@ -38,6 +45,7 @@ const defaultProps = {
 describe('CertificateSignatories', () => {
   beforeEach(() => {
     initializeMocks();
+    mockWaffleFlags({ enableAuthzCourseAuthoring: false });
 
     mockUseEditSignatory.mockReturnValue({
       toggleEditSignatory: jest.fn(),
@@ -72,6 +80,7 @@ describe('CertificateSignatories', () => {
 describe('CertificateSignatories - real useEditSignatory', () => {
   beforeEach(() => {
     initializeMocks();
+    mockWaffleFlags({ enableAuthzCourseAuthoring: false });
 
     // Use the real implementation so handleDeleteSignatory actually calls arrayHelpers.remove
     const realUseEditSignatory = jest.requireActual('./hooks/useEditSignatory').default;

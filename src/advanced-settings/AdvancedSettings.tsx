@@ -13,6 +13,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getAdvancedSettingsPermissions } from '@src/authz/permissionHelpers';
 import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
+import ViewOnlyPermissionsAlert from '@src/generic/ViewOnlyPermissionsAlert';
 import AlertProctoringError from '@src/generic/AlertProctoringError';
 import { LoadingSpinner } from '@src/generic/Loading';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
@@ -45,6 +46,7 @@ const AdvancedSettings = () => {
 
   const {
     isLoading: isLoadingUserPermissions,
+    canViewAdvancedSettings,
     canManageAdvancedSettings,
   } = useCourseUserPermissions(courseId, getAdvancedSettingsPermissions(courseId));
 
@@ -102,7 +104,7 @@ const AdvancedSettings = () => {
     );
   }
 
-  if (!canManageAdvancedSettings) {
+  if (!canViewAdvancedSettings) {
     return <PermissionDeniedAlert />;
   }
 
@@ -201,6 +203,7 @@ const AdvancedSettings = () => {
                 subtitle={intl.formatMessage(messages.headingSubtitle)}
                 title={intl.formatMessage(messages.headingTitle)}
                 contentTitle={intl.formatMessage(messages.policy)}
+                banner={!canManageAdvancedSettings ? <ViewOnlyPermissionsAlert /> : null}
               />
               <article>
                 <div>
@@ -246,6 +249,7 @@ const AdvancedSettings = () => {
                             handleBlur={handleSettingBlur}
                             isEditableState={isEditableState}
                             setIsEditableState={setIsEditableState}
+                            disabled={!canManageAdvancedSettings}
                           />
                         );
                       })}

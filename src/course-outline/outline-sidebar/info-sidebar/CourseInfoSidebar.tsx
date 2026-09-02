@@ -141,7 +141,7 @@ const SettingsTab = () => {
           isNewPage
         />
       )}
-      {perms.canManageAdvancedSettings && (
+      {perms.canViewAdvancedSettings && (
         <HelpSidebarLink
           as="span"
           pathToPage={`/course/${courseId}/${advancedSettings}`}

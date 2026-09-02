@@ -21,6 +21,7 @@ export const COURSE_PERMISSIONS = {
   EDIT_COURSE_CONTENT: 'courses.edit_course_content',
   PUBLISH_COURSE_CONTENT: 'courses.publish_course_content',
 
+  VIEW_ADVANCED_SETTINGS: 'courses.view_advanced_settings',
   MANAGE_ADVANCED_SETTINGS: 'courses.manage_advanced_settings',
 
   VIEW_GRADING_SETTINGS: 'courses.view_grading_settings',
@@ -44,6 +45,8 @@ export const COURSE_PERMISSIONS = {
   VIEW_COURSE_TEAM: 'courses.view_course_team',
 
   MANAGE_GROUP_CONFIGURATIONS: 'courses.manage_group_configurations',
+
+  VIEW_CERTIFICATES: 'courses.view_certificates',
   MANAGE_CERTIFICATES: 'courses.manage_certificates',
 
   VIEW_CHECKLISTS: 'courses.view_checklists',

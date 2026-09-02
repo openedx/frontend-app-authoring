@@ -93,17 +93,26 @@ describe('permissionHelpers', () => {
     });
 
     describe('getAdvancedSettingsPermissions', () => {
-      it('returns MANAGE permission with the correct action and scope', () => {
+      it('returns VIEW and MANAGE permissions with the correct actions and scope', () => {
         const result = getAdvancedSettingsPermissions(courseId);
 
-        expect(result.canManageAdvancedSettings.action).toBe(COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS);
-        expect(result.canManageAdvancedSettings.scope).toBe(courseId);
+        expect(result).toEqual({
+          canViewAdvancedSettings: {
+            action: COURSE_PERMISSIONS.VIEW_ADVANCED_SETTINGS,
+            scope: courseId,
+          },
+          canManageAdvancedSettings: {
+            action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
+            scope: courseId,
+          },
+        });
       });
 
       it('uses the provided courseId as scope', () => {
         const otherId = 'course-v1:another+test+run';
         const result = getAdvancedSettingsPermissions(otherId);
 
+        expect(result.canViewAdvancedSettings.scope).toBe(otherId);
         expect(result.canManageAdvancedSettings.scope).toBe(otherId);
       });
     });
@@ -212,10 +221,14 @@ describe('permissionHelpers', () => {
   });
 
   describe('getCertificatesPermissions', () => {
-    it('returns MANAGE_CERTIFICATES permission with the correct action and scope', () => {
+    it('returns VIEW and MANAGE permissions with the correct actions and scope', () => {
       const result = getCertificatesPermissions(courseId);
 
       expect(result).toEqual({
+        canViewCertificates: {
+          action: COURSE_PERMISSIONS.VIEW_CERTIFICATES,
+          scope: courseId,
+        },
         canManageCertificates: {
           action: COURSE_PERMISSIONS.MANAGE_CERTIFICATES,
           scope: courseId,

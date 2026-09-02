@@ -61,6 +61,10 @@ export const getPagesAndResourcesPermissions = (courseId: string) => ({
 });
 
 export const getAdvancedSettingsPermissions = (courseId: string) => ({
+  canViewAdvancedSettings: {
+    action: COURSE_PERMISSIONS.VIEW_ADVANCED_SETTINGS,
+    scope: courseId,
+  },
   canManageAdvancedSettings: {
     action: COURSE_PERMISSIONS.MANAGE_ADVANCED_SETTINGS,
     scope: courseId,
@@ -103,6 +107,10 @@ export const getGroupConfigurationsPermissions = (courseId: string) => ({
 });
 
 export const getCertificatesPermissions = (courseId: string) => ({
+  canViewCertificates: {
+    action: COURSE_PERMISSIONS.VIEW_CERTIFICATES,
+    scope: courseId,
+  },
   canManageCertificates: {
     action: COURSE_PERMISSIONS.MANAGE_CERTIFICATES,
     scope: courseId,

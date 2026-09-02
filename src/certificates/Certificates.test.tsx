@@ -18,6 +18,7 @@ const mockPermissions = (overrides = {}) =>
   jest.mocked(useCourseUserPermissions).mockReturnValue({
     isLoading: false,
     isAuthzEnabled: true,
+    canViewCertificates: true,
     canManageCertificates: true,
     ...overrides,
   } as ReturnType<typeof useCourseUserPermissions>);
@@ -38,13 +39,23 @@ describe('Certificates', () => {
   });
 
   it('shows PermissionDeniedAlert when user lacks manage certificates permission', async () => {
-    mockPermissions({ canManageCertificates: false });
+    mockPermissions({ canViewCertificates: false });
     axiosMock
       .onGet(getCertificatesApiUrl(courseId))
       .reply(200, certificatesDataMock);
     renderComponent();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
     expect(screen.queryByText(messages.withoutModesText.defaultMessage)).not.toBeInTheDocument();
+  });
+
+  it('renders content in view-only mode when user can view but not manage', async () => {
+    mockPermissions({ canViewCertificates: true, canManageCertificates: false });
+    axiosMock
+      .onGet(getCertificatesApiUrl(courseId))
+      .reply(200, certificatesDataMock);
+    renderComponent();
+    expect(await screen.findByTestId('certificates-list')).toBeInTheDocument();
+    expect(screen.getByTestId('viewOnlyPermissionsAlert')).toBeInTheDocument();
   });
 
   it('renders WithoutModes when there are certificates but no certificate modes', async () => {
