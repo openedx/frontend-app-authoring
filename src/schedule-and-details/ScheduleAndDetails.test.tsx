@@ -215,6 +215,26 @@ describe('<ScheduleAndDetails /> permissions', () => {
     dateInputs.forEach((input) => expect(input).toBeDisabled());
   });
 
+  it('shows the schedule section alert, not the page alert, when only edit_schedule is missing', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    mockPermissions({ canEditSchedule: false });
+    renderComponent();
+    expect(
+      await screen.findByText(scheduleMessages.scheduleReadOnlyAlert.defaultMessage),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(
+      'You have view-only access to this page. Contact your organization admin to request editing permissions.',
+    )).not.toBeInTheDocument();
+  });
+
+  it('shows no read-only alert when only edit_details is missing', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    mockPermissions({ canEditDetails: false });
+    renderComponent();
+    expect((await screen.findAllByText(messages.headingTitle.defaultMessage)).length).toBeGreaterThan(0);
+    expect(screen.queryByTestId('viewOnlyPermissionsAlert')).not.toBeInTheDocument();
+  });
+
   it('disables pacing and details inputs when user lacks edit_details permission', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
     mockPermissions({ canEditDetails: false });
@@ -233,5 +253,19 @@ describe('<ScheduleAndDetails /> permissions', () => {
     dateInputs.forEach((input) => expect(input).toBeDisabled());
     // No changes can be made so the save button never appears
     expect(screen.queryByText(messages.buttonSaveText.defaultMessage)).not.toBeInTheDocument();
+  });
+
+  it('shows the page-level view-only alert when user has no edit permissions', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    mockPermissions({ canEditSchedule: false, canEditDetails: false });
+    renderComponent();
+    expect(await screen.findByTestId('viewOnlyPermissionsAlert')).toBeInTheDocument();
+    expect(screen.getByText(
+      'You have view-only access to this page. Contact your organization admin to request editing permissions.',
+    )).toBeInTheDocument();
+    // The page-level alert stands in for the section-level one
+    expect(
+      screen.queryByText(scheduleMessages.scheduleReadOnlyAlert.defaultMessage),
+    ).not.toBeInTheDocument();
   });
 });

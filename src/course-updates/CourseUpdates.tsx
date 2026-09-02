@@ -12,6 +12,7 @@ import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
+import ViewOnlyPermissionsAlert from '@src/generic/ViewOnlyPermissionsAlert';
 import CourseHandouts from './course-handouts/CourseHandouts';
 import CourseUpdate from './course-update/CourseUpdate';
 import DeleteModal from './delete-modal/DeleteModal';
@@ -155,7 +156,9 @@ const CourseUpdates = () => {
                         </Button>
                       ) :
                       null}
+                    hideBorder={!canManageCourseUpdates}
                   />
+                  {!canManageCourseUpdates && <ViewOnlyPermissionsAlert />}
                   <section className="updates-section">
                     {isMainFormOpen && (
                       <UpdateForm
@@ -202,15 +205,17 @@ const CourseUpdates = () => {
                           <span className="small mr-2">
                             {intl.formatMessage(messages.noCourseUpdates)}
                           </span>
-                          <Button
-                            variant="primary"
-                            iconBefore={AddIcon}
-                            size="sm"
-                            onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
-                            disabled={isUpdateFormOpen || errors.loadingUpdates}
-                          >
-                            {intl.formatMessage(messages.firstUpdateButton)}
-                          </Button>
+                          {canManageCourseUpdates && (
+                            <Button
+                              variant="primary"
+                              iconBefore={AddIcon}
+                              size="sm"
+                              onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
+                              disabled={isUpdateFormOpen || errors.loadingUpdates}
+                            >
+                              {intl.formatMessage(messages.firstUpdateButton)}
+                            </Button>
+                          )}
                           <ActionRow.Spacer />
                         </ActionRow>
                       )}

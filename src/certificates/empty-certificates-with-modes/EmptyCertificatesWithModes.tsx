@@ -8,7 +8,7 @@ import { useCertificatesContext } from '../context';
 
 const EmptyCertificatesWithModes = () => {
   const intl = useIntl();
-  const { setComponentMode } = useCertificatesContext();
+  const { setComponentMode, canManageCertificates } = useCertificatesContext();
   const handleCreateMode = () => {
     setComponentMode(MODE_STATES.create);
   };
@@ -19,12 +19,14 @@ const EmptyCertificatesWithModes = () => {
         <ActionRow>
           <span className="small">{intl.formatMessage(messages.noCertificatesText)}</span>
           <ActionRow.Spacer />
-          <Button
-            iconBefore={AddIcon}
-            onClick={handleCreateMode}
-          >
-            {intl.formatMessage(messages.setupCertificateBtn)}
-          </Button>
+          {canManageCertificates && (
+            <Button
+              iconBefore={AddIcon}
+              onClick={handleCreateMode}
+            >
+              {intl.formatMessage(messages.setupCertificateBtn)}
+            </Button>
+          )}
         </ActionRow>
       </Card.Section>
     </Card>

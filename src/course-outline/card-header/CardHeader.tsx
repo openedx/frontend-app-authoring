@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 import { getConfig } from '@edx/frontend-platform';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { useSearchParams } from 'react-router-dom';
 import {
   Dropdown,
@@ -57,7 +57,6 @@ interface CardHeaderProps {
   namePrefix: string;
   proctoringExamConfigurationLink?: string;
   actions: XBlockActions;
-  enableCopyPasteUnits?: boolean;
   isVertical?: boolean;
   isSequential?: boolean;
   discussionEnabled?: boolean;
@@ -96,7 +95,6 @@ const CardHeader = ({
   titleComponent,
   namePrefix,
   actions,
-  enableCopyPasteUnits,
   isVertical,
   isSequential,
   proctoringExamConfigurationLink,
@@ -117,7 +115,7 @@ const CardHeader = ({
     setCurrentPageKey('align');
     onClickManageTags?.();
   }, [setCurrentPageKey, cardId]);
-  const { courseId } = useCourseAuthoringContext();
+  const { courseId, canEditCourseContent, canPublishCourseContent } = useCourseAuthoringContext();
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   // Set true by any Escape keydown handler; checked in handleEditSubmit
   // to prevent blur-after-Escape from saving the dirty titleValue.
@@ -285,15 +283,18 @@ const CardHeader = ({
           (
             <Stack direction="horizontal" gap={2}>
               {titleComponent}
-              <IconButtonWithTooltip
-                className="item-card-button-icon"
-                data-testid={`${namePrefix}-edit-button`}
-                alt={intl.formatMessage(messages.altButtonRename)}
-                tooltipContent={<div>{intl.formatMessage(messages.altButtonRename)}</div>}
-                iconAs={EditIcon}
-                onClick={onEditClick}
-                disabled={editMutation.isPending}
-              />
+              {canEditCourseContent &&
+                (
+                  <IconButtonWithTooltip
+                    className="item-card-button-icon"
+                    data-testid={`${namePrefix}-edit-button`}
+                    alt={intl.formatMessage(messages.altButtonRename)}
+                    tooltipContent={<div>{intl.formatMessage(messages.altButtonRename)}</div>}
+                    iconAs={EditIcon}
+                    onClick={onEditClick}
+                    disabled={editMutation.isPending}
+                  />
+                )}
             </Stack>
           )}
         <div className="ml-auto d-flex">
@@ -313,105 +314,110 @@ const CardHeader = ({
               onClick={onClickSync}
             />
           )}
-          <Dropdown data-testid={`${namePrefix}-card-header__menu`}>
-            <Dropdown.Toggle
-              className="item-card-header__menu"
-              id={`${namePrefix}-card-header__menu`}
-              data-testid={`${namePrefix}-card-header__menu-button`}
-              as={IconButton}
-              src={MoveVertIcon}
-              alt={`${namePrefix}-card-header__menu`}
-              iconAs={Icon}
-            />
-            <Dropdown.Menu>
-              {isSequential && proctoringExamConfigurationLink && (
+          {canEditCourseContent && (
+            <Dropdown data-testid={`${namePrefix}-card-header__menu`}>
+              <Dropdown.Toggle
+                className="item-card-header__menu"
+                id={`${namePrefix}-card-header__menu`}
+                data-testid={`${namePrefix}-card-header__menu-button`}
+                as={IconButton}
+                src={MoveVertIcon}
+                alt={`${namePrefix}-card-header__menu`}
+                iconAs={Icon}
+              />
+              <Dropdown.Menu>
+                {isSequential && proctoringExamConfigurationLink && (
+                  <Dropdown.Item
+                    as={Hyperlink}
+                    target="_blank"
+                    destination={fullProctoringExamConfigurationLink()}
+                    href={fullProctoringExamConfigurationLink()}
+                    externalLinkTitle={intl.formatMessage(messages.proctoringLinkTooltip)}
+                  >
+                    {intl.formatMessage(messages.menuProctoringLinkText)}
+                  </Dropdown.Item>
+                )}
+                {canPublishCourseContent &&
+                  (
+                    <Dropdown.Item
+                      data-testid={`${namePrefix}-card-header__menu-publish-button`}
+                      disabled={isDisabledPublish}
+                      onClick={onClickPublish}
+                    >
+                      {intl.formatMessage(messages.menuPublish)}
+                    </Dropdown.Item>
+                  )}
                 <Dropdown.Item
-                  as={Hyperlink}
-                  target="_blank"
-                  destination={fullProctoringExamConfigurationLink()}
-                  href={fullProctoringExamConfigurationLink()}
-                  externalLinkTitle={intl.formatMessage(messages.proctoringLinkTooltip)}
-                >
-                  {intl.formatMessage(messages.menuProctoringLinkText)}
-                </Dropdown.Item>
-              )}
-              <Dropdown.Item
-                data-testid={`${namePrefix}-card-header__menu-publish-button`}
-                disabled={isDisabledPublish}
-                onClick={onClickPublish}
-              >
-                {intl.formatMessage(messages.menuPublish)}
-              </Dropdown.Item>
-              <Dropdown.Item
-                data-testid={`${namePrefix}-card-header__menu-configure-button`}
-                disabled={editMutation.isPending}
-                onClick={onConfigureClick}
-              >
-                {intl.formatMessage(messages.menuConfigure)}
-              </Dropdown.Item>
-              {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
-                <Dropdown.Item
-                  data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
+                  data-testid={`${namePrefix}-card-header__menu-configure-button`}
                   disabled={editMutation.isPending}
-                  onClick={openManageTagsDrawer}
+                  onClick={onConfigureClick}
                 >
-                  {intl.formatMessage(messages.menuManageTags)}
+                  {intl.formatMessage(messages.menuConfigure)}
                 </Dropdown.Item>
-              )}
+                {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
+                  <Dropdown.Item
+                    data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
+                    disabled={editMutation.isPending}
+                    onClick={openManageTagsDrawer}
+                  >
+                    {intl.formatMessage(messages.menuManageTags)}
+                  </Dropdown.Item>
+                )}
 
-              {isVertical && enableCopyPasteUnits && (
-                <Dropdown.Item onClick={onClickCopy}>
-                  {intl.formatMessage(messages.menuCopy)}
-                </Dropdown.Item>
-              )}
-              {actions.duplicable && (
-                <Dropdown.Item
-                  data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
-                  onClick={onClickDuplicate}
-                >
-                  {intl.formatMessage(messages.menuDuplicate)}
-                </Dropdown.Item>
-              )}
-              {actions.draggable && (
-                <>
-                  <Dropdown.Item
-                    data-testid={`${namePrefix}-card-header__menu-move-up-button`}
-                    onClick={onClickMoveUp}
-                    disabled={!actions.allowMoveUp}
-                  >
-                    {intl.formatMessage(messages.menuMoveUp)}
+                {isVertical && (
+                  <Dropdown.Item onClick={onClickCopy}>
+                    {intl.formatMessage(messages.menuCopy)}
                   </Dropdown.Item>
+                )}
+                {actions.duplicable && (
                   <Dropdown.Item
-                    data-testid={`${namePrefix}-card-header__menu-move-down-button`}
-                    onClick={onClickMoveDown}
-                    disabled={!actions.allowMoveDown}
+                    data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
+                    onClick={onClickDuplicate}
                   >
-                    {intl.formatMessage(messages.menuMoveDown)}
+                    {intl.formatMessage(messages.menuDuplicate)}
                   </Dropdown.Item>
-                </>
-              )}
-              {((actions.unlinkable ?? null) !== null || actions.deletable) && <Dropdown.Divider />}
-              {(actions.unlinkable ?? null) !== null && (
-                <Dropdown.Item
-                  data-testid={`${namePrefix}-card-header__menu-unlink-button`}
-                  onClick={onClickUnlink}
-                  disabled={!actions.unlinkable}
-                  className="allow-hover-on-disabled"
-                  title={!actions.unlinkable ? intl.formatMessage(messages.menuUnlinkDisabledTooltip) : undefined}
-                >
-                  {intl.formatMessage(messages.menuUnlink)}
-                </Dropdown.Item>
-              )}
-              {actions.deletable && (
-                <Dropdown.Item
-                  data-testid={`${namePrefix}-card-header__menu-delete-button`}
-                  onClick={onClickDelete}
-                >
-                  {intl.formatMessage(messages.menuDelete)}
-                </Dropdown.Item>
-              )}
-            </Dropdown.Menu>
-          </Dropdown>
+                )}
+                {actions.draggable && (
+                  <>
+                    <Dropdown.Item
+                      data-testid={`${namePrefix}-card-header__menu-move-up-button`}
+                      onClick={onClickMoveUp}
+                      disabled={!actions.allowMoveUp}
+                    >
+                      {intl.formatMessage(messages.menuMoveUp)}
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      data-testid={`${namePrefix}-card-header__menu-move-down-button`}
+                      onClick={onClickMoveDown}
+                      disabled={!actions.allowMoveDown}
+                    >
+                      {intl.formatMessage(messages.menuMoveDown)}
+                    </Dropdown.Item>
+                  </>
+                )}
+                {((actions.unlinkable ?? null) !== null || actions.deletable) && <Dropdown.Divider />}
+                {(actions.unlinkable ?? null) !== null && (
+                  <Dropdown.Item
+                    data-testid={`${namePrefix}-card-header__menu-unlink-button`}
+                    onClick={onClickUnlink}
+                    disabled={!actions.unlinkable}
+                    className="allow-hover-on-disabled"
+                    title={!actions.unlinkable ? intl.formatMessage(messages.menuUnlinkDisabledTooltip) : undefined}
+                  >
+                    {intl.formatMessage(messages.menuUnlink)}
+                  </Dropdown.Item>
+                )}
+                {actions.deletable && (
+                  <Dropdown.Item
+                    data-testid={`${namePrefix}-card-header__menu-delete-button`}
+                    onClick={onClickDelete}
+                  >
+                    <FormattedMessage {...messages.menuDelete} />
+                  </Dropdown.Item>
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
         </div>
       </div>
     </>

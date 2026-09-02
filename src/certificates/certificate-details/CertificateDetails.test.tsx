@@ -8,6 +8,8 @@ import {
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { CertificatesProvider } from '@src/certificates/context';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 
 import { getCertificatesApiUrl, getUpdateCertificateApiUrl } from '../data/api';
 import { certificatesDataMock } from '../__mocks__';
@@ -25,6 +27,19 @@ const defaultProps: CertificateDetialsProps = {
   detailsCourseNumber: certificatesDataMock.courseNumber,
 };
 
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
+}));
+
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canViewCertificates: true,
+    canManageCertificates: true,
+    ...overrides,
+  } as ReturnType<typeof useCourseUserPermissions>);
+
 const renderComponent = (props = defaultProps) =>
   render(
     <CourseAuthoringProvider courseId={courseId}>
@@ -37,6 +52,8 @@ const renderComponent = (props = defaultProps) =>
 describe('CertificateDetails', () => {
   beforeEach(() => {
     ({ axiosMock } = initializeMocks());
+    mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+    mockPermissions();
     axiosMock
       .onGet(getCertificatesApiUrl(courseId))
       .reply(200, certificatesDataMock);
@@ -87,5 +104,16 @@ describe('CertificateDetails', () => {
 
     await screen.findByText(messages.detailsSectionTitle.defaultMessage);
     expect(screen.getByText(courseTitleOverride)).toBeInTheDocument();
+  });
+
+  it('hides edit and delete buttons in view-only mode', async () => {
+    mockPermissions({ canManageCertificates: false });
+    renderComponent();
+
+    await screen.findByText(messages.detailsSectionTitle.defaultMessage);
+    expect(screen.queryByRole('button', { name: commonMessages.editTooltip.defaultMessage })).not
+      .toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: commonMessages.deleteTooltip.defaultMessage })).not
+      .toBeInTheDocument();
   });
 });

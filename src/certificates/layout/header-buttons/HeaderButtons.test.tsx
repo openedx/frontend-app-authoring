@@ -1,4 +1,5 @@
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { useCourseUserPermissions } from '@src/authz/hooks';
 
 import {
   render,
@@ -7,6 +8,7 @@ import {
   screen,
   userEvent,
 } from '@src/testUtils';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { getCertificatesApiUrl, getUpdateCertificateActiveStatusApiUrl } from '../../data/api';
 import { certificatesDataMock } from '../../__mocks__';
 import messages from '../../messages';
@@ -15,6 +17,19 @@ import { CertificatesProvider } from '@src/certificates/context';
 
 let axiosMock;
 const courseId = 'course-123';
+
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
+}));
+
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canViewCertificates: true,
+    canManageCertificates: true,
+    ...overrides,
+  } as ReturnType<typeof useCourseUserPermissions>);
 
 const renderComponent = () =>
   render(
@@ -29,6 +44,8 @@ describe('HeaderButtons Component', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
+    mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+    mockPermissions();
     axiosMock
       .onGet(getCertificatesApiUrl(courseId))
       .reply(200, certificatesDataMock);
@@ -103,6 +120,18 @@ describe('HeaderButtons Component', () => {
     await user.click(deactivateButton);
 
     expect(screen.getByRole('button', { name: messages.headingActionsActivate.defaultMessage })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: messages.headingActionsDeactivate.defaultMessage })).not
+      .toBeInTheDocument();
+  });
+
+  it('hides activate button in view-only mode', async () => {
+    mockPermissions({ canManageCertificates: false });
+    renderComponent();
+
+    await waitFor(() => screen.getByRole('link', { name: messages.headingActionsPreview.defaultMessage }));
+
+    expect(screen.queryByRole('button', { name: messages.headingActionsActivate.defaultMessage })).not
+      .toBeInTheDocument();
     expect(screen.queryByRole('button', { name: messages.headingActionsDeactivate.defaultMessage })).not
       .toBeInTheDocument();
   });

@@ -11,6 +11,8 @@ import { type UnitXBlock, type XBlock } from '@src/data/types';
 import { CourseAppData, CourseDetailsData } from './data/api';
 import { useCourseApps, useCourseDetails } from './data/apiHooks';
 import { RequestStatus, RequestStatusType } from './data/constants';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getCourseOutlinePermissions } from '@src/authz/permissionHelpers';
 
 export type ModalState = {
   value?: XBlock | UnitXBlock;
@@ -46,6 +48,9 @@ export type CourseAuthoringContextData = {
   closeUnlinkModal: () => void;
   courseApps: CourseAppData[];
   courseAppsStatus: RequestStatusType;
+  isLoadingPermissions: boolean;
+  canEditCourseContent: boolean;
+  canPublishCourseContent: boolean;
 };
 
 /**
@@ -74,6 +79,12 @@ export const CourseAuthoringProvider = ({
     openUnlinkModal,
     closeUnlinkModal,
   ] = useToggleWithValue<ModalState>();
+
+  const {
+    canEditCourseContent,
+    canPublishCourseContent,
+    isLoading: isLoadingUserPermissions,
+  } = useCourseUserPermissions(courseId, getCourseOutlinePermissions(courseId));
 
   const getUnitUrl = (locator: string) => `/course/${courseId}/container/${locator}`;
 
@@ -124,6 +135,9 @@ export const CourseAuthoringProvider = ({
     currentUnlinkModalData,
     courseApps: sortedCourseApps || [],
     courseAppsStatus,
+    isLoadingPermissions: isLoadingUserPermissions,
+    canEditCourseContent,
+    canPublishCourseContent,
   }), [
     courseId,
     courseDetails,
@@ -137,6 +151,9 @@ export const CourseAuthoringProvider = ({
     currentUnlinkModalData,
     sortedCourseApps,
     courseAppsStatus,
+    canEditCourseContent,
+    canPublishCourseContent,
+    isLoadingUserPermissions,
   ]);
 
   return (

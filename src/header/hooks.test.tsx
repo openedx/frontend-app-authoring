@@ -279,12 +279,12 @@ describe('header utils', () => {
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: false,
-        canManageAdvancedSettings: true,
+        canViewAdvancedSettings: true,
         canViewGradingSettings: true,
         canViewScheduleAndDetails: true,
         canViewCourseTeam: true,
         canManageGroupConfigurations: true,
-        canManageCertificates: true,
+        canViewCertificates: true,
       } as ReturnType<typeof useCourseUserPermissions>);
     });
 
@@ -314,7 +314,7 @@ describe('header utils', () => {
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: true,
-        canManageAdvancedSettings: true,
+        canViewAdvancedSettings: true,
         canViewGradingSettings: true,
         canViewScheduleAndDetails: true,
       } as ReturnType<typeof useCourseUserPermissions>);
@@ -329,7 +329,7 @@ describe('header utils', () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: false });
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
-        canManageAdvancedSettings: true,
+        canViewAdvancedSettings: true,
         canViewCourseTeam: true,
       } as any);
       const actualItems =
@@ -352,7 +352,7 @@ describe('header utils', () => {
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: true,
-        canManageAdvancedSettings: true,
+        canViewAdvancedSettings: true,
         canViewCourseTeam: true,
       } as any);
       const courseIdWithSpecialChars = 'course-v1:org+course+run';
@@ -369,7 +369,7 @@ describe('header utils', () => {
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: true,
-        canManageAdvancedSettings: false,
+        canViewAdvancedSettings: false,
         canViewGradingSettings: true,
         canViewScheduleAndDetails: true,
       } as ReturnType<typeof useCourseUserPermissions>);
@@ -399,7 +399,7 @@ describe('header utils', () => {
         isLoading: false,
         isAuthzEnabled: true,
         canViewScheduleAndDetails: true,
-        canManageAdvancedSettings: true,
+        canViewAdvancedSettings: true,
         canViewGradingSettings: true,
       } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
@@ -415,7 +415,7 @@ describe('header utils', () => {
         isLoading: false,
         isAuthzEnabled: true,
         canViewScheduleAndDetails: false,
-        canManageAdvancedSettings: true,
+        canViewAdvancedSettings: true,
         canViewGradingSettings: true,
       } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
@@ -431,7 +431,7 @@ describe('header utils', () => {
         isLoading: false,
         isAuthzEnabled: true,
         canViewGradingSettings: true,
-        canManageAdvancedSettings: true,
+        canViewAdvancedSettings: true,
         canViewScheduleAndDetails: true,
       } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
@@ -447,7 +447,7 @@ describe('header utils', () => {
         isLoading: false,
         isAuthzEnabled: true,
         canViewGradingSettings: false,
-        canManageAdvancedSettings: true,
+        canViewAdvancedSettings: true,
         canViewScheduleAndDetails: true,
       } as ReturnType<typeof useCourseUserPermissions>);
       const { result } = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() });
@@ -462,7 +462,7 @@ describe('header utils', () => {
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: true,
-        canManageAdvancedSettings: true,
+        canViewAdvancedSettings: true,
         canViewGradingSettings: true,
         canViewScheduleAndDetails: true,
         canViewCourseTeam: true,
@@ -504,7 +504,7 @@ describe('header utils', () => {
       expect(actualItemsTitle).not.toContain('Group Configurations');
     });
 
-    it('when authz flag is enabled and user lacks canManageCertificates should not include certificates option', () => {
+    it('when authz flag is enabled and user lacks canViewCertificates should not include certificates option', () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
       setConfig({
         ...getConfig(),
@@ -513,7 +513,7 @@ describe('header utils', () => {
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: true,
-        canManageCertificates: false,
+        canViewCertificates: false,
       } as any);
       const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result
         .current.map((item) => item.title);

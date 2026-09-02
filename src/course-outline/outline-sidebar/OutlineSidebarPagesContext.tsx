@@ -14,25 +14,28 @@ import { OutlineAlignSidebar } from './OutlineAlignSidebar';
 import OutlineHelpSidebar from './OutlineHelpSidebar';
 import { InfoSidebar } from './info-sidebar/InfoSidebar';
 import messages from './messages';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 export type OutlineSidebarPages = {
   info: SidebarPage;
   help: SidebarPage;
-  add: SidebarPage;
+  add?: SidebarPage;
   align?: SidebarPage;
 };
 
-const getOutlineSidebarPages = () => ({
+const getOutlineSidebarPages = (canEditCourseContent: boolean = false) => ({
   info: {
     component: InfoSidebar,
     icon: Info,
     title: messages.sidebarButtonInfo,
   },
-  add: {
-    component: AddSidebar,
-    icon: Plus,
-    title: messages.sidebarButtonAdd,
-  },
+  ...(canEditCourseContent && {
+    add: {
+      component: AddSidebar,
+      icon: Plus,
+      title: messages.sidebarButtonAdd,
+    },
+  }),
   ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && {
     align: {
       component: OutlineAlignSidebar,
@@ -84,9 +87,11 @@ type OutlineSidebarPagesProviderProps = {
 };
 
 export const OutlineSidebarPagesProvider = ({ children }: OutlineSidebarPagesProviderProps) => {
+  const { canEditCourseContent } = useCourseAuthoringContext();
+
   // align page is sometimes not added when getOutlineSidebarPages() is called at the top level.
   // So if we call it inside the hook, getConfig has updated values and align page is added.
-  const sidebarPages = useMemo(getOutlineSidebarPages, []);
+  const sidebarPages = useMemo(() => getOutlineSidebarPages(canEditCourseContent), [canEditCourseContent]);
 
   return (
     <OutlineSidebarPagesContext.Provider value={sidebarPages}>

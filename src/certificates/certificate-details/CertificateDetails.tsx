@@ -14,6 +14,7 @@ import ModalNotification from '../../generic/modal-notification';
 import commonMessages from '../messages';
 import messages from './messages';
 import useCertificateDetails from './hooks/useCertificateDetails';
+import { useCertificatesContext } from '@src/certificates/context';
 
 export interface CertificateDetialsProps {
   certificateId: number;
@@ -31,6 +32,7 @@ const CertificateDetails = ({
   courseNumberOverride,
 }: CertificateDetialsProps) => {
   const intl = useIntl();
+  const { canManageCertificates } = useCertificatesContext();
   const {
     isConfirmOpen,
     confirmOpen,
@@ -48,24 +50,26 @@ const CertificateDetails = ({
       title={intl.formatMessage(messages.detailsSectionTitle)}
       className="certificate-details"
       data-testid="certificate-details"
-      actions={
-        <Stack direction="horizontal" gap={2}>
-          <IconButtonWithTooltip
-            src={EditOutlineIcon}
-            iconAs={Icon}
-            tooltipContent={<div>{intl.formatMessage(commonMessages.editTooltip)}</div>}
-            alt={intl.formatMessage(commonMessages.editTooltip)}
-            onClick={isCertificateActive ? editModalOpen : handleEditAll}
-          />
-          <IconButtonWithTooltip
-            src={DeleteOutlineIcon}
-            iconAs={Icon}
-            tooltipContent={<div>{intl.formatMessage(commonMessages.deleteTooltip)}</div>}
-            alt={intl.formatMessage(commonMessages.deleteTooltip)}
-            onClick={confirmOpen}
-          />
-        </Stack>
-      }
+      actions={canManageCertificates ?
+        (
+          <Stack direction="horizontal" gap={2}>
+            <IconButtonWithTooltip
+              src={EditOutlineIcon}
+              iconAs={Icon}
+              tooltipContent={<div>{intl.formatMessage(commonMessages.editTooltip)}</div>}
+              alt={intl.formatMessage(commonMessages.editTooltip)}
+              onClick={isCertificateActive ? editModalOpen : handleEditAll}
+            />
+            <IconButtonWithTooltip
+              src={DeleteOutlineIcon}
+              iconAs={Icon}
+              tooltipContent={<div>{intl.formatMessage(commonMessages.deleteTooltip)}</div>}
+              alt={intl.formatMessage(commonMessages.deleteTooltip)}
+              onClick={confirmOpen}
+            />
+          </Stack>
+        ) :
+        undefined}
     >
       <Stack>
         <Stack direction="horizontal" gap={1.5} className="certificate-details__info">

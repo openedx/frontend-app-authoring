@@ -42,7 +42,7 @@ const mockCoursePermissions = (
     canViewGradingSettings: true,
     canViewCourseTeam: true,
     canManageGroupConfigurations: true,
-    canManageAdvancedSettings: true,
+    canViewAdvancedSettings: true,
     ...permissions,
   } as unknown as ReturnType<typeof useCourseUserPermissions>);
 };
@@ -91,7 +91,7 @@ describe('HelpSidebar', () => {
       ['canViewScheduleAndDetails', messages.sidebarLinkToScheduleAndDetails],
       ['canViewGradingSettings', messages.sidebarLinkToGrading],
       ['canManageGroupConfigurations', messages.sidebarLinkToGroupConfigurations],
-      ['canManageAdvancedSettings', messages.sidebarLinkToAdvancedSettings],
+      ['canViewAdvancedSettings', messages.sidebarLinkToAdvancedSettings],
     ])('renders the %s link only when the permission is granted', async (permission, message) => {
       mockCoursePermissions({ [permission]: true });
       const { queryByText, unmount } = renderHelpSidebar(props);
@@ -130,7 +130,7 @@ describe('HelpSidebar', () => {
         canViewGradingSettings: false,
         canViewCourseTeam: false,
         canManageGroupConfigurations: false,
-        canManageAdvancedSettings: false,
+        canViewAdvancedSettings: false,
       }, { isLoading: true });
       const { queryByText } = renderHelpSidebar(props);
 

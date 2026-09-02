@@ -22,6 +22,7 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getScheduleAndDetailsPermissions } from '@src/authz/permissionHelpers';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
+import ViewOnlyPermissionsAlert from '@src/generic/ViewOnlyPermissionsAlert';
 
 import BasicSection from './basic-section';
 import CreditSection from './credit-section';
@@ -243,6 +244,7 @@ const ScheduleAndDetails = () => {
               {intl.formatMessage(messages.headingTitle)}
             </h2>
           </header>
+          {!canEdit && <ViewOnlyPermissionsAlert />}
         </div>
         <section className="setting-items mb-4">
           <Layout
@@ -262,6 +264,7 @@ const ScheduleAndDetails = () => {
                     lmsLinkForAboutPage={lmsLinkForAboutPage}
                     courseDisplayName={courseDisplayName}
                     platformName={platformName}
+                    isEditable={canEdit}
                   />
                   {showCreditSection && (
                     <CreditSection
@@ -287,6 +290,7 @@ const ScheduleAndDetails = () => {
                     certificatesDisplayBehavior={certificatesDisplayBehavior}
                     canShowCertificateAvailableDateField={canShowCertificateAvailableDateField}
                     isEditable={canEditSchedule}
+                    showReadOnlyAlert={!canEditSchedule && canEditDetails}
                     onChange={handleValuesChange}
                   />
                   {aboutPageEditable && (

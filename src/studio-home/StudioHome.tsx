@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import classNames from 'classnames';
 import {
   Button,
   Container,
@@ -85,7 +86,11 @@ const StudioHome = () => {
 
     if (canViewConsoleTeams) {
       headerButtons.push(
-        <div className="border-right mr-3 pr-4 py-2">
+        <div
+          className={classNames('mr-3 pr-4 py-2', {
+            'border-right': hasAbilityToCreateNewCourse || canCreateNewLibrary,
+          })}
+        >
           <Button
             as="a"
             href={adminConsoleUrl}
@@ -129,7 +134,14 @@ const StudioHome = () => {
     }
 
     return headerButtons;
-  }, [location, userIsActive, isFailedLoadingPage, canViewConsoleTeams]);
+  }, [
+    location,
+    userIsActive,
+    isFailedLoadingPage,
+    canViewConsoleTeams,
+    hasAbilityToCreateNewCourse,
+    canCreateNewLibrary,
+  ]);
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
   if (isLoadingPage && !isFiltered) {
