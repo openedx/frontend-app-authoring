@@ -8,6 +8,14 @@
 export const MAX_TAXONOMY_ITEMS = 10000;
 
 export enum TaxonomyType {
+  /**
+   * A taxonomy whose tags are only labels for content. They say what a piece of content is about,
+   * and carry no rules about demonstrating mastery of what they describe.
+   */
   Tags = 'tags',
+  /**
+   * A taxonomy of skills. Beyond labelling content, choosing this type enables the Competency
+   * Management page, where the rules used to demonstrate mastery of those skills are configured.
+   */
   Competency = 'competency',
 }
