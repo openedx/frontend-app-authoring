@@ -19,10 +19,18 @@ describe('CourseAuthoringProvider', () => {
     axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(200, {});
     axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(200, [
       {
-        id: 'wiki', name: 'Wiki', description: '', enabled: true, allowed_operations: { enable: true, configure: true },
+        id: 'wiki',
+        name: 'Wiki',
+        description: '',
+        enabled: true,
+        allowed_operations: { enable: true, configure: true },
       },
       {
-        id: 'discussion', name: 'Discussion', description: '', enabled: true, allowed_operations: { enable: true, configure: true },
+        id: 'discussion',
+        name: 'Discussion',
+        description: '',
+        enabled: true,
+        allowed_operations: { enable: true, configure: true },
       },
     ]);
 
