@@ -17,6 +17,8 @@ import './CompetencyTree.scss';
 interface CompetencyTreeProps {
   taxonomyId: number;
   taxonomyName: string;
+  selectedCompetencyId?: string | null;
+  onSelectCompetency?: (node: CompetencyTreeNode) => void;
 }
 
 /** A single node of this page's tree: either a real tag (from `TagTree`) or
@@ -49,7 +51,12 @@ function collectExpandableIds(node: CompetencyTreeNode): string[] {
   ];
 }
 
-const CompetencyTree = ({ taxonomyId, taxonomyName }: CompetencyTreeProps) => {
+const CompetencyTree = ({
+  taxonomyId,
+  taxonomyName,
+  selectedCompetencyId,
+  onSelectCompetency,
+}: CompetencyTreeProps) => {
   const intl = useIntl();
   const { isLoading, data: tagList } = useTagListData(taxonomyId, {
     pageIndex: 0,
@@ -157,6 +164,8 @@ const CompetencyTree = ({ taxonomyId, taxonomyName }: CompetencyTreeProps) => {
                     node={group}
                     expandedIds={expandedIds}
                     onToggle={handleToggle}
+                    selectedCompetencyId={selectedCompetencyId}
+                    onSelectCompetency={onSelectCompetency}
                   />
                 ))}
               </ul>

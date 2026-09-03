@@ -122,6 +122,17 @@
     }
   }
 
+  // Selected-leaf highlight (`.competency-row--selected`/`aria-selected` are
+  // only ever applied to a leaf row - see `CompetencyTreeItem.tsx`). Changes
+  // border-color only, not border-width, so the label stays at the same 25px
+  // inset every other row shares. Reuses the same primary-color custom
+  // property other "selected" states in this app key off (e.g.
+  // `library-authoring/hierarchy/index.scss`'s `.selected`); Figma doesn't
+  // specify this state yet.
+  .competency-row--selected {
+    border-color: var(--pgn-color-primary-500);
+  }
+
   // The taxonomy-root row is the single top item of the outer container:
   // plain/white, not its own box - it's not a real `Tag`, just this page's
   // display-only entry point into the tree (see `CompetencyTree.tsx`).

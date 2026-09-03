@@ -1,3 +1,5 @@
+import type { KeyboardEvent } from 'react';
+
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Badge } from '@openedx/paragon';
 
@@ -9,6 +11,8 @@ export interface CompetencyTreeItemProps {
   node: CompetencyTreeNode;
   expandedIds: Set<string>;
   onToggle: (id: string) => void;
+  selectedCompetencyId?: string | null;
+  onSelectCompetency?: (node: CompetencyTreeNode) => void;
 }
 
 /** CompetencyTreeItem
@@ -25,7 +29,13 @@ export interface CompetencyTreeItemProps {
  * below - not a depth number or a CSS structural-position selector, so it
  * holds recursively at any depth.
  */
-const CompetencyTreeItem = ({ node, expandedIds, onToggle }: CompetencyTreeItemProps) => {
+const CompetencyTreeItem = ({
+  node,
+  expandedIds,
+  onToggle,
+  selectedCompetencyId,
+  onSelectCompetency,
+}: CompetencyTreeItemProps) => {
   const intl = useIntl();
   const nodeId = String(node.id);
   const hasChildren = !!node.subRows?.length;
@@ -37,9 +47,41 @@ const CompetencyTreeItem = ({ node, expandedIds, onToggle }: CompetencyTreeItemP
   // `externalId: ''`), so use a truthiness check rather than `!== null`.
   const { externalId } = node;
 
+  // Only leaf rows are selectable - group rows keep today's expand/collapse-only
+  // behavior untouched, regardless of `selectedCompetencyId`/`onSelectCompetency`.
+  const isSelectable = !hasChildren && !!onSelectCompetency;
+  const isSelected = isSelectable && selectedCompetencyId != null && nodeId === selectedCompetencyId;
+
+  const handleSelect = () => {
+    if (isSelectable && onSelectCompetency) {
+      onSelectCompetency(node);
+    }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (isSelectable && onSelectCompetency && (event.key === 'Enter' || event.key === ' ')) {
+      event.preventDefault();
+      onSelectCompetency(node);
+    }
+  };
+
   return (
     <li className={hasChildren ? 'competency-group' : undefined}>
-      <div className="competency-row">
+      <div
+        // `role="button"` on this existing row `<div>`, rather than wrapping its
+        // icon+label+badge markup in a real `<button>`, which would need its own
+        // style reset (Bootstrap's button padding/border/background) to keep the
+        // row's current look.
+        className={isSelected ? 'competency-row competency-row--selected' : 'competency-row'}
+        role={isSelectable ? 'button' : undefined}
+        tabIndex={isSelectable ? 0 : undefined}
+        aria-selected={isSelectable ? isSelected : undefined}
+        aria-label={isSelected
+          ? intl.formatMessage(messages.selectedCompetencyAccessibleLabel, { competencyName: node.value })
+          : undefined}
+        onClick={isSelectable ? handleSelect : undefined}
+        onKeyDown={isSelectable ? handleKeyDown : undefined}
+      >
         <CompetencyExpandIcon
           canExpand={hasChildren}
           isExpanded={isExpanded}
@@ -66,6 +108,8 @@ const CompetencyTreeItem = ({ node, expandedIds, onToggle }: CompetencyTreeItemP
               node={child}
               expandedIds={expandedIds}
               onToggle={onToggle}
+              selectedCompetencyId={selectedCompetencyId}
+              onSelectCompetency={onSelectCompetency}
             />
           ))}
         </ul>
