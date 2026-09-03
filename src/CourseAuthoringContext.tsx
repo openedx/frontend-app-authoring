@@ -1,15 +1,16 @@
+import { useNavigate } from 'react-router';
 import {
   createContext,
   useContext,
   useMemo,
 } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-import { useNavigate } from 'react-router';
+
 import { useToggleWithValue } from '@src/hooks';
 import { type UnitXBlock, type XBlock } from '@src/data/types';
-import { CourseDetailsData } from './data/api';
-import { useCourseDetails } from './data/apiHooks';
-import { RequestStatusType } from './data/constants';
+import { CourseAppData, CourseDetailsData } from './data/api';
+import { useCourseApps, useCourseDetails } from './data/apiHooks';
+import { RequestStatus, RequestStatusType } from './data/constants';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getCourseOutlinePermissions } from '@src/authz/permissionHelpers';
 
@@ -18,6 +19,20 @@ export type ModalState = {
   subsectionId?: string;
   sectionId?: string;
 };
+
+const COURSE_APPS_ORDER = [
+  'progress',
+  'discussion',
+  'teams',
+  'edxnotes',
+  'wiki',
+  'calculator',
+  'proctoring',
+  'live',
+  'textbooks',
+  'custom_pages',
+  'ora_settings',
+];
 
 export type CourseAuthoringContextData = {
   /** The ID of the current course */
@@ -31,6 +46,8 @@ export type CourseAuthoringContextData = {
   currentUnlinkModalData?: ModalState;
   openUnlinkModal: (value: ModalState) => void;
   closeUnlinkModal: () => void;
+  courseApps: CourseAppData[];
+  courseAppsStatus: RequestStatusType;
   isLoadingPermissions: boolean;
   canEditCourseContent: boolean;
   canPublishCourseContent: boolean;
@@ -71,6 +88,33 @@ export const CourseAuthoringProvider = ({
 
   const getUnitUrl = (locator: string) => `/course/${courseId}/container/${locator}`;
 
+  const {
+    data: courseApps,
+    isPending: courseAppsIsPending,
+    failureReason: courseAppsError,
+  } = useCourseApps(courseId);
+
+  let courseAppsStatus: RequestStatusType = RequestStatus.SUCCESSFUL;
+
+  if (courseAppsIsPending) {
+    courseAppsStatus = RequestStatus.PENDING;
+  } else if (courseAppsError) {
+    if (courseAppsError?.response?.status === 403) {
+      courseAppsStatus = RequestStatus.DENIED;
+    } else {
+      courseAppsStatus = RequestStatus.FAILED;
+    }
+  }
+
+  // courseApps is the array reference held by the React Query cache; sort a copy
+  // so we don't mutate it during render (StrictMode double-renders can otherwise
+  // produce inconsistent results between the two passes).
+  const sortedCourseApps = courseApps ?
+    [...courseApps].sort((firstEl, secondEl) => (
+      COURSE_APPS_ORDER.indexOf(firstEl.id) - COURSE_APPS_ORDER.indexOf(secondEl.id)
+    )) :
+    courseApps;
+
   /**
    * Open the unit page for a given locator.
    */
@@ -89,6 +133,8 @@ export const CourseAuthoringProvider = ({
     openUnlinkModal,
     closeUnlinkModal,
     currentUnlinkModalData,
+    courseApps: sortedCourseApps || [],
+    courseAppsStatus,
     isLoadingPermissions: isLoadingUserPermissions,
     canEditCourseContent,
     canPublishCourseContent,
@@ -103,6 +149,8 @@ export const CourseAuthoringProvider = ({
     openUnlinkModal,
     closeUnlinkModal,
     currentUnlinkModalData,
+    sortedCourseApps,
+    courseAppsStatus,
     canEditCourseContent,
     canPublishCourseContent,
     isLoadingUserPermissions,

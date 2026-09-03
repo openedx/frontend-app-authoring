@@ -3,14 +3,15 @@ import { Button, Form } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 
 import { FieldArray } from 'formik';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { v4 as uuid } from 'uuid';
 import * as Yup from 'yup';
 import { GroupTypes, TeamSizes } from 'CourseAuthoring/data/constants';
 import FormikControl from 'CourseAuthoring/generic/FormikControl';
 import { setupYupExtensions, useAppSetting } from 'CourseAuthoring/utils';
+import { useUpdateCourseAdvancedSettings } from 'CourseAuthoring/data/apiHooks';
 import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
+import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContext';
 import GroupEditor from './GroupEditor';
 import messages from './messages';
 
@@ -18,9 +19,12 @@ setupYupExtensions();
 
 const TeamSettings = ({
   onClose,
-}) => {
+}: { onClose: () => void; }) => {
   const intl = useIntl();
-  const [teamsConfiguration, saveSettings] = useAppSetting('teamsConfiguration');
+  const { courseId } = useCourseAuthoringContext();
+  const settingName = 'teamsConfiguration';
+  const teamsConfiguration = useAppSetting(settingName);
+  const updateCourseAdvancedSettingsMutation = useUpdateCourseAdvancedSettings(courseId);
   const blankNewGroup = {
     name: '',
     description: '',
@@ -41,11 +45,19 @@ const TeamSettings = ({
       max_team_size: group.maxTeamSize,
       user_partition_id: group.userPartitionId,
     }));
-    return saveSettings({
-      team_sets: groups,
-      max_team_size: values.maxTeamSize,
-      enabled: values.enabled,
-    });
+    try {
+      await updateCourseAdvancedSettingsMutation.mutateAsync({
+        setting: settingName,
+        value: {
+          team_sets: groups,
+          max_team_size: values.maxTeamSize,
+          enabled: values.enabled,
+        },
+      });
+      return true;
+    } catch {
+      return false;
+    }
   };
   const enableAppError = {
     title: intl.formatMessage(messages.noGroupsErrorTitle),
@@ -60,7 +72,6 @@ const TeamSettings = ({
       enableAppLabel={intl.formatMessage(messages.enableTeamsLabel)}
       learnMoreText={intl.formatMessage(messages.enableTeamsLink)}
       onClose={onClose}
-      bodyClassName="bg-light-200"
       // Topic is supported for backwards compatibility, the new field is team_sets:
       // ref: https://github.com/openedx/edx-platform/blob/15461d3b6e6c0a724a7b8ed09241d970f201e5e7/openedx/core/lib/teams_config.py#L104-L108
       initialValues={{
@@ -165,10 +176,6 @@ const TeamSettings = ({
       )}
     </AppSettingsModal>
   );
-};
-
-TeamSettings.propTypes = {
-  onClose: PropTypes.func.isRequired,
 };
 
 export default TeamSettings;
