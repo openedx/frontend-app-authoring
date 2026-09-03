@@ -1,12 +1,16 @@
+import { renderHook } from '@testing-library/react';
 import {
   initializeMocks,
   cleanup,
   screen,
   render,
   waitFor,
+  makeQueryClientWrapper,
 } from '../testUtils';
-import { useWaffleFlags } from './apiHooks';
-import { getApiWaffleFlagsUrl } from './api';
+import { useWaffleFlags, useUpdateCourseAppStatus, useUpdateCourseAdvancedSettings } from './apiHooks';
+import { getApiWaffleFlagsUrl, getCourseAppsApiUrl, getCourseAdvancedSettingsApiUrl } from './api';
+
+const courseId = 'course-v1:edX+DemoX+Demo_Course';
 
 // A little component for testing our waffle flag hooks.
 const FlagComponent = ({ courseId }: { courseId?: string; }) => {
@@ -108,5 +112,46 @@ describe('useWaffleFlags', () => {
     });
     expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
     expect(await screen.findByLabelText('useReactMarkdownEditor')).toHaveTextContent('enabled');
+  });
+});
+
+describe('useUpdateCourseAppStatus', () => {
+  it('sends a PATCH request and invalidates the course apps query on success', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onPatch(`${getCourseAppsApiUrl()}/${courseId}`).reply(200);
+    const invalidateQueriesSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useUpdateCourseAppStatus(courseId),
+      { wrapper: makeQueryClientWrapper(queryClient) },
+    );
+
+    result.current.mutate({ appId: 'discussion', state: true });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(axiosMock.history.patch[0].url).toBe(`${getCourseAppsApiUrl()}/${courseId}`);
+    expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({ id: 'discussion', enabled: true });
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['courseApps', courseId] });
+  });
+});
+
+describe('useUpdateCourseAdvancedSettings', () => {
+  it('sends a PATCH request and invalidates the course settings and apps queries on success', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onPatch(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`).reply(200, {});
+    const invalidateQueriesSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useUpdateCourseAdvancedSettings(courseId),
+      { wrapper: makeQueryClientWrapper(queryClient) },
+    );
+
+    result.current.mutate({ setting: 'courseDisplayName', value: 'New Name' });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(axiosMock.history.patch[0].url).toBe(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`);
+    expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({ course_display_name: { value: 'New Name' } });
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['courseSettings', courseId] });
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['courseApps', courseId] });
   });
 });
