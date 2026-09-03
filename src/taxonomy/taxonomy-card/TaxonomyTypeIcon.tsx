@@ -1,12 +1,20 @@
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import { Tag } from '@openedx/paragon/icons';
 
 import CompetencyIcon from '@src/generic/CompetencyIcon';
+import messages from './messages';
 import { TaxonomyType } from '../data/constants';
 
 const taxonomyTypeIcons = {
-  [TaxonomyType.Competency]: CompetencyIcon,
-  [TaxonomyType.Tags]: Tag,
+  [TaxonomyType.Competency]: {
+    src: CompetencyIcon,
+    altText: messages.competencyTypeIconAltText,
+  },
+  [TaxonomyType.Tags]: {
+    src: Tag,
+    altText: messages.tagsTypeIconAltText,
+  },
 };
 
 interface TaxonomyTypeIconProps {
@@ -20,16 +28,19 @@ interface TaxonomyTypeIconProps {
  * every taxonomy gets exactly one icon.
  */
 export const TaxonomyTypeIcon = ({ taxonomyType, className }: TaxonomyTypeIconProps) => {
+  const intl = useIntl();
+
   const iconType = taxonomyType && taxonomyType in taxonomyTypeIcons
     ? taxonomyType
     : TaxonomyType.Tags;
 
-  const src = taxonomyTypeIcons[iconType];
+  const { src, altText } = taxonomyTypeIcons[iconType];
 
   return (
     <Icon
       src={src}
       className={className}
+      screenReaderText={intl.formatMessage(altText)}
       data-testid={`taxonomy-type-icon-${iconType}`}
     />
   );

@@ -112,20 +112,27 @@ describe('<TaxonomyCard />', () => {
     expect(getByText('Assigned to 6 orgs')).toBeInTheDocument();
   });
 
+  const competencyIconAltText = 'Competency taxonomy';
+  const tagsIconAltText = 'Tags taxonomy';
+
   it('shows the competency type icon with competency taxonomies', () => {
     const cardData = { ...data, taxonomyType: TaxonomyType.Competency };
 
-    const { getByTestId, queryByTestId } = render(<TaxonomyCardComponent original={cardData} />);
+    const { getByText, getByTestId, queryByTestId } = render(<TaxonomyCardComponent original={cardData} />);
     expect(getByTestId('taxonomy-type-icon-competency')).toBeInTheDocument();
     expect(queryByTestId('taxonomy-type-icon-tags')).not.toBeInTheDocument();
+
+    // The glyph is hidden from assistive tech, so the type has to be readable as text
+    expect(getByText(competencyIconAltText)).toBeInTheDocument();
   });
 
   it('shows the tags type icon with tags taxonomies', () => {
     const cardData = { ...data, taxonomyType: TaxonomyType.Tags };
 
-    const { getByTestId, queryByTestId } = render(<TaxonomyCardComponent original={cardData} />);
+    const { getByText, getByTestId, queryByTestId } = render(<TaxonomyCardComponent original={cardData} />);
     expect(getByTestId('taxonomy-type-icon-tags')).toBeInTheDocument();
     expect(queryByTestId('taxonomy-type-icon-competency')).not.toBeInTheDocument();
+    expect(getByText(tagsIconAltText)).toBeInTheDocument();
   });
 
   it('shows a type icon even when the taxonomy has no type, along with the read-only badge', () => {
@@ -133,6 +140,17 @@ describe('<TaxonomyCard />', () => {
 
     const { getByText, getByTestId } = render(<TaxonomyCardComponent original={cardData} />);
     expect(getByTestId('taxonomy-type-icon-tags')).toBeInTheDocument();
+    expect(getByText(tagsIconAltText)).toBeInTheDocument();
     expect(getByText(readOnlyBadgeText)).toBeInTheDocument();
+  });
+
+  it('shows the tags type icon when the taxonomy type is not one we know', () => {
+    // A type the backend may send that this version of the frontend doesn't know about yet
+    const cardData = { ...data, taxonomyType: 'unknown-type' as TaxonomyType };
+
+    const { getByText, getByTestId, queryByTestId } = render(<TaxonomyCardComponent original={cardData} />);
+    expect(getByTestId('taxonomy-type-icon-tags')).toBeInTheDocument();
+    expect(queryByTestId('taxonomy-type-icon-competency')).not.toBeInTheDocument();
+    expect(getByText(tagsIconAltText)).toBeInTheDocument();
   });
 });
