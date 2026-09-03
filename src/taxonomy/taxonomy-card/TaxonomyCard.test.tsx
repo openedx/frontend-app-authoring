@@ -4,6 +4,7 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import initializeStore from '../../store';
 import { TaxonomyType } from '../data/constants';
@@ -152,6 +153,26 @@ describe('<TaxonomyCard />', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${taxonomyId}/competencies`);
   });
+
+  it.each([
+    ['Enter', '{Enter}'],
+    ['Space', ' '],
+  ])(
+    'opens the competency management page, not the card link, when the footer button is activated with %s',
+    async (_label, keys) => {
+      const user = userEvent.setup();
+      const cardData = { ...data, taxonomyType: TaxonomyType.Competency };
+
+      const { getByRole } = render(<TaxonomyCardComponent original={cardData} />);
+      getByRole('button', { name: applyCompetenciesLabel }).focus();
+      await user.keyboard(keys);
+
+      expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${taxonomyId}/competencies`);
+      // Guards against the button's keyboard-triggered click bubbling up to the
+      // surrounding NavLink and also navigating it to the card's own href.
+      expect(window.location.pathname).not.toBe(`/taxonomy/${taxonomyId}/`);
+    },
+  );
 
   it('still links the card itself to the taxonomy editing page', () => {
     const cardData = { ...data, taxonomyType: TaxonomyType.Competency };
