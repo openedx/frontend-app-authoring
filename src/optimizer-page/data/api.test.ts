@@ -1,5 +1,5 @@
 import { mockApiResponse } from '../mocks/mockApiResponse';
-import { initializeMocks } from '../../testUtils';
+import { initializeMocks } from '@src/testUtils';
 import * as api from './api';
 import { LINK_CHECK_STATUSES } from './constants';
 
@@ -9,15 +9,23 @@ describe('Course Optimizer API', () => {
       const { axiosMock } = initializeMocks();
       const courseId = 'course-123';
       const url = api.postLinkCheckCourseApiUrl(courseId);
-      axiosMock.onPost(url).reply(200, { LinkCheckStatus: LINK_CHECK_STATUSES.IN_PROGRESS });
+      axiosMock.onPost(url).reply(200, { LinkCheckStatus: LINK_CHECK_STATUSES.PENDING });
       const data = await api.postLinkCheck(courseId);
 
-      expect(data.linkCheckStatus).toEqual(LINK_CHECK_STATUSES.IN_PROGRESS);
+      expect(data.linkCheckStatus).toEqual(LINK_CHECK_STATUSES.PENDING);
       expect(axiosMock.history.post[0].url).toEqual(url);
     });
   });
 
   describe('getLinkCheckStatus', () => {
+    it('preserves absent optional response fields', async () => {
+      const { axiosMock } = initializeMocks();
+      const courseId = 'course-123';
+      axiosMock.onGet(api.getLinkCheckStatusApiUrl(courseId)).reply(200, {});
+
+      await expect(api.getLinkCheckStatus(courseId)).resolves.toEqual({});
+    });
+
     it('should get the status of a scan', async () => {
       const { axiosMock } = initializeMocks();
       const courseId = 'course-123';
@@ -37,7 +45,7 @@ describe('Course Optimizer API', () => {
       const { axiosMock } = initializeMocks();
       const courseId = 'course-123';
       const url = api.postRerunLinkUpdateApiUrl(courseId);
-      const expectedResponse = { success: true };
+      const expectedResponse = { status: 'Pending' };
       axiosMock.onPost(url).reply(200, expectedResponse);
 
       const data = await api.postRerunLinkUpdateAll(courseId);
@@ -53,7 +61,7 @@ describe('Course Optimizer API', () => {
       const { axiosMock } = initializeMocks();
       const courseId = 'course-123';
       const url = api.postRerunLinkUpdateApiUrl(courseId);
-      const expectedResponse = { success: true };
+      const expectedResponse = { status: 'Pending' };
       const linkUrl = 'https://old.example.com/link';
       const blockId = 'block-id-123';
       const contentType = 'sections';
@@ -185,7 +193,7 @@ describe('Course Optimizer API', () => {
       const { axiosMock } = initializeMocks();
       const courseId = 'course-123';
       const url = api.postRerunLinkUpdateApiUrl(courseId);
-      const expectedResponse = { success: true };
+      const expectedResponse = { status: 'Pending' };
       const linkUrl = 'https://old.example.com/link';
       const blockId = 'block-id-123';
       const expectedRequestBody = {
@@ -207,21 +215,32 @@ describe('Course Optimizer API', () => {
     });
   });
 
-  // Add tests for the missing getRerunLinkUpdateStatus function
   describe('getRerunLinkUpdateStatus', () => {
-    it('should get the status of previous run link updates', async () => {
+    it('returns raw camel-cased status and result fields', async () => {
       const { axiosMock } = initializeMocks();
       const courseId = 'course-123';
       const url = api.getRerunLinkUpdateStatusApiUrl(courseId);
-      const expectedResponse = {
-        UpdateStatus: 'Succeeded',
-      };
-      axiosMock.onGet(url).reply(200, expectedResponse);
+      axiosMock.onGet(url).reply(200, {
+        status: 'Updating',
+        Results: [{
+          id: 'block-1',
+          success: true,
+          new_url: 'https://new.example.com',
+          original_url: 'https://old.example.com',
+          type: 'course_content',
+        }],
+      });
 
-      const data = await api.getRerunLinkUpdateStatus(courseId);
-
-      expect(data.updateStatus).toEqual(expectedResponse.UpdateStatus);
-      expect(axiosMock.history.get[0].url).toEqual(url);
+      await expect(api.getRerunLinkUpdateStatus(courseId)).resolves.toEqual({
+        status: 'Updating',
+        results: [{
+          id: 'block-1',
+          success: true,
+          newUrl: 'https://new.example.com',
+          originalUrl: 'https://old.example.com',
+          type: 'course_content',
+        }],
+      });
     });
 
     it('should handle network errors', async () => {
