@@ -23,7 +23,7 @@ const AppSettingsModalBase = ({
   children,
   footer,
   disclaimer,
-  isOpen = true,
+  isOpen,
 }: AppSettingsModalBaseProps) => (
   <ModalDialog
     title={title}
