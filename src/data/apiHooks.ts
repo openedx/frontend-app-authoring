@@ -152,7 +152,12 @@ export const useCourseDetails = (courseId: string) => {
 };
 
 /**
- * Create a global state function for a query.
+ * Create a global state function.
+ *
+ * This is sort of a hack for sharing state between components using React Query
+ * without actually loading data from an API. Instead of using this, please use
+ * a small context or `useSyncExternalStore`, and feel free to remove this once
+ * we've replaced the existing usage of it on the outline page.
  */
 export function createGlobalState<T>(
   queryKeyFn: (queryKeyArgs?: any) => QueryKey,
