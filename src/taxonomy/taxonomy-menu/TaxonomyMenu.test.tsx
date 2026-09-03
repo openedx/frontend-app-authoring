@@ -38,12 +38,14 @@ const TaxonomyMenuComponent: React.FC<{
   readOnly?: boolean;
   canChangeTaxonomy?: boolean;
   canDeleteTaxonomy?: boolean;
+  canTagObject?: boolean;
   taxonomyType?: TaxonomyType;
 }> = ({
   iconMenu,
   readOnly = false,
   canChangeTaxonomy = true,
   canDeleteTaxonomy = true,
+  canTagObject = true,
   taxonomyType = TaxonomyType.Tags,
 }) => {
   const context = useMemo(() => ({
@@ -63,6 +65,7 @@ const TaxonomyMenuComponent: React.FC<{
           readOnly,
           canChangeTaxonomy,
           canDeleteTaxonomy,
+          canTagObject,
           taxonomyType,
         }}
         iconMenu={iconMenu}
@@ -200,12 +203,12 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', (iconMenu) => {
     expect(within(getByTestId('taxonomy-menu')).getAllByRole('button')).toHaveLength(4);
   });
 
-  test('Hides "Apply Competencies" from users who cannot change the taxonomy', async () => {
+  test('Hides "Apply Competencies" from users who cannot tag with the taxonomy', async () => {
     const { findByTestId, queryByTestId } = render(
       <TaxonomyMenuComponent
         iconMenu={iconMenu}
         taxonomyType={TaxonomyType.Competency}
-        canChangeTaxonomy={false}
+        canTagObject={false}
       />,
     );
 

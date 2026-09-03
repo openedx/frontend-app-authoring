@@ -27,6 +27,7 @@ const data: TaxonomyCardData = {
   readOnly: false,
   canChangeTaxonomy: true,
   canDeleteTaxonomy: true,
+  canTagObject: true,
   tagsCount: 0,
 };
 
@@ -188,8 +189,8 @@ describe('<TaxonomyCard />', () => {
     expect(queryByRole('button', { name: applyCompetenciesLabel })).not.toBeInTheDocument();
   });
 
-  it('does not show the footer button to users who cannot change the taxonomy', () => {
-    const cardData = { ...data, taxonomyType: TaxonomyType.Competency, canChangeTaxonomy: false };
+  it('does not show the footer button to users who cannot tag with the taxonomy', () => {
+    const cardData = { ...data, taxonomyType: TaxonomyType.Competency, canTagObject: false };
 
     const { queryByRole } = render(<TaxonomyCardComponent original={cardData} />);
     expect(queryByRole('button', { name: applyCompetenciesLabel })).not.toBeInTheDocument();
