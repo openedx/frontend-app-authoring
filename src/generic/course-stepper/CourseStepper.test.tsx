@@ -1,5 +1,8 @@
 import { render, screen, initializeMocks } from '@src/testUtils';
 
+import { Icon } from '@openedx/paragon';
+import { ManageHistory as SuccessIcon, Settings as SettingsIcon } from '@openedx/paragon/icons';
+
 import CourseStepper from '.';
 
 const stepsMock = [
@@ -82,6 +85,18 @@ describe('<CourseStepper />', () => {
 
     const errorStep = screen.getAllByTestId('course-stepper__step')[1];
     expect(errorStep).toHaveClass('error');
+  });
+
+  it('shows neutral pending icon instead of success icon on the final step when an earlier step has an error', () => {
+    renderComponent({ activeKey: 1, hasError: true, errorMessage: 'Export failed' });
+
+    const lastStepIcon = screen.getByTestId('Success-icon').querySelector('svg');
+    // Render reference icons to compare the actual svg markup being shown
+    const { container: successRef } = render(<Icon src={SuccessIcon} />);
+    const { container: settingsRef } = render(<Icon src={SettingsIcon} />);
+
+    expect(lastStepIcon?.outerHTML).not.toEqual(successRef.querySelector('svg')?.outerHTML);
+    expect(lastStepIcon?.outerHTML).toEqual(settingsRef.querySelector('svg')?.outerHTML);
   });
 
   it('shows percentage for active step', () => {
