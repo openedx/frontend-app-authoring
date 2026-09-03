@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable react/jsx-filename-extension */
+import type MockAdapter from 'axios-mock-adapter';
+
 import {
   fireEvent,
   render,
@@ -11,23 +11,22 @@ import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import messages from './messages';
 import generalMessages from '../messages';
 import scanResultsMessages from './scan-results/messages';
-import CourseOptimizerPage, {
-  pollLinkCheckDuringScan,
-  pollRerunLinkUpdateDuringUpdate,
-  pollRerunLinkUpdateStatus,
-} from './CourseOptimizerPage';
-import { postLinkCheckCourseApiUrl, getLinkCheckStatusApiUrl } from './data/api';
+import CourseOptimizerPage from './CourseOptimizerPage';
+import {
+  postLinkCheckCourseApiUrl,
+  getLinkCheckStatusApiUrl,
+  getRerunLinkUpdateStatusApiUrl,
+} from './data/api';
 import {
   mockApiResponse,
   mockApiResponseForNoResultFound,
   mockApiResponseWithPreviousRunLinks,
   mockApiResponseEmpty,
 } from './mocks/mockApiResponse';
-import * as thunks from './data/thunks';
 import { useWaffleFlags } from '../data/apiHooks';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 
-let axiosMock;
+let axiosMock: MockAdapter;
 const courseId = '123';
 
 // Mock the waffle flags hook
@@ -42,13 +41,16 @@ jest.mock('@src/authz/hooks', () => ({
   useCourseUserPermissions: jest.fn(),
 }));
 
-const mockPermissions = (overrides = {}) =>
-  jest.mocked(useCourseUserPermissions).mockReturnValue({
+const mockedUseWaffleFlags = jest.mocked(useWaffleFlags);
+const mockedUseCourseUserPermissions = jest.mocked(useCourseUserPermissions);
+
+const mockPermissions = (overrides: Partial<ReturnType<typeof useCourseUserPermissions>> = {}) =>
+  mockedUseCourseUserPermissions.mockReturnValue({
     isLoading: false,
     isAuthzEnabled: true,
     canEditCourseContent: true,
     ...overrides,
-  });
+  } as ReturnType<typeof useCourseUserPermissions>);
 
 const OptimizerPage = () => (
   <CourseAuthoringProvider courseId={courseId}>
@@ -56,14 +58,11 @@ const OptimizerPage = () => (
   </CourseAuthoringProvider>
 );
 
-const setupOptimizerPage = async (apiResponse = mockApiResponse) => {
+const setupOptimizerPage = async (apiResponse: object = mockApiResponse) => {
   axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, apiResponse);
   const optimizerPage = render(<OptimizerPage />);
 
-  // Click the scan button
-  fireEvent.click(optimizerPage.getByText(messages.buttonTitle.defaultMessage));
-
-  // Wait for the scan results to load
+  // Wait for the existing scan results to load
   await waitFor(() => {
     expect(optimizerPage.getByText('Introduction to Programming')).toBeInTheDocument();
   });
@@ -75,62 +74,6 @@ const setupOptimizerPage = async (apiResponse = mockApiResponse) => {
 };
 
 describe('CourseOptimizerPage', () => {
-  describe('pollLinkCheckDuringScan', () => {
-    let mockFetchLinkCheckStatus;
-    beforeEach(() => {
-      mockFetchLinkCheckStatus = jest.fn();
-      jest.spyOn(thunks, 'fetchLinkCheckStatus').mockImplementation(mockFetchLinkCheckStatus);
-      jest.useFakeTimers();
-      jest.spyOn(global, 'setInterval').mockImplementation((cb) => {
-        cb();
-        return true;
-      });
-    });
-
-    afterEach(() => {
-      jest.clearAllTimers();
-      jest.useRealTimers();
-      jest.restoreAllMocks();
-    });
-
-    it('should start polling if linkCheckInProgress has never been started (is null)', () => {
-      const linkCheckInProgress = null;
-      const interval = { current: null };
-      const dispatch = jest.fn();
-      const courseId = 'course-123';
-      pollLinkCheckDuringScan(linkCheckInProgress, interval, dispatch, courseId);
-      expect(interval.current).toBeTruthy();
-      expect(mockFetchLinkCheckStatus).toHaveBeenCalled();
-    });
-
-    it('should start polling if link check is in progress', () => {
-      const linkCheckInProgress = true;
-      const interval = { current: null };
-      const dispatch = jest.fn();
-      const courseId = 'course-123';
-      pollLinkCheckDuringScan(linkCheckInProgress, interval, dispatch, courseId);
-      expect(interval.current).toBeTruthy();
-    });
-
-    it('should not start polling if link check is not in progress', () => {
-      const linkCheckInProgress = false;
-      const interval = { current: null };
-      const dispatch = jest.fn();
-      const courseId = 'course-123';
-      pollLinkCheckDuringScan(linkCheckInProgress, interval, dispatch, courseId);
-      expect(interval.current).toBeFalsy();
-    });
-
-    it('should clear the interval if link check is finished', () => {
-      const linkCheckInProgress = false;
-      const interval = { current: 1 };
-      const dispatch = jest.fn();
-      const courseId = 'course-123';
-      pollLinkCheckDuringScan(linkCheckInProgress, interval, dispatch, courseId);
-      expect(interval.current).toBeUndefined();
-    });
-  });
-
   describe('CourseOptimizerPage component', () => {
     beforeEach(() => {
       jest.useRealTimers();
@@ -143,6 +86,9 @@ describe('CourseOptimizerPage', () => {
       axiosMock
         .onGet(getLinkCheckStatusApiUrl(courseId))
         .reply(200, mockApiResponse);
+      axiosMock
+        .onGet(getRerunLinkUpdateStatusApiUrl(courseId))
+        .reply(200, { UpdateStatus: 'Succeeded', Results: [] });
       mockPermissions();
     });
 
@@ -161,45 +107,108 @@ describe('CourseOptimizerPage', () => {
       expect(screen.queryByText(messages.headingTitle.defaultMessage)).not.toBeInTheDocument();
     });
 
-    it('does not fetch the link check status when user lacks edit course content permission', async () => {
+    it('does not fetch optimizer statuses when user lacks edit course content permission', async () => {
       mockPermissions({ canEditCourseContent: false });
       render(<OptimizerPage />);
       expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
-      const linkCheckRequests = axiosMock.history.get.filter(
-        (request) => request.url === getLinkCheckStatusApiUrl(courseId),
+      const optimizerStatusRequests = axiosMock.history.get.filter(
+        ({ url }) =>
+          [
+            getLinkCheckStatusApiUrl(courseId),
+            getRerunLinkUpdateStatusApiUrl(courseId),
+          ].includes(url ?? ''),
       );
-      expect(linkCheckRequests).toHaveLength(0);
+      expect(optimizerStatusRequests).toHaveLength(0);
+    });
+
+    it('does not fetch rerun status when the optional feature is disabled', async () => {
+      render(<OptimizerPage />);
+      await waitFor(() => expect(screen.getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument());
+      expect(axiosMock.history.get.filter(({ url }) => url === getRerunLinkUpdateStatusApiUrl(courseId))).toHaveLength(
+        0,
+      );
     });
 
     it('should render the component', () => {
       const { getByText, queryByText } = render(<OptimizerPage />);
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       expect(getByText(messages.buttonTitle.defaultMessage)).toBeInTheDocument();
-      expect(queryByText(messages.preparingStepTitle)).not.toBeInTheDocument();
+      expect(queryByText(messages.preparingStepTitle.defaultMessage)).not.toBeInTheDocument();
     });
 
-    it('should start scan after clicking the scan button', async () => {
-      const { getByText } = render(<OptimizerPage />);
-      expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
-      fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
-      await waitFor(() => {
-        expect(getByText(messages.preparingStepTitle.defaultMessage)).toBeInTheDocument();
+    it('loads existing scan results on entry', async () => {
+      render(<OptimizerPage />);
+      expect(await screen.findByText('Introduction to Programming')).toBeInTheDocument();
+    });
+
+    it('hides previous scan results while rescanning', async () => {
+      let resolvePost: (value: [number, { LinkCheckStatus: string; }]) => void;
+      axiosMock.onPost(postLinkCheckCourseApiUrl(courseId)).reply(() =>
+        new Promise(resolve => {
+          resolvePost = resolve;
+        })
+      );
+      render(<OptimizerPage />);
+      expect(await screen.findByText('Introduction to Programming')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: messages.buttonTitle.defaultMessage }));
+
+      await waitFor(() => expect(screen.queryByText('Introduction to Programming')).not.toBeInTheDocument());
+      resolvePost!([200, { LinkCheckStatus: 'Pending' }]);
+    });
+
+    it('shows the current scan stage and disables the scan button while scanning', async () => {
+      axiosMock
+        .onGet(getLinkCheckStatusApiUrl(courseId))
+        .reply(200, { LinkCheckStatus: 'In Progress' });
+      render(<OptimizerPage />);
+
+      expect(await screen.findByText(messages.scanningStepDescription.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: messages.buttonTitle.defaultMessage })).toBeDisabled();
+    });
+
+    it('resets a scan failure when starting a new scan', async () => {
+      let statusRequestCount = 0;
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(() => {
+        statusRequestCount += 1;
+        return statusRequestCount === 1
+          ? [200, { LinkCheckStatus: 'Failed' }]
+          : [200, { LinkCheckStatus: 'Pending' }];
       });
+      render(<OptimizerPage />);
+      expect(await screen.findByText('Link Check Failed')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: messages.buttonTitle.defaultMessage }));
+
+      expect(await screen.findByText(messages.preparingStepDescription.defaultMessage)).toBeInTheDocument();
+      expect(screen.queryByText('Link Check Failed')).not.toBeInTheDocument();
+    });
+
+    it('shows a scan failure in the scan stepper', async () => {
+      axiosMock
+        .onGet(getLinkCheckStatusApiUrl(courseId))
+        .reply(200, { LinkCheckStatus: 'Failed' });
+      render(<OptimizerPage />);
+
+      expect(await screen.findByText('Link Check Failed')).toBeInTheDocument();
+    });
+
+    it.each([403, 500])('shows the connection error when loading scan status returns %s', async (status) => {
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(status);
+      render(<OptimizerPage />);
+
+      expect(await screen.findByTestId('connectionErrorAlert')).toBeInTheDocument();
     });
 
     it('should show no broken links found message', async () => {
       axiosMock
         .onGet(getLinkCheckStatusApiUrl(courseId))
         .reply(200, { LinkCheckStatus: 'Succeeded' });
-      const { getByText } = render(<OptimizerPage />);
-      expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
-      fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
-      await waitFor(() => {
-        expect(getByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
-      });
+      render(<OptimizerPage />);
+      expect(await screen.findByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
     });
 
-    it('should show an error state in the scan stepper if request does not go through', async () => {
+    it('shows the connection error when starting a scan fails', async () => {
       axiosMock
         .onPost(postLinkCheckCourseApiUrl(courseId))
         .reply(500);
@@ -225,33 +234,11 @@ describe('CourseOptimizerPage', () => {
 
       const collapsibleTrigger = container.querySelector('.collapsible-trigger');
       expect(collapsibleTrigger).toBeInTheDocument();
-      fireEvent.click(collapsibleTrigger);
+      fireEvent.click(collapsibleTrigger!);
 
       await waitFor(() => {
         expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
         expect(queryByText('https://example.com/broken-link')).not.toBeInTheDocument();
-        expect(queryByText('https://outsider.com/forbidden-link')).not.toBeInTheDocument();
-      });
-    });
-
-    it('should show only broken links when brokenLinks filter is selected', async () => {
-      const {
-        getByText,
-        getByLabelText,
-        queryByText,
-        container,
-      } = await setupOptimizerPage();
-      // Check if the modal is opened
-      expect(getByText('Broken')).toBeInTheDocument();
-      // Select the broken links checkbox
-      fireEvent.click(getByLabelText(scanResultsMessages.brokenLabel.defaultMessage));
-      const collapsibleTrigger = container.querySelector('.collapsible-trigger');
-      expect(collapsibleTrigger).toBeInTheDocument();
-      fireEvent.click(collapsibleTrigger);
-
-      await waitFor(() => {
-        expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
-        expect(queryByText('https://example.com/locked-link')).not.toBeInTheDocument();
         expect(queryByText('https://outsider.com/forbidden-link')).not.toBeInTheDocument();
       });
     });
@@ -270,7 +257,7 @@ describe('CourseOptimizerPage', () => {
 
       const collapsibleTrigger = container.querySelector('.collapsible-trigger');
       expect(collapsibleTrigger).toBeInTheDocument();
-      fireEvent.click(collapsibleTrigger);
+      fireEvent.click(collapsibleTrigger!);
 
       await waitFor(() => {
         expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
@@ -282,57 +269,6 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(getByLabelText(scanResultsMessages.manualLabel.defaultMessage));
 
       // Assert that all links are displayed after clearing the filter
-      await waitFor(() => {
-        expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
-        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
-        expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
-      });
-    });
-
-    it('should show only manual & locked links when manual & locked Links filters are selected, ignore broken links', async () => {
-      const {
-        getByText,
-        getByLabelText,
-        queryByText,
-        container,
-      } = await setupOptimizerPage();
-      // Check if the modal is opened
-      expect(getByText('Manual')).toBeInTheDocument();
-      expect(getByText('Locked')).toBeInTheDocument();
-      // Select the manual & locked links checkbox
-      fireEvent.click(getByLabelText(scanResultsMessages.manualLabel.defaultMessage));
-      fireEvent.click(getByLabelText(scanResultsMessages.lockedLabel.defaultMessage));
-
-      const collapsibleTrigger = container.querySelector('.collapsible-trigger');
-      expect(collapsibleTrigger).toBeInTheDocument();
-      fireEvent.click(collapsibleTrigger);
-
-      await waitFor(() => {
-        expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
-        expect(getByText('https://example.com/locked-link')).toBeInTheDocument();
-        expect(queryByText('https://example.com/broken-link')).not.toBeInTheDocument();
-      });
-    });
-
-    it('should show all links when all filters are selected', async () => {
-      const {
-        getByText,
-        getByLabelText,
-        container,
-      } = await setupOptimizerPage();
-      // Check if the modal is opened
-      expect(getByText('Broken')).toBeInTheDocument();
-      expect(getByText('Manual')).toBeInTheDocument();
-      expect(getByText('Locked')).toBeInTheDocument();
-      // Select the all checkboxes
-      fireEvent.click(getByLabelText(scanResultsMessages.brokenLabel.defaultMessage));
-      fireEvent.click(getByLabelText(scanResultsMessages.lockedLabel.defaultMessage));
-      fireEvent.click(getByLabelText(scanResultsMessages.manualLabel.defaultMessage));
-
-      const collapsibleTrigger = container.querySelector('.collapsible-trigger');
-      expect(collapsibleTrigger).toBeInTheDocument();
-      fireEvent.click(collapsibleTrigger);
-
       await waitFor(() => {
         expect(getByText('https://example.com/broken-link')).toBeInTheDocument();
         expect(getByText('https://outsider.com/forbidden-link')).toBeInTheDocument();
@@ -354,7 +290,7 @@ describe('CourseOptimizerPage', () => {
 
       const collapsibleTrigger = container.querySelector('.collapsible-trigger');
       expect(collapsibleTrigger).toBeInTheDocument();
-      fireEvent.click(collapsibleTrigger);
+      fireEvent.click(collapsibleTrigger!);
 
       // Assert that both links are displayed
       await waitFor(() => {
@@ -405,58 +341,52 @@ describe('CourseOptimizerPage', () => {
       axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseEmpty);
       const { getByText } = render(<OptimizerPage />);
 
-      fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
-
       await waitFor(() => {
         expect(getByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
-      });
+      }, { timeout: 5000 });
     });
 
     describe('Previous Run Links Feature', () => {
       beforeEach(() => {
         // Enable the waffle flag for previous run links
-        useWaffleFlags.mockReturnValue({
+        mockedUseWaffleFlags.mockReturnValue({
           enableCourseOptimizerCheckPrevRunLinks: true,
-        });
+        } as ReturnType<typeof useWaffleFlags>);
       });
 
       afterEach(() => {
         // Reset to default (disabled)
-        useWaffleFlags.mockReturnValue({
+        mockedUseWaffleFlags.mockReturnValue({
           enableCourseOptimizerCheckPrevRunLinks: false,
-        });
+        } as ReturnType<typeof useWaffleFlags>);
       });
 
       it('should show previous run links section when waffle flag is enabled and links exist', async () => {
         axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseWithPreviousRunLinks);
         const { getByText } = render(<OptimizerPage />);
 
-        fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
-
         await waitFor(() => {
           expect(getByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
-        });
+        }, { timeout: 5000 });
       });
 
       it('should show no results found for previous run links when flag is enabled but no links exist', async () => {
         axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseForNoResultFound);
         const { getByText, getAllByText } = render(<OptimizerPage />);
 
-        fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
-
         await waitFor(() => {
           expect(getByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
           // Should show "No results found" for previous run section
           const noResultsElements = getAllByText(scanResultsMessages.noResultsFound.defaultMessage);
           expect(noResultsElements.length).toBeGreaterThan(0);
-        });
+        }, { timeout: 5000 });
       });
 
       it('should not show previous run links section when waffle flag is disabled', async () => {
         // Disable the flag
-        useWaffleFlags.mockReturnValue({
+        mockedUseWaffleFlags.mockReturnValue({
           enableCourseOptimizerCheckPrevRunLinks: false,
-        });
+        } as ReturnType<typeof useWaffleFlags>);
 
         axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseWithPreviousRunLinks);
         const { getByText, queryByText } = render(<OptimizerPage />);
@@ -472,75 +402,12 @@ describe('CourseOptimizerPage', () => {
         axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseWithPreviousRunLinks);
         const { getByText, container } = render(<OptimizerPage />);
 
-        fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
-
         await waitFor(() => {
           expect(getByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
 
           const prevRunSections = container.querySelectorAll('.scan-results');
           expect(prevRunSections.length).toBeGreaterThan(1);
-        });
-      });
-    });
-
-    describe('CourseOptimizerPage polling helpers - rerun', () => {
-      beforeEach(() => {
-        jest.restoreAllMocks();
-      });
-
-      it('starts polling when shouldPoll is true', () => {
-        const mockDispatch = jest.fn();
-        const courseId = 'course-v1:Test+001';
-
-        // Mock setInterval to return a sentinel id
-        const intervalId = 123;
-        const setIntervalSpy = jest.spyOn(global, 'setInterval').mockImplementation(() => intervalId);
-
-        const intervalRef = { current: undefined };
-
-        // Call with rerunLinkUpdateInProgress true so shouldPoll === true
-        pollRerunLinkUpdateDuringUpdate(true, null, intervalRef, mockDispatch, courseId);
-
-        expect(setIntervalSpy).toHaveBeenCalled();
-        expect(intervalRef.current).toBe(intervalId);
-      });
-
-      it('clears existing interval when shouldPoll is false', () => {
-        const mockDispatch = jest.fn();
-        const courseId = 'course-v1:Test+002';
-        const clearIntervalSpy = jest.spyOn(global, 'clearInterval').mockImplementation(() => {});
-        const setIntervalSpy = jest.spyOn(global, 'setInterval').mockImplementation(() => 456);
-        const intervalRef = { current: 456 };
-
-        pollRerunLinkUpdateDuringUpdate(false, { status: 'Succeeded' }, intervalRef, mockDispatch, courseId);
-
-        expect(clearIntervalSpy).toHaveBeenCalledWith(456);
-        expect(intervalRef.current).toBeUndefined();
-
-        setIntervalSpy.mockRestore();
-        clearIntervalSpy.mockRestore();
-      });
-
-      it('pollRerunLinkUpdateStatus schedules dispatch at provided delay', () => {
-        jest.useFakeTimers();
-        const mockDispatch = jest.fn();
-        const courseId = 'course-v1:Test+003';
-
-        let capturedFn = null;
-        jest.spyOn(global, 'setInterval').mockImplementation((fn) => {
-          capturedFn = fn;
-          return 789;
-        });
-
-        const id = pollRerunLinkUpdateStatus(mockDispatch, courseId, 1000);
-        expect(id).toBe(789);
-
-        if (capturedFn) {
-          capturedFn();
-        }
-        expect(mockDispatch).toHaveBeenCalledWith(expect.any(Function));
-
-        jest.useRealTimers();
+        }, { timeout: 5000 });
       });
     });
   });

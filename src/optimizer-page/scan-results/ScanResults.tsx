@@ -19,46 +19,69 @@ import {
   SpinnerSimple,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useDispatch } from 'react-redux';
+import AlertMessage from '@src/generic/alert-message';
 import messages from './messages';
 import SectionCollapsible from './SectionCollapsible';
 import BrokenLinkTable from './BrokenLinkTable';
 import type { LinkCheckResult, Section } from '../types';
+import type { RerunLinkUpdateStatusData } from '../data/apiHooks';
 import { countBrokenLinks, isDataEmpty } from '../utils';
 import FilterModal from './filterModal';
 import { useWaffleFlags } from '../../data/apiHooks';
 import {
-  updateAllPreviousRunLinks,
-  updateSinglePreviousRunLink,
-  fetchRerunLinkUpdateStatus,
-} from '../data/thunks';
+  useRerunLinkUpdateStatus,
+  useUpdateAllPreviousRunLinks,
+  useUpdateSinglePreviousRunLink,
+} from '../data/apiHooks';
 import { STATEFUL_BUTTON_STATES } from '../../constants';
-import { RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES } from '../data/constants';
+import {
+  RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES,
+  RERUN_LINK_UPDATE_STATUSES,
+} from '../data/constants';
+
+type FlatLinkCheckResult = NonNullable<LinkCheckResult['courseUpdates']>[number];
 
 interface Props {
   data: LinkCheckResult | null;
   courseId: string;
+  /** Kept for callers that still surface operation errors outside this component. */
   onErrorStateChange?: (errorMessage: string | null) => void;
-  rerunLinkUpdateInProgress?: boolean | null;
-  rerunLinkUpdateResult?: any;
 }
 
 const ScanResults: FC<Props> = ({
   data,
   courseId,
   onErrorStateChange,
-  rerunLinkUpdateInProgress,
-  rerunLinkUpdateResult,
 }) => {
   const intl = useIntl();
   const waffleFlags = useWaffleFlags();
-  const dispatch = useDispatch();
+  const [isUpdateAllInProgress, setIsUpdateAllInProgress] = useState(false);
+  const rerunLinkUpdateStatusQuery = useRerunLinkUpdateStatus(courseId, {
+    enabled: waffleFlags.enableCourseOptimizerCheckPrevRunLinks,
+  });
+  const updateAllPreviousRunLinksMutation = useUpdateAllPreviousRunLinks(courseId);
+  const updateSinglePreviousRunLinkMutation = useUpdateSinglePreviousRunLink(courseId);
+  const rerunLinkUpdateResult = rerunLinkUpdateStatusQuery.data;
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const reportError = useCallback((message: string) => {
+    setErrorMessage(message);
+    onErrorStateChange?.(message);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [onErrorStateChange]);
+  useEffect(() => {
+    if (rerunLinkUpdateStatusQuery.isError) {
+      reportError(intl.formatMessage(messages.updateLinksError));
+    }
+  }, [intl, reportError, rerunLinkUpdateStatusQuery.isError]);
+  const serverRerunLinkUpdateInProgress = rerunLinkUpdateResult?.status != null
+    && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(rerunLinkUpdateResult.status);
+  const rerunLinkUpdateInProgress = updateAllPreviousRunLinksMutation.isPending
+    || isUpdateAllInProgress
+    || serverRerunLinkUpdateInProgress;
   const [isOpen, open, close] = useToggle(false);
   const [updatedLinkIds, setUpdatedLinkIds] = useState<string[]>([]);
   const [updatedLinkMap, setUpdatedLinkMap] = useState<Record<string, string>>({});
   const [updatingLinkIds, setUpdatingLinkIds] = useState<Record<string, boolean>>({});
-  const [isUpdateAllInProgress, setIsUpdateAllInProgress] = useState(false);
-  const [, setUpdateAllCompleted] = useState(false);
   const [updateAllTrigger, setUpdateAllTrigger] = useState(0);
   const [processedResponseIds, setProcessedResponseIds] = useState<Set<string>>(new Set());
   const initialFilters = {
@@ -74,7 +97,7 @@ const ScanResults: FC<Props> = ({
 
   const renderableSections = useMemo(() => {
     const buildSectionData = (
-      items: any[],
+      items: FlatLinkCheckResult[],
       sectionId: string,
       messageKey: keyof typeof messages,
     ) => {
@@ -94,7 +117,7 @@ const ScanResults: FC<Props> = ({
           id: `${sectionId}-subsection`,
           displayName: `${intl.formatMessage(messages[messageKey])} Subsection`,
           units: itemsWithLinks.map(item => {
-            const blockId = item.blockId || item.block_id || item.id;
+            const blockId = item.id;
 
             return {
               id: item.id,
@@ -115,7 +138,7 @@ const ScanResults: FC<Props> = ({
       };
     };
 
-    const rSections: any[] = [];
+    const rSections: Section[] = [];
 
     if (data?.courseUpdates && data.courseUpdates.length > 0) {
       const courseUpdatesSection = buildSectionData(data.courseUpdates, 'course-updates', 'courseUpdatesHeader');
@@ -198,17 +221,11 @@ const ScanResults: FC<Props> = ({
     setPrevRunOpenStates(allSections ? allSections.map(() => false) : []);
   }, [allSections]);
 
-  // Reset update all completion state when data changes (new scan results)
-  useEffect(() => {
-    setUpdateAllCompleted(false);
-  }, [data]);
-
-  const processUpdateResults = useCallback((response: any, isBulkUpdate = false) => {
-    if (!response) {
-      return;
-    }
-
-    if (response.status === 'Succeeded' && (isBulkUpdate || (response.results && response.results.length > 4))) {
+  const processUpdateResults = useCallback((response: RerunLinkUpdateStatusData, isBulkUpdate = false) => {
+    if (
+      response.status === RERUN_LINK_UPDATE_STATUSES.SUCCEEDED
+      && (isBulkUpdate || response.results.length > 4)
+    ) {
       const successfulLinkIds: string[] = [];
       const newMap: Record<string, string> = {};
 
@@ -302,15 +319,11 @@ const ScanResults: FC<Props> = ({
           const blockData = allBlocksMap.get(uiBlockId);
 
           if (blockData) {
-            const originalUrl = result.original_url || result.originalUrl;
-            const newUrl = result.new_url || result.newUrl;
+            const newUrl = result.newUrl;
 
-            if (result.success && newUrl && originalUrl) {
+            if (result.success && newUrl && result.originalUrl) {
               const matchingLink = blockData.previousRunLinks.find(
-                ({ originalLink }) => {
-                  const matches = originalLink === originalUrl;
-                  return matches;
-                },
+                ({ originalLink }) => originalLink === result.originalUrl,
               );
 
               if (matchingLink) {
@@ -332,18 +345,7 @@ const ScanResults: FC<Props> = ({
             return;
           }
 
-          const colonIndex = existingId.indexOf(':');
-          if (colonIndex > 0) {
-            const blockId = existingId.substring(0, colonIndex);
-
-            if (!blocksWithResults.has(blockId)) {
-              preservedIds.push(existingId);
-            } else {
-              preservedIds.push(existingId);
-            }
-          } else {
-            preservedIds.push(existingId);
-          }
+          preservedIds.push(existingId);
         });
 
         const result = [...successfulLinkIds, ...preservedIds];
@@ -359,18 +361,7 @@ const ScanResults: FC<Props> = ({
             return;
           }
 
-          const colonIndex = existingId.indexOf(':');
-          if (colonIndex > 0) {
-            const blockId = existingId.substring(0, colonIndex);
-
-            if (!blocksWithResults.has(blockId)) {
-              preservedMap[existingId] = currentMap[existingId];
-            } else {
-              preservedMap[existingId] = currentMap[existingId];
-            }
-          } else {
-            preservedMap[existingId] = currentMap[existingId];
-          }
+          preservedMap[existingId] = currentMap[existingId];
         });
 
         const result = { ...preservedMap, ...newMap };
@@ -381,7 +372,7 @@ const ScanResults: FC<Props> = ({
     }
 
     if (response.results && Array.isArray(response.results)) {
-      const successfulResults = response.results.filter((r: any) => r.success);
+      const successfulResults = response.results.filter(r => r.success);
       if (successfulResults.length === 0) {
         return;
       }
@@ -397,14 +388,13 @@ const ScanResults: FC<Props> = ({
                 block.previousRunLinks.forEach(({ originalLink }) => {
                   const uid = `${block.id}:${originalLink}`;
 
-                  const exactMatch = successfulResults.find(result => {
-                    const originalUrl = result.original_url || result.originalUrl;
-                    return result.id === block.id && originalUrl === originalLink;
-                  });
+                  const exactMatch = successfulResults.find(
+                    result => result.id === block.id && result.originalUrl === originalLink,
+                  );
 
-                  if (exactMatch && (exactMatch.newUrl || exactMatch.new_url)) {
+                  if (exactMatch && exactMatch.newUrl) {
                     successfulLinkIds.push(uid);
-                    newMap[uid] = exactMatch.newUrl || exactMatch.new_url;
+                    newMap[uid] = exactMatch.newUrl;
                   }
                 });
               }
@@ -428,117 +418,55 @@ const ScanResults: FC<Props> = ({
     }
   }, [allSections]);
 
-  // Process update results during polling when status is 'Succeeded' or results are present
+  // Process terminal results after the optimistic Pending cache entry has been replaced.
   useEffect(() => {
     if (
-      rerunLinkUpdateResult
-      && (rerunLinkUpdateResult.status === 'Succeeded'
-        || (rerunLinkUpdateResult.results && rerunLinkUpdateResult.results.length > 0))
+      !isUpdateAllInProgress
+      || updateAllPreviousRunLinksMutation.isPending
+      || rerunLinkUpdateStatusQuery.isFetching
+      || !rerunLinkUpdateResult
+      || rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.PENDING
+      || rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.IN_PROGRESS
+      || rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.RETRYING
+      || rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.SCANNING
+      || rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.UPDATING
     ) {
-      const allResultIds = rerunLinkUpdateResult.results?.map(r => r.id).sort().join(',') || '';
-      const responseId =
-        `${rerunLinkUpdateResult.status}-${rerunLinkUpdateResult.results?.length}-${allResultIds}-${isUpdateAllInProgress}`;
+      return;
+    }
 
-      if (processedResponseIds.has(responseId)) {
-        return;
-      }
+    const results = rerunLinkUpdateResult.results;
+    const responseId = `${rerunLinkUpdateResult.status}-${
+      results.map(r => `${r.id}-${r.originalUrl}-${r.newUrl}`).sort().join(',')
+    }`;
+    if (processedResponseIds.has(responseId)) {
+      return;
+    }
+    setProcessedResponseIds(prev => new Set([...prev, responseId]));
+    processUpdateResults({ ...rerunLinkUpdateResult, results }, true);
+    setIsUpdateAllInProgress(false);
+    setUpdateAllTrigger(t => t + 1);
 
-      setProcessedResponseIds(prev => new Set([...prev, responseId]));
-      processUpdateResults(rerunLinkUpdateResult, isUpdateAllInProgress);
-
-      // Handle completion for "Update All" operation (check for success status as indicator)
-      if (rerunLinkUpdateResult.status === 'Succeeded' && isUpdateAllInProgress) {
-        const failedCount = rerunLinkUpdateResult.results
-          ? rerunLinkUpdateResult.results.filter((r: any) => !r.success).length
-          : 0;
-
-        setIsUpdateAllInProgress(false);
-        setUpdateAllCompleted(failedCount === 0);
-        setUpdateAllTrigger(t => t + 1);
-
-        if (failedCount > 0) {
-          if (onErrorStateChange) {
-            onErrorStateChange(intl.formatMessage(messages.updateLinksError));
-          }
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else if (onErrorStateChange) {
-          onErrorStateChange(null);
-        }
-      }
+    if (
+      rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.SUCCEEDED
+      && results.every(result => result.success)
+    ) {
+      setErrorMessage(null);
+      onErrorStateChange?.(null);
+    } else {
+      const error = intl.formatMessage(messages.updateLinksError);
+      setErrorMessage(error);
+      onErrorStateChange?.(error);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [
-    rerunLinkUpdateResult,
-    rerunLinkUpdateInProgress,
-    isUpdateAllInProgress,
     intl,
+    isUpdateAllInProgress,
     onErrorStateChange,
     processUpdateResults,
     processedResponseIds,
-  ]);
-
-  // Handle completion of rerun link updates when polling stops
-  useEffect(() => {
-    const handleUpdateCompletion = async () => {
-      if (rerunLinkUpdateInProgress === false && isUpdateAllInProgress) {
-        try {
-          // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-          const updateStatusResponse = await dispatch(fetchRerunLinkUpdateStatus(courseId)) as any;
-
-          if (!updateStatusResponse) {
-            setIsUpdateAllInProgress(false);
-            setUpdateAllCompleted(false);
-            if (onErrorStateChange) {
-              onErrorStateChange(intl.formatMessage(messages.updateLinksError));
-            }
-            return;
-          }
-
-          processUpdateResults(updateStatusResponse, true);
-          let failedCount = 0;
-
-          if (updateStatusResponse.results) {
-            failedCount = updateStatusResponse.results.filter((r: any) => !r.success).length;
-          } else if (updateStatusResponse.status === 'Succeeded') {
-            failedCount = 0;
-          } else {
-            failedCount = 1;
-          }
-
-          setIsUpdateAllInProgress(false);
-          setUpdateAllCompleted(failedCount === 0);
-          setUpdateAllTrigger(t => t + 1);
-
-          if (failedCount > 0) {
-            if (onErrorStateChange) {
-              onErrorStateChange(intl.formatMessage(messages.updateLinksError));
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          } else if (onErrorStateChange) {
-            onErrorStateChange(null);
-          }
-        } catch {
-          setIsUpdateAllInProgress(false);
-          setUpdateAllCompleted(false);
-          setUpdateAllTrigger(t => t + 1);
-          if (onErrorStateChange) {
-            onErrorStateChange(intl.formatMessage(messages.updateLinksError));
-          }
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      }
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    handleUpdateCompletion();
-  }, [
-    rerunLinkUpdateInProgress,
-    isUpdateAllInProgress,
-    dispatch,
-    courseId,
-    allSections,
-    intl,
-    onErrorStateChange,
-    processUpdateResults,
+    rerunLinkUpdateResult,
+    rerunLinkUpdateStatusQuery.isFetching,
+    updateAllPreviousRunLinksMutation.isPending,
   ]);
 
   const getContentType = useCallback((sectionId: string): string => {
@@ -617,50 +545,46 @@ const ScanResults: FC<Props> = ({
     try {
       setUpdatingLinkIds(prev => ({ ...prev, [uniqueId]: true }));
       const contentType = getContentType(sectionId || '');
-      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-      await dispatch(updateSinglePreviousRunLink(courseId, link, blockId, contentType));
+      await updateSinglePreviousRunLinkMutation.mutateAsync({
+        linkUrl: link,
+        blockId,
+        contentType,
+      });
 
       const pollForSingleLinkResult = async (attempts = 0): Promise<boolean> => {
         if (attempts > 30) { // Max 30 attempts (60 seconds)
           throw new Error('Timeout waiting for link update result');
         }
 
-        // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-        const updateStatusResponse = await dispatch(fetchRerunLinkUpdateStatus(courseId)) as any;
-        const pollStatus = updateStatusResponse?.status || updateStatusResponse?.updateStatus;
+        const { data: updateStatusResponse } = await rerunLinkUpdateStatusQuery.refetch();
+        const pollStatus = updateStatusResponse?.status;
 
-        if (!updateStatusResponse || RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(pollStatus)) {
+        if (
+          !updateStatusResponse
+          || (pollStatus != null && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(pollStatus))
+        ) {
           await new Promise(resolve => {
             setTimeout(resolve, 2000);
           });
           return pollForSingleLinkResult(attempts + 1);
         }
 
-        if (updateStatusResponse && updateStatusResponse.results && updateStatusResponse.results.length > 0) {
-          const hasOriginalUrlField = updateStatusResponse.results.some(r => r.original_url !== undefined);
+        if (updateStatusResponse && updateStatusResponse.results.length > 0) {
+          const hasOriginalUrlField = updateStatusResponse.results.some(r => r.originalUrl != null);
 
           let exactMatch;
           if (hasOriginalUrlField) {
             exactMatch = updateStatusResponse.results.find(
-              (result: any) => {
-                const matches = result.id === blockId
-                  && result.original_url === link
-                  && result.success === true;
-
-                return matches;
-              },
+              result => result.id === blockId && result.originalUrl === link && result.success,
             );
           } else {
             exactMatch = updateStatusResponse.results.find(
-              (result: any) => {
-                const matches = result.id === blockId && result.success === true;
-                return matches;
-              },
+              result => result.id === blockId && result.success,
             );
           }
 
           if (exactMatch) {
-            const newUrl = exactMatch.new_url || exactMatch.newUrl || exactMatch.url;
+            const newUrl = exactMatch.newUrl;
 
             if (newUrl) {
               setUpdatedLinkMap(prev => {
@@ -680,30 +604,22 @@ const ScanResults: FC<Props> = ({
                 return copy;
               });
 
-              if (onErrorStateChange) {
-                onErrorStateChange(null);
-              }
+              setErrorMessage(null);
+              onErrorStateChange?.(null);
 
               return true;
             }
           }
 
-          const failed = updateStatusResponse.results.find(
-            (result: any) => {
-              if (hasOriginalUrlField) {
-                return result.id === blockId
-                  && result.original_url === link
-                  && result.success === false;
-              }
-              return result.id === blockId && result.success === false;
-            },
-          );
+          const failed = updateStatusResponse.results.find(result => {
+            if (hasOriginalUrlField) {
+              return result.id === blockId && result.originalUrl === link && !result.success;
+            }
+            return result.id === blockId && !result.success;
+          });
 
           if (failed) {
-            if (onErrorStateChange) {
-              onErrorStateChange(intl.formatMessage(messages.updateLinkError));
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            reportError(intl.formatMessage(messages.updateLinkError));
 
             setUpdatingLinkIds(prev => {
               const copy = { ...prev };
@@ -715,12 +631,9 @@ const ScanResults: FC<Props> = ({
           }
         }
 
-        // If status is 'Succeeded' but no results for this specific link, consider it failed
-        if (pollStatus === 'Succeeded') {
-          if (onErrorStateChange) {
-            onErrorStateChange(intl.formatMessage(messages.updateLinkError));
-          }
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+        // If status is Succeeded but no results for this specific link, consider it failed
+        if (pollStatus === RERUN_LINK_UPDATE_STATUSES.SUCCEEDED) {
+          reportError(intl.formatMessage(messages.updateLinkError));
 
           setUpdatingLinkIds(prev => {
             const copy = { ...prev };
@@ -731,10 +644,7 @@ const ScanResults: FC<Props> = ({
           return false;
         }
 
-        if (onErrorStateChange) {
-          onErrorStateChange(intl.formatMessage(messages.updateLinkError));
-        }
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        reportError(intl.formatMessage(messages.updateLinkError));
 
         setUpdatingLinkIds(prev => {
           const copy = { ...prev };
@@ -747,10 +657,7 @@ const ScanResults: FC<Props> = ({
 
       return await pollForSingleLinkResult();
     } catch {
-      if (onErrorStateChange) {
-        onErrorStateChange(intl.formatMessage(messages.updateLinkError));
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      reportError(intl.formatMessage(messages.updateLinkError));
 
       setUpdatingLinkIds(prev => {
         const copy = { ...prev };
@@ -760,7 +667,14 @@ const ScanResults: FC<Props> = ({
 
       return false;
     }
-  }, [dispatch, courseId, getContentType, intl, onErrorStateChange]);
+  }, [
+    getContentType,
+    intl,
+    reportError,
+    onErrorStateChange,
+    rerunLinkUpdateStatusQuery,
+    updateSinglePreviousRunLinkMutation,
+  ]);
 
   // When updatedLinkIds changes (links marked updated), clear any updating flags for those ids
   useEffect(() => {
@@ -784,23 +698,28 @@ const ScanResults: FC<Props> = ({
     try {
       setProcessedResponseIds(new Set());
       setIsUpdateAllInProgress(true);
-      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-      await dispatch(updateAllPreviousRunLinks(courseId));
-
+      await updateAllPreviousRunLinksMutation.mutateAsync();
       return true;
     } catch {
-      setIsUpdateAllInProgress(false); // Reset on error
-      if (onErrorStateChange) {
-        onErrorStateChange(intl.formatMessage(messages.updateLinksError));
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setIsUpdateAllInProgress(false);
+      reportError(intl.formatMessage(messages.updateLinksError));
       return false;
     }
-  }, [dispatch, courseId, intl, onErrorStateChange]);
+  }, [intl, reportError, updateAllPreviousRunLinksMutation]);
 
   if (!data || isDataEmpty(data)) {
     return (
       <>
+        {errorMessage && (
+          <AlertMessage
+            variant="danger"
+            title=""
+            description={errorMessage}
+            dismissible
+            onClose={() => setErrorMessage(null)}
+            className="mt-3"
+          />
+        )}
         <div className="scan-results">
           <div className="scan-header-second-title-container px-3">
             <header className="sub-header-content">
@@ -894,6 +813,16 @@ const ScanResults: FC<Props> = ({
 
   return (
     <>
+      {errorMessage && (
+        <AlertMessage
+          variant="danger"
+          title=""
+          description={errorMessage}
+          dismissible
+          onClose={() => setErrorMessage(null)}
+          className="mt-3"
+        />
+      )}
       <div className="scan-results">
         <div className="scan-header-second-title-container px-3">
           <header className="sub-header-content">
@@ -944,7 +873,7 @@ const ScanResults: FC<Props> = ({
                   }}
                 >
                   {(() => {
-                    const foundOption = filterOptions.filter(option => option.value === filter)[0];
+                    const foundOption = filterOptions.find(option => option.value === filter);
                     return foundOption ? foundOption.name : filter;
                   })()}
                 </Chip>
