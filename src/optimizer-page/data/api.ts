@@ -34,7 +34,8 @@ export interface RerunLinkUpdateResultApiResponse {
 /** The partial response returned by the rerun status endpoint. */
 export interface RerunLinkUpdateStatusApiResponseBody {
   status?: RawRerunLinkUpdateStatus | null;
-  results: RerunLinkUpdateResultApiResponse[];
+  /** Optional in the API contract; pending and failed responses may omit results. */
+  results?: RerunLinkUpdateResultApiResponse[];
 }
 
 export interface RerunLinkUpdateResponseBody {
