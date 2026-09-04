@@ -172,7 +172,7 @@ const CourseOptimizerPage = () => {
                       />
                     </Card.Section>
                   )}
-                  {linkCheckPresent && linkCheckResult && (
+                  {linkCheckPresent && linkCheckResult && !linkCheckInProgress && (
                     <>
                       <Card.Header
                         className="scan-header h3 px-3 text-black mb-2"
