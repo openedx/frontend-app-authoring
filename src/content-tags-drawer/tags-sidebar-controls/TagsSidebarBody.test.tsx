@@ -1,6 +1,10 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
+import {
+  initializeMocks,
+  render,
+  screen,
+  userEvent,
+} from '@src/testUtils';
 import TagsSidebarBody from './TagsSidebarBody';
 import { useContentTaxonomyTagsData } from '../data/apiHooks';
 import { contentTaxonomyTagsMock } from '../__mocks__';
@@ -16,12 +20,14 @@ jest.mock('../data/apiHooks', () => ({
 jest.mock('../ContentTagsDrawer', () => jest.fn(() => <div>Mocked ContentTagsDrawer</div>));
 
 const RootWrapper = ({ canManageTags = true }: { canManageTags?: boolean; } = {}) => (
-  <IntlProvider locale="en" messages={{}}>
-    <TagsSidebarBody readOnly={false} canManageTags={canManageTags} />
-  </IntlProvider>
+  <TagsSidebarBody readOnly={false} canManageTags={canManageTags} />
 );
 
 describe('<TagSidebarBody>', () => {
+  beforeEach(() => {
+    initializeMocks();
+  });
+
   it('shows spinner before the content data query is complete', () => {
     render(<RootWrapper />);
     expect(screen.getByRole('status')).toBeInTheDocument();
@@ -40,7 +46,8 @@ describe('<TagSidebarBody>', () => {
     expect(screen.queryByText('Mocked ContentTagsDrawer')).not.toBeInTheDocument();
   });
 
-  it('should open ContentTagsDrawer', () => {
+  it('should open ContentTagsDrawer', async () => {
+    const user = userEvent.setup();
     (useContentTaxonomyTagsData as jest.Mock).mockReturnValue({
       isSuccess: true,
       data: contentTaxonomyTagsMock[contentId],
@@ -48,7 +55,7 @@ describe('<TagSidebarBody>', () => {
     render(<RootWrapper />);
 
     const manageButton = screen.getByRole('button', { name: /manage tags/i });
-    fireEvent.click(manageButton);
+    await user.click(manageButton);
 
     expect(screen.getByText('Mocked ContentTagsDrawer')).toBeInTheDocument();
   });

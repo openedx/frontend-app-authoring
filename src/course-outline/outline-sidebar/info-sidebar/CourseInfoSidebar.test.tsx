@@ -1,15 +1,10 @@
-import { fireEvent, initializeMocks, render, screen } from '@src/testUtils';
-import { useCourseUserPermissions } from '@src/authz/hooks';
+import { initializeMocks, render, screen, userEvent } from '@src/testUtils';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { mockContentTaxonomyTagsData } from '@src/content-tags-drawer/data/api.mocks';
 import { CourseInfoSidebar } from './CourseInfoSidebar';
 
 const courseId = mockContentTaxonomyTagsData.otherTagsId;
-
-jest.mock('@src/authz/hooks', () => ({
-  ...jest.requireActual('@src/authz/hooks'),
-  useCourseUserPermissions: jest.fn(),
-}));
 
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   ...jest.requireActual('@src/course-outline/data/apiHooks'),
@@ -30,6 +25,17 @@ jest.mock('../OutlineSidebarContext', () => ({
 
 mockContentTaxonomyTagsData.applyMock();
 
+let validateUserPermissionsMock: ReturnType<typeof initializeMocks>['validateUserPermissionsMock'];
+
+/**
+ * Authz is only consulted when its waffle flag is on; with the flag off every permission is
+ * granted, so only the restricted cases need to enable it.
+ */
+const mockPermissions = (canManageTags = true) => {
+  mockWaffleFlags({ enableAuthzCourseAuthoring: !canManageTags });
+  validateUserPermissionsMock.mockResolvedValue({ canManageTags });
+};
+
 const renderComponent = () =>
   render(<CourseInfoSidebar />, {
     extraWrapper: ({ children }) => (
@@ -41,32 +47,26 @@ const renderComponent = () =>
 
 describe('<CourseInfoSidebar />', () => {
   beforeEach(() => {
-    initializeMocks();
-    jest.mocked(useCourseUserPermissions).mockReturnValue({
-      canManageTags: true,
-      isLoading: false,
-      isAuthzEnabled: false,
-    } as ReturnType<typeof useCourseUserPermissions>);
+    const mocks = initializeMocks();
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    mockPermissions();
   });
 
   it('shows the Manage tags action when user can manage tags', async () => {
+    const user = userEvent.setup();
     renderComponent();
     expect(await screen.findByText('Taxonomy Alignments')).toBeInTheDocument();
 
     const taxonomySection = screen.getByText('Taxonomy Alignments').closest('.pgn__hstack') as HTMLElement;
     const toggle = taxonomySection.querySelector('.dropdown button') as HTMLButtonElement;
     expect(toggle).not.toBeNull();
-    fireEvent.click(toggle);
+    await user.click(toggle);
 
     expect(await screen.findByText('Manage tags')).toBeInTheDocument();
   });
 
   it('hides the Manage tags action when user cannot manage tags', async () => {
-    jest.mocked(useCourseUserPermissions).mockReturnValue({
-      canManageTags: false,
-      isLoading: false,
-      isAuthzEnabled: false,
-    } as ReturnType<typeof useCourseUserPermissions>);
+    mockPermissions(false);
     renderComponent();
     expect(await screen.findByText('Taxonomy Alignments')).toBeInTheDocument();
 

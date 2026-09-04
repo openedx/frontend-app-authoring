@@ -2,15 +2,14 @@ import { setConfig, getConfig } from '@edx/frontend-platform';
 
 import { ITEM_BADGE_STATUS } from '@src/course-outline/constants';
 import {
-  act,
   fireEvent,
   screen,
+  userEvent,
   waitFor,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { courseId } from '@src/schedule-and-details/__mocks__/courseDetails';
-import { userEvent } from '@testing-library/user-event';
 import { renderCard, setupCardTestMocks } from '../__mocks__/testSetup';
 import CardHeader from './CardHeader';
 import TitleButton from './TitleButton';
@@ -162,17 +161,19 @@ describe('<CardHeader />', () => {
   });
 
   it('check publish menu item is disabled when subsection status is live or published not live and it has no changes', async () => {
+    const user = userEvent.setup();
     renderComponent({
       ...cardHeaderProps,
       status: ITEM_BADGE_STATUS.publishedNotLive,
     });
 
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menuButton);
+    await user.click(menuButton);
     expect(await screen.findByText(messages.menuPublish.defaultMessage)).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('check publish menu item is enabled when subsection status is live or published not live and it has changes', async () => {
+    const user = userEvent.setup();
     renderComponent({
       ...cardHeaderProps,
       status: ITEM_BADGE_STATUS.publishedNotLive,
@@ -180,55 +181,59 @@ describe('<CardHeader />', () => {
     });
 
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menuButton);
+    await user.click(menuButton);
     expect(await screen.findByText(messages.menuPublish.defaultMessage)).not.toHaveAttribute('aria-disabled');
   });
 
   it('calls handleExpanded when button is clicked', async () => {
+    const user = userEvent.setup();
     renderComponent();
 
     const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
-    fireEvent.click(expandButton);
+    await user.click(expandButton);
     expect(onExpandMock).toHaveBeenCalled();
   });
 
   it('calls onClickPublish when item is clicked', async () => {
+    const user = userEvent.setup();
     renderComponent({
       ...cardHeaderProps,
       status: ITEM_BADGE_STATUS.draft,
     });
 
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menuButton);
+    await user.click(menuButton);
 
     const publishMenuItem = await screen.findByText(messages.menuPublish.defaultMessage);
-    await act(async () => fireEvent.click(publishMenuItem));
+    await user.click(publishMenuItem);
     expect(onClickPublishMock).toHaveBeenCalled();
   });
 
   it('only shows Manage tags menu if the waffle flag is enabled', async () => {
+    const user = userEvent.setup();
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
     });
     renderComponent();
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menuButton);
+    await user.click(menuButton);
 
     expect(screen.queryByText(messages.menuManageTags.defaultMessage)).not.toBeInTheDocument();
   });
 
   it('shows ContentTagsDrawer when the menu is clicked', async () => {
+    const user = userEvent.setup();
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
     });
     renderComponent();
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menuButton);
+    await user.click(menuButton);
 
     const manageTagsMenuItem = await screen.findByText(messages.menuManageTags.defaultMessage);
-    fireEvent.click(manageTagsMenuItem);
+    await user.click(manageTagsMenuItem);
 
     // Check if the drawer is open
     expect(screen.getAllByText('Manage tags').length).toBe(1);
@@ -385,13 +390,14 @@ describe('<CardHeader />', () => {
   });
 
   it('check editing is enabled when isDisabledEditField is false', async () => {
+    const user = userEvent.setup();
     renderComponent({ ...cardHeaderProps });
 
     expect(screen.getByTestId('subsection-edit-button')).toBeEnabled();
 
     // Ensure menu items related to editing are enabled
     const menuButton = screen.getByTestId('subsection-card-header__menu-button');
-    await act(async () => fireEvent.click(menuButton));
+    await user.click(menuButton);
     expect(await screen.findByTestId('subsection-card-header__menu-configure-button')).not.toHaveAttribute(
       'aria-disabled',
     );
@@ -419,38 +425,41 @@ describe('<CardHeader />', () => {
   });
 
   it('calls onClickDelete when item is clicked', async () => {
+    const user = userEvent.setup();
     renderComponent();
 
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    await act(async () => fireEvent.click(menuButton));
+    await user.click(menuButton);
     const deleteMenuItem = await screen.findByText(messages.menuDelete.defaultMessage);
-    await act(async () => fireEvent.click(deleteMenuItem));
+    await user.click(deleteMenuItem);
     expect(onClickDeleteMock).toHaveBeenCalledTimes(1);
   });
 
   it('calls onClickUnlink when item is clicked', async () => {
+    const user = userEvent.setup();
     renderComponent();
 
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    await act(async () => fireEvent.click(menuButton));
+    await user.click(menuButton);
     const unlinkMenuItem = await screen.findByText(messages.menuUnlink.defaultMessage);
-    await act(async () => fireEvent.click(unlinkMenuItem));
+    await user.click(unlinkMenuItem);
     expect(onClickUnlinkMock).toHaveBeenCalledTimes(1);
   });
 
   it('calls onClickDuplicate when item is clicked', async () => {
+    const user = userEvent.setup();
     renderComponent();
 
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menuButton);
+    await user.click(menuButton);
 
     const duplicateMenuItem = await screen.findByText(messages.menuDuplicate.defaultMessage);
-    fireEvent.click(duplicateMenuItem);
-    await act(async () => fireEvent.click(duplicateMenuItem));
+    await user.click(duplicateMenuItem);
     expect(onClickDuplicateMock).toHaveBeenCalled();
   });
 
   it('check if proctoringExamConfigurationLink is visible', async () => {
+    const user = userEvent.setup();
     renderComponent({
       ...cardHeaderProps,
       proctoringExamConfigurationLink: 'proctoringlink',
@@ -458,7 +467,7 @@ describe('<CardHeader />', () => {
     });
 
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    await act(async () => fireEvent.click(menuButton));
+    await user.click(menuButton);
 
     const element = await screen.findByText(messages.menuProctoringLinkText.defaultMessage);
     expect(element).toBeInTheDocument();
@@ -466,6 +475,7 @@ describe('<CardHeader />', () => {
   });
 
   it('check if proctoringExamConfigurationLink is absolute', async () => {
+    const user = userEvent.setup();
     renderComponent({
       ...cardHeaderProps,
       proctoringExamConfigurationLink: 'http://localhost:9000/proctoringlink',
@@ -473,7 +483,7 @@ describe('<CardHeader />', () => {
     });
 
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    await act(async () => fireEvent.click(menuButton));
+    await user.click(menuButton);
 
     const element = await screen.findByText(messages.menuProctoringLinkText.defaultMessage);
     expect(element).toBeInTheDocument();
@@ -529,6 +539,7 @@ describe('<CardHeader />', () => {
   });
 
   it('hides Manage tags menu item and tag count when canManageTags is false', async () => {
+    const user = userEvent.setup();
     setConfig({
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
@@ -544,12 +555,13 @@ describe('<CardHeader />', () => {
     expect(screen.queryByText('17')).not.toBeInTheDocument();
 
     // Manage tags menu item is not rendered
-    fireEvent.click(menuButton);
+    await user.click(menuButton);
     expect(await screen.findByText(messages.menuConfigure.defaultMessage)).toBeInTheDocument();
     expect(screen.queryByText(messages.menuManageTags.defaultMessage)).not.toBeInTheDocument();
   });
 
-  it('should render sync button when is ready to sync', () => {
+  it('should render sync button when is ready to sync', async () => {
+    const user = userEvent.setup();
     const mockClickSync = jest.fn();
 
     renderComponent({
@@ -559,13 +571,14 @@ describe('<CardHeader />', () => {
 
     const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
     expect(syncButton).toBeInTheDocument();
-    fireEvent.click(syncButton);
+    await user.click(syncButton);
 
     expect(mockClickSync).toHaveBeenCalled();
   });
 
   [null, undefined].forEach((unlinkable) => (
     it(`should not render unlink button if unlinkable action is ${unlinkable}`, async () => {
+      const user = userEvent.setup();
       renderComponent({
         ...cardHeaderProps,
         actions: {
@@ -575,13 +588,14 @@ describe('<CardHeader />', () => {
       });
 
       const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-      fireEvent.click(menuButton);
+      await user.click(menuButton);
 
       expect(screen.queryByText(messages.menuUnlink.defaultMessage)).not.toBeInTheDocument();
     })
   ));
 
   it('should render unlink button disabled if unlinkable action is False', async () => {
+    const user = userEvent.setup();
     renderComponent({
       ...cardHeaderProps,
       actions: {
@@ -590,7 +604,7 @@ describe('<CardHeader />', () => {
       },
     });
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menuButton);
+    await user.click(menuButton);
 
     const unlinkMenuItem = await screen.findByText(messages.menuUnlink.defaultMessage);
     expect(unlinkMenuItem).toBeInTheDocument();
@@ -598,6 +612,7 @@ describe('<CardHeader />', () => {
   });
 
   it('should render unlink button disabled if unlinkable action is False', async () => {
+    const user = userEvent.setup();
     renderComponent({
       ...cardHeaderProps,
       actions: {
@@ -606,11 +621,10 @@ describe('<CardHeader />', () => {
       },
     });
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
-    fireEvent.click(menuButton);
+    await user.click(menuButton);
 
     const unlinkMenuItem = await screen.findByText(messages.menuUnlink.defaultMessage);
-    fireEvent.click(unlinkMenuItem);
-    await act(async () => fireEvent.click(unlinkMenuItem));
+    await user.click(unlinkMenuItem);
     expect(onClickUnlinkMock).toHaveBeenCalled();
   });
 

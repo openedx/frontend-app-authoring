@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
 import {
   act,
-  render,
   fireEvent,
+  initializeMocks,
+  render,
   screen,
+  userEvent,
   within,
-} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+} from '@src/testUtils';
 
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import messages from './messages';
@@ -208,14 +208,12 @@ const ContentTagsCollapsibleComponent = ({
   }), []);
   return (
     <ContentTagsDrawerContext.Provider value={context as unknown as ContentTagsDrawerContextData}>
-      <IntlProvider locale="en" messages={{}}>
-        <ContentTagsCollapsible
-          contentId={contentId}
-          taxonomyAndTagsData={taxonomyAndTagsData as unknown as TagsInTaxonomy}
-          stagedContentTags={stagedContentTags}
-          collapsibleState={collapsibleState}
-        />
-      </IntlProvider>
+      <ContentTagsCollapsible
+        contentId={contentId}
+        taxonomyAndTagsData={taxonomyAndTagsData as unknown as TagsInTaxonomy}
+        stagedContentTags={stagedContentTags}
+        collapsibleState={collapsibleState}
+      />
     </ContentTagsDrawerContext.Provider>
   );
 };
@@ -227,6 +225,10 @@ describe('<ContentTagsCollapsible />', () => {
 
   afterAll(() => {
     jest.useRealTimers(); // Restore real timers after the tests
+  });
+
+  beforeEach(() => {
+    initializeMocks();
   });
 
   afterEach(() => {
@@ -318,6 +320,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should render "no tags added yet" when expanded in read mode', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     await getComponent({
       ...data,
       isEditMode: false,
@@ -332,18 +335,19 @@ describe('<ContentTagsCollapsible />', () => {
     const expandToggle = screen.getByRole('button', {
       name: /taxonomy 1/i,
     });
-    fireEvent.click(expandToggle);
+    await user.click(expandToggle);
     expect(screen.queryByText(/no tags added yet/i)).toBeInTheDocument();
 
     const addTags = screen.getByRole('button', {
       name: /add tags/i,
     });
     expect(addTags).toBeInTheDocument();
-    fireEvent.click(addTags);
+    await user.click(addTags);
     expect(data.toEditMode).toHaveBeenCalledTimes(1);
   });
 
   it('should not render "add tags" button when expanded and not allowed to tag objects', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     await getComponent({
       ...data,
       isEditMode: false,
@@ -358,7 +362,7 @@ describe('<ContentTagsCollapsible />', () => {
     const expandToggle = screen.getByRole('button', {
       name: /taxonomy 1/i,
     });
-    fireEvent.click(expandToggle);
+    await user.click(expandToggle);
     expect(screen.queryByText(/no tags added yet/i)).toBeInTheDocument();
 
     const addTags = screen.queryByRole('button', {
@@ -368,6 +372,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should call `openCollapsible` when click in the collapsible', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     await getComponent({
       ...data,
       collapsibleState: false,
@@ -376,7 +381,7 @@ describe('<ContentTagsCollapsible />', () => {
     const expandToggle = screen.getByRole('button', {
       name: /taxonomy 1/i,
     });
-    fireEvent.click(expandToggle);
+    await user.click(expandToggle);
 
     expect(data.openCollapsible).toHaveBeenCalledTimes(1);
     expect(data.closeCollapsible).toHaveBeenCalledTimes(0);
@@ -384,6 +389,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should call `closeCollapsible` when click in the collapsible', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     await getComponent({
       ...data,
       collapsibleState: true,
@@ -392,20 +398,20 @@ describe('<ContentTagsCollapsible />', () => {
     const expandToggle = screen.getByRole('button', {
       name: /taxonomy 1/i,
     });
-    fireEvent.click(expandToggle);
+    await user.click(expandToggle);
 
     expect(data.closeCollapsible).toHaveBeenCalledTimes(1);
     expect(data.openCollapsible).toHaveBeenCalledTimes(0);
   });
 
   it('should call `addStagedContentTag` when tag checked in the dropdown', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const { getByText, getAllByText } = await getComponent();
 
     // Click on "Add a tag" button to open dropdown to select new tags
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
-    // Use `mouseDown/mouseUp` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(addTagsButton);
-    fireEvent.mouseUp(addTagsButton);
+    // react-select ignores a plain `click`, so press and release the pointer directly
+    await user.pointer([{ target: addTagsButton, keys: '[MouseLeft>]' }, { keys: '[/MouseLeft]' }]);
 
     // Wait for the dropdown selector for tags to open,
     // Tag 3 should only appear there, (i.e. the dropdown is open, since Tag 3 is not applied)
@@ -413,7 +419,7 @@ describe('<ContentTagsCollapsible />', () => {
 
     // Click to check Tag 3 and check the `addStagedContentTag` was called with the correct params
     const tag3 = getByText('Tag 3');
-    fireEvent.click(tag3);
+    await user.click(tag3);
 
     const taxonomyId = 123;
     const addedStagedTag = {
@@ -425,13 +431,13 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should call `removeStagedContentTag` when tag staged tag unchecked in the dropdown', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const { getByText, getAllByText } = await getComponent();
 
     // Click on "Add a tag" button to open dropdown to select new tags
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
-    // Use `mouseDown/mouseup` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(addTagsButton);
-    fireEvent.mouseUp(addTagsButton);
+    // react-select ignores a plain `click`, so press and release the pointer directly
+    await user.pointer([{ target: addTagsButton, keys: '[MouseLeft>]' }, { keys: '[/MouseLeft]' }]);
 
     // Wait for the dropdown selector for tags to open,
     // Tag 3 should only appear there, (i.e. the dropdown is open, since Tag 3 is not applied)
@@ -439,10 +445,10 @@ describe('<ContentTagsCollapsible />', () => {
 
     // Click to check Tag 3
     const tag3 = getByText('Tag 3');
-    fireEvent.click(tag3);
+    await user.click(tag3);
 
     // Click to uncheck Tag 3 and check the `removeStagedContentTag` was called with the correct params
-    fireEvent.click(tag3);
+    await user.click(tag3);
     const taxonomyId = 123;
     const tagValue = 'Tag%203';
     expect(data.removeStagedContentTag).toHaveBeenCalledTimes(1);
@@ -450,6 +456,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should call `removeGlobalStagedContentTag` when global staged tag is deleted', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     await getComponent({
       ...data,
       taxonomyAndTagsData: {
@@ -476,7 +483,7 @@ describe('<ContentTagsCollapsible />', () => {
     const deleteButton = screen.getByRole('button', {
       name: /delete/i,
     });
-    fireEvent.click(deleteButton);
+    await user.click(deleteButton);
 
     const taxonomyId = 123;
     expect(data.removeGlobalStagedContentTag).toHaveBeenCalledTimes(1);
@@ -484,13 +491,14 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should call `addRemovedContentTag` when a fetched tag is deleted', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     await getComponent();
 
     const tag = screen.getByText(/tag 2/i);
     const deleteButton = within(tag).getByRole('button', {
       name: /delete/i,
     });
-    fireEvent.click(deleteButton);
+    await user.click(deleteButton);
 
     const taxonomyId = 123;
     expect(data.addRemovedContentTag).toHaveBeenCalledTimes(1);
@@ -498,6 +506,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should call `setStagedTags` to clear staged tags when clicking inline "Add" button', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     // Setup component to have staged tags
     const { getByText } = await getComponent({
       ...data,
@@ -509,7 +518,7 @@ describe('<ContentTagsCollapsible />', () => {
 
     // Click on inline "Add" button and check that the appropriate methods are called
     const inlineAdd = getByText(messages.collapsibleInlineAddStagedTagsButtonText.defaultMessage);
-    fireEvent.click(inlineAdd);
+    await user.click(inlineAdd);
 
     // Check that `setStagedTags` called with empty tags list to clear staged tags
     const taxonomyId = 123;
@@ -518,6 +527,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should call `setStagedTags` to clear staged tags when clicking "Add tags" button in dropdown', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     // Setup component to have staged tags
     const { container, getByText } = await getComponent({
       ...data,
@@ -529,12 +539,13 @@ describe('<ContentTagsCollapsible />', () => {
 
     // Click on dropdown with staged tags to expand it
     const selectTagsDropdown = container.getElementsByClassName('react-select-add-tags__control')[0];
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(selectTagsDropdown);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: selectTagsDropdown, keys: '[MouseLeft>]' });
 
     // Click on "Add tags" button and check that the appropriate methods are called
     const dropdownAdd = getByText(messages.collapsibleAddStagedTagsButtonText.defaultMessage);
-    fireEvent.click(dropdownAdd);
+    await user.click(dropdownAdd);
 
     // Check that `setStagedTags` called with empty tags list to clear staged tags
     const taxonomyId = 123;
@@ -543,6 +554,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should close dropdown and clear staged tags when clicking "Cancel" inside dropdown', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     // Setup component to have staged tags
     const { container, getByText } = await getComponent({
       ...data,
@@ -554,12 +566,13 @@ describe('<ContentTagsCollapsible />', () => {
 
     // Click on dropdown with staged tags to expand it
     const selectTagsDropdown = container.getElementsByClassName('react-select-add-tags__control')[0];
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(selectTagsDropdown);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: selectTagsDropdown, keys: '[MouseLeft>]' });
 
     // Click on inline "Add" button and check that the appropriate methods are called
     const dropdownCancel = getByText(messages.collapsibleCancelStagedTagsButtonText.defaultMessage);
-    fireEvent.click(dropdownCancel);
+    await user.click(dropdownCancel);
 
     // Check that `setStagedTags` called with empty tags list to clear staged tags
     const taxonomyId = 123;
@@ -580,8 +593,9 @@ describe('<ContentTagsCollapsible />', () => {
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to click
-    fireEvent.mouseDown(addTagsButton);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
 
     // Get the search field
     const searchField = getByRole('combobox');
@@ -601,25 +615,29 @@ describe('<ContentTagsCollapsible />', () => {
     expect(getByDisplayValue(searchTerm)).toBeInTheDocument();
 
     // Clear search
-    fireEvent.change(searchField, { target: { value: '' } });
+    await user.clear(searchField);
 
     // Check that the search term has been cleared
     expect(searchField).toHaveValue('');
   });
 
   it('should close dropdown selector when clicking away', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const { container, getByText, queryByText } = await getComponent();
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(addTagsButton);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
 
     // Wait for the dropdown selector for tags to open, Tag 3 should appear
     // since it is not applied
     expect(queryByText('Tag 3')).toBeInTheDocument();
 
-    // Simulate clicking outside the dropdown remove focus
+    // Simulate clicking outside the dropdown remove focus.
+    // Kept on fireEvent: the handler under test branches on `relatedTarget`, which userEvent
+    // does not let us set.
     const outsideElement = container.querySelector('.taxonomy-tags-count-chip');
     const selectElement = container.querySelector('.react-select-add-tags__input')!;
     fireEvent.blur(selectElement, { relatedTarget: outsideElement });
@@ -639,8 +657,9 @@ describe('<ContentTagsCollapsible />', () => {
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(addTagsButton);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
 
     // Wait for the dropdown selector for tags to open, Tag 3 should appear
     // since it is not applied
@@ -760,6 +779,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should remove applied tags when clicking on `x` of tag bubble', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     await getComponent();
 
     // Click on 'x' of applied tag to remove it
@@ -767,7 +787,7 @@ describe('<ContentTagsCollapsible />', () => {
     const xButtonAppliedTag = within(appliedTag).getByRole('button', {
       name: /delete/i,
     });
-    fireEvent.click(xButtonAppliedTag);
+    await user.click(xButtonAppliedTag);
 
     // Check that the applied tag has been removed
     expect(appliedTag).not.toBeInTheDocument();

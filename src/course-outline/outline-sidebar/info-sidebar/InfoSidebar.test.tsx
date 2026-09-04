@@ -1,10 +1,10 @@
-import { fireEvent, initializeMocks, render, screen } from '@src/testUtils';
+import { initializeMocks, render, screen, userEvent } from '@src/testUtils';
 import { getCourseSettingsApiUrl } from '@src/data/api';
 import type { SelectionState } from '@src/data/types';
 import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getXBlockApiUrl } from '@src/course-outline/data/api';
-import userEvent from '@testing-library/user-event';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { InfoSidebar } from './InfoSidebar';
 
 const mockDuplicateItem = { mutate: jest.fn() };
@@ -86,20 +86,16 @@ jest.mock('@src/search-manager', () => ({
   useGetBlockTypes: () => ({ data: [] }),
 }));
 
-// Mirrors the real hook when authz is disabled (every permission granted), except for
-// `canManageTags`, which each test drives to check the taxonomy section's Manage tags action.
-let mockCanManageTags: boolean;
-jest.mock('@src/authz/hooks', () => ({
-  ...jest.requireActual('@src/authz/hooks'),
-  useCourseUserPermissions: (_courseId: string, permissions: Record<string, unknown>) => ({
-    isLoading: false,
-    isAuthzEnabled: false,
-    ...Object.keys(permissions).reduce(
-      (acc, key) => ({ ...acc, [key]: key === 'canManageTags' ? mockCanManageTags : true }),
-      {},
-    ),
-  }),
-}));
+let validateUserPermissionsMock: ReturnType<typeof initializeMocks>['validateUserPermissionsMock'];
+
+/**
+ * Authz is only consulted when its waffle flag is on; with the flag off every permission is
+ * granted, so only the restricted cases need to enable it.
+ */
+const mockPermissions = (canManageTags = true) => {
+  mockWaffleFlags({ enableAuthzCourseAuthoring: !canManageTags });
+  validateUserPermissionsMock.mockResolvedValue({ canManageTags });
+};
 
 const renderComponent = () =>
   render(<InfoSidebar />, {
@@ -149,7 +145,7 @@ function describeSidebarMenus(config: SidebarMenuConfig): void {
       await renderMenu();
 
       const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
-      fireEvent.click(menuToggle);
+      await user.click(menuToggle);
 
       const deleteBtn = await screen.findByText('Delete');
       await user.click(deleteBtn);
@@ -162,7 +158,7 @@ function describeSidebarMenus(config: SidebarMenuConfig): void {
       await renderMenu();
 
       const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
-      fireEvent.click(menuToggle);
+      await user.click(menuToggle);
 
       const duplicateBtn = await screen.findByText('Duplicate');
       await user.click(duplicateBtn);
@@ -180,7 +176,7 @@ function describeSidebarMenus(config: SidebarMenuConfig): void {
       await renderMenu(withUpstream);
 
       const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
-      fireEvent.click(menuToggle);
+      await user.click(menuToggle);
 
       const unlinkBtn = await screen.findByText('Unlink from Library');
       await user.click(unlinkBtn);
@@ -202,7 +198,7 @@ function describeSidebarMenus(config: SidebarMenuConfig): void {
       await renderMenu(withUpstream);
 
       const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
-      fireEvent.click(menuToggle);
+      await user.click(menuToggle);
 
       const viewLibBtn = await screen.findByText('View in Library');
       await user.click(viewLibBtn);
@@ -218,6 +214,8 @@ describe('InfoSidebar component', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    mockPermissions();
     openDeleteModal.mockClear();
     openUnlinkModal.mockClear();
     mockDuplicateItem.mutate.mockClear();
@@ -231,7 +229,6 @@ describe('InfoSidebar component', () => {
     mockOpenContainerInfoSidebar.mockClear();
     mockClearSelection.mockClear();
     mockSections = [];
-    mockCanManageTags = true;
   });
 
   it('renders InfoSidebar with course info if selectedContainerState is undefined', async () => {
@@ -401,17 +398,18 @@ describe('InfoSidebar component', () => {
     };
 
     it('shows the Manage tags action when the user can manage tags', async () => {
+      const user = userEvent.setup();
       const taxonomySection = await renderTaxonomySection();
 
       const toggle = taxonomySection.querySelector('.dropdown button') as HTMLButtonElement;
       expect(toggle).not.toBeNull();
-      fireEvent.click(toggle);
+      await user.click(toggle);
 
       expect(await screen.findByText('Manage tags')).toBeInTheDocument();
     });
 
     it('hides the Manage tags action when the user cannot manage tags', async () => {
-      mockCanManageTags = false;
+      mockPermissions(false);
       const taxonomySection = await renderTaxonomySection();
 
       expect(taxonomySection.querySelector('.dropdown')).toBeNull();
@@ -510,7 +508,7 @@ describe('InfoSidebar component', () => {
       await renderUnitMenu();
 
       const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
-      fireEvent.click(menuToggle);
+      await user.click(menuToggle);
 
       const copyLocationBtn = await screen.findByText('Copy Location ID');
       await user.click(copyLocationBtn);
@@ -567,7 +565,7 @@ describe('InfoSidebar component', () => {
         await renderDraggableUnitMenu();
 
         const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
-        fireEvent.click(menuToggle);
+        await user.click(menuToggle);
 
         const moveUpBtn = await screen.findByText('Move Up');
         await user.click(moveUpBtn);
@@ -584,7 +582,7 @@ describe('InfoSidebar component', () => {
         await renderDraggableUnitMenu();
 
         const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
-        fireEvent.click(menuToggle);
+        await user.click(menuToggle);
 
         const moveDownBtn = await screen.findByText('Move Down');
         await user.click(moveDownBtn);
@@ -709,7 +707,7 @@ describe('InfoSidebar component', () => {
         await renderDraggableSubsectionMenu();
 
         const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
-        fireEvent.click(menuToggle);
+        await user.click(menuToggle);
 
         const moveUpBtn = await screen.findByText('Move Up');
         await user.click(moveUpBtn);
@@ -726,7 +724,7 @@ describe('InfoSidebar component', () => {
         await renderDraggableSubsectionMenu();
 
         const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
-        fireEvent.click(menuToggle);
+        await user.click(menuToggle);
 
         const moveDownBtn = await screen.findByText('Move Down');
         await user.click(moveDownBtn);
@@ -783,6 +781,7 @@ describe('InfoSidebar component', () => {
       };
 
       it('renders Move Up/Down as disabled when index is undefined', async () => {
+        const user = userEvent.setup();
         mockSections = [makeMovableSection(sectionId)];
         selectedContainerState = { currentId: sectionId, sectionId };
         axiosMock.onGet(getXBlockApiUrl(sectionId)).reply(200, draggableSectionData);
@@ -790,7 +789,7 @@ describe('InfoSidebar component', () => {
         await screen.findByText(draggableSectionData.displayName);
 
         const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
-        fireEvent.click(menuToggle);
+        await user.click(menuToggle);
 
         expect(await screen.findByText('Move Up')).toBeInTheDocument();
         expect(screen.getByText('Move Down')).toBeInTheDocument();
@@ -801,7 +800,7 @@ describe('InfoSidebar component', () => {
         await renderDraggableSectionMenu();
 
         const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
-        fireEvent.click(menuToggle);
+        await user.click(menuToggle);
 
         const moveUpBtn = await screen.findByText('Move Up');
         await user.click(moveUpBtn);
@@ -818,7 +817,7 @@ describe('InfoSidebar component', () => {
         await renderDraggableSectionMenu();
 
         const menuToggle = screen.getByRole('button', { name: 'Item Menu' });
-        fireEvent.click(menuToggle);
+        await user.click(menuToggle);
 
         const moveDownBtn = await screen.findByText('Move Down');
         await user.click(moveDownBtn);
