@@ -14,6 +14,7 @@ import { getTaxonomyExportFile } from '@src/taxonomy/data/api';
 import { TaxonomyContext } from '@src/taxonomy/common/context';
 import type { TaxonomyContextData } from '@src/taxonomy/common/context';
 import { TaxonomyType } from '@src/taxonomy/data/constants';
+import type { TaxonomyData } from '@src/taxonomy/data/types';
 import { ImportTagsWizard } from './ImportTagsWizard';
 import type { ImportTaxonomy } from './types';
 
@@ -50,11 +51,26 @@ interface RenderWizardProps {
   onClose: () => void;
   reimport?: boolean;
   taxonomy?: ImportTaxonomy | null;
+  defaultTaxonomyType?: TaxonomyType;
+  onImportSuccess?: (taxonomy: TaxonomyData) => void;
 }
 
-const renderWizard = ({ onClose, reimport, taxonomy }: RenderWizardProps) =>
+const renderWizard = ({
+  onClose,
+  reimport,
+  taxonomy,
+  defaultTaxonomyType,
+  onImportSuccess,
+}: RenderWizardProps) =>
   render(
-    <ImportTagsWizard taxonomy={taxonomy} isOpen onClose={onClose} reimport={reimport} />,
+    <ImportTagsWizard
+      taxonomy={taxonomy}
+      isOpen
+      onClose={onClose}
+      reimport={reimport}
+      defaultTaxonomyType={defaultTaxonomyType}
+      onImportSuccess={onImportSuccess}
+    />,
     { extraWrapper: TaxonomyContextProvider },
   );
 
@@ -431,6 +447,71 @@ describe('<ImportTagsWizard />', () => {
       await user.selectOptions(select, TaxonomyType.Competency);
       expect(select).toHaveValue(TaxonomyType.Competency);
       expect(select).toHaveFocus();
+    });
+
+    describe('when the caller sets a default type', () => {
+      it('preselects that type but still lets the user change it', async () => {
+        const user = userEvent.setup();
+        renderWizard({ taxonomy: null, onClose: jest.fn(), defaultTaxonomyType: TaxonomyType.Competency });
+        await goToPopulateStep();
+
+        const select = screen.getByTestId('taxonomy-type-select');
+        expect(select).toHaveValue(TaxonomyType.Competency);
+        expect(select).toBeEnabled();
+
+        await user.selectOptions(select, TaxonomyType.Tags);
+        expect(select).toHaveValue(TaxonomyType.Tags);
+      });
+
+      it('submits the default type to the import API when it is left alone', async () => {
+        renderWizard({ taxonomy: null, onClose: jest.fn(), defaultTaxonomyType: TaxonomyType.Competency });
+        await goToPopulateStep();
+
+        fillInRequiredFields('Default Type Taxonomy');
+        axiosMock.onPost(doImportNewTaxonomyUrl).replyOnce(200, {});
+
+        await clickImport();
+
+        await waitFor(() => {
+          expect(axiosMock.history.post.length).toEqual(1);
+        });
+        expect(axiosMock.history.post[0].data.get('taxonomy_type')).toEqual(TaxonomyType.Competency);
+      });
+    });
+  });
+
+  describe('onImportSuccess', () => {
+    it('reports the taxonomy that was created', async () => {
+      const onImportSuccess = jest.fn();
+      renderWizard({ taxonomy: null, onClose: jest.fn(), onImportSuccess });
+      await goToPopulateStep();
+
+      fillInRequiredFields('Brand New Taxonomy');
+      axiosMock.onPost(doImportNewTaxonomyUrl).replyOnce(200, { id: 42, name: 'Brand New Taxonomy' });
+
+      await clickImport();
+
+      await waitFor(() => {
+        expect(onImportSuccess).toHaveBeenCalledWith(expect.objectContaining({ id: 42 }));
+      });
+    });
+
+    it('is not called when the import fails', async () => {
+      const onClose = jest.fn();
+      const onImportSuccess = jest.fn();
+      renderWizard({ taxonomy: null, onClose, onImportSuccess });
+      await goToPopulateStep();
+
+      fillInRequiredFields('Doomed Taxonomy');
+      axiosMock.onPost(doImportNewTaxonomyUrl).replyOnce(400, { error: 'Invalid file' });
+
+      await clickImport();
+
+      await waitFor(() => {
+        expect(mockSetAlertError).toHaveBeenCalledWith(expect.objectContaining({ title: 'Import error' }));
+      });
+      expect(onClose).toHaveBeenCalled();
+      expect(onImportSuccess).not.toHaveBeenCalled();
     });
   });
 });

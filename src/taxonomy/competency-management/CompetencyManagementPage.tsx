@@ -13,6 +13,7 @@ import SubHeader from '@src/generic/sub-header/SubHeader';
 import taxonomyMessages from '@src/taxonomy/messages';
 import { useTaxonomyDetails } from '@src/taxonomy/data/apiHooks';
 import { CompetencyAssociationsPanel } from './associations';
+import { ImportCompetencyFrameworkButton } from './ImportCompetencyFrameworkButton';
 import messages from './messages';
 
 const CompetencyManagementPage = () => {
@@ -50,6 +51,7 @@ const CompetencyManagementPage = () => {
           />
           <SubHeader
             title={taxonomy.name}
+            headerActions={<ImportCompetencyFrameworkButton />}
             hideBorder
           />
         </Container>

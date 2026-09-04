@@ -1,17 +1,44 @@
 import {
+  act,
+  fireEvent,
   initializeMocks,
   render,
+  waitFor,
   screen,
   within,
+  type RouteOptions,
 } from '@src/testUtils';
 import { apiUrls } from '@src/taxonomy/data/api';
 import CompetencyManagementPage from './CompetencyManagementPage';
+import type MockAdapter from 'axios-mock-adapter';
 
-let axiosMock;
+import { TaxonomyContext, type TaxonomyContextData } from '../common/context';
+import { TaxonomyType } from '../data/constants';
+
+let axiosMock: MockAdapter;
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 const taxonomyId = 1;
+const newTaxonomyId = 2;
+
 const path = '/taxonomy/:taxonomyId/competencies';
 const params = { taxonomyId: String(taxonomyId) };
+const route: RouteOptions = { path, params };
+
+const taxonomyResponse = {
+  id: taxonomyId,
+  name: 'Test taxonomy',
+  description: 'This is a description',
+  taxonomy_type: TaxonomyType.Competency,
+  read_only: false,
+  can_change_taxonomy: true,
+  can_delete_taxonomy: true,
+};
 
 const tagListUrl = apiUrls.tagList(taxonomyId, {
   pageIndex: 0,
@@ -30,11 +57,55 @@ const emptyTagListResponse = {
   results: [],
 };
 
-const renderPage = () => render(<CompetencyManagementPage />, { path, params });
+const renderPage = () =>
+  render(<CompetencyManagementPage />, {
+    ...route,
+    extraWrapper: ({ children }) => <TaxonomyContext.Provider value={context}>{children}</TaxonomyContext.Provider>,
+  });
+
+const listTaxonomiesUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/?enabled=true';
+const importNewTaxonomyUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/import/';
+
+const mockSetAlertError = jest.fn();
+const context: TaxonomyContextData = {
+  toastMessage: null,
+  setToastMessage: jest.fn(),
+  alertError: null,
+  setAlertError: mockSetAlertError,
+};
+
+/** Open the import wizard and walk it up to the step where the new taxonomy is described. */
+const goToPopulateStep = async () => {
+  fireEvent.click(await screen.findByTestId('import-competency-framework-button'));
+
+  expect(await screen.findByTestId('upload-step')).toBeInTheDocument();
+  fireEvent.drop(screen.getByTestId('dropzone'), {
+    dataTransfer: { files: [new File(['{}'], 'framework.json', { type: 'application/json' })], types: ['Files'] },
+  });
+  expect(await screen.findByTestId('file-info')).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+  expect(await screen.findByTestId('populate-step')).toBeInTheDocument();
+};
+
+/** Fill in the fields the wizard requires, then import. */
+const fillInAndImport = async (name: string) => {
+  fireEvent.change(screen.getByLabelText('Taxonomy Name'), { target: { value: name } });
+  fireEvent.change(screen.getByLabelText('Taxonomy Description'), { target: { value: `${name} description` } });
+
+  const importButton = screen.getByRole('button', { name: 'Import' });
+  await waitFor(() => {
+    expect(importButton).not.toHaveAttribute('aria-disabled', 'true');
+  });
+  act(() => {
+    fireEvent.click(importButton);
+  });
+};
 
 describe('<CompetencyManagementPage />', () => {
   beforeEach(() => {
     ({ axiosMock } = initializeMocks());
+    axiosMock.onGet(listTaxonomiesUrl).reply(200, { results: [], canAddTaxonomy: true });
   });
 
   it('shows a loading spinner while the taxonomy is being fetched', () => {
@@ -77,5 +148,83 @@ describe('<CompetencyManagementPage />', () => {
     expect(await screen.findByText('Test taxonomy', { selector: '.competency-row__label' }))
       .toBeInTheDocument();
     expect(screen.queryByText('No results found')).not.toBeInTheDocument();
+  });
+
+  describe('import competency framework button', () => {
+    beforeEach(() => {
+      axiosMock.onGet(apiUrls.taxonomy(taxonomyId)).reply(200, taxonomyResponse);
+    });
+
+    it('is shown to users who may create taxonomies', async () => {
+      renderPage();
+
+      expect(await screen.findByRole('button', { name: 'Import Competency Framework' })).toBeInTheDocument();
+    });
+
+    it('is hidden from users who may not create taxonomies', async () => {
+      axiosMock.onGet(listTaxonomiesUrl).reply(200, { results: [], canAddTaxonomy: false });
+
+      renderPage();
+
+      // Wait for the page itself, so that the button's absence is not just the page still loading.
+      expect(await screen.findByRole('heading')).toHaveTextContent('Test taxonomy');
+      await waitFor(() => {
+        expect(screen.queryByRole('button', { name: 'Import Competency Framework' })).not.toBeInTheDocument();
+      });
+    });
+
+    it('opens the wizard on the upload step, skipping the export step', async () => {
+      renderPage();
+
+      fireEvent.click(await screen.findByTestId('import-competency-framework-button'));
+
+      expect(await screen.findByTestId('upload-step')).toBeInTheDocument();
+      expect(screen.queryByTestId('export-step')).not.toBeInTheDocument();
+      // Only the reimport flow can step back to the export step.
+      expect(screen.queryByTestId('back-button')).not.toBeInTheDocument();
+    });
+
+    it('defaults the type of the new taxonomy to Competency, and leaves it editable', async () => {
+      renderPage();
+      await goToPopulateStep();
+
+      const select = screen.getByTestId('taxonomy-type-select');
+      expect(select).toHaveValue(TaxonomyType.Competency);
+      expect(within(select).getByRole('option', { name: 'Competency', selected: true })).toBeInTheDocument();
+      expect(select).toBeEnabled();
+    });
+
+    it('imports a competency taxonomy and goes to its competency management page', async () => {
+      renderPage();
+      await goToPopulateStep();
+
+      axiosMock.onPost(importNewTaxonomyUrl).replyOnce(200, { id: newTaxonomyId, name: 'New framework' });
+
+      await fillInAndImport('New framework');
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${newTaxonomyId}/competencies`);
+      });
+
+      const formData = axiosMock.history.post[0].data;
+      expect(formData.get('taxonomy_name')).toEqual('New framework');
+      expect(formData.get('taxonomy_type')).toEqual(TaxonomyType.Competency);
+    });
+
+    it('closes the wizard and shows a page-level alert if the import fails', async () => {
+      renderPage();
+      await goToPopulateStep();
+
+      axiosMock.onPost(importNewTaxonomyUrl).replyOnce(400, { error: 'Invalid file' });
+
+      await fillInAndImport('Broken framework');
+
+      await waitFor(() => {
+        expect(mockSetAlertError).toHaveBeenCalledWith(expect.objectContaining({ title: 'Import error' }));
+      });
+      // The wizard offers no retry: it closes, leaving the alert as the only report of the failure.
+      expect(screen.queryByTestId('populate-step')).not.toBeInTheDocument();
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
   });
 });

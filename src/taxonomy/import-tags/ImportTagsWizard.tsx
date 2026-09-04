@@ -16,6 +16,7 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import { TaxonomyContext } from '@src/taxonomy/common/context';
 import { TaxonomyType } from '@src/taxonomy/data/constants';
 import { useImportNewTaxonomy, useImportPlan, useImportTags } from '@src/taxonomy/data/apiHooks';
+import type { TaxonomyData } from '@src/taxonomy/data/types';
 import { ConfirmStep } from './steps/ConfirmStep';
 import { ExportStep } from './steps/ExportStep';
 import { PlanStep } from './steps/PlanStep';
@@ -40,6 +41,9 @@ interface ImportTagsWizardProps {
   onClose: () => void;
   /** True to import tags into `taxonomy`; false to create a new taxonomy from the uploaded file. */
   reimport?: boolean;
+  defaultTaxonomyType?: TaxonomyType;
+  /** Called with the taxonomy that a "create a new taxonomy" import just created. */
+  onImportSuccess?: (taxonomy: TaxonomyData) => void;
 }
 
 /**
@@ -51,6 +55,8 @@ export const ImportTagsWizard = ({
   isOpen,
   onClose,
   reimport = false,
+  defaultTaxonomyType = TaxonomyType.Tags,
+  onImportSuccess,
 }: ImportTagsWizardProps) => {
   const intl = useIntl();
   const { setToastMessage, setAlertError } = useContext(TaxonomyContext);
@@ -64,17 +70,18 @@ export const ImportTagsWizard = ({
   const [taxonomyPopulateData, setTaxonomyPopulateData] = useState<TaxonomyPopulateData>({
     taxonomyName: '',
     taxonomyDesc: '',
-    taxonomyType: TaxonomyType.Tags,
+    taxonomyType: defaultTaxonomyType,
   });
 
   const importNewTaxonomyMutation = useImportNewTaxonomy();
 
   const importNewTaxonomy = async () => {
     disableDialog();
+    let newTaxonomy: TaxonomyData | undefined;
     try {
       const { taxonomyName, taxonomyDesc, taxonomyType } = taxonomyPopulateData;
       if (file) {
-        await importNewTaxonomyMutation.mutateAsync({
+        newTaxonomy = await importNewTaxonomyMutation.mutateAsync({
           name: taxonomyName,
           description: taxonomyDesc,
           taxonomyType,
@@ -94,6 +101,10 @@ export const ImportTagsWizard = ({
     } finally {
       enableDialog();
       onClose();
+    }
+
+    if (newTaxonomy) {
+      onImportSuccess?.(newTaxonomy);
     }
   };
 
