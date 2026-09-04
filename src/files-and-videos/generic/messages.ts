@@ -115,6 +115,11 @@ const messages = defineMessages({
     defaultMessage: 'Info',
     description: 'Label for info button in card menu dropdown',
   },
+  infoAndTranscriptsTitle: {
+    id: 'course-authoring.files-and-uploads.cardMenu.infoAndTranscriptsTitle',
+    defaultMessage: 'Info and transcripts',
+    description: 'Label for video info button in card menu dropdown',
+  },
   downloadEncodingsTitle: {
     id: 'course-authoring.files-and-uploads.cardMenu.downloadEncodingsTitle',
     defaultMessage: 'Download video list (.csv)',
@@ -213,6 +218,11 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-uploads.fileInput.ariaLabel',
     defaultMessage: 'Upload a file',
     description: 'Accessible (screen reader) label for file input',
+  },
+  transcriptCountLabel: {
+    id: 'course-authoring.videos-page.table.transcriptColumn.message',
+    defaultMessage: '{numOfTranscripts, plural, =0 {No transcripts available} one {{numOfTranscripts} transcript available} other {{numOfTranscripts} transcripts available}}',
+    description: 'Message with the number of transcripts available for a video',
   },
 });
 
