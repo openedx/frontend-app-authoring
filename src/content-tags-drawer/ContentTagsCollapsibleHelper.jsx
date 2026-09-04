@@ -11,6 +11,7 @@ import { ContentTagsDrawerContext } from './common/context';
 /** @typedef {import("./ContentTagsCollapsible").TagTreeEntry} TagTreeEntry */
 /** @typedef {import("./data/types.js").StagedTagData} StagedTagData */
 /** @typedef {import("./data/types.js").UpdateTagsData} UpdateTagsData */
+/** @typedef {import("./data/types.js").DrawerTaxonomy} DrawerTaxonomy */
 
 /**
  * Util function that sorts the keys of a tree in alphabetical order.
@@ -67,7 +68,7 @@ const getLeafTags = (tree) => {
  * @param {string} contentId The ID of the content we're tagging (e.g. usage key)
  * @param {StagedTagData[]} stagedContentTags
  *       - Array of staged tags represented as objects with value/label
- * @param {TaxonomyData & {contentTags: ContentTagData[]}} taxonomyAndTagsData
+ * @param {DrawerTaxonomy} taxonomyAndTagsData
  * }}
  */
 const useContentTagsCollapsibleHelper = (

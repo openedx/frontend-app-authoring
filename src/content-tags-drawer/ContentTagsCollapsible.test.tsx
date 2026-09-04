@@ -12,6 +12,40 @@ import userEvent from '@testing-library/user-event';
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import messages from './messages';
 import { ContentTagsDrawerContext } from './common/context';
+import type { ContentTagsDrawerContextData } from './common/context';
+import type { StagedTagData, TagsInTaxonomy } from './data/types';
+
+/** Only the parts of a content tag that these tests exercise. */
+interface MockContentTag {
+  value: string;
+  lineage: string[];
+  canDeleteObjecttag: boolean;
+}
+
+interface ContentTagsCollapsibleComponentProps {
+  contentId: string;
+  taxonomyAndTagsData: {
+    id: number;
+    name: string;
+    canTagObject: boolean;
+    contentTags: MockContentTag[];
+  };
+  stagedContentTags: StagedTagData[];
+  addStagedContentTag: jest.Mock;
+  removeStagedContentTag: jest.Mock;
+  setStagedTags: jest.Mock;
+  removeGlobalStagedContentTag: jest.Mock;
+  addRemovedContentTag: jest.Mock;
+  deleteRemovedContentTag: jest.Mock;
+  globalStagedContentTags: Record<number, MockContentTag[]>;
+  globalStagedRemovedContentTags: Record<number, string[]>;
+  setGlobalStagedContentTags: jest.Mock;
+  isEditMode: boolean;
+  toEditMode: jest.Mock;
+  collapsibleState: boolean;
+  openCollapsible: jest.Mock;
+  closeCollapsible: jest.Mock;
+}
 
 const taxonomyMockData = {
   hasMorePages: false,
@@ -97,7 +131,7 @@ jest.mock('./data/apiHooks', () => ({
   }),
 }));
 
-const data = {
+const data: ContentTagsCollapsibleComponentProps = {
   contentId: 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab',
   taxonomyAndTagsData: {
     id: 123,
@@ -156,7 +190,7 @@ const ContentTagsCollapsibleComponent = ({
   collapsibleState,
   openCollapsible,
   closeCollapsible,
-}) => {
+}: ContentTagsCollapsibleComponentProps) => {
   const context = useMemo(() => ({
     addStagedContentTag,
     removeStagedContentTag,
@@ -173,11 +207,11 @@ const ContentTagsCollapsibleComponent = ({
     closeCollapsible,
   }), []);
   return (
-    <ContentTagsDrawerContext.Provider value={context}>
+    <ContentTagsDrawerContext.Provider value={context as unknown as ContentTagsDrawerContextData}>
       <IntlProvider locale="en" messages={{}}>
         <ContentTagsCollapsible
           contentId={contentId}
-          taxonomyAndTagsData={taxonomyAndTagsData}
+          taxonomyAndTagsData={taxonomyAndTagsData as unknown as TagsInTaxonomy}
           stagedContentTags={stagedContentTags}
           collapsibleState={collapsibleState}
         />
@@ -185,8 +219,6 @@ const ContentTagsCollapsibleComponent = ({
     </ContentTagsDrawerContext.Provider>
   );
 };
-
-ContentTagsCollapsibleComponent.propTypes = ContentTagsCollapsible.propTypes;
 
 describe('<ContentTagsCollapsible />', () => {
   beforeAll(() => {
@@ -201,7 +233,7 @@ describe('<ContentTagsCollapsible />', () => {
     jest.clearAllMocks(); // Reset all mock function call counts after each test case
   });
 
-  async function getComponent(updatedData) {
+  async function getComponent(updatedData?: ContentTagsCollapsibleComponentProps) {
     const componentData = !updatedData ? data : updatedData;
 
     return render(
@@ -589,7 +621,7 @@ describe('<ContentTagsCollapsible />', () => {
 
     // Simulate clicking outside the dropdown remove focus
     const outsideElement = container.querySelector('.taxonomy-tags-count-chip');
-    const selectElement = container.querySelector('.react-select-add-tags__input');
+    const selectElement = container.querySelector('.react-select-add-tags__input')!;
     fireEvent.blur(selectElement, { relatedTarget: outsideElement });
 
     // Wait for the dropdown selector for tags to close, Tag 3 is no longer on
