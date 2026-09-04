@@ -16,6 +16,8 @@ import {
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getLibraryUpdatesPermissions } from '@src/authz/permissionHelpers';
 import { usePasteFileNotices } from '@src/course-outline/data/apiHooks';
 import { AlertAgreementGatedFeature } from '@src/generic/agreement-gated-feature';
 import { AgreementGated } from '@src/constants';
@@ -54,6 +56,10 @@ const PageAlerts = ({
   const { data: pasteFileNotices, setData: setPasteFileNotices } = usePasteFileNotices(courseId);
   const [showOutOfSyncAlert, setShowOutOfSyncAlert] = useState(false);
   const navigate = useNavigate();
+  const {
+    isLoading: isLoadingUserPermissions,
+    canManageLibraryUpdates,
+  } = useCourseUserPermissions(courseId, getLibraryUpdatesPermissions(courseId));
 
   const getAssetsUrl = () => {
     if (getConfig().ENABLE_ASSETS_PAGE === 'true') {
@@ -434,14 +440,21 @@ const PageAlerts = ({
     );
   };
 
-  const renderOutOfSyncAlert = () => (
-    <OutOfSyncAlert
-      courseId={courseId}
-      onReview={() => navigate(`/course/${courseId}/libraries?tab=review`)}
-      showAlert={showOutOfSyncAlert}
-      setShowAlert={setShowOutOfSyncAlert}
-    />
-  );
+  const renderOutOfSyncAlert = () => {
+    // Wait for the permissions so the alert doesn't flash the read-only message first.
+    if (isLoadingUserPermissions) {
+      return null;
+    }
+    return (
+      <OutOfSyncAlert
+        courseId={courseId}
+        onReview={() => navigate(`/course/${courseId}/libraries?tab=review`)}
+        showAlert={showOutOfSyncAlert}
+        setShowAlert={setShowOutOfSyncAlert}
+        readOnly={!canManageLibraryUpdates}
+      />
+    );
+  };
 
   return (
     <>
