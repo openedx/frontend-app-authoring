@@ -8,12 +8,12 @@ const messages = defineMessages({
   competencyTypeIconAltText: {
     id: 'course-authoring.taxonomy-list.taxonomy-type-icon.competency.alt',
     defaultMessage: 'Competency taxonomy',
-    description: 'Screen reader text for the icon on a taxonomy card that indicates the taxonomy is a competency taxonomy.',
+    description: 'Alt text for the competency taxonomy icon.',
   },
   tagsTypeIconAltText: {
     id: 'course-authoring.taxonomy-list.taxonomy-type-icon.tags.alt',
     defaultMessage: 'Tags taxonomy',
-    description: 'Screen reader text for the icon on a taxonomy card that indicates the taxonomy is a tags taxonomy.',
+    description: 'Alt text for the tags taxonomy icon.',
   },
   applyCompetenciesButton: {
     id: 'course-authoring.taxonomy-list.button.apply-competencies.label',

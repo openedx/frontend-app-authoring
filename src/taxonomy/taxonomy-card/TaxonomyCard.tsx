@@ -95,7 +95,6 @@ export const TaxonomyCard = ({ className = '', original }: TaxonomyCardProps) =>
         <Card.Footer className="justify-content-end">
           <Button
             variant="primary"
-            // The whole card is a link, so stop the click here instead of nesting another one inside it.
             onClick={(e: MouseEvent) => {
               e.preventDefault();
               e.stopPropagation();

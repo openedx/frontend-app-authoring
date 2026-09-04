@@ -23,13 +23,17 @@ import type { TaxonomyData } from '../data/types';
 
 // Note: to make mocking easier for tests, the types below only specify the subset of TaxonomyData that we actually use.
 interface Props {
-  taxonomy:
-    & Pick<
-      TaxonomyData,
-      'id' | 'name' | 'tagsCount' | 'readOnly' | 'canChangeTaxonomy' | 'canDeleteTaxonomy' | 'canTagObject'
-    >
-    // Taxonomies whose type we don't know are treated as tags taxonomies, like the card type icon does.
-    & Partial<Pick<TaxonomyData, 'taxonomyType'>>;
+  taxonomy: Pick<
+    TaxonomyData,
+    | 'id'
+    | 'name'
+    | 'tagsCount'
+    | 'readOnly'
+    | 'taxonomyType'
+    | 'canChangeTaxonomy'
+    | 'canDeleteTaxonomy'
+    | 'canTagObject'
+  >;
   iconMenu?: boolean;
 }
 
