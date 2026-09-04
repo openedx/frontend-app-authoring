@@ -86,6 +86,21 @@ jest.mock('@src/search-manager', () => ({
   useGetBlockTypes: () => ({ data: [] }),
 }));
 
+// Mirrors the real hook when authz is disabled (every permission granted), except for
+// `canManageTags`, which each test drives to check the taxonomy section's Manage tags action.
+let mockCanManageTags: boolean;
+jest.mock('@src/authz/hooks', () => ({
+  ...jest.requireActual('@src/authz/hooks'),
+  useCourseUserPermissions: (_courseId: string, permissions: Record<string, unknown>) => ({
+    isLoading: false,
+    isAuthzEnabled: false,
+    ...Object.keys(permissions).reduce(
+      (acc, key) => ({ ...acc, [key]: key === 'canManageTags' ? mockCanManageTags : true }),
+      {},
+    ),
+  }),
+}));
+
 const renderComponent = () =>
   render(<InfoSidebar />, {
     extraWrapper: ({ children }) => (
@@ -216,6 +231,7 @@ describe('InfoSidebar component', () => {
     mockOpenContainerInfoSidebar.mockClear();
     mockClearSelection.mockClear();
     mockSections = [];
+    mockCanManageTags = true;
   });
 
   it('renders InfoSidebar with course info if selectedContainerState is undefined', async () => {
@@ -332,6 +348,74 @@ describe('InfoSidebar component', () => {
       value: data,
       subsectionId: selectedContainerState.subsectionId,
       sectionId: selectedContainerState.sectionId,
+    });
+  });
+
+  describe.each([
+    {
+      level: 'section',
+      category: 'chapter',
+      displayName: 'section name',
+      containerState: {
+        currentId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@tagged',
+        sectionId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@tagged',
+      },
+      opensOnDetailsTab: false,
+    },
+    {
+      level: 'unit',
+      category: 'vertical',
+      displayName: 'unit name',
+      containerState: {
+        currentId: 'block-v1:UNIX+UX1+2025_T3+type@vertical+block@tagged',
+        subsectionId: 'block-v1:UNIX+UX1+2025_T3+type@sequential+block@seq1',
+        sectionId: 'block-v1:UNIX+UX1+2025_T3+type@chapter+block@ch1',
+      },
+      opensOnDetailsTab: true,
+    },
+  ])('$level taxonomy section', ({
+    category,
+    displayName,
+    containerState,
+    opensOnDetailsTab,
+  }) => {
+    /** Renders the sidebar for this level and returns the Taxonomy Alignments section header. */
+    const renderTaxonomySection = async () => {
+      const user = userEvent.setup();
+      selectedContainerState = containerState;
+      axiosMock
+        .onGet(getXBlockApiUrl(containerState.currentId))
+        .reply(200, {
+          id: containerState.currentId,
+          displayName,
+          category,
+          hasChanges: false,
+        });
+      renderComponent();
+      await screen.findByText(displayName);
+      if (opensOnDetailsTab) {
+        // The Details tab is not active by default (preview is); click it to load its content
+        await user.click(screen.getByRole('tab', { name: /Details/i }));
+      }
+      return (await screen.findByText('Taxonomy Alignments')).closest('.pgn__hstack') as HTMLElement;
+    };
+
+    it('shows the Manage tags action when the user can manage tags', async () => {
+      const taxonomySection = await renderTaxonomySection();
+
+      const toggle = taxonomySection.querySelector('.dropdown button') as HTMLButtonElement;
+      expect(toggle).not.toBeNull();
+      fireEvent.click(toggle);
+
+      expect(await screen.findByText('Manage tags')).toBeInTheDocument();
+    });
+
+    it('hides the Manage tags action when the user cannot manage tags', async () => {
+      mockCanManageTags = false;
+      const taxonomySection = await renderTaxonomySection();
+
+      expect(taxonomySection.querySelector('.dropdown')).toBeNull();
+      expect(screen.queryByText('Manage tags')).not.toBeInTheDocument();
     });
   });
 
