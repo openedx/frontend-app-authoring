@@ -1,10 +1,14 @@
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { AccessManagedXBlockDataTypes } from '@src/data/types';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import * as authzApi from '@src/authz/data/api';
 import initializeStore from '../../store';
 import ConfigureModal from './ConfigureModal';
 import {
@@ -16,6 +20,7 @@ import {
 import messages from './messages';
 
 let store;
+let queryClient;
 const mockPathname = '/foo-bar';
 
 jest.mock('react-redux', () => ({
@@ -33,33 +38,54 @@ jest.mock('react-router-dom', () => ({
 const onCloseMock = jest.fn();
 const onConfigureSubmitMock = jest.fn();
 
+/**
+ * Common setup. Note `mockWaffleFlags()` leaves authz disabled, so
+ * `useCourseUserPermissions` synchronously falls back to granting every permission
+ * (`canEditCourseContent === true`). Tests that need the denied path re-enable authz
+ * and mock `validateUserPermissions` explicitly.
+ */
+const setupMocks = () => {
+  initializeMockApp({
+    authenticatedUser: {
+      userId: 3,
+      username: 'abc123',
+      administrator: true,
+      roles: [],
+    },
+  });
+  store = initializeStore();
+  queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  mockWaffleFlags();
+};
+
+// AppProvider supplies the Router that CourseAuthoringProvider (useNavigate) needs; the
+// QueryClientProvider is required for the course-details/permissions queries it runs.
+const withProviders = (ui: React.ReactNode) => (
+  <AppProvider store={store}>
+    <IntlProvider locale="en">
+      <QueryClientProvider client={queryClient}>
+        <CourseAuthoringProvider courseId={'courseId'}>
+          {ui}
+        </CourseAuthoringProvider>
+      </QueryClientProvider>
+    </IntlProvider>
+  </AppProvider>
+);
+
 const renderComponent = () =>
-  render(
-    <AppProvider store={store}>
-      <IntlProvider locale="en">
-        <ConfigureModal
-          isOpen
-          onClose={onCloseMock}
-          onConfigureSubmit={onConfigureSubmitMock}
-          currentItemData={currentSectionMock as unknown as AccessManagedXBlockDataTypes}
-          isSelfPaced={false}
-        />
-      </IntlProvider>,
-    </AppProvider>,
-  );
+  render(withProviders(
+    <ConfigureModal
+      isOpen
+      onClose={onCloseMock}
+      onConfigureSubmit={onConfigureSubmitMock}
+      currentItemData={currentSectionMock as unknown as AccessManagedXBlockDataTypes}
+      isSelfPaced={false}
+    />,
+  ));
 
 describe('<ConfigureModal /> for Section', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
+    setupMocks();
   });
 
   it('renders ConfigureModal component correctly', () => {
@@ -85,33 +111,20 @@ describe('<ConfigureModal /> for Section', () => {
 });
 
 const renderSubsectionComponent = (props?: object) =>
-  render(
-    <AppProvider store={store}>
-      <IntlProvider locale="en">
-        <ConfigureModal
-          isOpen
-          onClose={onCloseMock}
-          onConfigureSubmit={onConfigureSubmitMock}
-          currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
-          isSelfPaced={false}
-          {...props}
-        />
-      </IntlProvider>,
-    </AppProvider>,
-  );
+  render(withProviders(
+    <ConfigureModal
+      isOpen
+      onClose={onCloseMock}
+      onConfigureSubmit={onConfigureSubmitMock}
+      currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
+      isSelfPaced={false}
+      {...props}
+    />,
+  ));
 
 describe('<ConfigureModal /> for Subsection', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
+    setupMocks();
   });
 
   it('renders subsection ConfigureModal component correctly', () => {
@@ -176,32 +189,19 @@ describe('<ConfigureModal /> for Subsection', () => {
 });
 
 const renderUnitComponent = (props?: object) =>
-  render(
-    <AppProvider store={store}>
-      <IntlProvider locale="en">
-        <ConfigureModal
-          isOpen
-          onClose={onCloseMock}
-          onConfigureSubmit={onConfigureSubmitMock}
-          currentItemData={currentUnitMock as unknown as AccessManagedXBlockDataTypes}
-          {...props}
-        />
-      </IntlProvider>,
-    </AppProvider>,
-  );
+  render(withProviders(
+    <ConfigureModal
+      isOpen
+      onClose={onCloseMock}
+      onConfigureSubmit={onConfigureSubmitMock}
+      currentItemData={currentUnitMock as unknown as AccessManagedXBlockDataTypes}
+      {...props}
+    />,
+  ));
 
 describe('<ConfigureModal /> for Unit', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
+    setupMocks();
   });
 
   it('renders unit ConfigureModal component correctly', async () => {
@@ -246,33 +246,20 @@ describe('<ConfigureModal /> for Unit', () => {
 });
 
 const renderXBlockComponent = (props?: object) =>
-  render(
-    <AppProvider store={store}>
-      <IntlProvider locale="en">
-        <ConfigureModal
-          isOpen
-          isXBlockComponent
-          onClose={onCloseMock}
-          onConfigureSubmit={onConfigureSubmitMock}
-          currentItemData={currentXBlockMock as unknown as AccessManagedXBlockDataTypes}
-          {...props}
-        />
-      </IntlProvider>,
-    </AppProvider>,
-  );
+  render(withProviders(
+    <ConfigureModal
+      isOpen
+      isXBlockComponent
+      onClose={onCloseMock}
+      onConfigureSubmit={onConfigureSubmitMock}
+      currentItemData={currentXBlockMock as unknown as AccessManagedXBlockDataTypes}
+      {...props}
+    />,
+  ));
 
 describe('<ConfigureModal /> for XBlock', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
+    setupMocks();
   });
 
   it('renders unit ConfigureModal component correctly', async () => {
@@ -315,36 +302,78 @@ describe('<ConfigureModal /> for XBlock', () => {
   });
 });
 
+describe('<ConfigureModal /> permission gating', () => {
+  let validateUserPermissionsMock;
+
+  beforeEach(() => {
+    setupMocks();
+    // Enable authz so `canEditCourseContent` is driven by the mocked permissions API.
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    validateUserPermissionsMock = jest.spyOn(authzApi, 'validateUserPermissions');
+  });
+
+  it('disables the unit visibility, access and discussion controls when the user cannot edit', async () => {
+    validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent: false });
+    const { getByTestId, getByRole } = renderUnitComponent();
+
+    await waitFor(() => expect(getByTestId('unit-visibility-checkbox')).toBeDisabled());
+    expect(getByTestId('group-type-select')).toBeDisabled();
+    expect(
+      getByRole('checkbox', { name: messages.discussionEnabledCheckbox.defaultMessage }),
+    ).toBeDisabled();
+  });
+
+  it('enables the unit visibility and access controls when the user can edit', async () => {
+    validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent: true });
+    const { getByTestId } = renderUnitComponent();
+
+    await waitFor(() => expect(getByTestId('unit-visibility-checkbox')).not.toBeDisabled());
+    expect(getByTestId('group-type-select')).not.toBeDisabled();
+  });
+
+  it('disables the group type select for an xblock when the user cannot edit', async () => {
+    validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent: false });
+    const { getByTestId } = renderXBlockComponent();
+
+    await waitFor(() => expect(getByTestId('group-type-select')).toBeDisabled());
+  });
+
+  it('hides the footer Cancel and Save buttons when the user cannot edit', async () => {
+    validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent: false });
+    const { getByTestId, queryByRole } = renderUnitComponent();
+
+    // Wait for the modal body to render (the visibility checkbox is always present), then
+    // confirm the permission-gated footer actions are absent.
+    await waitFor(() => expect(getByTestId('unit-visibility-checkbox')).toBeInTheDocument());
+    expect(queryByRole('button', { name: messages.cancelButton.defaultMessage })).not.toBeInTheDocument();
+    expect(queryByRole('button', { name: messages.saveButton.defaultMessage })).not.toBeInTheDocument();
+  });
+
+  it('shows the footer Cancel and Save buttons when the user can edit', async () => {
+    validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent: true });
+    const { findByRole, getByRole } = renderUnitComponent();
+
+    expect(await findByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
+  });
+});
+
 describe('<ConfigureModal /> with enableTimedExams prop', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    store = initializeStore();
+    setupMocks();
   });
 
   const renderWithTimedExamsProps = (enableTimedExams = true) =>
-    render(
-      <AppProvider store={store}>
-        <IntlProvider locale="en">
-          <ConfigureModal
-            isOpen
-            onClose={onCloseMock}
-            onConfigureSubmit={onConfigureSubmitMock}
-            currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
-            enableTimedExams={enableTimedExams}
-            isSelfPaced={false}
-          />
-        </IntlProvider>
-        ,
-      </AppProvider>,
-    );
+    render(withProviders(
+      <ConfigureModal
+        isOpen
+        onClose={onCloseMock}
+        onConfigureSubmit={onConfigureSubmitMock}
+        currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
+        enableTimedExams={enableTimedExams}
+        isSelfPaced={false}
+      />,
+    ));
 
   it('passes enableTimedExams=true to AdvancedTab', async () => {
     const user = userEvent.setup();
@@ -412,20 +441,15 @@ describe('<ConfigureModal /> with enableTimedExams prop', () => {
   it('defaults enableTimedExams to false when not provided', async () => {
     const user = userEvent.setup();
 
-    const { getByRole } = render(
-      <AppProvider store={store}>
-        <IntlProvider locale="en">
-          <ConfigureModal
-            isOpen
-            onClose={onCloseMock}
-            onConfigureSubmit={onConfigureSubmitMock}
-            currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
-            isSelfPaced={false}
-          />
-        </IntlProvider>
-        ,
-      </AppProvider>,
-    );
+    const { getByRole } = render(withProviders(
+      <ConfigureModal
+        isOpen
+        onClose={onCloseMock}
+        onConfigureSubmit={onConfigureSubmitMock}
+        currentItemData={currentSubsectionMock as unknown as AccessManagedXBlockDataTypes}
+        isSelfPaced={false}
+      />,
+    ));
 
     const advancedTab = getByRole('tab', {
       name: messages.advancedTabTitle.defaultMessage,

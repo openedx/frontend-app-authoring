@@ -89,7 +89,7 @@ export const LEVEL_CONFIG: Record<Depth, LevelConfig> = {
   },
   1: {
     name: 'subsection',
-    contentClass: 'subsection-card__content item-children',
+    contentClass: 'subsection-card__content',
     contentTestId: 'subsection-card__content',
     childContainerClass: 'subsection-card__units',
     childContainerTestId: 'subsection-card__units',
@@ -99,7 +99,7 @@ export const LEVEL_CONFIG: Record<Depth, LevelConfig> = {
   },
   2: {
     name: 'unit',
-    contentClass: 'unit-card__content item-children',
+    contentClass: 'unit-card__content',
     contentTestId: 'unit-card__content',
     iconSize: 'xs',
     background: { background: '#fdfdfd' },

@@ -56,6 +56,8 @@ jest.mock('@src/CourseAuthoringContext', () => ({
     courseId,
     openUnlinkModal,
     getUnitUrl: jest.fn(),
+    canEditCourseContent: true,
+    canPublishCourseContent: true,
   }),
 }));
 
