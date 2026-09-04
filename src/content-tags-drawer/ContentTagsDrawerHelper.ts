@@ -1,4 +1,3 @@
-// @ts-check
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { cloneDeep } from 'lodash';
@@ -7,24 +6,31 @@ import { useTaxonomyList } from '../taxonomy/data/apiHooks';
 import { extractOrgFromContentId, languageExportId } from './utils';
 import messages from './messages';
 import { ContentTagsDrawerSheetContext } from './common/context';
-
-/** @typedef {import("./data/types.js").Tag} ContentTagData */
-/** @typedef {import("./data/types.js").StagedTagData} StagedTagData */
-/** @typedef {import("./data/types.js").TagsInTaxonomy} TagsInTaxonomy */
-/** @typedef {import("./common/context").ContentTagsDrawerContextData} ContentTagsDrawerContextData */
+import type { ContentTagsDrawerContextData } from './common/context';
+import type {
+  DrawerTag,
+  DrawerTaxonomy,
+  OtherTaxonomy,
+  StagedTagData,
+  Tag,
+  TagsInTaxonomy,
+  UpdateTagsData,
+} from './data/types';
 
 /**
  * Helper hook for *creating* a `ContentTagsDrawerContext`.
  * Handles the context and all the underlying logic for the ContentTagsDrawer component.
  *
  * To *use* the context, just use `useContext(ContentTagsDrawerContext)`
- * @param {string} contentId
- * @param {boolean} canTagObject
- * @param {boolean} fetchMetadata=false If true, fetches metadata for the contentId. This is used on `edx-platform`
+ *
+ * @param fetchMetadata If true, fetches metadata for the contentId. This is used on `edx-platform`
  * and the Course/Unit Outline to show the content name as the drawer title.
- * @returns {ContentTagsDrawerContextData}
  */
-export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetchMetadata = false) => {
+export const useCreateContentTagsDrawerContext = (
+  contentId: string,
+  canTagObject: boolean,
+  fetchMetadata: boolean = false,
+): ContentTagsDrawerContextData => {
   const intl = useIntl();
   const org = extractOrgFromContentId(contentId);
 
@@ -33,19 +39,22 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   // True if the drawer is on edit mode.
   const [isEditMode, setIsEditMode] = React.useState(false);
   // This stores the tags added on the add tags Select in all taxonomies.
-  const [stagedContentTags, setStagedContentTags] = React.useState({});
+  const [stagedContentTags, setStagedContentTags] = React.useState<Record<number, StagedTagData[]>>({});
   // When a staged tags on a taxonomy is commitet then is saved on this map.
-  const [globalStagedContentTags, setGlobalStagedContentTags] = React.useState({});
+  const [globalStagedContentTags, setGlobalStagedContentTags] = React.useState<Record<number, DrawerTag[]>>({});
   // This stores fetched tags deleted by the user.
-  const [globalStagedRemovedContentTags, setGlobalStagedRemovedContentTags] = React.useState({});
+  const [
+    globalStagedRemovedContentTags,
+    setGlobalStagedRemovedContentTags,
+  ] = React.useState<Record<number, string[]>>({});
   // Merges fetched tags, global staged tags and global removed staged tags
-  const [tagsByTaxonomy, setTagsByTaxonomy] = React.useState(/** @type TagsInTaxonomy[] */ ([]));
+  const [tagsByTaxonomy, setTagsByTaxonomy] = React.useState<DrawerTaxonomy[]>([]);
   // Other taxonomies that the user doesn't have permissions
-  const [otherTaxonomies, setOtherTaxonomies] = React.useState(/** @type TagsInTaxonomy[] */ ([]));
+  const [otherTaxonomies, setOtherTaxonomies] = React.useState<OtherTaxonomy[]>([]);
   // This stores taxonomy collapsible states (open/close).
-  const [collapsibleStates, setColapsibleStates] = React.useState({});
+  const [collapsibleStates, setColapsibleStates] = React.useState<Record<number, boolean>>({});
   // Message to show a toast in the content drawer.
-  const [toastMessage, setToastMessage] = React.useState(/** @type string | undefined */ (undefined));
+  const [toastMessage, setToastMessage] = React.useState<string | undefined>(undefined);
   // Mutation to update tags
   const updateTags = useContentTaxonomyTagsUpdater(contentId);
 
@@ -59,7 +68,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
 
   // Tags fetched from database
   const { fetchedTaxonomies, fetchedOtherTaxonomies } = React.useMemo(() => {
-    const sortTaxonomies = (taxonomiesList) => {
+    const sortTaxonomies = (taxonomiesList: TagsInTaxonomy[]) => {
       const taxonomiesWithData = taxonomiesList.filter(
         (t) => t.contentTags.length !== 0,
       );
@@ -67,7 +76,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
       // Count implicit tags per taxonomy.
       // TODO This count is also calculated individually
       // in ContentTagsCollapsible. It should only be calculated once.
-      const tagsCountBytaxonomy = {};
+      const tagsCountBytaxonomy: Record<number, number> = {};
       taxonomiesWithData.forEach((tax) => {
         tagsCountBytaxonomy[tax.id] = new Set(
           tax.contentTags.flatMap(item => item.lineage),
@@ -94,12 +103,12 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
       const taxonomiesList = taxonomyListData.results.map((taxonomy) => ({
         ...taxonomy,
         canTagObject: taxonomy.canTagObject && canTagObject,
-        contentTags: /** @type {ContentTagData[]} */ ([]),
+        contentTags: [] as Tag[],
       }));
 
       const contentTaxonomies = contentTaxonomyTagsData.taxonomies;
 
-      const otherTaxonomiesList = [];
+      const otherTaxonomiesList: OtherTaxonomy[] = [];
 
       // eslint-disable-next-line array-callback-return
       contentTaxonomies.map((contentTaxonomyTags) => {
@@ -140,7 +149,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   }, [taxonomyListData, contentTaxonomyTagsData]);
 
   // Add a content tags to the staged tags for a taxonomy
-  const addStagedContentTag = React.useCallback((taxonomyId, addedTag) => {
+  const addStagedContentTag = React.useCallback((taxonomyId: number, addedTag: StagedTagData) => {
     setStagedContentTags(prevStagedContentTags => {
       const updatedStagedContentTags = {
         ...prevStagedContentTags,
@@ -151,7 +160,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   }, [setStagedContentTags]);
 
   // Remove a content tag from the staged tags for a taxonomy
-  const removeStagedContentTag = React.useCallback((taxonomyId, tagValue) => {
+  const removeStagedContentTag = React.useCallback((taxonomyId: number, tagValue: string) => {
     setStagedContentTags(prevStagedContentTags => ({
       ...prevStagedContentTags,
       [taxonomyId]: prevStagedContentTags[taxonomyId].filter((t) => t.value !== tagValue),
@@ -159,7 +168,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   }, [setStagedContentTags]);
 
   // Remove a content tag from the global staged tags for a taxonomy
-  const removeGlobalStagedContentTag = React.useCallback((taxonomyId, tagValue) => {
+  const removeGlobalStagedContentTag = React.useCallback((taxonomyId: number, tagValue: string) => {
     setGlobalStagedContentTags(prevContentTags => ({
       ...prevContentTags,
       [taxonomyId]: prevContentTags[taxonomyId].filter((t) => t.value !== tagValue),
@@ -167,7 +176,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   }, [setGlobalStagedContentTags]);
 
   // Add a content tags to the removed tags for a taxonomy
-  const addRemovedContentTag = React.useCallback((taxonomyId, addedTag) => {
+  const addRemovedContentTag = React.useCallback((taxonomyId: number, addedTag: string) => {
     setGlobalStagedRemovedContentTags(prevContentTags => {
       const updatedStagedContentTags = {
         ...prevContentTags,
@@ -178,7 +187,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   }, [setGlobalStagedRemovedContentTags]);
 
   // Remove a content tag from the removed tags for a taxonomy
-  const deleteRemovedContentTag = React.useCallback((taxonomyId, tagValue) => {
+  const deleteRemovedContentTag = React.useCallback((taxonomyId: number, tagValue: string) => {
     setGlobalStagedRemovedContentTags(prevContentTags => ({
       ...prevContentTags,
       [taxonomyId]: prevContentTags[taxonomyId].filter((t) => t !== tagValue),
@@ -186,13 +195,13 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   }, [setGlobalStagedRemovedContentTags]);
 
   // Sets the staged content tags for taxonomy to the provided list of tags
-  const setStagedTags = React.useCallback((taxonomyId, tagsList) => {
+  const setStagedTags = React.useCallback((taxonomyId: number, tagsList: StagedTagData[]) => {
     setStagedContentTags(prevStagedContentTags => ({ ...prevStagedContentTags, [taxonomyId]: tagsList }));
   }, [setStagedContentTags]);
 
   // Open a collapsible of a taxonomy
   /* istanbul ignore next */
-  const openCollapsible = React.useCallback((taxonomyId) => {
+  const openCollapsible = React.useCallback((taxonomyId: number) => {
     setColapsibleStates(prevStates => ({
       ...prevStates,
       [taxonomyId]: true,
@@ -201,7 +210,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
 
   // Close a collapsible of a taxonomy
   /* istanbul ignore next */
-  const closeCollapsible = React.useCallback((taxonomyId) => {
+  const closeCollapsible = React.useCallback((taxonomyId: number) => {
     setColapsibleStates(prevStates => ({
       ...prevStates,
       [taxonomyId]: false,
@@ -209,7 +218,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   }, [setColapsibleStates]);
 
   const openAllCollapsible = React.useCallback(() => {
-    const updatedState = {};
+    const updatedState: Record<number, boolean> = {};
     fetchedTaxonomies.forEach((taxonomy) => {
       updatedState[taxonomy.id] = true;
     });
@@ -221,7 +230,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
 
   // Set initial state of collapsible based on content tags
   const setCollapsibleToInitalState = React.useCallback(() => {
-    const updatedState = {};
+    const updatedState: Record<number, boolean> = {};
     fetchedTaxonomies.forEach((taxonomy) => {
       // Taxonomy with content tags must be open
       updatedState[taxonomy.id] = taxonomy.contentTags.length !== 0;
@@ -281,7 +290,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   const showToastAfterSave = React.useCallback(() => {
     const { tagsAdded, tagsRemoved } = countTags();
 
-    let message;
+    let message: string | undefined;
     if (tagsAdded && tagsRemoved) {
       message = `${
         intl.formatMessage(
@@ -323,15 +332,18 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   // Updates `tagsByTaxonomy` merged fetched tags, global staged tags
   // and global removed staged tags.
   React.useEffect(() => {
-    const mergedTags = cloneDeep(fetchedTaxonomies).reduce((acc, obj) => (
+    const mergedTags = cloneDeep(fetchedTaxonomies).reduce<Record<number, DrawerTaxonomy>>((acc, obj) => (
       { ...acc, [obj.id]: obj }
     ), {});
 
-    const mergedOtherTaxonomies = cloneDeep(fetchedOtherTaxonomies).reduce((acc, obj) => (
-      { ...acc, [obj.id]: obj }
-    ), {});
+    const mergedOtherTaxonomies = cloneDeep(fetchedOtherTaxonomies).reduce<Record<number, OtherTaxonomy>>(
+      (acc, obj) => (
+        { ...acc, [obj.id]: obj }
+      ),
+      {},
+    );
 
-    Object.keys(globalStagedContentTags).forEach((taxonomyId) => {
+    Object.keys(globalStagedContentTags).map(Number).forEach((taxonomyId) => {
       if (mergedTags[taxonomyId]) {
         // TODO test this
         // Filter out applied tags that should become implicit because a child tag was committed
@@ -355,7 +367,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
       }
     });
 
-    Object.keys(globalStagedRemovedContentTags).forEach((taxonomyId) => {
+    Object.keys(globalStagedRemovedContentTags).map(Number).forEach((taxonomyId) => {
       if (mergedTags[taxonomyId]) {
         mergedTags[taxonomyId].contentTags = mergedTags[taxonomyId].contentTags.filter(
           (t) => !globalStagedRemovedContentTags[taxonomyId].includes(t.value),
@@ -406,7 +418,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetch
   ]);
 
   const commitGlobalStagedTags = React.useCallback(() => {
-    const tagsData = [];
+    const tagsData: UpdateTagsData[] = [];
     tagsByTaxonomy.forEach((tags) => {
       tagsData.push({
         taxonomy: tags.id,

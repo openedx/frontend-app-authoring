@@ -15,9 +15,9 @@ jest.mock('../data/apiHooks', () => ({
 }));
 jest.mock('../ContentTagsDrawer', () => jest.fn(() => <div>Mocked ContentTagsDrawer</div>));
 
-const RootWrapper = ({ canManageTags = true } = {}) => (
+const RootWrapper = ({ canManageTags = true }: { canManageTags?: boolean; } = {}) => (
   <IntlProvider locale="en" messages={{}}>
-    <TagsSidebarBody canManageTags={canManageTags} />
+    <TagsSidebarBody readOnly={false} canManageTags={canManageTags} />
   </IntlProvider>
 );
 
@@ -28,7 +28,7 @@ describe('<TagSidebarBody>', () => {
   });
 
   it('should render data after wuery is complete', () => {
-    useContentTaxonomyTagsData.mockReturnValue({
+    (useContentTaxonomyTagsData as jest.Mock).mockReturnValue({
       isSuccess: true,
       data: contentTaxonomyTagsMock[contentId],
     });
@@ -41,7 +41,7 @@ describe('<TagSidebarBody>', () => {
   });
 
   it('should open ContentTagsDrawer', () => {
-    useContentTaxonomyTagsData.mockReturnValue({
+    (useContentTaxonomyTagsData as jest.Mock).mockReturnValue({
       isSuccess: true,
       data: contentTaxonomyTagsMock[contentId],
     });
@@ -54,7 +54,7 @@ describe('<TagSidebarBody>', () => {
   });
 
   it('should not render Manage tags button when canManageTags is false', () => {
-    useContentTaxonomyTagsData.mockReturnValue({
+    (useContentTaxonomyTagsData as jest.Mock).mockReturnValue({
       isSuccess: true,
       data: contentTaxonomyTagsMock[contentId],
     });

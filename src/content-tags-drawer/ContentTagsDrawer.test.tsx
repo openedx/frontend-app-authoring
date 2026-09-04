@@ -1,3 +1,4 @@
+import type { ComponentProps, ContextType } from 'react';
 import {
   fireEvent,
   initializeMocks,
@@ -48,10 +49,21 @@ jest.mock('../library-authoring/common/context/SidebarContext', () => ({
   useSidebarContext: () => ({ sidebarAction: mockSidebarAction() }),
 }));
 
-const renderDrawer = (contentId, drawerParams = {}, renderPath = path, containerId = '') => {
-  const params = { contentId, containerId };
+type SheetContextData = ContextType<typeof ContentTagsDrawerSheetContext>;
+type DrawerParams = ComponentProps<typeof ContentTagsDrawer> & Partial<SheetContextData>;
+
+const renderDrawer = (
+  contentId: string | undefined,
+  drawerParams: DrawerParams = {},
+  renderPath = path,
+  containerId = '',
+) => {
+  const params: Record<string, string> = { containerId };
+  if (contentId !== undefined) {
+    params.contentId = contentId;
+  }
   return render(
-    <ContentTagsDrawerSheetContext.Provider value={drawerParams}>
+    <ContentTagsDrawerSheetContext.Provider value={drawerParams as SheetContextData}>
       <ContentTagsDrawer {...drawerParams} />
     </ContentTagsDrawerSheetContext.Provider>,
     { path: renderPath, params },
@@ -273,11 +285,11 @@ describe('<ContentTagsDrawer />', () => {
 
   test.each([
     {
-      variant: 'drawer',
+      variant: 'drawer' as const,
       editButton: /edit tags/i,
     },
     {
-      variant: 'component',
+      variant: 'component' as const,
       editButton: /manage tags/i,
     },
   ])(
@@ -377,7 +389,7 @@ describe('<ContentTagsDrawer />', () => {
     // Check that Tag 3 has been staged, i.e. there should be 2 of them on the page
     expect(screen.getAllByText('Tag 3').length).toBe(2);
 
-    const dropdown = container.querySelector('#content-tags-drawer > div:nth-child(1) > div');
+    const dropdown = container.querySelector<HTMLElement>('#content-tags-drawer > div:nth-child(1) > div')!;
     const dropdownCancel = within(dropdown).getByRole('button', { name: /cancel/i });
     fireEvent.click(dropdownCancel);
 
