@@ -24,7 +24,7 @@ const InfoModal = ({
   usagePathStatus,
   error,
   sidebar,
-  contentUnderPreview,
+  contentUnderPreview = null,
 }) => {
   const intl = useIntl();
   const [activeTab, setActiveTab] = useState('fileInfo');
@@ -121,7 +121,6 @@ InfoModal.propTypes = {
 
 InfoModal.defaultProps = {
   file: null,
-  contentUnderPreview: null,
 };
 
 export default InfoModal;

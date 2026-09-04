@@ -51,6 +51,21 @@ const messages = defineMessages({
     defaultMessage: 'Delete this transcript?',
     description: 'Title for Warning which allows users to select next step in the process of deleting a transcript',
   },
+  searchLanguagesPlaceholder: {
+    id: 'course-authoriong.video-uploads.file-info.transcript.searchLanguagesPlaceholder',
+    defaultMessage: 'Search languages',
+    description: 'Placeholder for the search box in the transcript language selector',
+  },
+  noLanguageResults: {
+    id: 'course-authoriong.video-uploads.file-info.transcript.noLanguageResults',
+    defaultMessage: 'No results',
+    description: 'Shown in the transcript language selector when no languages match the search',
+  },
+  deleteEmptyTranscriptLabel: {
+    id: 'course-authoriong.video-uploads.file-info.transcript.deleteEmptyTranscript',
+    defaultMessage: 'Delete empty transcript',
+    description: 'Accessible label for the button that removes an empty transcript row',
+  },
 });
 
 export default messages;

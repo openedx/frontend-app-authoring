@@ -76,6 +76,26 @@ const messages = defineMessages({
     defaultMessage: 'Cue text cannot be empty.',
     description: 'Error shown when one or more cue texts are empty',
   },
+  loadFailedLabel: {
+    id: 'course-authoring.video-uploads.transcriptEditor.loadFailed',
+    defaultMessage: 'Unable to load transcript, please try again.',
+    description: 'Error shown when the transcript could not be downloaded into the editor',
+  },
+  cueTextLabel: {
+    id: 'course-authoring.video-uploads.transcriptEditor.cueTextLabel',
+    defaultMessage: 'Cue {index} text',
+    description: 'Accessible label for the text field of a transcript cue',
+  },
+  cueStartTimeLabel: {
+    id: 'course-authoring.video-uploads.transcriptEditor.cueStartTimeLabel',
+    defaultMessage: 'Cue {index} start time',
+    description: 'Accessible label for the start timestamp field of a transcript cue',
+  },
+  cueEndTimeLabel: {
+    id: 'course-authoring.video-uploads.transcriptEditor.cueEndTimeLabel',
+    defaultMessage: 'Cue {index} end time',
+    description: 'Accessible label for the end timestamp field of a transcript cue',
+  },
 });
 
 export default messages;

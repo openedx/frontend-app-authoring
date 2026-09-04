@@ -219,6 +219,11 @@ const messages = defineMessages({
     defaultMessage: 'Upload a file',
     description: 'Accessible (screen reader) label for file input',
   },
+  transcriptCountLabel: {
+    id: 'course-authoring.videos-page.table.transcriptColumn.message',
+    defaultMessage: '{numOfTranscripts, plural, =0 {No transcripts available} one {{numOfTranscripts} transcript available} other {{numOfTranscripts} transcripts available}}',
+    description: 'Message with the number of transcripts available for a video',
+  },
 });
 
 export default messages;

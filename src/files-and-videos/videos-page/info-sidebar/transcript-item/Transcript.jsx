@@ -75,7 +75,6 @@ const Transcript = ({
     <>
       <div
         className="row m-0 align-items-center justify-content-between"
-        key={`transcript-${language}`}
         data-testid={`transcript-${language}`}
       >
         <LanguageSelect
@@ -91,7 +90,7 @@ const Transcript = ({
               iconAs={Icon}
               src={DeleteOutline}
               onClick={openConfirmation}
-              alt="delete empty transcript"
+              alt={intl.formatMessage(messages.deleteEmptyTranscriptLabel)}
             />
           ) :
           (

@@ -89,11 +89,38 @@ describe('TranscriptEditor', () => {
     );
   });
 
-  it('shows an error alert when the transcript fails to load', async () => {
+  it('shows a distinct error alert when the transcript fails to load', async () => {
     axiosMock.onGet(/transcript_download/).reply(500);
     renderEditor();
 
-    expect(await screen.findByText(messages.saveFailedLabel.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(messages.loadFailedLabel.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText(messages.saveFailedLabel.defaultMessage)).not.toBeInTheDocument();
+  });
+
+  it('gives cue fields accessible names', async () => {
+    mockTranscript();
+    renderEditor();
+    await screen.findByDisplayValue('Hello');
+
+    expect(screen.getByRole('textbox', { name: 'Cue 1 text' })).toHaveValue('Hello');
+    expect(screen.getByRole('textbox', { name: 'Cue 1 start time' })).toHaveValue('00:00:01,000');
+    expect(screen.getByRole('textbox', { name: 'Cue 2 end time' })).toHaveValue('00:00:04,000');
+  });
+
+  it('preserves multi-line cue text through editing and saving', async () => {
+    mockTranscript();
+    axiosMock.onPost(/transcript_upload/).reply(200);
+    renderEditor();
+
+    const cueText = await screen.findByRole('textbox', { name: 'Cue 1 text' });
+    expect(cueText.tagName).toBe('TEXTAREA');
+    fireEvent.change(cueText, { target: { value: 'first line\nsecond line' } });
+    expect(screen.getByRole('textbox', { name: 'Cue 1 text' })).toHaveValue('first line\nsecond line');
+
+    fireEvent.click(screen.getByRole('button', { name: messages.saveButtonLabel.defaultMessage }));
+    await waitFor(() => expect(axiosMock.history.post).toHaveLength(1));
+    const file = (axiosMock.history.post[0].data as FormData).get('file') as File;
+    expect(await readFileText(file)).toContain('00:00:01,000 --> 00:00:02,000\nfirst line\nsecond line');
   });
 
   it('saves edited cues as a re-uploaded SRT file and shows the saved indicator', async () => {

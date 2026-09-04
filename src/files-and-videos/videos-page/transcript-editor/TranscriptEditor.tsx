@@ -85,7 +85,6 @@ const TranscriptEditor = ({
   const cueIdRef = useRef(0);
   const cueListRef = useRef<HTMLDivElement | null>(null);
   const cueWrapperRefs = useRef<Record<string, HTMLDivElement>>({});
-  const cueTextRefs = useRef<Record<string, HTMLInputElement>>({});
   const pendingFocusId = useRef<string | null>(null);
 
   const [loading, setLoading] = useState(false);
@@ -145,7 +144,8 @@ const TranscriptEditor = ({
 
   useEffect(() => {
     if (pendingFocusId.current) {
-      const el = cueTextRefs.current[pendingFocusId.current];
+      const wrapper = cueWrapperRefs.current[pendingFocusId.current];
+      const el = wrapper?.querySelector<HTMLTextAreaElement>('textarea');
       if (el) {
         el.focus();
         pendingFocusId.current = null;
@@ -212,7 +212,7 @@ const TranscriptEditor = ({
         }
         setCues([]);
         setInitialCuesSnapshot('[]');
-        setSaveError(intl.formatMessage(messages.saveFailedLabel));
+        setSaveError(intl.formatMessage(messages.loadFailedLabel));
         return undefined;
       })
       .finally(() => {
@@ -521,16 +521,15 @@ const TranscriptEditor = ({
                       >
                         <div className="transcript-editor-modal__cue-text-wrap flex-grow-1">
                           <Form.Control
-                            type="text"
+                            as="textarea"
+                            autoResize
+                            rows={1}
                             value={cue.text}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            aria-label={intl.formatMessage(messages.cueTextLabel, { index: index + 1 })}
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                               handleCueChange(index, e.target.value)}
                             className="transcript-editor-modal__cue-text"
                             isInvalid={hasCueTextError}
-                            ref={(el: HTMLInputElement | null) => {
-                              if (el) { cueTextRefs.current[cue.id] = el; }
-                              else { delete cueTextRefs.current[cue.id]; }
-                            }}
                           />
                           {hasCueTextError && (
                             <Form.Control.Feedback type="invalid" hasIcon={false}>
@@ -543,6 +542,7 @@ const TranscriptEditor = ({
                             size="sm"
                             type="text"
                             value={cue.startTime}
+                            aria-label={intl.formatMessage(messages.cueStartTimeLabel, { index: index + 1 })}
                             className="transcript-editor-modal__time"
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                               handleCueTimeChange(index, 'startTime', e.target.value)}
@@ -556,6 +556,7 @@ const TranscriptEditor = ({
                             size="sm"
                             type="text"
                             value={cue.endTime}
+                            aria-label={intl.formatMessage(messages.cueEndTimeLabel, { index: index + 1 })}
                             className="transcript-editor-modal__time"
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                               handleCueTimeChange(index, 'endTime', e.target.value)}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import {
   Button,
@@ -10,6 +11,7 @@ import {
   MenuItem,
   useToggle,
 } from '@openedx/paragon';
+import messages from './messages';
 import {
   Check,
   ExpandMore,
@@ -26,6 +28,7 @@ const LanguageSelect = ({
   placeholderText,
   className = 'col-9 p-0',
 }) => {
+  const intl = useIntl();
   const currentSelection = isEmpty(value) ? placeholderText : options[value];
 
   const [isOpen, , close, toggle] = useToggle();
@@ -74,12 +77,16 @@ const LanguageSelect = ({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search languages"
+                placeholder={intl.formatMessage(messages.searchLanguagesPlaceholder)}
                 controlClassName="w-100"
                 floatingLabel={null}
               />
             </div>
-            {filteredOptions.length === 0 && <div className="px-3 py-2 small text-muted">No results</div>}
+            {filteredOptions.length === 0 && (
+              <div className="px-3 py-2 small text-muted">
+                <FormattedMessage {...messages.noLanguageResults} />
+              </div>
+            )}
             {filteredOptions.map(([valueKey, text]) => {
               if (valueKey === value) {
                 return (

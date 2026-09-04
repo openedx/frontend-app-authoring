@@ -19,7 +19,7 @@ export const TranscriptActionMenu = ({
   launchDeleteConfirmation,
   handleTranscript,
   input,
-  onEdit,
+  onEdit = () => {},
 }) => {
   const [isOpen, , close, toggle] = useToggle();
   const [target, setTarget] = useState(null);
@@ -44,7 +44,6 @@ export const TranscriptActionMenu = ({
           <MenuItem
             as={Button}
             variant="tertiary"
-            key={`transcript-actions-${language}-edit`}
             onClick={() => {
               onEdit(language);
               close();
@@ -55,7 +54,6 @@ export const TranscriptActionMenu = ({
           <MenuItem
             as={Button}
             variant="tertiary"
-            key={`transcript-actions-${language}-replace`}
             onClick={() => {
               input.click();
               close();
@@ -66,7 +64,6 @@ export const TranscriptActionMenu = ({
           <MenuItem
             as={Button}
             variant="tertiary"
-            key={`transcript-actions-${language}-download`}
             onClick={() => handleTranscript({ language }, 'download')}
           >
             <FormattedMessage {...messages.downloadTranscript} />
@@ -75,7 +72,6 @@ export const TranscriptActionMenu = ({
           <MenuItem
             as={Button}
             variant="tertiary"
-            key={`transcript-actions-${language}-delete`}
             onClick={launchDeleteConfirmation}
           >
             <FormattedMessage {...messages.deleteTranscript} />
@@ -94,10 +90,6 @@ TranscriptActionMenu.propTypes = {
   input: PropTypes.shape({
     click: PropTypes.func.isRequired,
   }).isRequired,
-};
-
-TranscriptActionMenu.defaultProps = {
-  onEdit: () => {},
 };
 
 export default TranscriptActionMenu;
