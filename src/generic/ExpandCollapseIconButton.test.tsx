@@ -10,8 +10,8 @@ describe('<ExpandCollapseIconButton />', () => {
         canExpand={false}
         isExpanded
         onToggle={onToggle}
-        expandedLabel="Expand"
-        collapsedLabel="Collapse"
+        expandLabel="Expand"
+        collapseLabel="Collapse"
       />,
     );
 
@@ -31,14 +31,14 @@ describe('<ExpandCollapseIconButton />', () => {
         canExpand
         isExpanded={false}
         onToggle={onToggle}
-        expandedLabel="Expand"
-        collapsedLabel="Collapse"
+        expandLabel="Expand"
+        collapseLabel="Collapse"
       />,
     );
 
-    // The accessible name comes from `aria-label`, which this component sets
-    // to `expandedLabel` while collapsed (see the prop's own doc comment:
-    // it's the label for the "expand" action, offered while collapsed).
+    // The accessible name comes from `aria-label`, which this component
+    // sets to `expandLabel` while collapsed and `collapseLabel` while
+    // expanded.
     const button = screen.getByRole('button', { name: 'Expand' });
     expect(button).toHaveAttribute('aria-expanded', 'false');
 
@@ -51,8 +51,8 @@ describe('<ExpandCollapseIconButton />', () => {
       <ExpandCollapseIconButton
         canExpand
         isExpanded
-        expandedLabel="Expand"
-        collapsedLabel="Collapse"
+        expandLabel="Expand"
+        collapseLabel="Collapse"
       />,
     );
 

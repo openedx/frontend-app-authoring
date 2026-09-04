@@ -51,9 +51,8 @@ function collectExpandableIds(node: CompetencyTreeNode): string[] {
 
 const CompetencyTree = ({ taxonomyId, taxonomyName }: CompetencyTreeProps) => {
   const intl = useIntl();
-  const { isLoading, data: tagList } = useTagListData(taxonomyId, {
+  const { isLoading, isError, data: tagList } = useTagListData(taxonomyId, {
     pageIndex: 0,
-    pageSize: 50,
     disablePagination: true,
     enabled: true,
   });
@@ -83,9 +82,12 @@ const CompetencyTree = ({ taxonomyId, taxonomyName }: CompetencyTreeProps) => {
   // own name, not just its starting point in the breadcrumb above the tree.
   // This node is a display-only construct - it's never part of `TagData`/the
   // API response, and nothing here writes it back.
-  const rootNode: CompetencyTreeNode | null = 'treeBuildError' in treeBuildResult
-    ? null
-    : { id: ROOT_ID, value: taxonomyName, subRows: treeBuildResult.treeData };
+  const rootNode: CompetencyTreeNode | null = useMemo(
+    () => ('treeBuildError' in treeBuildResult
+      ? null
+      : { id: ROOT_ID, value: taxonomyName, subRows: treeBuildResult.treeData }),
+    [treeBuildResult, taxonomyName],
+  );
 
   const allExpandableIds = useMemo(
     () => (rootNode ? collectExpandableIds(rootNode) : []),
@@ -111,7 +113,7 @@ const CompetencyTree = ({ taxonomyId, taxonomyName }: CompetencyTreeProps) => {
     setExpandedIds(isAllExpanded ? new Set() : new Set(allExpandableIds));
   };
 
-  if ('treeBuildError' in treeBuildResult || !rootNode) {
+  if ('treeBuildError' in treeBuildResult || !rootNode || isError) {
     return <ConnectionErrorAlert />;
   }
 
@@ -126,6 +128,7 @@ const CompetencyTree = ({ taxonomyId, taxonomyName }: CompetencyTreeProps) => {
           iconBefore={OpenInFull}
           onClick={handleToggleAll}
           aria-pressed={isAllExpanded}
+          disabled={isLoading || allExpandableIds.length === 0}
           className="competency-tree__toggle-button"
         >
           {isAllExpanded
@@ -146,8 +149,8 @@ const CompetencyTree = ({ taxonomyId, taxonomyName }: CompetencyTreeProps) => {
                 canExpand={rootHasChildren}
                 isExpanded={rootIsExpanded}
                 onToggle={() => handleToggle(ROOT_ID)}
-                expandedLabel={intl.formatMessage(messages.expandRowButtonLabel)}
-                collapsedLabel={intl.formatMessage(messages.collapseRowButtonLabel)}
+                expandLabel={intl.formatMessage(messages.expandRowButtonLabel)}
+                collapseLabel={intl.formatMessage(messages.collapseRowButtonLabel)}
               />
               <span className="competency-row__label">{taxonomyName}</span>
             </div>

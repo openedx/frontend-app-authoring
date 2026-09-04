@@ -6,9 +6,9 @@ interface ExpandCollapseIconButtonProps {
   isExpanded: boolean;
   onToggle?: () => void;
   /** Label for the "expand" action - shown while the row is collapsed. */
-  expandedLabel: string;
+  expandLabel: string;
   /** Label for the "collapse" action - shown while the row is expanded. */
-  collapsedLabel: string;
+  collapseLabel: string;
   className?: string;
 }
 
@@ -22,7 +22,7 @@ interface ExpandCollapseIconButtonProps {
  * invisible, disabled placeholder icon instead of nothing, so every row's
  * label still starts at the same horizontal position.
  *
- * `expandedLabel`/`collapsedLabel` are already-formatted strings, not
+ * `expandLabel`/`collapseLabel` are already-formatted strings, not
  * message objects, so this component stays free of any particular i18n
  * message set - each caller owns its own wording.
  */
@@ -30,8 +30,8 @@ const ExpandCollapseIconButton = ({
   canExpand,
   isExpanded,
   onToggle,
-  expandedLabel,
-  collapsedLabel,
+  expandLabel,
+  collapseLabel,
   className,
 }: ExpandCollapseIconButtonProps) => {
   if (!canExpand) {
@@ -48,7 +48,7 @@ const ExpandCollapseIconButton = ({
     );
   }
 
-  const label = isExpanded ? collapsedLabel : expandedLabel;
+  const label = isExpanded ? collapseLabel : expandLabel;
 
   return (
     <IconButton

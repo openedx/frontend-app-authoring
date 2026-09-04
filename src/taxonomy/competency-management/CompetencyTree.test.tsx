@@ -190,8 +190,12 @@ describe('<CompetencyTree />', () => {
 
     expect(screen.getByText('EXT-001')).toBeInTheDocument();
     // The badge has no `<th>` to associate it with a column meaning anymore
-    // (there's no table), so it needs its own accessible name instead.
-    expect(screen.getByText('EXT-001')).toHaveAttribute('aria-label', 'Competency ID: EXT-001');
+    // (there's no table), so it needs its own accessible name instead. Paragon's
+    // `Badge` renders a plain `<span>` (implicit ARIA role "generic"), on which
+    // `aria-label` is prohibited, so the badge is `aria-hidden` and a
+    // visually-hidden sibling `<span>` carries the accessible name instead.
+    expect(screen.getByText('EXT-001')).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.getByText('Competency ID: EXT-001')).toBeInTheDocument();
     expect(screen.getByText('EXT-003')).toBeInTheDocument();
 
     // Root B (`externalId: ''`), Root C (`externalId` absent), Group A1

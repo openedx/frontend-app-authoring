@@ -21,15 +21,6 @@
   $group-bg-color: #F8F8F8;
   $group-border-color: #DDDDDD;
 
-  // Figma specifies the Competency ID badge as color token "info/base"
-  // (#006DAA on white text), which isn't Paragon's own `variant="info"`
-  // color in this app's theme (that resolves to teal) - so the badge's
-  // color custom properties are retinted here, scoped to this page only.
-  .badge-info {
-    --pgn-color-badge-bg-info: #006DAA;
-    --pgn-color-badge-text-info: #FFFFFF;
-  }
-
   .competency-row__badge {
     overflow-wrap: anywhere;
     // Figma specifies a small, squared-off radius, not Paragon's full
@@ -40,11 +31,14 @@
     // `CompetencyTreeItem.tsx`) only pushes the badge right within the
     // row, it doesn't add this gap.
     margin-right: 5px;
-    // Padding and type read directly off Figma's inspector for this
-    // badge - more precise than Paragon's `Badge` defaults.
-    padding: 1.5px 6px;
-    font-weight: 400;
-    font-size: 10.13px;
+    // Padding and type read directly off Figma's inspector for this badge,
+    // overriding Paragon's own badge tokens (rather than the resolved
+    // properties) so anything else reading the same tokens stays in sync.
+    --pgn-spacing-badge-padding-y: 1.5px;
+    --pgn-spacing-badge-padding-x-base: 6px;
+    --pgn-typography-badge-font-weight: 400;
+    --pgn-typography-badge-font-size: 10px;
+
     line-height: 15.75px;
     letter-spacing: normal;
   }
@@ -80,6 +74,13 @@
     list-style: none;
     margin: 0;
     padding-left: $indent;
+
+    // Reduced indentation at narrow viewports so deep nesting doesn't crowd
+    // out the label and Competency ID badge. This value is a placeholder,
+    // not read off Figma — flag it for design confirmation before merge.
+    @include media-breakpoint-down(sm) {
+      padding-left: 16px;
+    }
   }
 
   // Base row look: white, bordered, rounded "pill". This is the leaf style
@@ -107,10 +108,12 @@
       height: $disclosure-icon-size;
       // Grows the hit area to the WCAG 24px minimum, then cancels that
       // growth's effect on the row's layout with matching negative margins
-      // so the glyph and the 25px label inset don't move. The right margin
-      // also covers the icon-to-label gap, replacing the `mr-1` utility
-      // this page's disclosure button doesn't apply (`ExpandCollapseIconButton`'s
-      // `!important` couldn't otherwise be overridden here).
+      // on three sides, so the glyph and the 25px label inset don't move.
+      // The right margin is left at 0, so the 4px right padding above stays
+      // uncancelled and provides the icon-to-label gap, replacing the `mr-1`
+      // utility this page's disclosure button doesn't apply
+      // (`ExpandCollapseIconButton`'s `!important` couldn't otherwise be
+      // overridden here).
       padding: $disclosure-hit-area-inset;
       margin: (-$disclosure-hit-area-inset) 0 (-$disclosure-hit-area-inset) (-$disclosure-hit-area-inset); // top right bottom left
 
@@ -165,7 +168,9 @@
 
   // Vertical gap between a group's own header row and its first child leaf
   // (smaller than the leaf-to-leaf gap below - two distinct values).
-  &__container > ul > li > ul {
+  // Keyed off `.competency-group` rather than a structural `> li >` selector,
+  // so this holds recursively at any nesting depth.
+  .competency-group > ul {
     margin-top: 5px;
   }
 

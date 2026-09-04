@@ -31,7 +31,9 @@ export interface TaxonomyListData {
 
 export interface QueryOptions {
   pageIndex: number;
-  pageSize: number;
+  // Unused (and thus omitted from the request URL) when `disablePagination`
+  // is true; see `apiUrls.tagList` in `./api.ts`.
+  pageSize?: number;
   enabled?: boolean;
   disablePagination?: boolean;
 }

@@ -44,19 +44,24 @@ const CompetencyTreeItem = ({ node, expandedIds, onToggle }: CompetencyTreeItemP
           canExpand={hasChildren}
           isExpanded={isExpanded}
           onToggle={() => onToggle(nodeId)}
-          expandedLabel={intl.formatMessage(messages.expandRowButtonLabel)}
-          collapsedLabel={intl.formatMessage(messages.collapseRowButtonLabel)}
+          expandLabel={intl.formatMessage(messages.expandRowButtonLabel)}
+          collapseLabel={intl.formatMessage(messages.collapseRowButtonLabel)}
         />
         <span className="competency-row__label">{node.value}</span>
         {externalId ?
           (
-            <Badge
-              variant="info"
-              className="competency-row__badge ml-auto"
-              aria-label={intl.formatMessage(messages.competencyIdAccessibleLabel, { externalId })}
-            >
-              {externalId}
-            </Badge>
+            <>
+              <span className="sr-only">
+                {intl.formatMessage(messages.competencyIdAccessibleLabel, { externalId })}
+              </span>
+              <Badge
+                variant="info"
+                className="competency-row__badge ml-auto"
+                aria-hidden="true"
+              >
+                {externalId}
+              </Badge>
+            </>
           ) :
           null}
       </div>

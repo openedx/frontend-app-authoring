@@ -27,8 +27,8 @@ const OptionalExpandLink = ({ row, forceHide = false }: OptionalExpandLinkProps)
       canExpand={canExpand}
       isExpanded={isExpanded}
       onToggle={row?.getToggleExpandedHandler()}
-      expandedLabel={intl.formatMessage(messages.showSubtagsButtonLabel)}
-      collapsedLabel={intl.formatMessage(messages.hideSubtagsButtonLabel)}
+      expandLabel={intl.formatMessage(messages.showSubtagsButtonLabel)}
+      collapseLabel={intl.formatMessage(messages.hideSubtagsButtonLabel)}
       className="mr-1"
     />
   );
