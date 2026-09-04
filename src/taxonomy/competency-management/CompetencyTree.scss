@@ -78,7 +78,12 @@
     // Reduced indentation at narrow viewports so deep nesting doesn't crowd
     // out the label and Competency ID badge. This value is a placeholder,
     // not read off Figma — flag it for design confirmation before merge.
-    @include media-breakpoint-down(sm) {
+    // Paragon's custom-media breakpoints (imported once, globally, in
+    // `src/index.scss`) rather than a Bootstrap mixin - this repo has no
+    // `media-breakpoint-down` in its Sass build; see the equivalent
+    // `@media (--pgn-size-breakpoint-max-width-xs)` usage in
+    // `course-unit/course-sequence/CourseSequence.scss`.
+    @media (--pgn-size-breakpoint-max-width-xs) {
       padding-left: 16px;
     }
   }
