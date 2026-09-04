@@ -139,6 +139,7 @@ const GroupConfigurations = () => {
               shouldShowExperimentGroups={shouldShowExperimentGroups}
               shouldShowContentGroup={!!contentGroup}
               shouldShowEnrollmentTrackGroup={!!enrollmentTrackGroup}
+              readOnly={!canManageGroupConfigurations}
             />
           </Layout.Element>
         </Layout>
