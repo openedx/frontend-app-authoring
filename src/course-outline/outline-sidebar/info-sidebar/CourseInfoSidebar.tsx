@@ -133,7 +133,7 @@ const SettingsTab = () => {
             />
           )
       )}
-      {perms.canManageGroupConfigurations && (
+      {perms.canViewGroupConfigurations && (
         <HelpSidebarLink
           as="span"
           pathToPage={`/course/${courseId}/${groupConfigurations}`}

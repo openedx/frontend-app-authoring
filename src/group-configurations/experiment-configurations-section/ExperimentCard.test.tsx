@@ -1,9 +1,8 @@
-import { render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-
+import { initializeMocks, render, userEvent } from '@src/testUtils';
+import { AvailableGroup } from '@src/group-configurations/types';
 import { experimentGroupConfigurationsMock } from '../__mocks__';
 import commonMessages from '../common/messages';
+import messages from './messages';
 import ExperimentCard from './ExperimentCard';
 
 const handleCreateMock = jest.fn();
@@ -16,21 +15,26 @@ const experimentConfigurationActions = {
 };
 
 const onCreateMock = jest.fn();
-const experimentConfiguration = experimentGroupConfigurationsMock[0];
+const experimentConfiguration = experimentGroupConfigurationsMock[0] as AvailableGroup;
+
+const courseId = 'course-v1:org+101+101';
 
 const renderComponent = (props = {}) =>
   render(
-    <IntlProvider locale="en">
-      <ExperimentCard
-        configuration={experimentConfiguration}
-        experimentConfigurationActions={experimentConfigurationActions}
-        onCreate={onCreateMock}
-        {...props}
-      />
-    </IntlProvider>,
+    <ExperimentCard
+      configuration={experimentConfiguration}
+      experimentConfigurationActions={experimentConfigurationActions}
+      onCreate={onCreateMock}
+      {...props}
+    />,
+    { path: '/course/:courseId/group_configurations', params: { courseId } },
   );
 
 describe('<ExperimentCard />', () => {
+  beforeEach(() => {
+    initializeMocks();
+  });
+
   it('renders component correctly', () => {
     const { getByText, getByTestId } = renderComponent();
     expect(getByText(experimentConfiguration.name)).toBeInTheDocument();
@@ -38,7 +42,7 @@ describe('<ExperimentCard />', () => {
       getByText(
         commonMessages.titleId.defaultMessage.replace(
           '{id}',
-          experimentConfiguration.id,
+          String(experimentConfiguration.id),
         ),
       ),
     ).toBeInTheDocument();
@@ -75,6 +79,20 @@ describe('<ExperimentCard />', () => {
     expect(
       getByTestId('experiment-configuration-card-usage-empty'),
     ).toBeInTheDocument();
+  });
+
+  it('hides the action buttons but keeps the outline link when readOnly', async () => {
+    const user = userEvent.setup();
+    const { queryByTestId, getByTestId, getByRole } = renderComponent({
+      configuration: { ...experimentConfiguration, usage: [] },
+      readOnly: true,
+    });
+    expect(queryByTestId('configuration-card-header-edit')).not.toBeInTheDocument();
+    expect(queryByTestId('configuration-card-header-delete')).not.toBeInTheDocument();
+
+    await user.click(getByTestId('configuration-card-header-button'));
+    expect(getByTestId('experiment-configuration-card-usage-empty')).toBeInTheDocument();
+    expect(getByRole('link', { name: messages.courseOutline.defaultMessage })).toBeInTheDocument();
   });
 
   it('renders usage with validation error message', async () => {

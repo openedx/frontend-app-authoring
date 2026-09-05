@@ -1,25 +1,30 @@
-import PropTypes from 'prop-types';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button, useToggle } from '@openedx/paragon';
 import { Add as AddIcon } from '@openedx/paragon/icons';
 
-import { availableGroupPropTypes } from '../constants';
+import { AvailableGroup, ContentGroupFormValues, GroupActions } from '@src/group-configurations/types';
 import EmptyPlaceholder from '../empty-placeholder';
 import ContentGroupCard from './ContentGroupCard';
 import ContentGroupForm from './ContentGroupForm';
 import { initialContentGroupObject } from './utils';
 import messages from './messages';
 
+interface ContentGroupsSectionProps {
+  availableGroup: AvailableGroup;
+  contentGroupActions: GroupActions;
+  readOnly?: boolean;
+}
+
 const ContentGroupsSection = ({
   availableGroup,
   contentGroupActions,
-}) => {
-  const { formatMessage } = useIntl();
+  readOnly = false,
+}: ContentGroupsSectionProps) => {
   const [isNewGroupVisible, openNewGroup, hideNewGroup] = useToggle(false);
   const { id: parentGroupId, groups, name } = availableGroup;
   const groupNames = groups?.map((group) => group.name);
 
-  const handleCreateNewGroup = (values) => {
+  const handleCreateNewGroup = (values: ContentGroupFormValues) => {
     const updatedContentGroups = {
       ...availableGroup,
       groups: [
@@ -30,7 +35,11 @@ const ContentGroupsSection = ({
     contentGroupActions.handleCreate(updatedContentGroups, hideNewGroup);
   };
 
-  const handleEditContentGroup = (id, { newGroupName }, callbackToClose) => {
+  const handleEditContentGroup = (
+    id: number,
+    { newGroupName }: ContentGroupFormValues,
+    callbackToClose: () => void,
+  ) => {
     const updatedContentGroups = {
       ...availableGroup,
       groups: availableGroup.groups.map((group) => (group.id === id ? { ...group, name: newGroupName } : group)),
@@ -52,11 +61,12 @@ const ContentGroupsSection = ({
                 groupNames={groupNames}
                 parentGroupId={parentGroupId}
                 key={group.id}
+                readOnly={readOnly}
                 contentGroupActions={contentGroupActions}
                 handleEditGroup={handleEditContentGroup}
               />
             ))}
-            {!isNewGroupVisible && (
+            {!readOnly && !isNewGroupVisible && (
               <Button
                 className="mt-4"
                 variant="outline-primary"
@@ -64,13 +74,13 @@ const ContentGroupsSection = ({
                 iconBefore={AddIcon}
                 block
               >
-                {formatMessage(messages.addNewGroup)}
+                <FormattedMessage {...messages.addNewGroup} />
               </Button>
             )}
           </>
         ) :
         (
-          !isNewGroupVisible && <EmptyPlaceholder onCreateNewGroup={openNewGroup} />
+          !isNewGroupVisible && <EmptyPlaceholder onCreateNewGroup={openNewGroup} readOnly={readOnly} />
         )}
       {isNewGroupVisible && (
         <ContentGroupForm
@@ -81,15 +91,6 @@ const ContentGroupsSection = ({
       )}
     </div>
   );
-};
-
-ContentGroupsSection.propTypes = {
-  availableGroup: PropTypes.shape(availableGroupPropTypes).isRequired,
-  contentGroupActions: PropTypes.shape({
-    handleCreate: PropTypes.func,
-    handleDelete: PropTypes.func,
-    handleEdit: PropTypes.func,
-  }).isRequired,
 };
 
 export default ContentGroupsSection;

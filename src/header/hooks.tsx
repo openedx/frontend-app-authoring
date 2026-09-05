@@ -125,7 +125,7 @@ export const useSettingMenuItems = (courseId: string) => {
           },
       ]
       : []),
-    ...(perms.canManageGroupConfigurations
+    ...(perms.canViewGroupConfigurations
       ? [{
         href: `/course/${courseId}/group_configurations`,
         title: intl.formatMessage(messages['header.links.groupConfigurations']),

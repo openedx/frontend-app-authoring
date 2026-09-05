@@ -283,7 +283,7 @@ describe('header utils', () => {
         canViewGradingSettings: true,
         canViewScheduleAndDetails: true,
         canViewCourseTeam: true,
-        canManageGroupConfigurations: true,
+        canViewGroupConfigurations: true,
         canViewCertificates: true,
       } as ReturnType<typeof useCourseUserPermissions>);
     });
@@ -492,12 +492,12 @@ describe('header utils', () => {
       expect(actualItemsTitle).not.toContain('Roles and Permissions');
     });
 
-    it('when authz flag is enabled and user lacks canManageGroupConfigurations should not include group configurations option', () => {
+    it('when authz flag is enabled and user lacks canViewGroupConfigurations should not include group configurations option', () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         isAuthzEnabled: true,
-        canManageGroupConfigurations: false,
+        canViewGroupConfigurations: false,
       } as any);
       const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result
         .current.map((item) => item.title);

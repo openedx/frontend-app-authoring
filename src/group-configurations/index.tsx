@@ -39,6 +39,7 @@ const GroupConfigurations = () => {
 
   const {
     isLoading: isLoadingUserPermissions,
+    canViewGroupConfigurations,
     canManageGroupConfigurations,
   } = useCourseUserPermissions(courseId, getGroupConfigurationsPermissions(courseId));
 
@@ -53,7 +54,7 @@ const GroupConfigurations = () => {
     allGroupConfigurations = [],
   } = groupConfigurations ?? {};
 
-  if (!isLoadingUserPermissions && !canManageGroupConfigurations) {
+  if (!isLoadingUserPermissions && !canViewGroupConfigurations) {
     return <PermissionDeniedAlert />;
   }
 
@@ -120,13 +121,14 @@ const GroupConfigurations = () => {
                 <ContentGroupsSection
                   availableGroup={contentGroup}
                   contentGroupActions={contentGroupActions}
+                  readOnly={!canManageGroupConfigurations}
                 />
               )}
               {shouldShowExperimentGroups && (
                 <ExperimentConfigurationsSection
-                  courseId={courseId}
                   availableGroups={experimentGroupConfigurations}
                   experimentConfigurationActions={experimentConfigurationActions}
+                  readOnly={!canManageGroupConfigurations}
                 />
               )}
             </Stack>
@@ -137,6 +139,7 @@ const GroupConfigurations = () => {
               shouldShowExperimentGroups={shouldShowExperimentGroups}
               shouldShowContentGroup={!!contentGroup}
               shouldShowEnrollmentTrackGroup={!!enrollmentTrackGroup}
+              readOnly={!canManageGroupConfigurations}
             />
           </Layout.Element>
         </Layout>

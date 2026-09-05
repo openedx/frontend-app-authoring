@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Hyperlink,
@@ -15,7 +14,8 @@ import {
   EditOutline as EditOutlineIcon,
 } from '@openedx/paragon/icons';
 
-import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import DeleteModal from '@src/generic/delete-modal/DeleteModal';
+import { AvailableGroup, GroupActions } from '@src/group-configurations/types';
 import TitleButton from '../common/TitleButton';
 import UsageList from '../common/UsageList';
 import ExperimentCardGroup from './ExperimentCardGroup';
@@ -23,12 +23,21 @@ import ExperimentForm from './ExperimentForm';
 import messages from './messages';
 import { initialExperimentConfiguration } from './constants';
 
+interface ExperimentCardProps {
+  configuration: AvailableGroup;
+  experimentConfigurationActions: GroupActions;
+  isExpandedByDefault?: boolean;
+  onCreate?: (configuration: AvailableGroup) => void;
+  readOnly?: boolean;
+}
+
 const ExperimentCard = ({
   configuration,
   experimentConfigurationActions,
-  isExpandedByDefault,
+  isExpandedByDefault = false,
   onCreate,
-}) => {
+  readOnly = false,
+}: ExperimentCardProps) => {
   const { formatMessage } = useIntl();
   const { courseId } = useParams();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -54,7 +63,7 @@ const ExperimentCard = ({
 
   const outlineComponentLink = (
     <Hyperlink destination={outlineUrl}>
-      {formatMessage(messages.courseOutline)}
+      <FormattedMessage {...messages.courseOutline} />
     </Hyperlink>
   );
 
@@ -63,7 +72,7 @@ const ExperimentCard = ({
       className="small text-gray-700"
       data-testid="experiment-configuration-card-usage-empty"
     >
-      {formatMessage(messages.emptyExperimentGroup, { outlineComponentLink })}
+      <FormattedMessage {...messages.emptyExperimentGroup} values={{ outlineComponentLink }} />
     </span>
   );
 
@@ -82,7 +91,7 @@ const ExperimentCard = ({
     closeDeleteModal();
   };
 
-  const handleEditConfiguration = (values) => {
+  const handleEditConfiguration = (values: AvailableGroup) => {
     experimentConfigurationActions.handleEdit(values, switchOffEditMode);
   };
 
@@ -103,7 +112,7 @@ const ExperimentCard = ({
           <div
             className="configuration-card"
             data-testid="configuration-card"
-            id={id}
+            id={String(id)}
           >
             <div className="configuration-card-header">
               <TitleButton
@@ -112,30 +121,34 @@ const ExperimentCard = ({
                 onTitleClick={() => setIsExpanded((prevState) => !prevState)}
                 isExperiment
               />
-              <ActionRow className="ml-auto d-flex">
-                <IconButtonWithTooltip
-                  tooltipContent={formatMessage(messages.actionEdit)}
-                  alt={formatMessage(messages.actionEdit)}
-                  src={EditOutlineIcon}
-                  iconAs={Icon}
-                  onClick={switchOnEditMode}
-                  data-testid="configuration-card-header-edit"
-                />
-                <IconButtonWithTooltip
-                  className="configuration-card-header__delete-tooltip"
-                  tooltipContent={formatMessage(
-                    isUsedInLocation
-                      ? messages.experimentConfigurationDeleteRestriction
-                      : messages.actionDelete,
-                  )}
-                  alt={formatMessage(messages.actionDelete)}
-                  src={DeleteOutlineIcon}
-                  iconAs={Icon}
-                  onClick={openDeleteModal}
-                  data-testid="configuration-card-header-delete"
-                  disabled={isUsedInLocation}
-                />
-              </ActionRow>
+              {!readOnly && (
+                <ActionRow className="ml-auto d-flex">
+                  <IconButtonWithTooltip
+                    tooltipContent={<FormattedMessage {...messages.actionEdit} />}
+                    alt={formatMessage(messages.actionEdit)}
+                    src={EditOutlineIcon}
+                    iconAs={Icon}
+                    onClick={switchOnEditMode}
+                    data-testid="configuration-card-header-edit"
+                  />
+                  <IconButtonWithTooltip
+                    className="configuration-card-header__delete-tooltip"
+                    tooltipContent={
+                      <FormattedMessage
+                        {...(isUsedInLocation
+                          ? messages.experimentConfigurationDeleteRestriction
+                          : messages.actionDelete)}
+                      />
+                    }
+                    alt={formatMessage(messages.actionDelete)}
+                    src={DeleteOutlineIcon}
+                    iconAs={Icon}
+                    onClick={openDeleteModal}
+                    data-testid="configuration-card-header-delete"
+                    disabled={isUsedInLocation}
+                  />
+                </ActionRow>
+              )}
             </div>
             {isExpanded && (
               <div
@@ -165,62 +178,6 @@ const ExperimentCard = ({
       />
     </>
   );
-};
-
-ExperimentCard.defaultProps = {
-  configuration: {
-    id: undefined,
-    name: '',
-    usage: [],
-    version: undefined,
-  },
-  isExpandedByDefault: false,
-  onCreate: null,
-  experimentConfigurationActions: {},
-};
-
-ExperimentCard.propTypes = {
-  configuration: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    usage: PropTypes.arrayOf(
-      PropTypes.shape({
-        label: PropTypes.string,
-        url: PropTypes.string,
-        validation: PropTypes.shape({
-          type: PropTypes.string,
-          text: PropTypes.string,
-        }),
-      }),
-    ),
-    version: PropTypes.number.isRequired,
-    active: PropTypes.bool,
-    description: PropTypes.string,
-    groups: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number,
-        name: PropTypes.string,
-        usage: PropTypes.arrayOf(
-          PropTypes.shape({
-            label: PropTypes.string,
-            url: PropTypes.string,
-          }),
-        ),
-        version: PropTypes.number,
-      }),
-    ),
-    parameters: PropTypes.shape({
-      courseId: PropTypes.string,
-    }),
-    scheme: PropTypes.string,
-  }),
-  isExpandedByDefault: PropTypes.bool,
-  onCreate: PropTypes.func,
-  experimentConfigurationActions: PropTypes.shape({
-    handleCreate: PropTypes.func,
-    handleEdit: PropTypes.func,
-    handleDelete: PropTypes.func,
-  }),
 };
 
 export default ExperimentCard;

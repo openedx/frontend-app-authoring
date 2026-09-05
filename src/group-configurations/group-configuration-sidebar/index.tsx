@@ -1,27 +1,35 @@
 import { Fragment } from 'react';
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Hyperlink } from '@openedx/paragon';
 
-import { HelpSidebar } from '../../generic/help-sidebar';
-import { useHelpUrls } from '../../help-urls/hooks';
+import { HelpSidebar } from '@src/generic/help-sidebar';
+import { useHelpUrls } from '@src/help-urls/hooks';
 import { getSidebarData } from './utils';
 import messages from './messages';
+
+interface GroupConfigurationSidebarProps {
+  courseId: string;
+  shouldShowExperimentGroups: boolean;
+  shouldShowContentGroup: boolean;
+  shouldShowEnrollmentTrackGroup: boolean;
+  readOnly?: boolean;
+}
 
 const GroupConfigurationSidebar = ({
   courseId,
   shouldShowExperimentGroups,
   shouldShowContentGroup,
   shouldShowEnrollmentTrackGroup,
-}) => {
+  readOnly = false,
+}: GroupConfigurationSidebarProps) => {
   const intl = useIntl();
   const urls = useHelpUrls(['groupConfigurations', 'enrollmentTracks', 'contentGroups']);
   const sidebarData = getSidebarData({
-    messages,
     intl,
     shouldShowExperimentGroups,
     shouldShowContentGroup,
     shouldShowEnrollmentTrackGroup,
+    readOnly,
   });
 
   return (
@@ -36,15 +44,15 @@ const GroupConfigurationSidebar = ({
             <h4 className="help-sidebar-about-title">
               {title}
             </h4>
-            {paragraphs.map((text) => (
-              <p key={text} className="help-sidebar-about-descriptions">
-                {text}
+            {paragraphs.map(({ id, content }) => (
+              <p key={id} className="help-sidebar-about-descriptions">
+                {content}
               </p>
             ))}
             <Hyperlink
               target="_blank"
               showLaunchIcon={false}
-              href={urls[urlKey]}
+              destination={urls[urlKey]}
               className="mt-2 mb-3.5 sidebar-link"
             >
               {intl.formatMessage(messages.learnMoreBtn)}
@@ -54,13 +62,6 @@ const GroupConfigurationSidebar = ({
         ))}
     </HelpSidebar>
   );
-};
-
-GroupConfigurationSidebar.propTypes = {
-  courseId: PropTypes.string.isRequired,
-  shouldShowContentGroup: PropTypes.bool.isRequired,
-  shouldShowExperimentGroups: PropTypes.bool.isRequired,
-  shouldShowEnrollmentTrackGroup: PropTypes.bool.isRequired,
 };
 
 export default GroupConfigurationSidebar;
