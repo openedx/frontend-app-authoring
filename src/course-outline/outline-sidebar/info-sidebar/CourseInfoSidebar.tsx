@@ -30,6 +30,7 @@ const DetailsTab = () => {
     [`context_key = "${courseId}"`],
   );
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
+  const { canManageTags } = useCourseUserPermissions(courseId, permissionHelpers.getTagsPermissions(courseId));
 
   return (
     <>
@@ -43,12 +44,14 @@ const DetailsTab = () => {
         <SidebarSection
           title={intl.formatMessage(messages.sidebarSectionTaxonomy)}
           icon={Tag}
-          actions={[
-            {
-              label: intl.formatMessage(messages.sidebarSectionTaxonomyManageTags),
-              onClick: openManageTagsDrawer,
-            },
-          ]}
+          actions={canManageTags ?
+            [
+              {
+                label: intl.formatMessage(messages.sidebarSectionTaxonomyManageTags),
+                onClick: openManageTagsDrawer,
+              },
+            ] :
+            undefined}
         >
           <ContentTagsSnippet contentId={courseId} />
         </SidebarSection>

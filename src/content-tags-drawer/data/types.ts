@@ -80,3 +80,34 @@ export interface StagedTagData {
   value: string;
   label: string;
 }
+
+/**
+ * A tag as shown in the tags drawer. Tags fetched from the server carry more fields
+ * (see `Tag`), but tags the user has staged in the drawer are only known by these.
+ */
+export interface DrawerTag {
+  value: string;
+  lineage: string[];
+  canDeleteObjecttag: boolean;
+  /** Only known for tags fetched from the server; not set on tags staged in the drawer. */
+  canChangeObjecttag?: boolean;
+  /** Only known for tags fetched from the server; not set on tags staged in the drawer. */
+  isCopied?: boolean;
+}
+
+/** A taxonomy as shown in the tags drawer, along with the tags applied to the content. */
+export interface DrawerTaxonomy extends Pick<TaxonomyData, 'id' | 'name' | 'canTagObject'> {
+  contentTags: DrawerTag[];
+}
+
+/**
+ * A taxonomy that is applied to the content but is not in the taxonomy list the user
+ * can see, so it is rebuilt from the tags applied to the content.
+ */
+export interface OtherTaxonomy extends
+  DrawerTaxonomy,
+  Pick<
+    TaxonomyData,
+    'exportId' | 'enabled' | 'visibleToAuthors' | 'canChangeTaxonomy' | 'canDeleteTaxonomy'
+  >
+{}

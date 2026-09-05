@@ -20,9 +20,10 @@ import { TagTree } from '../ContentTagsCollapsible';
 
 interface TagsSidebarBodyProps {
   readOnly: boolean;
+  canManageTags?: boolean;
 }
 
-const TagsSidebarBody = ({ readOnly }: TagsSidebarBodyProps) => {
+const TagsSidebarBody = ({ readOnly, canManageTags = true }: TagsSidebarBodyProps) => {
   const intl = useIntl();
   const [showManageTags, setShowManageTags] = useState(false);
   const contentId = useParams().blockId;
@@ -97,15 +98,17 @@ const TagsSidebarBody = ({ readOnly }: TagsSidebarBodyProps) => {
               </div>
             )}
 
-          <Button
-            className="mt-3 ml-2"
-            variant="outline-primary"
-            size="sm"
-            onClick={() => setShowManageTags(true)}
-            disabled={readOnly}
-          >
-            {intl.formatMessage(messages.manageTagsButton)}
-          </Button>
+          {canManageTags && (
+            <Button
+              className="mt-3 ml-2"
+              variant="outline-primary"
+              size="sm"
+              onClick={() => setShowManageTags(true)}
+              disabled={readOnly}
+            >
+              {intl.formatMessage(messages.manageTagsButton)}
+            </Button>
+          )}
         </Stack>
       </Card.Body>
       <ContentTagsDrawerSheet

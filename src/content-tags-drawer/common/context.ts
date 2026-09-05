@@ -1,11 +1,16 @@
 import React from 'react';
 
-import type { TagsInTaxonomy, StagedTagData } from '../data/types';
+import type {
+  DrawerTag,
+  DrawerTaxonomy,
+  OtherTaxonomy,
+  StagedTagData,
+} from '../data/types';
 
 export interface ContentTagsDrawerContextData {
   stagedContentTags: Record<number, StagedTagData[]>;
-  globalStagedContentTags: Record<number, StagedTagData[]>;
-  globalStagedRemovedContentTags: Record<number, string>;
+  globalStagedContentTags: Record<number, DrawerTag[]>;
+  globalStagedRemovedContentTags: Record<number, string[]>;
   addStagedContentTag: (taxonomyId: number, addedTag: StagedTagData) => void;
   removeStagedContentTag: (taxonomyId: number, tagValue: string) => void;
   removeGlobalStagedContentTag: (taxonomyId: number, tagValue: string) => void;
@@ -19,7 +24,7 @@ export interface ContentTagsDrawerContextData {
   isContentTaxonomyTagsLoaded: boolean;
   isTaxonomyListLoaded: boolean;
   contentName: string;
-  tagsByTaxonomy: TagsInTaxonomy[];
+  tagsByTaxonomy: DrawerTaxonomy[];
   isEditMode: boolean;
   toEditMode: () => void;
   toReadMode: () => void;
@@ -30,7 +35,7 @@ export interface ContentTagsDrawerContextData {
   showToastAfterSave: () => void;
   closeToast: () => void;
   setCollapsibleToInitalState: () => void;
-  otherTaxonomies: TagsInTaxonomy[];
+  otherTaxonomies: OtherTaxonomy[];
 }
 
 /* istanbul ignore next */

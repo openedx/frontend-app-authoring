@@ -6,13 +6,19 @@ export interface AlignSidebarProps {
   contentId: string;
   title: string;
   onBackBtnClick?: () => void;
+  readOnly?: boolean;
 }
 
 /**
  * Sidebar that renders Align Sidebar (manage tags sidebar)
  * for the given content.
  */
-export const AlignSidebar = ({ contentId, title, onBackBtnClick }: AlignSidebarProps) => (
+export const AlignSidebar = ({
+  contentId,
+  title,
+  onBackBtnClick,
+  readOnly = false,
+}: AlignSidebarProps) => (
   <div>
     <SidebarTitle
       title={title}
@@ -22,6 +28,7 @@ export const AlignSidebar = ({ contentId, title, onBackBtnClick }: AlignSidebarP
     <ContentTagsDrawer
       id={contentId}
       variant="component"
+      readOnly={readOnly}
     />
   </div>
 );

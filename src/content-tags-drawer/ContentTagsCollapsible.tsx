@@ -1,9 +1,16 @@
-// @ts-check
-// disable prop-types since we're using TypeScript to define the prop types,
-// but the linter can't detect that in a .jsx file.
-/* eslint-disable react/prop-types */
 import React, { useContext } from 'react';
 import Select, { components } from 'react-select';
+import type {
+  GroupBase,
+  IndicatorsContainerProps,
+  InputActionMeta,
+  MenuProps,
+  SelectInstance,
+} from 'react-select';
+// This import is necessary for the module augmentation below.
+// It allows us to extend the 'Props' interface in the 'react-select/base' module
+// and add our custom properties to it.
+import type {} from 'react-select/base';
 import {
   Collapsible,
   Button,
@@ -23,17 +30,56 @@ import ContentTagsDropDownSelector from './ContentTagsDropDownSelector';
 import useContentTagsCollapsibleHelper from './ContentTagsCollapsibleHelper';
 import TagsTree from './TagsTree';
 import { ContentTagsDrawerContext } from './common/context';
+import type { DrawerTaxonomy, StagedTagData } from './data/types';
 
-/** @typedef {import("./ContentTagsCollapsible").TaxonomySelectProps} TaxonomySelectProps */
-/** @typedef {import("../taxonomy/data/types.js").TaxonomyData} TaxonomyData */
-/** @typedef {import("./data/types.js").Tag} ContentTagData */
-/** @typedef {import("./data/types.js").StagedTagData} StagedTagData */
+export interface TagTreeEntry {
+  explicit: boolean;
+  children: Record<string, TagTreeEntry>;
+  isCopied: boolean;
+  canChangeObjecttag: boolean;
+  canDeleteObjecttag: boolean;
+}
+
+export interface TaxonomySelectProps {
+  taxonomyId: number;
+  searchTerm: string;
+  appliedContentTagsTree: Record<string, TagTreeEntry>;
+  stagedContentTagsTree: Record<string, TagTreeEntry>;
+  checkedTags: string[];
+  selectCancelRef: React.RefObject<HTMLButtonElement>;
+  selectAddRef: React.RefObject<HTMLButtonElement>;
+  selectInlineAddRef: React.RefObject<HTMLButtonElement>;
+  handleCommitStagedTags: () => void;
+  handleCancelStagedTags: () => void;
+  handleSelectableBoxChange: React.ChangeEventHandler<HTMLInputElement>;
+}
+
+// Unfortunately the only way to specify the custom props we pass into React Select
+// is with this global type augmentation.
+// https://react-select.com/typescript#custom-select-props
+// If in the future other parts of this MFE need to use React Select for different things,
+// we should change to using a 'react context' to share this data within <ContentTagsCollapsible>,
+// rather than using the custom <Select> Props (selectProps).
+declare module 'react-select/base' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  export interface Props<Option, IsMulti extends boolean, Group extends GroupBase<Option>> extends TaxonomySelectProps {
+  }
+}
+
+export type TagTree = {
+  [key: string]: {
+    children: TagTree;
+    canChangeObjecttag: boolean;
+    canDeleteObjecttag: boolean;
+    explicit: boolean;
+    isCopied: boolean;
+  };
+};
 
 /**
  * Custom Menu component for our Select box
- * @param {import("react-select").MenuProps&{selectProps: TaxonomySelectProps}} props
  */
-const CustomMenu = (props) => {
+const CustomMenu = (props: MenuProps<StagedTagData, true>) => {
   const {
     handleSelectableBoxChange,
     checkedTags,
@@ -47,6 +93,7 @@ const CustomMenu = (props) => {
     selectAddRef,
     value,
   } = props.selectProps;
+  const stagedTags: readonly StagedTagData[] = Array.isArray(value) ? value : [];
   const intl = useIntl();
   return (
     <components.Menu {...props}>
@@ -59,7 +106,7 @@ const CustomMenu = (props) => {
           className="taxonomy-tags-selectable-box-set"
           onChange={handleSelectableBoxChange}
           value={checkedTags}
-          tabIndex="-1"
+          tabIndex={-1}
         >
           <ContentTagsDropDownSelector
             key={`selector-${taxonomyId}`}
@@ -87,7 +134,7 @@ const CustomMenu = (props) => {
               ref={selectAddRef}
               variant="tertiary"
               className="text-info-500 add-tags-button"
-              disabled={!(value && value.length)}
+              disabled={!stagedTags.length}
               onClick={handleCommitStagedTags}
             >
               {intl.formatMessage(messages.collapsibleAddStagedTagsButtonText)}
@@ -99,7 +146,7 @@ const CustomMenu = (props) => {
   );
 };
 
-const disableActionKeys = (e) => {
+const disableActionKeys = (e: React.KeyboardEvent) => {
   const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowLeft', 'Backspace'];
   if (arrowKeys.includes(e.code)) {
     e.preventDefault();
@@ -118,18 +165,18 @@ const CustomLoadingIndicator = () => {
 
 /**
  * Custom IndicatorsContainer component for our Select box
- * @param {import("react-select").IndicatorsContainerProps&{selectProps: TaxonomySelectProps}} props
  */
-const CustomIndicatorsContainer = (props) => {
+const CustomIndicatorsContainer = (props: IndicatorsContainerProps<StagedTagData, true>) => {
   const {
     value,
     handleCommitStagedTags,
     selectInlineAddRef,
   } = props.selectProps;
+  const stagedTags: readonly StagedTagData[] = Array.isArray(value) ? value : [];
   const intl = useIntl();
   return (
     <components.IndicatorsContainer {...props}>
-      {(value && value.length && (
+      {(stagedTags.length > 0 && (
         <Button
           variant="dark"
           size="sm"
@@ -150,6 +197,17 @@ const CustomIndicatorsContainer = (props) => {
     </components.IndicatorsContainer>
   );
 };
+
+interface ContentTagsCollapsibleProps {
+  /** Id of the content object */
+  contentId: string;
+  /** Taxonomy metadata & applied tags */
+  taxonomyAndTagsData: DrawerTaxonomy;
+  /** Array of staged tags represented as objects with value/label */
+  stagedContentTags: StagedTagData[];
+  /** True if the collapsible is open */
+  collapsibleState: boolean;
+}
 
 /**
  * Collapsible component that holds a Taxonomy along with Tags that belong to it.
@@ -220,27 +278,20 @@ const CustomIndicatorsContainer = (props) => {
  * Here is an example of what the value of the "Virology" tag would be:
  *
  *  "Science%20and%20Research,Molecular%2C%20Cellular%2C%20and%20Microbiology,Virology"
- *
- * @param {Object} props - The component props.
- * @param {string} props.contentId - Id of the content object
- * @param {StagedTagData[]} props.stagedContentTags
- *        - Array of staged tags represented as objects with value/label
- * @param {TaxonomyData & {contentTags: ContentTagData[]}} props.taxonomyAndTagsData - Taxonomy metadata & applied tags
- * @param {boolean} props.collapsibleState - True if the collapsible is open
  */
 const ContentTagsCollapsible = ({
   contentId,
   taxonomyAndTagsData,
   stagedContentTags,
   collapsibleState,
-}) => {
+}: ContentTagsCollapsibleProps) => {
   const intl = useIntl();
   const { id: taxonomyId, name, canTagObject } = taxonomyAndTagsData;
-  const selectCancelRef = React.useRef(/** @type {HTMLSelectElement | null} */ (null));
-  const selectAddRef = React.useRef(/** @type {HTMLSelectElement | null} */ (null));
-  const selectInlineAddRef = React.useRef(/** @type {HTMLSelectElement | null} */ (null));
-  const selectInlineEditModeRef = React.useRef(/** @type {HTMLButtonElement | null} */ (null));
-  const selectRef = React.useRef(/** @type {HTMLSelectElement | null} */ (null));
+  const selectCancelRef = React.useRef<HTMLButtonElement>(null);
+  const selectAddRef = React.useRef<HTMLButtonElement>(null);
+  const selectInlineAddRef = React.useRef<HTMLButtonElement>(null);
+  const selectInlineEditModeRef = React.useRef<HTMLButtonElement>(null);
+  const selectRef = React.useRef<SelectInstance<StagedTagData, true>>(null);
 
   const [selectMenuIsOpen, setSelectMenuIsOpen] = React.useState(false);
 
@@ -269,15 +320,15 @@ const ContentTagsCollapsible = ({
 
   const [searchTerm, setSearchTerm] = React.useState('');
 
-  const handleSelectableBoxChange = React.useCallback((e) => {
+  const handleSelectableBoxChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     tagChangeHandler(e.target.value, e.target.checked);
   }, [tagChangeHandler]);
 
-  const handleSearch = debounce((term) => {
+  const handleSearch = debounce((term: string) => {
     setSearchTerm(term.trim());
   }, 500); // Perform search after 500ms
 
-  const handleSearchChange = React.useCallback((value, { action }) => {
+  const handleSearchChange = React.useCallback((value: string, { action }: InputActionMeta) => {
     if (action === 'input-blur') {
       if (!selectMenuIsOpen) {
         // Cancel/clear search if focused away from select input and menu closed
@@ -299,7 +350,7 @@ const ContentTagsCollapsible = ({
   // staged tags in the react-select input are removed or fully cleared.
   // The remaining staged tags are passed in as the parameter, so we set the state
   // to the passed in tags
-  const handleStagedTagsMenuChange = React.useCallback((stagedTags) => {
+  const handleStagedTagsMenuChange = React.useCallback((stagedTags: readonly StagedTagData[]) => {
     // Get tags that were unstaged to remove them from checkbox selector
     const unstagedTags = stagedContentTags.filter(
       t1 => !stagedTags.some(t2 => t1.value === t2.value),
@@ -310,7 +361,7 @@ const ContentTagsCollapsible = ({
     // only called when a change occurs in the react-select menu component we know that tags can only be
     // removed from there, hence the tagChangeHandler is always called with `checked=false`.
     unstagedTags.forEach(unstagedTag => tagChangeHandler(unstagedTag.value, false));
-    setStagedTags(taxonomyId, stagedTags);
+    setStagedTags(taxonomyId, [...stagedTags]);
   }, [taxonomyId, setStagedTags, stagedContentTags, tagChangeHandler]);
 
   const handleCommitStagedTags = React.useCallback(() => {
@@ -328,7 +379,7 @@ const ContentTagsCollapsible = ({
     setSelectMenuIsOpen(false);
   }, [handleStagedTagsMenuChange, selectRef, setSearchTerm]);
 
-  const handleSelectOnKeyDown = (event) => {
+  const handleSelectOnKeyDown = (event: React.KeyboardEvent) => {
     const focusedElement = event.target;
 
     if (event.key === 'Escape') {
@@ -345,7 +396,6 @@ const ContentTagsCollapsible = ({
           setSelectMenuIsOpen(false);
         }
         // Navigating backwards
-        // @ts-ignore inputRef actually exists under the current selectRef
       } else if (event.shiftKey && focusedElement === selectRef.current?.inputRef) {
         setSelectMenuIsOpen(false);
       }
@@ -359,10 +409,11 @@ const ContentTagsCollapsible = ({
   }, [setSelectMenuIsOpen, setSearchTerm]);
 
   // Handles logic to close the select menu when clicking outside
-  const handleOnBlur = React.useCallback((event) => {
+  const handleOnBlur = React.useCallback((event: React.FocusEvent) => {
     // Check if a target we are focusing to is an element in our select menu, if not close it
     const menuClasses = ['dropdown-selector', 'inline-add-button', 'cancel-add-tags-button'];
-    if (!event.relatedTarget || !menuClasses.some(cls => event.relatedTarget.className?.includes(cls))) {
+    const { relatedTarget } = event;
+    if (!relatedTarget || !menuClasses.some(cls => relatedTarget.className?.includes(cls))) {
       setSelectMenuIsOpen(false);
     }
   }, [setSelectMenuIsOpen]);
@@ -419,7 +470,7 @@ const ContentTagsCollapsible = ({
             )}
 
           <div className="d-flex taxonomy-tags-selector-menu">
-            {isEditMode && (
+            {isEditMode && canTagObject && (
               <Select
                 onBlur={handleOnBlur}
                 styles={{
@@ -433,7 +484,7 @@ const ContentTagsCollapsible = ({
                 menuIsOpen={selectMenuIsOpen}
                 onFocus={onSelectMenuFocus}
                 onKeyDown={handleSelectOnKeyDown}
-                ref={/** @type {React.RefObject} */ (selectRef)}
+                ref={selectRef}
                 isMulti
                 isLoading={updateTags.isPending}
                 isDisabled={updateTags.isPending}

@@ -12,6 +12,7 @@ import {
   getChecklistsPermissions,
   getImportExportPermissions,
   getViewTeamPermissions,
+  getTagsPermissions,
 } from './permissionHelpers';
 import { CONTENT_LIBRARY_PERMISSIONS, COURSE_PERMISSIONS } from './constants';
 
@@ -272,6 +273,26 @@ describe('permissionHelpers', () => {
           scope: courseId,
         },
       });
+    });
+  });
+
+  describe('getTagsPermissions', () => {
+    it('returns MANAGE_TAGS permission with the correct action and scope', () => {
+      const result = getTagsPermissions(courseId);
+
+      expect(result).toEqual({
+        canManageTags: {
+          action: COURSE_PERMISSIONS.MANAGE_TAGS,
+          scope: courseId,
+        },
+      });
+    });
+
+    it('uses the provided courseId as scope', () => {
+      const customCourseId = 'course-v1:TestOrg+TestCourse+2024';
+      const result = getTagsPermissions(customCourseId);
+
+      expect(result.canManageTags.scope).toBe(customCourseId);
     });
   });
 

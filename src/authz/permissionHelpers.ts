@@ -143,6 +143,13 @@ export const getImportExportPermissions = (courseId: string) => ({
   },
 });
 
+export const getTagsPermissions = (courseId: string) => ({
+  canManageTags: {
+    action: COURSE_PERMISSIONS.MANAGE_TAGS,
+    scope: courseId,
+  },
+});
+
 export const getFilesPermissions = (courseId: string) => ({
   canViewFiles: {
     action: COURSE_PERMISSIONS.VIEW_FILES,
