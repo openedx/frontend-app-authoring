@@ -287,6 +287,7 @@ const TranscriptEditor = ({
       }
 
       const currentCue = prev[index];
+      /* istanbul ignore if -- insert buttons always pass a valid index */
       if (!currentCue) {
         return prev;
       }
@@ -362,6 +363,7 @@ const TranscriptEditor = ({
 
   const handleSave = async () => {
     const hasInvalidCueTextValue = cues.some((cue) => hasInvalidCueText(cue.text));
+    /* istanbul ignore if -- the save button is disabled in this state */
     if (hasInvalidCueTextValue) {
       return;
     }

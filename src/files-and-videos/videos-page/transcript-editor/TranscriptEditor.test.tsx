@@ -2,6 +2,7 @@ import type MockAdapter from 'axios-mock-adapter';
 import { logError } from '@edx/frontend-platform/logging';
 
 import {
+  act,
   fireEvent,
   initializeMocks,
   render,
@@ -258,5 +259,140 @@ describe('TranscriptEditor', () => {
     playSpy.mockRejectedValueOnce(new Error('autoplay blocked'));
     fireEvent.click(seekButtons[1]);
     await waitFor(() => expect(logError).toHaveBeenCalledTimes(1));
+  });
+  it('leaves invalid timestamps unchanged on blur, for both start and end fields', async () => {
+    mockTranscript();
+    renderEditor();
+    await screen.findByDisplayValue('Hello');
+
+    const start = screen.getByRole('textbox', { name: 'Cue 1 start time' });
+    fireEvent.change(start, { target: { value: '00:00:01,5' } });
+    fireEvent.blur(start, { target: { value: '00:00:01,5' } });
+    expect(start).toHaveValue('00:00:01,5');
+
+    const end = screen.getByRole('textbox', { name: 'Cue 1 end time' });
+    fireEvent.change(end, { target: { value: '00:00:02,5' } });
+    fireEvent.blur(end, { target: { value: '00:00:02,5' } });
+    expect(end).toHaveValue('00:00:02,5');
+  });
+
+  it('updates the active cue from video timeupdate events', async () => {
+    mockTranscript();
+    renderEditor();
+    await screen.findByDisplayValue('Hello');
+
+    const video = document.querySelector('video') as HTMLVideoElement;
+    Object.defineProperty(video, 'currentTime', { value: 1.5, configurable: true });
+    fireEvent.timeUpdate(video);
+    await waitFor(() => expect(document.querySelector('.transcript-editor-modal__cue--active')).not.toBeNull());
+  });
+
+  it('does not close while a save is in progress', async () => {
+    mockTranscript();
+    let finishSave: (value: [number]) => void = () => {};
+    axiosMock.onPost(/transcript_upload/).reply(() =>
+      new Promise<[number]>((resolve) => {
+        finishSave = resolve;
+      })
+    );
+    const onClose = jest.fn();
+    renderEditor({ onClose });
+
+    fireEvent.change(await screen.findByDisplayValue('Hello'), { target: { value: 'Hello edited' } });
+    fireEvent.click(screen.getByRole('button', { name: messages.saveButtonLabel.defaultMessage }));
+    await screen.findAllByText(messages.saveInProgressLabel.defaultMessage);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    expect(onClose).not.toHaveBeenCalled();
+
+    finishSave([200]);
+    expect(await screen.findByText(messages.savedLabel.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('falls back to setting scrollTop when scrollTo is unavailable', async () => {
+    const original = Element.prototype.scrollTo;
+    Object.defineProperty(Element.prototype, 'scrollTo', { value: undefined, configurable: true, writable: true });
+    try {
+      mockTranscript();
+      renderEditor();
+      await screen.findByDisplayValue('Hello');
+      fireEvent.click(screen.getAllByRole('button', { name: messages.seekCueLabel.defaultMessage })[0]);
+      await waitFor(() => expect(document.querySelector('.transcript-editor-modal__cue--active')).not.toBeNull());
+    } finally {
+      Object.defineProperty(Element.prototype, 'scrollTo', { value: original, configurable: true, writable: true });
+    }
+  });
+
+  it('ignores a transcript that arrives after the editor unmounted', async () => {
+    mockTranscript();
+    const { unmount } = renderEditor();
+    unmount();
+    await waitFor(() => expect(axiosMock.history.get).toHaveLength(1));
+    await act(async () => {
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+    });
+  });
+
+  it('ignores a load failure that arrives after the editor unmounted', async () => {
+    axiosMock.onGet(/transcript_download/).reply(500);
+    const { unmount } = renderEditor();
+    unmount();
+    await waitFor(() => expect(axiosMock.history.get).toHaveLength(1));
+    await act(async () => {
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+    });
+  });
+
+  it('closes the unsaved-changes dialog with Escape', async () => {
+    mockTranscript();
+    renderEditor();
+    fireEvent.change(await screen.findByDisplayValue('Hello'), { target: { value: 'Changed' } });
+    fireEvent.click(screen.getByRole('button', { name: messages.cancelButtonLabel.defaultMessage }));
+    const description = await screen.findByText(messages.unsavedModalDescription.defaultMessage);
+
+    fireEvent.keyDown(description, { key: 'Escape', code: 'Escape', keyCode: 27 });
+    await waitFor(() =>
+      expect(screen.queryByText(messages.unsavedModalDescription.defaultMessage)).not.toBeInTheDocument()
+    );
+  });
+  it('inserts after the last cue using a default two-second window', async () => {
+    mockTranscript();
+    renderEditor();
+    await screen.findByDisplayValue('Hello');
+
+    const insertButtons = screen.getAllByRole('button', { name: messages.insertCueLabel.defaultMessage });
+    fireEvent.click(insertButtons[insertButtons.length - 1]);
+    // Last cue ends at 00:00:04,000, so the new cue spans 04,000 -> 06,000.
+    expect(screen.getAllByDisplayValue('00:00:04,000')).toHaveLength(2);
+    expect(screen.getByDisplayValue('00:00:06,000')).toBeInTheDocument();
+  });
+
+  it('falls back to the language code when no display name is configured', async () => {
+    mockTranscript();
+    renderEditor({ languages: {} });
+    await screen.findByDisplayValue('Hello');
+    expect(screen.getByText('en')).toBeInTheDocument();
+  });
+
+  it('renders without fetching when no language is selected', () => {
+    renderEditor({ language: undefined, languages: undefined });
+    expect(axiosMock.history.get).toHaveLength(0);
+    expect(screen.getByRole('button', { name: messages.insertCueLabel.defaultMessage })).toBeInTheDocument();
+  });
+  it('uses a plain two-second window when the next cue starts before the current one ends', async () => {
+    mockTranscript();
+    renderEditor();
+    await screen.findByDisplayValue('Hello');
+
+    // Push cue 1's end past cue 2's start (00:00:03,000), then insert after cue 1.
+    const end = screen.getByRole('textbox', { name: 'Cue 1 end time' });
+    fireEvent.change(end, { target: { value: '00:00:05,000' } });
+    fireEvent.click(screen.getAllByRole('button', { name: messages.insertCueLabel.defaultMessage })[0]);
+    expect(screen.getAllByDisplayValue('00:00:05,000')).toHaveLength(2);
+    expect(screen.getByDisplayValue('00:00:07,000')).toBeInTheDocument();
   });
 });

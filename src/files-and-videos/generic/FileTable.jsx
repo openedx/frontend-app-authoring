@@ -49,7 +49,7 @@ const FileTable = ({
   maxFileSize,
   thumbnailPreview,
   infoModalSidebar,
-  infoModalContentUnderPreview = /** @type {(file: any) => React.ReactNode} */ (() => null),
+  infoModalContentUnderPreview = /** @type {(file: any) => React.ReactNode} */ (/* istanbul ignore next */ () => null),
   permissions = {
     canCreateFiles: true,
     canDeleteFiles: true,

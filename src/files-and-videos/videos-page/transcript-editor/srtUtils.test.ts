@@ -42,6 +42,10 @@ describe('parseSrt', () => {
     expect(parseSrt(partiallyBroken)).toHaveLength(2);
   });
 
+  it('drops blocks that have fewer than two lines', () => {
+    expect(parseSrt(`${SRT}\n\nlonely line`)).toHaveLength(2);
+  });
+
   it('returns an empty list for empty or non-string input', () => {
     expect(parseSrt('')).toEqual([]);
     expect(parseSrt(null)).toEqual([]);
@@ -62,6 +66,7 @@ describe('parseTimestamp / formatTimestamp', () => {
   it('parses SRT timestamps into seconds', () => {
     expect(parseTimestamp('01:02:03,450')).toBeCloseTo(3723.45);
     expect(parseTimestamp('00:00:00,000')).toBe(0);
+    expect(parseTimestamp('00:01:00')).toBe(60);
   });
 
   it('formats seconds into SRT timestamps and round-trips', () => {

@@ -24,7 +24,7 @@ const InfoModal = ({
   usagePathStatus,
   error,
   sidebar,
-  contentUnderPreview = null,
+  contentUnderPreview = /* istanbul ignore next */ null,
 }) => {
   const intl = useIntl();
   const [activeTab, setActiveTab] = useState('fileInfo');
