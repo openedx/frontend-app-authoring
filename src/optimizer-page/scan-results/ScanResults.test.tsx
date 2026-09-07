@@ -861,6 +861,58 @@ describe('ScanResults', () => {
       expect(screen.getByText('https://updated.run/link1-v1')).toBeInTheDocument();
     });
 
+    it('processes a terminal bulk response with mapped and unmatched results', async () => {
+      const user = userEvent.setup();
+      let status: any = { data: undefined, isFetching: false, isSuccess: false, refetch };
+      const onErrorStateChange = jest.fn();
+      mockedUseRerunLinkUpdateStatus.mockImplementation(() => status);
+      const view = renderScanResults(previousRunOnlyData, onErrorStateChange);
+
+      await user.click(screen.getByTestId('update-all-course'));
+      status = {
+        data: {
+          status: 'Succeeded',
+          results: [
+            {
+              id: 'api-course-update',
+              type: 'course_updates',
+              success: true,
+              originalUrl: 'https://previous.run/link1',
+              newUrl: 'https://updated.run/link1',
+            },
+            { id: 'unknown-1', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
+            { id: 'unknown-2', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
+            { id: 'unknown-3', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
+            { id: 'unknown-4', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
+          ],
+        },
+        isFetching: false,
+        isSuccess: true,
+        refetch,
+      };
+      view.rerender(
+        <ScanResults data={previousRunOnlyData} courseId={courseId} onErrorStateChange={onErrorStateChange} />,
+      );
+
+      await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
+      expect(await screen.findByText('https://updated.run/link1')).toBeInTheDocument();
+      expect(onErrorStateChange).toHaveBeenCalledWith(null);
+    });
+
+    it('uses locally updated links when the API still reports them as unchanged', async () => {
+      const user = userEvent.setup();
+      const view = renderScanResults(previousRunOnlyData);
+      refetch.mockResolvedValue({
+        data: { status: 'Succeeded', results: [successfulResult('https://updated.run/link1')] },
+      });
+
+      await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
+      await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
+      await waitFor(() => expect(screen.getByText('https://updated.run/link1')).toBeInTheDocument());
+      expect(screen.getByTestId('update-all-course')).toBeDisabled();
+      view.unmount();
+    });
+
     it('drops existing IDs that are in the new bulk successful set', async () => {
       const user = userEvent.setup();
       let status: any = { data: undefined, isFetching: false, isSuccess: false, refetch };
