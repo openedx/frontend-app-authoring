@@ -587,22 +587,29 @@ const ScanResults: FC<Props> = ({
             const newUrl = exactMatch.newUrl;
 
             if (newUrl) {
-              setUpdatedLinkMap(prev => {
-                const newMap = { ...prev, [uniqueId]: newUrl };
-                return newMap;
-              });
+              const shouldProcessResults = hasOriginalUrlField && updateStatusResponse.results.length === 1;
+              if (shouldProcessResults) {
+                processUpdateResults(updateStatusResponse);
+              } else {
+                setUpdatedLinkMap(prev => {
+                  const newMap = { ...prev, [uniqueId]: newUrl };
+                  return newMap;
+                });
 
-              setUpdatedLinkIds(prev => {
-                const filtered = prev.filter(id => id !== uniqueId);
-                const newIds = [...filtered, uniqueId];
-                return newIds;
-              });
+                setUpdatedLinkIds(prev => {
+                  const filtered = prev.filter(id => id !== uniqueId);
+                  const newIds = [...filtered, uniqueId];
+                  return newIds;
+                });
+              }
 
-              setUpdatingLinkIds(prev => {
-                const copy = { ...prev };
-                delete copy[uniqueId];
-                return copy;
-              });
+              if (!shouldProcessResults) {
+                setUpdatingLinkIds(prev => {
+                  const copy = { ...prev };
+                  delete copy[uniqueId];
+                  return copy;
+                });
+              }
 
               setErrorMessage(null);
               onErrorStateChange?.(null);
@@ -672,6 +679,7 @@ const ScanResults: FC<Props> = ({
     intl,
     reportError,
     onErrorStateChange,
+    processUpdateResults,
     rerunLinkUpdateStatusQuery,
     updateSinglePreviousRunLinkMutation,
   ]);
