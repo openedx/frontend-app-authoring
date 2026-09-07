@@ -19,6 +19,7 @@ interface LibraryBlockProps {
   view?: string;
   scrolling?: string;
   minHeight?: string;
+  fillContainer?: boolean;
   scrollIntoView?: boolean;
   showTitle?: boolean;
 }
@@ -37,6 +38,7 @@ export const LibraryBlock = ({
   version,
   view,
   minHeight,
+  fillContainer = false,
   scrolling = 'no',
   scrollIntoView = false,
   showTitle = false,
@@ -92,9 +94,10 @@ export const LibraryBlock = ({
       referrerPolicy="origin"
       style={{
         width: '100%',
-        height: iframeHeight,
         pointerEvents: 'auto',
-        minHeight,
+        ...(fillContainer
+          ? { flex: '1 1 auto', height: 'auto', minHeight: 0 }
+          : { height: iframeHeight, minHeight }),
       }}
       allow={IFRAME_FEATURE_POLICY}
       allowFullScreen

@@ -4,3 +4,24 @@
     overflow: visible;
   }
 }
+
+// Pass the fullscreen height down: flex-basis outranks h-75 and TinyMCE's inline height.
+.editor-modal.pgn__modal-fullscreen {
+  .pgn__modal-body,
+  .pgn__modal-body-content,
+  .editor-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pgn__modal-body-content,
+  .editor-body,
+  .tox-tinymce {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  .pgn__modal-body-content {
+    overflow-y: auto;
+  }
+}
