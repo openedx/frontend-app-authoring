@@ -7,7 +7,7 @@ import {
   Icon,
 } from '@openedx/paragon';
 import { ArrowDropDown, ArrowDropUp } from '@openedx/paragon/icons';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
 import { ContentTagsDrawerSheet } from '..';
 
@@ -24,7 +24,6 @@ interface TagsSidebarBodyProps {
 }
 
 const TagsSidebarBody = ({ readOnly, canManageTags = true }: TagsSidebarBodyProps) => {
-  const intl = useIntl();
   const [showManageTags, setShowManageTags] = useState(false);
   const contentId = useParams().blockId;
   const onClose = () => setShowManageTags(false);
@@ -106,7 +105,7 @@ const TagsSidebarBody = ({ readOnly, canManageTags = true }: TagsSidebarBodyProp
               onClick={() => setShowManageTags(true)}
               disabled={readOnly}
             >
-              {intl.formatMessage(messages.manageTagsButton)}
+              <FormattedMessage {...messages.manageTagsButton} />
             </Button>
           )}
         </Stack>

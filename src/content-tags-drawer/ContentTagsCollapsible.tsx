@@ -19,7 +19,7 @@ import {
   Icon,
 } from '@openedx/paragon';
 import { Tag, KeyboardArrowDown, KeyboardArrowUp } from '@openedx/paragon/icons';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { debounce } from 'lodash';
 
 import SelectableBox from '../editors/sharedComponents/SelectableBox';
@@ -127,7 +127,7 @@ const CustomMenu = (props: MenuProps<StagedTagData, true>) => {
               className="tags-drawer-cancel-button"
               onClick={handleCancelStagedTags}
             >
-              {intl.formatMessage(messages.collapsibleCancelStagedTagsButtonText)}
+              <FormattedMessage {...messages.collapsibleCancelStagedTagsButtonText} />
             </Button>
             <Button
               tabIndex={0}
@@ -137,7 +137,7 @@ const CustomMenu = (props: MenuProps<StagedTagData, true>) => {
               disabled={!stagedTags.length}
               onClick={handleCommitStagedTags}
             >
-              {intl.formatMessage(messages.collapsibleAddStagedTagsButtonText)}
+              <FormattedMessage {...messages.collapsibleAddStagedTagsButtonText} />
             </Button>
           </div>
         </div>
@@ -173,7 +173,6 @@ const CustomIndicatorsContainer = (props: IndicatorsContainerProps<StagedTagData
     selectInlineAddRef,
   } = props.selectProps;
   const stagedTags: readonly StagedTagData[] = Array.isArray(value) ? value : [];
-  const intl = useIntl();
   return (
     <components.IndicatorsContainer {...props}>
       {(stagedTags.length > 0 && (
@@ -190,7 +189,7 @@ const CustomIndicatorsContainer = (props: IndicatorsContainerProps<StagedTagData
           tabIndex={0}
           onKeyDown={disableActionKeys} // To prevent navigating staged tags when button focused
         >
-          {intl.formatMessage(messages.collapsibleInlineAddStagedTagsButtonText)}
+          <FormattedMessage {...messages.collapsibleInlineAddStagedTagsButtonText} />
         </Button>
       )) || null}
       {props.children}
@@ -442,7 +441,7 @@ const ContentTagsCollapsible = ({
             && (
               <div className="mb-3" key={taxonomyId}>
                 <p className="text-gray-500">
-                  {intl.formatMessage(messages.collapsibleNoTagsAddedText)}
+                  <FormattedMessage {...messages.collapsibleNoTagsAddedText} />
                   {canTagObject && (
                     <Button
                       tabIndex={0}
@@ -452,7 +451,7 @@ const ContentTagsCollapsible = ({
                       className="text-info-500 add-tags-button"
                       onClick={toEditMode}
                     >
-                      {intl.formatMessage(messages.collapsibleAddStagedTagsButtonText)}
+                      <FormattedMessage {...messages.collapsibleAddStagedTagsButtonText} />
                     </Button>
                   )}
                 </p>
