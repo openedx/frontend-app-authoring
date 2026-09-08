@@ -53,6 +53,15 @@ const readFileText = (blob: Blob) =>
     reader.readAsText(blob);
   });
 
+// Lets an in-flight request settle and React process the result, so assertions run
+// after any state update the response would have triggered.
+const flushPendingResponses = () =>
+  act(async () => {
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+  });
+
 const renderEditor = (props = {}) => render(<TranscriptEditor {...defaultProps} {...props} />);
 
 const mockTranscript = (body: string = SRT) => {
@@ -323,28 +332,24 @@ describe('TranscriptEditor', () => {
     }
   });
 
-  it('ignores a transcript that arrives after the editor unmounted', async () => {
-    mockTranscript();
+  // The fetch effect guards every state update behind an isMounted flag, so a response
+  // that lands after the editor closes must neither render nor report anything.
+  it.each([
+    ['a transcript', () => mockTranscript()],
+    ['a load failure', () => {
+      axiosMock.onGet(/transcript_download/).reply(500);
+    }],
+  ])('ignores %s that arrives after the editor unmounted', async (_label, mockResponse) => {
+    mockResponse();
     const { unmount } = renderEditor();
     unmount();
     await waitFor(() => expect(axiosMock.history.get).toHaveLength(1));
-    await act(async () => {
-      await new Promise((resolve) => {
-        setTimeout(resolve, 0);
-      });
-    });
-  });
 
-  it('ignores a load failure that arrives after the editor unmounted', async () => {
-    axiosMock.onGet(/transcript_download/).reply(500);
-    const { unmount } = renderEditor();
-    unmount();
-    await waitFor(() => expect(axiosMock.history.get).toHaveLength(1));
-    await act(async () => {
-      await new Promise((resolve) => {
-        setTimeout(resolve, 0);
-      });
-    });
+    await flushPendingResponses();
+
+    expect(screen.queryByDisplayValue('Hello')).not.toBeInTheDocument();
+    expect(screen.queryByText(messages.loadFailedLabel.defaultMessage)).not.toBeInTheDocument();
+    expect(logError).not.toHaveBeenCalled();
   });
 
   it('closes the unsaved-changes dialog with Escape', async () => {
