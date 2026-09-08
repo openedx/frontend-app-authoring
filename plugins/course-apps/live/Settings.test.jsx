@@ -16,11 +16,11 @@ import { executeThunk } from 'CourseAuthoring/utils';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 
 import { CourseAuthoringProvider } from 'CourseAuthoring/CourseAuthoringContext';
+import { getCourseAppsApiUrl, getCourseDetailsUrl } from 'CourseAuthoring/data/api';
 import LiveSettings from './Settings';
 import {
   generateLiveConfigurationApiResponse,
   courseId,
-  initialState,
   configurationProviders,
 } from './factories/mockApiResponses';
 
@@ -35,14 +35,16 @@ const liveSettingsUrl = `/course/${courseId}/pages-and-resources/live/settings`;
 
 // Modal creates a portal. Overriding ReactDOM.createPortal allows portals to be tested in jest.
 ReactDOM.createPortal = jest.fn(node => node);
+// jsdom doesn't implement scrollIntoView; AppSettingsModal calls it when showing a save error.
+window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
 const renderComponent = () => {
   const wrapper = render(
-    <PagesAndResourcesProvider courseId={courseId}>
-      <CourseAuthoringProvider>
+    <CourseAuthoringProvider courseId={courseId}>
+      <PagesAndResourcesProvider courseId={courseId}>
         <LiveSettings onClose={() => {}} />
-      </CourseAuthoringProvider>
-    </PagesAndResourcesProvider>,
+      </PagesAndResourcesProvider>
+    </CourseAuthoringProvider>,
     {
       path: liveSettingsUrl,
       routerProps: {
@@ -74,11 +76,28 @@ const mockStore = async ({
 
 describe('LiveSettings', () => {
   beforeEach(async () => {
-    const mocks = initializeMocks({
-      initialState,
-    });
+    const mocks = initializeMocks();
     store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
+
+    axiosMock.onGet(getCourseDetailsUrl(courseId, 'abc123')).reply(200, {
+      courseId,
+      name: 'Course Test',
+      start: Date(),
+    });
+    axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(200, [
+      {
+        id: 'live',
+        enabled: true,
+        name: 'Live',
+        description: 'Enable in-platform video conferencing by configuring live',
+        allowed_operations: {
+          enable: true,
+          configure: true,
+        },
+        documentation_links: {},
+      },
+    ]);
   });
 
   test('Live Configuration modal is visible', async () => {
@@ -96,6 +115,7 @@ describe('LiveSettings', () => {
     await mockStore({ enabled: true });
     renderComponent();
 
+    await waitFor(() => expect(container.querySelector('label[for="enable-live-toggle"]')).not.toBeNull());
     const label = container.querySelector('label[for="enable-live-toggle"]');
     const helperText = container.querySelector('#enable-live-toggleHelpText');
     const enableBadge = queryByTestId(container, 'enable-badge');
@@ -109,6 +129,7 @@ describe('LiveSettings', () => {
     await mockStore({ enabled: false, piiSharingAllowed: false });
     renderComponent();
 
+    await waitFor(() => expect(container.querySelector('label[for="enable-live-toggle"]')).not.toBeNull());
     const label = container.querySelector('label[for="enable-live-toggle"]');
     const helperText = container.querySelector('#enable-live-toggleHelpText');
 

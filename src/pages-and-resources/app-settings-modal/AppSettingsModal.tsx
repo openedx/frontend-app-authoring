@@ -10,93 +10,126 @@ import {
 import { Info } from '@openedx/paragon/icons';
 
 import { Formik } from 'formik';
-import PropTypes from 'prop-types';
 import React, {
+  ReactNode,
   useContext,
   useEffect,
   useRef,
   useState,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 
-import { RequestStatus } from '../../data/constants';
-import ConnectionErrorAlert from '../../generic/ConnectionErrorAlert';
-import FormSwitchGroup from '../../generic/FormSwitchGroup';
-import Loading from '../../generic/Loading';
-import { useModel } from '../../generic/model-store';
-import PermissionDeniedAlert from '../../generic/PermissionDeniedAlert';
-import { useIsMobile } from '../../utils';
-import { getLoadingStatus, getSavingStatus } from '../data/selectors';
-import { updateSavingStatus } from '../data/slice';
-import { updateAppStatus } from '../data/thunks';
+import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import FormSwitchGroup from '@src/generic/FormSwitchGroup';
+import Loading from '@src/generic/Loading';
+import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
+import { RequestStatus } from '@src/data/constants';
+import { useIsMobile } from '@src/utils';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useUpdateCourseAppStatus } from '@src/data/apiHooks';
+
 import AppConfigFormDivider from '../discussions/app-config-form/apps/shared/AppConfigFormDivider';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import AppSettingsModalBase from './AppSettingsModalBase';
 import messages from './messages';
+
+export interface AppSettingsModalProps {
+  title: string;
+  appId: string;
+  children?: Function;
+  bodyChildren?: ReactNode;
+  onSettingsSave?: Function;
+  initialValues: Record<string, any>;
+  validationSchema: Record<string, any>;
+  onClose: () => void;
+  enableAppLabel: string;
+  enableAppHelp: string;
+  learnMoreText?: string;
+  configureBeforeEnable?: boolean;
+  enableReinitialize?: boolean;
+  hideAppToggle?: boolean;
+}
 
 const AppSettingsModal = ({
   appId,
   title,
   children,
   bodyChildren,
-  configureBeforeEnable,
-  initialValues,
-  validationSchema,
+  configureBeforeEnable = false,
+  initialValues = {},
+  validationSchema = {},
   onClose,
   onSettingsSave,
   enableAppLabel,
   enableAppHelp,
   learnMoreText,
-  enableReinitialize,
-  hideAppToggle,
-}) => {
+  enableReinitialize = false,
+  hideAppToggle = false,
+}: AppSettingsModalProps) => {
   const { formatMessage } = useIntl();
-  const { courseId, isEditable } = useContext(PagesAndResourcesContext);
-  const loadingStatus = useSelector(getLoadingStatus);
-  const updateSettingsRequestStatus = useSelector(getSavingStatus);
-  const alertRef = useRef(null);
-  const [saveError, setSaveError] = useState(false);
-  // FIXME: open the "Live" settings, then refresh the page. The courseApps model is not loaded, and an error occurs
-  // when trying to access 'appInfo.documentationLinks'. This happens even before the refactor to use plugins.
-  const appInfo = useModel('courseApps', appId);
-  const dispatch = useDispatch();
-  const submitButtonState = updateSettingsRequestStatus === RequestStatus.IN_PROGRESS ? 'pending' : 'default';
+  const { isEditable } = useContext(PagesAndResourcesContext);
+  const {
+    courseId,
+    courseApps,
+    courseAppsStatus,
+  } = useCourseAuthoringContext();
+  const appInfo = courseApps.find((app) => app.id === appId);
+  const updateCourseAppStatusMutation = useUpdateCourseAppStatus(courseId);
+
+  const alertRef = useRef<HTMLDivElement>(null);
+  const [formError, setFormError] = useState(false);
+  const [isSavingCallbackSuccess, setIsSavingCallbackSuccess] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const inError = updateCourseAppStatusMutation.isError || !isSavingCallbackSuccess || formError;
+
+  const submitButtonState = (isSubmitting || updateCourseAppStatusMutation.isPending) ? 'pending' : 'default';
   const isMobile = useIsMobile();
   const modalVariant = isMobile ? 'dark' : 'default';
 
-  useEffect(() => {
-    if (updateSettingsRequestStatus === RequestStatus.SUCCESSFUL) {
-      dispatch(updateSavingStatus({ status: '' }));
-      onClose();
-    }
-  }, [updateSettingsRequestStatus]);
-
   const handleFormSubmit = async (values) => {
-    let success = true;
-    if (appInfo.enabled !== values.enabled) {
-      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-      success = await dispatch(updateAppStatus(courseId, appInfo.id, values.enabled));
+    if (!appInfo) {
+      return;
     }
-    // Call the submit handler for the settings component to save its settings
-    if (onSettingsSave) {
-      success = success && await onSettingsSave(values);
+    setIsSubmitting(true);
+    try {
+      if (appInfo.enabled !== values.enabled) {
+        await updateCourseAppStatusMutation.mutateAsync({
+          appId: appInfo.id,
+          state: values.enabled,
+        });
+      }
+      // Call the submit handler for the settings component to save its settings
+      const success = onSettingsSave ? await onSettingsSave(values) : true;
+      setIsSavingCallbackSuccess(success);
+      if (success) {
+        onClose();
+      }
+    } catch {
+      setIsSavingCallbackSuccess(false);
+    } finally {
+      setIsSubmitting(false);
     }
-    setSaveError(!success);
-    !success && alertRef?.current.scrollIntoView(); // eslint-disable-line @typescript-eslint/no-unused-expressions
   };
 
+  useEffect(() => {
+    if (inError) {
+      alertRef?.current?.scrollIntoView();
+    }
+  }, [inError]);
+
   const handleFormikSubmit = ({ handleSubmit, errors }) => async (event) => {
+    // Clear any error left over from a previous failed attempt so a successful
+    // resubmit isn't blocked by stale state.
+    setFormError(false);
     // If submitting the form with errors, show the alert and scroll to it.
     await handleSubmit(event);
     if (Object.keys(errors).length > 0) {
       /* istanbul ignore next: temp to unblock lint cleanup. We probably should test this. */
-      setSaveError(true);
-      alertRef?.current.scrollIntoView?.(); // eslint-disable-line no-unused-expressions
+      setFormError(true);
     }
   };
 
-  const learnMoreLink = appInfo.documentationLinks?.learnMoreConfiguration && (
+  const learnMoreLink = appInfo?.documentationLinks?.learnMoreConfiguration && (
     <Hyperlink
       className="text-primary-500"
       destination={appInfo.documentationLinks.learnMoreConfiguration}
@@ -107,7 +140,7 @@ const AppSettingsModal = ({
     </Hyperlink>
   );
 
-  if (loadingStatus === RequestStatus.SUCCESSFUL) {
+  if (courseAppsStatus === RequestStatus.SUCCESSFUL) {
     return (
       <Formik
         initialValues={{
@@ -143,11 +176,13 @@ const AppSettingsModal = ({
                 />
               }
             >
-              {saveError && (
+              {inError && (
                 <Alert variant="danger" icon={Info} ref={alertRef}>
                   <Alert.Heading>
+                    {/* @ts-expect-error -- errors.enabled is typed as string|FormikErrors<any> by Formik, but the API returns { title, message } here */}
                     {formikProps.errors.enabled?.title || formatMessage(messages.errorSavingTitle)}
                   </Alert.Heading>
+                  {/* @ts-expect-error -- see above */}
                   {formikProps.errors.enabled?.message || formatMessage(messages.errorSavingMessage)}
                 </Alert>
               )}
@@ -202,45 +237,14 @@ const AppSettingsModal = ({
       title={title}
       isOpen
       onClose={onClose}
-      size="sm"
       variant={modalVariant}
       isMobile={isMobile}
-      isFullscreenOnMobile
     >
-      {loadingStatus === RequestStatus.IN_PROGRESS && <Loading />}
-      {loadingStatus === RequestStatus.FAILED && <ConnectionErrorAlert />}
-      {loadingStatus === RequestStatus.DENIED && <PermissionDeniedAlert />}
+      {courseAppsStatus === RequestStatus.PENDING && <Loading />}
+      {courseAppsStatus === RequestStatus.FAILED && <ConnectionErrorAlert />}
+      {courseAppsStatus === RequestStatus.DENIED && <PermissionDeniedAlert />}
     </AppSettingsModalBase>
   );
-};
-
-AppSettingsModal.propTypes = {
-  title: PropTypes.string.isRequired,
-  appId: PropTypes.string.isRequired,
-  children: PropTypes.func,
-  bodyChildren: PropTypes.node,
-  onSettingsSave: PropTypes.func,
-  initialValues: PropTypes.shape({}),
-  validationSchema: PropTypes.shape({}),
-  onClose: PropTypes.func.isRequired,
-  enableAppLabel: PropTypes.string.isRequired,
-  enableAppHelp: PropTypes.string.isRequired,
-  learnMoreText: PropTypes.string,
-  configureBeforeEnable: PropTypes.bool,
-  enableReinitialize: PropTypes.bool,
-  hideAppToggle: PropTypes.bool,
-};
-
-AppSettingsModal.defaultProps = {
-  children: null,
-  bodyChildren: null,
-  onSettingsSave: null,
-  initialValues: {},
-  validationSchema: {},
-  learnMoreText: null,
-  configureBeforeEnable: false,
-  enableReinitialize: false,
-  hideAppToggle: false,
 };
 
 export default AppSettingsModal;

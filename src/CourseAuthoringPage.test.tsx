@@ -2,9 +2,7 @@ import { getConfig } from '@edx/frontend-platform';
 
 import CourseAuthoringPage from './CourseAuthoringPage';
 import PagesAndResources from './pages-and-resources/PagesAndResources';
-import { executeThunk } from './utils';
-import { fetchCourseApps } from './pages-and-resources/data/thunks';
-import { getApiWaffleFlagsUrl } from './data/api';
+import { getApiWaffleFlagsUrl, getCourseAppsApiUrl } from './data/api';
 import { initializeMocks, render } from './testUtils';
 import { CourseAuthoringProvider } from './CourseAuthoringContext';
 
@@ -17,7 +15,6 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 let axiosMock;
-let store;
 
 const renderComponent = children =>
   render(
@@ -28,7 +25,6 @@ const renderComponent = children =>
 
 beforeEach(async () => {
   const mocks = initializeMocks();
-  store = mocks.reduxStore;
   axiosMock = mocks.axiosMock;
   axiosMock
     .onGet(getApiWaffleFlagsUrl(courseId))
@@ -103,13 +99,9 @@ describe('Course authoring page', () => {
     expect(wrapper.queryByTestId('notFoundAlert')).not.toBeInTheDocument();
   });
   const mockStoreDenied = async () => {
-    const studioApiBaseUrl = getConfig().STUDIO_BASE_URL;
-    const courseAppsApiUrl = `${studioApiBaseUrl}/api/course_apps/v1/apps`;
-
     axiosMock.onGet(
-      `${courseAppsApiUrl}/${courseId}`,
+      `${getCourseAppsApiUrl()}/${courseId}`,
     ).reply(403, { response: { status: 403 } });
-    await executeThunk(fetchCourseApps(courseId), store.dispatch);
   };
   test('renders PermissionDeniedAlert when courseAppsApiStatus is DENIED', async () => {
     mockPathname = '/editor/';

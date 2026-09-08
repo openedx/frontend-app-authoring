@@ -11,11 +11,11 @@ import ReactDOM from 'react-dom';
 import { executeThunk } from 'CourseAuthoring/utils';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 import { CourseAuthoringProvider } from 'CourseAuthoring/CourseAuthoringContext';
+import { getCourseAppsApiUrl, getCourseDetailsUrl } from 'CourseAuthoring/data/api';
 import LiveSettings from './Settings';
 import {
   generateLiveConfigurationApiResponse,
   courseId,
-  initialState,
   configurationProviders,
 } from './factories/mockApiResponses';
 
@@ -69,9 +69,28 @@ const mockStore = async ({
 
 describe('Zoom Settings', () => {
   beforeEach(async () => {
-    const mocks = initializeMocks({ initialState });
+    const mocks = initializeMocks();
     store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
+
+    axiosMock.onGet(getCourseDetailsUrl(courseId, 'abc123')).reply(200, {
+      courseId,
+      name: 'Course Test',
+      start: Date(),
+    });
+    axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(200, [
+      {
+        id: 'live',
+        enabled: true,
+        name: 'Live',
+        description: 'Enable in-platform video conferencing by configuring live',
+        allowed_operations: {
+          enable: true,
+          configure: true,
+        },
+        documentation_links: {},
+      },
+    ]);
   });
 
   test('LTI fields are visible when pii sharing is enabled', async () => {

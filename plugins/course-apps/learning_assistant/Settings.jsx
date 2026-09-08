@@ -5,13 +5,14 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Hyperlink } from '@openedx/paragon';
 
 import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
-import { useModel } from 'CourseAuthoring/generic/model-store';
+import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContext';
 
 import messages from './messages';
 
 const LearningAssistantSettings = ({ onClose }) => {
+  const { courseApps } = useCourseAuthoringContext();
   const appId = 'learning_assistant';
-  const appInfo = useModel('courseApps', appId);
+  const appInfo = courseApps.find((app) => app.id === appId);
   const intl = useIntl();
 
   // We need to render more than one link, so we use the bodyChildren prop.
