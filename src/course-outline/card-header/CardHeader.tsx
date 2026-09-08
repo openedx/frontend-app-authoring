@@ -292,7 +292,11 @@ const CardHeader = ({
                     className="item-card-button-icon"
                     data-testid={`${namePrefix}-edit-button`}
                     alt={intl.formatMessage(messages.altButtonRename)}
-                    tooltipContent={<div>{intl.formatMessage(messages.altButtonRename)}</div>}
+                    tooltipContent={
+                      <div>
+                        <FormattedMessage {...messages.altButtonRename} />
+                      </div>
+                    }
                     iconAs={EditIcon}
                     onClick={onEditClick}
                     disabled={editMutation.isPending}
@@ -313,7 +317,11 @@ const CardHeader = ({
               data-testid={`${namePrefix}-sync-button`}
               alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
               iconAs={SyncIcon}
-              tooltipContent={<div>{intl.formatMessage(messages.readyToSyncButtonAlt)}</div>}
+              tooltipContent={
+                <div>
+                  <FormattedMessage {...messages.readyToSyncButtonAlt} />
+                </div>
+              }
               onClick={onClickSync}
             />
           )}
@@ -337,7 +345,7 @@ const CardHeader = ({
                     href={fullProctoringExamConfigurationLink()}
                     externalLinkTitle={intl.formatMessage(messages.proctoringLinkTooltip)}
                   >
-                    {intl.formatMessage(messages.menuProctoringLinkText)}
+                    <FormattedMessage {...messages.menuProctoringLinkText} />
                   </Dropdown.Item>
                 )}
                 {canPublishCourseContent &&
@@ -347,7 +355,7 @@ const CardHeader = ({
                       disabled={isDisabledPublish}
                       onClick={onClickPublish}
                     >
-                      {intl.formatMessage(messages.menuPublish)}
+                      <FormattedMessage {...messages.menuPublish} />
                     </Dropdown.Item>
                   )}
                 <Dropdown.Item
@@ -355,7 +363,7 @@ const CardHeader = ({
                   disabled={editMutation.isPending}
                   onClick={onConfigureClick}
                 >
-                  {intl.formatMessage(messages.menuConfigure)}
+                  <FormattedMessage {...messages.menuConfigure} />
                 </Dropdown.Item>
                 {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && canManageTags && (
                   <Dropdown.Item
@@ -363,13 +371,13 @@ const CardHeader = ({
                     disabled={editMutation.isPending}
                     onClick={openManageTagsDrawer}
                   >
-                    {intl.formatMessage(messages.menuManageTags)}
+                    <FormattedMessage {...messages.menuManageTags} />
                   </Dropdown.Item>
                 )}
 
                 {isVertical && (
                   <Dropdown.Item onClick={onClickCopy}>
-                    {intl.formatMessage(messages.menuCopy)}
+                    <FormattedMessage {...messages.menuCopy} />
                   </Dropdown.Item>
                 )}
                 {actions.duplicable && (
@@ -377,7 +385,7 @@ const CardHeader = ({
                     data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
                     onClick={onClickDuplicate}
                   >
-                    {intl.formatMessage(messages.menuDuplicate)}
+                    <FormattedMessage {...messages.menuDuplicate} />
                   </Dropdown.Item>
                 )}
                 {actions.draggable && (
@@ -387,14 +395,14 @@ const CardHeader = ({
                       onClick={onClickMoveUp}
                       disabled={!actions.allowMoveUp}
                     >
-                      {intl.formatMessage(messages.menuMoveUp)}
+                      <FormattedMessage {...messages.menuMoveUp} />
                     </Dropdown.Item>
                     <Dropdown.Item
                       data-testid={`${namePrefix}-card-header__menu-move-down-button`}
                       onClick={onClickMoveDown}
                       disabled={!actions.allowMoveDown}
                     >
-                      {intl.formatMessage(messages.menuMoveDown)}
+                      <FormattedMessage {...messages.menuMoveDown} />
                     </Dropdown.Item>
                   </>
                 )}
@@ -407,7 +415,7 @@ const CardHeader = ({
                     className="allow-hover-on-disabled"
                     title={!actions.unlinkable ? intl.formatMessage(messages.menuUnlinkDisabledTooltip) : undefined}
                   >
-                    {intl.formatMessage(messages.menuUnlink)}
+                    <FormattedMessage {...messages.menuUnlink} />
                   </Dropdown.Item>
                 )}
                 {actions.deletable && (
