@@ -132,7 +132,7 @@ describe('FileMenu', () => {
 
       expect(screen.queryByText('Copy video ID')).not.toBeInTheDocument();
       expect(screen.queryByText('Download')).not.toBeInTheDocument();
-      expect(screen.getByText('Info')).toBeInTheDocument();
+      expect(screen.getByText('Info and transcripts')).toBeInTheDocument();
     });
   });
 });
