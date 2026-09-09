@@ -84,4 +84,26 @@ describe('<DatepickerControl />', () => {
     expect(input.getAttribute('aria-describedby')).toContain('fooControlName-timehint');
     expect(input.getAttribute('aria-describedby')).toContain('fooControlName-helptext');
   });
+
+  it('disables days after maxDate in the opened calendar', () => {
+    const { getByPlaceholderText, getByText } = render(
+      <RootWrapper
+        {...props}
+        value="2024-01-15T00:00:00Z"
+        maxDate={new Date(2024, 0, 10)}
+      />,
+    );
+    const input = getByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
+    fireEvent.click(input);
+
+    // A day after maxDate (Jan 10) is disabled...
+    const dayAfterMax = getByText('20').closest('.react-datepicker__day');
+    expect(dayAfterMax).toHaveClass('react-datepicker__day--disabled');
+    expect(dayAfterMax).toHaveAttribute('aria-disabled', 'true');
+
+    // ...while a day on/before maxDate is not.
+    const dayBeforeMax = getByText('5').closest('.react-datepicker__day');
+    expect(dayBeforeMax).not.toHaveClass('react-datepicker__day--disabled');
+    expect(dayBeforeMax).toHaveAttribute('aria-disabled', 'false');
+  });
 });

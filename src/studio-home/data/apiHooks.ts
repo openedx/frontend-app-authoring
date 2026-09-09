@@ -6,8 +6,8 @@ export interface StudioHomeCoursesV2Params {
   pageSize?: number;
   search?: string;
   order?: string;
-  startDateAfter?: string;
-  startDateBefore?: string;
+  startDateOnOrAfter?: string;
+  startDateOnOrBefore?: string;
 }
 
 export const studioHomeQueryKeys = {

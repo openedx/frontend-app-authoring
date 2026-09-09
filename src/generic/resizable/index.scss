@@ -19,3 +19,22 @@
   background: var(--pgn-color-dark-400);
 }
 
+/* Modifier for a box whose meaningful drag boundary is its right edge. Wider
+   than the shared base handle per Figma's `Gap: 10` spec - left-edge users
+   (e.g. Sidebar.tsx) keep the base 2px look. */
+.resizable-handle--right {
+  left: auto;
+  right: 0;
+  width: 10px;
+}
+
+/* The box's own content sits flush against its right edge (see
+   `Resizable.tsx`'s `w-100` content wrapper), so widening the handle above
+   would overlay the last 10px of that content. Reserve 10px to prevent that
+   overlay, plus another 10px of actual visible gap between the content and
+   the handle, matching the visible gap already present on the handle's other
+   side. Scoped to the right-handle variant only via the sibling selector. */
+.resizable-handle--right + .w-100 {
+  padding-right: 20px;
+}
+

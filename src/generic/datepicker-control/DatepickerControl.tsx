@@ -1,6 +1,4 @@
-import React from 'react';
 import DatePicker from 'react-datepicker';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Form, Icon } from '@openedx/paragon';
 import { AccessTime, Calendar } from '@openedx/paragon/icons';
@@ -13,19 +11,37 @@ import messages from './messages';
 export const DATEPICKER_TYPES = {
   date: 'date',
   time: 'time',
-};
+} as const;
+
+type DatepickerType = typeof DATEPICKER_TYPES[keyof typeof DATEPICKER_TYPES];
+
+interface Props {
+  type: DatepickerType;
+  label: string;
+  value?: string;
+  showUTC?: boolean;
+  readonly?: boolean;
+  helpText?: string;
+  isInvalid?: boolean;
+  controlName: string;
+  onChange: (value: string) => void;
+  minDate?: Date;
+  maxDate?: Date;
+}
 
 const DatepickerControl = ({
   type,
   label,
-  value,
-  showUTC,
-  readonly,
-  helpText,
-  isInvalid,
+  value = '',
+  showUTC = false,
+  readonly = false,
+  helpText = '',
+  isInvalid = false,
   controlName,
   onChange,
-}) => {
+  minDate,
+  maxDate,
+}: Props) => {
   const intl = useIntl();
   const formattedDate = convertToDateFromString(value);
   const inputFormat = {
@@ -60,14 +76,14 @@ const DatepickerControl = ({
           <Icon
             src={Calendar}
             className="datepicker-custom-control-icon"
-            alt={intl.formatMessage(messages.calendarAltText)}
+            screenReaderText={intl.formatMessage(messages.calendarAltText)}
           />
         )}
         {type === DATEPICKER_TYPES.time && (
           <Icon
             src={AccessTime}
             className="datepicker-custom-control-icon"
-            alt={intl.formatMessage(messages.timeAltText)}
+            screenReaderText={intl.formatMessage(messages.timeAltText)}
           />
         )}
         <DatePicker
@@ -82,7 +98,8 @@ const DatepickerControl = ({
             'datepicker-custom-control_isInvalid': isInvalid,
           })}
           autoComplete="off"
-          selectsStart
+          minDate={minDate}
+          maxDate={maxDate}
           showTimeSelect={type === DATEPICKER_TYPES.time}
           showTimeSelectOnly={type === DATEPICKER_TYPES.time}
           placeholderText={inputFormat[type].toLocaleUpperCase()}
@@ -109,26 +126,6 @@ const DatepickerControl = ({
       )}
     </Form.Group>
   );
-};
-
-DatepickerControl.defaultProps = {
-  helpText: '',
-  showUTC: false,
-  value: '',
-  readonly: false,
-  isInvalid: false,
-};
-
-DatepickerControl.propTypes = {
-  type: PropTypes.oneOf(Object.values(DATEPICKER_TYPES)).isRequired,
-  value: PropTypes.string,
-  label: PropTypes.string.isRequired,
-  showUTC: PropTypes.bool,
-  helpText: PropTypes.string,
-  readonly: PropTypes.bool,
-  isInvalid: PropTypes.bool,
-  controlName: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
 };
 
 export default DatepickerControl;
