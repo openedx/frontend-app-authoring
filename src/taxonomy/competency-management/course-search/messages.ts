@@ -50,9 +50,9 @@ const messages = defineMessages({
   },
   outlineErrorMessage: {
     id: 'course-authoring.competency-management.course-search.outline-error-message',
-    defaultMessage: "There was a problem loading this course's outline.",
+    defaultMessage: 'There was a problem loading this course\'s outline.',
     description: 'Inline error message shown inside a single expanded course row when fetching that '
-      + "course's outline fails. Distinct from the panel-level course search error message.",
+      + 'course\'s outline fails. Distinct from the panel-level course search error message.',
   },
   noGradedSubsectionsMessage: {
     id: 'course-authoring.competency-management.course-search.no-graded-subsections-message',
