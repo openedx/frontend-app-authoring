@@ -1,6 +1,12 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  coursesAndContentLabel: {
+    id: 'course-authoring.competency-management.course-search.courses-and-content-label',
+    defaultMessage: 'Courses & Content',
+    description: 'Persistent header label shown above the course list, in every state (loading/error/empty/'
+      + 'populated), once a competency is selected.',
+  },
   searchPlaceholder: {
     id: 'course-authoring.competency-management.course-search.search-placeholder',
     defaultMessage: 'Search courses',
@@ -42,10 +48,30 @@ const messages = defineMessages({
     defaultMessage: 'Collapse',
     description: 'Accessible label for the disclosure control that collapses an expanded course row.',
   },
-  outlinePlaceholder: {
-    id: 'course-authoring.competency-management.course-search.outline-placeholder',
-    defaultMessage: 'Course outline browsing is coming soon.',
-    description: 'Placeholder text shown in place of the real course outline when a course row is expanded.',
+  outlineErrorMessage: {
+    id: 'course-authoring.competency-management.course-search.outline-error-message',
+    defaultMessage: "There was a problem loading this course's outline.",
+    description: 'Inline error message shown inside a single expanded course row when fetching that '
+      + "course's outline fails. Distinct from the panel-level course search error message.",
+  },
+  noGradedSubsectionsMessage: {
+    id: 'course-authoring.competency-management.course-search.no-graded-subsections-message',
+    defaultMessage: 'This course has no gradeable subsections.',
+    description: 'Message shown in an expanded course row when the course outline contains no subsections '
+      + 'marked as graded, in place of the section/subsection list.',
+  },
+  dateRangeLabel: {
+    id: 'course-authoring.competency-management.course-search.date-range-label',
+    defaultMessage: 'Start Date',
+    description: 'Accessible name and visible text for the button that opens the course start-date range '
+      + 'calendar, filtering the course list to courses starting on or after the chosen start date and/or on or '
+      + 'before the chosen end date. Always reads this fixed text, even once a range is picked.',
+  },
+  clearDateRangeButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.clear-date-range-button-label',
+    defaultMessage: 'Clear dates',
+    description: 'Accessible label for the button that clears the selected course start-date range and re-runs '
+      + 'the query with no date filter. Only shown once a start date has been picked.',
   },
 });
 

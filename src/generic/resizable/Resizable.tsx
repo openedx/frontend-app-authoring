@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useWindowSize } from '@openedx/paragon';
 import React, {
   useRef,
@@ -12,15 +13,26 @@ interface ResizableBoxProps {
   children: React.ReactNode;
   minWidth?: number;
   maxWidth?: number;
+  /**
+   * Which edge of the box the drag handle sits on, and which direction grows it.
+   * `'left'` (default): handle on the box's left edge, dragging right shrinks it. This
+   * matches a box that sits on the right-hand side of a layout.
+   * `'right'`: handle on the box's right edge, dragging right grows it. Use this for a
+   * box that sits on the left-hand side of a layout, where the right edge is the
+   * meaningful boundary to drag.
+   */
+  handleSide?: 'left' | 'right';
 }
 
 /**
- * Creates a resizable box that can be dragged to resize the width from the left side.
+ * Creates a resizable box that can be dragged to resize its width. The draggable handle
+ * sits on the edge given by `handleSide` (defaults to the left edge).
  */
 export const ResizableBox = ({
   children,
   minWidth = MIN_WIDTH,
   maxWidth,
+  handleSide = 'left',
 }: ResizableBoxProps) => {
   const boxRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number>(minWidth); // initial width
@@ -38,12 +50,16 @@ export const ResizableBox = ({
 
   const onMouseMove = useCallback((e: MouseEvent) => {
     const dx = e.clientX - startXRef.current; // positive = mouse moved right
+    // Left handle: dragging right shrinks. Right handle: dragging right grows.
+    const rawWidth = handleSide === 'right'
+      ? startWidthRef.current + dx
+      : startWidthRef.current - dx;
     const newWidth = Math.min(
-      Math.max(startWidthRef.current - dx, minWidth),
+      Math.max(rawWidth, minWidth),
       maxWidth || defaultMaxWidth,
     );
     setWidth(newWidth);
-  }, [maxWidth, minWidth, defaultMaxWidth]);
+  }, [handleSide, maxWidth, minWidth, defaultMaxWidth]);
 
   const onMouseUp = useCallback(() => {
     document.removeEventListener('mousemove', onMouseMove);
@@ -67,8 +83,11 @@ export const ResizableBox = ({
       style={{ width: `${width}px` }}
     >
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-static-element-interactions */}
-      <div className="resizable-handle" onMouseDown={onMouseDown} />
-      <div className="w-100 d-flex">
+      <div
+        className={classNames('resizable-handle', { 'resizable-handle--right': handleSide === 'right' })}
+        onMouseDown={onMouseDown}
+      />
+      <div className="w-100">
         {children}
       </div>
     </div>

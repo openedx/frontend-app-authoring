@@ -5,10 +5,13 @@ import { IconButton } from '@openedx/paragon';
 import { ExpandLess, ExpandMore } from '@openedx/paragon/icons';
 
 import type { Course } from '@src/studio-home/data/api';
+import CourseOutlineSubtree from './CourseOutlineSubtree';
 import messages from './messages';
+import type { SubsectionSelectedEvent } from './types';
 
 export interface CourseRowProps {
   course: Course;
+  onSubsectionSelected?: SubsectionSelectedEvent;
 }
 
 /** CourseRow
@@ -20,7 +23,7 @@ export interface CourseRowProps {
  * disclosure control toggles anything, and this row is navigation-only,
  * never an association target for the active competency.
  */
-const CourseRow = ({ course }: CourseRowProps) => {
+const CourseRow = ({ course, onSubsectionSelected }: CourseRowProps) => {
   const intl = useIntl();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -29,8 +32,8 @@ const CourseRow = ({ course }: CourseRowProps) => {
     : intl.formatMessage(messages.expandRowButtonLabel);
 
   return (
-    <div className="border-bottom py-2">
-      <div className="d-flex align-items-center">
+    <div className="course-search-browse__group course-search-browse__group--course">
+      <div className="course-search-browse__course-row d-flex align-items-center">
         <IconButton
           src={isExpanded ? ExpandLess : ExpandMore}
           alt={toggleLabel}
@@ -40,19 +43,13 @@ const CourseRow = ({ course }: CourseRowProps) => {
           onClick={() => setIsExpanded((prev) => !prev)}
         />
         <div className="ml-2">
-          <div>{course.displayName}</div>
+          <div className="course-search-browse__course-title">{course.displayName}</div>
           <div className="text-gray-500 small">
             {course.org} / {course.number} / {course.run}
           </div>
         </div>
       </div>
-      {isExpanded && (
-        // Seam for step 5 (CourseOutlineSubtree), which replaces this static
-        // placeholder with a real outline fetch; that fetch is out of scope here.
-        <div className="ml-4 pl-2 pt-2">
-          {intl.formatMessage(messages.outlinePlaceholder)}
-        </div>
-      )}
+      {isExpanded && <CourseOutlineSubtree courseId={course.courseKey} onSubsectionSelected={onSubsectionSelected} />}
     </div>
   );
 };

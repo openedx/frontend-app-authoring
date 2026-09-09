@@ -1,20 +1,37 @@
-import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  forwardRef,
+  type MouseEventHandler,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
+  IconButton,
   Pagination,
   Row,
   SearchField,
+  Stack,
 } from '@openedx/paragon';
+import { Calendar, Close } from '@openedx/paragon/icons';
 import { debounce } from 'lodash';
+import DatePicker from 'react-datepicker';
 
 import AlertMessage from '@src/generic/alert-message';
 import { LoadingSpinner } from '@src/generic/Loading';
+import { DATE_FORMAT } from '@src/constants';
 import { useStudioHomeCoursesV2 } from '@src/studio-home/data/apiHooks';
+import { convertToStringFromDate } from '@src/utils';
 import type { CompetencyTreeNode } from '../CompetencyTree';
 import CourseRow from './CourseRow';
 import messages from './messages';
+import type { SubsectionSelectedEvent } from './types';
+// @ts-ignore
+import './CourseSearchBrowse.scss';
 
 export interface CourseSearchBrowseProps {
   /** The competency currently selected in the competency tree, or `null`
@@ -22,6 +39,7 @@ export interface CourseSearchBrowseProps {
    * a competency is active.
    */
   activeCompetency: CompetencyTreeNode | null;
+  onSubsectionSelected?: SubsectionSelectedEvent;
 }
 
 const PAGE_SIZE = 10;
@@ -34,12 +52,74 @@ const PAGE_SIZE = 10;
 // stable reference costs nothing and avoids relying on that not changing.
 const noop = () => {};
 
+interface DateRangeTriggerProps {
+  /** Whether a start (and/or end) date is currently picked - drives the
+   * highlighted visual state below. The trigger's own visible text never
+   * changes to reflect the picked value (see the component docstring).
+   */
+  hasSelection: boolean;
+  /** Accessible name and visible text, passed down rather than looked up
+   * again here via `useIntl` since the parent already has it.
+   */
+  label: string;
+  /** Injected by react-datepicker's `customInput` mechanism - opens the
+   * calendar popup on click.
+   */
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  /** Injected by react-datepicker: the `className` passed to `<DatePicker>`
+   * itself. Forwarded so the trigger picks up the same
+   * `.datepicker-custom-control` box styling every other datepicker trigger
+   * in this app uses.
+   */
+  className?: string;
+}
+
+/** DateRangeTrigger
+ * Trigger button rendered in place of react-datepicker's default `<input>`
+ * for the course start-date range filter, via `<DatePicker customInput={...}>`.
+ *
+ * react-datepicker's `customInput` mechanism clones whatever element is
+ * passed and always overwrites its `value` prop with the picker's own
+ * formatted string - once a full range is picked, that's the wide
+ * "MM/DD/YYYY - MM/DD/YYYY" text, which overflows a control sized for a
+ * short label. This component sidesteps that by never reading `props.value`
+ * at all: it always renders the fixed `label` text itself, and uses the
+ * separately-controlled `hasSelection` prop (not the injected value) to show
+ * that something is picked. `forwardRef` is required because react-datepicker
+ * attaches a ref to the trigger for popup positioning; only `onClick` (to
+ * open the calendar) and `className` (for shared box styling) are forwarded
+ * from the props react-datepicker injects - a native `<button>` already
+ * handles keyboard activation (Enter/Space) on its own, so the picker's own
+ * focus/blur/keydown handlers aren't needed here.
+ */
+const DateRangeTrigger = forwardRef<HTMLButtonElement, DateRangeTriggerProps>(
+  ({
+    hasSelection,
+    label,
+    onClick,
+    className,
+  }, ref) => (
+    <Button
+      ref={ref}
+      type="button"
+      variant={hasSelection ? 'primary' : 'outline-primary'}
+      iconAfter={Calendar}
+      onClick={onClick}
+      className={className}
+      aria-label={label}
+    >
+      {label}
+    </Button>
+  ),
+);
+DateRangeTrigger.displayName = 'DateRangeTrigger';
+
 /** CourseSearchBrowse
  * Search/browse pane for the competency management page: lets the user find
  * a course (by name, debounced as they type) and paginate through results,
  * once a competency is selected in the tree alongside this component.
  */
-const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
+const CourseSearchBrowse = ({ activeCompetency, onSubsectionSelected }: CourseSearchBrowseProps) => {
   const intl = useIntl();
   // `inputValue` is the raw, immediate field value (so typing feels
   // responsive); `search` is the debounced value that actually drives the
@@ -81,13 +161,39 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
     setPage(1);
   }, [debouncedUpdateSearch]);
 
+  // Course start-date range filter. The handler sets the whole range and
+  // resets `page` back to 1 in the same function body - both in the same
+  // state-update batch - for the same reason `debouncedUpdateSearch` above
+  // does: a separate effect keyed on the changing range would let a render
+  // fire with the new range paired with the old (possibly out-of-range) page
+  // before the page-1 correction caught up.
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+
+  const handleDateRangeChange = (range: [Date | null, Date | null]) => {
+    setDateRange(range);
+    setPage(1);
+  };
+
+  const handleClearDateRange = () => handleDateRangeChange([null, null]);
+
   const { data, isLoading, isError } = useStudioHomeCoursesV2(
-    { page, pageSize: PAGE_SIZE, search, order: 'display_name' },
+    {
+      page,
+      pageSize: PAGE_SIZE,
+      search,
+      order: 'display_name',
+      startDateOnOrAfter: dateRange[0] ? convertToStringFromDate(dateRange[0]) : undefined,
+      startDateOnOrBefore: dateRange[1] ? convertToStringFromDate(dateRange[1]) : undefined,
+    },
     { enabled: !!activeCompetency },
   );
 
   if (!activeCompetency) {
-    return <p>{intl.formatMessage(messages.selectCompetencyPrompt)}</p>;
+    return (
+      <div className="course-search-browse__empty-state">
+        <p>{intl.formatMessage(messages.selectCompetencyPrompt)}</p>
+      </div>
+    );
   }
 
   const courses = data?.results.courses ?? [];
@@ -123,7 +229,13 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
   } else {
     body = (
       <>
-        {courses.map((course) => <CourseRow key={course.courseKey} course={course} />)}
+        {courses.map((course) => (
+          <CourseRow
+            key={course.courseKey}
+            course={course}
+            onSubsectionSelected={onSubsectionSelected}
+          />
+        ))}
         {numPages > 1 && (
           <Pagination
             pageCount={numPages}
@@ -138,14 +250,53 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
   }
 
   return (
-    <div>
-      <SearchField
-        onSubmit={noop}
-        onChange={handleSearchChange}
-        value={inputValue}
-        placeholder={intl.formatMessage(messages.searchPlaceholder)}
-      />
-      {body}
+    <div className="course-search-browse">
+      <div className="course-search-browse__toolbar">
+        <Stack direction="horizontal" gap={3}>
+          <SearchField
+            className="flex-grow-1"
+            onSubmit={noop}
+            onChange={handleSearchChange}
+            value={inputValue}
+            placeholder={intl.formatMessage(messages.searchPlaceholder)}
+          />
+          <div className="d-flex align-items-center">
+            <DatePicker
+              id="course-search-date-range"
+              selectsRange
+              startDate={dateRange[0]}
+              endDate={dateRange[1]}
+              onChange={handleDateRangeChange}
+              dateFormat={DATE_FORMAT}
+              className="datepicker-custom-control"
+              autoComplete="off"
+              showPopperArrow={false}
+              popperPlacement="bottom-end"
+              customInput={
+                <DateRangeTrigger
+                  hasSelection={dateRange[0] !== null}
+                  label={intl.formatMessage(messages.dateRangeLabel)}
+                />
+              }
+            />
+            {dateRange[0] !== null && (
+              <IconButton
+                src={Close}
+                alt={intl.formatMessage(messages.clearDateRangeButtonLabel)}
+                onClick={handleClearDateRange}
+                size="sm"
+                className="ml-1"
+              />
+            )}
+          </div>
+        </Stack>
+      </div>
+      <div className="course-search-browse__container">
+        <div className="course-search-browse__section-label">
+          {intl.formatMessage(messages.coursesAndContentLabel)}
+        </div>
+        {body}
+      </div>
     </div>
   );
 };
