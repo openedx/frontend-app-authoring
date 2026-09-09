@@ -60,17 +60,19 @@ describe('<Sidebar>', () => {
     // Check the Page 1 content
     expect(screen.getByText('Component 1')).toBeInTheDocument();
 
-    // Check the IconButtonToggle
+    // Check the sidebar toggle buttons
     const sidebarToggle = screen.getByTestId('sidebar-toggle');
     expect(sidebarToggle).toBeInTheDocument();
 
     const page1Button = within(sidebarToggle).getByRole('button', { name: 'Page 1' });
     expect(page1Button).toBeInTheDocument();
-    expect(page1Button).toHaveAttribute('aria-selected', 'true');
+    expect(page1Button).toHaveAttribute('aria-pressed', 'true');
+    expect(page1Button).not.toHaveAttribute('aria-selected');
 
     const page2Button = within(sidebarToggle).getByRole('button', { name: 'Page 2' });
     expect(page2Button).toBeInTheDocument();
-    expect(page2Button).toHaveAttribute('aria-selected', 'false');
+    expect(page2Button).toHaveAttribute('aria-pressed', 'false');
+    expect(page2Button).not.toHaveAttribute('aria-selected');
   });
 
   it('should change pages using the icon button', async () => {
@@ -82,13 +84,13 @@ describe('<Sidebar>', () => {
     const page2Button = screen.getByRole('button', { name: 'Page 2' });
     await userEvent.click(page2Button);
 
-    expect(page2Button).toHaveAttribute('aria-selected', 'true');
+    expect(page2Button).toHaveAttribute('aria-pressed', 'true');
 
     // Check the Page 2 content
     expect(screen.getByText('Component 2')).toBeInTheDocument();
 
     const page1Button = screen.getByRole('button', { name: 'Page 1' });
-    expect(page1Button).toHaveAttribute('aria-selected', 'false');
+    expect(page1Button).toHaveAttribute('aria-pressed', 'false');
     await userEvent.click(page1Button);
 
     // Check the Page 1 content

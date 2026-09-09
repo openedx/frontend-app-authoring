@@ -121,6 +121,7 @@ describe('<CardHeader />', () => {
     expect(await screen.findByText(cardHeaderProps.title)).toBeInTheDocument();
     expect(await screen.findByTestId('subsection-card-header__expanded-btn')).toBeInTheDocument();
     expect(await screen.findByTestId('subsection-card-header__menu')).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: `Actions for ${cardHeaderProps.title}` })).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.queryByTestId('edit field')).not.toBeInTheDocument();
     });
