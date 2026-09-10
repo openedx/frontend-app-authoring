@@ -216,8 +216,8 @@ const twoBlocksPrevRunData: LinkCheckResult = {
   }],
 };
 
-const renderScanResults = (data: LinkCheckResult | null = mockData, onErrorStateChange = jest.fn()) => (
-  render(<ScanResults data={data} courseId={courseId} onErrorStateChange={onErrorStateChange} />)
+const renderScanResults = (data: LinkCheckResult | null = mockData) => (
+  render(<ScanResults data={data} courseId={courseId} />)
 );
 
 describe('ScanResults', () => {
@@ -307,6 +307,10 @@ describe('ScanResults', () => {
 
       expect(screen.getByText(messages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
       expect(screen.getByTestId('update-all-course')).toBeInTheDocument();
+      expect(mockedUseRerunLinkUpdateStatus).toHaveBeenCalledWith(courseId, {
+        enabled: true,
+        polling: false,
+      });
     });
 
     it('does not render the previous-run section when the feature is disabled', () => {
@@ -411,7 +415,6 @@ describe('ScanResults', () => {
 
     it('reports a failed single-link update', async () => {
       const user = userEvent.setup();
-      const onErrorStateChange = jest.fn();
       refetch.mockResolvedValue({
         data: {
           status: 'Succeeded',
@@ -424,12 +427,12 @@ describe('ScanResults', () => {
           }],
         },
       });
-      renderScanResults(previousRunOnlyData, onErrorStateChange);
+      renderScanResults(previousRunOnlyData);
 
       await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
       await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
 
-      await waitFor(() => expect(onErrorStateChange).toHaveBeenCalledWith(messages.updateLinkError.defaultMessage));
+      await waitFor(() => expect(screen.getByText(messages.updateLinkError.defaultMessage)).toBeInTheDocument());
     });
 
     it('polls a single-link update until a successful result is available', async () => {
@@ -460,9 +463,8 @@ describe('ScanResults', () => {
       jest.useFakeTimers();
       try {
         const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-        const onErrorStateChange = jest.fn();
         refetch.mockResolvedValue({ data: { status: 'In Progress' } });
-        renderScanResults(previousRunOnlyData, onErrorStateChange);
+        renderScanResults(previousRunOnlyData);
 
         await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
         await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
@@ -474,8 +476,6 @@ describe('ScanResults', () => {
         await act(async () => {
           await jest.runAllTimersAsync();
         });
-
-        expect(onErrorStateChange).toHaveBeenCalledWith(messages.updateLinkError.defaultMessage);
         expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
         expect(refetch).toHaveBeenCalledTimes(31);
       } finally {
@@ -485,7 +485,6 @@ describe('ScanResults', () => {
 
     it('treats a Succeeded poll with no matching target as a failed single-link update', async () => {
       const user = userEvent.setup();
-      const onErrorStateChange = jest.fn();
       refetch.mockResolvedValue({
         data: {
           status: 'Succeeded',
@@ -498,20 +497,18 @@ describe('ScanResults', () => {
           }],
         },
       });
-      renderScanResults(previousRunOnlyData, onErrorStateChange);
+      renderScanResults(previousRunOnlyData);
 
       await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
       await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
 
       await waitFor(() => {
-        expect(onErrorStateChange).toHaveBeenCalledWith(messages.updateLinkError.defaultMessage);
         expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
       });
     });
 
     it('treats a non-Succeeded terminal poll with no matching target as a failed single-link update', async () => {
       const user = userEvent.setup();
-      const onErrorStateChange = jest.fn();
       refetch.mockResolvedValue({
         data: {
           status: 'Failed',
@@ -524,20 +521,18 @@ describe('ScanResults', () => {
           }],
         },
       });
-      renderScanResults(previousRunOnlyData, onErrorStateChange);
+      renderScanResults(previousRunOnlyData);
 
       await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
       await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
 
       await waitFor(() => {
-        expect(onErrorStateChange).toHaveBeenCalledWith(messages.updateLinkError.defaultMessage);
         expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
       });
     });
 
     it('reports a failed single-link update when results omit the originalUrl field', async () => {
       const user = userEvent.setup();
-      const onErrorStateChange = jest.fn();
       refetch.mockResolvedValue({
         data: {
           status: 'Succeeded',
@@ -549,20 +544,18 @@ describe('ScanResults', () => {
           }],
         },
       });
-      renderScanResults(previousRunOnlyData, onErrorStateChange);
+      renderScanResults(previousRunOnlyData);
 
       await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
       await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
 
       await waitFor(() => {
-        expect(onErrorStateChange).toHaveBeenCalledWith(messages.updateLinkError.defaultMessage);
         expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
       });
     });
 
     it('reports a failed update-all result and scrolls to the error', async () => {
       const user = userEvent.setup();
-      const onErrorStateChange = jest.fn();
       window.scrollTo = jest.fn();
       mockedUseRerunLinkUpdateStatus.mockReturnValue({
         data: {
@@ -579,18 +572,16 @@ describe('ScanResults', () => {
         isSuccess: true,
         refetch,
       });
-      renderScanResults(previousRunOnlyData, onErrorStateChange);
+      renderScanResults(previousRunOnlyData);
 
       await user.click(screen.getByTestId('update-all-course'));
       await waitFor(() => {
-        expect(onErrorStateChange).toHaveBeenCalledWith(messages.updateLinksError.defaultMessage);
         expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
       });
     });
 
     it('reports a failed UpdateStatus without Results', async () => {
       const user = userEvent.setup();
-      const onErrorStateChange = jest.fn();
       mockedUseRerunLinkUpdateStatus.mockReturnValue({
         data: {
           status: 'Failed',
@@ -600,16 +591,15 @@ describe('ScanResults', () => {
         isSuccess: true,
         refetch,
       });
-      renderScanResults(previousRunOnlyData, onErrorStateChange);
+      renderScanResults(previousRunOnlyData);
 
       await user.click(screen.getByTestId('update-all-course'));
 
-      await waitFor(() => expect(onErrorStateChange).toHaveBeenCalledWith(messages.updateLinksError.defaultMessage));
+      await waitFor(() => expect(screen.getByText(messages.updateLinksError.defaultMessage)).toBeInTheDocument());
     });
 
     it('completes the update-all operation when the response omits a results array', async () => {
       const user = userEvent.setup();
-      const onErrorStateChange = jest.fn();
       mockedUseRerunLinkUpdateStatus.mockReturnValue({
         data: {
           status: 'Succeeded',
@@ -619,16 +609,15 @@ describe('ScanResults', () => {
         isSuccess: true,
         refetch,
       });
-      renderScanResults(previousRunOnlyData, onErrorStateChange);
+      renderScanResults(previousRunOnlyData);
 
       await user.click(screen.getByTestId('update-all-course'));
 
-      await waitFor(() => expect(onErrorStateChange).toHaveBeenCalledWith(null));
+      expect(screen.queryByText(messages.updateLinksError.defaultMessage)).not.toBeInTheDocument();
     });
 
     it('reports a terminal Failed rerun with non-empty failed results', async () => {
       const user = userEvent.setup();
-      const onErrorStateChange = jest.fn();
       mockedUseRerunLinkUpdateStatus.mockReturnValue({
         data: {
           status: 'Failed',
@@ -644,12 +633,11 @@ describe('ScanResults', () => {
         isSuccess: true,
         refetch,
       });
-      renderScanResults(previousRunOnlyData, onErrorStateChange);
+      renderScanResults(previousRunOnlyData);
 
       await user.click(screen.getByTestId('update-all-course'));
 
       await waitFor(() => {
-        expect(onErrorStateChange).toHaveBeenCalledWith(messages.updateLinksError.defaultMessage);
         expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
       });
     });
@@ -664,23 +652,19 @@ describe('ScanResults', () => {
         type: 'course_updates',
       }]],
     ])('does not bulk-process a cached %s rerun status on initial render', (status, results) => {
-      const onErrorStateChange = jest.fn();
       mockedUseRerunLinkUpdateStatus.mockReturnValue({
         data: { status, results },
         isFetching: false,
         isSuccess: true,
         refetch,
       });
-      renderScanResults(previousRunOnlyData, onErrorStateChange);
-
-      expect(onErrorStateChange).not.toHaveBeenCalled();
+      renderScanResults(previousRunOnlyData);
       expect(screen.queryByText('https://updated.run/link1')).not.toBeInTheDocument();
       expect(screen.getByTestId('update-all-course')).not.toBeDisabled();
     });
 
     it('does not bulk-process terminal status data during a single-link update', async () => {
       const user = userEvent.setup();
-      const onErrorStateChange = jest.fn();
       mockedUseRerunLinkUpdateStatus.mockReturnValue({
         data: {
           status: 'Failed',
@@ -699,33 +683,31 @@ describe('ScanResults', () => {
       refetch.mockResolvedValue({
         data: { status: 'Succeeded', results: [successfulResult('https://updated.run/link1')] },
       });
-      renderScanResults(previousRunOnlyData, onErrorStateChange);
+      renderScanResults(previousRunOnlyData);
 
       await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
       await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
 
       await waitFor(() => expect(screen.getByText('https://updated.run/link1')).toBeInTheDocument());
-      expect(onErrorStateChange).not.toHaveBeenCalledWith(messages.updateLinksError.defaultMessage);
     });
 
     it('reports mutation failures for update-all and single-link updates', async () => {
       const user = userEvent.setup();
-      const onErrorStateChange = jest.fn();
       updateAllMutateAsync.mockRejectedValueOnce(new Error('update all failed'));
-      renderScanResults(previousRunOnlyData, onErrorStateChange);
+      renderScanResults(previousRunOnlyData);
 
       await user.click(screen.getByTestId('update-all-course'));
-      await waitFor(() => expect(onErrorStateChange).toHaveBeenCalledWith(messages.updateLinksError.defaultMessage));
+      await waitFor(() => expect(screen.getByText(messages.updateLinksError.defaultMessage)).toBeInTheDocument());
 
       updateSingleMutateAsync.mockRejectedValueOnce(new Error('single update failed'));
-      renderScanResults(previousRunOnlyData, onErrorStateChange);
+      renderScanResults(previousRunOnlyData);
       await user.click(screen.getAllByText(messages.courseUpdatesHeader.defaultMessage).at(-1)!);
       await user.click(
         await screen.findAllByRole('button', { name: messages.updateButton.defaultMessage }).then(buttons =>
           buttons.at(-1)!
         ),
       );
-      await waitFor(() => expect(onErrorStateChange).toHaveBeenCalledWith(messages.updateLinkError.defaultMessage));
+      await waitFor(() => expect(screen.getByText(messages.updateLinkError.defaultMessage)).toBeInTheDocument());
     });
 
     it('preserves and replaces incremental update mappings', async () => {
@@ -864,9 +846,8 @@ describe('ScanResults', () => {
     it('processes a terminal bulk response with mapped and unmatched results', async () => {
       const user = userEvent.setup();
       let status: any = { data: undefined, isFetching: false, isSuccess: false, refetch };
-      const onErrorStateChange = jest.fn();
       mockedUseRerunLinkUpdateStatus.mockImplementation(() => status);
-      const view = renderScanResults(previousRunOnlyData, onErrorStateChange);
+      const view = renderScanResults(previousRunOnlyData);
 
       await user.click(screen.getByTestId('update-all-course'));
       status = {
@@ -891,12 +872,11 @@ describe('ScanResults', () => {
         refetch,
       };
       view.rerender(
-        <ScanResults data={previousRunOnlyData} courseId={courseId} onErrorStateChange={onErrorStateChange} />,
+        <ScanResults data={previousRunOnlyData} courseId={courseId} />,
       );
 
       await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
       expect(await screen.findByText('https://updated.run/link1')).toBeInTheDocument();
-      expect(onErrorStateChange).toHaveBeenCalledWith(null);
     });
 
     it('uses locally updated links when the API still reports them as unchanged', async () => {
