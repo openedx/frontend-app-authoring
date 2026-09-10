@@ -41,6 +41,7 @@ describe('course optimizer api hooks', () => {
     expect(query?.observers[0]?.options.retry).toBe(false);
     const refetchInterval = query?.observers[0]?.options.refetchInterval;
     expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(2000);
+    expect(query?.observers[0]?.options.staleTime).toBe(0);
 
     queryClient.setQueryData(courseOptimizerQueryKeys.linkCheckStatus(courseId), {
       linkCheckStatus: 'Succeeded',
@@ -75,8 +76,8 @@ describe('course optimizer api hooks', () => {
     const query = queryClient.getQueryCache().find({
       queryKey: courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId),
     });
-    const refetchInterval = query?.observers[0]?.options.refetchInterval;
-    expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(false);
+    expect(query?.observers[0]?.options.refetchInterval).toBe(false);
+    expect(query?.observers[0]?.options.staleTime).toBe(0);
   });
 
   it('normalizes lowercase uninitiated rerun status', async () => {
@@ -140,8 +141,8 @@ describe('course optimizer api hooks', () => {
     const query = queryClient.getQueryCache().find({
       queryKey: courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId),
     });
-    const refetchInterval = query?.observers[0]?.options.refetchInterval;
-    expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(2000);
+    expect(query?.observers[0]?.options.refetchInterval).toBe(2000);
+    expect(query?.observers[0]?.options.staleTime).toBe(0);
   });
 
   it('updates all previous-run links', async () => {

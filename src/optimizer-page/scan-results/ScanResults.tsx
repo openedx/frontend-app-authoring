@@ -44,38 +44,34 @@ type FlatLinkCheckResult = NonNullable<LinkCheckResult['courseUpdates']>[number]
 interface Props {
   data: LinkCheckResult | null;
   courseId: string;
-  /** Kept for callers that still surface operation errors outside this component. */
-  onErrorStateChange?: (errorMessage: string | null) => void;
 }
 
-const ScanResults: FC<Props> = ({
-  data,
-  courseId,
-  onErrorStateChange,
-}) => {
+const ScanResults: FC<Props> = ({ data, courseId }) => {
   const intl = useIntl();
-  const waffleFlags = useWaffleFlags();
+  const waffleFlags = useWaffleFlags(courseId);
   const [isUpdateAllInProgress, setIsUpdateAllInProgress] = useState(false);
   const rerunLinkUpdateStatusQuery = useRerunLinkUpdateStatus(courseId, {
     enabled: waffleFlags.enableCourseOptimizerCheckPrevRunLinks,
+    polling: isUpdateAllInProgress,
   });
   const updateAllPreviousRunLinksMutation = useUpdateAllPreviousRunLinks(courseId);
   const updateSinglePreviousRunLinkMutation = useUpdateSinglePreviousRunLink(courseId);
-  const rerunLinkUpdateResult = rerunLinkUpdateStatusQuery.data;
+  const { data: rerunLinkUpdateResult, isError, isFetching, refetch } = rerunLinkUpdateStatusQuery;
+  const { isPending: isUpdateAllPending, mutateAsync: updateAll } = updateAllPreviousRunLinksMutation;
+  const { mutateAsync: updateSingle } = updateSinglePreviousRunLinkMutation;
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const reportError = useCallback((message: string) => {
     setErrorMessage(message);
-    onErrorStateChange?.(message);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [onErrorStateChange]);
+  }, []);
   useEffect(() => {
-    if (rerunLinkUpdateStatusQuery.isError) {
+    if (isError) {
       reportError(intl.formatMessage(messages.updateLinksError));
     }
-  }, [intl, reportError, rerunLinkUpdateStatusQuery.isError]);
+  }, [intl, reportError, isError]);
   const serverRerunLinkUpdateInProgress = rerunLinkUpdateResult?.status != null
     && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(rerunLinkUpdateResult.status);
-  const rerunLinkUpdateInProgress = updateAllPreviousRunLinksMutation.isPending
+  const rerunLinkUpdateInProgress = isUpdateAllPending
     || isUpdateAllInProgress
     || serverRerunLinkUpdateInProgress;
   const [isOpen, open, close] = useToggle(false);
@@ -228,36 +224,6 @@ const ScanResults: FC<Props> = ({
     ) {
       const successfulLinkIds: string[] = [];
       const newMap: Record<string, string> = {};
-
-      const typeToSection: Record<string, string> = {
-        course_updates: 'course-updates',
-        custom_pages: 'custom-pages',
-      };
-
-      const blocksWithResults = new Set<string>();
-
-      const addBlocksWithPrevLinks = (sectionId: string) => {
-        const section = allSections.find(s => s.id === sectionId);
-        if (!section) { return; }
-        section.subsections.forEach(sub =>
-          sub.units.forEach(unit =>
-            unit.blocks.forEach(b => {
-              if (b.previousRunLinks?.length) { blocksWithResults.add(b.id); }
-            })
-          )
-        );
-      };
-
-      if (Array.isArray(response.results)) {
-        response.results.forEach((result) => {
-          const sectionId = typeToSection[result.type];
-          if (sectionId) {
-            addBlocksWithPrevLinks(sectionId);
-          } else if (result.id) {
-            blocksWithResults.add(result.id);
-          }
-        });
-      }
 
       const allBlocksMap = new Map();
       allSections.forEach(section => {
@@ -422,14 +388,11 @@ const ScanResults: FC<Props> = ({
   useEffect(() => {
     if (
       !isUpdateAllInProgress
-      || updateAllPreviousRunLinksMutation.isPending
-      || rerunLinkUpdateStatusQuery.isFetching
+      || isUpdateAllPending
+      || isFetching
       || !rerunLinkUpdateResult
-      || rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.PENDING
-      || rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.IN_PROGRESS
-      || rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.RETRYING
-      || rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.SCANNING
-      || rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.UPDATING
+      || (rerunLinkUpdateResult.status != null
+        && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(rerunLinkUpdateResult.status))
     ) {
       return;
     }
@@ -451,22 +414,19 @@ const ScanResults: FC<Props> = ({
       && results.every(result => result.success)
     ) {
       setErrorMessage(null);
-      onErrorStateChange?.(null);
     } else {
       const error = intl.formatMessage(messages.updateLinksError);
       setErrorMessage(error);
-      onErrorStateChange?.(error);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [
     intl,
     isUpdateAllInProgress,
-    onErrorStateChange,
     processUpdateResults,
     processedResponseIds,
     rerunLinkUpdateResult,
-    rerunLinkUpdateStatusQuery.isFetching,
-    updateAllPreviousRunLinksMutation.isPending,
+    isFetching,
+    isUpdateAllPending,
   ]);
 
   const getContentType = useCallback((sectionId: string): string => {
@@ -545,7 +505,7 @@ const ScanResults: FC<Props> = ({
     try {
       setUpdatingLinkIds(prev => ({ ...prev, [uniqueId]: true }));
       const contentType = getContentType(sectionId || '');
-      await updateSinglePreviousRunLinkMutation.mutateAsync({
+      await updateSingle({
         linkUrl: link,
         blockId,
         contentType,
@@ -556,7 +516,7 @@ const ScanResults: FC<Props> = ({
           throw new Error('Timeout waiting for link update result');
         }
 
-        const { data: updateStatusResponse } = await rerunLinkUpdateStatusQuery.refetch();
+        const { data: updateStatusResponse } = await refetch();
         const pollStatus = updateStatusResponse?.status;
 
         if (
@@ -612,7 +572,6 @@ const ScanResults: FC<Props> = ({
               }
 
               setErrorMessage(null);
-              onErrorStateChange?.(null);
 
               return true;
             }
@@ -678,10 +637,9 @@ const ScanResults: FC<Props> = ({
     getContentType,
     intl,
     reportError,
-    onErrorStateChange,
     processUpdateResults,
-    rerunLinkUpdateStatusQuery,
-    updateSinglePreviousRunLinkMutation,
+    refetch,
+    updateSingle,
   ]);
 
   // When updatedLinkIds changes (links marked updated), clear any updating flags for those ids
@@ -706,14 +664,14 @@ const ScanResults: FC<Props> = ({
     try {
       setProcessedResponseIds(new Set());
       setIsUpdateAllInProgress(true);
-      await updateAllPreviousRunLinksMutation.mutateAsync();
+      await updateAll();
       return true;
     } catch {
       setIsUpdateAllInProgress(false);
       reportError(intl.formatMessage(messages.updateLinksError));
       return false;
     }
-  }, [intl, reportError, updateAllPreviousRunLinksMutation]);
+  }, [intl, reportError, updateAll]);
 
   if (!data || isDataEmpty(data)) {
     return (

@@ -150,6 +150,7 @@ export const useLinkCheckStatus = (courseId: string, options: StatusQueryOptions
     refetchInterval: query => (
       options.polling || isLinkCheckInProgress(query.state.data?.linkCheckStatus) ? POLLING_INTERVAL : false
     ),
+    staleTime: 0,
     retry: false,
   })
 );
@@ -159,9 +160,8 @@ export const useRerunLinkUpdateStatus = (courseId: string, options: StatusQueryO
     queryKey: courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId),
     queryFn: () => fetchRerunLinkUpdateStatus(courseId),
     enabled: Boolean(courseId) && options.enabled !== false,
-    refetchInterval: query => (
-      options.polling || isRerunLinkUpdateInProgress(query.state.data?.status) ? POLLING_INTERVAL : false
-    ),
+    refetchInterval: options.polling ? POLLING_INTERVAL : false,
+    staleTime: 0,
     retry: false,
   })
 );
