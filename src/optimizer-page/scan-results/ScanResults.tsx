@@ -73,10 +73,9 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   }, []);
   const rerunLinkUpdateStatusQuery = useRerunLinkUpdateStatus(courseId, {
     enabled: waffleFlags.enableCourseOptimizerCheckPrevRunLinks,
-    polling: isUpdateAllInProgress,
     manualPolling: isSingleLinkPolling,
   });
-  // Bulk owns interval refetches; single-link updates own bounded manual GETs.
+  // Server status owns interval refetches; single-link updates own bounded manual GETs.
   const updateAllPreviousRunLinksMutation = useUpdateAllPreviousRunLinks(courseId);
   const updateSinglePreviousRunLinkMutation = useUpdateSinglePreviousRunLink(courseId);
   const { data: rerunLinkUpdateResult, isError, isFetching, refetch } = rerunLinkUpdateStatusQuery;
@@ -89,10 +88,12 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   }, []);
   useEffect(() => {
     if (isError) {
+      setIsUpdateAllInProgress(false);
       reportError(intl.formatMessage(messages.updateLinksError));
     }
   }, [intl, reportError, isError]);
-  const serverRerunLinkUpdateInProgress = rerunLinkUpdateResult?.status != null
+  const serverRerunLinkUpdateInProgress = !isError
+    && rerunLinkUpdateResult?.status != null
     && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(rerunLinkUpdateResult.status);
   const rerunLinkUpdateInProgress = isUpdateAllPending
     || isUpdateAllInProgress
@@ -102,8 +103,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   const [updatedLinkMap, setUpdatedLinkMap] = useState<Record<string, string>>({});
   const [updatingLinkIds, setUpdatingLinkIds] = useState<Record<string, boolean>>({});
   const [updateAllTrigger, setUpdateAllTrigger] = useState(0);
-  const [processedResponseIds, setProcessedResponseIds] = useState<Set<string>>(new Set());
-  const invalidatedResponseIds = useRef(new Set<string>());
   const initialFilters = {
     brokenLinks: false,
     lockedLinks: false,
@@ -408,12 +407,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     }
   }, [allSections]);
 
-  const rerunLinkUpdateResponseId = rerunLinkUpdateResult
-    ? `${rerunLinkUpdateResult.status}-${
-      rerunLinkUpdateResult.results.map(r => `${r.id}-${r.originalUrl}-${r.newUrl}`).sort().join(',')
-    }`
-    : null;
-
   // Without a backend operation ID/version, refresh authoritative link-check state on terminal rerun observations.
   useEffect(() => {
     if (
@@ -421,19 +414,15 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       || !rerunLinkUpdateResult
       || rerunLinkUpdateResult.status == null
       || RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(rerunLinkUpdateResult.status)
-      || !rerunLinkUpdateResponseId
-      || invalidatedResponseIds.current.has(rerunLinkUpdateResponseId)
     ) {
       return;
     }
 
-    invalidatedResponseIds.current.add(rerunLinkUpdateResponseId);
     queryClient.invalidateQueries({ queryKey: courseOptimizerQueryKeys.linkCheckStatus(courseId) });
   }, [
     courseId,
     isFetching,
     queryClient,
-    rerunLinkUpdateResponseId,
     rerunLinkUpdateResult,
   ]);
 
@@ -451,10 +440,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     }
 
     const results = rerunLinkUpdateResult.results;
-    if (!rerunLinkUpdateResponseId || processedResponseIds.has(rerunLinkUpdateResponseId)) {
-      return;
-    }
-    setProcessedResponseIds(prev => new Set([...prev, rerunLinkUpdateResponseId]));
     processUpdateResults({ ...rerunLinkUpdateResult, results }, true);
     setIsUpdateAllInProgress(false);
     setUpdateAllTrigger(t => t + 1);
@@ -473,11 +458,9 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     intl,
     isUpdateAllInProgress,
     processUpdateResults,
-    processedResponseIds,
     rerunLinkUpdateResult,
     isFetching,
     isUpdateAllPending,
-    rerunLinkUpdateResponseId,
   ]);
 
   const getContentType = useCallback((sectionId: string): string => {
@@ -555,8 +538,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     setSinglePolling(true);
 
     try {
-      setProcessedResponseIds(new Set());
-      invalidatedResponseIds.current.clear();
       setUpdatingLinkIds(prev => ({ ...prev, [uniqueId]: true }));
       const contentType = getContentType(sectionId || '');
       await updateSingle({
@@ -737,8 +718,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
 
   const handleUpdateAllCourseLinks = useCallback(async (): Promise<boolean> => {
     try {
-      setProcessedResponseIds(new Set());
-      invalidatedResponseIds.current.clear();
       setIsUpdateAllInProgress(true);
       await updateAll();
       return true;
