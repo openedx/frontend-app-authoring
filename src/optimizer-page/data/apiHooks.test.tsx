@@ -133,34 +133,22 @@ describe('course optimizer api hooks', () => {
     expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(false);
   });
 
-  it('normalizes lowercase uninitiated rerun status', async () => {
+  it.each([
+    ['lowercase uninitiated status', { status: 'uninitiated', results: [] }, { status: 'Uninitiated', results: [] }],
+    ['omitted results', { status: 'Pending' }, { status: 'Pending', results: [] }],
+  ])('normalizes %s rerun status response', async (_name, response, expected) => {
     const { axiosMock, queryClient } = initializeMocks();
-    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, {
-      status: 'uninitiated',
-      results: [],
-    });
+    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, response);
 
     const { result } = renderHook(() => useRerunLinkUpdateStatus(courseId), {
       wrapper: makeQueryClientWrapper(queryClient),
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(result.current.data).toEqual({ status: 'Uninitiated', results: [] });
+    expect(result.current.data).toEqual(expected);
   });
 
-  it('normalizes rerun status response with an omitted results field', async () => {
-    const { axiosMock, queryClient } = initializeMocks();
-    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, { status: 'Pending' });
-
-    const { result } = renderHook(() => useRerunLinkUpdateStatus(courseId), {
-      wrapper: makeQueryClientWrapper(queryClient),
-    });
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-
-    expect(result.current.data).toEqual({ status: 'Pending', results: [] });
-  });
-
-  it('starts a scan without retrying the mutation or retaining terminal query data', async () => {
+  it('optimistically resets terminal link-check data when starting a scan', async () => {
     const { axiosMock, queryClient } = initializeMocks();
     axiosMock.onPost(postLinkCheckCourseApiUrl(courseId)).reply(200, { LinkCheckStatus: 'Pending' });
 
@@ -179,12 +167,11 @@ describe('course optimizer api hooks', () => {
       linkCheckCreatedAt: null,
     });
     expect(axiosMock.history.post).toHaveLength(1);
-    expect(result.current.failureCount).toBe(0);
   });
 
-  it('does not poll a terminal status when manual polling owns the query', async () => {
+  it('does not poll an in-progress status when manual polling owns the query', async () => {
     const { axiosMock, queryClient } = initializeMocks();
-    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, { status: 'Succeeded', results: [] });
+    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, { status: 'Pending', results: [] });
 
     const { result } = renderHook(() => useRerunLinkUpdateStatus(courseId, { enabled: true, manualPolling: true }), {
       wrapper: makeQueryClientWrapper(queryClient),

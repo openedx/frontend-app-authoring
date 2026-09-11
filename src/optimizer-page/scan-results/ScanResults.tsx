@@ -26,7 +26,7 @@ import messages from './messages';
 import SectionCollapsible from './SectionCollapsible';
 import BrokenLinkTable from './BrokenLinkTable';
 import type { Filters, LinkCheckResult, Unit } from '../types';
-import type { RerunLinkUpdateStatusData } from '../data/apiHooks';
+import type { RerunLinkUpdateResult, RerunLinkUpdateStatusData } from '../data/apiHooks';
 import {
   areAllPreviousRunLinksUpdated,
   buildSyntheticSections,
@@ -494,7 +494,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
         if (updateStatusResponse && updateStatusResponse.results.length > 0) {
           const hasOriginalUrlField = updateStatusResponse.results.some(r => r.originalUrl != null);
 
-          let exactMatch;
+          let exactMatch: RerunLinkUpdateResult | undefined;
           if (hasOriginalUrlField) {
             exactMatch = updateStatusResponse.results.find(
               result => result.id === blockId && result.originalUrl === link && result.success,

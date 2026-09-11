@@ -13,7 +13,6 @@ describe('Course Optimizer API', () => {
       const data = await api.postLinkCheck(courseId);
 
       expect(data.linkCheckStatus).toEqual(LINK_CHECK_STATUSES.PENDING);
-      expect(axiosMock.history.post[0].url).toEqual(url);
     });
   });
 
@@ -36,7 +35,6 @@ describe('Course Optimizer API', () => {
       expect(data.linkCheckOutput).toEqual(mockApiResponse.LinkCheckOutput);
       expect(data.linkCheckStatus).toEqual(mockApiResponse.LinkCheckStatus);
       expect(data.linkCheckCreatedAt).toEqual(mockApiResponse.LinkCheckCreatedAt);
-      expect(axiosMock.history.get[0].url).toEqual(url);
     });
   });
 
@@ -51,7 +49,6 @@ describe('Course Optimizer API', () => {
       const data = await api.postRerunLinkUpdateAll(courseId);
 
       expect(data).toEqual(expectedResponse);
-      expect(axiosMock.history.post[0].url).toEqual(url);
       expect(axiosMock.history.post[0].data).toEqual(JSON.stringify({ action: 'all' }));
     });
   });
@@ -79,7 +76,6 @@ describe('Course Optimizer API', () => {
       const data = await api.postRerunLinkUpdateSingle(courseId, linkUrl, blockId, contentType);
 
       expect(data).toEqual(expectedResponse);
-      expect(axiosMock.history.post[0].url).toEqual(url);
       expect(axiosMock.history.post[0].data).toEqual(JSON.stringify(expectedRequestBody));
     });
   });

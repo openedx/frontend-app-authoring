@@ -123,16 +123,18 @@ describe('previous run link helpers', () => {
   ).concat(data.sections);
 
   it('builds synthetic sections in order with the expected shape', () => {
+    const syntheticInputItem = {
+      id: 'update-1',
+      displayName: 'Update',
+      url: 'https://example.com/update',
+      brokenLinks: [],
+      lockedLinks: [],
+      externalForbiddenLinks: [],
+      previousRunLinks: [{ originalLink: 'https://example.com/old', isUpdated: false }],
+    };
+
     expect(buildSyntheticSections(
-      [{
-        id: 'update-1',
-        displayName: 'Update',
-        url: 'https://example.com/update',
-        brokenLinks: [],
-        lockedLinks: [],
-        externalForbiddenLinks: [],
-        previousRunLinks: [{ originalLink: 'https://example.com/old', isUpdated: false }],
-      }],
+      [syntheticInputItem],
       undefined,
       { courseUpdates: 'Course updates', customPages: 'Custom pages' },
     )).toStrictEqual([{
@@ -142,18 +144,10 @@ describe('previous run link helpers', () => {
         id: 'course-updates-subsection',
         displayName: 'Course updates Subsection',
         units: [{
-          id: 'update-1',
-          displayName: 'Update',
-          url: 'https://example.com/update',
-          blocks: [{
-            id: 'update-1',
-            displayName: 'Update',
-            url: 'https://example.com/update',
-            brokenLinks: [],
-            lockedLinks: [],
-            externalForbiddenLinks: [],
-            previousRunLinks: [{ originalLink: 'https://example.com/old', isUpdated: false }],
-          }],
+          id: syntheticInputItem.id,
+          displayName: syntheticInputItem.displayName,
+          url: syntheticInputItem.url,
+          blocks: [syntheticInputItem],
         }],
       }],
     }]);
