@@ -5,9 +5,20 @@ import { getConfig } from '@edx/frontend-platform';
 
 import 'tinymce';
 import 'tinymce/themes/silver';
-import 'tinymce/skins/ui/oxide/skin.css';
+import 'tinymce/models/dom';
 import 'tinymce/icons/default';
-import 'frontend-components-tinymce-advanced-plugins';
+import 'tinymce/skins/ui/oxide/skin.css';
+import 'tinymce/plugins/autoresize';
+import 'tinymce/plugins/charmap';
+import 'tinymce/plugins/code';
+import 'tinymce/plugins/codesample';
+import 'tinymce/plugins/emoticons';
+import 'tinymce/plugins/emoticons/js/emojis';
+import 'tinymce/plugins/image';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/quickbars';
+import 'tinymce/plugins/table';
 
 import ImageUploadModal from '../ImageUploadModal';
 import SourceCodeModal from '../SourceCodeModal';
@@ -79,6 +90,10 @@ const TinyMceWidget = ({
         id={id}
         disabled={disabled}
         onEditorChange={onChange}
+        // TinyMCE 7 is GPL-2.0-or-later licensed. Declaring the open source license key
+        // silences the "running in evaluation mode" console warning. Operators using premium
+        // plugins must provide their commercial license key instead.
+        licenseKey={getConfig().TINYMCE_LICENSE_KEY || 'gpl'}
         {
           // @ts-ignore FIXME: this will have type errors until `editorConfig` gets proper type definitions.
           ...hooks.editorConfig({

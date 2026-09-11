@@ -6,7 +6,6 @@ import {
 } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { getLocale, isRtl } from '@edx/frontend-platform/i18n';
-import { a11ycheckerCss } from 'frontend-components-tinymce-advanced-plugins';
 import { isEmpty } from 'lodash';
 import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
@@ -305,6 +304,7 @@ export const setupCustomBehavior = ({
   setImage,
   lmsEndpointUrl,
   learningContextId,
+  imageToolbar,
 }) =>
 (editor) => {
   // image upload button
@@ -324,6 +324,15 @@ export const setupCustomBehavior = ({
       openImgModal,
     }),
   });
+  // toolbar shown when an image is selected (the TinyMCE 5 "imagetools" plugin used to provide this)
+  if (imageToolbar) {
+    editor.ui.registry.addContextToolbar('imageSettings', {
+      predicate: (node) => node.nodeName === 'IMG' && !node.hasAttribute('data-mce-object'),
+      items: imageToolbar,
+      position: 'node',
+      scope: 'node',
+    });
+  }
   // overriding the code plugin's icon with 'HTML' text
   editor.ui.registry.addButton(tinyMCE.buttons.code, {
     text: 'HTML',
@@ -414,9 +423,6 @@ export const setupCustomBehavior = ({
   editor.on('ObjectResized', getImageResizeHandler({ editor, imagesRef: images, setImage }));
 };
 
-// imagetools_cors_hosts needs a protocol-sanatized url
-export const removeProtocolFromUrl = (url) => url.replace(/^https?:\/\//, '');
-
 export const editorConfig = ({
   editorType,
   setEditorRef,
@@ -436,7 +442,6 @@ export const editorConfig = ({
   enableImageUpload,
 }) => {
   const lmsEndpointUrl = getConfig().LMS_BASE_URL;
-  const studioEndpointUrl = getConfig().STUDIO_BASE_URL;
 
   const baseURL = staticRootUrl || lmsEndpointUrl;
   const {
@@ -460,14 +465,12 @@ export const editorConfig = ({
       ...config,
       skin: false,
       content_css: false,
-      content_style: tinyMCEStyles + a11ycheckerCss,
+      content_style: tinyMCEStyles,
       min_height: minHeight,
       max_height: maxHeight,
       contextmenu: 'link table',
       directionality: isLocaleRtl ? 'rtl' as const : 'ltr' as const,
       document_base_url: baseURL,
-      imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
-      imagetools_toolbar: imageToolbar,
       formats: { label: { inline: 'label' } },
       setup: setupCustomBehavior({
         editorType,
@@ -480,6 +483,7 @@ export const editorConfig = ({
         content,
         images,
         learningContextId,
+        imageToolbar,
       }),
       quickbars_insert_toolbar: quickbarsInsertToolbar,
       quickbars_selection_toolbar: quickbarsSelectionToolbar,

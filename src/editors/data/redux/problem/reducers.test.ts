@@ -173,7 +173,7 @@ describe('problem reducer', () => {
       it('sets a default when deleting the last answer', () => {
         windowSpy.mockImplementation(() => ({
           tinymce: {
-            editors: 'mock-editors',
+            get: () => null,
           },
         }));
         const payload = {
@@ -205,7 +205,7 @@ describe('problem reducer', () => {
       it('sets answers and correctAnswerCount', () => {
         windowSpy.mockImplementation(() => ({
           tinymce: {
-            editors: 'mock-editors',
+            get: () => null,
           },
         }));
         const payload = {
@@ -241,10 +241,11 @@ describe('problem reducer', () => {
         const setContent = jest.fn();
         windowSpy.mockImplementation(() => ({
           tinymce: {
-            editors: {
-              'answer-A': { setContent },
-              'answer-B': { setContent },
-            },
+            get: (id: string) =>
+              ({
+                'answer-A': { setContent },
+                'answer-B': { setContent },
+              })[id],
           },
         }));
         const payload = {
@@ -282,10 +283,11 @@ describe('problem reducer', () => {
       it('sets selectedFeedback and unselectedFeedback with editorState', () => {
         windowSpy.mockImplementation(() => ({
           tinymce: {
-            editors: {
-              'answer-A': 'mockEditor',
-              'answer-B': 'mockEditor',
-            },
+            get: (id: string) =>
+              ({
+                'answer-A': 'mockEditor',
+                'answer-B': 'mockEditor',
+              })[id],
           },
         }));
         const payload = {
@@ -323,14 +325,15 @@ describe('problem reducer', () => {
         const setContent = jest.fn();
         windowSpy.mockImplementation(() => ({
           tinymce: {
-            editors: {
-              'answer-A': { setContent },
-              'answer-B': { setContent },
-              'selectedFeedback-A': { setContent },
-              'selectedFeedback-B': { setContent },
-              'unselectedFeedback-A': { setContent },
-              'unselectedFeedback-B': { setContent },
-            },
+            get: (id: string) =>
+              ({
+                'answer-A': { setContent },
+                'answer-B': { setContent },
+                'selectedFeedback-A': { setContent },
+                'selectedFeedback-B': { setContent },
+                'unselectedFeedback-A': { setContent },
+                'unselectedFeedback-B': { setContent },
+              })[id],
           },
         }));
         const payload = {
@@ -354,15 +357,15 @@ describe('problem reducer', () => {
           },
           actions.deleteAnswer(payload),
         );
-        expect((window as any).tinymce.editors['answer-A'].setContent).toHaveBeenCalled();
-        expect((window as any).tinymce.editors['answer-A'].setContent).toHaveBeenCalledWith('editorAnsB');
-        expect((window as any).tinymce.editors['selectedFeedback-A'].setContent).toHaveBeenCalledWith('editSelFB');
-        expect((window as any).tinymce.editors['unselectedFeedback-A'].setContent).toHaveBeenCalledWith('editUnselFB');
+        expect((window as any).tinymce.get('answer-A').setContent).toHaveBeenCalled();
+        expect((window as any).tinymce.get('answer-A').setContent).toHaveBeenCalledWith('editorAnsB');
+        expect((window as any).tinymce.get('selectedFeedback-A').setContent).toHaveBeenCalledWith('editSelFB');
+        expect((window as any).tinymce.get('unselectedFeedback-A').setContent).toHaveBeenCalledWith('editUnselFB');
       });
       it('sets groupFeedbackList by removing the checked item in the groupFeedback', () => {
         windowSpy.mockImplementation(() => ({
           tinymce: {
-            editors: 'mock-editors',
+            get: () => null,
           },
         }));
         const payload = {
@@ -413,7 +416,7 @@ describe('problem reducer', () => {
       it('if you delete an answer range, it will be replaced with a blank answer', () => {
         windowSpy.mockImplementation(() => ({
           tinymce: {
-            editors: 'mock-editors',
+            get: () => null,
           },
         }));
         const payload = {

@@ -293,13 +293,10 @@ describe('TinyMceEditor hooks', () => {
             editorType: props.editorType,
           };
           expect(output.init.plugins).toEqual(pluginConfig(pluginProps).plugins);
-          expect(output.init.imagetools_toolbar).toEqual(pluginConfig(pluginProps).imageToolbar);
           expect(output.init.toolbar).toEqual(pluginConfig(pluginProps).toolbar);
           Object.keys(pluginConfig(pluginProps).config).forEach(key => {
             expect(output.init[key]).toEqual(pluginConfig(pluginProps).config[key]);
           });
-          // Commented out as we investigate whether this is only needed for image proxy
-          // expect(output.init.imagetools_cors_hosts).toMatchObject([props.lmsEndpointUrl]);
         });
       });
       describe('text editor plugins and toolbar for content library', () => {
@@ -310,7 +307,6 @@ describe('TinyMceEditor hooks', () => {
           };
           output = module.editorConfig({ ...props, isLibrary: true });
           expect(output.init.plugins).toEqual(pluginConfig(pluginProps).plugins);
-          expect(output.init.imagetools_toolbar).toEqual(pluginConfig(pluginProps).imageToolbar);
           expect(output.init.toolbar).toEqual(pluginConfig(pluginProps).toolbar);
           expect(output.init.quickbars_insert_toolbar).toEqual(pluginConfig(pluginProps).quickbarsInsertToolbar);
           expect(output.init.quickbars_selection_toolbar).toEqual(pluginConfig(pluginProps).quickbarsSelectionToolbar);
@@ -332,7 +328,6 @@ describe('TinyMceEditor hooks', () => {
             placeholder: 'soMEtExT',
           });
           expect(output.init.plugins).toEqual(pluginConfig(pluginProps).plugins);
-          expect(output.init.imagetools_toolbar).toEqual(pluginConfig(pluginProps).imageToolbar);
           expect(output.init.toolbar).toEqual(pluginConfig(pluginProps).toolbar);
           expect(output.init.quickbars_insert_toolbar).toEqual(pluginConfig(pluginProps).quickbarsInsertToolbar);
           expect(output.init.quickbars_selection_toolbar).toEqual(pluginConfig(pluginProps).quickbarsSelectionToolbar);
@@ -355,7 +350,6 @@ describe('TinyMceEditor hooks', () => {
             placeholder: 'soMEtExT',
           });
           expect(output.init.plugins).toEqual(pluginConfig(pluginProps).plugins);
-          expect(output.init.imagetools_toolbar).toEqual(pluginConfig(pluginProps).imageToolbar);
           expect(output.init.toolbar).toEqual(pluginConfig(pluginProps).toolbar);
           expect(output.init.quickbars_insert_toolbar).toEqual(pluginConfig(pluginProps).quickbarsInsertToolbar);
           expect(output.init.quickbars_selection_toolbar).toEqual(pluginConfig(pluginProps).quickbarsSelectionToolbar);
@@ -389,6 +383,7 @@ describe('TinyMceEditor hooks', () => {
             images: mockImagesRef,
             lmsEndpointUrl: props.lmsEndpointUrl,
             learningContextId: props.learningContextId,
+            imageToolbar: pluginConfig({ editorType: props.editorType }).imageToolbar,
           }),
         );
       });

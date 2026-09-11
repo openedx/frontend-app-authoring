@@ -33,7 +33,7 @@ export const buttons = StrictDict({
     vert: 'flipv',
     horiz: 'fliph',
   }),
-  formatSelect: 'formatSelect',
+  formatSelect: 'blocks', // block format dropdown (was 'formatselect' before TinyMCE 6)
   hr: 'hr',
   imageUploadButton: 'imageuploadbutton',
   indent: 'indent',
@@ -52,8 +52,8 @@ export const buttons = StrictDict({
   table: 'table',
   undo: 'undo',
   underline: 'underline',
-  a11ycheck: 'a11ycheck',
   embediframe: 'embediframe',
+  a11ycheck: 'a11ycheck', // provided by the premium 'a11ychecker' plugin, if an operator has configured it
 });
 
 export const plugins = listKeyStore([
@@ -62,15 +62,11 @@ export const plugins = listKeyStore([
   'codesample',
   'emoticons',
   'table',
-  'hr',
   'charmap',
   'code',
   'autoresize',
   'image',
-  'imagetools',
   'quickbars',
-  'a11ychecker',
-  'powerpaste',
   'embediframe',
 ]);
 
