@@ -23,7 +23,7 @@ const SequenceNavigationTabs = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const sequenceId = useSelector(getSequenceId);
-  const { courseId } = useCourseAuthoringContext();
+  const { courseId, canEditCourseContent } = useCourseAuthoringContext();
   const courseUnit = useSelector(getCourseUnitData);
   const sequenceChildAddable = courseUnit?.ancestorInfo?.ancestors?.[0]?.actions?.childAddable;
 
@@ -67,7 +67,7 @@ const SequenceNavigationTabs = ({
               isActive={unitId === buttonUnitId}
             />
           ))}
-          {sequenceChildAddable && (
+          {canEditCourseContent && sequenceChildAddable && (
             <Button
               className="sequence-navigation-tabs-action-btn"
               variant="outline-primary"
@@ -77,7 +77,7 @@ const SequenceNavigationTabs = ({
               {intl.formatMessage(messages.newUnitBtnText)}
             </Button>
           )}
-          {showPasteUnit && (
+          {canEditCourseContent && showPasteUnit && (
             <Button
               className="sequence-navigation-tabs-action-btn"
               variant="outline-primary"

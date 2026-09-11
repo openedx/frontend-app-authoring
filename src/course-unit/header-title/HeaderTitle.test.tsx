@@ -1,7 +1,12 @@
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig, setConfig } from '@edx/frontend-platform';
-import { initializeMocks, render, screen } from '@src/testUtils';
+import {
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
+} from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
 import { executeThunk } from '@src/utils';
 
@@ -11,6 +16,8 @@ import { fetchCourseSectionVerticalData } from '../data/thunk';
 import { courseSectionVerticalMock } from '../__mocks__';
 import HeaderTitle from './HeaderTitle';
 import messages from './messages';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 
 const blockId = '123';
 const unitTitle = 'Getting Started';
@@ -21,8 +28,12 @@ const handleConfigureSubmit = jest.fn();
 let store;
 let axiosMock;
 
-const renderComponent = (props?: any) =>
-  render(
+const renderComponent = (props?: any) => {
+  const WrapperProvider = ({ children }) => (
+    <CourseAuthoringProvider courseId={'courseId'}>{children}</CourseAuthoringProvider>
+  );
+
+  return render(
     <IframeProvider>
       <HeaderTitle
         unitTitle={unitTitle}
@@ -33,12 +44,20 @@ const renderComponent = (props?: any) =>
         {...props}
       />,
     </IframeProvider>,
+    {
+      extraWrapper: WrapperProvider,
+    },
   );
-
+};
 describe('<HeaderTitle />', () => {
+  let validateUserPermissionsMock;
   beforeEach(async () => {
     const mocks = initializeMocks();
-
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    validateUserPermissionsMock.mockResolvedValue({
+      canEditCourseContent: true,
+    });
     store = mocks.reduxStore;
     axiosMock = mocks.axiosMock;
     axiosMock
@@ -47,7 +66,7 @@ describe('<HeaderTitle />', () => {
     await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
   });
 
-  it('render HeaderTitle component correctly', () => {
+  it('render HeaderTitle component correctly', async () => {
     setConfig({
       ...getConfig(),
       ENABLE_UNIT_PAGE_NEW_DESIGN: false,
@@ -55,11 +74,11 @@ describe('<HeaderTitle />', () => {
     renderComponent();
 
     expect(screen.getByText(unitTitle)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeInTheDocument();
   });
 
-  it('render HeaderTitle with open edit form', () => {
+  it('render HeaderTitle with open edit form', async () => {
     setConfig({
       ...getConfig(),
       ENABLE_UNIT_PAGE_NEW_DESIGN: false,
@@ -70,7 +89,7 @@ describe('<HeaderTitle />', () => {
 
     expect(screen.getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage })).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage })).toHaveValue(unitTitle);
-    expect(screen.getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeEnabled();
+    expect(await screen.findByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeEnabled();
     expect(screen.getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeEnabled();
   });
 
@@ -97,7 +116,7 @@ describe('<HeaderTitle />', () => {
 
     renderComponent();
 
-    expect(screen.getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeEnabled();
+    expect(await screen.findByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeEnabled();
     expect(screen.getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeEnabled();
   });
 
@@ -105,7 +124,7 @@ describe('<HeaderTitle />', () => {
     const user = userEvent.setup();
     renderComponent();
 
-    const editTitleButton = screen.getByRole('button', { name: messages.altButtonEdit.defaultMessage });
+    const editTitleButton = await screen.findByRole('button', { name: messages.altButtonEdit.defaultMessage });
     await user.click(editTitleButton);
     expect(handleTitleEdit).toHaveBeenCalledTimes(1);
   });
@@ -126,5 +145,34 @@ describe('<HeaderTitle />', () => {
     await user.type(titleField, ' 2[Enter]');
     expect(titleField).toHaveValue(`${unitTitle} 1 2`);
     expect(handleTitleEditSubmit).toHaveBeenCalledTimes(2);
+  });
+
+  it('hides the Edit button when the user cannot edit course content (legacy design)', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
+    validateUserPermissionsMock.mockResolvedValue({
+      canEditCourseContent: false,
+    });
+    renderComponent();
+    expect(
+      await screen.findByRole('button', { name: messages.altButtonSettings.defaultMessage }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: messages.altButtonEdit.defaultMessage })).not.toBeInTheDocument();
+  });
+
+  it('hides the Edit button when the user cannot edit course content (new design)', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: 'true',
+    });
+    validateUserPermissionsMock.mockResolvedValue({
+      canEditCourseContent: false,
+    });
+    renderComponent();
+    expect(screen.getByText(unitTitle)).toBeInTheDocument();
+    await waitFor(() => expect(validateUserPermissionsMock).toHaveBeenCalled());
+    expect(screen.queryByRole('button', { name: messages.altButtonEdit.defaultMessage })).not.toBeInTheDocument();
   });
 });

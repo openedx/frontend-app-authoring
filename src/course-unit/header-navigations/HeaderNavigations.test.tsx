@@ -1,11 +1,18 @@
 import userEvent from '@testing-library/user-event';
 import { getConfig, setConfig } from '@edx/frontend-platform';
-import { render, initializeMocks, screen } from '@src/testUtils';
+import {
+  initializeMocks,
+  render,
+  screen,
+  waitFor,
+} from '@src/testUtils';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import HeaderNavigations from './HeaderNavigations';
 import messages from './messages';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 
 const handleViewLiveFn = jest.fn();
 const handlePreviewFn = jest.fn();
@@ -18,6 +25,10 @@ const headerNavigationsActions = {
   handleEdit: handleEditFn,
 };
 
+const WrapperProvider = ({ children }) => (
+  <CourseAuthoringProvider courseId={'courseId'}>{children}</CourseAuthoringProvider>
+);
+
 const renderComponent = (props) =>
   render(
     <IntlProvider locale="en">
@@ -27,6 +38,9 @@ const renderComponent = (props) =>
         {...props}
       />
     </IntlProvider>,
+    {
+      extraWrapper: WrapperProvider,
+    },
   );
 
 jest.mock('../unit-sidebar/UnitSidebarContext', () => ({
@@ -36,9 +50,15 @@ jest.mock('../unit-sidebar/UnitSidebarContext', () => ({
   }),
 }));
 
+let validateUserPermissionsMock;
 describe('<HeaderNavigations />', () => {
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    validateUserPermissionsMock.mockResolvedValue({
+      canEditCourseContent: true,
+    });
   });
 
   it('render HeaderNavigations component correctly', () => {
@@ -111,10 +131,33 @@ describe('<HeaderNavigations />', () => {
     const user = userEvent.setup();
     renderComponent({ unitCategory: COURSE_BLOCK_NAMES.vertical.id });
 
-    const addButton = screen.getByRole('button', { name: /add/i });
+    // The Add button is gated behind `canEditCourseContent`, which is only known once
+    // the (async) permissions query resolves, so wait for it rather than querying synchronously.
+    const addButton = await screen.findByRole('button', { name: /add/i });
     expect(addButton).toBeInTheDocument();
     await user.click(addButton);
 
     expect(mockSetCurrentPageKey).toHaveBeenCalledWith('add', null);
+  });
+
+  it('hides the Add button on the unit page when the user cannot edit course content', async () => {
+    validateUserPermissionsMock.mockResolvedValue({
+      canEditCourseContent: false,
+    });
+    renderComponent({ unitCategory: COURSE_BLOCK_NAMES.vertical.id });
+    expect(await screen.findByRole('button', { name: messages.previewButton.defaultMessage })).toBeInTheDocument();
+    await waitFor(() => expect(validateUserPermissionsMock).toHaveBeenCalled());
+    expect(screen.queryByRole('button', { name: messages.addButton.defaultMessage })).not.toBeInTheDocument();
+  });
+
+  ['libraryContent', 'splitTest'].forEach((category) => {
+    it(`hides the Edit button on the ${category} page when the user cannot edit course content`, async () => {
+      validateUserPermissionsMock.mockResolvedValue({
+        canEditCourseContent: false,
+      });
+      renderComponent({ category: COURSE_BLOCK_NAMES[category].id });
+      await waitFor(() => expect(validateUserPermissionsMock).toHaveBeenCalled());
+      expect(screen.queryByRole('button', { name: messages.editButton.defaultMessage })).not.toBeInTheDocument();
+    });
   });
 });

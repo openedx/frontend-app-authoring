@@ -15,6 +15,7 @@ import { Edit, Groups, Lock } from '@openedx/paragon/icons';
 import { useConfigureUnitWithPageUpdates } from '@src/course-unit/data/apiHooks';
 import messages from './messages';
 import { useUnitSidebarContext } from '../UnitSidebarContext';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 interface UnitVisibilityInfoProps {
   openVisibleModal: () => void;
@@ -46,6 +47,7 @@ const LegacyVisibilityInfo = ({
 
   const { blockId } = useParams();
   const publishMutation = useConfigureUnitWithPageUpdates();
+  const { canEditCourseContent } = useCourseAuthoringContext();
 
   const handleCourseUnitVisibility = () => {
     /* istanbul ignore next */
@@ -87,6 +89,7 @@ const LegacyVisibilityInfo = ({
         checked={hasExplicitStaffLock}
         onChange={hasExplicitStaffLock ? null : handleCourseUnitVisibility}
         onClick={hasExplicitStaffLock ? openVisibleModal : null}
+        disabled={!canEditCourseContent}
       >
         <FormattedMessage {...messages.visibilityCheckboxTitle} />
       </Form.Checkbox>
@@ -100,6 +103,7 @@ const UnitVisibilityInfoContent = ({
 }: UnitVisibilityInfoContentProps) => {
   const intl = useIntl();
   const { setCurrentTabKey } = useUnitSidebarContext();
+  const { canEditCourseContent } = useCourseAuthoringContext();
 
   const { selectedPartitionIndex, selectedGroupsLabel } = userPartitionInfo ?? {};
   const hasGroups = selectedPartitionIndex !== -1 && !Number.isNaN(selectedPartitionIndex) && selectedGroupsLabel;
@@ -135,12 +139,15 @@ const UnitVisibilityInfoContent = ({
         <span className="font-weight-bold text-primary-700">
           {labelMessages}
         </span>
-        <IconButton
-          src={Edit}
-          alt={intl.formatMessage(messages.visibilityEditButton)}
-          size="inline"
-          onClick={() => setCurrentTabKey('settings')}
-        />
+        {canEditCourseContent &&
+          (
+            <IconButton
+              src={Edit}
+              alt={intl.formatMessage(messages.visibilityEditButton)}
+              size="inline"
+              onClick={() => setCurrentTabKey('settings')}
+            />
+          )}
       </Stack>
       {secondLabelMessages}
     </>

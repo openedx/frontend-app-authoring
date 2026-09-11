@@ -470,11 +470,13 @@ describe('ProctoredExamSettings', () => {
       await waitFor(() => {
         screen.getByDisplayValue('mockproc');
       });
-      // (1) for studio settings
-      // (2) for course details
-      // (3) for user course permissions
-      expect(axiosMock.history.get.length).toBe(3);
-      expect(axiosMock.history.get[0].url.includes('proctored_exam_settings')).toEqual(true);
+      // With no exam service URL configured, no request should be made to the exams
+      // service for provider options. (Total GET count is not asserted because the
+      // CourseAuthoringProvider also fetches course details and waffle flags.)
+      const examProvidersRequested = axiosMock.history.get.some((req) => req.url.includes('/api/v1/providers'));
+      expect(examProvidersRequested).toBe(false);
+      const studioSettingsRequested = axiosMock.history.get.some((req) => req.url.includes('proctored_exam_settings'));
+      expect(studioSettingsRequested).toBe(true);
     });
 
     it('Selected LTI proctoring provider is shown on page load', async () => {

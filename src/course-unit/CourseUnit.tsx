@@ -164,7 +164,7 @@ const StatusBar = ({ courseUnit }: { courseUnit: any; }) => {
 const CourseUnit = () => {
   const intl = useIntl();
   const { blockId } = useParams();
-  const { courseId } = useCourseAuthoringContext();
+  const { courseId, canEditCourseContent } = useCourseAuthoringContext();
   const urls = useHelpUrls(['syncLibraryUpdates']);
 
   if (courseId === undefined) {
@@ -359,7 +359,8 @@ const CourseUnit = () => {
                     courseVerticalChildren={courseVerticalChildren.children}
                   />
                 )}
-                {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && sharedClipboardData
+                {canEditCourseContent && !readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType &&
+                  sharedClipboardData
                   && /* istanbul ignore next */ (
                     <PasteComponent
                       clipboardData={sharedClipboardData}
@@ -370,7 +371,7 @@ const CourseUnit = () => {
                       text={intl.formatMessage(messages.pasteButtonText)}
                     />
                   )}
-                {!readOnly && blockId && (
+                {canEditCourseContent && !readOnly && blockId && (
                   <AddComponent
                     parentLocator={blockId}
                     isSplitTestType={isSplitTestType}

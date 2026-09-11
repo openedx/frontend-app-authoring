@@ -19,6 +19,7 @@ import VisibilityTab from './VisibilityTab';
 import AdvancedTab from './AdvancedTab';
 import { UnitTab } from './UnitTab';
 import { PUBLISH_TYPES } from '@src/course-unit/constants';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 interface Props {
   isOpen: boolean;
@@ -44,6 +45,7 @@ const ConfigureModal = ({
   isOverflowVisible = false,
 }: Props) => {
   const intl = useIntl();
+  const { canEditCourseContent } = useCourseAuthoringContext();
 
   if (!currentItemData) {
     return null;
@@ -337,19 +339,21 @@ const ConfigureModal = ({
                   {renderModalBody(values, setFieldValue)}
                 </Form.Group>
               </ModalDialog.Body>
-              <ModalDialog.Footer className="pt-1">
-                <ActionRow>
-                  <ModalDialog.CloseButton variant="tertiary">
-                    {intl.formatMessage(messages.cancelButton)}
-                  </ModalDialog.CloseButton>
-                  <Button
-                    data-testid="configure-save-button"
-                    type="submit"
-                  >
-                    {intl.formatMessage(messages.saveButton)}
-                  </Button>
-                </ActionRow>
-              </ModalDialog.Footer>
+              {canEditCourseContent && (
+                <ModalDialog.Footer className="pt-1">
+                  <ActionRow>
+                    <ModalDialog.CloseButton variant="tertiary">
+                      {intl.formatMessage(messages.cancelButton)}
+                    </ModalDialog.CloseButton>
+                    <Button
+                      data-testid="configure-save-button"
+                      type="submit"
+                    >
+                      {intl.formatMessage(messages.saveButton)}
+                    </Button>
+                  </ActionRow>
+                </ModalDialog.Footer>
+              )}
             </Form>
           )}
         </Formik>

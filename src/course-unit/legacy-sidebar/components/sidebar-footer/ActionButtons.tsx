@@ -6,6 +6,7 @@ import { Divider } from '@src/generic/divider';
 import { getCanEdit, getCourseUnitData } from '@src/course-unit/data/selectors';
 import { useClipboard } from '@src/generic/clipboard';
 import messages from '../../messages';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 interface ActionButtonsProps {
   openDiscardModal: () => void;
@@ -23,14 +24,14 @@ const ActionButtons = ({
     id,
     published,
     hasChanges,
-    enableCopyPasteUnits,
   } = useSelector(getCourseUnitData);
   const canEdit = useSelector(getCanEdit);
   const { copyToClipboard } = useClipboard();
+  const { canPublishCourseContent, canEditCourseContent } = useCourseAuthoringContext();
 
   return (
     <>
-      {(!published || hasChanges) && (
+      {(!published || hasChanges) && canPublishCourseContent && (
         <Button
           size="sm"
           className="mt-3.5"
@@ -40,7 +41,7 @@ const ActionButtons = ({
           {intl.formatMessage(messages.actionButtonPublishTitle)}
         </Button>
       )}
-      {(published && hasChanges) && (
+      {(published && hasChanges) && canEditCourseContent && (
         <Button
           size="sm"
           variant="link"
@@ -50,7 +51,7 @@ const ActionButtons = ({
           {intl.formatMessage(messages.actionButtonDiscardChangesTitle)}
         </Button>
       )}
-      {enableCopyPasteUnits && canEdit && !hideCopyButton && (
+      {canEdit && !hideCopyButton && canEditCourseContent && (
         <>
           <Divider className="course-unit-sidebar-footer__divider" />
           <Button

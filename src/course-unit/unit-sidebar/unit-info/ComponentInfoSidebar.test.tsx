@@ -47,6 +47,8 @@ jest.mock('@src/course-unit/data/selectors', () => ({
 jest.mock('@src/CourseAuthoringContext', () => ({
   useCourseAuthoringContext: () => ({
     courseId: 'course-v1:UNIX+UX1+2025_T3',
+    canEditCourseContent: true,
+    canPublishCourseContent: true,
   }),
 }));
 
