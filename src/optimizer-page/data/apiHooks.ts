@@ -59,7 +59,6 @@ export interface UpdatePreviousRunLinkVariables {
 
 interface StatusQueryOptions {
   enabled?: boolean;
-  polling?: boolean;
   manualPolling?: boolean;
 }
 
@@ -110,9 +109,12 @@ export const useLinkCheckStatus = (courseId: string, options: StatusQueryOptions
     queryKey: courseOptimizerQueryKeys.linkCheckStatus(courseId),
     queryFn: () => getLinkCheckStatus(courseId).then(normalizeLinkCheckStatus),
     enabled: Boolean(courseId) && options.enabled !== false,
-    refetchInterval: query => (
-      options.polling || isLinkCheckInProgress(query.state.data?.linkCheckStatus) ? POLLING_INTERVAL : false
-    ),
+    refetchInterval: query => {
+      if (query.state.error) {
+        return false;
+      }
+      return isLinkCheckInProgress(query.state.data?.linkCheckStatus) ? POLLING_INTERVAL : false;
+    },
     staleTime: 0,
     retry: false,
   })
