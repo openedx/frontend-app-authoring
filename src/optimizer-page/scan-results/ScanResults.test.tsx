@@ -14,6 +14,7 @@ jest.mock('@src/CourseAuthoringContext', () => ({
 }));
 
 jest.mock('../data/apiHooks', () => ({
+  courseOptimizerQueryKeys: jest.requireActual('../data/apiHooks').courseOptimizerQueryKeys,
   useRerunLinkUpdateStatus: jest.fn(),
   useUpdateAllPreviousRunLinks: jest.fn(),
   useUpdateSinglePreviousRunLink: jest.fn(),
