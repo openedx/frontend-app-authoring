@@ -192,7 +192,7 @@ export const useImportPlan = (taxonomyId: number, file: File | null) =>
  * Use the list of tags in a taxonomy.
  */
 export const useTagListData = (taxonomyId: number, options: QueryOptions) => {
-  const { pageIndex, pageSize, enabled = true, disablePagination = false } = options; // eslint-disable-line
+  const { pageIndex, pageSize = null, enabled = true, disablePagination = false } = options; // eslint-disable-line
   return useQuery({
     // queryKey: taxonomyQueryKeys.taxonomyTagListPage(taxonomyId, pageIndex, pageSize),
     queryKey: taxonomyQueryKeys.taxonomyTagList(taxonomyId), // For now, ignore pagination in the query key.
