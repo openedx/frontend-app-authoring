@@ -12,6 +12,8 @@ export async function mockContentTaxonomyTagsData(contentId: string): Promise<an
       return thisMock.stagedTags;
     case thisMock.otherTagsId:
       return thisMock.otherTags;
+    case thisMock.editableOtherTagsId:
+      return thisMock.editableOtherTags;
     case thisMock.languageWithTagsId:
       return thisMock.languageWithTags;
     case thisMock.languageWithoutTagsId:
@@ -83,6 +85,40 @@ mockContentTaxonomyTagsData.otherTags = {
         {
           value: 'Tag 4',
           lineage: ['Tag 4'],
+          canDeleteObjecttag: true,
+        },
+      ],
+    },
+  ],
+};
+mockContentTaxonomyTagsData.editableOtherTagsId =
+  'block-v1:StagedTagsOrg+STC1+2023_1+type@vertical+block@editableOtherTagsId';
+// Same shape as `otherTags`, but the "other" taxonomy is taggable, so its
+// "Add a tag" select is available and tags can be staged onto it.
+mockContentTaxonomyTagsData.editableOtherTags = {
+  taxonomies: [
+    {
+      name: 'Taxonomy 1',
+      taxonomyId: 123,
+      canTagObject: true,
+      tags: [
+        {
+          value: 'Tag 2',
+          lineage: ['Tag 2'],
+          canDeleteObjecttag: true,
+        },
+      ],
+    },
+    {
+      // Not present in `mockTaxonomyListData.stagedTags`, so it is rendered
+      // under the "Other tags" section.
+      name: 'Taxonomy 2',
+      taxonomyId: 1234,
+      canTagObject: true,
+      tags: [
+        {
+          value: 'Tag 3',
+          lineage: ['Tag 3'],
           canDeleteObjecttag: true,
         },
       ],
