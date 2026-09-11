@@ -16,6 +16,7 @@ import {
   postLinkCheckCourseApiUrl,
   getLinkCheckStatusApiUrl,
   getRerunLinkUpdateStatusApiUrl,
+  postRerunLinkUpdateApiUrl,
 } from './data/api';
 import {
   mockApiResponse,
@@ -28,6 +29,52 @@ import { useCourseUserPermissions } from '@src/authz/hooks';
 
 let axiosMock: MockAdapter;
 const courseId = '123';
+const previousRunLink = 'https://example.com/old-course-run/link';
+const previousRunLinksApiResponse = {
+  LinkCheckStatus: 'Succeeded',
+  LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
+  LinkCheckOutput: {
+    sections: [],
+    courseUpdates: [{
+      id: 'update-1',
+      displayName: 'Course Update with Previous Run Link',
+      url: 'https://example.com/course-update-1',
+      brokenLinks: [],
+      lockedLinks: [],
+      externalForbiddenLinks: [],
+      previousRunLinks: [{ originalLink: previousRunLink, isUpdated: false }],
+    }],
+    customPages: [],
+  },
+};
+const terminalRerunResponse = {
+  status: 'Succeeded',
+  results: [{
+    id: 'update-1',
+    success: true,
+    originalUrl: previousRunLink,
+    newUrl: 'https://example.com/new-course-run/link',
+    type: 'course_updates',
+  }],
+};
+const terminalRerunResponseWithoutClientUpdate = {
+  ...terminalRerunResponse,
+  results: [{ ...terminalRerunResponse.results[0], newUrl: undefined }],
+};
+const authoritativeCompletedLinksApiResponse = {
+  ...previousRunLinksApiResponse,
+  LinkCheckOutput: {
+    ...previousRunLinksApiResponse.LinkCheckOutput,
+    courseUpdates: [{
+      ...previousRunLinksApiResponse.LinkCheckOutput.courseUpdates[0],
+      previousRunLinks: [{
+        originalLink: previousRunLink,
+        isUpdated: true,
+        updatedLink: 'https://example.com/authoritative-refresh/link',
+      }],
+    }],
+  },
+};
 
 // Mock the waffle flags hook
 jest.mock('../data/apiHooks', () => ({
@@ -359,6 +406,81 @@ describe('CourseOptimizerPage', () => {
         mockedUseWaffleFlags.mockReturnValue({
           enableCourseOptimizerCheckPrevRunLinks: false,
         } as ReturnType<typeof useWaffleFlags>);
+      });
+
+      const setupTerminalRerun = (
+        initialRerunResponse: object = { status: null, results: [] },
+        completedLinkCheckResponse: object = mockApiResponseEmpty,
+        terminalResponse: object = terminalRerunResponse,
+      ) => {
+        axiosMock.resetHandlers();
+        let linkCheckStatusRequests = 0;
+        let rerunStatusRequests = 0;
+        axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(() => {
+          linkCheckStatusRequests += 1;
+          return [200, linkCheckStatusRequests === 1 ? previousRunLinksApiResponse : completedLinkCheckResponse];
+        });
+        axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(() => {
+          rerunStatusRequests += 1;
+          return [200, rerunStatusRequests === 1 ? initialRerunResponse : terminalResponse];
+        });
+        axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(200, { status: 'Pending' });
+      };
+
+      it('refreshes authoritative results after a bulk rerun reaches a terminal status', async () => {
+        setupTerminalRerun(
+          { status: null, results: [] },
+          authoritativeCompletedLinksApiResponse,
+          terminalRerunResponseWithoutClientUpdate,
+        );
+        render(<OptimizerPage />);
+
+        await screen.findByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage);
+        fireEvent.click(screen.getByText(scanResultsMessages.courseUpdatesHeader.defaultMessage));
+        await screen.findByText(previousRunLink);
+        fireEvent.click(screen.getByTestId('update-all-course'));
+
+        await waitFor(
+          () =>
+            expect(axiosMock.history.get.filter(({ url }) => url === getLinkCheckStatusApiUrl(courseId))).toHaveLength(
+              2,
+            ),
+          { timeout: 5000 },
+        );
+        expect(screen.getByTestId('update-all-course')).toBeDisabled();
+        fireEvent.click(screen.getByText(scanResultsMessages.courseUpdatesHeader.defaultMessage));
+        expect(await screen.findByText('https://example.com/authoritative-refresh/link')).toBeInTheDocument();
+      });
+
+      it('refreshes authoritative results after a single-link rerun reaches a terminal status', async () => {
+        setupTerminalRerun();
+        render(<OptimizerPage />);
+
+        await screen.findByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage);
+        fireEvent.click(screen.getByText(scanResultsMessages.courseUpdatesHeader.defaultMessage));
+        await screen.findByText(previousRunLink);
+        fireEvent.click(screen.getByRole('button', { name: scanResultsMessages.updateButton.defaultMessage }));
+
+        await waitFor(() =>
+          expect(axiosMock.history.get.filter(({ url }) => url === getLinkCheckStatusApiUrl(courseId))).toHaveLength(2)
+        );
+        await waitFor(() => expect(screen.queryByTestId('update-all-course')).not.toBeInTheDocument());
+      });
+
+      it('refreshes authoritative results when a terminal rerun status is observed after remount', async () => {
+        setupTerminalRerun(terminalRerunResponse);
+        const firstRender = render(<OptimizerPage />);
+
+        await waitFor(() =>
+          expect(axiosMock.history.get.filter(({ url }) => url === getLinkCheckStatusApiUrl(courseId))).toHaveLength(2)
+        );
+        firstRender.unmount();
+        render(<OptimizerPage />);
+
+        await waitFor(() =>
+          expect(axiosMock.history.get.filter(({ url }) => url === getLinkCheckStatusApiUrl(courseId))).toHaveLength(3)
+        );
+        await waitFor(() => expect(screen.queryByTestId('update-all-course')).not.toBeInTheDocument());
       });
 
       it('should show previous run links section when waffle flag is enabled and links exist', async () => {
