@@ -35,7 +35,6 @@ jest.spyOn(editorCmsApi as any, 'fetchBlockById').mockImplementation(
   ),
 );
 jest.spyOn(textEditorHooks, 'getContent').mockImplementation(() => () => '<p>Edited HTML content</p>');
-jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
 const saveSpy = jest.spyOn(editorCmsApi as any, 'saveBlock');
 
 const { libraryId } = mockContentLibrary;

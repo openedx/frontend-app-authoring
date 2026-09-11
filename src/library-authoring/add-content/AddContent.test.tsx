@@ -33,7 +33,6 @@ import { ComponentEditorModal } from '../components/ComponentEditorModal';
 // mockCreateLibraryBlock.applyMock();
 
 // Mocks for ComponentEditorModal to work in tests.
-jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
 
 const { libraryId } = mockContentLibrary;
 const render = (collectionId?: string) => {

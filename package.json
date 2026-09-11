@@ -75,7 +75,6 @@
     "fast-xml-parser": "5.11.1",
     "file-saver": "^2.0.5",
     "formik": "2.4.9",
-    "frontend-components-tinymce-advanced-plugins": "^1.0.3",
     "jszip": "^3.10.1",
     "lodash": "4.18.1",
     "meilisearch": "^0.41.0",
