@@ -22,7 +22,7 @@ export const getExternalPluginConfig = () => {
         powerpaste_html_import: 'prompt',
         powerpaste_googledoc_import: 'prompt',
       }),
-      ...(getConfig().TINYMCE_PLUGIN_OPTIONS || {}),
+      ...getConfig().TINYMCE_PLUGIN_OPTIONS,
     },
   };
 };
