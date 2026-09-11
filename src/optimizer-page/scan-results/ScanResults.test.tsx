@@ -1,3 +1,4 @@
+import { StrictMode } from 'react';
 import { act, initializeMocks, render, screen, userEvent, waitFor } from '@src/testUtils';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import ScanResults from './ScanResults';
@@ -337,6 +338,27 @@ describe('ScanResults', () => {
       expect(screen.getByTestId('update-all-course')).toBeDisabled();
     });
 
+    it('polls a single-link update under StrictMode', async () => {
+      const user = userEvent.setup();
+      refetch.mockResolvedValue({
+        data: {
+          status: 'Succeeded',
+          results: [successfulResult('https://updated.run/link1')],
+        },
+      });
+      render(
+        <StrictMode>
+          <ScanResults data={previousRunOnlyData} courseId={courseId} />
+        </StrictMode>,
+      );
+
+      await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
+      const updateButton = await screen.findByRole('button', { name: messages.updateButton.defaultMessage });
+      await user.click(updateButton);
+
+      await waitFor(() => expect(screen.getByText('https://updated.run/link1')).toBeInTheDocument());
+    });
+
     it('updates one link when the normalized result has a null originalUrl', async () => {
       const user = userEvent.setup();
       refetch.mockResolvedValue({
@@ -348,7 +370,8 @@ describe('ScanResults', () => {
       renderScanResults(previousRunOnlyData);
 
       await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
-      await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
+      const updateButton = await screen.findByRole('button', { name: messages.updateButton.defaultMessage });
+      await user.click(updateButton);
 
       await waitFor(() => expect(screen.getByText('https://updated.run/link1')).toBeInTheDocument());
       expect(refetch).toHaveBeenCalled();

@@ -134,9 +134,17 @@ describe('course optimizer api hooks', () => {
   });
 
   it.each([
-    ['lowercase uninitiated status', { status: 'uninitiated', results: [] }, { status: 'Uninitiated', results: [] }],
-    ['omitted results', { status: 'Pending' }, { status: 'Pending', results: [] }],
-  ])('normalizes %s rerun status response', async (_name, response, expected) => {
+    ['uninitiated', 'Uninitiated'],
+    ['pending', 'Pending'],
+    ['in_progress', 'In Progress'],
+    ['completed', 'Succeeded'],
+    ['failed', 'Failed'],
+    ['canceled', 'Canceled'],
+    ['retrying', 'Retrying'],
+    ['scanning', 'Scanning'],
+    ['updating', 'Updating'],
+  ])('normalizes lowercase %s rerun status response', async (status, expectedStatus) => {
+    const response = { status, results: [] };
     const { axiosMock, queryClient } = initializeMocks();
     axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, response);
 
@@ -145,7 +153,7 @@ describe('course optimizer api hooks', () => {
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(result.current.data).toEqual(expected);
+    expect(result.current.data).toEqual({ status: expectedStatus, results: [] });
   });
 
   it('optimistically resets terminal link-check data when starting a scan', async () => {
@@ -186,18 +194,25 @@ describe('course optimizer api hooks', () => {
     expect(query?.observers[0]?.options.staleTime).toBe(0);
   });
 
-  it('updates all previous-run links and invalidates their status', async () => {
+  it('updates all previous-run links and leaves status polling responsible for refresh', async () => {
     const { axiosMock, queryClient } = initializeMocks();
     const queryKey = courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId);
     const invalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
+    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, { status: 'Pending', results: [] });
     axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(200, { status: 'Pending' });
 
-    const { result } = renderHook(() => useUpdateAllPreviousRunLinks(courseId), {
-      wrapper: makeQueryClientWrapper(queryClient),
-    });
-    await expect(result.current.mutateAsync()).resolves.toEqual({ status: 'Pending' });
+    const { result } = renderHook(() => ({
+      status: useRerunLinkUpdateStatus(courseId),
+      mutation: useUpdateAllPreviousRunLinks(courseId),
+    }), { wrapper: makeQueryClientWrapper(queryClient) });
+    await waitFor(() => expect(result.current.status.isSuccess).toBe(true));
+    await expect(result.current.mutation.mutateAsync()).resolves.toEqual({ status: 'Pending' });
     expect(queryClient.getQueryData(queryKey)).toEqual({ status: 'Pending', results: [] });
-    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey });
+    expect(invalidateQueries).not.toHaveBeenCalled();
+    expect(axiosMock.history.get).toHaveLength(1);
+    const query = queryClient.getQueryCache().find({ queryKey });
+    const refetchInterval = query?.observers[0]?.options.refetchInterval;
+    expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(2000);
     expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({ action: 'all' });
   });
 

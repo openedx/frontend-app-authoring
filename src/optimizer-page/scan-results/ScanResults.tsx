@@ -84,11 +84,14 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       setIsSingleLinkPolling(activeSinglePollersRef.current > 0);
     }
   }, []);
-  useEffect(() => () => {
-    mountedRef.current = false;
-    singlePollerCleanupsRef.current.forEach(cleanup => cleanup());
-    singlePollerCleanupsRef.current.clear();
-    activeSinglePollersRef.current = 0;
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      singlePollerCleanupsRef.current.forEach(cleanup => cleanup());
+      singlePollerCleanupsRef.current.clear();
+      activeSinglePollersRef.current = 0;
+    };
   }, []);
   const rerunLinkUpdateStatusQuery = useRerunLinkUpdateStatus(courseId, {
     enabled: waffleFlags.enableCourseOptimizerCheckPrevRunLinks,
@@ -376,19 +379,18 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       || isUpdateAllPending
       || isFetching
       || !rerunLinkUpdateResult
-      || (rerunLinkUpdateResult.status != null
-        && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(rerunLinkUpdateResult.status))
+      || isError
+      || serverRerunLinkUpdateInProgress
     ) {
       return;
     }
 
-    const results = rerunLinkUpdateResult.results;
-    processUpdateResults({ ...rerunLinkUpdateResult, results }, true);
+    processUpdateResults(rerunLinkUpdateResult, true);
     setIsUpdateAllInProgress(false);
 
     if (
       rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.SUCCEEDED
-      && results.every(result => result.success)
+      && rerunLinkUpdateResult.results.every(result => result.success)
     ) {
       setErrorMessage(null);
     } else {
@@ -398,11 +400,13 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     }
   }, [
     intl,
+    isError,
     isUpdateAllInProgress,
     processUpdateResults,
     rerunLinkUpdateResult,
     isFetching,
     isUpdateAllPending,
+    serverRerunLinkUpdateInProgress,
   ]);
 
   const getContentType = useCallback((sectionId: string): string => {
@@ -509,29 +513,16 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
             const newUrl = exactMatch.newUrl;
 
             if (newUrl) {
-              const shouldProcessResults = hasOriginalUrlField && updateStatusResponse.results.length === 1;
-              if (shouldProcessResults) {
-                processUpdateResults(updateStatusResponse);
-              } else {
-                setUpdatedLinkMap(prev => {
-                  const newMap = { ...prev, [uniqueId]: newUrl };
-                  return newMap;
-                });
-
-                setUpdatedLinkIds(prev => {
-                  const filtered = prev.filter(id => id !== uniqueId);
-                  const newIds = [...filtered, uniqueId];
-                  return newIds;
-                });
-              }
-
-              if (!shouldProcessResults) {
-                setUpdatingLinkIds(prev => {
-                  const copy = { ...prev };
-                  delete copy[uniqueId];
-                  return copy;
-                });
-              }
+              setUpdatedLinkMap(prev => ({ ...prev, [uniqueId]: newUrl }));
+              setUpdatedLinkIds(prev => [
+                ...prev.filter(id => id !== uniqueId),
+                uniqueId,
+              ]);
+              setUpdatingLinkIds(prev => {
+                const copy = { ...prev };
+                delete copy[uniqueId];
+                return copy;
+              });
 
               setErrorMessage(null);
 
@@ -592,7 +583,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     getContentType,
     intl,
     reportError,
-    processUpdateResults,
     refetch,
     setSinglePolling,
     updateSingle,
