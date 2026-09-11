@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Button,
   CardView,
   Container,
   DataTable,
@@ -10,7 +9,6 @@ import {
   Tooltip,
   SelectMenu,
   MenuItem,
-  useToggle,
 } from '@openedx/paragon';
 import {
   Add,
@@ -25,23 +23,15 @@ import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
 import { ALL_TAXONOMIES, apiUrls, UNASSIGNED } from './data/api';
 import { useTaxonomyList } from './data/apiHooks';
-import { ImportTagsWizard } from './import-tags';
+import { ImportTagsWizardButton } from './import-tags';
 import messages from './messages';
 import { TaxonomyCard } from './taxonomy-card';
 
 const TaxonomyListHeaderButtons = (props: { canAddTaxonomy: boolean; }) => {
   const intl = useIntl();
 
-  const [isImportModalOpen, importModalOpen, importModalClose] = useToggle(false);
-
   return (
     <>
-      {isImportModalOpen && (
-        <ImportTagsWizard
-          isOpen={isImportModalOpen}
-          onClose={importModalClose}
-        />
-      )}
       <OverlayTrigger
         placement="top"
         overlay={
@@ -74,14 +64,13 @@ const TaxonomyListHeaderButtons = (props: { canAddTaxonomy: boolean; }) => {
           </Dropdown.Menu>
         </Dropdown>
       </OverlayTrigger>
-      <Button
+      <ImportTagsWizardButton
         iconBefore={Add}
-        onClick={importModalOpen}
         data-testid="taxonomy-import-button"
         disabled={!props.canAddTaxonomy}
       >
         {intl.formatMessage(messages.importButtonLabel)}
-      </Button>
+      </ImportTagsWizardButton>
     </>
   );
 };

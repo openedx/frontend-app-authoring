@@ -450,6 +450,24 @@ describe('<ImportTagsWizard />', () => {
     });
 
     describe('when the caller sets a default type', () => {
+      it('preselects Tags when explicitly set, same as the implicit default', async () => {
+        renderWizard({ taxonomy: null, onClose: jest.fn(), defaultTaxonomyType: TaxonomyType.Tags });
+        await goToPopulateStep();
+
+        const select = screen.getByTestId('taxonomy-type-select');
+        expect(select).toHaveValue(TaxonomyType.Tags);
+
+        fillInRequiredFields('Explicit Tags Default Taxonomy');
+        axiosMock.onPost(doImportNewTaxonomyUrl).replyOnce(200, {});
+
+        await clickImport();
+
+        await waitFor(() => {
+          expect(axiosMock.history.post.length).toEqual(1);
+        });
+        expect(axiosMock.history.post[0].data.get('taxonomy_type')).toEqual(TaxonomyType.Tags);
+      });
+
       it('preselects that type but still lets the user change it', async () => {
         const user = userEvent.setup();
         renderWizard({ taxonomy: null, onClose: jest.fn(), defaultTaxonomyType: TaxonomyType.Competency });

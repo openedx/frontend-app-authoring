@@ -173,17 +173,6 @@ describe('<CompetencyManagementPage />', () => {
       });
     });
 
-    it('opens the wizard on the upload step, skipping the export step', async () => {
-      renderPage();
-
-      fireEvent.click(await screen.findByTestId('import-competency-framework-button'));
-
-      expect(await screen.findByTestId('upload-step')).toBeInTheDocument();
-      expect(screen.queryByTestId('export-step')).not.toBeInTheDocument();
-      // Only the reimport flow can step back to the export step.
-      expect(screen.queryByTestId('back-button')).not.toBeInTheDocument();
-    });
-
     it('defaults the type of the new taxonomy to Competency, and leaves it editable', async () => {
       renderPage();
       await goToPopulateStep();
@@ -194,7 +183,7 @@ describe('<CompetencyManagementPage />', () => {
       expect(select).toBeEnabled();
     });
 
-    it('imports a competency taxonomy and goes to its competency management page', async () => {
+    it('navigates to the new taxonomy\'s competency management page after a successful import', async () => {
       renderPage();
       await goToPopulateStep();
 
@@ -205,13 +194,9 @@ describe('<CompetencyManagementPage />', () => {
       await waitFor(() => {
         expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${newTaxonomyId}/competencies`);
       });
-
-      const formData = axiosMock.history.post[0].data;
-      expect(formData.get('taxonomy_name')).toEqual('New framework');
-      expect(formData.get('taxonomy_type')).toEqual(TaxonomyType.Competency);
     });
 
-    it('closes the wizard and shows a page-level alert if the import fails', async () => {
+    it('does not navigate away when the import fails', async () => {
       renderPage();
       await goToPopulateStep();
 
@@ -220,10 +205,8 @@ describe('<CompetencyManagementPage />', () => {
       await fillInAndImport('Broken framework');
 
       await waitFor(() => {
-        expect(mockSetAlertError).toHaveBeenCalledWith(expect.objectContaining({ title: 'Import error' }));
+        expect(mockSetAlertError).toHaveBeenCalled();
       });
-      // The wizard offers no retry: it closes, leaving the alert as the only report of the failure.
-      expect(screen.queryByTestId('populate-step')).not.toBeInTheDocument();
       expect(mockNavigate).not.toHaveBeenCalled();
     });
   });

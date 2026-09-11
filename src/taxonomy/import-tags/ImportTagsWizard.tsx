@@ -34,13 +34,14 @@ export const DefaultModalHeader = ({ children }: { children: string; }) => (
   </ModalDialog.Header>
 );
 
-interface ImportTagsWizardProps {
+export interface ImportTagsWizardProps {
   /** The taxonomy to import tags into. Only used (and required) when `reimport` is true. */
   taxonomy?: ImportTaxonomy | null;
   isOpen: boolean;
   onClose: () => void;
   /** True to import tags into `taxonomy`; false to create a new taxonomy from the uploaded file. */
   reimport?: boolean;
+  /** The taxonomy type pre-selected on the wizard's "populate" step. */
   defaultTaxonomyType?: TaxonomyType;
   /** Called with the taxonomy that a "create a new taxonomy" import just created. */
   onImportSuccess?: (taxonomy: TaxonomyData) => void;
