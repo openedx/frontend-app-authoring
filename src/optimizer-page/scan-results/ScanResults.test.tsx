@@ -1121,7 +1121,54 @@ describe('ScanResults', () => {
     expect(screen.queryByText('https://example.com/locked-only')).not.toBeInTheDocument();
   });
 
-  it('returns -1 from findPreviousVisibleSection and findNextVisibleSection at boundaries', async () => {
+  it('uses visible sections for accordion adjacency when a section is filtered out', async () => {
+    const user = userEvent.setup();
+    const sourceSection = mockData.sections[0];
+    const sectionWithLinks = (
+      id: string,
+      displayName: string,
+      links: Partial<typeof sourceSection.subsections[0]['units'][0]['blocks'][0]>,
+    ) => ({
+      ...sourceSection,
+      id,
+      displayName,
+      subsections: [{
+        ...sourceSection.subsections[0],
+        units: [{
+          ...sourceSection.subsections[0].units[0],
+          blocks: [{ ...sourceSection.subsections[0].units[0].blocks[0], ...links }],
+        }],
+      }],
+    });
+
+    renderScanResults({
+      sections: [
+        sourceSection,
+        sectionWithLinks('section-hidden', 'Section Hidden By Filter', {
+          brokenLinks: [],
+          lockedLinks: ['https://example.com/locked-only'],
+          externalForbiddenLinks: [],
+        }),
+        sectionWithLinks('section-final', 'Section Final', {
+          brokenLinks: ['https://example.com/final-broken'],
+          lockedLinks: [],
+          externalForbiddenLinks: [],
+        }),
+      ],
+      courseUpdates: [],
+      customPages: [],
+    });
+
+    await user.click(screen.getByRole('button', { name: messages.filterButtonLabel.defaultMessage }));
+    await user.click(screen.getByLabelText(messages.brokenLabel.defaultMessage));
+    expect(screen.queryByText('Section Hidden By Filter')).not.toBeInTheDocument();
+    expect(screen.getByText('Section Final')).toBeInTheDocument();
+
+    await user.click(screen.getByText('Introduction to Programming'));
+    expect(screen.getByText('Section Final').closest('.collapsible-card-lg')).toHaveClass('closed-section-rounded-top');
+  });
+
+  it('handles filtered section visibility at boundaries', async () => {
     const user = userEvent.setup();
     renderScanResults({
       sections: [

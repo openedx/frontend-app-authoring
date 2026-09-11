@@ -1,5 +1,14 @@
-import { mockApiResponse } from './mocks/mockApiResponse';
-import { countBrokenLinks, isDataEmpty, buildBlockContainerUrl } from './utils';
+import { mockApiResponse, mockApiResponseWithPreviousRunLinks } from './mocks/mockApiResponse';
+import {
+  areAllPreviousRunLinksUpdated,
+  buildBlockContainerUrl,
+  buildSyntheticSections,
+  countBrokenLinks,
+  countPreviousRunLinksBySection,
+  filterSectionsWithPreviousRunLinks,
+  hasPreviousRunLinks,
+  isDataEmpty,
+} from './utils';
 
 describe('countBrokenLinks', () => {
   it('should return the count of broken links', () => {
@@ -102,6 +111,76 @@ describe('isDataEmpty', () => {
       courseUpdates: [],
     };
     expect(isDataEmpty(data)).toBe(false);
+  });
+});
+
+describe('previous run link helpers', () => {
+  const data = mockApiResponseWithPreviousRunLinks.LinkCheckOutput;
+  const sections = buildSyntheticSections(
+    data.courseUpdates,
+    data.customPages,
+    { courseUpdates: 'Course updates', customPages: 'Custom pages' },
+  ).concat(data.sections);
+
+  it('builds synthetic sections in order with the expected shape', () => {
+    expect(buildSyntheticSections(
+      [{
+        id: 'update-1',
+        displayName: 'Update',
+        url: 'https://example.com/update',
+        brokenLinks: [],
+        lockedLinks: [],
+        externalForbiddenLinks: [],
+        previousRunLinks: [{ originalLink: 'https://example.com/old', isUpdated: false }],
+      }],
+      undefined,
+      { courseUpdates: 'Course updates', customPages: 'Custom pages' },
+    )).toStrictEqual([{
+      id: 'course-updates',
+      displayName: 'Course updates',
+      subsections: [{
+        id: 'course-updates-subsection',
+        displayName: 'Course updates Subsection',
+        units: [{
+          id: 'update-1',
+          displayName: 'Update',
+          url: 'https://example.com/update',
+          blocks: [{
+            id: 'update-1',
+            displayName: 'Update',
+            url: 'https://example.com/update',
+            brokenLinks: [],
+            lockedLinks: [],
+            externalForbiddenLinks: [],
+            previousRunLinks: [{ originalLink: 'https://example.com/old', isUpdated: false }],
+          }],
+        }],
+      }],
+    }]);
+  });
+
+  it('detects, counts, and filters previous-run links by section', () => {
+    expect(hasPreviousRunLinks(sections)).toBe(true);
+    expect(countPreviousRunLinksBySection(sections)).toStrictEqual({
+      'course-updates': 1,
+      'custom-pages': 1,
+      'section-1': 2,
+    });
+    expect(filterSectionsWithPreviousRunLinks(sections).map(section => section.id)).toStrictEqual([
+      'course-updates',
+      'custom-pages',
+      'section-1',
+    ]);
+  });
+
+  it('uses local update IDs with API update status for completion', () => {
+    expect(areAllPreviousRunLinksUpdated(sections, [
+      'update-1:https://example.com/old-course-run/update',
+      'custom-2:https://example.com/old-course-run/about',
+      'block-1-1-1-5:https://example.com/old-course-run/content',
+    ])).toBe(true);
+    expect(areAllPreviousRunLinksUpdated(sections, [])).toBe(false);
+    expect(areAllPreviousRunLinksUpdated(mockApiResponse.LinkCheckOutput.sections, [])).toBe(false);
   });
 });
 
