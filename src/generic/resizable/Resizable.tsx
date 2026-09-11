@@ -22,6 +22,14 @@ interface ResizableBoxProps {
    * meaningful boundary to drag.
    */
   handleSide?: 'left' | 'right';
+  /**
+   * When `true`, renders the box at `width: '100%'` and hides the drag
+   * handle instead of using the pixel-based resizable width. Use this for a
+   * layout where this box is temporarily the only column - e.g. before a
+   * sibling column exists to resize against - so there's nothing meaningful
+   * to drag. Defaults to `false`, preserving the normal resizable behavior.
+   */
+  fullWidth?: boolean;
 }
 
 /**
@@ -33,6 +41,7 @@ export const ResizableBox = ({
   minWidth = MIN_WIDTH,
   maxWidth,
   handleSide = 'left',
+  fullWidth = false,
 }: ResizableBoxProps) => {
   const boxRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number>(minWidth); // initial width
@@ -80,13 +89,15 @@ export const ResizableBox = ({
     <div
       className="resizable align-self-stretch d-flex"
       ref={boxRef}
-      style={{ width: `${width}px` }}
+      style={{ width: fullWidth ? '100%' : `${width}px` }}
     >
-      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-static-element-interactions */}
-      <div
-        className={classNames('resizable-handle', { 'resizable-handle--right': handleSide === 'right' })}
-        onMouseDown={onMouseDown}
-      />
+      {!fullWidth && (
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-static-element-interactions
+        <div
+          className={classNames('resizable-handle', { 'resizable-handle--right': handleSide === 'right' })}
+          onMouseDown={onMouseDown}
+        />
+      )}
       <div className="w-100">
         {children}
       </div>

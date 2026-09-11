@@ -7,23 +7,21 @@ import { ExpandLess, ExpandMore } from '@openedx/paragon/icons';
 import type { Course } from '@src/studio-home/data/api';
 import CourseOutlineSubtree from './CourseOutlineSubtree';
 import messages from './messages';
-import type { SubsectionSelectedEvent } from './types';
 
 export interface CourseRowProps {
   course: Course;
-  onSubsectionSelected?: SubsectionSelectedEvent;
 }
 
 /** CourseRow
  * One row of the competency management course search/browse list: a
- * course's title and org/number/run subtitle, plus a disclosure control that
- * expands the row to show its outline.
+ * course's title, plus a disclosure control that expands the row to show
+ * its outline.
  *
- * The row's title/subtitle carry no click behavior of their own - only the
+ * The row's title carries no click behavior of its own - only the
  * disclosure control toggles anything, and this row is navigation-only,
  * never an association target for the active competency.
  */
-const CourseRow = ({ course, onSubsectionSelected }: CourseRowProps) => {
+const CourseRow = ({ course }: CourseRowProps) => {
   const intl = useIntl();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -42,14 +40,9 @@ const CourseRow = ({ course, onSubsectionSelected }: CourseRowProps) => {
           size="sm"
           onClick={() => setIsExpanded((prev) => !prev)}
         />
-        <div className="ml-2">
-          <div className="course-search-browse__course-title">{course.displayName}</div>
-          <div className="text-gray-500 small">
-            {course.org} / {course.number} / {course.run}
-          </div>
-        </div>
+        <div className="course-search-browse__course-title ml-2">{course.displayName}</div>
       </div>
-      {isExpanded && <CourseOutlineSubtree courseId={course.courseKey} onSubsectionSelected={onSubsectionSelected} />}
+      {isExpanded && <CourseOutlineSubtree courseId={course.courseKey} />}
     </div>
   );
 };

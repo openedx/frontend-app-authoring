@@ -82,10 +82,14 @@
     padding-left: $indent;
   }
 
-  // Base row look: white, bordered, rounded "pill". This is the leaf style
+  // Base row look: white, bordered, rounded "pill" - this is the leaf style
   // and the default for every row; a row with children flattens back to
   // its envelope's fill via `.competency-group > .competency-row` below.
+  // The border is a uniform 1px on every side including the left, same as
+  // Figma's own unselected-row look. `position: relative` anchors the
+  // selected-row accent overlay below (`::before`, scoped to leaf rows only).
   .competency-row {
+    position: relative;
     display: flex;
     align-items: center;
     background-color: #FFFFFF;
@@ -122,15 +126,43 @@
     }
   }
 
-  // Selected-leaf highlight (`.competency-row--selected`/`aria-selected` are
-  // only ever applied to a leaf row - see `CompetencyTreeItem.tsx`). Changes
-  // border-color only, not border-width, so the label stays at the same 25px
-  // inset every other row shares. Reuses the same primary-color custom
-  // property other "selected" states in this app key off (e.g.
-  // `library-authoring/hierarchy/index.scss`'s `.selected`); Figma doesn't
-  // specify this state yet.
+  // Selected-row highlight (`.competency-row--selected`/`aria-selected` can
+  // land on a leaf or a group header row alike, since every row is
+  // selectable - see `CompetencyTreeItem.tsx`, though the accent below is
+  // scoped to leaf rows only - see the note further down): a pale-blue fill,
+  // matching Figma. Reuses the exact `#F0F6FA` literal
+  // `../course-search/CourseSearchBrowse.scss`'s own `&__section-label`
+  // already uses for its own pale-blue fill. Group headers don't get this
+  // either - see the note above `.competency-group > .competency-row` for
+  // why the specificity there suppresses it.
   .competency-row--selected {
-    border-color: var(--pgn-color-primary-500);
+    background-color: #F0F6FA;
+  }
+
+  // The 6px left accent bar itself, as a separate filled overlay rather than
+  // a thicker `border-left`: this row's border is a uniform 1px on every
+  // side (see the base rule above), and a `border-left` thicker than that
+  // creates a visibly notched corner where the two different border widths
+  // meet the shared `border-radius` arc - confirmed live, not just
+  // theoretical. An independently-rounded overlay avoids that entirely,
+  // since it's a plain filled shape competing with nothing at the corner.
+  // `top`/`bottom`/`left: -1px` extends it 1px past the row's own padding
+  // edge to fully cover the row's own border on those three sides, flush
+  // with the row's true outer edge. Reuses the same `#006DAA` literal the
+  // `.badge-info` override above already uses, for consistency. Scoped to
+  // `li:not(.competency-group) > .competency-row--selected` (leaf rows only,
+  // the same selector `padding-left: 4px` below already uses) rather than
+  // the bare `.competency-row--selected`, so this overlay is never generated
+  // for a selected group header at all.
+  li:not(.competency-group) > .competency-row--selected::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: -1px;
+    width: 6px;
+    background-color: #006DAA;
+    border-radius: $border-radius 0 0 $border-radius;
   }
 
   // The taxonomy-root row is the single top item of the outer container:
@@ -161,6 +193,15 @@
   // A group's own header row sits flat on its envelope's fill instead of
   // the white/bordered leaf look - only true leaves keep that from the
   // base `.competency-row` rule above.
+  //
+  // This also intentionally means a selected group header does NOT get the
+  // selected-leaf look: `.competency-group > .competency-row`'s own
+  // `background-color: transparent; border: none;` (two classes) is more
+  // specific than the single-class `.competency-row--selected` above, so it
+  // wins the cascade here and a selected group header renders identically to
+  // an unselected one. `aria-selected`/the `--selected` class still land on
+  // the DOM node either way - that's driven by `CompetencyTreeItem.tsx`, not
+  // by this stylesheet - only the visual treatment is withheld here.
   .competency-group > .competency-row {
     background-color: transparent;
     border: none;

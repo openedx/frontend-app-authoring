@@ -47,9 +47,11 @@ const CompetencyTreeItem = ({
   // `externalId: ''`), so use a truthiness check rather than `!== null`.
   const { externalId } = node;
 
-  // Only leaf rows are selectable - group rows keep today's expand/collapse-only
-  // behavior untouched, regardless of `selectedCompetencyId`/`onSelectCompetency`.
-  const isSelectable = !hasChildren && !!onSelectCompetency;
+  // Every row is selectable, group or leaf, as long as a selection handler was
+  // passed down - a group row keeps its own separate expand/collapse control
+  // (see `CompetencyExpandIcon`, which stops its click from also reaching this
+  // row's own `onClick` below).
+  const isSelectable = !!onSelectCompetency;
   const isSelected = isSelectable && selectedCompetencyId != null && nodeId === selectedCompetencyId;
 
   const handleSelect = () => {

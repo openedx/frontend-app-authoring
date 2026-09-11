@@ -53,13 +53,20 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
   });
 
   describe('<CourseSearchBrowse />', () => {
-    it('shows a prompt and fires no request when no competency is selected', () => {
-      render(<CourseSearchBrowse activeCompetency={null} />);
+    it(
+      'renders the active competency\'s name in the "Demonstrate Mastery For" line, and the static '
+        + 'associations empty state',
+      async () => {
+        axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
+        render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
 
-      expect(screen.getByText('Select a competency to browse and associate courses.')).toBeInTheDocument();
-      expect(screen.queryByRole('searchbox')).not.toBeInTheDocument();
-      expect(axiosMock.history.get).toHaveLength(0);
-    });
+        expect(await screen.findByText('Demonstrate Mastery For Test Competency')).toBeInTheDocument();
+        expect(screen.getByText('No content associated.')).toBeInTheDocument();
+        expect(
+          screen.getByText('Make content selections to associate this competency with course content.'),
+        ).toBeInTheDocument();
+      },
+    );
 
     it('renders course rows once the request resolves, and paginates on page-button click', async () => {
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()], 2));
@@ -222,7 +229,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
   });
 
   describe('<CourseRow />', () => {
-    it('toggles expansion only via its disclosure control, and title/subtitle clicks do nothing', async () => {
+    it('toggles expansion only via its disclosure control, and title clicks do nothing', async () => {
       const course = buildCourse();
       const outlineSectionHeading = 'Section 1';
       axiosMock.onGet(getCourseOutlineIndexApiUrl(course.courseKey)).reply(

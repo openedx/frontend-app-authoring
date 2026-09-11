@@ -12,12 +12,6 @@ const messages = defineMessages({
     defaultMessage: 'Search courses',
     description: 'Placeholder text for the course search field in the competency management course browser.',
   },
-  selectCompetencyPrompt: {
-    id: 'course-authoring.competency-management.course-search.select-competency-prompt',
-    defaultMessage: 'Select a competency to browse and associate courses.',
-    description: 'Prompt shown in the course browser before a competency has been selected, in place of the '
-      + 'search field and course list.',
-  },
   errorMessage: {
     id: 'course-authoring.competency-management.course-search.error-message',
     defaultMessage: 'There was a problem loading courses. Please try again.',
@@ -48,6 +42,20 @@ const messages = defineMessages({
     defaultMessage: 'Collapse',
     description: 'Accessible label for the disclosure control that collapses an expanded course row.',
   },
+  expandSectionButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.expand-section.button-label',
+    defaultMessage: 'Expand',
+    description: 'Accessible label for the disclosure control that expands a section (chapter) within an '
+      + 'expanded course row to show its graded subsections. Distinct from expandRowButtonLabel, which is for the '
+      + 'course-row-level toggle, not this section-level one.',
+  },
+  collapseSectionButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.collapse-section.button-label',
+    defaultMessage: 'Collapse',
+    description: 'Accessible label for the disclosure control that collapses an expanded section (chapter) '
+      + 'within a course row. Distinct from collapseRowButtonLabel, which is for the course-row-level toggle, not '
+      + 'this section-level one.',
+  },
   outlineErrorMessage: {
     id: 'course-authoring.competency-management.course-search.outline-error-message',
     defaultMessage: 'There was a problem loading this course\'s outline.',
@@ -72,6 +80,29 @@ const messages = defineMessages({
     defaultMessage: 'Clear dates',
     description: 'Accessible label for the button that clears the selected course start-date range and re-runs '
       + 'the query with no date filter. Only shown once a start date has been picked.',
+  },
+  associationsSectionLabel: {
+    id: 'course-authoring.competency-management.course-search.associations-section-label',
+    defaultMessage: 'Competency Criteria Associations',
+    description: 'Header label shown above the "Demonstrate Mastery For" line and the associations empty '
+      + 'state, once a competency is selected.',
+  },
+  demonstrateMasteryForLabel: {
+    id: 'course-authoring.competency-management.course-search.demonstrate-mastery-for-label',
+    defaultMessage: 'Demonstrate Mastery For {competencyName}',
+    description: 'Line shown under the associations section label, naming the currently active competency.',
+  },
+  noAssociationsMessage: {
+    id: 'course-authoring.competency-management.course-search.no-associations-message',
+    defaultMessage: 'No content associated.',
+    description: 'First line of the static empty state shown in the associations block, since there is no '
+      + 'backend endpoint yet to list a competency\'s actual associations.',
+  },
+  noAssociationsPromptMessage: {
+    id: 'course-authoring.competency-management.course-search.no-associations-prompt-message',
+    defaultMessage: 'Make content selections to associate this competency with course content.',
+    description: 'Second line of the static empty state shown in the associations block, prompting the user '
+      + 'to make content selections below.',
   },
 });
 

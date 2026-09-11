@@ -5,6 +5,7 @@ import {
   render,
   screen,
   userEvent,
+  within,
 } from '@src/testUtils';
 import CourseOutlineSubtree from './CourseOutlineSubtree';
 
@@ -95,35 +96,58 @@ describe('<CourseOutlineSubtree />', () => {
     expect(error).toHaveAttribute('role', 'alert');
   });
 
-  it('renders every section header, and only graded subsections as clickable rows - nothing for units', async () => {
-    axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-    render(<CourseOutlineSubtree courseId={courseId} />);
-
-    expect(await screen.findByText('Section 1')).toBeInTheDocument();
-    expect(screen.getByText('Section 2')).toBeInTheDocument();
-
-    expect(screen.getByRole('button', { name: 'Subsection 1A (graded)' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Subsection 2A (graded)' })).toBeInTheDocument();
-
-    expect(screen.queryByText('Subsection 1B (ungraded)')).not.toBeInTheDocument();
-    expect(screen.queryByText('Unit 2A1')).not.toBeInTheDocument();
-  });
-
   it(
-    'renders a section header with nothing clickable underneath it when that section has no graded '
-      + 'subsections, while another section in the same course does',
+    'shows a disclosure icon for a section with graded subsections, starting collapsed, and reveals only '
+      + 'graded subsections (nothing for units) once expanded',
     async () => {
-      axiosMock.onGet(outlineApiUrl).reply(200, partiallyGradedOutline);
+      const user = userEvent.setup();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
       render(<CourseOutlineSubtree courseId={courseId} />);
 
       expect(await screen.findByText('Section 1')).toBeInTheDocument();
       expect(screen.getByText('Section 2')).toBeInTheDocument();
 
-      // Section 1 has its graded subsection's clickable row, and it's the
-      // only button anywhere in the tree - Section 2's ungraded subsection
-      // renders no row at all.
+      // Both sections have a graded subsection, so both start collapsed:
+      // neither's subsections are in the DOM until expanded.
+      const expandButtons = screen.getAllByRole('button', { name: 'Expand' });
+      expect(expandButtons).toHaveLength(2);
+      expect(screen.queryByText('Subsection 1A (graded)')).not.toBeInTheDocument();
+      expect(screen.queryByText('Subsection 2A (graded)')).not.toBeInTheDocument();
+
+      await user.click(expandButtons[0]);
+      await user.click(screen.getByRole('button', { name: 'Expand' }));
+
       expect(screen.getByRole('button', { name: 'Subsection 1A (graded)' })).toBeInTheDocument();
-      expect(screen.getAllByRole('button')).toHaveLength(1);
+      expect(screen.getByRole('button', { name: 'Subsection 2A (graded)' })).toBeInTheDocument();
+
+      expect(screen.queryByText('Subsection 1B (ungraded)')).not.toBeInTheDocument();
+      expect(screen.queryByText('Unit 2A1')).not.toBeInTheDocument();
+    },
+  );
+
+  it(
+    'shows a disclosure icon only for the section with a graded subsection, while the section with none gets '
+      + 'no icon and never renders anything underneath it',
+    async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(outlineApiUrl).reply(200, partiallyGradedOutline);
+      render(<CourseOutlineSubtree courseId={courseId} />);
+
+      expect(await screen.findByText('Section 1')).toBeInTheDocument();
+      const section2Header = screen.getByText('Section 2');
+
+      // Only Section 1 (which has a graded subsection) gets a disclosure
+      // icon - it's the only button anywhere in the tree before expanding.
+      expect(screen.getAllByRole('button', { name: 'Expand' })).toHaveLength(1);
+      expect(within(section2Header.closest('.course-search-browse__group')!).queryByRole('button'))
+        .not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: 'Expand' }));
+
+      // Expanding Section 1 reveals only its own graded subsection row -
+      // Section 2's ungraded subsection never renders a row at all.
+      expect(screen.getByRole('button', { name: 'Subsection 1A (graded)' })).toBeInTheDocument();
+      expect(screen.getAllByRole('button')).toHaveLength(2); // the collapse icon + the subsection row
       expect(screen.queryByText('Subsection 2A (ungraded)')).not.toBeInTheDocument();
     },
   );
@@ -148,51 +172,18 @@ describe('<CourseOutlineSubtree />', () => {
     expect(await screen.findByText('This course has no gradeable subsections.')).toBeInTheDocument();
   });
 
-  it('calls onSubsectionSelected with the usageKey and blockType of a clicked graded subsection', async () => {
+  it('does nothing when a section with no graded subsections is clicked', async () => {
     const user = userEvent.setup();
-    const onSubsectionSelected = jest.fn();
-    axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-    render(<CourseOutlineSubtree courseId={courseId} onSubsectionSelected={onSubsectionSelected} />);
+    axiosMock.onGet(outlineApiUrl).reply(200, partiallyGradedOutline);
+    render(<CourseOutlineSubtree courseId={courseId} />);
 
-    const row = await screen.findByRole('button', { name: 'Subsection 1A (graded)' });
-    await user.click(row);
-
-    expect(onSubsectionSelected).toHaveBeenCalledTimes(1);
-    expect(onSubsectionSelected).toHaveBeenCalledWith({ usageKey: 'sub-1a', blockType: 'sequential' });
-  });
-
-  it('calls onSubsectionSelected when Enter or Space is pressed while a graded subsection row is focused', async () => {
-    const user = userEvent.setup();
-    const onSubsectionSelected = jest.fn();
-    axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-    render(<CourseOutlineSubtree courseId={courseId} onSubsectionSelected={onSubsectionSelected} />);
-
-    const row = await screen.findByRole('button', { name: 'Subsection 1A (graded)' });
-
-    row.focus();
-    await user.keyboard('{Enter}');
-    expect(onSubsectionSelected).toHaveBeenCalledTimes(1);
-    expect(onSubsectionSelected).toHaveBeenCalledWith({ usageKey: 'sub-1a', blockType: 'sequential' });
-
-    onSubsectionSelected.mockClear();
-    row.focus();
-    await user.keyboard(' ');
-    expect(onSubsectionSelected).toHaveBeenCalledTimes(1);
-    expect(onSubsectionSelected).toHaveBeenCalledWith({ usageKey: 'sub-1a', blockType: 'sequential' });
-  });
-
-  it('does nothing when a section header is clicked', async () => {
-    const user = userEvent.setup();
-    const onSubsectionSelected = jest.fn();
-    axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-    render(<CourseOutlineSubtree courseId={courseId} onSubsectionSelected={onSubsectionSelected} />);
-
-    const header = await screen.findByText('Section 1');
+    const header = await screen.findByText('Section 2');
     await user.click(header);
 
-    expect(onSubsectionSelected).not.toHaveBeenCalled();
-    // Structural check: the header is plain, non-interactive text - not a button.
-    expect(screen.queryByRole('button', { name: 'Section 1' })).not.toBeInTheDocument();
+    // Structural check: Section 2 (no graded subsections) is plain,
+    // non-interactive text - not a button, and clicking it renders nothing.
+    expect(screen.queryByRole('button', { name: 'Section 2' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Subsection 2A (ungraded)')).not.toBeInTheDocument();
   });
 
   it(
