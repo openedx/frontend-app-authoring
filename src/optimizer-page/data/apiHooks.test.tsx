@@ -1,4 +1,4 @@
-import { renderHook, waitFor, initializeMocks, makeQueryClientWrapper } from '@src/testUtils';
+import { act, renderHook, waitFor, initializeMocks, makeQueryClientWrapper } from '@src/testUtils';
 import {
   useLinkCheckStatus,
   useRerunLinkUpdateStatus,
@@ -49,6 +49,34 @@ describe('course optimizer api hooks', () => {
       linkCheckCreatedAt: null,
     });
     expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(false);
+  });
+
+  it.each([403, 500])('stops link-check polling after a %s status GET error', async statusCode => {
+    jest.useFakeTimers();
+    try {
+      const { axiosMock, queryClient } = initializeMocks();
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).replyOnce(200, { LinkCheckStatus: 'Pending' });
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(statusCode);
+
+      const { result } = renderHook(() => useLinkCheckStatus(courseId), {
+        wrapper: makeQueryClientWrapper(queryClient),
+      });
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(axiosMock.history.get).toHaveLength(1);
+
+      await act(async () => {
+        jest.advanceTimersByTime(2000);
+      });
+      await waitFor(() => expect(result.current.isError).toBe(true));
+      expect(axiosMock.history.get).toHaveLength(2);
+
+      await act(async () => {
+        jest.advanceTimersByTime(10000);
+      });
+      expect(axiosMock.history.get).toHaveLength(2);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it('normalizes rerun status data and stops polling at a terminal status', async () => {
@@ -252,7 +280,7 @@ describe('course optimizer api hooks', () => {
     axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(200, { status: 'Pending' });
 
     const { result } = renderHook(() => ({
-      status: useRerunLinkUpdateStatus(courseId, { polling: true }),
+      status: useRerunLinkUpdateStatus(courseId),
       mutation: useUpdateSinglePreviousRunLink(courseId),
     }), { wrapper: makeQueryClientWrapper(queryClient) });
     await waitFor(() => expect(result.current.status.isSuccess).toBe(true));

@@ -517,6 +517,50 @@ describe('ScanResults', () => {
       }
     });
 
+    it('keeps overlapping single-link pollers independent and clears both indicators', async () => {
+      jest.useFakeTimers();
+      try {
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+        refetch
+          .mockResolvedValueOnce({ data: { status: 'In Progress', results: [] } })
+          .mockResolvedValueOnce({
+            data: {
+              status: 'Succeeded',
+              results: [{
+                id: blockId,
+                success: false,
+                originalUrl: 'https://previous.run/link2',
+                newUrl: null,
+                type: 'course_updates',
+              }],
+            },
+          })
+          .mockResolvedValueOnce({
+            data: { status: 'Succeeded', results: [successfulResult('https://updated.run/link1')] },
+          });
+        renderScanResults(twoPreviousRunLinksData);
+
+        await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
+        const firstButton = screen.getByTestId(`update-link-${blockId}:https://previous.run/link1`);
+        const secondButton = screen.getByTestId(`update-link-${blockId}:https://previous.run/link2`);
+        await user.click(firstButton);
+        await waitFor(() => expect(refetch).toHaveBeenCalledTimes(1));
+        expect(firstButton).toBeDisabled();
+        expect(secondButton).toBeEnabled();
+
+        await user.click(secondButton);
+        await waitFor(() => expect(refetch).toHaveBeenCalledTimes(2));
+        await waitFor(() => expect(secondButton).toBeEnabled());
+        expect(firstButton).toBeDisabled();
+
+        await act(async () => jest.advanceTimersByTime(2000));
+        await waitFor(() => expect(screen.getByText('https://updated.run/link1')).toBeInTheDocument());
+        expect(screen.getByTestId(`update-link-${blockId}:https://previous.run/link2`)).toBeEnabled();
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
     it('reports a timeout error when the single-link poll never reaches a terminal status', async () => {
       jest.useFakeTimers();
       try {

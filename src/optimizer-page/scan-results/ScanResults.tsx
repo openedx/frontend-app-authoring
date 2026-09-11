@@ -55,21 +55,22 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   const waffleFlags = useWaffleFlags(courseId);
   const [isUpdateAllInProgress, setIsUpdateAllInProgress] = useState(false);
   const [isSingleLinkPolling, setIsSingleLinkPolling] = useState(false);
-  const singlePollingRef = useRef(false);
-  const singlePollingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeSinglePollersRef = useRef(0);
+  const singlePollerCleanupsRef = useRef(new Set<() => void>());
+  const mountedRef = useRef(true);
   const setSinglePolling = useCallback((active: boolean) => {
-    singlePollingRef.current = active;
-    if (!active && singlePollingTimerRef.current !== null) {
-      clearTimeout(singlePollingTimerRef.current);
-      singlePollingTimerRef.current = null;
+    activeSinglePollersRef.current = active
+      ? activeSinglePollersRef.current + 1
+      : Math.max(0, activeSinglePollersRef.current - 1);
+    if (mountedRef.current) {
+      setIsSingleLinkPolling(activeSinglePollersRef.current > 0);
     }
-    setIsSingleLinkPolling(active);
   }, []);
   useEffect(() => () => {
-    singlePollingRef.current = false;
-    if (singlePollingTimerRef.current !== null) {
-      clearTimeout(singlePollingTimerRef.current);
-    }
+    mountedRef.current = false;
+    singlePollerCleanupsRef.current.forEach(cleanup => cleanup());
+    singlePollerCleanupsRef.current.clear();
+    activeSinglePollersRef.current = 0;
   }, []);
   const rerunLinkUpdateStatusQuery = useRerunLinkUpdateStatus(courseId, {
     enabled: waffleFlags.enableCourseOptimizerCheckPrevRunLinks,
@@ -102,7 +103,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   const [updatedLinkIds, setUpdatedLinkIds] = useState<string[]>([]);
   const [updatedLinkMap, setUpdatedLinkMap] = useState<Record<string, string>>({});
   const [updatingLinkIds, setUpdatingLinkIds] = useState<Record<string, boolean>>({});
-  const [updateAllTrigger, setUpdateAllTrigger] = useState(0);
   const initialFilters = {
     brokenLinks: false,
     lockedLinks: false,
@@ -341,21 +341,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
         return result;
       });
 
-      setUpdatedLinkMap(currentMap => {
-        const preservedMap: Record<string, string> = {};
-        const newSuccessfulSet = new Set(successfulLinkIds);
-
-        Object.keys(currentMap).forEach(existingId => {
-          if (newSuccessfulSet.has(existingId)) {
-            return;
-          }
-
-          preservedMap[existingId] = currentMap[existingId];
-        });
-
-        const result = { ...preservedMap, ...newMap };
-        return result;
-      });
+      setUpdatedLinkMap(currentMap => ({ ...currentMap, ...newMap }));
 
       return;
     }
@@ -442,7 +428,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     const results = rerunLinkUpdateResult.results;
     processUpdateResults({ ...rerunLinkUpdateResult, results }, true);
     setIsUpdateAllInProgress(false);
-    setUpdateAllTrigger(t => t + 1);
 
     if (
       rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.SUCCEEDED
@@ -527,7 +512,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     allSections,
     hasPreviousRunLinks,
     updatedLinkIds,
-    updateAllTrigger,
     rerunLinkUpdateInProgress,
     isUpdateAllInProgress,
   ]);
@@ -535,6 +519,19 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   // Handler for updating a single previous run link
   const handleUpdateLink = useCallback(async (link: string, blockId: string, sectionId?: string): Promise<boolean> => {
     const uniqueId = `${blockId}:${link}`;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    let resolveTimer: (() => void) | null = null;
+    const cancel = () => {
+      cancelled = true;
+      if (timer !== null) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      resolveTimer?.();
+      resolveTimer = null;
+    };
+    singlePollerCleanupsRef.current.add(cancel);
     setSinglePolling(true);
 
     try {
@@ -547,7 +544,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       });
 
       const pollForSingleLinkResult = async (attempts = 0): Promise<boolean> => {
-        if (!singlePollingRef.current) {
+        if (cancelled || !mountedRef.current) {
           return false;
         }
         if (attempts >= 30) { // Up to 30 attempts, with two seconds between retries (roughly one minute)
@@ -558,7 +555,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
         if (pollResponse.isError || pollResponse.error) {
           throw pollResponse.error ?? new Error('Failed to fetch link update result');
         }
-        if (!singlePollingRef.current) {
+        if (cancelled || !mountedRef.current) {
           return false;
         }
         const updateStatusResponse = pollResponse.data;
@@ -569,8 +566,10 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
           || (pollStatus != null && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(pollStatus))
         ) {
           await new Promise<void>(resolve => {
-            singlePollingTimerRef.current = setTimeout(() => {
-              singlePollingTimerRef.current = null;
+            resolveTimer = resolve;
+            timer = setTimeout(() => {
+              timer = null;
+              resolveTimer = null;
               resolve();
             }, 2000);
           });
@@ -645,19 +644,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
           }
         }
 
-        // If status is Succeeded but no results for this specific link, consider it failed
-        if (pollStatus === RERUN_LINK_UPDATE_STATUSES.SUCCEEDED) {
-          reportError(intl.formatMessage(messages.updateLinkError));
-
-          setUpdatingLinkIds(prev => {
-            const copy = { ...prev };
-            delete copy[uniqueId];
-            return copy;
-          });
-
-          return false;
-        }
-
         reportError(intl.formatMessage(messages.updateLinkError));
 
         setUpdatingLinkIds(prev => {
@@ -671,7 +657,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
 
       return await pollForSingleLinkResult();
     } catch {
-      if (!singlePollingRef.current) {
+      if (cancelled || !mountedRef.current) {
         return false;
       }
       reportError(intl.formatMessage(messages.updateLinkError));
@@ -684,9 +670,8 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
 
       return false;
     } finally {
-      if (singlePollingRef.current) {
-        setSinglePolling(false);
-      }
+      singlePollerCleanupsRef.current.delete(cancel);
+      setSinglePolling(false);
     }
   }, [
     getContentType,
