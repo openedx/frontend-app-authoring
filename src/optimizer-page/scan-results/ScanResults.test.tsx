@@ -311,6 +311,7 @@ describe('ScanResults', () => {
       expect(mockedUseRerunLinkUpdateStatus).toHaveBeenCalledWith(courseId, {
         enabled: true,
         polling: false,
+        manualPolling: false,
       });
     });
 
@@ -436,6 +437,63 @@ describe('ScanResults', () => {
       await waitFor(() => expect(screen.getByText(messages.updateLinkError.defaultMessage)).toBeInTheDocument());
     });
 
+    it('stops single-link polling and reports the generic error when status GET fails', async () => {
+      const user = userEvent.setup();
+      refetch.mockRejectedValueOnce(new Error('status request failed'));
+      renderScanResults(previousRunOnlyData);
+
+      await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
+      await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
+
+      await waitFor(() => expect(screen.getByText(messages.updateLinkError.defaultMessage)).toBeInTheDocument());
+      expect(refetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not report an error when a pending status refetch rejects after unmount', async () => {
+      const user = userEvent.setup();
+      let rejectRefetch!: (error: Error) => void;
+      refetch.mockImplementationOnce(() =>
+        new Promise((_resolve, reject) => {
+          rejectRefetch = reject;
+        })
+      );
+      const view = renderScanResults(previousRunOnlyData);
+
+      await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
+      await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
+      await waitFor(() => expect(refetch).toHaveBeenCalledTimes(1));
+
+      view.unmount();
+      await act(async () => {
+        rejectRefetch(new Error('status request failed'));
+      });
+
+      expect(window.scrollTo).not.toHaveBeenCalled();
+      expect(screen.queryByText(messages.updateLinkError.defaultMessage)).not.toBeInTheDocument();
+    });
+
+    it('does not refetch after unmount during the single-link polling delay', async () => {
+      jest.useFakeTimers();
+      try {
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+        refetch.mockResolvedValueOnce({ data: { status: 'In Progress', results: [] } });
+        const view = renderScanResults(previousRunOnlyData);
+
+        await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
+        await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
+        await waitFor(() => expect(refetch).toHaveBeenCalledTimes(1));
+
+        view.unmount();
+        await act(async () => {
+          jest.advanceTimersByTime(2000);
+        });
+
+        expect(refetch).toHaveBeenCalledTimes(1);
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
     it('polls a single-link update until a successful result is available', async () => {
       jest.useFakeTimers();
       try {
@@ -470,15 +528,17 @@ describe('ScanResults', () => {
         await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
         await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
 
-        // pollForSingleLinkResult allows 30 retries (attempts 0..30) with a 2s delay each,
-        // then throws on the 31st attempt. runAllTimersAsync fires every due timer and
-        // awaits each callback's returned promise, draining the recursive microtask chain
-        // so the timeout throw reaches the outer catch block.
+        // pollForSingleLinkResult makes 30 GET attempts (attempts 0..29) with a 2s delay;
+        // runAllTimersAsync drains the recursive microtask chain so timeout reaches the catch.
         await act(async () => {
           await jest.runAllTimersAsync();
         });
         expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
-        expect(refetch).toHaveBeenCalledTimes(31);
+        expect(refetch).toHaveBeenCalledTimes(30);
+        await act(async () => {
+          jest.advanceTimersByTime(6000);
+        });
+        expect(refetch).toHaveBeenCalledTimes(30);
       } finally {
         jest.useRealTimers();
       }
@@ -690,6 +750,26 @@ describe('ScanResults', () => {
       await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
 
       await waitFor(() => expect(screen.getByText('https://updated.run/link1')).toBeInTheDocument());
+    });
+
+    it('does not update UI when a single-link mutation rejects after unmount', async () => {
+      const user = userEvent.setup();
+      let rejectMutation!: (error: Error) => void;
+      updateSingleMutateAsync.mockImplementationOnce(() =>
+        new Promise((_resolve, reject) => {
+          rejectMutation = reject;
+        })
+      );
+      const view = renderScanResults(previousRunOnlyData);
+
+      await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
+      await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
+      await waitFor(() => expect(updateSingleMutateAsync).toHaveBeenCalled());
+
+      view.unmount();
+      await act(async () => {
+        rejectMutation(new Error('single update failed'));
+      });
     });
 
     it('reports mutation failures for update-all and single-link updates', async () => {

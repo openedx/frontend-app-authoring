@@ -54,10 +54,29 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   const queryClient = useQueryClient();
   const waffleFlags = useWaffleFlags(courseId);
   const [isUpdateAllInProgress, setIsUpdateAllInProgress] = useState(false);
+  const [isSingleLinkPolling, setIsSingleLinkPolling] = useState(false);
+  const singlePollingRef = useRef(false);
+  const singlePollingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const setSinglePolling = useCallback((active: boolean) => {
+    singlePollingRef.current = active;
+    if (!active && singlePollingTimerRef.current !== null) {
+      clearTimeout(singlePollingTimerRef.current);
+      singlePollingTimerRef.current = null;
+    }
+    setIsSingleLinkPolling(active);
+  }, []);
+  useEffect(() => () => {
+    singlePollingRef.current = false;
+    if (singlePollingTimerRef.current !== null) {
+      clearTimeout(singlePollingTimerRef.current);
+    }
+  }, []);
   const rerunLinkUpdateStatusQuery = useRerunLinkUpdateStatus(courseId, {
     enabled: waffleFlags.enableCourseOptimizerCheckPrevRunLinks,
     polling: isUpdateAllInProgress,
+    manualPolling: isSingleLinkPolling,
   });
+  // Bulk owns interval refetches; single-link updates own bounded manual GETs.
   const updateAllPreviousRunLinksMutation = useUpdateAllPreviousRunLinks(courseId);
   const updateSinglePreviousRunLinkMutation = useUpdateSinglePreviousRunLink(courseId);
   const { data: rerunLinkUpdateResult, isError, isFetching, refetch } = rerunLinkUpdateStatusQuery;
@@ -533,6 +552,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   // Handler for updating a single previous run link
   const handleUpdateLink = useCallback(async (link: string, blockId: string, sectionId?: string): Promise<boolean> => {
     const uniqueId = `${blockId}:${link}`;
+    setSinglePolling(true);
 
     try {
       setProcessedResponseIds(new Set());
@@ -546,19 +566,32 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       });
 
       const pollForSingleLinkResult = async (attempts = 0): Promise<boolean> => {
-        if (attempts > 30) { // Max 30 attempts (60 seconds)
+        if (!singlePollingRef.current) {
+          return false;
+        }
+        if (attempts >= 30) { // Up to 30 attempts, with two seconds between retries (roughly one minute)
           throw new Error('Timeout waiting for link update result');
         }
 
-        const { data: updateStatusResponse } = await refetch();
+        const pollResponse = await refetch();
+        if (pollResponse.isError || pollResponse.error) {
+          throw pollResponse.error ?? new Error('Failed to fetch link update result');
+        }
+        if (!singlePollingRef.current) {
+          return false;
+        }
+        const updateStatusResponse = pollResponse.data;
         const pollStatus = updateStatusResponse?.status;
 
         if (
           !updateStatusResponse
           || (pollStatus != null && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(pollStatus))
         ) {
-          await new Promise(resolve => {
-            setTimeout(resolve, 2000);
+          await new Promise<void>(resolve => {
+            singlePollingTimerRef.current = setTimeout(() => {
+              singlePollingTimerRef.current = null;
+              resolve();
+            }, 2000);
           });
           return pollForSingleLinkResult(attempts + 1);
         }
@@ -657,6 +690,9 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
 
       return await pollForSingleLinkResult();
     } catch {
+      if (!singlePollingRef.current) {
+        return false;
+      }
       reportError(intl.formatMessage(messages.updateLinkError));
 
       setUpdatingLinkIds(prev => {
@@ -666,6 +702,10 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       });
 
       return false;
+    } finally {
+      if (singlePollingRef.current) {
+        setSinglePolling(false);
+      }
     }
   }, [
     getContentType,
@@ -673,6 +713,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     reportError,
     processUpdateResults,
     refetch,
+    setSinglePolling,
     updateSingle,
   ]);
 
