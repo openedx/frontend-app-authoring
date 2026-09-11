@@ -2,6 +2,14 @@
 // tree (a page-local `<ul>/<li>` renderer, not a table). Scoped under
 // `.competency-tree` so nothing here reaches the existing, unrelated
 // `/taxonomy/:taxonomyId` page.
+//
+// This file is imported directly from `CompetencyTree.tsx`, so it compiles as
+// its own root stylesheet rather than through `src/index.scss` (where
+// `CourseSequence.scss` gets its custom-media names from, via that file's own
+// `@import` chain). `postcss-custom-media` only resolves names declared in
+// the same compiled output, so this file needs its own `@use` below.
+@use "@openedx/paragon/styles/css/core/custom-media-breakpoints.css";
+
 .competency-tree {
   $line-color: rgb(0 0 0 / .08);
   $shadow-color: rgb(0 0 0 / .12);
@@ -37,7 +45,10 @@
     --pgn-spacing-badge-padding-y: 1.5px;
     --pgn-spacing-badge-padding-x-base: 6px;
     --pgn-typography-badge-font-weight: 400;
-    --pgn-typography-badge-font-size: 10px;
+    // `62.5%` renders as 10px at the default root font size (Figma's spec),
+    // but as a relative unit it keeps scaling with the user's font-size
+    // preference, unlike a fixed px value.
+    --pgn-typography-badge-font-size: 62.5%;
 
     line-height: 15.75px;
     letter-spacing: normal;
@@ -76,13 +87,7 @@
     padding-left: $indent;
 
     // Reduced indentation at narrow viewports so deep nesting doesn't crowd
-    // out the label and Competency ID badge. This value is a placeholder,
-    // not read off Figma — flag it for design confirmation before merge.
-    // Paragon's custom-media breakpoints (imported once, globally, in
-    // `src/index.scss`) rather than a Bootstrap mixin - this repo has no
-    // `media-breakpoint-down` in its Sass build; see the equivalent
-    // `@media (--pgn-size-breakpoint-max-width-xs)` usage in
-    // `course-unit/course-sequence/CourseSequence.scss`.
+    // out the label and Competency ID badge.
     @media (--pgn-size-breakpoint-max-width-xs) {
       padding-left: 16px;
     }
