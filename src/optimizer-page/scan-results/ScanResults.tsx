@@ -2,9 +2,11 @@ import {
   useEffect,
   useState,
   useMemo,
+  useRef,
   FC,
   useCallback,
 } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Chip,
   Button,
@@ -19,48 +21,109 @@ import {
   SpinnerSimple,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useDispatch } from 'react-redux';
+import AlertMessage from '@src/generic/alert-message';
 import messages from './messages';
 import SectionCollapsible from './SectionCollapsible';
 import BrokenLinkTable from './BrokenLinkTable';
-import type { LinkCheckResult, Section } from '../types';
-import { countBrokenLinks, isDataEmpty } from '../utils';
+import type { Filters, LinkCheckResult, Unit } from '../types';
+import type { RerunLinkUpdateResult, RerunLinkUpdateStatusData } from '../data/apiHooks';
+import {
+  areAllPreviousRunLinksUpdated,
+  buildSyntheticSections,
+  countPreviousRunLinksBySection,
+  countBrokenLinks,
+  filterSectionsWithPreviousRunLinks,
+  hasPreviousRunLinks,
+  isDataEmpty,
+} from '../utils';
 import FilterModal from './filterModal';
 import { useWaffleFlags } from '../../data/apiHooks';
 import {
-  updateAllPreviousRunLinks,
-  updateSinglePreviousRunLink,
-  fetchRerunLinkUpdateStatus,
-} from '../data/thunks';
+  courseOptimizerQueryKeys,
+  useRerunLinkUpdateStatus,
+  useUpdateAllPreviousRunLinks,
+  useUpdateSinglePreviousRunLink,
+} from '../data/apiHooks';
 import { STATEFUL_BUTTON_STATES } from '../../constants';
-import { RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES } from '../data/constants';
+import {
+  RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES,
+  RERUN_LINK_UPDATE_STATUSES,
+} from '../data/constants';
+
+const hasVisibleBlock = (block: Unit['blocks'][number], filters: Filters): boolean => {
+  const hasBroken = block.brokenLinks?.length > 0;
+  const hasLocked = block.lockedLinks?.length > 0;
+  const hasExternal = block.externalForbiddenLinks?.length > 0;
+  const noFilters = !filters.brokenLinks && !filters.lockedLinks && !filters.externalForbiddenLinks;
+
+  return (filters.brokenLinks && hasBroken)
+    || (filters.lockedLinks && hasLocked)
+    || (filters.externalForbiddenLinks && hasExternal)
+    || (noFilters && (hasBroken || hasLocked || hasExternal));
+};
 
 interface Props {
   data: LinkCheckResult | null;
   courseId: string;
-  onErrorStateChange?: (errorMessage: string | null) => void;
-  rerunLinkUpdateInProgress?: boolean | null;
-  rerunLinkUpdateResult?: any;
 }
 
-const ScanResults: FC<Props> = ({
-  data,
-  courseId,
-  onErrorStateChange,
-  rerunLinkUpdateInProgress,
-  rerunLinkUpdateResult,
-}) => {
+const ScanResults: FC<Props> = ({ data, courseId }) => {
   const intl = useIntl();
-  const waffleFlags = useWaffleFlags();
-  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+  const waffleFlags = useWaffleFlags(courseId);
+  const [isUpdateAllInProgress, setIsUpdateAllInProgress] = useState(false);
+  const [isSingleLinkPolling, setIsSingleLinkPolling] = useState(false);
+  const activeSinglePollersRef = useRef(0);
+  const singlePollerCleanupsRef = useRef(new Set<() => void>());
+  const mountedRef = useRef(true);
+  const setSinglePolling = useCallback((active: boolean) => {
+    activeSinglePollersRef.current = active
+      ? activeSinglePollersRef.current + 1
+      : Math.max(0, activeSinglePollersRef.current - 1);
+    if (mountedRef.current) {
+      setIsSingleLinkPolling(activeSinglePollersRef.current > 0);
+    }
+  }, []);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      singlePollerCleanupsRef.current.forEach(cleanup => cleanup());
+      singlePollerCleanupsRef.current.clear();
+      activeSinglePollersRef.current = 0;
+    };
+  }, []);
+  const rerunLinkUpdateStatusQuery = useRerunLinkUpdateStatus(courseId, {
+    enabled: waffleFlags.enableCourseOptimizerCheckPrevRunLinks,
+    manualPolling: isSingleLinkPolling,
+  });
+  // Server status owns interval refetches; single-link updates own bounded manual GETs.
+  const updateAllPreviousRunLinksMutation = useUpdateAllPreviousRunLinks(courseId);
+  const updateSinglePreviousRunLinkMutation = useUpdateSinglePreviousRunLink(courseId);
+  const { data: rerunLinkUpdateResult, isError, isFetching, refetch } = rerunLinkUpdateStatusQuery;
+  const { isPending: isUpdateAllPending, mutateAsync: updateAll } = updateAllPreviousRunLinksMutation;
+  const { mutateAsync: updateSingle } = updateSinglePreviousRunLinkMutation;
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const reportError = useCallback((message: string) => {
+    setErrorMessage(message);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+  useEffect(() => {
+    if (isError) {
+      setIsUpdateAllInProgress(false);
+      reportError(intl.formatMessage(messages.updateLinksError));
+    }
+  }, [intl, reportError, isError]);
+  const serverRerunLinkUpdateInProgress = !isError
+    && rerunLinkUpdateResult?.status != null
+    && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(rerunLinkUpdateResult.status);
+  const rerunLinkUpdateInProgress = isUpdateAllPending
+    || isUpdateAllInProgress
+    || serverRerunLinkUpdateInProgress;
   const [isOpen, open, close] = useToggle(false);
   const [updatedLinkIds, setUpdatedLinkIds] = useState<string[]>([]);
   const [updatedLinkMap, setUpdatedLinkMap] = useState<Record<string, string>>({});
   const [updatingLinkIds, setUpdatingLinkIds] = useState<Record<string, boolean>>({});
-  const [isUpdateAllInProgress, setIsUpdateAllInProgress] = useState(false);
-  const [, setUpdateAllCompleted] = useState(false);
-  const [updateAllTrigger, setUpdateAllTrigger] = useState(0);
-  const [processedResponseIds, setProcessedResponseIds] = useState<Set<string>>(new Set());
   const initialFilters = {
     brokenLinks: false,
     lockedLinks: false,
@@ -72,74 +135,20 @@ const ScanResults: FC<Props> = ({
   const [prevRunOpenStates, setPrevRunOpenStates] = useState<boolean[]>([]);
   const { sections } = data || {};
 
-  const renderableSections = useMemo(() => {
-    const buildSectionData = (
-      items: any[],
-      sectionId: string,
-      messageKey: keyof typeof messages,
-    ) => {
-      const itemsWithLinks = items.filter(item =>
-        (item.brokenLinks && item.brokenLinks.length > 0)
-        || (item.lockedLinks && item.lockedLinks.length > 0)
-        || (item.externalForbiddenLinks && item.externalForbiddenLinks.length > 0)
-        || (item.previousRunLinks && item.previousRunLinks.length > 0)
-      );
+  const renderableSections = useMemo(
+    () =>
+      buildSyntheticSections(
+        data?.courseUpdates,
+        data?.customPages,
+        {
+          courseUpdates: intl.formatMessage(messages.courseUpdatesHeader),
+          customPages: intl.formatMessage(messages.customPagesHeader),
+        },
+      ),
+    [data?.courseUpdates, data?.customPages, intl],
+  );
 
-      if (itemsWithLinks.length === 0) { return null; }
-
-      return {
-        id: sectionId,
-        displayName: intl.formatMessage(messages[messageKey]),
-        subsections: [{
-          id: `${sectionId}-subsection`,
-          displayName: `${intl.formatMessage(messages[messageKey])} Subsection`,
-          units: itemsWithLinks.map(item => {
-            const blockId = item.blockId || item.block_id || item.id;
-
-            return {
-              id: item.id,
-              displayName: item.displayName,
-              url: item.url,
-              blocks: [{
-                id: blockId,
-                displayName: item.displayName,
-                url: item.url,
-                brokenLinks: item.brokenLinks || [],
-                lockedLinks: item.lockedLinks || [],
-                externalForbiddenLinks: item.externalForbiddenLinks || [],
-                previousRunLinks: item.previousRunLinks || [],
-              }],
-            };
-          }),
-        }],
-      };
-    };
-
-    const rSections: any[] = [];
-
-    if (data?.courseUpdates && data.courseUpdates.length > 0) {
-      const courseUpdatesSection = buildSectionData(data.courseUpdates, 'course-updates', 'courseUpdatesHeader');
-      if (courseUpdatesSection) {
-        rSections.push(courseUpdatesSection);
-      }
-    }
-
-    if (data?.customPages && data.customPages.length > 0) {
-      const customPagesSection = buildSectionData(
-        data.customPages,
-        'custom-pages',
-        'customPagesHeader',
-      );
-      if (customPagesSection) {
-        rSections.push(customPagesSection);
-      }
-    }
-
-    return rSections;
-  }, [data?.courseUpdates, data?.customPages, intl]);
-
-  // Combine renderable sections with regular sections
-  const allSections: Section[] = useMemo(
+  const allSections = useMemo(
     () => [...renderableSections, ...(sections || [])],
     [renderableSections, sections],
   );
@@ -150,40 +159,33 @@ const ScanResults: FC<Props> = ({
     externalForbiddenLinksCounts,
   } = useMemo(() => countBrokenLinks({ sections: allSections }), [allSections]);
 
-  // Calculate if there are any previous run links across all sections
-  const hasPreviousRunLinks = useMemo(
-    () =>
-      allSections.some(section => (
-        section.subsections.some(subsection =>
-          subsection.units.some(unit => (
-            unit.blocks.some(block => block.previousRunLinks && block.previousRunLinks.length > 0)
-          ))
-        )
-      )),
+  const hasPreviousRunLinksInSections = useMemo(
+    () => hasPreviousRunLinks(allSections),
+    [allSections],
+  );
+  const previousRunLinksCounts = useMemo(
+    () => countPreviousRunLinksBySection(allSections),
+    [allSections],
+  );
+  const previousRunSections = useMemo(
+    () => filterSectionsWithPreviousRunLinks(allSections),
     [allSections],
   );
 
-  // Calculate previous run links count for each section
-  const previousRunLinksCounts = useMemo(() => {
-    if (!allSections) { return {}; }
-
-    const linksCountMap = {};
-    allSections.forEach(section => {
-      let sectionTotal = 0;
-
-      (section.subsections || []).forEach(subsection => {
-        (subsection.units || []).forEach(unit => {
-          (unit.blocks || []).forEach(block => {
-            sectionTotal += block.previousRunLinks ? block.previousRunLinks.length : 0;
-          });
-        });
-      });
-
-      linksCountMap[section.id] = sectionTotal;
-    });
-
-    return linksCountMap;
-  }, [allSections]);
+  // Keep original section indexes so counts and accordion state stay aligned with allSections.
+  const visibleSectionIndexes = useMemo(
+    () =>
+      allSections.reduce<number[]>((indexes, section, sectionIndex) => {
+        const hasVisibleUnit = section.subsections.some(subsection =>
+          subsection.units.some(unit => unit.blocks.some(block => hasVisibleBlock(block, filters)))
+        );
+        if (hasVisibleUnit) {
+          indexes.push(sectionIndex);
+        }
+        return indexes;
+      }, []),
+    [allSections, filters],
+  );
 
   const activeFilters = Object.keys(filters).filter(key => filters[key]);
   const [filterBy, {
@@ -198,49 +200,13 @@ const ScanResults: FC<Props> = ({
     setPrevRunOpenStates(allSections ? allSections.map(() => false) : []);
   }, [allSections]);
 
-  // Reset update all completion state when data changes (new scan results)
-  useEffect(() => {
-    setUpdateAllCompleted(false);
-  }, [data]);
-
-  const processUpdateResults = useCallback((response: any, isBulkUpdate = false) => {
-    if (!response) {
-      return;
-    }
-
-    if (response.status === 'Succeeded' && (isBulkUpdate || (response.results && response.results.length > 4))) {
+  const processUpdateResults = useCallback((response: RerunLinkUpdateStatusData, isBulkUpdate = false) => {
+    if (
+      response.status === RERUN_LINK_UPDATE_STATUSES.SUCCEEDED
+      && (isBulkUpdate || response.results.length > 4)
+    ) {
       const successfulLinkIds: string[] = [];
       const newMap: Record<string, string> = {};
-
-      const typeToSection: Record<string, string> = {
-        course_updates: 'course-updates',
-        custom_pages: 'custom-pages',
-      };
-
-      const blocksWithResults = new Set<string>();
-
-      const addBlocksWithPrevLinks = (sectionId: string) => {
-        const section = allSections.find(s => s.id === sectionId);
-        if (!section) { return; }
-        section.subsections.forEach(sub =>
-          sub.units.forEach(unit =>
-            unit.blocks.forEach(b => {
-              if (b.previousRunLinks?.length) { blocksWithResults.add(b.id); }
-            })
-          )
-        );
-      };
-
-      if (Array.isArray(response.results)) {
-        response.results.forEach((result) => {
-          const sectionId = typeToSection[result.type];
-          if (sectionId) {
-            addBlocksWithPrevLinks(sectionId);
-          } else if (result.id) {
-            blocksWithResults.add(result.id);
-          }
-        });
-      }
 
       const allBlocksMap = new Map();
       allSections.forEach(section => {
@@ -302,15 +268,11 @@ const ScanResults: FC<Props> = ({
           const blockData = allBlocksMap.get(uiBlockId);
 
           if (blockData) {
-            const originalUrl = result.original_url || result.originalUrl;
-            const newUrl = result.new_url || result.newUrl;
+            const newUrl = result.newUrl;
 
-            if (result.success && newUrl && originalUrl) {
+            if (result.success && newUrl && result.originalUrl) {
               const matchingLink = blockData.previousRunLinks.find(
-                ({ originalLink }) => {
-                  const matches = originalLink === originalUrl;
-                  return matches;
-                },
+                ({ originalLink }) => originalLink === result.originalUrl,
               );
 
               if (matchingLink) {
@@ -332,56 +294,20 @@ const ScanResults: FC<Props> = ({
             return;
           }
 
-          const colonIndex = existingId.indexOf(':');
-          if (colonIndex > 0) {
-            const blockId = existingId.substring(0, colonIndex);
-
-            if (!blocksWithResults.has(blockId)) {
-              preservedIds.push(existingId);
-            } else {
-              preservedIds.push(existingId);
-            }
-          } else {
-            preservedIds.push(existingId);
-          }
+          preservedIds.push(existingId);
         });
 
         const result = [...successfulLinkIds, ...preservedIds];
         return result;
       });
 
-      setUpdatedLinkMap(currentMap => {
-        const preservedMap: Record<string, string> = {};
-        const newSuccessfulSet = new Set(successfulLinkIds);
-
-        Object.keys(currentMap).forEach(existingId => {
-          if (newSuccessfulSet.has(existingId)) {
-            return;
-          }
-
-          const colonIndex = existingId.indexOf(':');
-          if (colonIndex > 0) {
-            const blockId = existingId.substring(0, colonIndex);
-
-            if (!blocksWithResults.has(blockId)) {
-              preservedMap[existingId] = currentMap[existingId];
-            } else {
-              preservedMap[existingId] = currentMap[existingId];
-            }
-          } else {
-            preservedMap[existingId] = currentMap[existingId];
-          }
-        });
-
-        const result = { ...preservedMap, ...newMap };
-        return result;
-      });
+      setUpdatedLinkMap(currentMap => ({ ...currentMap, ...newMap }));
 
       return;
     }
 
     if (response.results && Array.isArray(response.results)) {
-      const successfulResults = response.results.filter((r: any) => r.success);
+      const successfulResults = response.results.filter(r => r.success);
       if (successfulResults.length === 0) {
         return;
       }
@@ -397,14 +323,13 @@ const ScanResults: FC<Props> = ({
                 block.previousRunLinks.forEach(({ originalLink }) => {
                   const uid = `${block.id}:${originalLink}`;
 
-                  const exactMatch = successfulResults.find(result => {
-                    const originalUrl = result.original_url || result.originalUrl;
-                    return result.id === block.id && originalUrl === originalLink;
-                  });
+                  const exactMatch = successfulResults.find(
+                    result => result.id === block.id && result.originalUrl === originalLink,
+                  );
 
-                  if (exactMatch && (exactMatch.newUrl || exactMatch.new_url)) {
+                  if (exactMatch && exactMatch.newUrl) {
                     successfulLinkIds.push(uid);
-                    newMap[uid] = exactMatch.newUrl || exactMatch.new_url;
+                    newMap[uid] = exactMatch.newUrl;
                   }
                 });
               }
@@ -428,117 +353,60 @@ const ScanResults: FC<Props> = ({
     }
   }, [allSections]);
 
-  // Process update results during polling when status is 'Succeeded' or results are present
+  // Without a backend operation ID/version, refresh authoritative link-check state on terminal rerun observations.
   useEffect(() => {
     if (
-      rerunLinkUpdateResult
-      && (rerunLinkUpdateResult.status === 'Succeeded'
-        || (rerunLinkUpdateResult.results && rerunLinkUpdateResult.results.length > 0))
+      isFetching
+      || !rerunLinkUpdateResult
+      || rerunLinkUpdateResult.status == null
+      || RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(rerunLinkUpdateResult.status)
     ) {
-      const allResultIds = rerunLinkUpdateResult.results?.map(r => r.id).sort().join(',') || '';
-      const responseId =
-        `${rerunLinkUpdateResult.status}-${rerunLinkUpdateResult.results?.length}-${allResultIds}-${isUpdateAllInProgress}`;
-
-      if (processedResponseIds.has(responseId)) {
-        return;
-      }
-
-      setProcessedResponseIds(prev => new Set([...prev, responseId]));
-      processUpdateResults(rerunLinkUpdateResult, isUpdateAllInProgress);
-
-      // Handle completion for "Update All" operation (check for success status as indicator)
-      if (rerunLinkUpdateResult.status === 'Succeeded' && isUpdateAllInProgress) {
-        const failedCount = rerunLinkUpdateResult.results
-          ? rerunLinkUpdateResult.results.filter((r: any) => !r.success).length
-          : 0;
-
-        setIsUpdateAllInProgress(false);
-        setUpdateAllCompleted(failedCount === 0);
-        setUpdateAllTrigger(t => t + 1);
-
-        if (failedCount > 0) {
-          if (onErrorStateChange) {
-            onErrorStateChange(intl.formatMessage(messages.updateLinksError));
-          }
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else if (onErrorStateChange) {
-          onErrorStateChange(null);
-        }
-      }
+      return;
     }
+
+    queryClient.invalidateQueries({ queryKey: courseOptimizerQueryKeys.linkCheckStatus(courseId) });
   }, [
+    courseId,
+    isFetching,
+    queryClient,
     rerunLinkUpdateResult,
-    rerunLinkUpdateInProgress,
-    isUpdateAllInProgress,
-    intl,
-    onErrorStateChange,
-    processUpdateResults,
-    processedResponseIds,
   ]);
 
-  // Handle completion of rerun link updates when polling stops
+  // Process terminal results after the optimistic Pending cache entry has been replaced.
   useEffect(() => {
-    const handleUpdateCompletion = async () => {
-      if (rerunLinkUpdateInProgress === false && isUpdateAllInProgress) {
-        try {
-          // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-          const updateStatusResponse = await dispatch(fetchRerunLinkUpdateStatus(courseId)) as any;
+    if (
+      !isUpdateAllInProgress
+      || isUpdateAllPending
+      || isFetching
+      || !rerunLinkUpdateResult
+      || isError
+      || serverRerunLinkUpdateInProgress
+    ) {
+      return;
+    }
 
-          if (!updateStatusResponse) {
-            setIsUpdateAllInProgress(false);
-            setUpdateAllCompleted(false);
-            if (onErrorStateChange) {
-              onErrorStateChange(intl.formatMessage(messages.updateLinksError));
-            }
-            return;
-          }
+    processUpdateResults(rerunLinkUpdateResult, true);
+    setIsUpdateAllInProgress(false);
 
-          processUpdateResults(updateStatusResponse, true);
-          let failedCount = 0;
-
-          if (updateStatusResponse.results) {
-            failedCount = updateStatusResponse.results.filter((r: any) => !r.success).length;
-          } else if (updateStatusResponse.status === 'Succeeded') {
-            failedCount = 0;
-          } else {
-            failedCount = 1;
-          }
-
-          setIsUpdateAllInProgress(false);
-          setUpdateAllCompleted(failedCount === 0);
-          setUpdateAllTrigger(t => t + 1);
-
-          if (failedCount > 0) {
-            if (onErrorStateChange) {
-              onErrorStateChange(intl.formatMessage(messages.updateLinksError));
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          } else if (onErrorStateChange) {
-            onErrorStateChange(null);
-          }
-        } catch {
-          setIsUpdateAllInProgress(false);
-          setUpdateAllCompleted(false);
-          setUpdateAllTrigger(t => t + 1);
-          if (onErrorStateChange) {
-            onErrorStateChange(intl.formatMessage(messages.updateLinksError));
-          }
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      }
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    handleUpdateCompletion();
+    if (
+      rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.SUCCEEDED
+      && rerunLinkUpdateResult.results.every(result => result.success)
+    ) {
+      setErrorMessage(null);
+    } else {
+      const error = intl.formatMessage(messages.updateLinksError);
+      setErrorMessage(error);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, [
-    rerunLinkUpdateInProgress,
-    isUpdateAllInProgress,
-    dispatch,
-    courseId,
-    allSections,
     intl,
-    onErrorStateChange,
+    isError,
+    isUpdateAllInProgress,
     processUpdateResults,
+    rerunLinkUpdateResult,
+    isFetching,
+    isUpdateAllPending,
+    serverRerunLinkUpdateInProgress,
   ]);
 
   const getContentType = useCallback((sectionId: string): string => {
@@ -549,7 +417,7 @@ const ScanResults: FC<Props> = ({
 
   // Get update all button state
   const getUpdateAllButtonState = () => {
-    if (rerunLinkUpdateInProgress || isUpdateAllInProgress) {
+    if (rerunLinkUpdateInProgress) {
       return STATEFUL_BUTTON_STATES.pending;
     }
     return STATEFUL_BUTTON_STATES.default;
@@ -557,153 +425,120 @@ const ScanResults: FC<Props> = ({
 
   // Disable the button if all links have been successfully updated or if polling is in progress
   const areAllLinksUpdated = useMemo(() => {
-    if (!hasPreviousRunLinks) { return false; }
-    if (rerunLinkUpdateInProgress || isUpdateAllInProgress) { return true; }
-
-    const checkBlockUpdated = (block) => {
-      const noPreviousLinks = !block.previousRunLinks?.length;
-      const allUpdated = block.previousRunLinks?.every(({ isUpdated }) => isUpdated) ?? true;
-      return noPreviousLinks || allUpdated;
-    };
-
-    const checkUnitUpdated = (unit) => unit.blocks.every(checkBlockUpdated);
-    const checkSubsectionUpdated = (subsection) => subsection.units.every(checkUnitUpdated);
-    const checkSectionUpdated = (section) => section.subsections.every(checkSubsectionUpdated);
-
-    const allLinksUpdatedInAPI = allSections.every(checkSectionUpdated);
-
-    if (allLinksUpdatedInAPI) { return true; }
-
-    const allPreviousRunLinks: { linkId: string; isUpdatedInAPI: boolean; }[] = [];
-    allSections.forEach(section => {
-      section.subsections.forEach(subsection => {
-        subsection.units.forEach(unit => {
-          unit.blocks.forEach(block => {
-            if (block.previousRunLinks) {
-              block.previousRunLinks.forEach(({ originalLink, isUpdated }) => {
-                const linkId = `${block.id}:${originalLink}`;
-                allPreviousRunLinks.push({
-                  linkId,
-                  isUpdatedInAPI: isUpdated || false,
-                });
-              });
-            }
-          });
-        });
-      });
-    });
-
-    if (allPreviousRunLinks.length === 0) { return false; }
-
-    const allUpdated = allPreviousRunLinks.every(({ linkId, isUpdatedInAPI }) =>
-      isUpdatedInAPI
-      || updatedLinkIds.includes(linkId)
-    );
-
-    return allUpdated;
+    if (!hasPreviousRunLinksInSections) { return false; }
+    if (rerunLinkUpdateInProgress) { return true; }
+    return areAllPreviousRunLinksUpdated(allSections, updatedLinkIds);
   }, [
     allSections,
-    hasPreviousRunLinks,
+    hasPreviousRunLinksInSections,
     updatedLinkIds,
-    updateAllTrigger,
     rerunLinkUpdateInProgress,
-    isUpdateAllInProgress,
   ]);
 
   // Handler for updating a single previous run link
   const handleUpdateLink = useCallback(async (link: string, blockId: string, sectionId?: string): Promise<boolean> => {
     const uniqueId = `${blockId}:${link}`;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    let resolveTimer: (() => void) | null = null;
+    const cancel = () => {
+      cancelled = true;
+      if (timer !== null) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      resolveTimer?.();
+      resolveTimer = null;
+    };
+    singlePollerCleanupsRef.current.add(cancel);
+    setSinglePolling(true);
 
     try {
       setUpdatingLinkIds(prev => ({ ...prev, [uniqueId]: true }));
       const contentType = getContentType(sectionId || '');
-      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-      await dispatch(updateSinglePreviousRunLink(courseId, link, blockId, contentType));
+      await updateSingle({
+        linkUrl: link,
+        blockId,
+        contentType,
+      });
 
       const pollForSingleLinkResult = async (attempts = 0): Promise<boolean> => {
-        if (attempts > 30) { // Max 30 attempts (60 seconds)
+        if (cancelled || !mountedRef.current) {
+          return false;
+        }
+        if (attempts >= 30) { // Up to 30 attempts, with two seconds between retries (roughly one minute)
           throw new Error('Timeout waiting for link update result');
         }
 
-        // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-        const updateStatusResponse = await dispatch(fetchRerunLinkUpdateStatus(courseId)) as any;
-        const pollStatus = updateStatusResponse?.status || updateStatusResponse?.updateStatus;
+        const pollResponse = await refetch();
+        if (pollResponse.isError || pollResponse.error) {
+          throw pollResponse.error ?? new Error('Failed to fetch link update result');
+        }
+        if (cancelled || !mountedRef.current) {
+          return false;
+        }
+        const updateStatusResponse = pollResponse.data;
+        const pollStatus = updateStatusResponse?.status;
 
-        if (!updateStatusResponse || RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(pollStatus)) {
-          await new Promise(resolve => {
-            setTimeout(resolve, 2000);
+        if (
+          !updateStatusResponse
+          || (pollStatus != null && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(pollStatus))
+        ) {
+          await new Promise<void>(resolve => {
+            resolveTimer = resolve;
+            timer = setTimeout(() => {
+              timer = null;
+              resolveTimer = null;
+              resolve();
+            }, 2000);
           });
           return pollForSingleLinkResult(attempts + 1);
         }
 
-        if (updateStatusResponse && updateStatusResponse.results && updateStatusResponse.results.length > 0) {
-          const hasOriginalUrlField = updateStatusResponse.results.some(r => r.original_url !== undefined);
+        if (updateStatusResponse && updateStatusResponse.results.length > 0) {
+          const hasOriginalUrlField = updateStatusResponse.results.some(r => r.originalUrl != null);
 
-          let exactMatch;
+          let exactMatch: RerunLinkUpdateResult | undefined;
           if (hasOriginalUrlField) {
             exactMatch = updateStatusResponse.results.find(
-              (result: any) => {
-                const matches = result.id === blockId
-                  && result.original_url === link
-                  && result.success === true;
-
-                return matches;
-              },
+              result => result.id === blockId && result.originalUrl === link && result.success,
             );
           } else {
             exactMatch = updateStatusResponse.results.find(
-              (result: any) => {
-                const matches = result.id === blockId && result.success === true;
-                return matches;
-              },
+              result => result.id === blockId && result.success,
             );
           }
 
           if (exactMatch) {
-            const newUrl = exactMatch.new_url || exactMatch.newUrl || exactMatch.url;
+            const newUrl = exactMatch.newUrl;
 
             if (newUrl) {
-              setUpdatedLinkMap(prev => {
-                const newMap = { ...prev, [uniqueId]: newUrl };
-                return newMap;
-              });
-
-              setUpdatedLinkIds(prev => {
-                const filtered = prev.filter(id => id !== uniqueId);
-                const newIds = [...filtered, uniqueId];
-                return newIds;
-              });
-
+              setUpdatedLinkMap(prev => ({ ...prev, [uniqueId]: newUrl }));
+              setUpdatedLinkIds(prev => [
+                ...prev.filter(id => id !== uniqueId),
+                uniqueId,
+              ]);
               setUpdatingLinkIds(prev => {
                 const copy = { ...prev };
                 delete copy[uniqueId];
                 return copy;
               });
 
-              if (onErrorStateChange) {
-                onErrorStateChange(null);
-              }
+              setErrorMessage(null);
 
               return true;
             }
           }
 
-          const failed = updateStatusResponse.results.find(
-            (result: any) => {
-              if (hasOriginalUrlField) {
-                return result.id === blockId
-                  && result.original_url === link
-                  && result.success === false;
-              }
-              return result.id === blockId && result.success === false;
-            },
-          );
+          const failed = updateStatusResponse.results.find(result => {
+            if (hasOriginalUrlField) {
+              return result.id === blockId && result.originalUrl === link && !result.success;
+            }
+            return result.id === blockId && !result.success;
+          });
 
           if (failed) {
-            if (onErrorStateChange) {
-              onErrorStateChange(intl.formatMessage(messages.updateLinkError));
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            reportError(intl.formatMessage(messages.updateLinkError));
 
             setUpdatingLinkIds(prev => {
               const copy = { ...prev };
@@ -715,26 +550,7 @@ const ScanResults: FC<Props> = ({
           }
         }
 
-        // If status is 'Succeeded' but no results for this specific link, consider it failed
-        if (pollStatus === 'Succeeded') {
-          if (onErrorStateChange) {
-            onErrorStateChange(intl.formatMessage(messages.updateLinkError));
-          }
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-
-          setUpdatingLinkIds(prev => {
-            const copy = { ...prev };
-            delete copy[uniqueId];
-            return copy;
-          });
-
-          return false;
-        }
-
-        if (onErrorStateChange) {
-          onErrorStateChange(intl.formatMessage(messages.updateLinkError));
-        }
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        reportError(intl.formatMessage(messages.updateLinkError));
 
         setUpdatingLinkIds(prev => {
           const copy = { ...prev };
@@ -747,10 +563,10 @@ const ScanResults: FC<Props> = ({
 
       return await pollForSingleLinkResult();
     } catch {
-      if (onErrorStateChange) {
-        onErrorStateChange(intl.formatMessage(messages.updateLinkError));
+      if (cancelled || !mountedRef.current) {
+        return false;
       }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      reportError(intl.formatMessage(messages.updateLinkError));
 
       setUpdatingLinkIds(prev => {
         const copy = { ...prev };
@@ -759,8 +575,18 @@ const ScanResults: FC<Props> = ({
       });
 
       return false;
+    } finally {
+      singlePollerCleanupsRef.current.delete(cancel);
+      setSinglePolling(false);
     }
-  }, [dispatch, courseId, getContentType, intl, onErrorStateChange]);
+  }, [
+    getContentType,
+    intl,
+    reportError,
+    refetch,
+    setSinglePolling,
+    updateSingle,
+  ]);
 
   // When updatedLinkIds changes (links marked updated), clear any updating flags for those ids
   useEffect(() => {
@@ -782,25 +608,29 @@ const ScanResults: FC<Props> = ({
 
   const handleUpdateAllCourseLinks = useCallback(async (): Promise<boolean> => {
     try {
-      setProcessedResponseIds(new Set());
       setIsUpdateAllInProgress(true);
-      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-      await dispatch(updateAllPreviousRunLinks(courseId));
-
+      await updateAll();
       return true;
     } catch {
-      setIsUpdateAllInProgress(false); // Reset on error
-      if (onErrorStateChange) {
-        onErrorStateChange(intl.formatMessage(messages.updateLinksError));
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setIsUpdateAllInProgress(false);
+      reportError(intl.formatMessage(messages.updateLinksError));
       return false;
     }
-  }, [dispatch, courseId, intl, onErrorStateChange]);
+  }, [intl, reportError, updateAll]);
 
   if (!data || isDataEmpty(data)) {
     return (
       <>
+        {errorMessage && (
+          <AlertMessage
+            variant="danger"
+            title=""
+            description={errorMessage}
+            dismissible
+            onClose={() => setErrorMessage(null)}
+            className="mt-3"
+          />
+        )}
         <div className="scan-results">
           <div className="scan-header-second-title-container px-3">
             <header className="sub-header-content">
@@ -839,61 +669,18 @@ const ScanResults: FC<Props> = ({
     { name: intl.formatMessage(messages.lockedLabel), value: 'lockedLinks' },
   ];
 
-  // Only show sections that have at least one unit with a visible link (not just previousRunLinks)
-  const shouldSectionRender = (sectionIndex: number): boolean => {
-    const section = allSections[sectionIndex];
-    const hasVisibleUnit = section.subsections.some(
-      (subsection) =>
-        subsection.units.some((unit) =>
-          unit.blocks.some((block) => {
-            const hasBroken = block.brokenLinks?.length > 0;
-            const hasLocked = block.lockedLinks?.length > 0;
-            const hasExternal = block.externalForbiddenLinks?.length > 0;
-
-            const noFilters = !filters.brokenLinks
-              && !filters.lockedLinks
-              && !filters.externalForbiddenLinks;
-
-            const showBroken = filters.brokenLinks && hasBroken;
-            const showLocked = filters.lockedLinks && hasLocked;
-            const showExternal = filters.externalForbiddenLinks && hasExternal;
-
-            return (
-              showBroken
-              || showLocked
-              || showExternal
-              || (noFilters && (hasBroken || hasLocked || hasExternal))
-            );
-          })
-        ),
-    );
-    return hasVisibleUnit;
-  };
-
-  const findPreviousVisibleSection = (currentIndex: number): number => {
-    let prevIndex = currentIndex - 1;
-    while (prevIndex >= 0) {
-      if (shouldSectionRender(prevIndex)) {
-        return prevIndex;
-      }
-      prevIndex--;
-    }
-    return -1;
-  };
-
-  const findNextVisibleSection = (currentIndex: number): number => {
-    let nextIndex = currentIndex + 1;
-    while (nextIndex < allSections.length) {
-      if (shouldSectionRender(nextIndex)) {
-        return nextIndex;
-      }
-      nextIndex++;
-    }
-    return -1;
-  };
-
   return (
     <>
+      {errorMessage && (
+        <AlertMessage
+          variant="danger"
+          title=""
+          description={errorMessage}
+          dismissible
+          onClose={() => setErrorMessage(null)}
+          className="mt-3"
+        />
+      )}
       <div className="scan-results">
         <div className="scan-header-second-title-container px-3">
           <header className="sub-header-content">
@@ -944,7 +731,7 @@ const ScanResults: FC<Props> = ({
                   }}
                 >
                   {(() => {
-                    const foundOption = filterOptions.filter(option => option.value === filter)[0];
+                    const foundOption = filterOptions.find(option => option.value === filter);
                     return foundOption ? foundOption.name : filter;
                   })()}
                 </Chip>
@@ -963,41 +750,30 @@ const ScanResults: FC<Props> = ({
           </div>
         )}
 
-        {(() => {
-          // Find all visible sections
-          const visibleSections = allSections && allSections.length > 0
-            ? allSections
-              .map((_, index) => (shouldSectionRender(index) ? index : -1))
-              .filter(idx => idx !== -1)
-            : [];
-          if (visibleSections.length === 0) {
-            return (
-              <div className="no-results-found-container">
-                <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
-              </div>
-            );
-          }
-          return allSections.map((section, index) => {
-            if (!shouldSectionRender(index)) {
+        {visibleSectionIndexes.length === 0 ?
+          (
+            <div className="no-results-found-container">
+              <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
+            </div>
+          ) :
+          allSections.map((section, index) => {
+            if (!visibleSectionIndexes.includes(index)) {
               return null;
             }
+            const visiblePosition = visibleSectionIndexes.indexOf(index);
+            const previousVisibleIndex = visibleSectionIndexes[visiblePosition - 1] ?? -1;
+            const nextVisibleIndex = visibleSectionIndexes[visiblePosition + 1] ?? -1;
             return (
               <SectionCollapsible
                 index={index}
                 handleToggle={handleToggle}
                 isOpen={openStates[index]}
-                hasPrevAndIsOpen={index > 0 ?
-                  (() => {
-                    const prevVisibleIndex = findPreviousVisibleSection(index);
-                    return prevVisibleIndex >= 0 && openStates[prevVisibleIndex];
-                  })() :
-                  true}
-                hasNextAndIsOpen={index < allSections.length - 1 ?
-                  (() => {
-                    const nextVisibleIndex = findNextVisibleSection(index);
-                    return nextVisibleIndex >= 1 && openStates[nextVisibleIndex];
-                  })() :
-                  true}
+                hasPrevAndIsOpen={index > 0
+                  ? previousVisibleIndex >= 0 && openStates[previousVisibleIndex]
+                  : true}
+                hasNextAndIsOpen={index < allSections.length - 1
+                  ? nextVisibleIndex >= 1 && openStates[nextVisibleIndex]
+                  : true}
                 key={section.id}
                 title={section.displayName}
                 brokenNumber={brokenLinksCounts[index]}
@@ -1008,27 +784,8 @@ const ScanResults: FC<Props> = ({
                 {section.subsections.map((subsection) => (
                   <>
                     {subsection.units.map((unit) => {
-                      // Determine if any block in this unit should be shown based on filters
-                      const hasVisibleBlock = unit.blocks.some((block) => {
-                        const hasBroken = block.brokenLinks?.length > 0;
-                        const hasLocked = block.lockedLinks?.length > 0;
-                        const hasExternal = block.externalForbiddenLinks?.length > 0;
-
-                        const showBroken = filters.brokenLinks && hasBroken;
-                        const showLocked = filters.lockedLinks && hasLocked;
-                        const showExternal = filters.externalForbiddenLinks && hasExternal;
-
-                        const noFilters = !filters.brokenLinks
-                          && !filters.lockedLinks
-                          && !filters.externalForbiddenLinks;
-
-                        return showBroken
-                          || showLocked
-                          || showExternal
-                          || (noFilters && (hasBroken || hasLocked || hasExternal));
-                      });
-
-                      if (hasVisibleBlock) {
+                      const hasVisibleUnit = unit.blocks.some(block => hasVisibleBlock(block, filters));
+                      if (hasVisibleUnit) {
                         return (
                           <div className="unit" key={unit.id}>
                             <BrokenLinkTable unit={unit} filters={filters} updatedLinks={[]} />
@@ -1041,105 +798,76 @@ const ScanResults: FC<Props> = ({
                 ))}
               </SectionCollapsible>
             );
-          });
-        })()}
+          })}
       </div>
 
       {waffleFlags.enableCourseOptimizerCheckPrevRunLinks
-        && allSections
         && allSections.length > 0
-        && hasPreviousRunLinks && (() => {
-          // Filter out sections/subsections/units that have no previous run links
-          const filteredSections = allSections.map((section) => {
-            // Filter subsections
-            const filteredSubsections = section.subsections.map(subsection => {
-              // Filter units
-              const filteredUnits = subsection.units.filter(unit =>
-                unit.blocks.some(block => {
-                  const hasPreviousLinks = block.previousRunLinks?.length > 0;
-                  return hasPreviousLinks;
-                })
-              );
-              return {
-                ...subsection,
-                units: filteredUnits,
-              };
-            }).filter(subsection => subsection.units.length > 0);
-            return {
-              ...section,
-              subsections: filteredSubsections,
-            };
-          }).filter(section => section.subsections.length > 0);
-
-          if (filteredSections.length === 0) {
-            return null;
-          }
-
-          return (
-            <div className="scan-results">
-              <div className="scan-header-second-title-container px-3">
-                <header className="sub-header-content d-flex justify-content-between align-items-center">
-                  <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
-                  <StatefulButton
-                    className="px-4 rounded-0 update-all-course-btn"
-                    labels={{
-                      default: intl.formatMessage(messages.updateAllButtonText),
-                      disable: intl.formatMessage(messages.updateAllButtonText),
-                      pending: intl.formatMessage(messages.updateAllButtonText),
-                    }}
-                    icons={{
-                      default: '',
-                      disable: '',
-                      pending: <Icon src={SpinnerSimple} className="icon-spin" />,
-                    }}
-                    state={Object.keys(updatingLinkIds).length > 0
-                      ? STATEFUL_BUTTON_STATES.disable
-                      : getUpdateAllButtonState()}
-                    onClick={handleUpdateAllCourseLinks}
-                    disabled={areAllLinksUpdated}
-                    disabledStates={['disable', 'pending']}
-                    variant="primary"
-                    data-testid="update-all-course"
-                  />
-                </header>
-              </div>
-              {filteredSections.map((section, index) => (
-                <SectionCollapsible
-                  index={index}
-                  handleToggle={handlePrevRunToggle}
-                  isOpen={prevRunOpenStates[index]}
-                  hasPrevAndIsOpen={index > 0 ? prevRunOpenStates[index - 1] : true}
-                  hasNextAndIsOpen={index < filteredSections.length - 1 ? prevRunOpenStates[index + 1] : true}
-                  key={section.id}
-                  title={section.displayName}
-                  previousRunLinksCount={previousRunLinksCounts[section.id] || 0}
-                  isPreviousRunLinks
-                  className="section-collapsible-header"
-                >
-                  {section.subsections.map((subsection) => (
-                    <>
-                      {subsection.units.map((unit) => (
-                        <div className="unit" key={unit.id}>
-                          <BrokenLinkTable
-                            unit={unit}
-                            linkType="previous"
-                            onUpdateLink={handleUpdateLink}
-                            sectionId={section.id}
-                            updatedLinks={updatedLinkIds}
-                            updatedLinkMap={updatedLinkMap}
-                            updatedLinkInProgress={updatingLinkIds}
-                          />
-                        </div>
-                      ))}
-                    </>
+        && hasPreviousRunLinksInSections
+        && previousRunSections.length > 0 && (
+        <div className="scan-results">
+          <div className="scan-header-second-title-container px-3">
+            <header className="sub-header-content d-flex justify-content-between align-items-center">
+              <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
+              <StatefulButton
+                className="px-4 rounded-0 update-all-course-btn"
+                labels={{
+                  default: intl.formatMessage(messages.updateAllButtonText),
+                  disable: intl.formatMessage(messages.updateAllButtonText),
+                  pending: intl.formatMessage(messages.updateAllButtonText),
+                }}
+                icons={{
+                  default: '',
+                  disable: '',
+                  pending: <Icon src={SpinnerSimple} className="icon-spin" />,
+                }}
+                state={Object.keys(updatingLinkIds).length > 0
+                  ? STATEFUL_BUTTON_STATES.disable
+                  : getUpdateAllButtonState()}
+                onClick={handleUpdateAllCourseLinks}
+                disabled={areAllLinksUpdated}
+                disabledStates={['disable', 'pending']}
+                variant="primary"
+                data-testid="update-all-course"
+              />
+            </header>
+          </div>
+          {previousRunSections.map((section, index) => (
+            <SectionCollapsible
+              index={index}
+              handleToggle={handlePrevRunToggle}
+              isOpen={prevRunOpenStates[index]}
+              hasPrevAndIsOpen={index > 0 ? prevRunOpenStates[index - 1] : true}
+              hasNextAndIsOpen={index < previousRunSections.length - 1 ? prevRunOpenStates[index + 1] : true}
+              key={section.id}
+              title={section.displayName}
+              previousRunLinksCount={previousRunLinksCounts[section.id] || 0}
+              isPreviousRunLinks
+              className="section-collapsible-header"
+            >
+              {section.subsections.map((subsection) => (
+                <>
+                  {subsection.units.map((unit) => (
+                    <div className="unit" key={unit.id}>
+                      <BrokenLinkTable
+                        unit={unit}
+                        linkType="previous"
+                        onUpdateLink={handleUpdateLink}
+                        sectionId={section.id}
+                        updatedLinks={updatedLinkIds}
+                        updatedLinkMap={updatedLinkMap}
+                        updatedLinkInProgress={updatingLinkIds}
+                      />
+                    </div>
                   ))}
-                </SectionCollapsible>
+                </>
               ))}
-            </div>
-          );
-        })()}
+            </SectionCollapsible>
+          ))}
+        </div>
+      )}
 
-      {waffleFlags.enableCourseOptimizerCheckPrevRunLinks && !hasPreviousRunLinks && (
+      {waffleFlags.enableCourseOptimizerCheckPrevRunLinks && !hasPreviousRunLinksInSections && (
         <div className="scan-results">
           <div className="scan-header-second-title-container px-3">
             <header className="sub-header-content">

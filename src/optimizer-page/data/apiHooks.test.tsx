@@ -1,0 +1,303 @@
+import { act, renderHook, waitFor, initializeMocks, makeQueryClientWrapper } from '@src/testUtils';
+import {
+  useLinkCheckStatus,
+  useRerunLinkUpdateStatus,
+  useStartLinkCheck,
+  useUpdateAllPreviousRunLinks,
+  useUpdateSinglePreviousRunLink,
+  courseOptimizerQueryKeys,
+} from './apiHooks';
+import {
+  getLinkCheckStatusApiUrl,
+  getRerunLinkUpdateStatusApiUrl,
+  postLinkCheckCourseApiUrl,
+  postRerunLinkUpdateApiUrl,
+} from './api';
+
+const courseId = 'course-123';
+
+describe('course optimizer api hooks', () => {
+  it('normalizes link-check status data and polls while in progress', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, {
+      LinkCheckStatus: 'In Progress',
+      LinkCheckOutput: null,
+      LinkCheckCreatedAt: null,
+    });
+
+    const { result } = renderHook(() => useLinkCheckStatus(courseId), {
+      wrapper: makeQueryClientWrapper(queryClient),
+    });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data).toEqual({
+      linkCheckStatus: 'In Progress',
+      linkCheckOutput: null,
+      linkCheckCreatedAt: null,
+    });
+    const query = queryClient.getQueryCache().find({
+      queryKey: courseOptimizerQueryKeys.linkCheckStatus(courseId),
+    });
+    expect(query?.observers[0]?.options.retry).toBe(false);
+    const refetchInterval = query?.observers[0]?.options.refetchInterval;
+    expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(2000);
+    expect(query?.observers[0]?.options.staleTime).toBe(0);
+
+    queryClient.setQueryData(courseOptimizerQueryKeys.linkCheckStatus(courseId), {
+      linkCheckStatus: 'Succeeded',
+      linkCheckOutput: null,
+      linkCheckCreatedAt: null,
+    });
+    expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(false);
+  });
+
+  it.each([403, 500])('stops link-check polling after a %s status GET error', async statusCode => {
+    jest.useFakeTimers();
+    try {
+      const { axiosMock, queryClient } = initializeMocks();
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).replyOnce(200, { LinkCheckStatus: 'Pending' });
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(statusCode);
+
+      const { result } = renderHook(() => useLinkCheckStatus(courseId), {
+        wrapper: makeQueryClientWrapper(queryClient),
+      });
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(axiosMock.history.get).toHaveLength(1);
+
+      await act(async () => {
+        jest.advanceTimersByTime(2000);
+      });
+      await waitFor(() => expect(result.current.isError).toBe(true));
+      expect(axiosMock.history.get).toHaveLength(2);
+
+      await act(async () => {
+        jest.advanceTimersByTime(10000);
+      });
+      expect(axiosMock.history.get).toHaveLength(2);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it('normalizes rerun status data and stops polling at a terminal status', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, {
+      status: 'Succeeded',
+      Results: [{ id: 'block-1', success: true, original_url: 'https://old.example.com', type: 'html' }],
+    });
+
+    const { result } = renderHook(() => useRerunLinkUpdateStatus(courseId), {
+      wrapper: makeQueryClientWrapper(queryClient),
+    });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data).toEqual({
+      status: 'Succeeded',
+      results: [{
+        id: 'block-1',
+        success: true,
+        newUrl: null,
+        originalUrl: 'https://old.example.com',
+        type: 'html',
+      }],
+    });
+    const query = queryClient.getQueryCache().find({
+      queryKey: courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId),
+    });
+    const refetchInterval = query?.observers[0]?.options.refetchInterval;
+    expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(false);
+    expect(query?.observers[0]?.options.staleTime).toBe(0);
+  });
+
+  it('stops polling after a rerun status GET fails', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).replyOnce(200, {
+      status: 'Pending',
+      results: [],
+    });
+    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(500);
+
+    const { result } = renderHook(() => useRerunLinkUpdateStatus(courseId), {
+      wrapper: makeQueryClientWrapper(queryClient),
+    });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const query = queryClient.getQueryCache().find({
+      queryKey: courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId),
+    });
+    const refetchInterval = query?.observers[0]?.options.refetchInterval;
+    expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(2000);
+
+    await result.current.refetch();
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(false);
+  });
+
+  it.each([
+    ['uninitiated', 'Uninitiated'],
+    ['pending', 'Pending'],
+    ['in_progress', 'In Progress'],
+    ['completed', 'Succeeded'],
+    ['failed', 'Failed'],
+    ['canceled', 'Canceled'],
+    ['retrying', 'Retrying'],
+    ['scanning', 'Scanning'],
+    ['updating', 'Updating'],
+  ])('normalizes lowercase %s rerun status response', async (status, expectedStatus) => {
+    const response = { status, results: [] };
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, response);
+
+    const { result } = renderHook(() => useRerunLinkUpdateStatus(courseId), {
+      wrapper: makeQueryClientWrapper(queryClient),
+    });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data).toEqual({ status: expectedStatus, results: [] });
+  });
+
+  it('optimistically resets terminal link-check data when starting a scan', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onPost(postLinkCheckCourseApiUrl(courseId)).reply(200, { LinkCheckStatus: 'Pending' });
+
+    queryClient.setQueryData(courseOptimizerQueryKeys.linkCheckStatus(courseId), {
+      linkCheckStatus: 'Succeeded',
+      linkCheckOutput: { sections: [] },
+      linkCheckCreatedAt: '2024-01-01',
+    });
+    const { result } = renderHook(() => useStartLinkCheck(courseId), {
+      wrapper: makeQueryClientWrapper(queryClient),
+    });
+    await expect(result.current.mutateAsync()).resolves.toEqual({ linkCheckStatus: 'Pending' });
+    expect(queryClient.getQueryData(courseOptimizerQueryKeys.linkCheckStatus(courseId))).toEqual({
+      linkCheckStatus: 'Pending',
+      linkCheckOutput: null,
+      linkCheckCreatedAt: null,
+    });
+    expect(axiosMock.history.post).toHaveLength(1);
+  });
+
+  it('does not poll an in-progress status when manual polling owns the query', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, { status: 'Pending', results: [] });
+
+    const { result } = renderHook(() => useRerunLinkUpdateStatus(courseId, { enabled: true, manualPolling: true }), {
+      wrapper: makeQueryClientWrapper(queryClient),
+    });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const query = queryClient.getQueryCache().find({
+      queryKey: courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId),
+    });
+    const refetchInterval = query?.observers[0]?.options.refetchInterval;
+    expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(false);
+    expect(query?.observers[0]?.options.staleTime).toBe(0);
+  });
+
+  it('updates all previous-run links and leaves status polling responsible for refresh', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    const queryKey = courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId);
+    const invalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
+    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, { status: 'Pending', results: [] });
+    axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(200, { status: 'Pending' });
+
+    const { result } = renderHook(() => ({
+      status: useRerunLinkUpdateStatus(courseId),
+      mutation: useUpdateAllPreviousRunLinks(courseId),
+    }), { wrapper: makeQueryClientWrapper(queryClient) });
+    await waitFor(() => expect(result.current.status.isSuccess).toBe(true));
+    await expect(result.current.mutation.mutateAsync()).resolves.toEqual({ status: 'Pending' });
+    expect(queryClient.getQueryData(queryKey)).toEqual({ status: 'Pending', results: [] });
+    expect(invalidateQueries).not.toHaveBeenCalled();
+    expect(axiosMock.history.get).toHaveLength(1);
+    const query = queryClient.getQueryCache().find({ queryKey });
+    const refetchInterval = query?.observers[0]?.options.refetchInterval;
+    expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(2000);
+    expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({ action: 'all' });
+  });
+
+  it('restores link-check cache when starting a scan fails', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    const previous = {
+      linkCheckStatus: 'Succeeded' as const,
+      linkCheckOutput: { sections: [] },
+      linkCheckCreatedAt: '2024-01-01',
+    };
+    queryClient.setQueryData(courseOptimizerQueryKeys.linkCheckStatus(courseId), previous);
+    axiosMock.onPost(postLinkCheckCourseApiUrl(courseId)).reply(500);
+
+    const { result } = renderHook(() => useStartLinkCheck(courseId), {
+      wrapper: makeQueryClientWrapper(queryClient),
+    });
+    await expect(result.current.mutateAsync()).rejects.toThrow('Request failed');
+
+    expect(queryClient.getQueryData(courseOptimizerQueryKeys.linkCheckStatus(courseId))).toEqual(previous);
+  });
+
+  it('restores rerun cache when updating all links fails', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    const previous = { status: 'Succeeded' as const, results: [] };
+    queryClient.setQueryData(courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId), previous);
+    axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(500);
+
+    const { result } = renderHook(() => useUpdateAllPreviousRunLinks(courseId), {
+      wrapper: makeQueryClientWrapper(queryClient),
+    });
+    await expect(result.current.mutateAsync()).rejects.toThrow('Request failed');
+
+    expect(queryClient.getQueryData(courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId))).toEqual(previous);
+  });
+
+  it.each([
+    ['update-all', useUpdateAllPreviousRunLinks],
+    ['single-link', useUpdateSinglePreviousRunLink],
+  ])('removes the optimistic rerun cache when %s fails with no prior data', async (_name, hook) => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(500);
+
+    const { result } = renderHook(() => hook(courseId), { wrapper: makeQueryClientWrapper(queryClient) });
+    const variables = { linkUrl: 'https://old.example.com', blockId: 'block-1', contentType: 'html' };
+    await expect(result.current.mutateAsync(variables as never)).rejects.toThrow('Request failed');
+
+    expect(queryClient.getQueryData(courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId))).toBeUndefined();
+  });
+
+  it('removes the optimistic link-check cache when starting a scan fails with no prior data', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onPost(postLinkCheckCourseApiUrl(courseId)).reply(500);
+
+    const { result } = renderHook(() => useStartLinkCheck(courseId), {
+      wrapper: makeQueryClientWrapper(queryClient),
+    });
+    await expect(result.current.mutateAsync()).rejects.toThrow('Request failed');
+
+    expect(queryClient.getQueryData(courseOptimizerQueryKeys.linkCheckStatus(courseId))).toBeUndefined();
+  });
+
+  it('updates a single previous-run link, marks its status stale, and leaves GET ownership to manual polling', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    const queryKey = courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId);
+    const invalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
+    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, { status: 'Pending', results: [] });
+    axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(200, { status: 'Pending' });
+
+    const { result } = renderHook(() => ({
+      status: useRerunLinkUpdateStatus(courseId),
+      mutation: useUpdateSinglePreviousRunLink(courseId),
+    }), { wrapper: makeQueryClientWrapper(queryClient) });
+    await waitFor(() => expect(result.current.status.isSuccess).toBe(true));
+    await result.current.mutation.mutateAsync({
+      linkUrl: 'https://old.example.com',
+      blockId: 'block-1',
+      contentType: 'html',
+    });
+
+    expect(queryClient.getQueryData(queryKey)).toEqual({ status: 'Pending', results: [] });
+    expect(invalidateQueries).toHaveBeenCalledWith({ queryKey, refetchType: 'none' });
+    expect(axiosMock.history.get).toHaveLength(1);
+    expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+      action: 'single',
+      data: [{ id: 'block-1', type: 'html', url: 'https://old.example.com' }],
+    });
+  });
+});

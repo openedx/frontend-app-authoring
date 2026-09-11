@@ -42,7 +42,7 @@ const CourseStepper = ({
       if (hasError && isActiveStep) {
         return ErrorIcon;
       }
-      if (isLastStep && !isActiveStep) {
+      if (isLastStep && !isActiveStep && !hasError) {
         return SuccessIcon;
       }
       if (isLastStepDone) {
