@@ -377,7 +377,7 @@ class ReactStateOLXParser {
       }
     });
     answerObject[problemType].push({
-      textline: { '#text': '' },
+      textline: [{ '#text': '' }],
       ':@': { '@_size': get(this.problemState, 'additionalAttributes.textline.size', 20) },
     });
     return answerObject;
@@ -489,7 +489,7 @@ class ReactStateOLXParser {
         }
       }
     });
-    answerObject[problemType].push({ formulaequationinput: { '#text': '' } });
+    answerObject[problemType].push({ formulaequationinput: [{ '#text': '' }] });
     return answerObject;
   }
 
