@@ -310,7 +310,6 @@ describe('ScanResults', () => {
       expect(screen.getByTestId('update-all-course')).toBeInTheDocument();
       expect(mockedUseRerunLinkUpdateStatus).toHaveBeenCalledWith(courseId, {
         enabled: true,
-        polling: false,
         manualPolling: false,
       });
     });
@@ -612,6 +611,26 @@ describe('ScanResults', () => {
 
       await waitFor(() => {
         expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    it('reports a rerun status GET error with the generic message after bulk polling starts', async () => {
+      const user = userEvent.setup();
+      const view = renderScanResults(previousRunOnlyData);
+
+      await user.click(screen.getByTestId('update-all-course'));
+      mockedUseRerunLinkUpdateStatus.mockReturnValue({
+        data: { status: 'Pending', results: [] },
+        isError: true,
+        isFetching: false,
+        isSuccess: false,
+        refetch,
+      });
+      view.rerender(<ScanResults data={previousRunOnlyData} courseId={courseId} />);
+
+      await waitFor(() => {
+        expect(screen.getByText(messages.updateLinksError.defaultMessage)).toBeInTheDocument();
+        expect(screen.getByTestId('update-all-course')).toBeEnabled();
       });
     });
 

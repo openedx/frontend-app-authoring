@@ -81,6 +81,30 @@ describe('course optimizer api hooks', () => {
     expect(query?.observers[0]?.options.staleTime).toBe(0);
   });
 
+  it('stops polling after a rerun status GET fails', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).replyOnce(200, {
+      status: 'Pending',
+      results: [],
+    });
+    axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(500);
+
+    const { result } = renderHook(() => useRerunLinkUpdateStatus(courseId), {
+      wrapper: makeQueryClientWrapper(queryClient),
+    });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const query = queryClient.getQueryCache().find({
+      queryKey: courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId),
+    });
+    const refetchInterval = query?.observers[0]?.options.refetchInterval;
+    expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(2000);
+
+    await result.current.refetch();
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(typeof refetchInterval === 'function' && refetchInterval(query!)).toBe(false);
+  });
+
   it('normalizes lowercase uninitiated rerun status', async () => {
     const { axiosMock, queryClient } = initializeMocks();
     axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, {

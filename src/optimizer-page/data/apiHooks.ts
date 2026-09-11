@@ -128,9 +128,6 @@ export const useRerunLinkUpdateStatus = (courseId: string, options: StatusQueryO
       if (options.manualPolling || query.state.error) {
         return false;
       }
-      if (options.polling) {
-        return POLLING_INTERVAL;
-      }
       const status = query.state.data?.status;
       return status != null && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(status)
         ? POLLING_INTERVAL
