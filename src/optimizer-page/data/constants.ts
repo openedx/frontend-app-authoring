@@ -51,7 +51,17 @@ export const RERUN_LINK_UPDATE_STATUSES = {
 } as const;
 
 export type RerunLinkUpdateStatus = typeof RERUN_LINK_UPDATE_STATUSES[keyof typeof RERUN_LINK_UPDATE_STATUSES];
-export type RawRerunLinkUpdateStatus = RerunLinkUpdateStatus | 'uninitiated';
+export type RawRerunLinkUpdateStatus =
+  | RerunLinkUpdateStatus
+  | 'uninitiated'
+  | 'pending'
+  | 'in_progress'
+  | 'completed'
+  | 'failed'
+  | 'canceled'
+  | 'retrying'
+  | 'scanning'
+  | 'updating';
 
 export const RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES: RerunLinkUpdateStatus[] = [
   RERUN_LINK_UPDATE_STATUSES.PENDING,

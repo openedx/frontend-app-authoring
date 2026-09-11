@@ -68,12 +68,24 @@ const normalizeLinkCheckStatus = (response: LinkCheckStatusApiResponseBody): Lin
   linkCheckCreatedAt: response.linkCheckCreatedAt ?? null,
 });
 
+const rerunLinkUpdateStatusMap: Record<string, RerunLinkUpdateStatus> = {
+  uninitiated: RERUN_LINK_UPDATE_STATUSES.UNINITIATED,
+  pending: RERUN_LINK_UPDATE_STATUSES.PENDING,
+  in_progress: RERUN_LINK_UPDATE_STATUSES.IN_PROGRESS,
+  completed: RERUN_LINK_UPDATE_STATUSES.SUCCEEDED,
+  failed: RERUN_LINK_UPDATE_STATUSES.FAILED,
+  canceled: RERUN_LINK_UPDATE_STATUSES.CANCELED,
+  retrying: RERUN_LINK_UPDATE_STATUSES.RETRYING,
+  scanning: RERUN_LINK_UPDATE_STATUSES.SCANNING,
+  updating: RERUN_LINK_UPDATE_STATUSES.UPDATING,
+};
+
 const normalizeRerunLinkUpdateStatus = (
   response: RerunLinkUpdateStatusApiResponseBody,
 ): RerunLinkUpdateStatusData => ({
-  status: response.status === 'uninitiated'
-    ? RERUN_LINK_UPDATE_STATUSES.UNINITIATED
-    : response.status ?? null,
+  status: response.status == null
+    ? null
+    : rerunLinkUpdateStatusMap[response.status] ?? response.status,
   results: (response.results ?? []).map(result => ({
     id: result.id,
     success: result.success,
@@ -186,7 +198,6 @@ export const useUpdateAllPreviousRunLinks = (courseId: string) => {
     onError: (_error, _variables, context) => {
       rollbackOptimisticQuery(queryClient, queryKey, context?.previous);
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
     retry: false,
   });
 };
