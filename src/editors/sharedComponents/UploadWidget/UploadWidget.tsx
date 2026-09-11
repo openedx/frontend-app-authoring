@@ -127,6 +127,9 @@ const UploadWidget = ({
   }
 
   const fileHint = isLibrary ? messages.libraryFileHint : messages.courseFileHint;
+  // State will always be reset by a 'finally' call after upload is completed. Success means we're waiting on
+  // a callback to finish.
+  const lockLoading = mutation.isPending || mutation.isSuccess;
 
   return (
     <Form.Group as={Col} controlId={id}>
@@ -140,7 +143,7 @@ const UploadWidget = ({
           <FileInput supportedFileFormats={supportedFileFormats} fileInput={fileInput} id={id} />
           <Stack gap={3}>
             <ActionRow className="border border-gray-300 rounded px-3 py-2">
-              {mutation.isPending ? <FormattedMessage {...messages.uploading} /> : deriveFileName(urlField.value)}
+              {lockLoading ? <FormattedMessage {...messages.uploading} /> : deriveFileName(urlField.value)}
               <ActionRow.Spacer />
               <Dropdown>
                 <Dropdown.Toggle
