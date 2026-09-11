@@ -16,8 +16,10 @@ export interface PdfState {
   allowDownload: boolean;
   sourceText: string;
   sourceUrl: string;
-  // Note: Not a field, so can't be set.
+  // Note: The following are not fields, so can't be set.
+  // They're indicators of backend settings.
   disableAllDownload: boolean;
+  conversionAvailable: boolean;
 }
 
 declare interface PdfBlockContextInterface {
@@ -35,6 +37,7 @@ export const initialPdfState: () => PdfState = () => ({
   sourceText: '',
   sourceUrl: '',
   disableAllDownload: false,
+  conversionAvailable: false,
 });
 
 export const PdfBlockContext = createContext<PdfBlockContextInterface>({

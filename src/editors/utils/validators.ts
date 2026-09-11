@@ -3,9 +3,12 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import type { FieldValidator } from 'formik';
 import messages from '../sharedComponents/UploadWidget/messages';
 
-export const useUrlValidator = () => {
+export const useUrlValidator = ({ allowAbsolute = false }: { allowAbsolute?: boolean; }) => {
   const intl = useIntl();
   const validator: FieldValidator = (url: string) => {
+    if (allowAbsolute && url.startsWith('/')) {
+      url = 'https://example.com' + url;
+    }
     try {
       new URL(url); /* eslint-disable-line no-new */
     } catch {
