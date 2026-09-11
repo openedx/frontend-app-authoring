@@ -17,6 +17,7 @@ import {
 } from './api';
 import {
   LINK_CHECK_IN_PROGRESS_STATUSES,
+  RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES,
   RERUN_LINK_UPDATE_STATUSES,
   LinkCheckStatusTypes,
   type RerunLinkUpdateStatus,
@@ -59,6 +60,7 @@ export interface UpdatePreviousRunLinkVariables {
 interface StatusQueryOptions {
   enabled?: boolean;
   polling?: boolean;
+  manualPolling?: boolean;
 }
 
 const normalizeLinkCheckStatus = (response: LinkCheckStatusApiResponseBody): LinkCheckStatusData => ({
@@ -121,7 +123,19 @@ export const useRerunLinkUpdateStatus = (courseId: string, options: StatusQueryO
     queryKey: courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId),
     queryFn: () => fetchRerunLinkUpdateStatus(courseId),
     enabled: Boolean(courseId) && options.enabled !== false,
-    refetchInterval: options.polling ? POLLING_INTERVAL : false,
+    // Server status drives this interval so remounts recover; manual single-link polling suppresses it to avoid duplicate GETs.
+    refetchInterval: query => {
+      if (options.manualPolling || query.state.error) {
+        return false;
+      }
+      if (options.polling) {
+        return POLLING_INTERVAL;
+      }
+      const status = query.state.data?.status;
+      return status != null && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(status)
+        ? POLLING_INTERVAL
+        : false;
+    },
     staleTime: 0,
     retry: false,
   })
@@ -152,7 +166,7 @@ export const useStartLinkCheck = (courseId: string) => {
 };
 
 // Both rerun mutations invalidate because no operation ID/version correlates reruns with terminal payloads;
-// normal polling/refetching then observes authoritative server state without payload comparison or handoff retries.
+// bulk polling refetches active queries, while single-link polling marks this query stale for its manual loop.
 const pendingRerunStatus: RerunLinkUpdateStatusData = {
   status: RERUN_LINK_UPDATE_STATUSES.PENDING,
   results: [],
@@ -195,7 +209,8 @@ export const useUpdateSinglePreviousRunLink = (courseId: string) => {
     onError: (_error, _variables, context) => {
       rollbackOptimisticQuery(queryClient, queryKey, context?.previous);
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
+    // Keep the cache stale without stealing the manual single-link loop's GET ownership.
+    onSuccess: () => queryClient.invalidateQueries({ queryKey, refetchType: 'none' }),
     retry: false,
   });
 };

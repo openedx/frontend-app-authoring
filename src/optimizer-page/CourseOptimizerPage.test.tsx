@@ -1,6 +1,7 @@
 import type MockAdapter from 'axios-mock-adapter';
 
 import {
+  act,
   fireEvent,
   render,
   waitFor,
@@ -465,6 +466,48 @@ describe('CourseOptimizerPage', () => {
           expect(axiosMock.history.get.filter(({ url }) => url === getLinkCheckStatusApiUrl(courseId))).toHaveLength(2)
         );
         await waitFor(() => expect(screen.queryByTestId('update-all-course')).not.toBeInTheDocument());
+        // One initial status GET plus the manual post-mutation poll; invalidation must not refetch.
+        expect(axiosMock.history.get.filter(({ url }) => url === getRerunLinkUpdateStatusApiUrl(courseId)))
+          .toHaveLength(2);
+      });
+
+      it('resumes server-owned rerun polling after remounting during an in-progress rerun', async () => {
+        axiosMock.resetHandlers();
+        let linkCheckStatusRequests = 0;
+        let rerunStatusRequests = 0;
+        axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(() => {
+          linkCheckStatusRequests += 1;
+          return [200, linkCheckStatusRequests === 1 ? previousRunLinksApiResponse : mockApiResponseEmpty];
+        });
+        axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(() => {
+          rerunStatusRequests += 1;
+          return [
+            200,
+            rerunStatusRequests <= 2 ? { status: 'In Progress', results: [] } : { status: 'Succeeded', results: [] },
+          ];
+        });
+        axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(200, { status: 'Pending' });
+
+        jest.useFakeTimers();
+        try {
+          const firstRender = render(<OptimizerPage />);
+          await screen.findByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage);
+          firstRender.unmount();
+          render(<OptimizerPage />);
+
+          await act(async () => {
+            await Promise.resolve();
+            await Promise.resolve();
+          });
+          expect(rerunStatusRequests).toBe(2);
+          await act(async () => {
+            jest.advanceTimersByTime(2000);
+            await Promise.resolve();
+          });
+          await waitFor(() => expect(rerunStatusRequests).toBe(3));
+        } finally {
+          jest.useRealTimers();
+        }
       });
 
       it('refreshes authoritative results when a terminal rerun status is observed after remount', async () => {
