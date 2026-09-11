@@ -17,15 +17,11 @@ import {
 } from './api';
 import {
   LINK_CHECK_IN_PROGRESS_STATUSES,
-  RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES,
   RERUN_LINK_UPDATE_STATUSES,
   LinkCheckStatusTypes,
   type RerunLinkUpdateStatus,
 } from './constants';
 import type { LinkCheckResult } from '../types';
-
-const RERUN_UPDATE_HANDOFF_RETRIES = 20;
-const RERUN_UPDATE_HANDOFF_INTERVAL_MS = 500;
 
 const POLLING_INTERVAL = 2000;
 
@@ -90,44 +86,9 @@ const isLinkCheckInProgress = (status: LinkCheckStatusTypes | null | undefined) 
   status !== undefined && status !== null && LINK_CHECK_IN_PROGRESS_STATUSES.includes(status)
 );
 
-const isRerunLinkUpdateInProgress = (status: RerunLinkUpdateStatus | null | undefined) => (
-  status !== undefined && status !== null && RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(status)
-);
-
 const fetchRerunLinkUpdateStatus = (courseId: string) => (
   getRerunLinkUpdateStatus(courseId).then(normalizeRerunLinkUpdateStatus)
 );
-
-class RerunUpdateNotReflectedError extends Error {}
-
-/**
- * Wait for evidence that the status endpoint no longer represents the previous operation.
- * The backend commits the new operation's status before the POST response returns, so with
- * no cached previous status any response — including an immediately terminal one — is the
- * new operation and is accepted.
- */
-const waitForRerunUpdateReflected = (
-  queryClient: QueryClient,
-  courseId: string,
-  previous: RerunLinkUpdateStatusData | undefined,
-) =>
-  queryClient.fetchQuery({
-    queryKey: courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId),
-    queryFn: async () => {
-      const data = await fetchRerunLinkUpdateStatus(courseId);
-      if (
-        !isRerunLinkUpdateInProgress(data.status)
-        && previous !== undefined && JSON.stringify(data) === JSON.stringify(previous)
-      ) {
-        throw new RerunUpdateNotReflectedError();
-      }
-      return data;
-    },
-    retry: (failureCount, error) => (
-      error instanceof RerunUpdateNotReflectedError && failureCount < RERUN_UPDATE_HANDOFF_RETRIES
-    ),
-    retryDelay: RERUN_UPDATE_HANDOFF_INTERVAL_MS,
-  });
 
 /** Restore the pre-mutation cache entry, or drop the optimistic entry when there was none. */
 const rollbackOptimisticQuery = (
@@ -190,6 +151,8 @@ export const useStartLinkCheck = (courseId: string) => {
   });
 };
 
+// Both rerun mutations invalidate because no operation ID/version correlates reruns with terminal payloads;
+// normal polling/refetching then observes authoritative server state without payload comparison or handoff retries.
 const pendingRerunStatus: RerunLinkUpdateStatusData = {
   status: RERUN_LINK_UPDATE_STATUSES.PENDING,
   results: [],
@@ -210,10 +173,7 @@ export const useUpdateAllPreviousRunLinks = (courseId: string) => {
     onError: (_error, _variables, context) => {
       rollbackOptimisticQuery(queryClient, queryKey, context?.previous);
     },
-    onSuccess: async (_result, _variables, context) => {
-      await waitForRerunUpdateReflected(queryClient, courseId, context?.previous);
-      queryClient.invalidateQueries({ queryKey });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
     retry: false,
   });
 };
@@ -235,10 +195,7 @@ export const useUpdateSinglePreviousRunLink = (courseId: string) => {
     onError: (_error, _variables, context) => {
       rollbackOptimisticQuery(queryClient, queryKey, context?.previous);
     },
-    onSuccess: async (_result, _variables, context) => {
-      await waitForRerunUpdateReflected(queryClient, courseId, context?.previous);
-      queryClient.invalidateQueries({ queryKey });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
     retry: false,
   });
 };
