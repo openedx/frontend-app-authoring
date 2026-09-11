@@ -1,4 +1,112 @@
-import { LinkCheckResult } from './types';
+import { LinkCheckResult, Section } from './types';
+
+type FlatLinkCheckResult = NonNullable<LinkCheckResult['courseUpdates']>[number];
+
+export const buildSyntheticSections = (
+  courseUpdates: FlatLinkCheckResult[] | undefined,
+  customPages: FlatLinkCheckResult[] | undefined,
+  labels: { courseUpdates: string; customPages: string; },
+): Section[] => {
+  const buildSection = (
+    items: FlatLinkCheckResult[] | undefined,
+    sectionId: string,
+    displayName: string,
+  ): Section | null => {
+    const itemsWithLinks = (items || []).filter(item =>
+      (item.brokenLinks && item.brokenLinks.length > 0)
+      || (item.lockedLinks && item.lockedLinks.length > 0)
+      || (item.externalForbiddenLinks && item.externalForbiddenLinks.length > 0)
+      || (item.previousRunLinks && item.previousRunLinks.length > 0)
+    );
+
+    if (itemsWithLinks.length === 0) { return null; }
+
+    return {
+      id: sectionId,
+      displayName,
+      subsections: [{
+        id: `${sectionId}-subsection`,
+        displayName: `${displayName} Subsection`,
+        units: itemsWithLinks.map(item => ({
+          id: item.id,
+          displayName: item.displayName,
+          url: item.url,
+          blocks: [{
+            id: item.id,
+            displayName: item.displayName,
+            url: item.url,
+            brokenLinks: item.brokenLinks || [],
+            lockedLinks: item.lockedLinks || [],
+            externalForbiddenLinks: item.externalForbiddenLinks || [],
+            previousRunLinks: item.previousRunLinks || [],
+          }],
+        })),
+      }],
+    };
+  };
+
+  return [
+    buildSection(courseUpdates, 'course-updates', labels.courseUpdates),
+    buildSection(customPages, 'custom-pages', labels.customPages),
+  ].filter((section): section is Section => section !== null);
+};
+
+export const hasPreviousRunLinks = (sections: Section[]): boolean =>
+  sections.some(section =>
+    section.subsections.some(subsection =>
+      subsection.units.some(unit =>
+        unit.blocks.some(block => block.previousRunLinks && block.previousRunLinks.length > 0)
+      )
+    )
+  );
+
+export const countPreviousRunLinksBySection = (sections: Section[]): Record<string, number> => {
+  const counts: Record<string, number> = {};
+  sections.forEach(section => {
+    counts[section.id] = section.subsections.reduce(
+      (sectionTotal, subsection) =>
+        sectionTotal + subsection.units.reduce(
+          (subsectionTotal, unit) =>
+            subsectionTotal + unit.blocks.reduce(
+              (unitTotal, block) => unitTotal + (block.previousRunLinks?.length || 0),
+              0,
+            ),
+          0,
+        ),
+      0,
+    );
+  });
+  return counts;
+};
+
+export const filterSectionsWithPreviousRunLinks = (sections: Section[]): Section[] =>
+  sections.map(section => ({
+    ...section,
+    subsections: section.subsections.map(subsection => ({
+      ...subsection,
+      units: subsection.units.filter(unit => unit.blocks.some(block => block.previousRunLinks?.length > 0)),
+    })).filter(subsection => subsection.units.length > 0),
+  })).filter(section => section.subsections.length > 0);
+
+export const areAllPreviousRunLinksUpdated = (sections: Section[], updatedLinkIds: string[]): boolean => {
+  const updatedIds = new Set(updatedLinkIds);
+  let hasLinks = false;
+
+  const allUpdated = sections.every(section =>
+    section.subsections.every(subsection =>
+      subsection.units.every(unit =>
+        unit.blocks.every(block =>
+          block.previousRunLinks?.every(({ originalLink, isUpdated }) => {
+            hasLinks = true;
+            return isUpdated || updatedIds.has(`${block.id}:${originalLink}`);
+          }) ?? true
+        )
+      )
+    )
+  );
+
+  return hasLinks && allUpdated;
+};
 
 export const buildBlockContainerUrl = (
   courseId: string,
