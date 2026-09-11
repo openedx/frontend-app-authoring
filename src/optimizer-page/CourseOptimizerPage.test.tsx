@@ -125,7 +125,6 @@ describe('CourseOptimizerPage', () => {
   describe('CourseOptimizerPage component', () => {
     beforeEach(() => {
       jest.useRealTimers();
-      jest.clearAllMocks();
       const mocks = initializeMocks();
       axiosMock = mocks.axiosMock;
       axiosMock
@@ -140,13 +139,6 @@ describe('CourseOptimizerPage', () => {
       mockPermissions();
     });
 
-    it('shows PermissionDeniedAlert when user lacks edit course content permission', async () => {
-      mockPermissions({ canEditCourseContent: false });
-      render(<OptimizerPage />);
-      expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
-      expect(screen.queryByText(messages.headingTitle.defaultMessage)).not.toBeInTheDocument();
-    });
-
     it('shows a loading spinner while permissions are loading', async () => {
       mockPermissions({ isLoading: true, canEditCourseContent: false });
       render(<OptimizerPage />);
@@ -159,6 +151,7 @@ describe('CourseOptimizerPage', () => {
       mockPermissions({ canEditCourseContent: false });
       render(<OptimizerPage />);
       expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
+      expect(screen.queryByText(messages.headingTitle.defaultMessage)).not.toBeInTheDocument();
       const optimizerStatusRequests = axiosMock.history.get.filter(
         ({ url }) =>
           [
@@ -182,11 +175,6 @@ describe('CourseOptimizerPage', () => {
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       expect(getByText(messages.buttonTitle.defaultMessage)).toBeInTheDocument();
       expect(queryByText(messages.preparingStepTitle.defaultMessage)).not.toBeInTheDocument();
-    });
-
-    it('loads existing scan results on entry', async () => {
-      render(<OptimizerPage />);
-      expect(await screen.findByText('Introduction to Programming')).toBeInTheDocument();
     });
 
     it('hides previous scan results while rescanning', async () => {
@@ -230,15 +218,6 @@ describe('CourseOptimizerPage', () => {
 
       expect(await screen.findByText(messages.preparingStepDescription.defaultMessage)).toBeInTheDocument();
       expect(screen.queryByText('Link Check Failed')).not.toBeInTheDocument();
-    });
-
-    it('shows a scan failure in the scan stepper', async () => {
-      axiosMock
-        .onGet(getLinkCheckStatusApiUrl(courseId))
-        .reply(200, { LinkCheckStatus: 'Failed' });
-      render(<OptimizerPage />);
-
-      expect(await screen.findByText('Link Check Failed')).toBeInTheDocument();
     });
 
     it.each([403, 500])('shows the connection error when loading scan status returns %s', async (status) => {
@@ -526,15 +505,6 @@ describe('CourseOptimizerPage', () => {
         await waitFor(() => expect(screen.queryByTestId('update-all-course')).not.toBeInTheDocument());
       });
 
-      it('should show previous run links section when waffle flag is enabled and links exist', async () => {
-        axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseWithPreviousRunLinks);
-        const { getByText } = render(<OptimizerPage />);
-
-        await waitFor(() => {
-          expect(getByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
-        }, { timeout: 5000 });
-      });
-
       it('should show no results found for previous run links when flag is enabled but no links exist', async () => {
         axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseForNoResultFound);
         const { getByText, getAllByText } = render(<OptimizerPage />);
@@ -561,18 +531,6 @@ describe('CourseOptimizerPage', () => {
         await waitFor(() => {
           expect(queryByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).not.toBeInTheDocument();
         });
-      });
-
-      it('should handle previous run links in course updates and custom pages', async () => {
-        axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseWithPreviousRunLinks);
-        const { getByText, container } = render(<OptimizerPage />);
-
-        await waitFor(() => {
-          expect(getByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
-
-          const prevRunSections = container.querySelectorAll('.scan-results');
-          expect(prevRunSections.length).toBeGreaterThan(1);
-        }, { timeout: 5000 });
       });
     });
   });

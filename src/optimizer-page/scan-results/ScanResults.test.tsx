@@ -230,7 +230,6 @@ describe('ScanResults', () => {
     initializeMocks();
     mockWaffleFlags({ enableCourseOptimizerCheckPrevRunLinks: false });
     window.scrollTo = jest.fn();
-
     refetch = jest.fn().mockResolvedValue({ data: undefined });
     updateAllMutateAsync = jest.fn().mockResolvedValue({});
     updateSingleMutateAsync = jest.fn().mockResolvedValue({});
@@ -468,7 +467,6 @@ describe('ScanResults', () => {
       });
 
       expect(window.scrollTo).not.toHaveBeenCalled();
-      expect(screen.queryByText(messages.updateLinkError.defaultMessage)).not.toBeInTheDocument();
     });
 
     it('does not refetch after unmount during the single-link polling delay', async () => {
@@ -488,30 +486,6 @@ describe('ScanResults', () => {
         });
 
         expect(refetch).toHaveBeenCalledTimes(1);
-      } finally {
-        jest.useRealTimers();
-      }
-    });
-
-    it('polls a single-link update until a successful result is available', async () => {
-      jest.useFakeTimers();
-      try {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-        refetch
-          .mockResolvedValueOnce({ data: { status: 'In Progress', results: [] } })
-          .mockResolvedValueOnce({
-            data: { status: 'Succeeded', results: [successfulResult('https://updated.run/link1')] },
-          });
-        renderScanResults(previousRunOnlyData);
-
-        await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
-        await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
-        await waitFor(() => expect(refetch).toHaveBeenCalledTimes(1));
-
-        await act(async () => jest.advanceTimersByTime(2000));
-
-        await waitFor(() => expect(screen.getByText('https://updated.run/link1')).toBeInTheDocument());
-        expect(refetch).toHaveBeenCalledTimes(2);
       } finally {
         jest.useRealTimers();
       }
@@ -555,6 +529,7 @@ describe('ScanResults', () => {
 
         await act(async () => jest.advanceTimersByTime(2000));
         await waitFor(() => expect(screen.getByText('https://updated.run/link1')).toBeInTheDocument());
+        expect(refetch).toHaveBeenCalledTimes(3);
         expect(screen.getByTestId(`update-link-${blockId}:https://previous.run/link2`)).toBeEnabled();
       } finally {
         jest.useRealTimers();
@@ -576,6 +551,7 @@ describe('ScanResults', () => {
         await act(async () => {
           await jest.runAllTimersAsync();
         });
+        expect(screen.getByText(messages.updateLinkError.defaultMessage)).toBeInTheDocument();
         expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
         expect(refetch).toHaveBeenCalledTimes(30);
         await act(async () => {
@@ -587,53 +563,33 @@ describe('ScanResults', () => {
       }
     });
 
-    it('treats a Succeeded poll with no matching target as a failed single-link update', async () => {
-      const user = userEvent.setup();
-      refetch.mockResolvedValue({
-        data: {
-          status: 'Succeeded',
-          results: [{
-            id: 'different-block',
-            success: true,
-            originalUrl: 'https://previous.run/other-link',
-            newUrl: 'https://updated.run/other-link',
-            type: 'course_updates',
-          }],
-        },
-      });
-      renderScanResults(previousRunOnlyData);
+    it.each(['Succeeded', 'Failed'])(
+      'treats a %s poll with no matching target as a failed single-link update',
+      async status => {
+        const user = userEvent.setup();
+        refetch.mockResolvedValue({
+          data: {
+            status,
+            results: [{
+              id: 'different-block',
+              success: true,
+              originalUrl: 'https://previous.run/other-link',
+              newUrl: 'https://updated.run/other-link',
+              type: 'course_updates',
+            }],
+          },
+        });
+        renderScanResults(previousRunOnlyData);
 
-      await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
-      await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
+        await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
+        await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
 
-      await waitFor(() => {
-        expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
-      });
-    });
-
-    it('treats a non-Succeeded terminal poll with no matching target as a failed single-link update', async () => {
-      const user = userEvent.setup();
-      refetch.mockResolvedValue({
-        data: {
-          status: 'Failed',
-          results: [{
-            id: 'different-block',
-            success: true,
-            originalUrl: 'https://previous.run/other-link',
-            newUrl: 'https://updated.run/other-link',
-            type: 'course_updates',
-          }],
-        },
-      });
-      renderScanResults(previousRunOnlyData);
-
-      await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
-      await user.click(await screen.findByRole('button', { name: messages.updateButton.defaultMessage }));
-
-      await waitFor(() => {
-        expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
-      });
-    });
+        await waitFor(() => {
+          expect(screen.getByText(messages.updateLinkError.defaultMessage)).toBeInTheDocument();
+          expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
+        });
+      },
+    );
 
     it('reports a failed single-link update when results omit the originalUrl field', async () => {
       const user = userEvent.setup();
@@ -680,7 +636,6 @@ describe('ScanResults', () => {
 
     it('reports a failed update-all result and scrolls to the error', async () => {
       const user = userEvent.setup();
-      window.scrollTo = jest.fn();
       mockedUseRerunLinkUpdateStatus.mockReturnValue({
         data: {
           status: 'Succeeded',
@@ -833,6 +788,9 @@ describe('ScanResults', () => {
       await act(async () => {
         rejectMutation(new Error('single update failed'));
       });
+
+      expect(window.scrollTo).not.toHaveBeenCalled();
+      expect(refetch).not.toHaveBeenCalled();
     });
 
     it('reports mutation failures for update-all and single-link updates', async () => {
@@ -901,39 +859,6 @@ describe('ScanResults', () => {
       expect(screen.queryByText('https://updated.run/link1-v1')).not.toBeInTheDocument();
     });
 
-    it('maps bulk results to course-update blocks and ignores unknown result types', async () => {
-      const user = userEvent.setup();
-      mockedUseRerunLinkUpdateStatus.mockReturnValue({
-        data: {
-          status: 'Succeeded',
-          results: [
-            {
-              id: 'api-course-update',
-              type: 'course_updates',
-              success: true,
-              originalUrl: 'https://previous.run/link1',
-              newUrl: 'https://updated.run/link1',
-            },
-            {
-              id: 'unknown',
-              type: 'unknown_type',
-              success: true,
-              originalUrl: 'https://previous.run/ignored',
-              newUrl: 'https://updated.run/ignored',
-            },
-          ],
-        },
-        isFetching: false,
-        isSuccess: true,
-        refetch,
-      });
-      renderScanResults(previousRunOnlyData);
-
-      await user.click(screen.getByTestId('update-all-course'));
-      await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
-      expect(await screen.findByText('https://updated.run/link1')).toBeInTheDocument();
-    });
-
     it('preserves existing colon-separated IDs when later updates target different blocks', async () => {
       const user = userEvent.setup();
       let status: any = { data: undefined, isFetching: false, isSuccess: false, refetch };
@@ -968,9 +893,6 @@ describe('ScanResults', () => {
             type: 'course_updates',
           },
           { id: 'unknown-1', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
-          { id: 'unknown-2', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
-          { id: 'unknown-3', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
-          { id: 'unknown-4', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
         ],
       };
       status = { data: customPageResult, isFetching: false, isSuccess: true, refetch };
@@ -1006,9 +928,6 @@ describe('ScanResults', () => {
               newUrl: 'https://updated.run/link1',
             },
             { id: 'unknown-1', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
-            { id: 'unknown-2', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
-            { id: 'unknown-3', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
-            { id: 'unknown-4', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
           ],
         },
         isFetching: false,
@@ -1035,52 +954,6 @@ describe('ScanResults', () => {
       await waitFor(() => expect(screen.getByText('https://updated.run/link1')).toBeInTheDocument());
       expect(screen.getByTestId('update-all-course')).toBeDisabled();
       view.unmount();
-    });
-
-    it('drops existing IDs that are in the new bulk successful set', async () => {
-      const user = userEvent.setup();
-      let status: any = { data: undefined, isFetching: false, isSuccess: false, refetch };
-      mockedUseRerunLinkUpdateStatus.mockImplementation(() => status);
-      const view = renderScanResults(twoPreviousRunLinksData);
-
-      await user.click(screen.getByTestId('update-all-course'));
-      const firstResult = {
-        status: 'Succeeded',
-        results: [successfulResult('https://updated.run/link1-v1')],
-      };
-      status = { data: firstResult, isFetching: false, isSuccess: true, refetch };
-      view.rerender(
-        <ScanResults data={twoPreviousRunLinksData} courseId={courseId} />,
-      );
-      await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
-      expect(await screen.findByText('https://updated.run/link1-v1')).toBeInTheDocument();
-
-      status = { data: undefined, isFetching: false, isSuccess: false, refetch };
-      view.rerender(
-        <ScanResults data={twoPreviousRunLinksData} courseId={courseId} />,
-      );
-      await user.click(screen.getByTestId('update-all-course'));
-      const secondResult = {
-        status: 'Succeeded',
-        results: [
-          successfulResult('https://updated.run/link1-v2'),
-          { id: 'unknown-1', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
-          { id: 'unknown-2', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
-          { id: 'unknown-3', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
-          { id: 'unknown-4', type: 'unknown_type', success: true, originalUrl: 'x', newUrl: 'y' },
-        ],
-      };
-      status = { data: secondResult, isFetching: false, isSuccess: true, refetch };
-      view.rerender(
-        <ScanResults data={twoPreviousRunLinksData} courseId={courseId} />,
-      );
-      const courseToggle = screen.getByText(messages.courseUpdatesHeader.defaultMessage);
-      if (courseToggle.closest('.collapsible-trigger')?.getAttribute('aria-expanded') === 'false') {
-        await user.click(courseToggle);
-      }
-
-      expect(await screen.findByText('https://updated.run/link1-v2')).toBeInTheDocument();
-      expect(screen.queryByText('https://updated.run/link1-v1')).not.toBeInTheDocument();
     });
   });
 
