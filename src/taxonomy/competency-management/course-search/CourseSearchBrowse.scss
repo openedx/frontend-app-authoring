@@ -14,12 +14,18 @@
   $line-color: rgb(0 0 0 / .08);
   $shadow-color: rgb(0 0 0 / .12);
   $border-radius: 8px;
-  // `&__container`'s own padding, pulled out to a variable because
-  // `&__section-label` below needs the exact same values to bleed back out
-  // to the container's edges - keeping both in sync here avoids the two
-  // rules silently drifting apart.
+  // `&__container`'s own layout inset. No longer shared with
+  // `&__section-label` (that rule used to bleed back out through this exact
+  // padding to reach the container's edges - see `&__section-label` below,
+  // which is now a plain bordered-bottom header and doesn't need it).
   $container-padding-y: 12px;
   $container-padding-x: 16px;
+  // One consistent indent step between nesting levels (course -> section ->
+  // subsection), mirroring `../CompetencyTree.scss`'s own single `$indent`
+  // variable for its `<ul>` nesting. Applied once per level transition below:
+  // `&__outline`'s padding-left (course -> section) and `&__subsection`'s
+  // margin-left (section -> subsection).
+  $indent-step: 20px;
   // Nested-group envelope border: darkest at the course level, medium at the
   // section level, lightest at the subsection level, so the border color
   // itself signals nesting depth - see `&__group--course`, `&__group--section`
@@ -30,9 +36,9 @@
   // depth); only that structural idea is reused, not that file's single grey
   // fill/all-around border - here the border is left-side-only, on a white
   // fill.
-  $group-border-color-course: #5C5C5C; // gray/600
-  $group-border-color-section: #8F8F8F; // gray/400
-  $group-border-color-subsection: #CCCCCC; // gray/200
+  $group-border-color-course: var(--pgn-color-gray-600); // #5C5C5C
+  $group-border-color-section: var(--pgn-color-gray-400); // #8F8F8F
+  $group-border-color-subsection: var(--pgn-color-gray-200); // #CCCCCC
   // Two-layer "soft elevation" shadow (a wider, fainter 4px blur plus a
   // tighter 2px blur underneath, both at 15% black, no offset/spread) - read
   // off Figma's "Shadows and blurs" panel for a subsection row. Shared by
@@ -67,54 +73,110 @@
     --pgn-size-search-field-border-radius: 6px;
   }
 
-  // The single outer boundary holding every course row, matching
-  // `.competency-tree__container`.
+  // Plain layout wrapper holding the "Courses & Content" label and every
+  // course row - no border/shadow/background of its own. Each course row is
+  // now its own separately-carded box (see `&__group--course` below), rather
+  // than this being one shared bordered container wrapping every row.
   &__container {
+    // Reuses the exact literal `.competency-tree__container` already uses
+    // for its own white fill (see `../CompetencyTree.scss`): this app's
+    // theme remaps Paragon's white-ish tokens away from a literal white, so
+    // a literal is needed here too rather than a token.
     background-color: #FFFFFF;
-    border: 1px solid $line-color;
+    // Same radius `.competency-tree__container` uses. `overflow: hidden` is
+    // required for it to actually show: `&__section-label` below is this
+    // container's first child and fills its full width with its own square
+    // corners, which otherwise paint over this rounding entirely - clipping
+    // it to this rounded shape is what makes the label's own top corners
+    // read as rounded too.
     border-radius: $border-radius;
-    box-shadow: 0 1px 4px $shadow-color;
+    overflow: hidden;
     padding: $container-padding-y $container-padding-x;
-  }
-
-  // The "select a competency first" placeholder shown in place of
-  // `&__container` before anything is selected in the sibling tree (see
-  // `CourseSearchBrowse.tsx`). Centered both ways, with an arbitrary
-  // `min-height` just tall enough to read as an empty-state block rather
-  // than text flush against the top of the column.
-  &__empty-state {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 320px;
-    text-align: center;
   }
 
   // Vertical gap between adjacent top-level course rows (and the loading/
   // empty/error states that can also appear directly inside the
   // container), recursively mirroring `.competency-tree`'s own
   // `ul > li + li` sibling gap. Also covers the gap below `&__section-label`
-  // below, since that's the container's first child too.
+  // below, since that's the container's first child too. Wider than the
+  // nested-level gaps below it (10px) so each card's own shadow reads as
+  // clearly separated from its neighbors, now that there's no shared outer
+  // border holding them together.
   &__container > * + * {
-    margin-top: 10px;
+    margin-top: 16px;
   }
 
   // Persistent "Courses & Content" header strip, always the container's
   // first child (rendered regardless of loading/error/empty/populated
-  // state - see `CourseSearchBrowse.tsx`). Bleeds back out through the
-  // container's own padding via matching negative margins, so it reads as
-  // a full-width tinted strip flush with the container's rounded top
-  // corners, rather than an inset block like the rows below it.
+  // state - see `CourseSearchBrowse.tsx`). Uppercase text on a light-blue
+  // fill with a border-bottom rule, matching Figma - no bleed to the
+  // container's edges (this file no longer has a container edge to bleed
+  // to, since `&__container` above carries no box of its own). The fill is
+  // Figma's literal `#F0F6FA`, not the Paragon `--pgn-color-info-*` tokens -
+  // see the `.badge-info` override in `../CompetencyTree.scss` for why this
+  // app's theme needs literals instead of the "info" token family.
   &__section-label {
-    margin: (-$container-padding-y) (-$container-padding-x) 0;
-    padding: 8px $container-padding-x;
-    border-radius: $border-radius $border-radius 0 0;
-    background-color: var(--pgn-color-info-100);
-    color: var(--pgn-color-info-900);
-    font-size: 11px;
-    font-weight: 700;
+    padding: 4px 8px;
+    background-color: #F0F6FA;
+    border-bottom: 1px solid var(--pgn-color-gray-200);
     text-transform: uppercase;
-    letter-spacing: .05em;
+    font-family: monospace;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: normal;
+    color: #004C77;
+  }
+
+  // "Competency Criteria Associations" header strip above `&__associations-
+  // mastery`/`&__associations-empty-state` below, and above `&__container`'s
+  // own "Courses & Content" header - styled identically to `&__section-label`
+  // above for visual consistency between the two headers in this column.
+  &__associations-label {
+    padding: 4px 8px;
+    background-color: #F0F6FA;
+    border-bottom: 1px solid var(--pgn-color-gray-200);
+    text-transform: uppercase;
+    font-family: monospace;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: normal;
+    color: #004C77;
+  }
+
+  // Wraps `&__associations-label` and the "Demonstrate Mastery For"/empty-
+  // state text under it, mirroring `&__container`'s own inset padding below
+  // so both blocks line up in the same column. `margin-bottom` reuses
+  // `&__container > * + *`'s own 16px sibling gap, for the same visual
+  // separation from the "Courses & Content" container that follows this
+  // block (the toolbar-to-associations gap above doesn't need one of its
+  // own: it already comes from `&__toolbar`'s own bottom padding).
+  &__associations {
+    // Same literal white as `&__container` above, for the same reason.
+    background-color: #FFFFFF;
+    // Same rounding/clipping as `&__container` above, and for the same
+    // reason: `&__associations-label` below is this box's first child and
+    // needs to be clipped to this shape for its own top corners to read as
+    // rounded.
+    border-radius: $border-radius;
+    overflow: hidden;
+    padding: $container-padding-y $container-padding-x;
+    margin-bottom: 16px;
+  }
+
+  // "Demonstrate Mastery For <competency name>", directly under
+  // `&__associations-label`.
+  &__associations-mastery {
+    margin-top: 8px;
+    font-weight: 700;
+  }
+
+  // Static empty-state body under `&__associations-mastery` - always shown,
+  // since there's no backend endpoint yet to list a competency's actual
+  // associations (see `CourseSearchBrowse.tsx`).
+  &__associations-empty-state {
+    margin-top: 8px;
   }
 
   // A node with children's own envelope: wraps its header plus everything
@@ -124,10 +186,11 @@
   // an all-around border. Shared by the course-level group (`CourseRow`'s
   // outer wrapper) and the section-level group nested inside it
   // (`CourseOutlineSubtree`'s per-section wrapper) - the section-level one
-  // additionally gets an `ml-3` indent in JSX so it visibly sits further
-  // right than its enclosing course-level group's own left edge.
+  // visibly sits further right than its enclosing course-level group's own
+  // left edge via `&__outline`'s own `padding-left: $indent-step` below,
+  // its parent wrapper.
   &__group {
-    background-color: #FFFFFF;
+    background-color: var(--pgn-color-white);
     border-radius: 5px;
     box-shadow: $block-shadow;
     padding: 10px 8px;
@@ -150,6 +213,16 @@
     margin-top: 10px;
   }
 
+  // Indents every section-level group one step under its enclosing course
+  // row - the course -> section indent transition, paired with
+  // `&__subsection`'s own margin-left below for the section -> subsection
+  // transition. Both use the same `$indent-step`, replacing the old JSX
+  // `ml-3`/`ml-4 pl-2` utility classes (removed from `CourseOutlineSubtree`)
+  // as the single indent mechanism.
+  &__outline {
+    padding-left: $indent-step;
+  }
+
   // Vertical gap between adjacent section-level boxes (and any other direct
   // children of the outline, e.g. the loading/error states) - nothing spaced
   // these apart before this rule, since `CourseOutlineSubtree`'s outer
@@ -169,7 +242,9 @@
   // A graded subsection row (a Paragon tertiary `Button`): its own bordered
   // box, one level deeper than `&__group`, sitting inside its enclosing
   // section's `&__group` box and further indented under its own section
-  // header - the course -> section -> subsection nesting each one step
+  // header via `margin-left: $indent-step` - the same indent step
+  // `&__outline` above uses for the course -> section transition, so
+  // course -> section -> subsection each read as one consistent step
   // deeper, mirroring how the tree's `<ul>` nesting reads as increasing
   // indent. Gets its own lightest border color, `$group-border-color-
   // subsection` above, continuing the same darkest-to-lightest progression
@@ -180,10 +255,14 @@
   // panel for this layer, overriding the tertiary `Button`'s own resolved
   // default of 18px/normal.
   &__subsection {
-    margin-left: 16px;
+    // This element is a Paragon `<Button block>` (width: 100%). Without the
+    // matching `width: calc(...)`, the plain `margin-left` above would push
+    // its 100%-wide box past its parent's right edge by exactly that margin.
+    margin-left: $indent-step;
+    width: calc(100% - #{$indent-step});
     font-size: 14px;
     font-weight: 700;
-    background-color: #FFFFFF;
+    background-color: var(--pgn-color-white);
     border-left: 6px solid $group-border-color-subsection;
     border-radius: 5px;
     box-shadow: $block-shadow;

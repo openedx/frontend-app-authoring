@@ -29,17 +29,16 @@ import { convertToStringFromDate } from '@src/utils';
 import type { CompetencyTreeNode } from '../CompetencyTree';
 import CourseRow from './CourseRow';
 import messages from './messages';
-import type { SubsectionSelectedEvent } from './types';
 // @ts-ignore
 import './CourseSearchBrowse.scss';
 
 export interface CourseSearchBrowseProps {
-  /** The competency currently selected in the competency tree, or `null`
-   * when nothing is selected yet. Course search/browsing is disabled until
-   * a competency is active.
+  /** The competency currently selected in the competency tree. The parent
+   * only mounts this component once a competency is active - see
+   * `CompetencyAssociationsPanel`. Its `value` names the competency in the
+   * "Demonstrate Mastery For" line above the course list.
    */
-  activeCompetency: CompetencyTreeNode | null;
-  onSubsectionSelected?: SubsectionSelectedEvent;
+  activeCompetency: CompetencyTreeNode;
 }
 
 const PAGE_SIZE = 10;
@@ -119,7 +118,7 @@ DateRangeTrigger.displayName = 'DateRangeTrigger';
  * a course (by name, debounced as they type) and paginate through results,
  * once a competency is selected in the tree alongside this component.
  */
-const CourseSearchBrowse = ({ activeCompetency, onSubsectionSelected }: CourseSearchBrowseProps) => {
+const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
   const intl = useIntl();
   // `inputValue` is the raw, immediate field value (so typing feels
   // responsive); `search` is the debounced value that actually drives the
@@ -176,25 +175,14 @@ const CourseSearchBrowse = ({ activeCompetency, onSubsectionSelected }: CourseSe
 
   const handleClearDateRange = () => handleDateRangeChange([null, null]);
 
-  const { data, isLoading, isError } = useStudioHomeCoursesV2(
-    {
-      page,
-      pageSize: PAGE_SIZE,
-      search,
-      order: 'display_name',
-      startDateOnOrAfter: dateRange[0] ? convertToStringFromDate(dateRange[0]) : undefined,
-      startDateOnOrBefore: dateRange[1] ? convertToStringFromDate(dateRange[1]) : undefined,
-    },
-    { enabled: !!activeCompetency },
-  );
-
-  if (!activeCompetency) {
-    return (
-      <div className="course-search-browse__empty-state">
-        <p>{intl.formatMessage(messages.selectCompetencyPrompt)}</p>
-      </div>
-    );
-  }
+  const { data, isLoading, isError } = useStudioHomeCoursesV2({
+    page,
+    pageSize: PAGE_SIZE,
+    search,
+    order: 'display_name',
+    startDateOnOrAfter: dateRange[0] ? convertToStringFromDate(dateRange[0]) : undefined,
+    startDateOnOrBefore: dateRange[1] ? convertToStringFromDate(dateRange[1]) : undefined,
+  });
 
   const courses = data?.results.courses ?? [];
   const numPages = data?.numPages ?? 0;
@@ -233,7 +221,6 @@ const CourseSearchBrowse = ({ activeCompetency, onSubsectionSelected }: CourseSe
           <CourseRow
             key={course.courseKey}
             course={course}
-            onSubsectionSelected={onSubsectionSelected}
           />
         ))}
         {numPages > 1 && (
@@ -290,6 +277,22 @@ const CourseSearchBrowse = ({ activeCompetency, onSubsectionSelected }: CourseSe
             )}
           </div>
         </Stack>
+      </div>
+      <div className="course-search-browse__associations">
+        <div className="course-search-browse__associations-label">
+          {intl.formatMessage(messages.associationsSectionLabel)}
+        </div>
+        <div className="course-search-browse__associations-mastery">
+          {intl.formatMessage(messages.demonstrateMasteryForLabel, { competencyName: activeCompetency.value })}
+        </div>
+        <div className="course-search-browse__associations-empty-state">
+          <p>{intl.formatMessage(messages.noAssociationsMessage)}</p>
+          {
+            /* Placeholder copy: this exact tail wording isn't confirmed from Figma (the screenshot was cut
+              off) - update it once the actual text layer is confirmed. */
+          }
+          <p>{intl.formatMessage(messages.noAssociationsPromptMessage)}</p>
+        </div>
       </div>
       <div className="course-search-browse__container">
         <div className="course-search-browse__section-label">
