@@ -13,23 +13,11 @@ import ContentTagsCollapsible from './ContentTagsCollapsible';
 import messages from './messages';
 import { ContentTagsDrawerContext } from './common/context';
 import type { ContentTagsDrawerContextData } from './common/context';
-import type { DrawerTaxonomy, StagedTagData } from './data/types';
-
-/** Only the parts of a content tag that these tests exercise. */
-interface MockContentTag {
-  value: string;
-  lineage: string[];
-  canDeleteObjecttag: boolean;
-}
+import type { DrawerTaxonomy, StagedTagData, Tag } from './data/types';
 
 interface ContentTagsCollapsibleComponentProps {
   contentId: string;
-  taxonomyAndTagsData: {
-    id: number;
-    name: string;
-    canTagObject: boolean;
-    contentTags: MockContentTag[];
-  };
+  taxonomyAndTagsData: DrawerTaxonomy;
   stagedContentTags: StagedTagData[];
   addStagedContentTag: jest.Mock;
   removeStagedContentTag: jest.Mock;
@@ -37,7 +25,7 @@ interface ContentTagsCollapsibleComponentProps {
   removeGlobalStagedContentTag: jest.Mock;
   addRemovedContentTag: jest.Mock;
   deleteRemovedContentTag: jest.Mock;
-  globalStagedContentTags: Record<number, MockContentTag[]>;
+  globalStagedContentTags: Record<number, Tag[]>;
   globalStagedRemovedContentTags: Record<number, string[]>;
   setGlobalStagedContentTags: jest.Mock;
   isEditMode: boolean;
@@ -141,17 +129,23 @@ const data: ContentTagsCollapsibleComponentProps = {
       {
         value: 'Tag 1',
         lineage: ['Tag 1'],
+        canChangeObjecttag: true,
         canDeleteObjecttag: true,
+        isCopied: false,
       },
       {
         value: 'Tag 1.1',
         lineage: ['Tag 1', 'Tag 1.1'],
+        canChangeObjecttag: true,
         canDeleteObjecttag: true,
+        isCopied: false,
       },
       {
         value: 'Tag 2',
         lineage: ['Tag 2'],
+        canChangeObjecttag: true,
         canDeleteObjecttag: true,
+        isCopied: false,
       },
     ],
   },
@@ -210,7 +204,7 @@ const ContentTagsCollapsibleComponent = ({
     <ContentTagsDrawerContext.Provider value={context as unknown as ContentTagsDrawerContextData}>
       <ContentTagsCollapsible
         contentId={contentId}
-        taxonomyAndTagsData={taxonomyAndTagsData as unknown as DrawerTaxonomy}
+        taxonomyAndTagsData={taxonomyAndTagsData}
         stagedContentTags={stagedContentTags}
         collapsibleState={collapsibleState}
       />
@@ -301,7 +295,9 @@ describe('<ContentTagsCollapsible />', () => {
           {
             value: 'Tag 1',
             lineage: ['Tag 1'],
+            canChangeObjecttag: true,
             canDeleteObjecttag: true,
+            isCopied: false,
           },
         ],
       },
@@ -467,7 +463,9 @@ describe('<ContentTagsCollapsible />', () => {
           {
             value: 'Tag 3',
             lineage: ['Tag 3'],
+            canChangeObjecttag: true,
             canDeleteObjecttag: true,
+            isCopied: false,
           },
         ],
       },
@@ -475,7 +473,9 @@ describe('<ContentTagsCollapsible />', () => {
         123: [{
           value: 'Tag 3',
           lineage: ['Tag 3'],
+          canChangeObjecttag: true,
           canDeleteObjecttag: true,
+          isCopied: false,
         }],
       },
     });
