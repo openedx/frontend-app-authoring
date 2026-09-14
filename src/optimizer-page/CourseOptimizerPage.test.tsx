@@ -450,6 +450,53 @@ describe('CourseOptimizerPage', () => {
           .toHaveLength(2);
       });
 
+      it('pauses server-owned rerun polling after a single-link polling timeout', async () => {
+        axiosMock.resetHandlers();
+        let linkCheckStatusRequests = 0;
+        let rerunStatusRequests = 0;
+        axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(() => {
+          linkCheckStatusRequests += 1;
+          return [200, linkCheckStatusRequests === 1 ? previousRunLinksApiResponse : mockApiResponseEmpty];
+        });
+        axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(() => {
+          rerunStatusRequests += 1;
+          return [200, { status: 'In Progress', results: [] }];
+        });
+        axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(200, { status: 'Pending' });
+
+        jest.useFakeTimers();
+        try {
+          render(<OptimizerPage />);
+          await screen.findByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage);
+          fireEvent.click(screen.getByText(scanResultsMessages.courseUpdatesHeader.defaultMessage));
+          await screen.findByText(previousRunLink);
+          const initialRerunStatusRequests = rerunStatusRequests;
+          expect(initialRerunStatusRequests).toBe(1);
+
+          fireEvent.click(screen.getByRole('button', { name: scanResultsMessages.updateButton.defaultMessage }));
+          await waitFor(() => expect(rerunStatusRequests).toBeGreaterThan(initialRerunStatusRequests));
+
+          for (let attempt = 0; attempt < 30; attempt += 1) {
+            await act(async () => {
+              jest.advanceTimersByTime(2000);
+              await Promise.resolve();
+              await Promise.resolve();
+            });
+          }
+          expect(await screen.findByText(scanResultsMessages.updateLinkError.defaultMessage)).toBeInTheDocument();
+          const timedOutRerunStatusRequests = rerunStatusRequests;
+          expect(timedOutRerunStatusRequests).toBe(initialRerunStatusRequests + 30);
+
+          await act(async () => {
+            jest.advanceTimersByTime(10000);
+            await Promise.resolve();
+          });
+          expect(rerunStatusRequests).toBe(timedOutRerunStatusRequests);
+        } finally {
+          jest.useRealTimers();
+        }
+      });
+
       it('resumes server-owned rerun polling after remounting during an in-progress rerun', async () => {
         axiosMock.resetHandlers();
         let linkCheckStatusRequests = 0;

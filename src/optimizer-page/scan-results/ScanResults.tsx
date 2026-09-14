@@ -73,6 +73,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   const waffleFlags = useWaffleFlags(courseId);
   const [isUpdateAllInProgress, setIsUpdateAllInProgress] = useState(false);
   const [isSingleLinkPolling, setIsSingleLinkPolling] = useState(false);
+  const [singleLinkTimedOut, setSingleLinkTimedOut] = useState(false);
   const activeSinglePollersRef = useRef(0);
   const singlePollerCleanupsRef = useRef(new Set<() => void>());
   const mountedRef = useRef(true);
@@ -97,7 +98,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   }, []);
   const rerunLinkUpdateStatusQuery = useRerunLinkUpdateStatus(courseId, {
     enabled: waffleFlags.enableCourseOptimizerCheckPrevRunLinks,
-    manualPolling: isSingleLinkPolling,
+    manualPolling: isSingleLinkPolling || singleLinkTimedOut,
   });
   // Server status owns interval refetches; single-link updates own bounded manual GETs.
   const updateAllPreviousRunLinksMutation = useUpdateAllPreviousRunLinks(courseId);
@@ -457,6 +458,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   // Handler for updating a single previous run link
   const handleUpdateLink = useCallback(async (link: string, blockId: string, sectionId?: string): Promise<boolean> => {
     const uniqueId = `${blockId}:${link}`;
+    setSingleLinkTimedOut(false);
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
     let resolveTimer: (() => void) | null = null;
@@ -487,6 +489,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
           return false;
         }
         if (attempts >= 30) { // Up to 30 attempts, with two seconds between retries (roughly one minute)
+          setSingleLinkTimedOut(true);
           throw new Error('Timeout waiting for link update result');
         }
 
@@ -627,6 +630,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   }, [updatedLinkIds]);
 
   const handleUpdateAllCourseLinks = useCallback(async (): Promise<boolean> => {
+    setSingleLinkTimedOut(false);
     try {
       setIsUpdateAllInProgress(true);
       await updateAll();
