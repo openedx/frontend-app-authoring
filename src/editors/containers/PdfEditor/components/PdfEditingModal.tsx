@@ -43,7 +43,7 @@ const EditorWrapper: React.FC<PropsWithChildren> = ({ children }) => {
 
 const PdfEditingModal: React.FC<EditorComponent> = (props) => {
   const intl = useIntl();
-  const { fields, blockId, isLibrary } = useContext(PdfBlockContext);
+  const { fields, blockId, isLibrary, isBusy, setIsBusy } = useContext(PdfBlockContext);
   const originalState = useRef({ ...fields });
   const { values, setValues } = useFormikContext<PdfState>();
   const mutation = usePdfConversion(blockId);
@@ -90,7 +90,7 @@ const PdfEditingModal: React.FC<EditorComponent> = (props) => {
   };
 
   return (
-    <EditorContainer {...props} isDirty={isDirty} getContent={getContent}>
+    <EditorContainer {...props} isDirty={isDirty} getContent={getContent} isBusy={isBusy}>
       <EditorWrapper>
         <div className="mt-2">
           <UploadWidget
@@ -99,6 +99,7 @@ const PdfEditingModal: React.FC<EditorComponent> = (props) => {
             label={intl.formatMessage(messages.urlFieldLabel)}
             blockId={blockId}
             isLibrary={isLibrary}
+            setIsBusy={setIsBusy}
             saveField={saver}
             id="pdf-url"
           />

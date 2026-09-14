@@ -28,6 +28,8 @@ declare interface PdfBlockContextInterface {
   isPending: boolean;
   blockId: string;
   isLibrary: boolean;
+  isBusy: boolean;
+  setIsBusy: (val: boolean) => void;
 }
 
 export const initialPdfState: () => PdfState = () => ({
@@ -46,12 +48,15 @@ export const PdfBlockContext = createContext<PdfBlockContextInterface>({
   isPending: true,
   blockId: '',
   isLibrary: false,
+  isBusy: false,
+  setIsBusy: () => undefined,
 });
 
 export const PdfBlockContextProvider: React.FC<{ blockId: string; children: React.ReactNode; }> = (
   { blockId, children },
 ) => {
   const [uniqueId] = useState(() => uuidv4());
+  const [isBusy, setIsBusy] = useState(false);
   const defaultData = useMemo(initialPdfState, []);
   const { data, error, isPending } = useBlockHandlerData<PdfState>({
     blockId,
@@ -89,7 +94,9 @@ export const PdfBlockContextProvider: React.FC<{ blockId: string; children: Reac
     isPending,
     blockId,
     isLibrary,
-  }), [data, error, isPending]);
+    isBusy,
+    setIsBusy,
+  }), [data, error, isPending, isBusy]);
 
   return <PdfBlockContext.Provider value={value}>{children}</PdfBlockContext.Provider>;
 };

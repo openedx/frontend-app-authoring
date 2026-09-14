@@ -73,6 +73,7 @@ export const useBlockHandlerData = <T>({
   });
 };
 
+// Instructs the backend to convert a given document URL to PDF. Returns the resulting PDF URL.
 export const usePdfConversion = (blockId: string) => {
   const studioEndpointUrl = useSelector(selectors.app.studioEndpointUrl)!;
   const isLibrary = useSelector(selectors.app.isLibrary);

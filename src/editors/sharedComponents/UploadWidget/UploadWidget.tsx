@@ -36,6 +36,7 @@ export interface UploadWidgetProps<T = string> {
   blockId: string;
   isLibrary: boolean;
   saveField?: (args: FieldSaverArgs<T>) => Promise<unknown>;
+  setIsBusy?: (val: boolean) => void;
 }
 
 type LibraryAsset = { path: string; };
@@ -53,6 +54,7 @@ const UploadWidget = ({
   blockId,
   isLibrary,
   saveField,
+  setIsBusy,
 }: UploadWidgetProps<string>) => {
   const intl = useIntl();
   const [manualMode, setManualMode] = useState(false);
@@ -70,6 +72,7 @@ const UploadWidget = ({
       urlFieldControl.setError(intl.formatMessage(messages.fileTooLarge));
       return;
     }
+    setIsBusy?.(true);
     mutation.mutateAsync(file).then((result: AssetResponse) => {
       let value: string;
       if (isLibrary) {
@@ -86,6 +89,7 @@ const UploadWidget = ({
       urlFieldControl.setError(intl.formatMessage(messages.uploadError));
     }).finally(() => {
       mutation.reset();
+      setIsBusy?.(false);
     });
   };
   const fileInput = useFileInput({ onAddFile, setSelectedRows, setAddOpen });
