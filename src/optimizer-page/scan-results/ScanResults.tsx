@@ -76,6 +76,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   const activeSinglePollersRef = useRef(0);
   const singlePollerCleanupsRef = useRef(new Set<() => void>());
   const mountedRef = useRef(true);
+  // Keep shared status polling active until every single-link update finishes.
   const setSinglePolling = useCallback((active: boolean) => {
     activeSinglePollersRef.current = active
       ? activeSinglePollersRef.current + 1
@@ -84,6 +85,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       setIsSingleLinkPolling(activeSinglePollersRef.current > 0);
     }
   }, []);
+  // Cancel pending single-link timers when the component is removed.
   useEffect(() => {
     mountedRef.current = true;
     return () => {
@@ -135,6 +137,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   const [prevRunOpenStates, setPrevRunOpenStates] = useState<boolean[]>([]);
   const { sections } = data || {};
 
+  // Turn course updates and custom pages into sections so all results use the same layout.
   const renderableSections = useMemo(
     () =>
       buildSyntheticSections(
@@ -195,19 +198,24 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     clear,
   }] = useCheckboxSetValues(activeFilters);
 
+  // Reset both accordion lists when the available sections change.
   useEffect(() => {
     setOpenStates(allSections ? allSections.map(() => false) : []);
     setPrevRunOpenStates(allSections ? allSections.map(() => false) : []);
   }, [allSections]);
 
+  // Match API results to UI blocks, including synthetic sections, and record successful updates.
   const processUpdateResults = useCallback((response: RerunLinkUpdateStatusData, isBulkUpdate = false) => {
+    // Bulk calls use the full mapping below. The result-count check is a legacy fallback for older status responses.
     if (
       response.status === RERUN_LINK_UPDATE_STATUSES.SUCCEEDED
       && (isBulkUpdate || response.results.length > 4)
     ) {
+      // Collect successful link IDs and their replacement URLs before updating state.
       const successfulLinkIds: string[] = [];
       const newMap: Record<string, string> = {};
 
+      // Index blocks with previous-run links so API results can be matched to the UI.
       const allBlocksMap = new Map();
       allSections.forEach(section => {
         section.subsections.forEach(subsection => {
@@ -225,18 +233,22 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
         });
       });
 
+      // Synthetic sections can use different IDs in the API and the UI.
       const blockIdMapping = new Map();
 
+      // Map each API block ID to the corresponding UI block ID.
       if (response.results && Array.isArray(response.results)) {
         response.results.forEach(result => {
           const apiBlockId = result.id;
           const contentType = result.type;
 
+          // Regular course blocks already use the same ID in both responses.
           if (allBlocksMap.has(apiBlockId)) {
             blockIdMapping.set(apiBlockId, apiBlockId);
             return;
           }
 
+          // Find the UI block when a course update or custom page has a synthetic ID.
           if (contentType === 'course_updates' || contentType === 'custom_pages') {
             const expectedSectionId = contentType === 'course_updates' ? 'course-updates' : 'custom-pages';
 
@@ -261,6 +273,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
         });
       }
 
+      // Match successful API results to their original URLs and save the new URLs.
       if (response.results && Array.isArray(response.results)) {
         response.results.forEach((result) => {
           const apiBlockId = result.id;
@@ -276,6 +289,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
               );
 
               if (matchingLink) {
+                // Use the block ID and original URL together because one block can contain several links.
                 const uid = `${uiBlockId}:${matchingLink.originalLink}`;
                 successfulLinkIds.push(uid);
                 newMap[uid] = newUrl;
@@ -285,6 +299,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
         });
       }
 
+      // Mark the newly updated links while keeping links updated by earlier requests.
       setUpdatedLinkIds(currentIds => {
         const preservedIds: string[] = [];
         const newSuccessfulSet = new Set(successfulLinkIds);
@@ -306,6 +321,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       return;
     }
 
+    // Handle a single-link response by matching each successful result directly to the UI block.
     if (response.results && Array.isArray(response.results)) {
       const successfulResults = response.results.filter(r => r.success);
       if (successfulResults.length === 0) {
@@ -315,6 +331,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       const successfulLinkIds: string[] = [];
       const newMap: Record<string, string> = {};
 
+      // Find every updated link in the current sections.
       allSections.forEach(section => {
         section.subsections.forEach(subsection => {
           subsection.units.forEach(unit => {
@@ -338,12 +355,14 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
         });
       });
 
+      // Add the new IDs without showing the same link more than once.
       setUpdatedLinkIds(prev => {
         const combined = [...prev, ...successfulLinkIds];
         const deduped = combined.filter((item, index) => combined.indexOf(item) === index);
 
         return deduped;
       });
+      // Save replacement URLs only when at least one link was updated.
       if (Object.keys(newMap).length > 0) {
         setUpdatedLinkMap(prev => {
           const updated = { ...prev, ...newMap };
@@ -462,6 +481,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
         contentType,
       });
 
+      // Keep checking until the update finishes, then match the response to this specific link.
       const pollForSingleLinkResult = async (attempts = 0): Promise<boolean> => {
         if (cancelled || !mountedRef.current) {
           return false;
@@ -618,6 +638,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     }
   }, [intl, reportError, updateAll]);
 
+  // Show separate empty states because the main scan and previous-run checks are independent.
   if (!data || isDataEmpty(data)) {
     return (
       <>
@@ -756,6 +777,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
               <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
             </div>
           ) :
+          // Keep original indexes so counts and accordion state stay aligned with allSections.
           allSections.map((section, index) => {
             if (!visibleSectionIndexes.includes(index)) {
               return null;
@@ -801,6 +823,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
           })}
       </div>
 
+      {/* Show previous-run links only when the feature is enabled and matching links exist. */}
       {waffleFlags.enableCourseOptimizerCheckPrevRunLinks
         && allSections.length > 0
         && hasPreviousRunLinksInSections
@@ -867,6 +890,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
         </div>
       )}
 
+      {/* The feature can be enabled even when there are no previous-run links to display. */}
       {waffleFlags.enableCourseOptimizerCheckPrevRunLinks && !hasPreviousRunLinksInSections && (
         <div className="scan-results">
           <div className="scan-header-second-title-container px-3">
