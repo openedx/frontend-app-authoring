@@ -86,7 +86,7 @@ const PdfEditingModal: React.FC<EditorComponent> = (props) => {
       return args.control.setValue(args.value);
     }
     const pdfUrl = await mutation.mutateAsync(args.value);
-    await setValues({ ...values, url: pdfUrl, sourceUrl: args.value });
+    await setValues(prev => ({ ...prev, url: pdfUrl, sourceUrl: args.value }));
   };
 
   return (
