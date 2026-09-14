@@ -16,14 +16,15 @@ import {
   getContentSearchConfig,
   fetchBlockTypes,
   type PublishStatus,
+  type SearchIndexType,
   fetchContentHits,
 } from './api';
 
 /**
- * Load the Meilisearch connection details from the CMS: the URL to use, the index name, and an API key specific
- * to the current user that allows it to search all content he have permission to view.
+ * Load the Meilisearch connection details from the CMS: the URL to use, the name of the course or library index, and
+ * an API key specific to the current user that allows it to search all content he have permission to view.
  */
-export const useContentSearchConnection = (): {
+export const useContentSearchConnection = (indexType: SearchIndexType): {
   client?: MeiliSearch;
   indexName?: string;
   hasConnectionError: boolean;
@@ -38,7 +39,7 @@ export const useContentSearchConnection = (): {
     refetchOnMount: false,
   });
 
-  const indexName = connectionDetails?.indexName;
+  const indexName = indexType === 'library' ? connectionDetails?.libraryIndexName : connectionDetails?.courseIndexName;
   const client = React.useMemo(() => {
     if (connectionDetails?.apiKey === undefined || connectionDetails?.url === undefined) {
       return undefined;
@@ -295,8 +296,8 @@ export const useTagFilterOptions = (args: {
   return { ...mainQuery, data };
 };
 
-export const useGetBlockTypes = (extraFilters: Filter, enabled: boolean = true) => {
-  const { client, indexName } = useContentSearchConnection();
+export const useGetBlockTypes = (extraFilters: Filter, indexType: SearchIndexType, enabled: boolean = true) => {
+  const { client, indexName } = useContentSearchConnection(indexType);
   return useQuery({
     enabled: client !== undefined && indexName !== undefined,
     queryKey: [
@@ -314,12 +315,13 @@ export const useGetBlockTypes = (extraFilters: Filter, enabled: boolean = true) 
 
 export const useGetContentHits = (
   extraFilters: Filter,
+  indexType: SearchIndexType,
   enabled: boolean = true,
   attributesToRetrieve?: string[],
   limit?: number,
   refetchOnMount?: boolean | 'always',
 ) => {
-  const { client, indexName } = useContentSearchConnection();
+  const { client, indexName } = useContentSearchConnection(indexType);
   return useQuery({
     enabled: client !== undefined && indexName !== undefined,
     queryKey: [

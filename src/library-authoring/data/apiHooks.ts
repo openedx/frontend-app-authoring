@@ -16,7 +16,12 @@ import { type MeiliSearch } from 'meilisearch';
 import { getBlockType, getLibraryId } from '../../generic/key-utils';
 import * as api from './api';
 import { VersionSpec } from '../LibraryBlock';
-import { useContentSearchConnection, useContentSearchResults, buildSearchQueryKey } from '../../search-manager';
+import {
+  useContentSearchConnection,
+  useContentSearchResults,
+  buildSearchQueryKey,
+  type SearchIndexType,
+} from '../../search-manager';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
   // Invalidate all content queries related to this library.
@@ -872,7 +877,7 @@ const getSearchQueryKeyFromContent = (
  */
 export const useAddItemsToContainer = (containerId?: string) => {
   const queryClient = useQueryClient();
-  const { client, indexName } = useContentSearchConnection();
+  const { client, indexName } = useContentSearchConnection('library');
   return useMutation({
     mutationFn: async (itemIds: string[]) => {
       // istanbul ignore if: this should never happen
@@ -1007,18 +1012,20 @@ export const usePublishContainer = (containerId: string) => {
  * Use this mutations to get a list of objects from the search index
  */
 export const useContentFromSearchIndex = (contentIds: string[]) => {
-  const { client, indexName } = useContentSearchConnection();
   const extraFilter = [`usage_key IN ["${contentIds.join('","')}"]`];
+  let indexType: SearchIndexType = 'course';
   // NOTE: assuming that all contentIds are part of a single libraryId as we don't have a usecase
   // of passing multiple contentIds from different libraries.
   if (contentIds.length > 0) {
     try {
       const libraryId = getLibraryId(contentIds?.[0]);
       extraFilter.push(`context_key = "${libraryId}"`);
+      indexType = 'library';
     } catch {
       // Ignore as the contentIds could be part of course instead of a library.
     }
   }
+  const { client, indexName } = useContentSearchConnection(indexType);
   return useContentSearchResults({
     client,
     indexName,
