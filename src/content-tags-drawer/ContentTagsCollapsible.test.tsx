@@ -13,7 +13,7 @@ import ContentTagsCollapsible from './ContentTagsCollapsible';
 import messages from './messages';
 import { ContentTagsDrawerContext } from './common/context';
 import type { ContentTagsDrawerContextData } from './common/context';
-import type { StagedTagData, TagsInTaxonomy } from './data/types';
+import type { DrawerTaxonomy, StagedTagData } from './data/types';
 
 /** Only the parts of a content tag that these tests exercise. */
 interface MockContentTag {
@@ -210,7 +210,7 @@ const ContentTagsCollapsibleComponent = ({
     <ContentTagsDrawerContext.Provider value={context as unknown as ContentTagsDrawerContextData}>
       <ContentTagsCollapsible
         contentId={contentId}
-        taxonomyAndTagsData={taxonomyAndTagsData as unknown as TagsInTaxonomy}
+        taxonomyAndTagsData={taxonomyAndTagsData as unknown as DrawerTaxonomy}
         stagedContentTags={stagedContentTags}
         collapsibleState={collapsibleState}
       />

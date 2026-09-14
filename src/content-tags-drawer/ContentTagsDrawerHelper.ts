@@ -8,12 +8,9 @@ import messages from './messages';
 import { ContentTagsDrawerSheetContext } from './common/context';
 import type { ContentTagsDrawerContextData } from './common/context';
 import type {
-  DrawerTag,
   DrawerTaxonomy,
-  OtherTaxonomy,
   StagedTagData,
   Tag,
-  TagsInTaxonomy,
   UpdateTagsData,
 } from './data/types';
 
@@ -41,7 +38,7 @@ export const useCreateContentTagsDrawerContext = (
   // This stores the tags added on the add tags Select in all taxonomies.
   const [stagedContentTags, setStagedContentTags] = React.useState<Record<number, StagedTagData[]>>({});
   // When a staged tags on a taxonomy is commitet then is saved on this map.
-  const [globalStagedContentTags, setGlobalStagedContentTags] = React.useState<Record<number, DrawerTag[]>>({});
+  const [globalStagedContentTags, setGlobalStagedContentTags] = React.useState<Record<number, Tag[]>>({});
   // This stores fetched tags deleted by the user.
   const [
     globalStagedRemovedContentTags,
@@ -50,7 +47,7 @@ export const useCreateContentTagsDrawerContext = (
   // Merges fetched tags, global staged tags and global removed staged tags
   const [tagsByTaxonomy, setTagsByTaxonomy] = React.useState<DrawerTaxonomy[]>([]);
   // Other taxonomies that the user doesn't have permissions
-  const [otherTaxonomies, setOtherTaxonomies] = React.useState<OtherTaxonomy[]>([]);
+  const [otherTaxonomies, setOtherTaxonomies] = React.useState<DrawerTaxonomy[]>([]);
   // This stores taxonomy collapsible states (open/close).
   const [collapsibleStates, setColapsibleStates] = React.useState<Record<number, boolean>>({});
   // Message to show a toast in the content drawer.
@@ -68,7 +65,7 @@ export const useCreateContentTagsDrawerContext = (
 
   // Tags fetched from database
   const { fetchedTaxonomies, fetchedOtherTaxonomies } = React.useMemo(() => {
-    const sortTaxonomies = (taxonomiesList: TagsInTaxonomy[]) => {
+    const sortTaxonomies = <T extends DrawerTaxonomy>(taxonomiesList: T[]) => {
       const taxonomiesWithData = taxonomiesList.filter(
         (t) => t.contentTags.length !== 0,
       );
@@ -108,7 +105,7 @@ export const useCreateContentTagsDrawerContext = (
 
       const contentTaxonomies = contentTaxonomyTagsData.taxonomies;
 
-      const otherTaxonomiesList: OtherTaxonomy[] = [];
+      const otherTaxonomiesList: DrawerTaxonomy[] = [];
 
       // eslint-disable-next-line array-callback-return
       contentTaxonomies.map((contentTaxonomyTags) => {
@@ -117,15 +114,10 @@ export const useCreateContentTagsDrawerContext = (
           contentTaxonomy.contentTags = contentTaxonomyTags.tags;
         } else {
           otherTaxonomiesList.push({
-            canChangeTaxonomy: false,
-            canDeleteTaxonomy: false,
             canTagObject: contentTaxonomyTags.canTagObject,
             contentTags: contentTaxonomyTags.tags,
-            enabled: true,
-            exportId: contentTaxonomyTags.exportId,
             id: contentTaxonomyTags.taxonomyId,
             name: contentTaxonomyTags.name,
-            visibleToAuthors: true,
           });
         }
       });
@@ -146,7 +138,7 @@ export const useCreateContentTagsDrawerContext = (
       fetchedTaxonomies: [],
       fetchedOtherTaxonomies: [],
     };
-  }, [taxonomyListData, contentTaxonomyTagsData]);
+  }, [taxonomyListData, contentTaxonomyTagsData, canTagObject]);
 
   // Add a content tags to the staged tags for a taxonomy
   const addStagedContentTag = React.useCallback((taxonomyId: number, addedTag: StagedTagData) => {
@@ -336,7 +328,7 @@ export const useCreateContentTagsDrawerContext = (
       { ...acc, [obj.id]: obj }
     ), {});
 
-    const mergedOtherTaxonomies = cloneDeep(fetchedOtherTaxonomies).reduce<Record<number, OtherTaxonomy>>(
+    const mergedOtherTaxonomies = cloneDeep(fetchedOtherTaxonomies).reduce<Record<number, DrawerTaxonomy>>(
       (acc, obj) => (
         { ...acc, [obj.id]: obj }
       ),

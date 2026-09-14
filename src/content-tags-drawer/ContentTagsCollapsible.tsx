@@ -34,17 +34,19 @@ import type { DrawerTaxonomy, StagedTagData } from './data/types';
 
 export interface TagTreeEntry {
   explicit: boolean;
-  children: Record<string, TagTreeEntry>;
+  children: TagTree;
   isCopied: boolean;
   canChangeObjecttag: boolean;
   canDeleteObjecttag: boolean;
 }
 
+export type TagTree = Record<string, TagTreeEntry>;
+
 export interface TaxonomySelectProps {
   taxonomyId: number;
   searchTerm: string;
-  appliedContentTagsTree: Record<string, TagTreeEntry>;
-  stagedContentTagsTree: Record<string, TagTreeEntry>;
+  appliedContentTagsTree: TagTree;
+  stagedContentTagsTree: TagTree;
   checkedTags: string[];
   selectCancelRef: React.RefObject<HTMLButtonElement>;
   selectAddRef: React.RefObject<HTMLButtonElement>;
@@ -65,16 +67,6 @@ declare module 'react-select/base' {
   export interface Props<Option, IsMulti extends boolean, Group extends GroupBase<Option>> extends TaxonomySelectProps {
   }
 }
-
-export type TagTree = {
-  [key: string]: {
-    children: TagTree;
-    canChangeObjecttag: boolean;
-    canDeleteObjecttag: boolean;
-    explicit: boolean;
-    isCopied: boolean;
-  };
-};
 
 /**
  * Custom Menu component for our Select box

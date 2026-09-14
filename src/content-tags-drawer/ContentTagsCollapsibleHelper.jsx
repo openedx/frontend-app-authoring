@@ -37,7 +37,7 @@ const sortKeysAlphabetically = (tree) => {
  * tags selected in the staged tags tree
  *
  * @param {object} tree - tree to extract the leaf tags from
- * @returns {StagedTagData[]} array of leaf (explicit) tags of provided tree
+ * @returns {ContentTagData[]} array of leaf (explicit) tags of provided tree
  */
 const getLeafTags = (tree) => {
   const leafTags = [];
@@ -48,9 +48,11 @@ const getLeafTags = (tree) => {
       if (Object.keys(child.children).length === 0) {
         leafTags.push({
           value: key,
-          // Always true because this is a new added tag,
-          // so the user can delete.
+          // Always true/false because this is a new added tag,
+          // so the user can change/delete it and it is not a copy.
+          canChangeObjecttag: true,
           canDeleteObjecttag: true,
+          isCopied: false,
           lineage: child.lineage,
         });
       } else {
