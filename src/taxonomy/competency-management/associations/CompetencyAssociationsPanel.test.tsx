@@ -210,9 +210,10 @@ describe('<CompetencyAssociationsPanel />', () => {
     );
     await screen.findByText(taxonomyName);
 
-    // Expand the taxonomy root, then "Root A", then "Group A1", one
-    // disclosure icon at a time, until the leaf "Leaf A1a" is visible.
-    fireEvent.click(screen.getByRole('button', { name: 'Expand' }));
+    // The taxonomy root starts expanded (its immediate children, like "Root
+    // A", are already visible), so only "Root A" and "Group A1" need their
+    // own explicit disclosure click, one icon at a time, until the leaf
+    // "Leaf A1a" is visible.
     await screen.findByText('Root A');
     fireEvent.click(screen.getByRole('button', { name: 'Expand' }));
     await screen.findByText('Group A1');
