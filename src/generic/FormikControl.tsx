@@ -11,6 +11,7 @@ interface Props {
   controlClasses?: string;
   value: string | number;
   setFieldValue?: (name: string, value: any) => void;
+  readOnly?: boolean;
 }
 
 // Because <Form.Control> is only typed as 'any' in Paragon so far, the props of the following become 'any' :/
@@ -24,6 +25,7 @@ const FormikControl: React.FC<Props & React.ComponentProps<typeof Form.Control>>
   className = '',
   controlClasses = 'pb-2',
   setFieldValue,
+  readOnly = false,
   ...params
 }) => {
   const formikContext = useFormikContext() || null;
@@ -62,6 +64,7 @@ const FormikControl: React.FC<Props & React.ComponentProps<typeof Form.Control>>
         onBlur={handleBlur}
         onFocus={handleFocus}
         isInvalid={!!fieldTouched && !!fieldError}
+        disabled={readOnly}
       />
       {formikContext && (
         <FormikErrorFeedback name={name}>

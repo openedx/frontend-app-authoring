@@ -13,6 +13,7 @@ import { Formik, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ExpandableCard } from '@src/generic/expandable-card/ExpandableCard';
 import { useBlocker } from 'react-router';
 import PromptIfDirty from '@src/generic/prompt-if-dirty/PromptIfDirty';
@@ -178,6 +179,7 @@ const HighlightsViewCard = ({
   onEdit: () => void;
 }) => {
   const intl = useIntl();
+  const { canEditCourseContent } = useCourseAuthoringContext();
   const nonEmptyHighlights = highlights.filter((h) => h?.trim());
 
   return (
@@ -185,7 +187,7 @@ const HighlightsViewCard = ({
       <Card.Header
         title={intl.formatMessage(messages.highlightsTitle)}
         size="sm"
-        actions={
+        actions={canEditCourseContent && (
           <ActionRow>
             <IconButton
               size="sm"
@@ -194,7 +196,7 @@ const HighlightsViewCard = ({
               alt={intl.formatMessage(messages.editButton)}
             />
           </ActionRow>
-        }
+        )}
       />
       <Card.Body>
         <ExpandableCard maxHeight={400}>
@@ -218,6 +220,7 @@ const HighlightsEmptyState = ({ onAdd }: { onAdd: () => void; }) => {
 export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => {
   const { data: currentItemData } = useCourseItemData(sectionId);
   const { highlights = [] } = currentItemData || {};
+  const { canEditCourseContent } = useCourseAuthoringContext();
 
   const [mode, setMode] = useState<DisplayMode>(
     highlights.some((h) => h?.trim()) ? 'viewing' : 'empty',
@@ -270,7 +273,7 @@ export const HighlightsCard = ({ sectionId, onSubmit }: HighlightsCardProps) => 
         }}
       />
 
-      {mode === 'empty' && <HighlightsEmptyState onAdd={handleAddClick} />}
+      {mode === 'empty' && canEditCourseContent && <HighlightsEmptyState onAdd={handleAddClick} />}
 
       {mode === 'viewing' && (
         <HighlightsViewCard
