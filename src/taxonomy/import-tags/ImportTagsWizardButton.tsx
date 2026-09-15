@@ -5,7 +5,11 @@ import { ImportTagsWizard, type ImportTagsWizardProps } from './ImportTagsWizard
 
 type ImportTagsWizardButtonProps =
   & React.ComponentProps<typeof Button>
-  & Pick<ImportTagsWizardProps, 'defaultTaxonomyType' | 'onImportSuccess'>;
+  & Pick<ImportTagsWizardProps, 'defaultTaxonomyType' | 'onImportSuccess'>
+  & {
+    /** Not supported: this component owns the button's `onClick` and uses it to open the wizard. */
+    onClick?: never;
+  };
 
 /**
  * A button that opens the ImportTagsWizard to create a new taxonomy from an uploaded file.
