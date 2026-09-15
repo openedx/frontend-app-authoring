@@ -69,6 +69,18 @@ export const ResizableBox = ({
     return Math.abs(windowWidth * 0.65);
   }, [windowWidth]);
 
+  /*
+   * `width` is the width the user dragged to, which may no longer fit once the
+   * window is narrowed. Clamp it on every render so the box shrinks with the
+   * viewport instead of overflowing its flex row and painting over the page
+   * content. The preferred width stays in state, so it is restored when the
+   * window is widened again.
+   */
+  const effectiveWidth = useMemo(
+    () => Math.min(width, Math.max(minWidth, maxWidth || defaultMaxWidth)),
+    [width, minWidth, maxWidth, defaultMaxWidth],
+  );
+
   const onMouseMove = useCallback((e: MouseEvent) => {
     const dx = e.clientX - startXRef.current; // positive = mouse moved right
     // Left handle: dragging right shrinks. Right handle: dragging right grows.
@@ -101,7 +113,7 @@ export const ResizableBox = ({
     <div
       className="resizable align-self-stretch d-flex"
       ref={boxRef}
-      style={{ width: fullWidth ? '100%' : `${width}px` }}
+      style={{ width: fullWidth ? '100%' : `${effectiveWidth}px` }}
     >
       {!fullWidth && (
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-static-element-interactions
