@@ -14,7 +14,8 @@ import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
 import { type ToastActionData } from '@src/generic/toast-context';
 import { libraryBlockChangesUrl } from '@src/course-unit/data/api';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { useCourseUserPermissions } from '@src/authz/hooks';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { CourseLibraries } from './CourseLibraries';
 import {
   mockGetEntityLinks,
@@ -49,18 +50,25 @@ jest.mock('react-router-dom', () => ({
   }],
 }));
 
-jest.mock('@src/authz/hooks', () => ({
-  useCourseUserPermissions: jest.fn(),
+jest.mock('@src/authz/data/apiHooks', () => ({
+  useUserPermissions: jest.fn(),
 }));
 
-const mockPermissions = (overrides = {}) =>
-  jest.mocked(useCourseUserPermissions).mockReturnValue({
-    isLoading: false,
-    isAuthzEnabled: true,
-    canViewLibraryUpdates: true,
-    canManageLibraryUpdates: true,
-    ...overrides,
-  } as ReturnType<typeof useCourseUserPermissions>);
+/**
+ * Set the permissions of the current user. `useCourseUserPermissions()` is built on top of
+ * `useUserPermissions()`, so mocking the latter covers both the course-level library update
+ * permissions and the per-library `view_library` check that each library card makes.
+ */
+const mockPermissions = ({ isLoading = false, ...permissions }: Record<string, boolean> = {}) =>
+  jest.mocked(useUserPermissions).mockReturnValue({
+    isLoading,
+    data: {
+      canViewLibraryUpdates: true,
+      canManageLibraryUpdates: true,
+      canViewLibrary: true,
+      ...permissions,
+    },
+  } as unknown as ReturnType<typeof useUserPermissions>);
 
 describe('<CourseLibraries />', () => {
   beforeEach(() => {
@@ -69,6 +77,7 @@ describe('<CourseLibraries />', () => {
     mockFetchIndexDocuments.applyMock();
     localStorage.clear();
     searchParamsGetMock.mockReturnValue('all');
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
     mockPermissions();
   });
 
@@ -235,6 +244,27 @@ describe('<CourseLibraries />', () => {
     await user.click(allTab);
     expect(screen.queryByRole('button', { name: 'Review Updates' })).not.toBeInTheDocument();
   });
+
+  it('shows a View Library link on each card when the user can view the library', async () => {
+    const user = userEvent.setup();
+    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    await user.click(await screen.findByRole('tab', { name: 'Libraries' }));
+
+    const links = await screen.findAllByRole('link', { name: 'View Library' });
+    expect(links.length).toEqual(3);
+    expect(links[0]).toHaveAttribute('href', expect.stringContaining('library/lib:OpenedX:CSPROB3'));
+  });
+
+  it('does not show the View Library link when user lacks view library permission', async () => {
+    const user = userEvent.setup();
+    mockPermissions({ canViewLibrary: false });
+    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    await user.click(await screen.findByRole('tab', { name: 'Libraries' }));
+
+    // The libraries are still listed, they just don't link to the library.
+    expect(await screen.findByText('CS problems 3')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'View Library' })).not.toBeInTheDocument();
+  });
 });
 
 describe('<CourseLibraries ReviewTab />', () => {
@@ -247,6 +277,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     localStorage.clear();
     searchParamsGetMock.mockReturnValue('review');
     queryClient = mocks.queryClient;
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
     mockPermissions();
   });
 
