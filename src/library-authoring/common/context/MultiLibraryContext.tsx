@@ -28,13 +28,13 @@ export const MultiLibraryProvider: React.FC<{ children: React.ReactNode; }> = ({
     setSelectedLibraries,
     selectedCollections,
     setSelectedCollections,
-	allLibraries
+    allLibraries,
   }), [
     selectedLibraries,
     setSelectedLibraries,
     selectedCollections,
     setSelectedCollections,
-	allLibraries
+    allLibraries,
   ]);
 
   return (
@@ -53,7 +53,7 @@ export const useMultiLibraryContext = (): MultiLibraryContextProps => {
       setSelectedLibraries: () => {},
       selectedCollections: [],
       setSelectedCollections: () => {},
-	  allLibraries: { current: [] },
+      allLibraries: { current: [] },
     };
   }
   return ctx;

@@ -160,9 +160,9 @@ describe('LibraryDropdownFilter', () => {
 
     // After the debounce fires and data is 2 items (matching selected count),
     // the label must still show the count, NOT "All libraries".
-    await waitFor(() =>
-      expect(mockApi).toHaveBeenLastCalledWith({ pagination: false, search: 'Test' }),
-    { timeout: 600 });
+    await waitFor(() => expect(mockApi).toHaveBeenLastCalledWith({ pagination: false, search: 'Test' }), {
+      timeout: 600,
+    });
 
     expect(await screen.findByRole('button', { name: '2 Libraries' })).toBeInTheDocument();
   });
