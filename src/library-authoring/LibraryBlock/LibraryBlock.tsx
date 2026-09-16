@@ -22,6 +22,13 @@ interface LibraryBlockProps {
   scrollIntoView?: boolean;
   showTitle?: boolean;
   addHeight?: number;
+  /**
+   * The downstream (course) block id this library block is being reviewed from, if any.
+   * Lets the backend grant access via the course's `view_library_updates` permission when
+   * the current user doesn't otherwise have direct access to the library, e.g. when
+   * previewing pending library updates from a course.
+   */
+  courseId?: string;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -42,6 +49,7 @@ export const LibraryBlock = ({
   scrollIntoView = false,
   showTitle = false,
   addHeight = 0,
+  courseId,
 }: LibraryBlockProps) => {
   const { iframeRef, setIframeRef } = useIframe();
   const xblockView = view ?? 'student_view';
@@ -58,6 +66,9 @@ export const LibraryBlock = ({
   }
   if (showTitle) {
     params.set('show_title', 'true');
+  }
+  if (courseId) {
+    params.set('course_id', courseId);
   }
 
   // For now, always show the draft version of the Xblock v1
