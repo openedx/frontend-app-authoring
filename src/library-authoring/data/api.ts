@@ -162,9 +162,15 @@ export const getLibraryContainersApiUrl = (libraryId: string) =>
   `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/containers/`;
 /**
  * Get the URL for the container detail api.
+ *
+ * `courseId` is optional: passing it lets the backend grant access via the course's
+ * `view_library_updates` permission when the caller is reviewing this container from a
+ * course it doesn't otherwise have library access from. Callers that use this as a base for
+ * other endpoints (restore, hierarchy, etc.) should omit it.
  */
-export const getLibraryContainerApiUrl = (containerId: string) =>
-  `${getApiBaseUrl()}/api/libraries/v2/containers/${containerId}/`;
+export const getLibraryContainerApiUrl = (containerId: string, courseId?: string) =>
+  `${getApiBaseUrl()}/api/libraries/v2/containers/${containerId}/`
+  + (courseId ? `?course_id=${encodeURIComponent(courseId)}` : '');
 /**
  * Get the URL for restore a container
  */
@@ -173,8 +179,9 @@ export const getLibraryContainerRestoreApiUrl = (containerId: string) =>
 /**
  * Get the URL for a single container children api.
  */
-export const getLibraryContainerChildrenApiUrl = (containerId: string, published: boolean = false) =>
-  `${getLibraryContainerApiUrl(containerId)}children/?published=${published}`;
+export const getLibraryContainerChildrenApiUrl = (containerId: string, published: boolean = false, courseId?: string) =>
+  `${getLibraryContainerApiUrl(containerId)}children/?published=${published}`
+  + (courseId ? `&course_id=${encodeURIComponent(courseId)}` : '');
 /**
  * Get the URL for a single container hierarchy api.
  */
@@ -782,8 +789,8 @@ export interface Container {
 /**
  * Get the container metadata.
  */
-export async function getContainerMetadata(containerId: string): Promise<Container> {
-  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerApiUrl(containerId));
+export async function getContainerMetadata(containerId: string, courseId?: string): Promise<Container> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerApiUrl(containerId, courseId));
   return camelCaseObject(data);
 }
 
@@ -824,9 +831,10 @@ export async function restoreContainer(containerId: string) {
 export async function getLibraryContainerChildren<ChildType = LibraryBlockMetadata | Container>(
   containerId: string,
   published: boolean = false,
+  courseId?: string,
 ): Promise<ChildType[]> {
   const { data } = await getAuthenticatedHttpClient().get(
-    getLibraryContainerChildrenApiUrl(containerId, published),
+    getLibraryContainerChildrenApiUrl(containerId, published, courseId),
   );
   return camelCaseObject(data);
 }
