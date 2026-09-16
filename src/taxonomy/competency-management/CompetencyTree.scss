@@ -1,13 +1,9 @@
-// Scoped styling for the read-only Competency Management page's nested-list
-// tree (a page-local `<ul>/<li>` renderer, not a table). Scoped under
-// `.competency-tree` so nothing here reaches the existing, unrelated
-// `/taxonomy/:taxonomyId` page.
+// Scoped under `.competency-tree` so this nested-list tree's styling doesn't
+// reach the unrelated `/taxonomy/:taxonomyId` page.
 //
-// This file is imported directly from `CompetencyTree.tsx`, so it compiles as
-// its own root stylesheet rather than through `src/index.scss` (where
-// `CourseSequence.scss` gets its custom-media names from, via that file's own
-// `@import` chain). `postcss-custom-media` only resolves names declared in
-// the same compiled output, so this file needs its own `@use` below.
+// Imported directly from `CompetencyTree.tsx` rather than through
+// `src/index.scss`, so `postcss-custom-media` needs its own `@use` below to
+// resolve the breakpoint name used further down.
 @use "@openedx/paragon/styles/css/core/custom-media-breakpoints.css";
 
 .competency-tree {
@@ -66,23 +62,17 @@
     letter-spacing: normal;
   }
 
-  // Sits on this page's own light-grey background, not the white container
-  // below it - reuses the exact custom property `bg-light-400` resolves to.
+  // Distinct from `&__container`'s white background below it.
   &__toolbar {
     background-color: var(--pgn-color-light-400);
-    // Bootstrap's `p-4` conflated two separate Figma measurements: a 24px
-    // vertical gap to `.competency-tree__container` below (kept, via
-    // top/bottom padding) and a 24px horizontal inset that pushed the
-    // button off the container's right edge below it - Figma has them
-    // flush, so left/right padding is zeroed instead.
+    // Figma has the button flush with the container's right edge, so
+    // left/right padding is zeroed rather than using Bootstrap's `p-4`.
     padding: 24px 0;
   }
 
-  // The single outer boundary holding the root row and every group/leaf
-  // inside one container, matching Figma. A plain `<div>` rather than
-  // Paragon's `Card`, since `Card`'s own visible outline is entirely a
-  // `box-shadow` (its Bootstrap `.card` border is zeroed) - a plain `<div>`
-  // is simpler and gives full control over that same look.
+  // A plain `<div>` rather than Paragon's `Card`, since `Card`'s own visible
+  // outline is entirely a `box-shadow` (its Bootstrap `.card` border is
+  // zeroed) - simpler to just control that look directly.
   &__container {
     background-color: #FFFFFF;
     border: 1px solid $line-color;
@@ -105,12 +95,11 @@
     }
   }
 
-  // Base row look: white, bordered, rounded "pill" - this is the leaf style
-  // and the default for every row; a row with children flattens back to
-  // its envelope's fill via `.competency-group > .competency-row` below.
-  // The border is a uniform 1px on every side including the left, same as
-  // Figma's own unselected-row look. `position: relative` anchors the
-  // selected-row accent overlay below (`::before`, scoped to leaf rows only).
+  // Base row look: white, bordered, rounded "pill" - the leaf style and the
+  // default for every row; a row with children flattens back to its
+  // envelope's fill via `.competency-group > .competency-row` below.
+  // `position: relative` anchors the selected-row accent overlay's
+  // `::before` below.
   .competency-row {
     position: relative;
     display: flex;
@@ -133,13 +122,9 @@
       width: $disclosure-icon-size;
       height: $disclosure-icon-size;
       // Grows the hit area to the WCAG 24px minimum, then cancels that
-      // growth's effect on the row's layout with matching negative margins
-      // on three sides, so the glyph and the 25px label inset don't move.
-      // The right margin is left at 0, so the 4px right padding above stays
-      // uncancelled and provides the icon-to-label gap, replacing the `mr-1`
-      // utility this page's disclosure button doesn't apply
-      // (`ExpandCollapseIconButton`'s `!important` couldn't otherwise be
-      // overridden here).
+      // growth's effect on layout with matching negative margins on three
+      // sides so the glyph and the 25px label inset don't move. The right
+      // margin is left uncancelled, providing the icon-to-label gap.
       padding: $disclosure-hit-area-inset;
       margin: (-$disclosure-hit-area-inset) 0 (-$disclosure-hit-area-inset) (-$disclosure-hit-area-inset); // top right bottom left
 
@@ -151,15 +136,12 @@
     }
   }
 
-  // Selected-row highlight (`.competency-row--selected`/`aria-selected` can
-  // land on a leaf or a group header row alike, since every row is
-  // selectable - see `CompetencyTreeItem.tsx`, though the accent below is
-  // scoped to leaf rows only - see the note further down): a pale-blue fill,
-  // matching Figma. Reuses the exact `#F0F6FA` literal
-  // `../course-search/CourseSearchBrowse.scss`'s own `&__section-label`
-  // already uses for its own pale-blue fill. Group headers don't get this
-  // either - see the note above `.competency-group > .competency-row` for
-  // why the specificity there suppresses it.
+  // Selected-row highlight: a pale-blue fill, matching Figma, reusing the
+  // exact `#F0F6FA` literal `../course-search/CourseSearchBrowse.scss`'s own
+  // `&__section-label` already uses. Applies to a leaf or a group header row
+  // alike - see the explicit `.competency-group > .competency-row--selected`
+  // override further down for why a group header needs its own rule at
+  // matching specificity to actually get this.
   .competency-row--selected {
     background-color: #F0F6FA;
   }
@@ -169,17 +151,11 @@
   // side (see the base rule above), and a `border-left` thicker than that
   // creates a visibly notched corner where the two different border widths
   // meet the shared `border-radius` arc - confirmed live, not just
-  // theoretical. An independently-rounded overlay avoids that entirely,
-  // since it's a plain filled shape competing with nothing at the corner.
-  // `top`/`bottom`/`left: -1px` extends it 1px past the row's own padding
-  // edge to fully cover the row's own border on those three sides, flush
-  // with the row's true outer edge. Reuses the same `#006DAA` literal the
-  // `.badge-info` override above already uses, for consistency. Scoped to
-  // `li:not(.competency-group) > .competency-row--selected` (leaf rows only,
-  // the same selector `padding-left: 4px` below already uses) rather than
-  // the bare `.competency-row--selected`, so this overlay is never generated
-  // for a selected group header at all.
-  li:not(.competency-group) > .competency-row--selected::before {
+  // theoretical. Applies to a leaf or a group header row alike (the square-
+  // corner override right below squares it off again for a group row).
+  // Reuses the same `#006DAA` literal the `.badge-info` override above
+  // already uses.
+  .competency-row--selected::before {
     content: '';
     position: absolute;
     top: -1px;
@@ -188,6 +164,13 @@
     width: 6px;
     background-color: #006DAA;
     border-radius: $border-radius 0 0 $border-radius;
+  }
+
+  // A group row has square corners everywhere else (see
+  // `.competency-group > .competency-row`'s own `border-radius: 0` below),
+  // so its accent bar should be square too, not rounded like a leaf's.
+  .competency-group > .competency-row--selected::before {
+    border-radius: 0;
   }
 
   // The taxonomy-root row is the single top item of the outer container:
@@ -202,12 +185,10 @@
     margin-bottom: 12px + $disclosure-hit-area-inset;
   }
 
-  // Any node with children is a "group": one grey envelope around itself -
-  // its header row plus its whole rendered `<ul>` of children, not just the
-  // header. Keyed off `.competency-group` (added by `CompetencyTreeItem`
-  // from the same `hasChildren` check that decides whether to render a
-  // nested `<ul>`), so this recurses to any depth: a child that's itself a
-  // group gets its own envelope inset inside this one.
+  // Any node with children is a "group": one grey envelope wrapping its
+  // header row plus its whole rendered `<ul>` of children. Keyed off
+  // `.competency-group` (added by `CompetencyTreeItem`'s own `hasChildren`
+  // check) rather than a depth number, so this recurses to any nesting depth.
   .competency-group {
     background-color: $group-bg-color;
     border: 1px solid $group-border-color;
@@ -218,19 +199,18 @@
   // A group's own header row sits flat on its envelope's fill instead of
   // the white/bordered leaf look - only true leaves keep that from the
   // base `.competency-row` rule above.
-  //
-  // This also intentionally means a selected group header does NOT get the
-  // selected-leaf look: `.competency-group > .competency-row`'s own
-  // `background-color: transparent; border: none;` (two classes) is more
-  // specific than the single-class `.competency-row--selected` above, so it
-  // wins the cascade here and a selected group header renders identically to
-  // an unselected one. `aria-selected`/the `--selected` class still land on
-  // the DOM node either way - that's driven by `CompetencyTreeItem.tsx`, not
-  // by this stylesheet - only the visual treatment is withheld here.
   .competency-group > .competency-row {
     background-color: transparent;
     border: none;
     border-radius: 0;
+  }
+
+  // A selected group header gets the same highlight a selected leaf gets
+  // (`.competency-row--selected` above), but the two-class selector above
+  // is more specific than that single-class rule, so it needs its own
+  // override at matching specificity to win the cascade here.
+  .competency-group > .competency-row--selected {
+    background-color: #F0F6FA;
   }
 
   // Leaf rows keep the base rule's 1px border (groups/root override it to

@@ -5,6 +5,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from '@src/testUtils';
 import { getApiBaseUrl, type Course } from '@src/studio-home/data/api';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
@@ -60,13 +61,74 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
         axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
         render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
 
-        expect(await screen.findByText('Demonstrate Mastery For Test Competency')).toBeInTheDocument();
-        expect(screen.getByText('No content associated.')).toBeInTheDocument();
+        // The competency name renders inside its own `<strong>` node (see
+        // `CourseSearchBrowse.tsx`), so the full sentence isn't a single text
+        // node - check the line's own full text, then separately confirm the
+        // name within it is bolded.
+        const masteryLine = await screen.findByText(
+          (_, element) =>
+            element?.tagName.toLowerCase() === 'div'
+            && element.classList.contains('course-search-browse__associations-mastery')
+            && element.textContent === 'Demonstrate Mastery For Test Competency',
+        );
+        expect(masteryLine).toBeInTheDocument();
+        expect(within(masteryLine).getByText('Test Competency', { selector: 'strong' })).toBeInTheDocument();
+
+        // The competency name renders inside its own `<strong>` node (see
+        // `CourseSearchBrowse.tsx`), so the full sentence isn't a single text
+        // node - check the paragraph's own full text, then separately confirm
+        // the name within it is bolded.
+        const emptyStateMessage = screen.getByText(
+          (_, element) =>
+            element?.tagName.toLowerCase() === 'p'
+            && element.textContent === 'No content associated with Test Competency yet.',
+        );
+        expect(emptyStateMessage).toBeInTheDocument();
+        expect(within(emptyStateMessage).getByText('Test Competency', { selector: 'strong' })).toBeInTheDocument();
+
         expect(
-          screen.getByText('Make content selections to associate this competency with course content.'),
+          screen.getByText('Make content selections to create competency criteria associations.'),
         ).toBeInTheDocument();
       },
     );
+
+    it('renders the Competency ID badge next to the "Demonstrate Mastery For" line when externalId is set', async () => {
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
+      const competencyWithExternalId: CompetencyTreeNode = { ...activeCompetency, externalId: 'EXT-042' };
+      render(<CourseSearchBrowse activeCompetency={competencyWithExternalId} />);
+
+      // The competency name renders inside its own `<strong>` node (see
+      // `CourseSearchBrowse.tsx`), and the badge/sr-only text follow it in
+      // the same line, so a plain full-text match no longer applies here -
+      // check the line starts with the expected sentence instead.
+      await screen.findByText(
+        (_, element) =>
+          element?.tagName.toLowerCase() === 'div'
+          && element.classList.contains('course-search-browse__associations-mastery')
+          && !!element.textContent?.startsWith('Demonstrate Mastery For Test Competency'),
+      );
+
+      expect(screen.getByText('EXT-042')).toBeInTheDocument();
+      expect(screen.getByText('EXT-042')).toHaveAttribute('aria-hidden', 'true');
+      expect(screen.getByText('Competency ID: EXT-042')).toBeInTheDocument();
+    });
+
+    it('renders no Competency ID badge when externalId is falsy', async () => {
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
+      render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+
+      // The competency name renders inside its own `<strong>` node (see
+      // `CourseSearchBrowse.tsx`), so the full sentence isn't a single text
+      // node - match on the line's own full text instead.
+      await screen.findByText(
+        (_, element) =>
+          element?.tagName.toLowerCase() === 'div'
+          && element.classList.contains('course-search-browse__associations-mastery')
+          && element.textContent === 'Demonstrate Mastery For Test Competency',
+      );
+
+      expect(screen.queryByText('Competency ID:', { exact: false })).not.toBeInTheDocument();
+    });
 
     it('renders course rows once the request resolves, and paginates on page-button click', async () => {
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()], 2));
@@ -151,6 +213,31 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       const requestsSinceTyping = axiosMock.history.get.slice(requestCountBeforeTyping);
       expect(requestsSinceTyping).toHaveLength(1);
       expect(requestsSinceTyping[0].params).toMatchObject({ search: 'physics', page: 1 });
+    });
+
+    it('keeps an active search filter in the request when only the page changes', async () => {
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()], 3));
+      render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+      await screen.findByText('Intro to Testing');
+
+      const searchBox = screen.getByRole('searchbox');
+      fireEvent.change(searchBox, { target: { value: 'physics' } });
+      act(() => {
+        jest.advanceTimersByTime(400);
+      });
+      await waitFor(() => {
+        expect(lastRequestParams()).toMatchObject({ search: 'physics', page: 1 });
+      });
+      // The request firing (checked above) doesn't mean the response has
+      // been processed and re-rendered yet - wait for the page controls
+      // themselves, so the click below lands once they're actually there.
+      const pageTwoButton = await screen.findByRole('button', { name: 'Page 2' });
+
+      // Changing the page alone must not drop the still-active search filter.
+      fireEvent.click(pageTwoButton);
+      await waitFor(() => {
+        expect(lastRequestParams()).toMatchObject({ search: 'physics', page: 2 });
+      });
     });
 
     it('sends start_date_on_or_after when a start date is picked in the range calendar, and resets the page back to 1', async () => {

@@ -10,6 +10,7 @@ import {
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  Badge,
   Button,
   IconButton,
   Pagination,
@@ -77,19 +78,12 @@ interface DateRangeTriggerProps {
  * Trigger button rendered in place of react-datepicker's default `<input>`
  * for the course start-date range filter, via `<DatePicker customInput={...}>`.
  *
- * react-datepicker's `customInput` mechanism clones whatever element is
- * passed and always overwrites its `value` prop with the picker's own
- * formatted string - once a full range is picked, that's the wide
- * "MM/DD/YYYY - MM/DD/YYYY" text, which overflows a control sized for a
- * short label. This component sidesteps that by never reading `props.value`
- * at all: it always renders the fixed `label` text itself, and uses the
- * separately-controlled `hasSelection` prop (not the injected value) to show
- * that something is picked. `forwardRef` is required because react-datepicker
- * attaches a ref to the trigger for popup positioning; only `onClick` (to
- * open the calendar) and `className` (for shared box styling) are forwarded
- * from the props react-datepicker injects - a native `<button>` already
- * handles keyboard activation (Enter/Space) on its own, so the picker's own
- * focus/blur/keydown handlers aren't needed here.
+ * react-datepicker's `customInput` mechanism always overwrites the injected
+ * `value` prop with its own formatted string, which overflows a control sized
+ * for a short label once a full range is picked - so this component ignores
+ * `props.value` entirely and shows the picked state via `hasSelection`
+ * instead. `forwardRef` is required because react-datepicker attaches a ref
+ * to the trigger for popup positioning.
  */
 const DateRangeTrigger = forwardRef<HTMLButtonElement, DateRangeTriggerProps>(
   ({
@@ -283,14 +277,26 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
           {intl.formatMessage(messages.associationsSectionLabel)}
         </div>
         <div className="course-search-browse__associations-mastery">
-          {intl.formatMessage(messages.demonstrateMasteryForLabel, { competencyName: activeCompetency.value })}
+          {intl.formatMessage(messages.demonstrateMasteryForLabel, {
+            competencyName: <strong>{activeCompetency.value}</strong>,
+          })}
+          {activeCompetency.externalId && (
+            <>
+              <span className="sr-only">
+                {intl.formatMessage(messages.competencyIdAccessibleLabel, { externalId: activeCompetency.externalId })}
+              </span>
+              <Badge variant="info" className="competency-row__badge ml-2" aria-hidden="true">
+                {activeCompetency.externalId}
+              </Badge>
+            </>
+          )}
         </div>
         <div className="course-search-browse__associations-empty-state">
-          <p>{intl.formatMessage(messages.noAssociationsMessage)}</p>
-          {
-            /* Placeholder copy: this exact tail wording isn't confirmed from Figma (the screenshot was cut
-              off) - update it once the actual text layer is confirmed. */
-          }
+          <p>
+            {intl.formatMessage(messages.noAssociationsMessage, {
+              competencyName: <strong>{activeCompetency.value}</strong>,
+            })}
+          </p>
           <p>{intl.formatMessage(messages.noAssociationsPromptMessage)}</p>
         </div>
       </div>

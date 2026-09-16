@@ -158,17 +158,13 @@ describe('<CompetencyAssociationsPanel />', () => {
     );
     await screen.findByText(taxonomyName);
 
-    // `.pgn__hstack`'s own CSS sets `align-items: center`. Left as-is, that
-    // vertically centers whichever column is shorter against the taller one
-    // (e.g. the course-search column before any course row is expanded)
-    // instead of the two columns starting flush at the same top, which is
-    // how the original raw flexbox `div` (no `align-items` override, so the
-    // default `stretch`) behaved. `alignItems: 'stretch'` is set inline on
-    // the `Stack` specifically to override that class rule and restore the
-    // original behavior.
+    // `.pgn__hstack`'s own CSS sets `align-items: center`, which would
+    // vertically center whichever column is shorter against the taller one.
+    // The `align-items-stretch` utility class overrides that so the two
+    // columns start flush at the same top instead.
     const hstack = container.querySelector('.pgn__hstack') as HTMLElement | null;
     expect(hstack).not.toBeNull();
-    expect(hstack?.style.alignItems).toBe('stretch');
+    expect(hstack).toHaveClass('align-items-stretch');
   });
 
   it('gives the tree the full row width and renders no right-hand column before any competency is selected', async () => {
@@ -194,15 +190,10 @@ describe('<CompetencyAssociationsPanel />', () => {
   });
 
   it('keeps the tree\'s own expand/collapse state when selecting a competency mounts the right panel', async () => {
-    // Regression test for the bug described in `CompetencyAssociationsPanel.tsx`:
-    // a naive fix that only wrapped the tree in `ResizableBox` once something
-    // is selected would move `CompetencyTree` to a different position in the
-    // element tree between the two states, and React would remount it -
-    // silently discarding its own local `expandedIds` state right when the
-    // user selects a competency. This test expands one branch of the tree by
-    // hand (not "Expand All", which would always re-expand everything and so
-    // couldn't tell a remount apart from a correct re-render), then selects a
-    // leaf and checks the expanded branch is still expanded afterward.
+    // Regression test: remounting `CompetencyTree` would reset its local
+    // `expandedIds` state. Expands one branch by hand (not "Expand All",
+    // which would always re-expand everything regardless) so a remount is
+    // distinguishable from a correct re-render.
     render(
       <ResponsiveContext.Provider value={{ width: breakpoints.large.minWidth }}>
         <CompetencyAssociationsPanel taxonomyId={taxonomyId} taxonomyName={taxonomyName} />
@@ -226,7 +217,9 @@ describe('<CompetencyAssociationsPanel />', () => {
     // If `CompetencyTree` had been remounted when the right panel appeared,
     // its `expandedIds` state would have reset to its initial (root-only)
     // value, and "Leaf A1a" - only reachable through "Group A1" staying
-    // expanded - would no longer be in the DOM.
-    expect(screen.getByText('Leaf A1a')).toBeInTheDocument();
+    // expanded - would no longer be in the DOM. Scoped to the tree's own row
+    // label, since the right panel's associations empty state now also
+    // names the competency (in a `<strong>`, not this class).
+    expect(screen.getByText('Leaf A1a', { selector: '.competency-row__label' })).toBeInTheDocument();
   });
 });
