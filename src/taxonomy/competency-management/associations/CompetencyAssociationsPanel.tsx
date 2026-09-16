@@ -4,6 +4,7 @@ import { Col, Row, Stack } from '@openedx/paragon';
 
 import { ResizableBox } from '@src/generic/resizable/Resizable';
 import { useIsDesktop } from '@src/utils';
+import { CompetencyAssociationsProvider } from '../CompetencyAssociationsContext';
 import CompetencyTree, { type CompetencyTreeNode } from '../CompetencyTree';
 import { CourseSearchBrowse } from '../course-search';
 
@@ -54,7 +55,12 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
         </ResizableBox>
         {selectedCompetency && (
           <div className="flex-grow-1">
-            <CourseSearchBrowse activeCompetency={selectedCompetency} />
+            <CompetencyAssociationsProvider
+              tagId={Number(selectedCompetency.id)}
+              competencyExternalId={selectedCompetency.externalId ?? null}
+            >
+              <CourseSearchBrowse activeCompetency={selectedCompetency} />
+            </CompetencyAssociationsProvider>
           </div>
         )}
       </Stack>
@@ -68,7 +74,12 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
       </Col>
       {selectedCompetency && (
         <Col xs={12} lg={8}>
-          <CourseSearchBrowse activeCompetency={selectedCompetency} />
+          <CompetencyAssociationsProvider
+            tagId={Number(selectedCompetency.id)}
+            competencyExternalId={selectedCompetency.externalId ?? null}
+          >
+            <CourseSearchBrowse activeCompetency={selectedCompetency} />
+          </CompetencyAssociationsProvider>
         </Col>
       )}
     </Row>

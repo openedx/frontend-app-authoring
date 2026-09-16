@@ -7,6 +7,7 @@ import {
   userEvent,
   within,
 } from '@src/testUtils';
+import { MockCompetencyAssociationsProvider } from '../testHelpers';
 import CourseOutlineSubtree from './CourseOutlineSubtree';
 
 let axiosMock;
@@ -75,6 +76,17 @@ const allUngradedOutline = buildOutlineIndex({
 
 const noSubsectionsOutline = buildOutlineIndex([]);
 
+// `CourseOutlineSubtree` renders `SubsectionRow`, which reads
+// `CompetencyAssociationsContext` for the already-associated marking and
+// the select control - these tests care about the outline rendering
+// itself, not that data layer, so a lightly-mocked provider is enough.
+const renderSubtree = () =>
+  render(
+    <MockCompetencyAssociationsProvider>
+      <CourseOutlineSubtree courseId={courseId} />
+    </MockCompetencyAssociationsProvider>,
+  );
+
 describe('<CourseOutlineSubtree />', () => {
   beforeEach(() => {
     ({ axiosMock } = initializeMocks());
@@ -82,14 +94,14 @@ describe('<CourseOutlineSubtree />', () => {
 
   it('renders a loading state while the outline request is pending', () => {
     axiosMock.onGet(outlineApiUrl).reply(() => new Promise(() => {}));
-    render(<CourseOutlineSubtree courseId={courseId} />);
+    renderSubtree();
 
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('renders a scoped inline error, not the panel-level error, when the outline request fails', async () => {
     axiosMock.onGet(outlineApiUrl).reply(500);
-    render(<CourseOutlineSubtree courseId={courseId} />);
+    renderSubtree();
 
     const error = await screen.findByText('There was a problem loading this course\'s outline.');
     expect(error).toBeInTheDocument();
@@ -102,7 +114,7 @@ describe('<CourseOutlineSubtree />', () => {
     async () => {
       const user = userEvent.setup();
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      render(<CourseOutlineSubtree courseId={courseId} />);
+      renderSubtree();
 
       expect(await screen.findByText('Section 1')).toBeInTheDocument();
       expect(screen.getByText('Section 2')).toBeInTheDocument();
@@ -131,7 +143,7 @@ describe('<CourseOutlineSubtree />', () => {
     async () => {
       const user = userEvent.setup();
       axiosMock.onGet(outlineApiUrl).reply(200, partiallyGradedOutline);
-      render(<CourseOutlineSubtree courseId={courseId} />);
+      renderSubtree();
 
       expect(await screen.findByText('Section 1')).toBeInTheDocument();
       const section2Header = screen.getByText('Section 2');
@@ -157,7 +169,7 @@ describe('<CourseOutlineSubtree />', () => {
       + 'subsection is ungraded',
     async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, allUngradedOutline);
-      render(<CourseOutlineSubtree courseId={courseId} />);
+      renderSubtree();
 
       expect(await screen.findByText('This course has no gradeable subsections.')).toBeInTheDocument();
       expect(screen.queryByText('Section 1')).not.toBeInTheDocument();
@@ -167,7 +179,7 @@ describe('<CourseOutlineSubtree />', () => {
 
   it('renders the whole-course no-gradeable-subsections message when there are no subsections at all', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, noSubsectionsOutline);
-    render(<CourseOutlineSubtree courseId={courseId} />);
+    renderSubtree();
 
     expect(await screen.findByText('This course has no gradeable subsections.')).toBeInTheDocument();
   });
@@ -175,7 +187,7 @@ describe('<CourseOutlineSubtree />', () => {
   it('does nothing when a section with no graded subsections is clicked', async () => {
     const user = userEvent.setup();
     axiosMock.onGet(outlineApiUrl).reply(200, partiallyGradedOutline);
-    render(<CourseOutlineSubtree courseId={courseId} />);
+    renderSubtree();
 
     const header = await screen.findByText('Section 2');
     await user.click(header);
@@ -191,7 +203,7 @@ describe('<CourseOutlineSubtree />', () => {
       + 'one request in total',
     async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      const { unmount } = render(<CourseOutlineSubtree courseId={courseId} />);
+      const { unmount } = renderSubtree();
 
       await screen.findByText('Section 1');
       expect(axiosMock.history.get).toHaveLength(1);
@@ -201,7 +213,7 @@ describe('<CourseOutlineSubtree />', () => {
       // staleTime. With `refetchOnMount: false`, this must serve the cached
       // data without firing a second request.
       unmount();
-      render(<CourseOutlineSubtree courseId={courseId} />);
+      renderSubtree();
 
       await screen.findByText('Section 1');
       expect(axiosMock.history.get).toHaveLength(1);

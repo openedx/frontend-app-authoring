@@ -47,11 +47,14 @@ const CompetencyTreeItem = ({
   // `externalId: ''`), so use a truthiness check rather than `!== null`.
   const { externalId } = node;
 
-  // Every row is selectable, group or leaf, as long as a selection handler was
-  // passed down - a group row keeps its own separate expand/collapse control
-  // (see `ExpandCollapseIconButton`, which stops its click and keydown from
-  // also reaching this row's own `onClick`/`onKeyDown` below).
-  const isSelectable = !!onSelectCompetency;
+  // Only a leaf competency is selectable - a bottom-tier or higher group
+  // node is expand/collapse-only, matching the CBE model where a parent
+  // competency's mastery rolls up from its children rather than being
+  // directly associated. A group row keeps its own separate expand/collapse
+  // control regardless (see `ExpandCollapseIconButton`, which stops its
+  // click and keydown from also reaching this row's own `onClick`/
+  // `onKeyDown` below).
+  const isSelectable = !!onSelectCompetency && !hasChildren;
   const isSelected = isSelectable && selectedCompetencyId != null && nodeId === selectedCompetencyId;
 
   const handleSelect = () => {

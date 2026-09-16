@@ -5,10 +5,13 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from '@src/testUtils';
 import { getApiBaseUrl, type Course } from '@src/studio-home/data/api';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
+import { CompetencyAssociationsProvider } from '../CompetencyAssociationsContext';
+import { apiUrls as competencyManagementApiUrls } from '../data/api';
 import type { CompetencyTreeNode } from '../CompetencyTree';
 import CourseRow from './CourseRow';
 import CourseSearchBrowse from './CourseSearchBrowse';
@@ -37,7 +40,33 @@ const buildResponse = (courses: Course[], numPages: number = 1) => ({
   count: courses.length,
 });
 
-const lastRequestParams = () => axiosMock.history.get[axiosMock.history.get.length - 1].params;
+// Scoped to the courses-list endpoint specifically: with the real
+// `CompetencyAssociationsProvider` now mounted too, `axiosMock.history.get`
+// also holds its own (paramless) requests, so the plain "last GET" this
+// helper used to mean no longer identifies a courses-list request.
+const lastRequestParams = () => {
+  const courseRequests = axiosMock.history.get.filter((req) => req.url === coursesApiUrl);
+  return courseRequests[courseRequests.length - 1].params;
+};
+
+// `CourseSearchBrowse` mounts `CriteriaAssociationsSection`, which reads
+// `CompetencyAssociationsContext` - the real provider is used here (not a
+// lightly-mocked one) since `beforeEach` below already mocks its two HTTP
+// requests to the empty-associations shape, which the first test asserts
+// on directly.
+const renderCourseSearchBrowse = () =>
+  render(
+    <CompetencyAssociationsProvider tagId={Number(activeCompetency.id)} competencyExternalId={null}>
+      <CourseSearchBrowse activeCompetency={activeCompetency} />
+    </CompetencyAssociationsProvider>,
+  );
+
+const renderCourseRow = (course: Course) =>
+  render(
+    <CompetencyAssociationsProvider tagId={Number(activeCompetency.id)} competencyExternalId={null}>
+      <CourseRow course={course} />
+    </CompetencyAssociationsProvider>,
+  );
 
 describe('<CourseSearchBrowse /> and <CourseRow />', () => {
   beforeAll(() => {
@@ -46,6 +75,15 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
   beforeEach(() => {
     ({ axiosMock } = initializeMocks());
+    // The associations section (`CriteriaAssociationsSection`/`CourseGroupList`)
+    // mounts alongside the course list below it and fires its own two
+    // requests - mocked here, to the empty-associations shape, so every
+    // test in this file that doesn't care about the associations section
+    // isn't left with it stuck in a loading/error state of its own.
+    axiosMock.onGet(competencyManagementApiUrls.competencyCriteriaGroups(Number(activeCompetency.id)))
+      .reply(200, { groups: [], criteria: [] });
+    axiosMock.onGet(competencyManagementApiUrls.defaultCompetencyRuleProfile())
+      .reply(200, { id: 1, rule_type: 'grade', rule_payload: { op: 'gte', value: 0.7, scale: 'percent' } });
   });
 
   afterAll(() => {
@@ -54,14 +92,14 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
   describe('<CourseSearchBrowse />', () => {
     it(
-      'renders the active competency\'s name in the "Demonstrate Mastery For" line, and the static '
-        + 'associations empty state',
+      'renders the active competency\'s name in the "Demonstrate Mastery For" line, and the '
+        + 'empty-associations state once the associations queries resolve',
       async () => {
         axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
-        render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+        renderCourseSearchBrowse();
 
         expect(await screen.findByText('Demonstrate Mastery For Test Competency')).toBeInTheDocument();
-        expect(screen.getByText('No content associated.')).toBeInTheDocument();
+        expect(await screen.findByText('No content associated.')).toBeInTheDocument();
         expect(
           screen.getByText('Make content selections to associate this competency with course content.'),
         ).toBeInTheDocument();
@@ -70,9 +108,16 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
     it('renders course rows once the request resolves, and paginates on page-button click', async () => {
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()], 2));
-      render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+      renderCourseSearchBrowse();
 
-      expect(screen.getByRole('status')).toBeInTheDocument();
+      // Scoped to the "Courses & Content" list itself: the associations
+      // section above it (mocked in `beforeEach`) briefly shows its own
+      // loading spinner too, so an unscoped `getByRole('status')` would see
+      // two.
+      const coursesContainer = screen.getByText('Courses & Content').closest(
+        '.course-search-browse__container',
+      ) as HTMLElement;
+      expect(within(coursesContainer).getByRole('status')).toBeInTheDocument();
       expect(await screen.findByText('Intro to Testing')).toBeInTheDocument();
 
       fireEvent.click(screen.getByRole('button', { name: 'Page 2' }));
@@ -84,7 +129,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
     it('renders an inline error, not the empty state, when the request fails', async () => {
       axiosMock.onGet(coursesApiUrl).reply(500);
-      render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+      renderCourseSearchBrowse();
 
       expect(await screen.findByText('There was a problem loading courses. Please try again.'))
         .toBeInTheDocument();
@@ -94,7 +139,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
     it('shows distinct empty-result messages for no search vs. a search value, and clears the search on demand', async () => {
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([]));
-      render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+      renderCourseSearchBrowse();
 
       expect(await screen.findByText('You do not have access to any courses.')).toBeInTheDocument();
       expect(screen.queryByRole('button', { name: 'Clear search' })).not.toBeInTheDocument();
@@ -118,7 +163,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
     it('debounces the search field by 400ms and resets the page back to 1', async () => {
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()], 3));
-      render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+      renderCourseSearchBrowse();
       await screen.findByText('Intro to Testing');
 
       // Move off page 1 first, so the reset back to page 1 below is observable.
@@ -155,7 +200,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
     it('sends start_date_on_or_after when a start date is picked in the range calendar, and resets the page back to 1', async () => {
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()], 3));
-      render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+      renderCourseSearchBrowse();
       await screen.findByText('Intro to Testing');
 
       // Move off page 1 first, so the reset back to page 1 below is observable.
@@ -189,7 +234,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
     it('sends both start_date_on_or_after and start_date_on_or_before once an end date is also picked', async () => {
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()], 3));
-      render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+      renderCourseSearchBrowse();
       await screen.findByText('Intro to Testing');
 
       fireEvent.click(screen.getByLabelText('Start Date'));
@@ -215,7 +260,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
     it('omits start_date_on_or_after and start_date_on_or_before from the request when neither date is set', async () => {
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
-      render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+      renderCourseSearchBrowse();
       await screen.findByText('Intro to Testing');
 
       // The mock adapter records the params object exactly as handed to axios,
@@ -246,7 +291,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
           ],
         }),
       );
-      render(<CourseRow course={course} />);
+      renderCourseRow(course);
 
       expect(screen.queryByText(outlineSectionHeading)).not.toBeInTheDocument();
 

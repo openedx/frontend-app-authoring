@@ -28,6 +28,7 @@ import { useStudioHomeCoursesV2 } from '@src/studio-home/data/apiHooks';
 import { convertToStringFromDate } from '@src/utils';
 import type { CompetencyTreeNode } from '../CompetencyTree';
 import CourseRow from './CourseRow';
+import CriteriaAssociationsSection from './CriteriaAssociationsSection';
 import messages from './messages';
 // @ts-ignore
 import './CourseSearchBrowse.scss';
@@ -278,22 +279,7 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
           </div>
         </Stack>
       </div>
-      <div className="course-search-browse__associations">
-        <div className="course-search-browse__associations-label">
-          {intl.formatMessage(messages.associationsSectionLabel)}
-        </div>
-        <div className="course-search-browse__associations-mastery">
-          {intl.formatMessage(messages.demonstrateMasteryForLabel, { competencyName: activeCompetency.value })}
-        </div>
-        <div className="course-search-browse__associations-empty-state">
-          <p>{intl.formatMessage(messages.noAssociationsMessage)}</p>
-          {
-            /* Placeholder copy: this exact tail wording isn't confirmed from Figma (the screenshot was cut
-              off) - update it once the actual text layer is confirmed. */
-          }
-          <p>{intl.formatMessage(messages.noAssociationsPromptMessage)}</p>
-        </div>
-      </div>
+      <CriteriaAssociationsSection competencyName={activeCompetency.value} />
       <div className="course-search-browse__container">
         <div className="course-search-browse__section-label">
           {intl.formatMessage(messages.coursesAndContentLabel)}

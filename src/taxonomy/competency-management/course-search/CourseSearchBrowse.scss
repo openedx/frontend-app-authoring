@@ -172,9 +172,9 @@
     font-weight: 700;
   }
 
-  // Static empty-state body under `&__associations-mastery` - always shown,
-  // since there's no backend endpoint yet to list a competency's actual
-  // associations (see `CourseSearchBrowse.tsx`).
+  // Empty-state body under `&__associations-mastery`, shown by
+  // `CourseGroupList` only when the selected competency has no visible
+  // course-level groups (see `criteria-groups/CourseGroupList.tsx`).
   &__associations-empty-state {
     margin-top: 8px;
   }
@@ -269,11 +269,49 @@
     padding: 10px 8px;
     text-align: left;
     // Paragon's `.btn` base class sets `display: inline-flex` with
-    // `justify-content: center` - since this rule's only content is a single
-    // text-node child, that flex `justify-content` (not `text-align`) is what
-    // actually controls its visual position, so it has to be overridden
-    // explicitly. `text-align: left` above is kept too, in case a future
-    // multi-line label needs it, but is a no-op for today's single line.
-    justify-content: flex-start;
+    // `justify-content: center` - since this row now has two children (the
+    // label, and the already-associated badge/select-icon wrapper below),
+    // `space-between` is what actually pushes them to opposite edges;
+    // `text-align: left` above is kept for the label's own text alignment
+    // within its half.
+    justify-content: space-between;
+  }
+
+  // Wraps the already-associated badge and/or the select-control icon on
+  // the right of a subsection row - never both empty, since a row that's
+  // neither associated nor selectable renders this as an empty span.
+  &__subsection-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  // Figma specifies this badge as the same color token ("info/base",
+  // #006DAA on white text) `../CompetencyTree.scss`'s own Competency ID
+  // badge retints `--pgn-color-badge-bg-info`/`--pgn-color-badge-text-info`
+  // for - reused here rather than a second, slightly different literal,
+  // since this app's theme resolves Paragon's own `variant="info"` to teal
+  // (see that file's own comment for how this was confirmed). Scoped here
+  // too since this badge lives in a different part of the DOM tree than
+  // `.competency-tree`'s own copy of the same override.
+  .badge-info {
+    --pgn-color-badge-bg-info: #006DAA;
+    --pgn-color-badge-text-info: #FFFFFF;
+  }
+
+  &__subsection-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 6px;
+  }
+
+  &__subsection-associated-icon,
+  &__subsection-select-icon {
+    color: #006DAA;
+  }
+
+  &__subsection-associated-icon {
+    margin-right: 6px;
   }
 }

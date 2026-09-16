@@ -95,8 +95,8 @@ const messages = defineMessages({
   noAssociationsMessage: {
     id: 'course-authoring.competency-management.course-search.no-associations-message',
     defaultMessage: 'No content associated.',
-    description: 'First line of the static empty state shown in the associations block, since there is no '
-      + 'backend endpoint yet to list a competency\'s actual associations.',
+    description: 'First line of the empty state shown in the associations block when the selected competency '
+      + 'has no course content associated with it yet.',
   },
   noAssociationsPromptMessage: {
     id: 'course-authoring.competency-management.course-search.no-associations-prompt-message',

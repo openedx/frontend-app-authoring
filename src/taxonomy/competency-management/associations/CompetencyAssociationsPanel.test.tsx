@@ -110,7 +110,7 @@ describe('<CompetencyAssociationsPanel />', () => {
     expect(screen.getByRole('searchbox')).toBeInTheDocument();
   });
 
-  it('populates the right panel when a group (non-leaf) competency is selected too', async () => {
+  it('mounts no right-hand column at all when a group (non-leaf) competency is clicked', async () => {
     renderPanel();
     await screen.findByText(taxonomyName);
     fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
@@ -118,11 +118,11 @@ describe('<CompetencyAssociationsPanel />', () => {
     const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
     fireEvent.click(groupRow);
 
-    // A group row is now selectable just like a leaf row (see
-    // CompetencyTreeItem.tsx), so selecting one also mounts the right panel
-    // and fires the course-list query.
-    expect(await screen.findByRole('searchbox')).toBeInTheDocument();
-    expect(axiosMock.history.get.filter((req) => req.url === coursesApiUrl)).toHaveLength(1);
+    // A group (or higher) node is expand/collapse-only (see
+    // CompetencyTreeItem.tsx) - clicking it must not select anything, so the
+    // right panel never mounts and no course-list request ever fires.
+    expect(screen.queryByRole('searchbox')).not.toBeInTheDocument();
+    expect(axiosMock.history.get.filter((req) => req.url === coursesApiUrl)).toHaveLength(0);
   });
 
   it('preserves the right panel\'s own state when switching from one leaf competency to a different one', async () => {
