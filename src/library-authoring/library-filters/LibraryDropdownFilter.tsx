@@ -63,7 +63,7 @@ const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
 export const LibraryDropdownFilter = () => {
   const intl = useIntl();
   const [search, setSearch] = useState('');
-  const { selectedLibraries, setSelectedLibraries } = useMultiLibraryContext();
+  const { selectedLibraries, setSelectedLibraries, allLibraries } = useMultiLibraryContext();
   const [label, setLabel] = useState(intl.formatMessage(messages.librariesFilterBtnText));
   const { isPending, data } = useContentLibraryV2List({ pagination: false, search });
 
@@ -83,17 +83,19 @@ export const LibraryDropdownFilter = () => {
   };
 
   useEffect(() => {
+    if (!search) { allLibraries.current = data || []; }
+
     const baseName = intl.formatMessage(messages.librariesFilterBtnText);
     if (!selectedLibraries.length) {
       setLabel(baseName);
     } else if (selectedLibraries.length === 1) {
-      setLabel(data?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);
-    } else if (selectedLibraries.length === data?.length) {
-      setLabel(baseName);
+      setLabel(allLibraries.current?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);
+    } else if (selectedLibraries.length === allLibraries.current.length) {
+	  setLabel(baseName);
     } else if (selectedLibraries.length > 1) {
       setLabel(intl.formatMessage(messages.librariesFilterBtnCount, { count: selectedLibraries.length }));
     }
-  }, [intl, selectedLibraries, data]);
+  }, [selectedLibraries, data, allLibraries.current.length, search]);
 
   return (
     <Dropdown
@@ -113,12 +115,12 @@ export const LibraryDropdownFilter = () => {
         <Dropdown.Toggle
           id="library-filter-dropdown-toggle"
           iconBefore={Newsstand}
-          className="text-overflow text-primary-500 p-2 px-4 mr-2"
+          className="text-overflow text-primary-500 p-2 px-4"
         >
           {truncate(label, { length: 30 })}
         </Dropdown.Toggle>
       </OverlayTrigger>
-      <Dropdown.Menu className="my-1">
+      <Dropdown.Menu className="w-100">
         <SearchField
           onSubmit={handleSearch}
           onChange={handleSearch}

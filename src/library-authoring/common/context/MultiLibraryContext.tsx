@@ -1,11 +1,13 @@
 import { useStickyState } from '@src/hooks';
-import React from 'react';
+import { ContentLibrary } from '@src/library-authoring/data/api';
+import React, { useRef } from 'react';
 
 interface MultiLibraryContextProps {
   selectedLibraries: string[];
   setSelectedLibraries: React.Dispatch<React.SetStateAction<string[]>>;
   selectedCollections: string[];
   setSelectedCollections: React.Dispatch<React.SetStateAction<string[]>>;
+  allLibraries: React.MutableRefObject<ContentLibrary[]>;
 }
 
 const Context = React.createContext<MultiLibraryContextProps | undefined>(undefined);
@@ -13,6 +15,7 @@ const Context = React.createContext<MultiLibraryContextProps | undefined>(undefi
 export const MultiLibraryProvider: React.FC<{ children: React.ReactNode; }> = ({ children }) => {
   const [selectedLibraries, setSelectedLibraries] = useStickyState<string[]>([], 'outline-library-filter');
   const [selectedCollections, setSelectedCollections] = React.useState<string[]>([]);
+  const allLibraries = useRef<ContentLibrary[]>([]);
 
   React.useEffect(() => {
     if (selectedLibraries.length !== 1) {
@@ -25,11 +28,13 @@ export const MultiLibraryProvider: React.FC<{ children: React.ReactNode; }> = ({
     setSelectedLibraries,
     selectedCollections,
     setSelectedCollections,
+	allLibraries
   }), [
     selectedLibraries,
     setSelectedLibraries,
     selectedCollections,
     setSelectedCollections,
+	allLibraries
   ]);
 
   return (
@@ -48,6 +53,7 @@ export const useMultiLibraryContext = (): MultiLibraryContextProps => {
       setSelectedLibraries: () => {},
       selectedCollections: [],
       setSelectedCollections: () => {},
+	  allLibraries: { current: [] },
     };
   }
   return ctx;
