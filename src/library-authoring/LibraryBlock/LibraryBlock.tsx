@@ -19,6 +19,7 @@ interface LibraryBlockProps {
   view?: string;
   scrolling?: string;
   minHeight?: string;
+  /** Stretch the frame to its flex container instead of the height the block reports. */
   fillContainer?: boolean;
   scrollIntoView?: boolean;
   showTitle?: boolean;
