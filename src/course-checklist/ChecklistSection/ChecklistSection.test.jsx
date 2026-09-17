@@ -4,6 +4,7 @@ import {
   initializeMocks,
   render,
   screen,
+  waitFor,
   within,
 } from '@src/testUtils';
 import { getApiWaffleFlagsUrl } from '@src/data/api';
@@ -34,12 +35,62 @@ const renderComponent = (props) => {
   render(<ChecklistSection {...props} />);
 };
 
+let axiosMock;
+let validateUserPermissionsMock;
+
 describe('ChecklistSection', () => {
   beforeEach(async () => {
-    const { axiosMock } = initializeMocks();
+    ({ axiosMock, validateUserPermissionsMock } = initializeMocks());
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
       .reply(200, {});
+  });
+
+  describe('authz validation', () => {
+    const allPermissions = {
+      canManageCourseUpdates: true,
+      canEditGradingSettings: true,
+      canManageCertificates: true,
+      canEditSchedule: true,
+      canManagePagesAndResources: true,
+    };
+    const getUpdateLink = (checkId) =>
+      within(screen.getByTestId(`checklist-item-${checkId}`)).queryByTestId('update-link');
+
+    beforeEach(() => {
+      axiosMock
+        .onGet(getApiWaffleFlagsUrl(courseId))
+        .reply(200, { enable_authz_course_authoring: true });
+    });
+
+    it('renders every update link when the user can make changes on all the linked pages', async () => {
+      validateUserPermissionsMock.mockResolvedValue(allPermissions);
+      renderComponent(defaultProps);
+
+      await waitFor(() => expect(screen.getAllByTestId('update-link')).toHaveLength(5));
+      expect(getUpdateLink('proctoringEmail')).toHaveAttribute(
+        'href',
+        `/course/${courseId}/pages-and-resources/proctoring/settings`,
+      );
+    });
+
+    it.each([
+      ['welcomeMessage', 'canViewCourseUpdates', 'canManageCourseUpdates'],
+      ['gradingPolicy', 'canViewGradingSettings', 'canEditGradingSettings'],
+      ['certificate', 'canViewCertificates', 'canManageCertificates'],
+      ['courseDates', 'canViewScheduleAndDetails', 'canEditSchedule'],
+      ['proctoringEmail', 'canViewPagesAndResources', 'canManagePagesAndResources'],
+    ])('hides the %s update link with %s but without %s', async (checkId, viewPermission, updatePermission) => {
+      validateUserPermissionsMock.mockResolvedValue({
+        ...allPermissions,
+        [viewPermission]: true,
+        [updatePermission]: false,
+      });
+      renderComponent(defaultProps);
+
+      await waitFor(() => expect(screen.getAllByTestId('update-link')).toHaveLength(4));
+      expect(getUpdateLink(checkId)).not.toBeInTheDocument();
+    });
   });
 
   it('a heading using the dataHeading prop', () => {
@@ -175,7 +226,7 @@ describe('ChecklistSection', () => {
     let checklistData;
     let updateLinks;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       renderComponent(defaultProps);
 
       checklistData = testChecklistData.map((item) => ({
@@ -186,7 +237,7 @@ describe('ChecklistSection', () => {
         longDescription: messages[`${item.id}LongDescription`].defaultMessage,
       }));
 
-      updateLinks = screen.getAllByTestId('update-link');
+      updateLinks = await screen.findAllByTestId('update-link');
     });
 
     it('should display the correct icons based on completion status', () => {
