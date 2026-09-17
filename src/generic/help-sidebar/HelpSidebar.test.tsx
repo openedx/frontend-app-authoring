@@ -1,7 +1,5 @@
-import { waitFor } from '@testing-library/react';
-
 import { useCourseUserPermissions } from '@src/authz/hooks';
-import { initializeMocks, render } from '@src/testUtils';
+import { initializeMocks, render, waitFor } from '@src/testUtils';
 
 import messages from './messages';
 import { HelpSidebar } from '.';

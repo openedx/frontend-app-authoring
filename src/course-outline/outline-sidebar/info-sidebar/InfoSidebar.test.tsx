@@ -1,10 +1,15 @@
-import { fireEvent, initializeMocks, render, screen } from '@src/testUtils';
+import {
+  fireEvent,
+  initializeMocks,
+  render,
+  screen,
+  userEvent,
+} from '@src/testUtils';
 import { getApiWaffleFlagsUrl, getCourseSettingsApiUrl } from '@src/data/api';
 import type { SelectionState } from '@src/data/types';
 import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
 import { getXBlockApiUrl } from '@src/course-outline/data/api';
-import userEvent from '@testing-library/user-event';
 import { InfoSidebar } from './InfoSidebar';
 
 const mockDuplicateItem = { mutate: jest.fn() };
