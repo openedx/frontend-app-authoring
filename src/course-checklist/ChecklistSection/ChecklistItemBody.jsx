@@ -7,18 +7,14 @@ import { getConfig } from '@edx/frontend-platform';
 
 import messages from './messages';
 
-const getUpdateLinks = (courseId) => {
-  const baseUrl = getConfig().STUDIO_BASE_URL;
-
-  return {
-    welcomeMessage: `/course/${courseId}/course_info`,
-    gradingPolicy: `/course/${courseId}/settings/grading`,
-    certificate: `/course/${courseId}/certificates`,
-    courseDates: `/course/${courseId}/settings/details/#schedule`,
-    proctoringEmail: `${baseUrl}/pages-and-resources/proctoring/settings`,
-    outline: `/course/${courseId}`,
-  };
-};
+const getUpdateLinks = (courseId) => ({
+  welcomeMessage: `/course/${courseId}/course_info`,
+  gradingPolicy: `/course/${courseId}/settings/grading`,
+  certificate: `/course/${courseId}/certificates`,
+  courseDates: `/course/${courseId}/settings/details/#schedule`,
+  proctoringEmail: `/course/${courseId}/pages-and-resources/proctoring/settings`,
+  outline: `/course/${courseId}`,
+});
 
 const ChecklistItemBody = ({
   courseId,
