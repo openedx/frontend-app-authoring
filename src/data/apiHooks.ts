@@ -1,5 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { AxiosError } from 'axios';
+import { useCallback, useMemo } from 'react';
+
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { UserAgreement, UserAgreementRecord } from '@src/data/types';
@@ -150,7 +152,12 @@ export const useCourseDetails = (courseId: string) => {
 };
 
 /**
- * Create a global state function for a query.
+ * Create a global state function.
+ *
+ * This is sort of a hack for sharing state between components using React Query
+ * without actually loading data from an API. Instead of using this, please use
+ * a small context or `useSyncExternalStore`, and feel free to remove this once
+ * we've replaced the existing usage of it on the outline page.
  */
 export function createGlobalState<T>(
   queryKeyFn: (queryKeyArgs?: any) => QueryKey,
@@ -158,7 +165,7 @@ export function createGlobalState<T>(
 ) {
   return (queryKeyArgs?: any) => {
     const queryClient = useQueryClient();
-    const queryKey = queryKeyFn(queryKeyArgs);
+    const queryKey = useMemo(() => queryKeyFn(queryKeyArgs), [queryKeyArgs]);
 
     const { data } = useQuery({
       queryKey,
@@ -170,15 +177,13 @@ export function createGlobalState<T>(
       refetchIntervalInBackground: false,
     });
 
-    function setData(x: Partial<T>) {
+    const setData = useCallback((x: Partial<T>) => {
       queryClient.setQueryData(queryKey, x);
-    }
+    }, [queryClient, queryKey]);
 
-    async function resetData() {
-      await queryClient.invalidateQueries({
-        queryKey,
-      });
-    }
+    const resetData = useCallback(async () => {
+      await queryClient.invalidateQueries({ queryKey });
+    }, [queryClient, queryKey]);
 
     return { data, setData, resetData };
   };
