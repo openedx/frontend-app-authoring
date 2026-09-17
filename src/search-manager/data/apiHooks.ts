@@ -22,7 +22,7 @@ import {
 
 /**
  * Load the Meilisearch connection details from the CMS: the URL to use, the name of the course or library index, and
- * an API key specific to the current user that allows it to search all content he have permission to view.
+ * an API key specific to the current user that allows it to search all content they have permission to view.
  */
 export const useContentSearchConnection = (indexType: SearchIndexType): {
   client?: MeiliSearch;

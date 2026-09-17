@@ -358,9 +358,9 @@ describe('library api hooks', () => {
     });
 
     it.each([
-      ['lct:org:lib:unit:1', 'studio_library'],
-      ['block-v1:org+course+run+type@vertical+block@1', 'studio_course'],
-    ])('searches for %s in the %s index', async (contentId, expectedIndex) => {
+      ['lct:org:lib:unit:1', undefined, 'studio_library'],
+      ['block-v1:org+course+run+type@vertical+block@1', 'course' as const, 'studio_course'],
+    ])('searches for %s in the %s index', async (contentId, indexType, expectedIndex) => {
       jest.spyOn(searchApi, 'getContentSearchConfig').mockResolvedValue({
         url: 'http://mock.meilisearch.local',
         courseIndexName: 'studio_course',
@@ -371,9 +371,10 @@ describe('library api hooks', () => {
         overwriteRoutes: true,
       });
       const freshQueryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-      const { result } = renderHook(() => useContentFromSearchIndex([contentId]), {
-        wrapper: ({ children }) => <QueryClientProvider client={freshQueryClient}>{children}</QueryClientProvider>,
-      });
+      const { result } = renderHook(
+        () => (indexType ? useContentFromSearchIndex([contentId], indexType) : useContentFromSearchIndex([contentId])),
+        { wrapper: ({ children }) => <QueryClientProvider client={freshQueryClient}>{children}</QueryClientProvider> },
+      );
       await waitFor(() => {
         expect(result.current.status).toEqual('success');
       });
