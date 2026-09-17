@@ -5,12 +5,12 @@ import {
   act,
   fireEvent,
   screen,
+  userEvent,
   waitFor,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { courseId } from '@src/schedule-and-details/__mocks__/courseDetails';
-import { userEvent } from '@testing-library/user-event';
 import { renderCard, setupCardTestMocks } from '../__mocks__/testSetup';
 import CardHeader from './CardHeader';
 import TitleButton from './TitleButton';
@@ -460,6 +460,26 @@ describe('<CardHeader />', () => {
     const element = await screen.findByText(messages.menuProctoringLinkText.defaultMessage);
     expect(element).toBeInTheDocument();
     expect(element.getAttribute('href')).toBe(`${getConfig().STUDIO_BASE_URL}/proctoringlink`);
+  });
+
+  it('hides proctoringExamConfigurationLink when the user cannot manage pages and resources', async () => {
+    const user = userEvent.setup();
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    validateUserPermissionsMock.mockResolvedValue({
+      canEditCourseContent: true,
+      canManagePagesAndResources: false,
+    });
+    renderComponent({
+      ...cardHeaderProps,
+      proctoringExamConfigurationLink: 'proctoringlink',
+      isSequential: true,
+    });
+
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
+    await user.click(menuButton);
+
+    expect(await screen.findByText(messages.menuDuplicate.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText(messages.menuProctoringLinkText.defaultMessage)).not.toBeInTheDocument();
   });
 
   it('check if proctoringExamConfigurationLink is absolute', async () => {
