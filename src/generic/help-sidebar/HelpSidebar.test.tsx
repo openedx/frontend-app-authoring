@@ -43,6 +43,7 @@ const mockCoursePermissions = (
     canViewCourseTeam: true,
     canViewGroupConfigurations: true,
     canViewAdvancedSettings: true,
+    canManagePagesAndResources: true,
     ...permissions,
   } as unknown as ReturnType<typeof useCourseUserPermissions>);
 };
@@ -103,6 +104,19 @@ describe('HelpSidebar', () => {
       await waitFor(() => expect(queryWithoutPermission(message.defaultMessage)).toBeFalsy());
     });
 
+    it('renders the proctored exam settings link only when the user can manage pages and resources', async () => {
+      const initialProps = { ...props, proctoredExamSettingsUrl: 'http:/link-to' };
+      const message = messages.sidebarLinkToProctoredExamSettings.defaultMessage;
+      mockCoursePermissions({ canManagePagesAndResources: true });
+      const { queryByText, unmount } = renderHelpSidebar(initialProps);
+      await waitFor(() => expect(queryByText(message)).toBeTruthy());
+      unmount();
+
+      mockCoursePermissions({ canManagePagesAndResources: false });
+      const { queryByText: queryWithoutPermission } = renderHelpSidebar(initialProps);
+      await waitFor(() => expect(queryWithoutPermission(message)).toBeFalsy());
+    });
+
     it('should render the roles and permissions link instead of course team when authz is enabled', async () => {
       mockCoursePermissions({ canViewCourseTeam: true });
       const { queryByText } = renderHelpSidebar(props);
@@ -131,8 +145,9 @@ describe('HelpSidebar', () => {
         canViewCourseTeam: false,
         canViewGroupConfigurations: false,
         canViewAdvancedSettings: false,
+        canManagePagesAndResources: false,
       }, { isLoading: true });
-      const { queryByText } = renderHelpSidebar(props);
+      const { queryByText } = renderHelpSidebar({ ...props, proctoredExamSettingsUrl: 'http:/link-to' });
 
       await waitFor(() => {
         expect(queryByText(messages.sidebarLinkToScheduleAndDetails.defaultMessage)).toBeFalsy();
@@ -141,6 +156,7 @@ describe('HelpSidebar', () => {
       expect(queryByText(messages.sidebarLinkToRolesAndPermissions.defaultMessage)).toBeFalsy();
       expect(queryByText(messages.sidebarLinkToGroupConfigurations.defaultMessage)).toBeFalsy();
       expect(queryByText(messages.sidebarLinkToAdvancedSettings.defaultMessage)).toBeFalsy();
+      expect(queryByText(messages.sidebarLinkToProctoredExamSettings.defaultMessage)).toBeFalsy();
     });
   });
 });

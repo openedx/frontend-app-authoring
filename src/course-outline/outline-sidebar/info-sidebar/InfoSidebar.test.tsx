@@ -1,5 +1,5 @@
 import { fireEvent, initializeMocks, render, screen } from '@src/testUtils';
-import { getCourseSettingsApiUrl } from '@src/data/api';
+import { getApiWaffleFlagsUrl, getCourseSettingsApiUrl } from '@src/data/api';
 import type { SelectionState } from '@src/data/types';
 import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
@@ -99,6 +99,7 @@ const renderComponent = () =>
     ),
   });
 let axiosMock;
+let validateUserPermissionsMock;
 
 interface SidebarMenuConfig {
   /** Level name for test descriptions: 'Section', 'Subsection', 'Unit'. */
@@ -205,6 +206,7 @@ describe('InfoSidebar component', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
     openDeleteModal.mockClear();
     openUnlinkModal.mockClear();
     mockDuplicateItem.mutate.mockClear();
@@ -249,6 +251,24 @@ describe('InfoSidebar component', () => {
     renderComponent();
     await user.click(await screen.findByRole('tab', { name: 'Settings' }));
     expect(await screen.findByRole('link', { name: 'Proctored exam settings' })).toBeInTheDocument();
+  });
+
+  it('hides the proctored exam settings link when the user cannot manage pages and resources', async () => {
+    const user = userEvent.setup();
+    axiosMock
+      .onGet(getCourseSettingsApiUrl(courseId))
+      .reply(200, { mfeProctoredExamSettingsUrl: 'https://example.com/proctored-exam-settings' });
+    axiosMock
+      .onGet(getApiWaffleFlagsUrl(courseId))
+      .reply(200, { enable_authz_course_authoring: true });
+    validateUserPermissionsMock.mockResolvedValue({
+      canViewAdvancedSettings: true,
+      canManagePagesAndResources: false,
+    });
+    renderComponent();
+    await user.click(await screen.findByRole('tab', { name: 'Settings' }));
+    expect(await screen.findByRole('link', { name: 'Advanced settings' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Proctored exam settings' })).not.toBeInTheDocument();
   });
 
   it('renders InfoSidebar with section info', async () => {

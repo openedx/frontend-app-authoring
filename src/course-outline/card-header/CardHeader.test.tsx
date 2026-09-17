@@ -462,6 +462,25 @@ describe('<CardHeader />', () => {
     expect(element.getAttribute('href')).toBe(`${getConfig().STUDIO_BASE_URL}/proctoringlink`);
   });
 
+  it('hides proctoringExamConfigurationLink when the user cannot manage pages and resources', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    validateUserPermissionsMock.mockResolvedValue({
+      canEditCourseContent: true,
+      canManagePagesAndResources: false,
+    });
+    renderComponent({
+      ...cardHeaderProps,
+      proctoringExamConfigurationLink: 'proctoringlink',
+      isSequential: true,
+    });
+
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(menuButton));
+
+    expect(await screen.findByText(messages.menuDuplicate.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText(messages.menuProctoringLinkText.defaultMessage)).not.toBeInTheDocument();
+  });
+
   it('check if proctoringExamConfigurationLink is absolute', async () => {
     renderComponent({
       ...cardHeaderProps,
