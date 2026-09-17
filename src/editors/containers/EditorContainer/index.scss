@@ -5,7 +5,7 @@
   }
 }
 
-// Pass the fullscreen height down: flex-basis outranks h-75 and TinyMCE's inline height.
+// Fullscreen height down to TinyMCE: `flex: 1 1 0` beats `.editor-body`'s `h-75` and TinyMCE's inline height.
 .editor-modal.pgn__modal-fullscreen {
   .pgn__modal-body,
   .pgn__modal-body-content,

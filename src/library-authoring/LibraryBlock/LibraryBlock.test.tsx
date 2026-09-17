@@ -1,14 +1,14 @@
 import { initializeMocks, render, screen } from '../../testUtils';
-import { ADVANCED_EDITOR_MIN_HEIGHT } from '../../constants';
 import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
 import { LibraryBlock } from '.';
 
 const usageKey = 'lb:Org:Lib:html:block-1';
+const minHeight = '70vh';
 
 const renderBlock = (props = {}) =>
   render(
     <IframeProvider>
-      <LibraryBlock usageKey={usageKey} minHeight={ADVANCED_EDITOR_MIN_HEIGHT} {...props} />
+      <LibraryBlock usageKey={usageKey} minHeight={minHeight} {...props} />
     </IframeProvider>,
   );
 
@@ -17,11 +17,11 @@ describe('LibraryBlock', () => {
     initializeMocks();
   });
 
-  it('sizes the frame to the height the block reports', async () => {
+  it('gives the frame the requested minimum height and does not stretch it', async () => {
     renderBlock();
 
     const iframe = await screen.findByTestId('block-preview');
-    expect(iframe.style.minHeight).toBe(ADVANCED_EDITOR_MIN_HEIGHT);
+    expect(iframe.style.minHeight).toBe(minHeight);
     expect(iframe.style.flex).toBe('');
   });
 
