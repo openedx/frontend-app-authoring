@@ -89,6 +89,7 @@ const SettingsTab = () => {
     ...permissionHelpers.getCourseTeamPermissions(courseId),
     ...permissionHelpers.getGroupConfigurationsPermissions(courseId),
     ...permissionHelpers.getAdvancedSettingsPermissions(courseId),
+    ...permissionHelpers.getPagesAndResourcesPermissions(courseId),
   });
 
   return (
@@ -152,7 +153,7 @@ const SettingsTab = () => {
           isNewPage
         />
       )}
-      {proctoredExamSettingsUrl && (
+      {proctoredExamSettingsUrl && perms.canManagePagesAndResources && (
         <HelpSidebarLink
           as="span"
           pathToPage={proctoredExamSettingsUrl}
