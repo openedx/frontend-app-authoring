@@ -35,8 +35,6 @@ jest.mock('react-redux', () => ({
   }),
 }));
 
-// Mock this plugins component:
-jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
 // Always mock out the "fetch course images" endpoint:
 jest.spyOn(editorCmsApi, 'fetchCourseImages').mockImplementation(async () => ( // eslint-disable-next-line
   { data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }

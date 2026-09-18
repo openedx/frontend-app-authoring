@@ -167,6 +167,32 @@ Feature: New React XBlock Editors
 
 New React editors for the HTML, Video, and Problem XBlocks are provided here and are rendered by this MFE instead of by the XBlock's authoring view.
 
+Configuration
+-------------
+
+The rich text editor is `TinyMCE <https://www.tiny.cloud/>`_ (the open source, GPL-licensed version). Operators who have
+licensed premium TinyMCE plugins such as the Accessibility Checker (``a11ychecker``) or PowerPaste (``powerpaste``) can
+load them by adding the following to ``env.config.jsx``:
+
+* ``TINYMCE_LICENSE_KEY``: your commercial TinyMCE license key (defaults to ``gpl``).
+* ``TINYMCE_EXTERNAL_PLUGINS``: an object mapping each plugin name to the URL of its ``plugin.min.js``. The plugins are
+  loaded into every editor; ``a11ychecker`` additionally gets its toolbar button, and ``powerpaste`` gets sensible defaults.
+* ``TINYMCE_PLUGIN_OPTIONS`` (optional): an object of extra TinyMCE init options to pass to those plugins.
+
+.. code-block:: javascript
+
+    const config = {
+      ...process.env,
+      TINYMCE_LICENSE_KEY: 'your-license-key',
+      TINYMCE_EXTERNAL_PLUGINS: {
+        a11ychecker: 'https://cdn.example.com/tinymce/plugins/a11ychecker/plugin.min.js',
+        powerpaste: 'https://cdn.example.com/tinymce/plugins/powerpaste/plugin.min.js',
+      },
+      TINYMCE_PLUGIN_OPTIONS: {
+        powerpaste_word_import: 'clean',
+      },
+    };
+
 Feature: New Proctoring Exams View
 ==================================
 
