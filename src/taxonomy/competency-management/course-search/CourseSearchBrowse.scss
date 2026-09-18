@@ -3,6 +3,15 @@
 // Color/shadow/radius literals below match `CompetencyTree.scss`'s own
 // toolbar/container/row look, redeclared rather than shared through a
 // partial - not enough call sites yet to justify one.
+//
+// Figma's "COMPETENCY CRITERIA ASSOCIATIONS"/"COURSES & CONTENT" header
+// layers specify Roboto Mono, not loaded anywhere else in this app - only
+// existing precedent is `src/editors/data/constants/tinyMCEStyles.js`'s own
+// `@import`, for a separate iframe document. A URL string starting with
+// `https://` is one of Sass's own rules for treating an `@import` as a
+// plain passthrough CSS import rather than a Sass partial lookup.
+@import "https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap";
+
 .course-search-browse {
   $line-color: rgb(0 0 0 / .08);
   $shadow-color: rgb(0 0 0 / .12);
@@ -21,6 +30,16 @@
   // Two-layer "soft elevation" shadow read off Figma, shared by every
   // bordered box in the outline.
   $block-shadow: 0 0 4px rgb(0 0 0 / .15), 0 0 2px rgb(0 0 0 / .15);
+
+  // `height: 100%` resolves against `CompetencyAssociationsPanel.tsx`'s
+  // `.flex-grow-1` wrapper, which is itself stretched to the competency
+  // tree's height by the `align-items-stretch` `Stack` around both columns -
+  // without this, the wrapper stretches but this element inside it stays
+  // sized to its own content, leaving the extra height as blank space below
+  // it instead of reaching `&__panel` below.
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 
   .competency-row__badge {
     overflow-wrap: anywhere;
@@ -52,16 +71,30 @@
     --pgn-size-search-field-border-radius: 6px;
   }
 
-  // Plain layout wrapper for the "Courses & Content" label and course rows -
-  // each row is its own separately-carded box (see `&__group--course`).
-  &__container {
-    // This app's theme remaps Paragon's white-ish tokens away from a
-    // literal white, so a literal is needed here too.
+  // Shared white envelope for `&__associations` and `&__container` below,
+  // so the two read as one continuous column instead of two separate boxes.
+  // `flex: 1` (this element is a flex child of the root `.course-search-
+  // browse`, see above) lets it absorb any extra height the root picks up
+  // from matching the competency tree's own height.
+  &__panel {
     background-color: #FFFFFF;
-    // Required for the rounding to show: `&__section-label` below is this
-    // container's square-cornered first child, filling its full width.
     border-radius: $border-radius;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  // Plain layout wrapper for the "Courses & Content" label and course rows -
+  // each row is its own separately-carded box (see `&__group--course`).
+  // `border-top` is the divider from `&__associations` above it now that
+  // both share `&__panel`'s single envelope. `flex: 1` (a flex child of
+  // `&__panel`) is what actually grows to fill the extra height - `&__panel`
+  // growing alone would otherwise leave the added space unused above this
+  // box's own bottom edge.
+  &__container {
+    border-top: 1px solid $line-color;
+    flex: 1;
     padding: $container-padding-y $container-padding-x;
   }
 
@@ -77,7 +110,7 @@
     padding: 4px 8px;
     background-color: var(--pgn-color-info-100);
     text-transform: uppercase;
-    font-family: monospace;
+    font-family: "Roboto Mono", monospace;
     font-weight: 400;
     font-size: 12px;
     line-height: 20px;
@@ -91,7 +124,7 @@
     padding: 4px 8px;
     background-color: var(--pgn-color-info-100);
     text-transform: uppercase;
-    font-family: monospace;
+    font-family: "Roboto Mono", monospace;
     font-weight: 400;
     font-size: 12px;
     line-height: 20px;
@@ -102,11 +135,7 @@
   // Wraps `&__associations-label` and the "Demonstrate Mastery For"/empty-
   // state text under it.
   &__associations {
-    background-color: #FFFFFF;
-    border-radius: $border-radius;
-    overflow: hidden;
     padding: $container-padding-y $container-padding-x;
-    margin-bottom: 16px;
   }
 
   // Figma gives regular weight for this text layer - only the interpolated

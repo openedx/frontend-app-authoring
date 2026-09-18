@@ -272,39 +272,43 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
           </div>
         </Stack>
       </div>
-      <div className="course-search-browse__associations">
-        <div className="course-search-browse__associations-label">
-          {intl.formatMessage(messages.associationsSectionLabel)}
-        </div>
-        <div className="course-search-browse__associations-mastery">
-          {intl.formatMessage(messages.demonstrateMasteryForLabel, {
-            competencyName: <strong>{activeCompetency.value}</strong>,
-          })}
-          {activeCompetency.externalId && (
-            <>
-              <span className="sr-only">
-                {intl.formatMessage(messages.competencyIdAccessibleLabel, { externalId: activeCompetency.externalId })}
-              </span>
-              <Badge variant="info" className="competency-row__badge ml-2" aria-hidden="true">
-                {activeCompetency.externalId}
-              </Badge>
-            </>
-          )}
-        </div>
-        <div className="course-search-browse__associations-empty-state">
-          <p>
-            {intl.formatMessage(messages.noAssociationsMessage, {
+      <div className="course-search-browse__panel">
+        <div className="course-search-browse__associations">
+          <div className="course-search-browse__associations-label">
+            {intl.formatMessage(messages.associationsSectionLabel)}
+          </div>
+          <div className="course-search-browse__associations-mastery">
+            {intl.formatMessage(messages.demonstrateMasteryForLabel, {
               competencyName: <strong>{activeCompetency.value}</strong>,
             })}
-          </p>
-          <p>{intl.formatMessage(messages.noAssociationsPromptMessage)}</p>
+            {activeCompetency.externalId && (
+              <>
+                <span className="sr-only">
+                  {intl.formatMessage(messages.competencyIdAccessibleLabel, {
+                    externalId: activeCompetency.externalId,
+                  })}
+                </span>
+                <Badge variant="info" className="competency-row__badge ml-2" aria-hidden="true">
+                  {activeCompetency.externalId}
+                </Badge>
+              </>
+            )}
+          </div>
+          <div className="course-search-browse__associations-empty-state">
+            <p>
+              {intl.formatMessage(messages.noAssociationsMessage, {
+                competencyName: <strong>{activeCompetency.value}</strong>,
+              })}
+            </p>
+            <p>{intl.formatMessage(messages.noAssociationsPromptMessage)}</p>
+          </div>
         </div>
-      </div>
-      <div className="course-search-browse__container">
-        <div className="course-search-browse__section-label">
-          {intl.formatMessage(messages.coursesAndContentLabel)}
+        <div className="course-search-browse__container">
+          <div className="course-search-browse__section-label">
+            {intl.formatMessage(messages.coursesAndContentLabel)}
+          </div>
+          {body}
         </div>
-        {body}
       </div>
     </div>
   );
