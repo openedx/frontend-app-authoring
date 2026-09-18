@@ -48,7 +48,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     isError: isErrorIndexDocuments,
     error: errorIndexDocuments,
     isPending: isPendingIndexDocuments,
-  } = useContentFromSearchIndex(downstreamKeys);
+  } = useContentFromSearchIndex(downstreamKeys, 'course');
 
   if (isErrorDownstreamLinks || isErrorIndexDocuments) {
     return <AlertError error={errorDownstreamLinks || errorIndexDocuments} />;

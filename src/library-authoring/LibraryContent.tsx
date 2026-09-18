@@ -64,6 +64,8 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     [
       `usage_key IN [${placeholderBlocks?.map((block) => `"${block.sourceKey}"`).join(',')}]`,
     ],
+    // The placeholders' source blocks come from courses (legacy library blocks aren't indexed).
+    'course',
     (placeholderBlocks?.length || 0) > 0,
     ['usage_key', 'block_type', 'display_name'],
     placeholderBlocks?.length,

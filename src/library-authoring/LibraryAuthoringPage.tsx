@@ -380,6 +380,7 @@ const LibraryAuthoringPage = ({
           })}
         >
           <SearchContextProvider
+            indexType="library"
             extraFilter={extraFilter}
             overrideTypesFilter={overrideTypesFilter}
             skipUrlUpdate={!!componentPickerMode}
