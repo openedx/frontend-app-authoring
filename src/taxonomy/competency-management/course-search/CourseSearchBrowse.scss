@@ -1,0 +1,220 @@
+// Scoped under `.course-search-browse`, mirroring `../CompetencyTree.scss`.
+//
+// Color/shadow/radius literals below match `CompetencyTree.scss`'s own
+// toolbar/container/row look, redeclared rather than shared through a
+// partial - not enough call sites yet to justify one.
+//
+// Figma's "COMPETENCY CRITERIA ASSOCIATIONS"/"COURSES & CONTENT" header
+// layers specify Roboto Mono, not loaded anywhere else in this app - only
+// existing precedent is `src/editors/data/constants/tinyMCEStyles.js`'s own
+// `@import`, for a separate iframe document. A URL string starting with
+// `https://` is one of Sass's own rules for treating an `@import` as a
+// plain passthrough CSS import rather than a Sass partial lookup.
+@import "https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap";
+
+.course-search-browse {
+  $line-color: rgb(0 0 0 / .08);
+  $shadow-color: rgb(0 0 0 / .12);
+  $border-radius: 8px;
+  $container-padding-y: 12px;
+  $container-padding-x: 16px;
+  // One consistent indent step between nesting levels (course -> section ->
+  // subsection), mirroring `../CompetencyTree.scss`'s own `$indent`.
+  $indent-step: 20px;
+  // Border color darkest at the course level, lightest at the subsection
+  // level, so color signals nesting depth alongside indent - swatches read
+  // off Figma.
+  $group-border-color-course: var(--pgn-color-gray-600); // #5C5C5C
+  $group-border-color-section: var(--pgn-color-gray-400); // #8F8F8F
+  $group-border-color-subsection: var(--pgn-color-gray-200); // #CCCCCC
+  // Two-layer "soft elevation" shadow read off Figma, shared by every
+  // bordered box in the outline.
+  $block-shadow: 0 0 4px rgb(0 0 0 / .15), 0 0 2px rgb(0 0 0 / .15);
+
+  // `height: 100%` resolves against `CompetencyAssociationsPanel.tsx`'s
+  // `.flex-grow-1` wrapper, which is itself stretched to the competency
+  // tree's height by the `align-items-stretch` `Stack` around both columns -
+  // without this, the wrapper stretches but this element inside it stays
+  // sized to its own content, leaving the extra height as blank space below
+  // it instead of reaching `&__panel` below.
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .competency-row__badge {
+    overflow-wrap: anywhere;
+    border-radius: var(--pgn-size-badge-border-radius-base);
+
+    --pgn-spacing-badge-padding-y: 1.5px;
+    --pgn-spacing-badge-padding-x-base: 6px;
+    --pgn-typography-badge-font-weight: 400;
+    --pgn-typography-badge-font-size: 62.5%;
+
+    line-height: 15.75px;
+    letter-spacing: normal;
+  }
+
+  // Matches `.competency-tree__toolbar` so the search field/date range here
+  // starts at the same vertical offset as the tree's "Expand All" button.
+  &__toolbar {
+    background-color: var(--pgn-color-light-400);
+    padding: 24px 0;
+  }
+
+  // Figma calls for `Radius: 6px` on this field; `overflow: hidden` is also
+  // needed since the child `.pgn__searchfield-form` has its own opaque,
+  // square-cornered background that otherwise paints over the rounding.
+  &__toolbar .pgn__searchfield {
+    border-radius: 6px;
+    overflow: hidden;
+
+    --pgn-size-search-field-border-radius: 6px;
+  }
+
+  // Shared white envelope for `&__associations` and `&__container` below,
+  // so the two read as one continuous column instead of two separate boxes.
+  // `flex: 1` (this element is a flex child of the root `.course-search-
+  // browse`, see above) lets it absorb any extra height the root picks up
+  // from matching the competency tree's own height.
+  &__panel {
+    background-color: #FFFFFF;
+    border-radius: $border-radius;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  // Plain layout wrapper for the "Courses & Content" label and course rows -
+  // each row is its own separately-carded box (see `&__group--course`).
+  // `border-top` is the divider from `&__associations` above it now that
+  // both share `&__panel`'s single envelope. `flex: 1` (a flex child of
+  // `&__panel`) is what actually grows to fill the extra height - `&__panel`
+  // growing alone would otherwise leave the added space unused above this
+  // box's own bottom edge.
+  &__container {
+    border-top: 1px solid $line-color;
+    flex: 1;
+    padding: $container-padding-y $container-padding-x;
+  }
+
+  // Wider than the nested-level gaps below (10px) so each card's own shadow
+  // reads as clearly separated from its neighbors.
+  &__container > * + * {
+    margin-top: 16px;
+  }
+
+  // Persistent "Courses & Content" header strip, always the container's
+  // first child regardless of loading/error/empty/populated state.
+  &__section-label {
+    padding: 4px 8px;
+    background-color: var(--pgn-color-info-100);
+    text-transform: uppercase;
+    font-family: "Roboto Mono", monospace;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: normal;
+    color: var(--pgn-color-info-900);
+  }
+
+  // Styled identically to `&__section-label` for visual consistency between
+  // the two header strips in this column.
+  &__associations-label {
+    padding: 4px 8px;
+    background-color: var(--pgn-color-info-100);
+    text-transform: uppercase;
+    font-family: "Roboto Mono", monospace;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: normal;
+    color: var(--pgn-color-info-900);
+  }
+
+  // Wraps `&__associations-label` and the "Demonstrate Mastery For"/empty-
+  // state text under it.
+  &__associations {
+    padding: $container-padding-y $container-padding-x;
+  }
+
+  // Figma gives regular weight for this text layer - only the interpolated
+  // competency name (its own `<strong>` in the JSX) is bold.
+  &__associations-mastery {
+    margin-top: 8px;
+    font-size: 15.8px;
+    line-height: 24.5px;
+    letter-spacing: normal;
+  }
+
+  // Always shown: there's no backend endpoint yet to list a competency's
+  // actual associations (see `CourseSearchBrowse.tsx`).
+  &__associations-empty-state {
+    margin-top: 8px;
+    font-size: 15.8px;
+    line-height: 24.5px;
+    letter-spacing: normal;
+    background-color: var(--pgn-color-info-100);
+    border-radius: 12px; // approximate "border-radius/lg" token value - confirm later
+    text-align: center;
+    padding: 32px 16px; // approximate - not directly readable from the inspector screenshot, confirm later
+  }
+
+  // A node with children's own envelope, recursing to any depth - shared by
+  // the course-level group (`CourseRow`'s wrapper) and the section-level
+  // group nested inside it (`CourseOutlineSubtree`'s per-section wrapper).
+  &__group {
+    background-color: var(--pgn-color-white);
+    border-radius: 5px;
+    box-shadow: $block-shadow;
+    padding: 10px 8px;
+  }
+
+  &__group--course {
+    border-left: 6px solid $group-border-color-course;
+  }
+
+  &__group--section {
+    border-left: 6px solid $group-border-color-section;
+  }
+
+  &__group > * + * {
+    margin-top: 10px;
+  }
+
+  &__outline {
+    padding-left: $indent-step;
+  }
+
+  &__outline > * + * {
+    margin-top: 10px;
+  }
+
+  &__course-title {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  // One level deeper than `&__group`, further indented, with the lightest
+  // border color continuing the darkest-to-lightest progression. Font-size/
+  // weight read off Figma, overriding the tertiary `Button`'s own 18px/
+  // normal default.
+  &__subsection {
+    // This is a Paragon `<Button block>` (width: 100%); without the
+    // matching `width: calc(...)`, `margin-left` would push it past its
+    // parent's right edge.
+    margin-left: $indent-step;
+    width: calc(100% - #{$indent-step});
+    font-size: 14px;
+    font-weight: 700;
+    background-color: var(--pgn-color-white);
+    border-left: 6px solid $group-border-color-subsection;
+    border-radius: 5px;
+    box-shadow: $block-shadow;
+    padding: 10px 8px;
+    text-align: left;
+    // Paragon's `.btn` sets `inline-flex`/`justify-content: center`, which
+    // (not `text-align`) controls this button's text position.
+    justify-content: flex-start;
+  }
+}
