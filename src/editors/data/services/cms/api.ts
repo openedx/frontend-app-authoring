@@ -423,6 +423,26 @@ export const apiMethods = {
       urls.validateNumericInputUrl({ studioEndpointUrl }),
       data,
     ),
+  saveInVideoQuizSettings: ({
+    studioEndpointUrl,
+    blockId,
+    displayName,
+    videoId,
+    timemap,
+    jumpBack,
+  }) =>
+    post(
+      urls.handlerUrl({ studioEndpointUrl, blockId, handlerName: 'submit_studio_edits' }),
+      {
+        values: {
+          display_name: displayName,
+          video_id: videoId,
+          timemap,
+          jump_back: jumpBack,
+        },
+        defaults: [],
+      },
+    ),
 };
 
 export default apiMethods;

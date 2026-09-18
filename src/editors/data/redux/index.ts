@@ -8,6 +8,8 @@ import * as requests from './requests';
 import * as video from './video';
 import * as problem from './problem';
 import * as game from './game';
+import * as inVideoQuiz from './inVideoQuiz';
+import type { InVideoQuizState } from './inVideoQuiz';
 import type { RequestKeys, RequestStates } from '../constants/requests';
 import { AdvancedProblemType, type GradingMethodKey, ProblemType } from '../constants/problem';
 
@@ -19,6 +21,7 @@ const editorReducer = combineReducers({
   video: video.reducer,
   problem: problem.reducer,
   game: game.reducer,
+  inVideoQuiz: inVideoQuiz.reducer,
 });
 
 const rootReducer = (state: any, action: any) => {
@@ -40,6 +43,7 @@ const actions = StrictDict({
   video: video.actions,
   problem: problem.actions,
   game: game.actions,
+  inVideoQuiz: inVideoQuiz.actions,
 });
 
 const selectors = StrictDict({
@@ -48,6 +52,7 @@ const selectors = StrictDict({
   video: video.selectors,
   problem: problem.selectors,
   game: game.selectors,
+  inVideoQuiz: inVideoQuiz.selectors,
 });
 
 export interface EditorState {
@@ -201,6 +206,7 @@ export interface EditorState {
     settings: Record<string, any>;
     exampleValue: 'this is an example value from the redux state';
   };
+  inVideoQuiz: InVideoQuizState;
 }
 
 export { actions, selectors };
