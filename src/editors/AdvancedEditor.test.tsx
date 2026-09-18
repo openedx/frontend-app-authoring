@@ -1,4 +1,5 @@
 import { getConfig } from '@edx/frontend-platform';
+import userEvent from '@testing-library/user-event';
 
 import {
   render,
@@ -8,10 +9,15 @@ import {
   act,
   fireEvent,
 } from '../testUtils';
+import { LibraryBlock } from '../library-authoring/LibraryBlock';
+import messages from './messages';
 import AdvancedEditor from './AdvancedEditor';
 
 jest.mock('./containers/EditorContainer', () => ({
-  EditorModalWrapper: jest.fn(() => <div>Advanced Editor Iframe</div>),
+  EditorModalWrapper: jest.fn(({ children }) => <div>Advanced Editor Iframe{children}</div>),
+}));
+jest.mock('../library-authoring/LibraryBlock', () => ({
+  LibraryBlock: jest.fn(() => <div>Library Block</div>),
 }));
 const onCloseMock = jest.fn();
 
@@ -98,5 +104,25 @@ describe('AdvancedEditor', () => {
     window.dispatchEvent(messageEvent);
 
     expect(onCloseMock).not.toHaveBeenCalled();
+  });
+
+  it('lets the block fill the modal only in fullscreen', async () => {
+    const user = userEvent.setup();
+    render(<AdvancedEditor usageKey="test" onClose={onCloseMock} />);
+
+    expect(LibraryBlock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ fillContainer: false }),
+      expect.anything(),
+    );
+
+    const toggleButton = await screen.findByRole('button', {
+      name: messages.advancedEditorFullscreenButtonAlt.defaultMessage,
+    });
+    await user.click(toggleButton);
+
+    expect(LibraryBlock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ fillContainer: true }),
+      expect.anything(),
+    );
   });
 });
