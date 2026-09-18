@@ -8,6 +8,10 @@
   flex-direction: column;
   margin-left: 1rem;
 
+  .sidebar-inner {
+    align-items: baseline;
+  }
+
   .sidebar-content {
     flex: 0 1 auto;
     min-width: 440px;
@@ -88,6 +92,95 @@
         border-left: none;
         position: absolute;
         transform: translate(-30px, 15px);
+      }
+    }
+  }
+}
+
+/*
+ * Narrow viewports: stack the sidebar above the page content instead of
+ * competing with it for horizontal room.
+ *
+ * The panel is a fixed 440px and the icon rail ~74px, and neither shrinks, so
+ * side by side needs at least the sum below. Any narrower and the content
+ * column overflows its own width and slides underneath the opaque panel, which
+ * also pushes the page into horizontal scroll. The pre-rewrite outline used a
+ * Paragon grid that stacked at `sm`/`xs` for the same reason.
+ */
+$sidebar-panel-width: 440px;
+$sidebar-rail-width: 74px;
+$sidebar-min-content-width: 440px;
+$sidebar-page-gutters: 48px;
+// 440 + 74 + 440 + 48 = 1002px
+$sidebar-stack-breakpoint: $sidebar-panel-width + $sidebar-rail-width + $sidebar-min-content-width + $sidebar-page-gutters;
+
+.sidebar-layout {
+  display: flex;
+  align-items: flex-start;
+
+  @media (width < $sidebar-stack-breakpoint) {
+    flex-direction: column;
+    // Both children span the row once it is a column.
+    align-items: stretch;
+
+    > .sidebar {
+      order: -1; // above the content
+      position: static; // undo the sticky side rail
+      width: 100%;
+      height: auto;
+      max-height: none;
+      margin-left: 0;
+      margin-bottom: var(--pgn-spacing-spacer-3);
+
+      .sidebar-content {
+        // Fill the width instead of the fixed 440px column, and cap the height
+        // so a long panel does not push the content off-screen.
+        flex: 1 1 auto;
+        min-width: 0;
+        max-height: 60vh;
+      }
+
+      // Dragging the width is meaningless at full width.
+      .resizable {
+        width: 100% !important;
+      }
+
+      .resizable-handle {
+        display: none;
+      }
+
+      // Stack the rail above the panel and lay its buttons out in a row: a
+      // vertical rail only makes sense beside a column of content.
+      .sidebar-inner {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .sidebar-toggle {
+        order: -1;
+        flex-direction: row;
+        align-items: center;
+        align-self: flex-start;
+        gap: var(--pgn-spacing-spacer-2);
+
+        // `mb-2` on the collapse button spaces the vertical rail.
+        > .btn-icon {
+          margin-bottom: 0 !important;
+        }
+
+        .pgn__icon-button-toggle__container {
+          flex-direction: row;
+
+          .btn-icon + .btn-icon {
+            margin-top: 0;
+            margin-inline-start: var(--pgn-spacing-spacer-1);
+          }
+        }
+
+        // The caret points sideways at a panel that is now below the rail.
+        .rounded-iconbutton.btn-icon-primary-active::before {
+          display: none;
+        }
       }
     }
   }
