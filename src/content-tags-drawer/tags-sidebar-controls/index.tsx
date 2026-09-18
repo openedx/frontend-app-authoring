@@ -3,12 +3,13 @@ import TagsSidebarBody from './TagsSidebarBody';
 
 interface TagsSidebarControlsProps {
   readOnly: boolean;
+  canManageTags?: boolean;
 }
 
-const TagsSidebarControls = ({ readOnly }: TagsSidebarControlsProps) => (
+const TagsSidebarControls = ({ readOnly, canManageTags = true }: TagsSidebarControlsProps) => (
   <>
     <TagsSidebarHeader />
-    <TagsSidebarBody readOnly={readOnly} />
+    <TagsSidebarBody readOnly={readOnly} canManageTags={canManageTags} />
   </>
 );
 

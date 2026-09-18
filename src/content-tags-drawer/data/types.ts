@@ -61,10 +61,6 @@ export interface XBlockData {
   hasPartitionGroupComponents: boolean;
 }
 
-export interface TagsInTaxonomy extends TaxonomyData {
-  contentTags: Tag[];
-}
-
 export interface CourseData {
   courseDisplayNameWithDefault: string;
 }
@@ -79,4 +75,9 @@ export interface UpdateTagsData {
 export interface StagedTagData {
   value: string;
   label: string;
+}
+
+/** A taxonomy as shown in the tags drawer, along with the tags applied to the content. */
+export interface DrawerTaxonomy extends Pick<TaxonomyData, 'id' | 'name' | 'canTagObject'> {
+  contentTags: Tag[];
 }

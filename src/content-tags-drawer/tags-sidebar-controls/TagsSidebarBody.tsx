@@ -7,7 +7,7 @@ import {
   Icon,
 } from '@openedx/paragon';
 import { ArrowDropDown, ArrowDropUp } from '@openedx/paragon/icons';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
 import { ContentTagsDrawerSheet } from '..';
 
@@ -20,10 +20,10 @@ import { TagTree } from '../ContentTagsCollapsible';
 
 interface TagsSidebarBodyProps {
   readOnly: boolean;
+  canManageTags?: boolean;
 }
 
-const TagsSidebarBody = ({ readOnly }: TagsSidebarBodyProps) => {
-  const intl = useIntl();
+const TagsSidebarBody = ({ readOnly, canManageTags = true }: TagsSidebarBodyProps) => {
   const [showManageTags, setShowManageTags] = useState(false);
   const contentId = useParams().blockId;
   const onClose = () => setShowManageTags(false);
@@ -97,15 +97,17 @@ const TagsSidebarBody = ({ readOnly }: TagsSidebarBodyProps) => {
               </div>
             )}
 
-          <Button
-            className="mt-3 ml-2"
-            variant="outline-primary"
-            size="sm"
-            onClick={() => setShowManageTags(true)}
-            disabled={readOnly}
-          >
-            {intl.formatMessage(messages.manageTagsButton)}
-          </Button>
+          {canManageTags && (
+            <Button
+              className="mt-3 ml-2"
+              variant="outline-primary"
+              size="sm"
+              onClick={() => setShowManageTags(true)}
+              disabled={readOnly}
+            >
+              <FormattedMessage {...messages.manageTagsButton} />
+            </Button>
+          )}
         </Stack>
       </Card.Body>
       <ContentTagsDrawerSheet

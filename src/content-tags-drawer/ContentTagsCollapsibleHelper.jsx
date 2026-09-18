@@ -11,6 +11,7 @@ import { ContentTagsDrawerContext } from './common/context';
 /** @typedef {import("./ContentTagsCollapsible").TagTreeEntry} TagTreeEntry */
 /** @typedef {import("./data/types.js").StagedTagData} StagedTagData */
 /** @typedef {import("./data/types.js").UpdateTagsData} UpdateTagsData */
+/** @typedef {import("./data/types.js").DrawerTaxonomy} DrawerTaxonomy */
 
 /**
  * Util function that sorts the keys of a tree in alphabetical order.
@@ -36,7 +37,7 @@ const sortKeysAlphabetically = (tree) => {
  * tags selected in the staged tags tree
  *
  * @param {object} tree - tree to extract the leaf tags from
- * @returns {StagedTagData[]} array of leaf (explicit) tags of provided tree
+ * @returns {ContentTagData[]} array of leaf (explicit) tags of provided tree
  */
 const getLeafTags = (tree) => {
   const leafTags = [];
@@ -47,9 +48,11 @@ const getLeafTags = (tree) => {
       if (Object.keys(child.children).length === 0) {
         leafTags.push({
           value: key,
-          // Always true because this is a new added tag,
-          // so the user can delete.
+          // Always true/false because this is a new added tag,
+          // so the user can change/delete it and it is not a copy.
+          canChangeObjecttag: true,
           canDeleteObjecttag: true,
+          isCopied: false,
           lineage: child.lineage,
         });
       } else {
@@ -67,7 +70,7 @@ const getLeafTags = (tree) => {
  * @param {string} contentId The ID of the content we're tagging (e.g. usage key)
  * @param {StagedTagData[]} stagedContentTags
  *       - Array of staged tags represented as objects with value/label
- * @param {TaxonomyData & {contentTags: ContentTagData[]}} taxonomyAndTagsData
+ * @param {DrawerTaxonomy} taxonomyAndTagsData
  * }}
  */
 const useContentTagsCollapsibleHelper = (

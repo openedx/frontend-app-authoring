@@ -1,11 +1,12 @@
+import type { ComponentProps, ContextType } from 'react';
 import {
-  fireEvent,
   initializeMocks,
   render,
   waitFor,
   screen,
+  userEvent,
   within,
-} from '../testUtils';
+} from '@src/testUtils';
 import ContentTagsDrawer from './ContentTagsDrawer';
 import messages from './messages';
 import { ContentTagsDrawerSheetContext } from './common/context';
@@ -30,6 +31,7 @@ mockContentData.applyMock();
 const {
   stagedTagsId,
   otherTagsId,
+  editableOtherTagsId,
   languageWithTagsId,
   languageWithoutTagsId,
   largeTagsId,
@@ -47,10 +49,21 @@ jest.mock('../library-authoring/common/context/SidebarContext', () => ({
   useSidebarContext: () => ({ sidebarAction: mockSidebarAction() }),
 }));
 
-const renderDrawer = (contentId, drawerParams = {}, renderPath = path, containerId = '') => {
-  const params = { contentId, containerId };
+type SheetContextData = ContextType<typeof ContentTagsDrawerSheetContext>;
+type DrawerParams = ComponentProps<typeof ContentTagsDrawer> & Partial<SheetContextData>;
+
+const renderDrawer = (
+  contentId: string | undefined,
+  drawerParams: DrawerParams = {},
+  renderPath = path,
+  containerId = '',
+) => {
+  const params: Record<string, string> = { containerId };
+  if (contentId !== undefined) {
+    params.contentId = contentId;
+  }
   return render(
-    <ContentTagsDrawerSheetContext.Provider value={drawerParams}>
+    <ContentTagsDrawerSheetContext.Provider value={drawerParams as SheetContextData}>
       <ContentTagsDrawer {...drawerParams} />
     </ContentTagsDrawerSheetContext.Provider>,
     { path: renderPath, params },
@@ -62,7 +75,7 @@ describe('<ContentTagsDrawer />', () => {
     initializeMocks();
   });
 
-  it('should render page and page title correctly', () => {
+  it('should render page and page title correctly', async () => {
     renderDrawer(stagedTagsId);
     expect(screen.getByText('Manage tags')).toBeInTheDocument();
   });
@@ -147,12 +160,13 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should change to edit mode when click on `Edit tags` on drawer variant', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     // Show delete tag buttons
     expect(
@@ -172,12 +186,13 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should change to edit mode when click on `Manage tags` on component variant', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId, { variant: 'component' });
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
     const manageTagsButton = screen.getByRole('button', {
       name: /manage tags/i,
     });
-    fireEvent.click(manageTagsButton);
+    await user.click(manageTagsButton);
 
     // Show delete tag buttons
     expect(
@@ -219,17 +234,18 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should change to read mode when click on `Cancel` on drawer variant', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     const cancelButton = screen.getByRole('button', {
       name: /cancel/i,
     });
-    fireEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     // Not show delete tag buttons
     expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
@@ -245,17 +261,18 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should change to read mode when click on `Cancel` on component variant', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId, { variant: 'component' });
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
     const manageTagsButton = screen.getByRole('button', {
       name: /manage tags/i,
     });
-    fireEvent.click(manageTagsButton);
+    await user.click(manageTagsButton);
 
     const cancelButton = screen.getByRole('button', {
       name: /cancel/i,
     });
-    fireEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     // Not show delete tag buttons
     expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
@@ -272,11 +289,11 @@ describe('<ContentTagsDrawer />', () => {
 
   test.each([
     {
-      variant: 'drawer',
+      variant: 'drawer' as const,
       editButton: /edit tags/i,
     },
     {
-      variant: 'component',
+      variant: 'component' as const,
       editButton: /manage tags/i,
     },
   ])(
@@ -294,6 +311,7 @@ describe('<ContentTagsDrawer />', () => {
   );
 
   it('should test adding a content tag to the staged tags for a taxonomy', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
@@ -301,25 +319,27 @@ describe('<ContentTagsDrawer />', () => {
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = screen.getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(addTagsButton);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
 
     // Tag 3 should only appear in dropdown selector, (i.e. the dropdown is open, since Tag 3 is not applied)
     expect((await screen.findAllByText('Tag 3')).length).toBe(1);
 
     // Click to check Tag 3
     const tag3 = screen.getByText('Tag 3');
-    fireEvent.click(tag3);
+    await user.click(tag3);
 
     // Check that Tag 3 has been staged, i.e. there should be 2 of them on the page
     expect(screen.getAllByText('Tag 3').length).toBe(2);
   });
 
   it('should test removing a staged content from a taxonomy', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
@@ -327,29 +347,31 @@ describe('<ContentTagsDrawer />', () => {
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = screen.getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(addTagsButton);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
 
     // Tag 3 should only appear in dropdown selector, (i.e. the dropdown is open, since Tag 3 is not applied)
     expect((await screen.findAllByText('Tag 3')).length).toBe(1);
 
     // Click to check Tag 3
     const tag3 = screen.getByText('Tag 3');
-    fireEvent.click(tag3);
+    await user.click(tag3);
 
     // Check that Tag 3 has been staged, i.e. there should be 2 of them on the page
     expect(screen.getAllByText('Tag 3').length).toBe(2);
 
     // Click it again to unstage it and confirm that there is only one on the page
-    fireEvent.click(tag3);
+    await user.click(tag3);
     expect(screen.getAllByText('Tag 3').length).toBe(1);
   });
 
   it('should test clearing staged tags for a taxonomy', async () => {
+    const user = userEvent.setup();
     const {
       container,
     } = renderDrawer(stagedTagsId);
@@ -359,26 +381,27 @@ describe('<ContentTagsDrawer />', () => {
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = screen.getByText(/add a tag/i);
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(addTagsButton);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
 
     // Tag 3 should only appear in dropdown selector, (i.e. the dropdown is open, since Tag 3 is not applied)
     expect((await screen.findAllByText('Tag 3')).length).toBe(1);
 
     // Click to check Tag 3
     const tag3 = screen.getByText('Tag 3');
-    fireEvent.click(tag3);
+    await user.click(tag3);
 
     // Check that Tag 3 has been staged, i.e. there should be 2 of them on the page
     expect(screen.getAllByText('Tag 3').length).toBe(2);
 
-    const dropdown = container.querySelector('#content-tags-drawer > div:nth-child(1) > div');
+    const dropdown = container.querySelector<HTMLElement>('#content-tags-drawer > div:nth-child(1) > div')!;
     const dropdownCancel = within(dropdown).getByRole('button', { name: /cancel/i });
-    fireEvent.click(dropdownCancel);
+    await user.click(dropdownCancel);
 
     // Check that there are no more Tag 3 on the page, since the staged one is cleared
     // and the dropdown has been closed
@@ -386,6 +409,7 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should test adding global staged tags and cancel', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
@@ -393,31 +417,33 @@ describe('<ContentTagsDrawer />', () => {
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = screen.getByText(/add a tag/i);
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(addTagsButton);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
 
     // Click to check Tag 3
     const tag3 = await screen.findByText(/tag 3/i);
-    fireEvent.click(tag3);
+    await user.click(tag3);
 
     // Click "Add tags" to save to global staged tags
     const addTags = screen.getByRole('button', { name: /add tags/i });
-    fireEvent.click(addTags);
+    await user.click(addTags);
 
     expect(screen.getByText(/tag 3/i)).toBeInTheDocument();
 
     // Click "Cancel"
     const cancelButton = screen.getByRole('button', { name: /cancel/i });
-    fireEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     expect(screen.queryByText(/tag 3/i)).not.toBeInTheDocument();
   });
 
   it('should test delete fetched tags and cancel', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
@@ -425,25 +451,26 @@ describe('<ContentTagsDrawer />', () => {
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     // Delete the tag
     const tag = await screen.findByText(/tag 2/i);
     const deleteButton = within(tag).getByRole('button', {
       name: /delete/i,
     });
-    fireEvent.click(deleteButton);
+    await user.click(deleteButton);
 
     expect(tag).not.toBeInTheDocument();
 
     // Click "Cancel"
     const cancelButton = screen.getByRole('button', { name: /cancel/i });
-    fireEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     expect(screen.getByText(/tag 2/i)).toBeInTheDocument();
   });
 
   it('should test delete global staged tags and cancel', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
@@ -451,20 +478,21 @@ describe('<ContentTagsDrawer />', () => {
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = screen.getByText(/add a tag/i);
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(addTagsButton);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
 
     // Click to check Tag 3
     const tag3 = await screen.findByText(/tag 3/i);
-    fireEvent.click(tag3);
+    await user.click(tag3);
 
     // Click "Add tags" to save to global staged tags
     const addTags = screen.getByRole('button', { name: /add tags/i });
-    fireEvent.click(addTags);
+    await user.click(addTags);
 
     const tag = screen.getByText(/tag 3/i);
     expect(screen.getByText(/tag 3/i)).toBeInTheDocument();
@@ -473,18 +501,19 @@ describe('<ContentTagsDrawer />', () => {
     const deleteButton = within(tag).getByRole('button', {
       name: /delete/i,
     });
-    fireEvent.click(deleteButton);
+    await user.click(deleteButton);
 
     expect(tag).not.toBeInTheDocument();
 
     // Click "Cancel"
     const cancelButton = screen.getByRole('button', { name: /cancel/i });
-    fireEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     expect(screen.queryByText(/tag 3/i)).not.toBeInTheDocument();
   });
 
   it('should test add removed fetched tags and cancel', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
@@ -492,88 +521,87 @@ describe('<ContentTagsDrawer />', () => {
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     // Delete the tag
     const tag = await screen.findByText(/tag 2/i);
     const deleteButton = within(tag).getByRole('button', {
       name: /delete/i,
     });
-    fireEvent.click(deleteButton);
+    await user.click(deleteButton);
 
     expect(tag).not.toBeInTheDocument();
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = screen.getByText(/add a tag/i);
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(addTagsButton);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
 
     // Click to check Tag 2
     const tag2 = await screen.findByText(/tag 2/i);
-    fireEvent.click(tag2);
+    await user.click(tag2);
 
     // Click "Add tags" to save to global staged tags
     const addTags = screen.getByRole('button', { name: /add tags/i });
-    fireEvent.click(addTags);
+    await user.click(addTags);
 
     expect(screen.getByText(/tag 2/i)).toBeInTheDocument();
 
     // Click "Cancel"
     const cancelButton = screen.getByRole('button', { name: /cancel/i });
-    fireEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     expect(screen.getByText(/tag 2/i)).toBeInTheDocument();
   });
 
   it('should call onClose when cancel is clicked', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId, { onClose: mockOnClose });
 
     const cancelButton = await screen.findByRole('button', {
       name: /close/i,
     });
     expect(cancelButton).toBeInTheDocument();
-    fireEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('should call closeManageTagsDrawer when Escape key is pressed and no selectable box is active', () => {
+  it('should call closeManageTagsDrawer when Escape key is pressed and no selectable box is active', async () => {
+    const user = userEvent.setup();
     const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
 
-    const { container } = renderDrawer(stagedTagsId);
+    renderDrawer(stagedTagsId);
 
-    fireEvent.keyDown(container, {
-      key: 'Escape',
-    });
+    await user.keyboard('{Escape}');
 
     expect(postMessageSpy).toHaveBeenCalledWith('closeManageTagsDrawer', '*');
 
     postMessageSpy.mockRestore();
   });
 
-  it('should call `onClose` when Escape key is pressed and no selectable box is active', () => {
-    const { container } = renderDrawer(stagedTagsId, { onClose: mockOnClose });
+  it('should call `onClose` when Escape key is pressed and no selectable box is active', async () => {
+    const user = userEvent.setup();
+    renderDrawer(stagedTagsId, { onClose: mockOnClose });
 
-    fireEvent.keyDown(container, {
-      key: 'Escape',
-    });
+    await user.keyboard('{Escape}');
 
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('should not call closeManageTagsDrawer when Escape key is pressed and a selectable box is active', () => {
+  it('should not call closeManageTagsDrawer when Escape key is pressed and a selectable box is active', async () => {
+    const user = userEvent.setup();
     const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
 
-    const { container } = renderDrawer(stagedTagsId);
+    renderDrawer(stagedTagsId);
 
     // Simulate that the selectable box is open by adding an element with the data attribute
     const selectableBox = document.createElement('div');
     selectableBox.setAttribute('data-selectable-box', 'taxonomy-tags');
     document.body.appendChild(selectableBox);
 
-    fireEvent.keyDown(container, {
-      key: 'Escape',
-    });
+    await user.keyboard('{Escape}');
 
     expect(postMessageSpy).not.toHaveBeenCalled();
 
@@ -583,17 +611,16 @@ describe('<ContentTagsDrawer />', () => {
     postMessageSpy.mockRestore();
   });
 
-  it('should not call `onClose` when Escape key is pressed and a selectable box is active', () => {
-    const { container } = renderDrawer(stagedTagsId, { onClose: mockOnClose });
+  it('should not call `onClose` when Escape key is pressed and a selectable box is active', async () => {
+    const user = userEvent.setup();
+    renderDrawer(stagedTagsId, { onClose: mockOnClose });
 
     // Simulate that the selectable box is open by adding an element with the data attribute
     const selectableBox = document.createElement('div');
     selectableBox.setAttribute('data-selectable-box', 'taxonomy-tags');
     document.body.appendChild(selectableBox);
 
-    fireEvent.keyDown(container, {
-      key: 'Escape',
-    });
+    await user.keyboard('{Escape}');
 
     expect(mockOnClose).not.toHaveBeenCalled();
 
@@ -601,31 +628,30 @@ describe('<ContentTagsDrawer />', () => {
     document.body.removeChild(selectableBox);
   });
 
-  it('should not call closeManageTagsDrawer when Escape key is pressed and container is blocked', () => {
+  it('should not call closeManageTagsDrawer when Escape key is pressed and container is blocked', async () => {
+    const user = userEvent.setup();
     const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
-    const { container } = renderDrawer(stagedTagsId, { blockingSheet: true });
-    fireEvent.keyDown(container, {
-      key: 'Escape',
-    });
+    renderDrawer(stagedTagsId, { blockingSheet: true });
+    await user.keyboard('{Escape}');
 
     expect(postMessageSpy).not.toHaveBeenCalled();
 
     postMessageSpy.mockRestore();
   });
 
-  it('should not call `onClose` when Escape key is pressed and container is blocked', () => {
-    const { container } = renderDrawer(stagedTagsId, {
+  it('should not call `onClose` when Escape key is pressed and container is blocked', async () => {
+    const user = userEvent.setup();
+    renderDrawer(stagedTagsId, {
       blockingSheet: true,
       onClose: mockOnClose,
     });
-    fireEvent.keyDown(container, {
-      key: 'Escape',
-    });
+    await user.keyboard('{Escape}');
 
     expect(mockOnClose).not.toHaveBeenCalled();
   });
 
   it('should call `setBlockingSheet` on add a tag', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId, {
       blockingSheet: true,
       setBlockingSheet: mockSetBlockingSheet,
@@ -638,25 +664,27 @@ describe('<ContentTagsDrawer />', () => {
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = screen.getByText(/add a tag/i);
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
-    fireEvent.mouseDown(addTagsButton);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
 
     // Click to check Tag 3
     const tag3 = await screen.findByText(/tag 3/i);
-    fireEvent.click(tag3);
+    await user.click(tag3);
 
     // Click "Add tags" to save to global staged tags
     const addTags = screen.getByRole('button', { name: /add tags/i });
-    fireEvent.click(addTags);
+    await user.click(addTags);
 
     expect(mockSetBlockingSheet).toHaveBeenCalledWith(true);
   });
 
   it('should call `setBlockingSheet` on delete a tag', async () => {
+    const user = userEvent.setup();
     renderDrawer(stagedTagsId, {
       blockingSheet: true,
       setBlockingSheet: mockSetBlockingSheet,
@@ -669,19 +697,20 @@ describe('<ContentTagsDrawer />', () => {
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     // Delete the tag
     const tag = screen.getByText(/tag 2/i);
     const deleteButton = within(tag).getByRole('button', {
       name: /delete/i,
     });
-    fireEvent.click(deleteButton);
+    await user.click(deleteButton);
 
     expect(mockSetBlockingSheet).toHaveBeenCalledWith(true);
   });
 
   it('should call `updateTags` mutation on save', async () => {
+    const user = userEvent.setup();
     const { axiosMock } = initializeMocks();
     const url = getContentTaxonomyTagsApiUrl(stagedTagsId);
     axiosMock.onPut(url).reply(200);
@@ -690,12 +719,12 @@ describe('<ContentTagsDrawer />', () => {
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     const saveButton = screen.getByRole('button', {
       name: /save/i,
     });
-    fireEvent.click(saveButton);
+    await user.click(saveButton);
 
     await waitFor(() => expect(axiosMock.history.put[0].url).toEqual(url));
   });
@@ -706,6 +735,7 @@ describe('<ContentTagsDrawer />', () => {
     'lb:org:lib:html:1',
   ].forEach((containerId) => {
     it(`should invalidate children query when update child tag when containerId is ${containerId}`, async () => {
+      const user = userEvent.setup();
       const newPath = '/container/:containerId/';
       const { axiosMock, queryClient } = initializeMocks();
       const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
@@ -716,12 +746,12 @@ describe('<ContentTagsDrawer />', () => {
       const editTagsButton = screen.getByRole('button', {
         name: /edit tags/i,
       });
-      fireEvent.click(editTagsButton);
+      await user.click(editTagsButton);
 
       const saveButton = screen.getByRole('button', {
         name: /save/i,
       });
-      fireEvent.click(saveButton);
+      await user.click(saveButton);
 
       await waitFor(() => expect(axiosMock.history.put[0].url).toEqual(url));
       expect(mockInvalidateQueries).toHaveBeenCalledTimes(5);
@@ -776,6 +806,7 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should test delete "Other tags" and cancel', async () => {
+    const user = userEvent.setup();
     renderDrawer(otherTagsId);
     expect(await screen.findByText('Taxonomy 2')).toBeInTheDocument();
 
@@ -783,22 +814,47 @@ describe('<ContentTagsDrawer />', () => {
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
     });
-    fireEvent.click(editTagsButton);
+    await user.click(editTagsButton);
 
     // Delete the tag
     const tag = screen.getByText(/tag 3/i);
     const deleteButton = within(tag).getByRole('button', {
       name: /delete/i,
     });
-    fireEvent.click(deleteButton);
+    await user.click(deleteButton);
 
     expect(tag).not.toBeInTheDocument();
 
     // Click "Cancel"
     const cancelButton = screen.getByRole('button', { name: /cancel/i });
-    fireEvent.click(cancelButton);
+    await user.click(cancelButton);
 
     expect(screen.getByText(/tag 3/i)).toBeInTheDocument();
+  });
+
+  it('should show tags staged on an "Other tags" taxonomy', async () => {
+    const user = userEvent.setup();
+    renderDrawer(editableOtherTagsId);
+    expect(await screen.findByText('Other tags')).toBeInTheDocument();
+
+    // To edit mode
+    await user.click(screen.getByRole('button', { name: /edit tags/i }));
+
+    // The second "Add a tag" select belongs to the taxonomy under "Other tags";
+    // the first one belongs to the regular taxonomy rendered above it.
+    const addTagsSelects = screen.getAllByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    expect(addTagsSelects.length).toBe(2);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsSelects[1], keys: '[MouseLeft>]' });
+
+    // Stage "Tag 1" on the other taxonomy
+    await user.click(await screen.findByText('Tag 1'));
+    await user.click(screen.getByRole('button', { name: /add tags/i }));
+
+    // The staged tag is merged into the other taxonomy's tags, alongside the fetched one
+    expect(screen.getByText('Tag 3')).toBeInTheDocument();
+    expect(screen.getByText('Tag 1')).toBeInTheDocument();
   });
 
   it('should show Language Taxonomy', async () => {
@@ -813,12 +869,13 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should show empty drawer message', async () => {
+    const user = userEvent.setup();
     renderDrawer(emptyTagsId);
     expect(await screen.findByText(/to use tags, please or contact your administrator\./i)).toBeInTheDocument();
     const enableButton = screen.getByRole('button', {
       name: /enable a taxonomy/i,
     });
-    fireEvent.click(enableButton);
+    await user.click(enableButton);
     expect(mockNavigate).toHaveBeenCalledWith('/taxonomies');
   });
 });
