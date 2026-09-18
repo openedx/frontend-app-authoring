@@ -1,94 +1,109 @@
-import MockAdapter from 'axios-mock-adapter';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type MockAdapter from 'axios-mock-adapter';
+
 import {
   act,
   fireEvent,
+  initializeMocks,
   render,
-  waitFor,
   screen,
-} from '@testing-library/react';
-import PropTypes from 'prop-types';
-
-import initializeStore from '../../store';
-import { getTaxonomyExportFile } from '../data/api';
-import { TaxonomyContext } from '../common/context';
+  userEvent,
+  waitFor,
+  within,
+} from '@src/testUtils';
+import { getTaxonomyExportFile } from '@src/taxonomy/data/api';
+import { TaxonomyContext } from '@src/taxonomy/common/context';
+import type { TaxonomyContextData } from '@src/taxonomy/common/context';
+import { TaxonomyType } from '@src/taxonomy/data/constants';
 import { ImportTagsWizard } from './ImportTagsWizard';
+import type { ImportTaxonomy } from './types';
 
-let store;
+let axiosMock: MockAdapter;
 
-const queryClient = new QueryClient();
-let axiosMock;
-
-jest.mock('../data/api', () => ({
-  ...jest.requireActual('../data/api'),
+jest.mock('@src/taxonomy/data/api', () => ({
+  ...jest.requireActual('@src/taxonomy/data/api'),
   getTaxonomyExportFile: jest.fn(),
 }));
 
 const mockSetToastMessage = jest.fn();
 const mockSetAlertError = jest.fn();
-const context = {
+const context: TaxonomyContextData = {
   toastMessage: null,
   setToastMessage: mockSetToastMessage,
-  alertProps: null,
+  alertError: null,
   setAlertError: mockSetAlertError,
 };
+
+const TaxonomyContextProvider = ({ children }: { children: React.ReactNode; }) => (
+  <TaxonomyContext.Provider value={context}>{children}</TaxonomyContext.Provider>
+);
 
 const planImportUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/import/plan/';
 const doImportUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/import/';
 const doImportNewTaxonomyUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/import/';
 
-const sampleTaxonomy = {
+const sampleTaxonomy: ImportTaxonomy = {
   id: 1,
   name: 'Test Taxonomy',
 };
 
-const RootWrapper = ({ onClose, reimport, taxonomy }) => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <QueryClientProvider client={queryClient}>
-        <TaxonomyContext.Provider value={context}>
-          <ImportTagsWizard taxonomy={taxonomy} isOpen onClose={onClose} reimport={reimport} />
-        </TaxonomyContext.Provider>
-      </QueryClientProvider>
-    </IntlProvider>
-  </AppProvider>
-);
+interface RenderWizardProps {
+  onClose: () => void;
+  reimport?: boolean;
+  taxonomy?: ImportTaxonomy | null;
+}
 
-RootWrapper.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  reimport: PropTypes.bool.isRequired,
-  taxonomy: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-  }).isRequired,
+const renderWizard = ({ onClose, reimport, taxonomy }: RenderWizardProps) =>
+  render(
+    <ImportTagsWizard taxonomy={taxonomy} isOpen onClose={onClose} reimport={reimport} />,
+    { extraWrapper: TaxonomyContextProvider },
+  );
+
+const makeJson = (filename: string) => new File(['{}'], filename, { type: 'application/json' });
+
+/**
+ * Drop a valid file onto the upload step of the "create a new taxonomy" flow, then continue to the
+ * populate step.
+ */
+const goToPopulateStep = async () => {
+  fireEvent.drop(screen.getByTestId('dropzone'), {
+    dataTransfer: { files: [makeJson('example1.json')], types: ['Files'] },
+  });
+  expect(await screen.findByTestId('file-info')).toBeInTheDocument();
+
+  const continueButton = await screen.findByRole('button', { name: 'Continue' });
+  await waitFor(() => {
+    expect(continueButton).not.toHaveAttribute('aria-disabled', 'true');
+  });
+  fireEvent.click(continueButton);
+
+  expect(await screen.findByTestId('populate-step')).toBeInTheDocument();
+};
+
+/** Fill in the name and description of the populate step, which the Import button requires. */
+const fillInRequiredFields = (name: string) => {
+  fireEvent.change(screen.getByLabelText('Taxonomy Name'), { target: { value: name } });
+  fireEvent.change(screen.getByLabelText('Taxonomy Description'), { target: { value: `${name} Description` } });
+};
+
+/** Click Import on the populate step, once enabled, and wait for the request to be made. */
+const clickImport = async () => {
+  await waitFor(() => {
+    expect(screen.getByRole('button', { name: 'Import' })).not.toHaveAttribute('aria-disabled', 'true');
+  });
+
+  act(() => {
+    fireEvent.click(screen.getByRole('button', { name: 'Import' }));
+  });
 };
 
 describe('<ImportTagsWizard />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-    queryClient.clear();
+    ({ axiosMock } = initializeMocks());
   });
 
   it('render the dialog in the reimport first step can close on cancel', async () => {
     const onClose = jest.fn();
-    const { findByTestId, getByTestId } = render(<RootWrapper taxonomy={sampleTaxonomy} onClose={onClose} reimport />);
+    const { findByTestId, getByTestId } = renderWizard({ taxonomy: sampleTaxonomy, onClose, reimport: true });
 
     expect(await findByTestId('export-step')).toBeInTheDocument();
 
@@ -99,7 +114,7 @@ describe('<ImportTagsWizard />', () => {
 
   it('can export taxonomies from the reimport dialog', async () => {
     const onClose = jest.fn();
-    const { findByTestId, getByTestId } = render(<RootWrapper taxonomy={sampleTaxonomy} onClose={onClose} reimport />);
+    const { findByTestId, getByTestId } = renderWizard({ taxonomy: sampleTaxonomy, onClose, reimport: true });
 
     expect(await findByTestId('export-step')).toBeInTheDocument();
 
@@ -121,7 +136,7 @@ describe('<ImportTagsWizard />', () => {
       getAllByTestId,
       getByTestId,
       getByText,
-    } = render(<RootWrapper taxonomy={sampleTaxonomy} onClose={onClose} reimport />);
+    } = renderWizard({ taxonomy: sampleTaxonomy, onClose, reimport: true });
 
     expect(await findByTestId('export-step')).toBeInTheDocument();
 
@@ -144,8 +159,6 @@ describe('<ImportTagsWizard />', () => {
     fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [fileTarGz], types: ['Files'] } });
     expect(getByTestId('dropzone')).toBeInTheDocument();
     expect(importButton).toHaveAttribute('aria-disabled', 'true');
-
-    const makeJson = (filename) => new File(['{}'], filename, { type: 'application/json' });
 
     // Correct file type
     axiosMock.onPut(planImportUrl).replyOnce(200, { plan: 'Import plan' });
@@ -259,7 +272,7 @@ describe('<ImportTagsWizard />', () => {
       getByTestId,
       getByText,
       queryByTestId,
-    } = render(<RootWrapper taxonomy={null} onClose={onClose} />);
+    } = renderWizard({ taxonomy: null, onClose });
 
     // Check that there is no export step
     expect(queryByTestId('export-step')).not.toBeInTheDocument();
@@ -270,8 +283,7 @@ describe('<ImportTagsWizard />', () => {
     expect(getByTestId('upload-step')).toBeInTheDocument();
 
     // Continue flow
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument());
-    let continueButton = getByRole('button', { name: 'Continue' });
+    let continueButton = await screen.findByRole('button', { name: 'Continue' });
     expect(continueButton).toHaveAttribute('aria-disabled', 'true');
 
     // Invalid file type
@@ -279,8 +291,6 @@ describe('<ImportTagsWizard />', () => {
     fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [fileTarGz], types: ['Files'] } });
     expect(getByTestId('dropzone')).toBeInTheDocument();
     expect(continueButton).toHaveAttribute('aria-disabled', 'true');
-
-    const makeJson = (filename) => new File(['{}'], filename, { type: 'application/json' });
 
     // Correct file type
     fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [makeJson('example1.json')], types: ['Files'] } });
@@ -297,8 +307,7 @@ describe('<ImportTagsWizard />', () => {
     expect(getByText('example1.json')).toBeInTheDocument();
 
     // Click continue once button enabled
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument());
-    continueButton = getByRole('button', { name: 'Continue' });
+    continueButton = await screen.findByRole('button', { name: 'Continue' });
     await waitFor(() => {
       expect(continueButton).not.toHaveAttribute('aria-disabled', 'true');
     });
@@ -313,26 +322,11 @@ describe('<ImportTagsWizard />', () => {
     expect(await findByTestId('populate-step')).toBeInTheDocument();
 
     // Check import button is disabled when fields not populated
-    const importButton = getByRole('button', { name: 'Import' });
-    expect(importButton).toHaveAttribute('aria-disabled', 'true');
+    expect(getByRole('button', { name: 'Import' })).toHaveAttribute('aria-disabled', 'true');
 
-    // Populate new taxonomy information
+    // Populate new taxonomy information, leaving the taxonomy type at its default.
     const newTaxonomyName = 'New Taxonomy';
-    const taxonomyNameInputEl = screen.getByLabelText('Taxonomy Name');
-    fireEvent.change(taxonomyNameInputEl, {
-      target: { value: newTaxonomyName },
-    });
-    const taxonomyDescInputEl = screen.getByLabelText('Taxonomy Description');
-    fireEvent.change(taxonomyDescInputEl, {
-      target: { value: 'New Taxonomy Description' },
-    });
-
-    // Test back button
-    fireEvent.click(getByTestId('back-button'));
-    expect(getByTestId('upload-step')).toBeInTheDocument();
-    fireEvent.click(getByRole('button', { name: 'Continue' }));
-
-    expect(getByTestId('populate-step')).toBeInTheDocument();
+    fillInRequiredFields(newTaxonomyName);
 
     if (expectedResult === 'success') {
       axiosMock.onPost(doImportNewTaxonomyUrl).replyOnce(200, {});
@@ -340,19 +334,15 @@ describe('<ImportTagsWizard />', () => {
       axiosMock.onPost(doImportNewTaxonomyUrl).replyOnce(400);
     }
 
-    await waitFor(() => {
-      expect(getByRole('button', { name: 'Import' })).not.toHaveAttribute('aria-disabled', 'true');
-    });
-
-    act(() => {
-      fireEvent.click(getByRole('button', { name: 'Import' }));
-    });
+    await clickImport();
 
     if (expectedResult === 'success') {
       // Toast message shown
       await waitFor(() => {
         expect(mockSetToastMessage).toHaveBeenCalledWith(`"${newTaxonomyName}" imported`);
       });
+      // The default taxonomy type is submitted when the user never touches the dropdown.
+      expect(axiosMock.history.post[0].data.get('taxonomy_type')).toEqual(TaxonomyType.Tags);
     } else {
       // Alert message shown
       await waitFor(() => {
@@ -364,5 +354,83 @@ describe('<ImportTagsWizard />', () => {
         );
       });
     }
+  });
+
+  describe('taxonomy type dropdown', () => {
+    it('defaults to Tags and offers every taxonomy type', async () => {
+      renderWizard({ taxonomy: null, onClose: jest.fn() });
+      await goToPopulateStep();
+
+      // The dropdown is a native `<select>`, whose options are rendered as `<option>`s.
+      const select = screen.getByLabelText('Taxonomy Type');
+      expect(select).toBe(screen.getByTestId('taxonomy-type-select'));
+
+      expect(select).toHaveValue(TaxonomyType.Tags);
+      expect(within(select).getAllByRole('option').map((option) => option.textContent))
+        .toEqual(['Tags', 'Competency']);
+      expect(within(select).getAllByRole('option').map((option) => option.getAttribute('value')))
+        .toEqual(Object.values(TaxonomyType));
+    });
+
+    it('keeps the selected type when the user steps back and forward again', async () => {
+      renderWizard({ taxonomy: null, onClose: jest.fn() });
+      await goToPopulateStep();
+
+      const select = screen.getByTestId('taxonomy-type-select');
+      fireEvent.change(select, { target: { value: TaxonomyType.Competency } });
+      expect(select).toHaveValue(TaxonomyType.Competency);
+
+      fireEvent.click(screen.getByTestId('back-button'));
+      expect(screen.getByTestId('upload-step')).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: 'Continue' }));
+
+      expect(screen.getByTestId('populate-step')).toBeInTheDocument();
+      expect(screen.getByTestId('taxonomy-type-select')).toHaveValue(TaxonomyType.Competency);
+    });
+
+    it.each(Object.values(TaxonomyType))('submits the %s type to the import API', async (taxonomyType) => {
+      renderWizard({ taxonomy: null, onClose: jest.fn() });
+      await goToPopulateStep();
+
+      const newTaxonomyName = `New ${taxonomyType} Taxonomy`;
+      fillInRequiredFields(newTaxonomyName);
+      fireEvent.change(screen.getByTestId('taxonomy-type-select'), { target: { value: taxonomyType } });
+
+      axiosMock.onPost(doImportNewTaxonomyUrl).replyOnce(200, {});
+
+      await clickImport();
+
+      await waitFor(() => {
+        expect(mockSetToastMessage).toHaveBeenCalledWith(`"${newTaxonomyName}" imported`);
+      });
+
+      const formData = axiosMock.history.post[0].data;
+      expect(formData.get('taxonomy_name')).toEqual(newTaxonomyName);
+      expect(formData.get('taxonomy_type')).toEqual(taxonomyType);
+    });
+
+    it('is labelled and reachable with the keyboard', async () => {
+      const user = userEvent.setup();
+      renderWizard({ taxonomy: null, onClose: jest.fn() });
+      await goToPopulateStep();
+
+      const select = screen.getByTestId('taxonomy-type-select');
+      expect(select).toHaveAccessibleName('Taxonomy Type');
+
+      // Tabbing forward from the description field must land on the dropdown, so that a keyboard
+      // user reaches it in the same order as the fields above it.
+      screen.getByLabelText('Taxonomy Description').focus();
+      await user.tab();
+      expect(select).toHaveFocus();
+
+      // Note: we can't assert on arrowing between the options here. This is a native `<select>`, so
+      // the browser (not the page) draws and controls the option list, and jsdom implements none of
+      // that -- arrow keys, Enter and type-ahead all leave `select.value` untouched under jsdom.
+      // What the component owns, and what is asserted above and in the tests before this one, is
+      // that the control is focusable, labelled, and carries every option with the right value.
+      await user.selectOptions(select, TaxonomyType.Competency);
+      expect(select).toHaveValue(TaxonomyType.Competency);
+      expect(select).toHaveFocus();
+    });
   });
 });
