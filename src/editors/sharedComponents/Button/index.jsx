@@ -7,10 +7,10 @@ import { getButtonProps } from './hooks';
 import './index.scss';
 
 const Button = ({
-  variant,
-  className,
-  text,
-  children,
+  variant = 'default',
+  className = null,
+  text = null,
+  children = null,
   ...props
 }) => (
   <ParagonButton

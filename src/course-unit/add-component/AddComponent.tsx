@@ -196,7 +196,16 @@ const AddComponent = ({
         if (moduleName === COMPONENT_TYPES.pdf && useNewPdfEditor) {
           handleCreateNewCourseXBlock(
             { type: moduleName, parentLocator: blockId },
-            /* istanbul ignore next */
+            /* istanbul ignore next */ ({ courseKey, locator }) => {
+              setCourseId(courseKey);
+              setBlockType(moduleName);
+              setNewBlockId(locator);
+              showXBlockEditorModal();
+            },
+          );
+        } else if (moduleName === COMPONENT_TYPES.invideoquiz) {
+          handleCreateNewCourseXBlock(
+            { type: moduleName, category: moduleName, parentLocator: blockId },
             ({ courseKey, locator }) => {
               setCourseId(courseKey);
               setBlockType(moduleName);
@@ -205,9 +214,14 @@ const AddComponent = ({
             },
           );
         } else {
-          handleCreateNewCourseXBlock({ type: moduleName!, category: moduleName!, parentLocator: blockId });
+          handleCreateNewCourseXBlock({
+            type: moduleName!,
+            category: moduleName!,
+            parentLocator: blockId,
+          });
         }
         break;
+
       case COMPONENT_TYPES.openassessment:
         handleCreateNewCourseXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });
         break;

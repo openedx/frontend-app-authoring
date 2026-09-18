@@ -27,6 +27,7 @@ jest.mock('./urls', () => ({
       ({ studioEndpointUrl, learningContextId }) => `${studioEndpointUrl}/some_video_upload_url/${learningContextId}`,
     ),
   boundHandlerUrl: jest.fn().mockReturnValue('urls.handlerUrl'),
+  handlerUrl: jest.fn().mockReturnValue('urls.handlerUrl'),
   transcriptXblockV2: jest.fn().mockReturnValue('url.transcriptXblockV2'),
 }));
 
@@ -504,6 +505,33 @@ describe('cms api', () => {
         expect(get).toHaveBeenCalledWith(
           `${urls.transcriptXblockV2({ transcriptHandlerUrl })}?language_code=${language}`,
           mockJSON,
+        );
+      });
+    });
+    describe('saveInVideoQuizSettings', () => {
+      it('should call post with urls.handlerUrl for submit_studio_edits', async () => {
+        const videoId = 'video-1';
+        const timemap = '{"1:30":"problem-1"}';
+        const jumpBack = '{"problem-1":"1:00"}';
+        await apiMethods.saveInVideoQuizSettings({
+          studioEndpointUrl,
+          blockId,
+          displayName: title,
+          videoId,
+          timemap,
+          jumpBack,
+        });
+        expect(post).toHaveBeenCalledWith(
+          urls.handlerUrl({ studioEndpointUrl, blockId, handlerName: 'submit_studio_edits' }),
+          {
+            values: {
+              display_name: title,
+              video_id: videoId,
+              timemap,
+              jump_back: jumpBack,
+            },
+            defaults: [],
+          },
         );
       });
     });
