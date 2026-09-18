@@ -83,7 +83,18 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
     axiosMock.onGet(competencyManagementApiUrls.competencyCriteriaGroups(Number(activeCompetency.id)))
       .reply(200, { groups: [], criteria: [] });
     axiosMock.onGet(competencyManagementApiUrls.defaultCompetencyRuleProfile())
-      .reply(200, { id: 1, rule_type: 'grade', rule_payload: { op: 'gte', value: 0.7, scale: 'percent' } });
+      .reply(200, {
+        count: 1,
+        next: null,
+        previous: null,
+        results: [{
+          id: 1,
+          scope_type: 'system_default',
+          rule_type: 'grade',
+          rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+          archived: false,
+        }],
+      });
   });
 
   afterAll(() => {

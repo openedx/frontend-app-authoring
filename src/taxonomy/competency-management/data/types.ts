@@ -81,13 +81,39 @@ export interface CompetencyCriteriaGroupsResponse {
   criteria: CompetencyCriterion[];
 }
 
-/** The studio-wide default rule profile (`#773`), used to resolve a
- * criterion that carries no override fields of its own.
+/** One competency rule profile (`#773`) - the studio-wide default is the
+ * only one this app resolves criteria against today, but the response this
+ * type describes can carry `taxonomy`/`course`/`organization`-scoped rows
+ * too (see `scopeType`).
  */
 export interface CompetencyRuleProfile {
   id: number;
+  /** Which scope this profile applies to: `'system_default'`,
+   * `'taxonomy'`, `'course'`, or `'organization'`. Computed server-side by a
+   * `SerializerMethodField` from which scope column is set on the row - the
+   * raw scope column itself is never sent on the wire. Only
+   * `'system_default'` is used by this app today (see
+   * `getDefaultCompetencyRuleProfile` in `./api`); no scoped profile ships
+   * in this MVP phase yet.
+   */
+  scopeType: string;
   ruleType: string;
   rulePayload: GradeRulePayload;
+  archived: boolean;
+}
+
+/** `#773`'s actual list-endpoint envelope: a standard DRF `PageNumberPagination`
+ * -style response (`CompetencyRuleProfilePagination`, page size 100), not a
+ * single object. The endpoint returns every rule profile in scope - just the
+ * one `system_default` row in this MVP phase, but designed to return more
+ * once scoped profiles ship - so callers must pick the row they want out of
+ * `results` themselves; see `getDefaultCompetencyRuleProfile` in `./api`.
+ */
+export interface CompetencyRuleProfileListResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: CompetencyRuleProfile[];
 }
 
 /** The rule that actually governs one rule box, after resolving a

@@ -6,8 +6,10 @@ import RuleBoxList from './RuleBoxList';
 
 const systemDefaultProfile: CompetencyRuleProfile = {
   id: 1,
+  scopeType: 'system_default',
   ruleType: 'grade',
   rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
+  archived: false,
 };
 
 // Group 10 holds two criteria sharing the default profile's rule (101, 102)

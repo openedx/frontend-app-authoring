@@ -21,12 +21,19 @@ describe('competency-management api calls', () => {
     expect(result).toEqual(mockResponse);
   });
 
-  it('gets the default competency rule profile, camelCased', async () => {
+  it('gets the default competency rule profile out of the paginated list response, camelCased', async () => {
     const { axiosMock } = initializeMocks();
     axiosMock.onGet(apiUrls.defaultCompetencyRuleProfile()).reply(200, {
-      id: 1,
-      rule_type: 'grade',
-      rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+      count: 1,
+      next: null,
+      previous: null,
+      results: [{
+        id: 1,
+        scope_type: 'system_default',
+        rule_type: 'grade',
+        rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+        archived: false,
+      }],
     });
 
     const result = await getDefaultCompetencyRuleProfile();
@@ -34,9 +41,66 @@ describe('competency-management api calls', () => {
     expect(axiosMock.history.get[0].url).toEqual(apiUrls.defaultCompetencyRuleProfile());
     expect(result).toEqual({
       id: 1,
+      scopeType: 'system_default',
       ruleType: 'grade',
       rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
+      archived: false,
     });
+  });
+
+  it('picks the system_default row by scopeType, not by array position, when other-scoped rows are present', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.defaultCompetencyRuleProfile()).reply(200, {
+      count: 2,
+      next: null,
+      previous: null,
+      results: [
+        // A scoped profile ordered *before* the system default - a
+        // position-based pick (e.g. `results[0]`) would wrongly return this.
+        {
+          id: 2,
+          scope_type: 'taxonomy',
+          rule_type: 'grade',
+          rule_payload: { op: 'gte', value: 0.9, scale: 'percent' },
+          archived: false,
+        },
+        {
+          id: 1,
+          scope_type: 'system_default',
+          rule_type: 'grade',
+          rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+          archived: false,
+        },
+      ],
+    });
+
+    const result = await getDefaultCompetencyRuleProfile();
+
+    expect(result).toEqual({
+      id: 1,
+      scopeType: 'system_default',
+      ruleType: 'grade',
+      rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
+      archived: false,
+    });
+  });
+
+  it('throws when no system_default row is present, rather than returning an arbitrary row', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.defaultCompetencyRuleProfile()).reply(200, {
+      count: 1,
+      next: null,
+      previous: null,
+      results: [{
+        id: 2,
+        scope_type: 'taxonomy',
+        rule_type: 'grade',
+        rule_payload: { op: 'gte', value: 0.9, scale: 'percent' },
+        archived: false,
+      }],
+    });
+
+    await expect(getDefaultCompetencyRuleProfile()).rejects.toThrow();
   });
 
   it('creates a new criterion, sending a snake_case payload and camelCasing the response', async () => {

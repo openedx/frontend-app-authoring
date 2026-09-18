@@ -33,9 +33,16 @@ describe('<CriteriaAssociationsSection />', () => {
   it('renders the empty-associations state once both queries resolve with no groups', async () => {
     axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, { groups: [], criteria: [] });
     axiosMock.onGet(apiUrls.defaultCompetencyRuleProfile()).reply(200, {
-      id: 1,
-      rule_type: 'grade',
-      rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+      count: 1,
+      next: null,
+      previous: null,
+      results: [{
+        id: 1,
+        scope_type: 'system_default',
+        rule_type: 'grade',
+        rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+        archived: false,
+      }],
     });
     renderSection();
 
@@ -45,9 +52,16 @@ describe('<CriteriaAssociationsSection />', () => {
   it('renders a failed state when the groups request fails', async () => {
     axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(500);
     axiosMock.onGet(apiUrls.defaultCompetencyRuleProfile()).reply(200, {
-      id: 1,
-      rule_type: 'grade',
-      rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+      count: 1,
+      next: null,
+      previous: null,
+      results: [{
+        id: 1,
+        scope_type: 'system_default',
+        rule_type: 'grade',
+        rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+        archived: false,
+      }],
     });
     renderSection();
 

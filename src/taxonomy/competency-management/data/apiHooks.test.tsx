@@ -45,12 +45,19 @@ describe('useCompetencyCriteriaGroups', () => {
 });
 
 describe('useDefaultCompetencyRuleProfile', () => {
-  it('fetches the studio-wide default rule profile', async () => {
+  it('fetches the studio-wide default rule profile out of the paginated list response', async () => {
     const { axiosMock } = initializeMocks();
     axiosMock.onGet(apiUrls.defaultCompetencyRuleProfile()).reply(200, {
-      id: 1,
-      rule_type: 'grade',
-      rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+      count: 1,
+      next: null,
+      previous: null,
+      results: [{
+        id: 1,
+        scope_type: 'system_default',
+        rule_type: 'grade',
+        rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+        archived: false,
+      }],
     });
 
     const { result } = renderHook(() => useDefaultCompetencyRuleProfile(), { wrapper: makeWrapper() });
@@ -58,8 +65,46 @@ describe('useDefaultCompetencyRuleProfile', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual({
       id: 1,
+      scopeType: 'system_default',
       ruleType: 'grade',
       rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
+      archived: false,
+    });
+  });
+
+  it('picks the system_default row by scopeType, not array position, when a scoped profile is also present', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.defaultCompetencyRuleProfile()).reply(200, {
+      count: 2,
+      next: null,
+      previous: null,
+      results: [
+        {
+          id: 2,
+          scope_type: 'taxonomy',
+          rule_type: 'grade',
+          rule_payload: { op: 'gte', value: 0.9, scale: 'percent' },
+          archived: false,
+        },
+        {
+          id: 1,
+          scope_type: 'system_default',
+          rule_type: 'grade',
+          rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+          archived: false,
+        },
+      ],
+    });
+
+    const { result } = renderHook(() => useDefaultCompetencyRuleProfile(), { wrapper: makeWrapper() });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual({
+      id: 1,
+      scopeType: 'system_default',
+      ruleType: 'grade',
+      rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
+      archived: false,
     });
   });
 });

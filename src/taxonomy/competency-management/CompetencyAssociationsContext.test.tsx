@@ -25,13 +25,27 @@ const createUrl = apiUrls.createCompetencyCriterion(tagId);
 
 const systemDefaultProfile: CompetencyRuleProfile = {
   id: 1,
+  scopeType: 'system_default',
   ruleType: 'grade',
   rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
+  archived: false,
 };
+/** `#773`'s real response envelope: a paginated list, not a single object -
+ * see `CompetencyRuleProfileListResponse` in `./data/types`.
+ */
 const profileResponse = {
-  id: 1,
-  rule_type: 'grade',
-  rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+  count: 1,
+  next: null,
+  previous: null,
+  results: [
+    {
+      id: 1,
+      scope_type: 'system_default',
+      rule_type: 'grade',
+      rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
+      archived: false,
+    },
+  ],
 };
 
 /** One course-level group (courseA, id 1) holding one bottom-tier group
