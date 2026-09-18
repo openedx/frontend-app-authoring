@@ -11,6 +11,11 @@ import { type EditorState } from './data/redux';
 // type.
 let editorStore: Store<EditorState>;
 
+export type EditorRenderState =
+  & Omit<WrapperOptions, 'extraWrapper'>
+  & RouteOptions
+  & { initialState?: PartialEditorState; learningContextId?: string; };
+
 /**
  * Custom render function for testing React components with the editor context and Redux store.
  *
@@ -23,10 +28,7 @@ export const editorRender = (
     initialState = {},
     learningContextId = 'course-v1:Org+COURSE+RUN',
     ...options
-  }:
-    & Omit<WrapperOptions, 'extraWrapper'>
-    & RouteOptions
-    & { initialState?: PartialEditorState; learningContextId?: string; } = {},
+  }: EditorRenderState = {},
 ) => {
   editorStore = createStore(initialState);
 

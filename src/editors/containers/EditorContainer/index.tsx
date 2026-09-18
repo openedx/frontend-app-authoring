@@ -66,6 +66,8 @@ interface Props extends EditorComponent {
   children: React.ReactNode;
   getContent: Function;
   isDirty: () => boolean;
+  /** Used to indicate that the XBlock is currently modifying its own state and shouldn't allow saving. */
+  isBusy?: boolean;
   validateEntry?: Function | null;
 }
 
@@ -73,6 +75,7 @@ const EditorContainer: React.FC<Props> = ({
   children,
   getContent,
   isDirty,
+  isBusy = false,
   onClose = null,
   validateEntry = null,
   returnFunction = null,
@@ -86,7 +89,7 @@ const EditorContainer: React.FC<Props> = ({
   const [isFullscreen, , , toggleFullscreen] = useToggle(false);
   const handleCancel = hooks.handleCancel({ onClose, returnFunction });
   const { createFailed, createFailedError } = hooks.createFailed();
-  const disableSave = !isInitialized;
+  const disableSave = !isInitialized || isBusy;
   const saveFailed = hooks.saveFailed();
   const clearSaveFailed = hooks.clearSaveError({ dispatch });
   const clearCreateFailed = hooks.clearCreateError({ dispatch });
