@@ -12,6 +12,7 @@ import {
   sortKeys,
   sortMessages,
 } from '../../containers/VideoGallery/utils';
+import { sortMessages as imageSortMessages } from '../ImageUploadModal/SelectImageModal/utils';
 import SearchSort from './SearchSort';
 import messages from './messages';
 
@@ -70,6 +71,16 @@ describe('SearchSort component', () => {
         expect(getByRole('link', { name: `By ${defaultMessage}` }))
           .toBeInTheDocument();
       });
+  });
+  test('separates "By" from the sort option', () => {
+    getComponent();
+    expect(screen.getByRole('button', { name: /By oldest/i }))
+      .toHaveTextContent('By oldest');
+  });
+  test('leaves the "By" prefix to the component', () => {
+    Object.values(imageSortMessages).forEach(({ defaultMessage }) => {
+      expect(defaultMessage).not.toMatch(/^by /i);
+    });
   });
   test('adds a filter option for each filter key', () => {
     const { getByTestId } = getComponent();

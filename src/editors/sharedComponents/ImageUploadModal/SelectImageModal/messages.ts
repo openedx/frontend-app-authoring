@@ -20,22 +20,22 @@ const messages = defineMessages({
   // Sort Dropdown
   sortByDateNewest: {
     id: 'authoring.texteditor.selectimagemodal.sort.datenewest.label',
-    defaultMessage: 'By date added (newest)',
+    defaultMessage: 'date added (newest)',
     description: 'Dropdown label for sorting by date (newest)',
   },
   sortByDateOldest: {
     id: 'authoring.texteditor.selectimagemodal.sort.dateoldest.label',
-    defaultMessage: 'By date added (oldest)',
+    defaultMessage: 'date added (oldest)',
     description: 'Dropdown label for sorting by date (oldest)',
   },
   sortByNameAscending: {
     id: 'authoring.texteditor.selectimagemodal.sort.nameascending.label',
-    defaultMessage: 'By name (ascending)',
+    defaultMessage: 'name (ascending)',
     description: 'Dropdown label for sorting by name (ascending)',
   },
   sortByNameDescending: {
     id: 'authoring.texteditor.selectimagemodal.sort.namedescending.label',
-    defaultMessage: 'By name (descending)',
+    defaultMessage: 'name (descending)',
     description: 'Dropdown label for sorting by name (descending)',
   },
 
