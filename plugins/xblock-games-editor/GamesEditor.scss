@@ -1,0 +1,321 @@
+// Everything here is scoped to the wrapper GameEditor renders, so the
+// plugin's .card/.sidebar/.editor-body rules never reach Paragon or Studio.
+.xblock-games-editor {
+  /* Basic styles to support GameEditor layout and classes used in JSX */
+  .editor-body {
+    height: 100%;
+  }
+
+  .page-body {
+    gap: 24px;
+    display: flex;
+    padding: 8px 0;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .terms {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+    gap: 16px;
+    align-self: stretch;
+  }
+
+  .terms > div {
+  width: 100%;
+  }
+
+  .sidebar {
+    width: 320px;
+    display: flex;
+    padding: 8px 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .draggable-button {
+    cursor: grab;
+    position: absolute;
+    left: 12px;
+  }
+
+  .card-number {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: var(--primary-500, #00262B);
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  .img-preview-wrapper {
+    display: flex;
+    width: 32px;
+    height: 32px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 3px;
+    border: 1px solid var(--gray-500, #F2F0EF);
+    overflow: hidden;
+  }
+
+  .img-preview {
+    min-width: 24px;
+    min-height: 24px;
+    object-fit: cover;
+    max-height: 32px;
+    max-width: 32px;
+    color: var(--gray-500, #707070);
+  }
+
+  .card-image-area {
+    display: flex;
+    padding: 0 24px 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+    max-height: 200px;
+    border-radius: 8px;
+  }
+
+  .card-divider {
+    width: 100%;
+    display: flex;
+    height: 1px;
+    justify-content: center;
+    align-items: center;
+    align-self: stretch;
+    background: var(--light-400, #EAE6E5);
+  }
+
+  .add-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 16px 16px 16px 2px;
+    text-decoration: none;
+    color: var(--primary-500, #00262B);
+  }
+
+  .add-button:hover {
+    text-decoration: none;
+    color: var(--primary-500, #00262B);
+  }
+
+  .add-button .btn-icon-before {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .type-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+  }
+
+  .toggle-button {
+    flex: 1;
+  }
+
+  .preview-term {
+    margin-right: 8px;
+    display: flex;
+    max-width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 8px;
+    padding-right: 8px;
+    position: absolute;
+    left: 0;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .preview-block {
+    margin-right: 8px;
+    bottom: 30%;
+  }
+
+  .preview-definition {
+    display: flex;
+    max-width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 8px;
+    padding-right: 8px;
+    position: absolute;
+    left: 50%;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .description {
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .description-header, .sidebar-title {
+    color: var(--primary-500, #00262B);
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24px;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    width: 100%;
+    position: relative;
+    border: none;
+    background: var(--extras-white, #FFFFFF);
+  }
+
+  // The heading row holds the collapsible trigger, the card menu and the
+  // chevron side by side, so the trigger contains no other controls.
+  .card-heading-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding-right: 24px;
+  }
+
+  .card-heading-wrapper {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0 12px 24px;
+  }
+
+  .card-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    align-self: stretch;
+    width: 100%;
+    margin-left: 24px;
+  }
+
+  .card-spacer {
+    flex: 1 0 0;
+    align-self: stretch;
+  }
+
+  .card-delete-button, .card-image-button, .image-delete-button {
+    display: flex;
+    width: 32px;
+    height: 32px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    border-radius: 44px;
+  }
+
+  .card-body {
+    width: 100%;
+    position: relative;
+  }
+
+  .card-term, .card-definition {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    gap: 16px;
+    color: var(--primary-500, #00262B);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 28px;
+    padding: 24px;
+  }
+
+  .card-image {
+    max-height: 200px;
+  }
+
+  .card-input-line {
+    color: var(--gray-500, #707070);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  .card-field {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1 0 0;
+    border: 1px solid var(--gray-500, #707070);
+    background: #FFFFFF;
+    padding: 10px 16px;
+    gap: 10px;
+    align-self: stretch;
+    color: var(--gray-500, #707070);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  .sidebar-type, .sidebar-shuffle, .sidebar-timer {
+    border-radius: 4px;
+    border: none !important;
+    background: var(--extras-white, #FFFFFF);
+    justify-content: space-between;
+    // stylelint-disable-next-line
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .sidebar-type > div, .sidebar-shuffle > div, .sidebar-timer > div {
+    width: 100%;
+  }
+
+  .drag-spacer {
+    width: 20px;
+    height: 44px;
+  }
+
+  .check {
+    fill: green;
+  }
+
+  .card-dropdown {
+    z-index: 10;
+  }
+
+  .settings-description {
+    padding-bottom: 16px;
+    color: #51565C;
+    margin-bottom: 8px;
+  }
+
+  .timer-toggle-button:focus::before,
+  .shuffle-toggle-button:focus::before {
+    display: none;
+  }
+
+  .game-editor {
+    background-color: var(--pgn-color-light-300);
+  }
+}
