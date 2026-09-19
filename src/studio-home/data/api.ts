@@ -2,7 +2,11 @@ import { camelCaseObject, snakeCaseObject, getConfig } from '@edx/frontend-platf
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-export const getStudioHomeApiUrl = () => new URL('api/contentstore/v1/home', getApiBaseUrl()).href;
+// FC-0118 (ADR 0028/0037): standardized v3 Studio Home endpoint. The trailing
+// slash is required by the DRF DefaultRouter that serves the v3 `HomeViewSet`
+// (the v1 route was a plain APIView). The aggregated home context lives at the
+// `list` action `…/v3/home/`, and the library list at `…/v3/home/libraries/`.
+export const getStudioHomeApiUrl = () => new URL('api/contentstore/v3/home/', getApiBaseUrl()).href;
 export const getRequestCourseCreatorUrl = () => new URL('request_course_creator', getApiBaseUrl()).href;
 export const getCourseNotificationUrl = (url) => new URL(url, getApiBaseUrl()).href;
 
@@ -55,7 +59,9 @@ export interface LibrariesV1ListData {
 }
 
 export async function getStudioHomeLibraries(): Promise<LibrariesV1ListData> {
-  const { data } = await getAuthenticatedHttpClient().get(`${getStudioHomeApiUrl()}/libraries`);
+  // `getStudioHomeApiUrl()` already ends in a slash (`…/v3/home/`); the v3
+  // library list is the `libraries` action at `…/v3/home/libraries/`.
+  const { data } = await getAuthenticatedHttpClient().get(`${getStudioHomeApiUrl()}libraries/`);
   return camelCaseObject(data);
 }
 
