@@ -8,6 +8,7 @@ import classNames from 'classnames';
 
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import messages from './messages';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 export type UserPartitionInfo = {
   selectablePartitions: {
@@ -45,16 +46,19 @@ export const DiscussionEditComponent = ({
 }: {
   discussionEnabled: boolean;
   handleDiscussionChange: (e: any) => void;
-}) => (
-  <>
-    <Form.Checkbox checked={discussionEnabled} onChange={handleDiscussionChange}>
-      <FormattedMessage {...messages.discussionEnabledCheckbox} />
-    </Form.Checkbox>
-    <p className="x-small font-weight-bold">
-      <FormattedMessage {...messages.discussionEnabledDescription} />
-    </p>
-  </>
-);
+}) => {
+  const { canEditCourseContent } = useCourseAuthoringContext();
+  return (
+    <>
+      <Form.Checkbox checked={discussionEnabled} onChange={handleDiscussionChange} disabled={!canEditCourseContent}>
+        <FormattedMessage {...messages.discussionEnabledCheckbox} />
+      </Form.Checkbox>
+      <p className="x-small font-weight-bold">
+        <FormattedMessage {...messages.discussionEnabledDescription} />
+      </p>
+    </>
+  );
+};
 
 export interface AccessEditComponentProps {
   selectedPartitionIndex?: number;
@@ -70,6 +74,7 @@ export const AccessEditComponent = ({
   selectedGroups,
 }: AccessEditComponentProps) => {
   const intl = useIntl();
+  const { canEditCourseContent } = useCourseAuthoringContext();
   const checkIsDeletedGroup = (group) => {
     const isGroupSelected = selectedGroups.includes(group.id.toString());
 
@@ -92,6 +97,7 @@ export const AccessEditComponent = ({
         value={selectedPartitionIndex}
         onChange={handleSelect}
         data-testid="group-type-select"
+        disabled={!canEditCourseContent}
       >
         <option value="-1" key="-1">
           {userPartitionInfo?.selectedPartitionIndex === -1
@@ -132,6 +138,7 @@ export const AccessEditComponent = ({
                   type="checkbox"
                   value={`${group.id}`}
                   name="selectedGroups"
+                  disabled={!canEditCourseContent}
                 />
                 <div>
                   <Form.Label
@@ -169,7 +176,7 @@ export const UnitTab = ({
     selectedGroups,
     discussionEnabled,
   } = values;
-
+  const { canEditCourseContent } = useCourseAuthoringContext();
   const handleVisibilityChange = (e) => {
     setFieldValue('isVisibleToStaffOnly', e.target.checked);
   };
@@ -201,6 +208,7 @@ export const UnitTab = ({
             checked={isVisibleToStaffOnly}
             onChange={handleVisibilityChange}
             data-testid="unit-visibility-checkbox"
+            disabled={!canEditCourseContent}
           >
             <FormattedMessage {...messages.hideFromLearners} />
           </Form.Checkbox>

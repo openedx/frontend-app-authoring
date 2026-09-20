@@ -875,6 +875,10 @@ export const labelDescriptionQuestionOLX = {
   <em class="olx_description">Watch out, boiling water is hot</em>`,
 };
 
+// NOTE: fast-xml-parser >= 5.7.3 unconditionally escapes quotes inside attribute values (a security
+// hardening change that ignores `processEntities: false`), so single quotes in the `style` attribute
+// come back as `&apos;` after a parse/build round-trip. `&apos;` is valid XML/HTML and browsers render
+// it identically, so the expected outputs below use the escaped form.
 export const htmlEntityTestOLX = {
   rawOLX: `<problem>
   <multiplechoiceresponse>
@@ -907,9 +911,9 @@ export const htmlEntityTestOLX = {
     ],
   },
   question: `<p>What is the content of the register x2 after executing the following three lines of instructions?</p>
-  <p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions <br></br>0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1<br></br>0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4<br></br>0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1</strong></span></p>`,
+  <p><span style="font-family: &apos;courier new&apos;, courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions <br></br>0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1<br></br>0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4<br></br>0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1</strong></span></p>`,
   solutionExplanation:
-    `<p><span style="font-family: 'courier new', courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions&#160;&#160;&#160;&#160;comment<br></br>0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = 0x1<br></br>0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x2 = x1 &lt;&lt; 4 = 0x10<br></br>0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = x2 - x1 = 0x10 - 0x01 = 0xf</strong></span></p>`,
+    `<p><span style="font-family: &apos;courier new&apos;, courier;"><strong>Address&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;assembly instructions&#160;&#160;&#160;&#160;comment<br></br>0x0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;addi x1, x0, 1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = 0x1<br></br>0x4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;slli x2, x1, 4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x2 = x1 &lt;&lt; 4 = 0x10<br></br>0x8&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;sub x1, x2, x1&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;x1 = x2 - x1 = 0x10 - 0x01 = 0xf</strong></span></p>`,
 };
 
 export const numberParseTestOLX = {
@@ -928,22 +932,22 @@ export const numberParseTestOLX = {
     answers: [
       {
         id: 'A',
-        title: `<span style="font-family: 'courier new', courier;"><strong>0x10</strong></span>`,
+        title: `<span style="font-family: &apos;courier new&apos;, courier;"><strong>0x10</strong></span>`,
         correct: false,
       },
       {
         id: 'B',
-        title: `<span style="font-family: 'courier new', courier;"><strong>0x0f</strong></span>`,
+        title: `<span style="font-family: &apos;courier new&apos;, courier;"><strong>0x0f</strong></span>`,
         correct: true,
       },
       {
         id: 'C',
-        title: `<span style="font-family: 'courier new', courier;"><strong>0x07</strong></span>`,
+        title: `<span style="font-family: &apos;courier new&apos;, courier;"><strong>0x07</strong></span>`,
         correct: false,
       },
       {
         id: 'D',
-        title: `<span style="font-family: 'courier new', courier;"><strong>0009</strong></span>`,
+        title: `<span style="font-family: &apos;courier new&apos;, courier;"><strong>0009</strong></span>`,
         correct: false,
       },
     ],

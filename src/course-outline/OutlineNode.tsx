@@ -347,7 +347,12 @@ const OutlineNode = ({
                 readyToSync={blk.upstreamInfo?.readyToSync}
               />
               <div
-                className={levelConfig.contentClass}
+                className={classNames(levelConfig.contentClass, {
+                  // `item-children` pulls the content 2.75rem to the right so it spans
+                  // under the drag handle column. Without the handle there is no column
+                  // to fill, and the negative margin would overflow the card.
+                  'item-children': isDraggable,
+                })}
                 data-testid={levelConfig.contentTestId}
                 onClick={(e) => onClickCard(e, false)}
               >

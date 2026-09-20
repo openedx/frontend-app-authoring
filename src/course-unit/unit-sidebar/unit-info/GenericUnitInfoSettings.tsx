@@ -12,6 +12,7 @@ import { useFieldDraft } from '@src/hooks/useFieldDraft';
 import ModalNotification from '@src/generic/modal-notification';
 import { InfoOutline } from '@openedx/paragon/icons';
 import messages from './messages';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 interface UnitInfoSettingsProps {
   id: string;
@@ -44,6 +45,7 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
   const visibleToStaffOnly = visibilityState === UNIT_VISIBILITY_STATES.staffOnly;
   const mutateFn = configureHook();
   const [isVisibleModalOpen, openVisibleModal, closeVisibleModal] = useToggle(false);
+  const { canEditCourseContent } = useCourseAuthoringContext();
 
   const handleUpdate = (
     isVisible: boolean,
@@ -121,12 +123,14 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
         >
           <ButtonGroup toggle>
             <Button
+              disabled={!canEditCourseContent}
               variant={localState?.isVisible ? 'outline-primary' : 'primary'}
               onClick={openVisibleModal}
             >
               <FormattedMessage {...messages.sidebarInfoVisibilityStudentLabel} />
             </Button>
             <Button
+              disabled={!canEditCourseContent}
               variant={localState?.isVisible ? 'primary' : 'outline-primary'}
               onClick={() => setLocalState((prev) => ({ ...prev, isVisible: true }))}
             >

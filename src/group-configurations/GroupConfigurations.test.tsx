@@ -27,6 +27,7 @@ const mockPermissions = (overrides = {}) =>
   jest.mocked(useCourseUserPermissions).mockReturnValue({
     isLoading: false,
     isAuthzEnabled: true,
+    canViewGroupConfigurations: true,
     canManageGroupConfigurations: true,
     ...overrides,
   } as ReturnType<typeof useCourseUserPermissions>);
@@ -48,8 +49,8 @@ describe('<GroupConfigurations />', () => {
     mockPermissions();
   });
 
-  it('shows PermissionDeniedAlert when user lacks manage group configurations permission', async () => {
-    mockPermissions({ canManageGroupConfigurations: false });
+  it('shows PermissionDeniedAlert when user lacks view group configurations permission', async () => {
+    mockPermissions({ canViewGroupConfigurations: false, canManageGroupConfigurations: false });
     renderComponent();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
     expect(screen.queryByText(messages.headingSubtitle.defaultMessage)).not.toBeInTheDocument();
@@ -77,6 +78,25 @@ describe('<GroupConfigurations />', () => {
     expect(screen.getByText(contentGroups.name)).toBeInTheDocument();
     expect(screen.getByText(enrollmentTrackGroups.name)).toBeInTheDocument();
     expect(screen.getByText(teamGroups.name)).toBeInTheDocument();
+  });
+
+  it('hides every action button when the user can view but not manage group configurations', async () => {
+    mockPermissions({ canManageGroupConfigurations: false });
+    renderComponent();
+
+    const mainContent = await screen.findByTestId('group-configurations-main-content-wrapper');
+
+    expect(within(mainContent).getByText(contentGroups.name)).toBeInTheDocument();
+    expect(
+      within(mainContent).queryByText(contentGroupsMessages.addNewGroup.defaultMessage),
+    ).not.toBeInTheDocument();
+    expect(
+      within(mainContent).queryByText(experimentMessages.addNewGroup.defaultMessage),
+    ).not.toBeInTheDocument();
+    expect(within(mainContent).queryAllByTestId('content-group-card-header-edit')).toHaveLength(0);
+    expect(within(mainContent).queryAllByTestId('content-group-card-header-delete')).toHaveLength(0);
+    expect(within(mainContent).queryAllByTestId('configuration-card-header-edit')).toHaveLength(0);
+    expect(within(mainContent).queryAllByTestId('configuration-card-header-delete')).toHaveLength(0);
   });
 
   it('does not render an empty section for enrollment track groups if it is empty', async () => {

@@ -3,6 +3,7 @@ import { Icon, IconButton, Stack } from '@openedx/paragon';
 import { ArrowBack } from '@openedx/paragon/icons';
 import messages from './messages';
 import { InfoSidebarMenu, InfoSidebarMenuProps } from './InfoSidebarMenu';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 interface SidebarTitleProps {
   /** Title of the section */
@@ -29,6 +30,7 @@ export const SidebarTitle = ({
   menuProps,
 }: SidebarTitleProps) => {
   const intl = useIntl();
+  const { canEditCourseContent } = useCourseAuthoringContext();
   return (
     <>
       <div className="d-flex justify-content-between">
@@ -44,7 +46,7 @@ export const SidebarTitle = ({
           <Icon src={icon} className="mr-2 text-primary" />
           <h2 className="text-primary h3 mb-0">{title}</h2>
         </Stack>
-        {menuProps && <InfoSidebarMenu {...menuProps} />}
+        {canEditCourseContent && menuProps && <InfoSidebarMenu {...menuProps} />}
       </div>
       <hr className="border" style={{ marginLeft: '-1rem', marginRight: '-1rem' }} />
     </>

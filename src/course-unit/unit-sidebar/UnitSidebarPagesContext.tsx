@@ -9,6 +9,7 @@ import { AddSidebar } from './AddSidebar';
 import { UnitAlignSidebar } from './UnitAlignSidebar';
 import { useUnitSidebarContext } from './UnitSidebarContext';
 import messages from './messages';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 export type UnitSidebarPages = {
   info: SidebarPage;
@@ -16,7 +17,7 @@ export type UnitSidebarPages = {
   align?: SidebarPage;
 };
 
-const getUnitSidebarPages = (readOnly: boolean, disableAdd: boolean) => {
+const getUnitSidebarPages = (readOnly: boolean, disableAdd: boolean, canEditCourseContent: boolean) => {
   const showAlignSidebar = getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true';
 
   return {
@@ -25,7 +26,7 @@ const getUnitSidebarPages = (readOnly: boolean, disableAdd: boolean) => {
       icon: Info,
       title: messages.sidebarButtonInfo,
     },
-    ...(!readOnly && {
+    ...(!readOnly && canEditCourseContent && {
       add: {
         component: AddSidebar,
         icon: Plus,
@@ -87,13 +88,15 @@ export const UnitSidebarPagesProvider = ({ children }: UnitSidebarPagesProviderP
     currentItemCategory,
   } = useUnitSidebarContext();
 
+  const { canEditCourseContent } = useCourseAuthoringContext();
+
   const hasComponentSelected = selectedComponentId !== undefined;
   const isSplitTest = currentItemCategory === 'split_test';
   const disableAdd = hasComponentSelected || isSplitTest;
 
   const sidebarPages = useMemo(
-    () => getUnitSidebarPages(readOnly, disableAdd),
-    [readOnly, disableAdd],
+    () => getUnitSidebarPages(readOnly, disableAdd, canEditCourseContent),
+    [readOnly, disableAdd, canEditCourseContent],
   );
 
   return (

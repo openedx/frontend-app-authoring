@@ -1,5 +1,6 @@
 import { render, screen, initializeMocks } from '@src/testUtils';
 
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import * as CourseAuthoringContext from '@src/CourseAuthoringContext';
 import * as CourseOutlineContext from '@src/course-outline/CourseOutlineContext';
 import * as CourseDetailsApi from '@src/data/apiHooks';
@@ -8,12 +9,23 @@ import * as OutlineSidebarContext from './OutlineSidebarContext';
 import { OutlineAlignSidebar } from './OutlineAlignSidebar';
 
 jest.mock('@src/content-tags-drawer', () => ({
-  ContentTagsDrawer: jest.fn(({ id, variant }) => (
+  ContentTagsDrawer: jest.fn(({ id, variant, readOnly }) => (
     <div data-testid="content-tags-drawer">
-      drawer-mock-{id}-{variant}
+      drawer-mock-{id}-{variant}-{String(readOnly)}
     </div>
   )),
 }));
+
+let validateUserPermissionsMock: ReturnType<typeof initializeMocks>['validateUserPermissionsMock'];
+
+/**
+ * Authz is only consulted when its waffle flag is on; with the flag off every permission is
+ * granted, so only the restricted cases need to enable it.
+ */
+const mockPermissions = (canManageTags = true) => {
+  mockWaffleFlags({ enableAuthzCourseAuthoring: !canManageTags });
+  validateUserPermissionsMock.mockResolvedValue({ canManageTags });
+};
 
 describe('OutlineAlignSidebar', () => {
   const setCurrentSelection = jest.fn();
@@ -24,7 +36,9 @@ describe('OutlineAlignSidebar', () => {
   const unitId = 'block-v1:test+course+run+type@vertical+block@unit-1';
 
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    mockPermissions();
     setCurrentSelection.mockReset();
     clearSelection.mockReset();
     openContainerSidebar.mockReset();
@@ -80,7 +94,16 @@ describe('OutlineAlignSidebar', () => {
 
     expect(drawer).toBeInTheDocument();
     expect(drawer).toHaveTextContent(
-      'drawer-mock-block-v1:test+course+run+type@sequential+block@seq1-component',
+      'drawer-mock-block-v1:test+course+run+type@sequential+block@seq1-component-false',
+    );
+  });
+
+  it('renders ContentTagsDrawer in read-only mode when user cannot manage tags', async () => {
+    mockPermissions(false);
+    render(<OutlineAlignSidebar />);
+
+    expect(await screen.findByTestId('content-tags-drawer')).toHaveTextContent(
+      'drawer-mock-block-v1:test+course+run+type@sequential+block@seq1-component-true',
     );
   });
 

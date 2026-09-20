@@ -21,6 +21,7 @@ import { getCourseUnitData } from '../data/selectors';
 import { updateQueryPendingStatus } from '../data/slice';
 import messages from './messages';
 import { isUnitPageNewDesignEnabled } from '../utils';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 
 type HeaderTitleProps = {
   unitTitle: string;
@@ -47,6 +48,7 @@ const HeaderTitle = ({
   const [titleValue, setTitleValue] = useState(unitTitle);
   const currentItemData = useSelector(getCourseUnitData);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
+  const { canEditCourseContent } = useCourseAuthoringContext();
 
   const isXBlockComponent = [
     COURSE_BLOCK_NAMES.libraryContent.id,
@@ -97,12 +99,15 @@ const HeaderTitle = ({
           </Form.Group>
         ) :
         unitTitle}
-      <IconButton
-        alt={intl.formatMessage(messages.altButtonEdit)}
-        className="ml-1 flex-shrink-0 edit-button"
-        iconAs={EditIcon}
-        onClick={handleTitleEdit}
-      />
+      {canEditCourseContent &&
+        (
+          <IconButton
+            alt={intl.formatMessage(messages.altButtonEdit)}
+            className="ml-1 flex-shrink-0 edit-button"
+            iconAs={EditIcon}
+            onClick={handleTitleEdit}
+          />
+        )}
       {!isUnitPageNewDesignEnabled() && (
         <>
           <IconButton

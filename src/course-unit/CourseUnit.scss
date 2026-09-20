@@ -12,8 +12,16 @@
   min-width: 900px;
 
   .sub-header {
-    // To clean the blank space in the bottom of the sub header
-    margin-bottom: -35px;
+    // Remove the blank space at the bottom of the sub header at the source.
+    // The shared SubHeader reserves 1.75rem under its action buttons, which the
+    // unit page does not want because it renders its own status bar right below.
+    // Do not do this with a negative margin on `.sub-header`: that pulls the
+    // status bar up by a fixed amount regardless of how tall the title is, so a
+    // display name that wraps to two or more lines ends up underneath the
+    // "Live" / "Discussions Enabled" badges.
+    .sub-header-actions {
+      margin-bottom: 0;
+    }
   }
 }
 

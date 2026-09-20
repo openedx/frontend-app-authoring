@@ -100,6 +100,10 @@ export const getCourseTeamPermissions = (courseId: string) => ({
 });
 
 export const getGroupConfigurationsPermissions = (courseId: string) => ({
+  canViewGroupConfigurations: {
+    action: COURSE_PERMISSIONS.VIEW_GROUP_CONFIGURATIONS,
+    scope: courseId,
+  },
   canManageGroupConfigurations: {
     action: COURSE_PERMISSIONS.MANAGE_GROUP_CONFIGURATIONS,
     scope: courseId,
@@ -135,6 +139,13 @@ export const getImportExportPermissions = (courseId: string) => ({
   },
   canExportTags: {
     action: COURSE_PERMISSIONS.EXPORT_TAGS,
+    scope: courseId,
+  },
+});
+
+export const getTagsPermissions = (courseId: string) => ({
+  canManageTags: {
+    action: COURSE_PERMISSIONS.MANAGE_TAGS,
     scope: courseId,
   },
 });

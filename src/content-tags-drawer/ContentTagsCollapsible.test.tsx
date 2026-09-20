@@ -1,0 +1,806 @@
+import React, { useMemo } from 'react';
+import {
+  act,
+  fireEvent,
+  initializeMocks,
+  render,
+  screen,
+  userEvent,
+  within,
+} from '@src/testUtils';
+
+import ContentTagsCollapsible from './ContentTagsCollapsible';
+import messages from './messages';
+import { ContentTagsDrawerContext } from './common/context';
+import type { ContentTagsDrawerContextData } from './common/context';
+import type { DrawerTaxonomy, StagedTagData, Tag } from './data/types';
+
+interface ContentTagsCollapsibleComponentProps {
+  contentId: string;
+  taxonomyAndTagsData: DrawerTaxonomy;
+  stagedContentTags: StagedTagData[];
+  addStagedContentTag: jest.Mock;
+  removeStagedContentTag: jest.Mock;
+  setStagedTags: jest.Mock;
+  removeGlobalStagedContentTag: jest.Mock;
+  addRemovedContentTag: jest.Mock;
+  deleteRemovedContentTag: jest.Mock;
+  globalStagedContentTags: Record<number, Tag[]>;
+  globalStagedRemovedContentTags: Record<number, string[]>;
+  setGlobalStagedContentTags: jest.Mock;
+  isEditMode: boolean;
+  toEditMode: jest.Mock;
+  collapsibleState: boolean;
+  openCollapsible: jest.Mock;
+  closeCollapsible: jest.Mock;
+}
+
+const taxonomyMockData = {
+  hasMorePages: false,
+  canAddTag: false,
+  tagPages: {
+    isLoading: false,
+    isError: false,
+    data: [{
+      value: 'Tag 1',
+      externalId: null,
+      childCount: 2,
+      depth: 0,
+      parentValue: null,
+      id: 12345,
+      subTagsUrl: null,
+      canChangeTag: false,
+      canDeleteTag: false,
+    }, {
+      value: 'Tag 2',
+      externalId: null,
+      childCount: 0,
+      depth: 0,
+      parentValue: null,
+      id: 12346,
+      subTagsUrl: null,
+      canChangeTag: false,
+      canDeleteTag: false,
+    }, {
+      value: 'Tag 3',
+      externalId: null,
+      childCount: 0,
+      depth: 0,
+      parentValue: null,
+      id: 12347,
+      subTagsUrl: null,
+      canChangeTag: false,
+      canDeleteTag: false,
+    }],
+  },
+};
+
+const nestedTaxonomyMockData = {
+  hasMorePages: false,
+  canAddTag: false,
+  tagPages: {
+    isLoading: false,
+    isError: false,
+    data: [{
+      value: 'Tag 1.1',
+      externalId: null,
+      childCount: 0,
+      depth: 1,
+      parentValue: 'Tag 1',
+      id: 12354,
+      subTagsUrl: null,
+      canChangeTag: false,
+      canDeleteTag: false,
+    }, {
+      value: 'Tag 1.2',
+      externalId: null,
+      childCount: 0,
+      depth: 1,
+      parentValue: 'Tag 1',
+      id: 12355,
+      subTagsUrl: null,
+      canChangeTag: false,
+      canDeleteTag: false,
+    }],
+  },
+};
+
+jest.mock('./data/apiHooks', () => ({
+  useContentTaxonomyTagsUpdater: jest.fn(() => ({
+    isError: false,
+    mutate: jest.fn(),
+  })),
+  useTaxonomyTagsData: jest.fn((_, parentTagValue) => {
+    // To mock nested call of useTaxonomyData in subtags dropdown
+    if (parentTagValue === 'Tag 1') {
+      return nestedTaxonomyMockData;
+    }
+    return taxonomyMockData;
+  }),
+}));
+
+const data: ContentTagsCollapsibleComponentProps = {
+  contentId: 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab',
+  taxonomyAndTagsData: {
+    id: 123,
+    name: 'Taxonomy 1',
+    canTagObject: true,
+    contentTags: [
+      {
+        value: 'Tag 1',
+        lineage: ['Tag 1'],
+        canChangeObjecttag: true,
+        canDeleteObjecttag: true,
+        isCopied: false,
+      },
+      {
+        value: 'Tag 1.1',
+        lineage: ['Tag 1', 'Tag 1.1'],
+        canChangeObjecttag: true,
+        canDeleteObjecttag: true,
+        isCopied: false,
+      },
+      {
+        value: 'Tag 2',
+        lineage: ['Tag 2'],
+        canChangeObjecttag: true,
+        canDeleteObjecttag: true,
+        isCopied: false,
+      },
+    ],
+  },
+  stagedContentTags: [],
+  addStagedContentTag: jest.fn(),
+  removeStagedContentTag: jest.fn(),
+  setStagedTags: jest.fn(),
+  removeGlobalStagedContentTag: jest.fn(),
+  addRemovedContentTag: jest.fn(),
+  deleteRemovedContentTag: jest.fn(),
+  globalStagedContentTags: {},
+  globalStagedRemovedContentTags: {},
+  setGlobalStagedContentTags: jest.fn(),
+  isEditMode: true,
+  toEditMode: jest.fn(),
+  collapsibleState: true,
+  openCollapsible: jest.fn(),
+  closeCollapsible: jest.fn(),
+};
+
+const ContentTagsCollapsibleComponent = ({
+  contentId,
+  taxonomyAndTagsData,
+  stagedContentTags,
+  addStagedContentTag,
+  removeStagedContentTag,
+  setStagedTags,
+  removeGlobalStagedContentTag,
+  addRemovedContentTag,
+  deleteRemovedContentTag,
+  globalStagedContentTags,
+  globalStagedRemovedContentTags,
+  setGlobalStagedContentTags,
+  isEditMode,
+  toEditMode,
+  collapsibleState,
+  openCollapsible,
+  closeCollapsible,
+}: ContentTagsCollapsibleComponentProps) => {
+  const context = useMemo(() => ({
+    addStagedContentTag,
+    removeStagedContentTag,
+    setStagedTags,
+    removeGlobalStagedContentTag,
+    addRemovedContentTag,
+    deleteRemovedContentTag,
+    globalStagedContentTags,
+    globalStagedRemovedContentTags,
+    setGlobalStagedContentTags,
+    isEditMode,
+    toEditMode,
+    openCollapsible,
+    closeCollapsible,
+  }), []);
+  return (
+    <ContentTagsDrawerContext.Provider value={context as unknown as ContentTagsDrawerContextData}>
+      <ContentTagsCollapsible
+        contentId={contentId}
+        taxonomyAndTagsData={taxonomyAndTagsData}
+        stagedContentTags={stagedContentTags}
+        collapsibleState={collapsibleState}
+      />
+    </ContentTagsDrawerContext.Provider>
+  );
+};
+
+describe('<ContentTagsCollapsible />', () => {
+  beforeAll(() => {
+    jest.useFakeTimers(); // To account for debounce timer
+  });
+
+  afterAll(() => {
+    jest.useRealTimers(); // Restore real timers after the tests
+  });
+
+  beforeEach(() => {
+    initializeMocks();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks(); // Reset all mock function call counts after each test case
+  });
+
+  async function getComponent(updatedData?: ContentTagsCollapsibleComponentProps) {
+    const componentData = !updatedData ? data : updatedData;
+
+    return render(
+      <ContentTagsCollapsibleComponent
+        contentId={componentData.contentId}
+        taxonomyAndTagsData={componentData.taxonomyAndTagsData}
+        stagedContentTags={componentData.stagedContentTags}
+        addStagedContentTag={componentData.addStagedContentTag}
+        removeStagedContentTag={componentData.removeStagedContentTag}
+        setStagedTags={componentData.setStagedTags}
+        removeGlobalStagedContentTag={componentData.removeGlobalStagedContentTag}
+        addRemovedContentTag={componentData.addRemovedContentTag}
+        deleteRemovedContentTag={componentData.deleteRemovedContentTag}
+        globalStagedContentTags={componentData.globalStagedContentTags}
+        globalStagedRemovedContentTags={componentData.globalStagedRemovedContentTags}
+        setGlobalStagedContentTags={componentData.setGlobalStagedContentTags}
+        isEditMode={componentData.isEditMode}
+        toEditMode={componentData.toEditMode}
+        collapsibleState={componentData.collapsibleState}
+        openCollapsible={componentData.openCollapsible}
+        closeCollapsible={componentData.closeCollapsible}
+      />,
+    );
+  }
+
+  it('should render taxonomy tags data along content tags number badge', async () => {
+    const { container, getByText } = await getComponent();
+    expect(getByText('Taxonomy 1')).toBeInTheDocument();
+    expect(container.getElementsByClassName('taxonomy-tags-count-chip').length).toBe(1);
+    expect(getByText('3')).toBeInTheDocument();
+  });
+
+  it('should render read mode', async () => {
+    await getComponent({
+      ...data,
+      isEditMode: false,
+    });
+
+    expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+    expect(screen.queryByText(/add a tag/i)).not.toBeInTheDocument();
+  });
+
+  it('should render edit mode', async () => {
+    await getComponent();
+
+    expect(
+      screen.getAllByRole(
+        'button',
+        { name: /delete/i },
+      ).length,
+    ).toBe(3);
+    expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
+  });
+
+  it('should not render add tags select in edit mode when not allowed to tag objects', async () => {
+    await getComponent({
+      ...data,
+      taxonomyAndTagsData: {
+        id: 123,
+        name: 'Taxonomy 1',
+        canTagObject: false,
+        contentTags: [
+          {
+            value: 'Tag 1',
+            lineage: ['Tag 1'],
+            canChangeObjecttag: true,
+            canDeleteObjecttag: true,
+            isCopied: false,
+          },
+        ],
+      },
+    });
+
+    // Still in edit mode, so delete buttons are shown
+    expect(
+      screen.getAllByRole(
+        'button',
+        { name: /delete/i },
+      ).length,
+    ).toBe(1);
+
+    // But the add tags select is hidden
+    expect(screen.queryByText(/add a tag/i)).not.toBeInTheDocument();
+  });
+
+  it('should render "no tags added yet" when expanded in read mode', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    await getComponent({
+      ...data,
+      isEditMode: false,
+      taxonomyAndTagsData: {
+        id: 123,
+        name: 'Taxonomy 1',
+        canTagObject: true,
+        contentTags: [],
+      },
+    });
+
+    const expandToggle = screen.getByRole('button', {
+      name: /taxonomy 1/i,
+    });
+    await user.click(expandToggle);
+    expect(screen.queryByText(/no tags added yet/i)).toBeInTheDocument();
+
+    const addTags = screen.getByRole('button', {
+      name: /add tags/i,
+    });
+    expect(addTags).toBeInTheDocument();
+    await user.click(addTags);
+    expect(data.toEditMode).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not render "add tags" button when expanded and not allowed to tag objects', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    await getComponent({
+      ...data,
+      isEditMode: false,
+      taxonomyAndTagsData: {
+        id: 123,
+        name: 'Taxonomy 1',
+        canTagObject: false,
+        contentTags: [],
+      },
+    });
+
+    const expandToggle = screen.getByRole('button', {
+      name: /taxonomy 1/i,
+    });
+    await user.click(expandToggle);
+    expect(screen.queryByText(/no tags added yet/i)).toBeInTheDocument();
+
+    const addTags = screen.queryByRole('button', {
+      name: /add tags/i,
+    });
+    expect(addTags).not.toBeInTheDocument();
+  });
+
+  it('should call `openCollapsible` when click in the collapsible', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    await getComponent({
+      ...data,
+      collapsibleState: false,
+    });
+
+    const expandToggle = screen.getByRole('button', {
+      name: /taxonomy 1/i,
+    });
+    await user.click(expandToggle);
+
+    expect(data.openCollapsible).toHaveBeenCalledTimes(1);
+    expect(data.closeCollapsible).toHaveBeenCalledTimes(0);
+    expect(screen.queryByText(/no tags added yet/i)).not.toBeInTheDocument();
+  });
+
+  it('should call `closeCollapsible` when click in the collapsible', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    await getComponent({
+      ...data,
+      collapsibleState: true,
+    });
+
+    const expandToggle = screen.getByRole('button', {
+      name: /taxonomy 1/i,
+    });
+    await user.click(expandToggle);
+
+    expect(data.closeCollapsible).toHaveBeenCalledTimes(1);
+    expect(data.openCollapsible).toHaveBeenCalledTimes(0);
+  });
+
+  it('should call `addStagedContentTag` when tag checked in the dropdown', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    const { getByText, getAllByText } = await getComponent();
+
+    // Click on "Add a tag" button to open dropdown to select new tags
+    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    // react-select ignores a plain `click`, so press and release the pointer directly
+    await user.pointer([{ target: addTagsButton, keys: '[MouseLeft>]' }, { keys: '[/MouseLeft]' }]);
+
+    // Wait for the dropdown selector for tags to open,
+    // Tag 3 should only appear there, (i.e. the dropdown is open, since Tag 3 is not applied)
+    expect(getAllByText('Tag 3').length).toBe(1);
+
+    // Click to check Tag 3 and check the `addStagedContentTag` was called with the correct params
+    const tag3 = getByText('Tag 3');
+    await user.click(tag3);
+
+    const taxonomyId = 123;
+    const addedStagedTag = {
+      value: 'Tag%203',
+      label: 'Tag 3',
+    };
+    expect(data.addStagedContentTag).toHaveBeenCalledTimes(1);
+    expect(data.addStagedContentTag).toHaveBeenCalledWith(taxonomyId, addedStagedTag);
+  });
+
+  it('should call `removeStagedContentTag` when tag staged tag unchecked in the dropdown', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    const { getByText, getAllByText } = await getComponent();
+
+    // Click on "Add a tag" button to open dropdown to select new tags
+    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    // react-select ignores a plain `click`, so press and release the pointer directly
+    await user.pointer([{ target: addTagsButton, keys: '[MouseLeft>]' }, { keys: '[/MouseLeft]' }]);
+
+    // Wait for the dropdown selector for tags to open,
+    // Tag 3 should only appear there, (i.e. the dropdown is open, since Tag 3 is not applied)
+    expect(getAllByText('Tag 3').length).toBe(1);
+
+    // Click to check Tag 3
+    const tag3 = getByText('Tag 3');
+    await user.click(tag3);
+
+    // Click to uncheck Tag 3 and check the `removeStagedContentTag` was called with the correct params
+    await user.click(tag3);
+    const taxonomyId = 123;
+    const tagValue = 'Tag%203';
+    expect(data.removeStagedContentTag).toHaveBeenCalledTimes(1);
+    expect(data.removeStagedContentTag).toHaveBeenCalledWith(taxonomyId, tagValue);
+  });
+
+  it('should call `removeGlobalStagedContentTag` when global staged tag is deleted', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    await getComponent({
+      ...data,
+      taxonomyAndTagsData: {
+        id: 123,
+        name: 'Taxonomy 1',
+        canTagObject: true,
+        contentTags: [
+          {
+            value: 'Tag 3',
+            lineage: ['Tag 3'],
+            canChangeObjecttag: true,
+            canDeleteObjecttag: true,
+            isCopied: false,
+          },
+        ],
+      },
+      globalStagedContentTags: {
+        123: [{
+          value: 'Tag 3',
+          lineage: ['Tag 3'],
+          canChangeObjecttag: true,
+          canDeleteObjecttag: true,
+          isCopied: false,
+        }],
+      },
+    });
+
+    const deleteButton = screen.getByRole('button', {
+      name: /delete/i,
+    });
+    await user.click(deleteButton);
+
+    const taxonomyId = 123;
+    expect(data.removeGlobalStagedContentTag).toHaveBeenCalledTimes(1);
+    expect(data.removeGlobalStagedContentTag).toHaveBeenCalledWith(taxonomyId, 'Tag 3');
+  });
+
+  it('should call `addRemovedContentTag` when a fetched tag is deleted', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    await getComponent();
+
+    const tag = screen.getByText(/tag 2/i);
+    const deleteButton = within(tag).getByRole('button', {
+      name: /delete/i,
+    });
+    await user.click(deleteButton);
+
+    const taxonomyId = 123;
+    expect(data.addRemovedContentTag).toHaveBeenCalledTimes(1);
+    expect(data.addRemovedContentTag).toHaveBeenCalledWith(taxonomyId, 'Tag 2');
+  });
+
+  it('should call `setStagedTags` to clear staged tags when clicking inline "Add" button', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    // Setup component to have staged tags
+    const { getByText } = await getComponent({
+      ...data,
+      stagedContentTags: [{
+        value: 'Tag%203',
+        label: 'Tag 3',
+      }],
+    });
+
+    // Click on inline "Add" button and check that the appropriate methods are called
+    const inlineAdd = getByText(messages.collapsibleInlineAddStagedTagsButtonText.defaultMessage);
+    await user.click(inlineAdd);
+
+    // Check that `setStagedTags` called with empty tags list to clear staged tags
+    const taxonomyId = 123;
+    expect(data.setStagedTags).toHaveBeenCalledTimes(1);
+    expect(data.setStagedTags).toHaveBeenCalledWith(taxonomyId, []);
+  });
+
+  it('should call `setStagedTags` to clear staged tags when clicking "Add tags" button in dropdown', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    // Setup component to have staged tags
+    const { container, getByText } = await getComponent({
+      ...data,
+      stagedContentTags: [{
+        value: 'Tag%203',
+        label: 'Tag 3',
+      }],
+    });
+
+    // Click on dropdown with staged tags to expand it
+    const selectTagsDropdown = container.getElementsByClassName('react-select-add-tags__control')[0];
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: selectTagsDropdown, keys: '[MouseLeft>]' });
+
+    // Click on "Add tags" button and check that the appropriate methods are called
+    const dropdownAdd = getByText(messages.collapsibleAddStagedTagsButtonText.defaultMessage);
+    await user.click(dropdownAdd);
+
+    // Check that `setStagedTags` called with empty tags list to clear staged tags
+    const taxonomyId = 123;
+    expect(data.setStagedTags).toHaveBeenCalledTimes(1);
+    expect(data.setStagedTags).toHaveBeenCalledWith(taxonomyId, []);
+  });
+
+  it('should close dropdown and clear staged tags when clicking "Cancel" inside dropdown', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    // Setup component to have staged tags
+    const { container, getByText } = await getComponent({
+      ...data,
+      stagedContentTags: [{
+        value: 'Tag%203',
+        label: 'Tag 3',
+      }],
+    });
+
+    // Click on dropdown with staged tags to expand it
+    const selectTagsDropdown = container.getElementsByClassName('react-select-add-tags__control')[0];
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: selectTagsDropdown, keys: '[MouseLeft>]' });
+
+    // Click on inline "Add" button and check that the appropriate methods are called
+    const dropdownCancel = getByText(messages.collapsibleCancelStagedTagsButtonText.defaultMessage);
+    await user.click(dropdownCancel);
+
+    // Check that `setStagedTags` called with empty tags list to clear staged tags
+    const taxonomyId = 123;
+    expect(data.setStagedTags).toHaveBeenCalledTimes(1);
+    expect(data.setStagedTags).toHaveBeenCalledWith(taxonomyId, []);
+
+    // Check that the dropdown is closed
+    expect(dropdownCancel).not.toBeInTheDocument();
+  });
+
+  it('should handle search term change', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    const {
+      getByText,
+      getByRole,
+      getByDisplayValue,
+    } = await getComponent();
+
+    // Click on "Add a tag" button to open dropdown
+    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
+
+    // Get the search field
+    const searchField = getByRole('combobox');
+
+    const searchTerm = 'memo';
+
+    // Trigger a change in the search field
+    await user.type(searchField, searchTerm);
+
+    await act(async () => {
+      // Fast-forward time by 500 milliseconds (for the debounce delay)
+      jest.advanceTimersByTime(500);
+    });
+
+    // Check that the search term has been set
+    expect(searchField).toHaveValue(searchTerm);
+    expect(getByDisplayValue(searchTerm)).toBeInTheDocument();
+
+    // Clear search
+    await user.clear(searchField);
+
+    // Check that the search term has been cleared
+    expect(searchField).toHaveValue('');
+  });
+
+  it('should close dropdown selector when clicking away', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    const { container, getByText, queryByText } = await getComponent();
+
+    // Click on "Add a tag" button to open dropdown
+    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
+
+    // Wait for the dropdown selector for tags to open, Tag 3 should appear
+    // since it is not applied
+    expect(queryByText('Tag 3')).toBeInTheDocument();
+
+    // Simulate clicking outside the dropdown remove focus.
+    // Kept on fireEvent: the handler under test branches on `relatedTarget`, which userEvent
+    // does not let us set.
+    const outsideElement = container.querySelector('.taxonomy-tags-count-chip');
+    const selectElement = container.querySelector('.react-select-add-tags__input')!;
+    fireEvent.blur(selectElement, { relatedTarget: outsideElement });
+
+    // Wait for the dropdown selector for tags to close, Tag 3 is no longer on
+    // the page
+    expect(queryByText('Tag 3')).not.toBeInTheDocument();
+  });
+
+  it('should test keyboard navigation of add tags widget', async () => {
+    const user = userEvent.setup({ delay: null });
+    const {
+      getByText,
+      queryByText,
+      queryAllByText,
+    } = await getComponent();
+
+    // Click on "Add a tag" button to open dropdown
+    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    // Press without releasing: react-select opens its menu on mouseDown, and a full click
+    // would immediately toggle it back closed.
+    await user.pointer({ target: addTagsButton, keys: '[MouseLeft>]' });
+
+    // Wait for the dropdown selector for tags to open, Tag 3 should appear
+    // since it is not applied
+    expect(queryByText('Tag 3')).toBeInTheDocument();
+
+    /*
+    The dropdown data looks like the following:
+
+      │Tag 1
+      │  │
+      │  ├─ Tag 1.1
+      │  │
+      │  │
+      │  └─ Tag 1.2
+      │
+      │Tag 2
+      │
+      │
+      │Tag 3
+
+     */
+
+    // Press tab to focus on first element in dropdown, Tag 1 should be focused
+    await user.keyboard('{Tab}');
+
+    const dropdownTag1Div = queryAllByText('Tag 1')[1].closest('.dropdown-selector-tag-actions');
+    expect(dropdownTag1Div).toHaveFocus();
+
+    // Press right arrow to expand Tag 1, Tag 1.1 & Tag 1.2 should now be visible
+    await user.keyboard('{arrowright}');
+    expect(queryAllByText('Tag 1.1').length).toBe(2);
+    expect(queryByText('Tag 1.2')).toBeInTheDocument();
+
+    // Press left arrow to collapse Tag 1, Tag 1.1 & Tag 1.2 should not be visible
+    await user.keyboard('{arrowleft}');
+    expect(queryAllByText('Tag 1.1').length).toBe(1);
+    expect(queryByText('Tag 1.2')).not.toBeInTheDocument();
+
+    // Press enter key to expand Tag 1, Tag 1.1 & Tag 1.2 should now be visible
+    await user.keyboard('{enter}');
+    expect(queryAllByText('Tag 1.1').length).toBe(2);
+    expect(queryByText('Tag 1.2')).toBeInTheDocument();
+
+    // Press down arrow to navigate to Tag 1.1, it should be focused
+    await user.keyboard('{arrowdown}');
+    const dropdownTag1pt1Div = queryAllByText('Tag 1.1')[1].closest('.dropdown-selector-tag-actions');
+    expect(dropdownTag1pt1Div).toHaveFocus();
+
+    // Press down arrow again to navigate to Tag 1.2, it should be fouced
+    await user.keyboard('{arrowdown}');
+    const dropdownTag1pt2Div = queryAllByText('Tag 1.2')[0].closest('.dropdown-selector-tag-actions');
+    expect(dropdownTag1pt2Div).toHaveFocus();
+
+    // Press down arrow again to navigate to Tag 2, it should be fouced
+    await user.keyboard('{arrowdown}');
+    const dropdownTag2Div = queryAllByText('Tag 2')[1].closest('.dropdown-selector-tag-actions');
+    expect(dropdownTag2Div).toHaveFocus();
+
+    // Press up arrow to navigate back to Tag 1.2, it should be focused
+    await user.keyboard('{arrowup}');
+    expect(dropdownTag1pt2Div).toHaveFocus();
+
+    // Press up arrow to navigate back to Tag 1.1, it should be focused
+    await user.keyboard('{arrowup}');
+    expect(dropdownTag1pt1Div).toHaveFocus();
+
+    // Press up arrow again to navigate to Tag 1, it should be focused
+    await user.keyboard('{arrowup}');
+    expect(dropdownTag1Div).toHaveFocus();
+
+    // Press down arrow twice to navigate to Tag 1.2, it should be focsed
+    await user.keyboard('{arrowdown}');
+    await user.keyboard('{arrowdown}');
+    expect(dropdownTag1pt2Div).toHaveFocus();
+
+    // Press space key to check Tag 1.2, it should be staged
+    await user.keyboard('[Space]');
+
+    const taxonomyId = 123;
+    const addedStagedTag = {
+      value: 'Tag%201,Tag%201.2',
+      label: 'Tag 1.2',
+    };
+    expect(data.addStagedContentTag).toHaveBeenCalledWith(taxonomyId, addedStagedTag);
+
+    // Press enter key again to uncheck Tag 1.2 (since it's a leaf), it should be unstaged
+    await user.keyboard('{enter}');
+    const tagValue = 'Tag%201,Tag%201.2';
+    expect(data.removeStagedContentTag).toHaveBeenCalledWith(taxonomyId, tagValue);
+
+    // Press left arrow to navigate back to Tag 1, it should be focused
+    await user.keyboard('{arrowleft}');
+    expect(dropdownTag1Div).toHaveFocus();
+
+    // Press tab key it should jump to cancel button, it should be focused
+    await user.keyboard('{Tab}');
+    const dropdownCancel = getByText(messages.collapsibleCancelStagedTagsButtonText.defaultMessage);
+    expect(dropdownCancel).toHaveFocus();
+
+    // Press tab again, it should exit and close the select menu, since there are not staged tags
+    await user.keyboard('{Tab}');
+    expect(queryByText('Tag 3')).not.toBeInTheDocument();
+
+    // Press shift tab, focus back on select menu input, it should open the menu
+    await user.tab({ shift: true });
+    expect(queryByText('Tag 3')).toBeInTheDocument();
+
+    // Press shift tab again, it should focus out and close the select menu
+    await user.tab({ shift: true });
+    expect(queryByText('Tag 3')).not.toBeInTheDocument();
+
+    // Press tab again, the select menu should open, then press escape, it should close
+    await user.keyboard('{Tab}');
+    expect(queryByText('Tag 3')).toBeInTheDocument();
+    await user.keyboard('{escape}');
+    expect(queryByText('Tag 3')).not.toBeInTheDocument();
+  });
+
+  it('should remove applied tags when clicking on `x` of tag bubble', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    await getComponent();
+
+    // Click on 'x' of applied tag to remove it
+    const appliedTag = screen.getByText(/tag 2/i);
+    const xButtonAppliedTag = within(appliedTag).getByRole('button', {
+      name: /delete/i,
+    });
+    await user.click(xButtonAppliedTag);
+
+    // Check that the applied tag has been removed
+    expect(appliedTag).not.toBeInTheDocument();
+  });
+
+  it('should render taxonomy tags data with tags number badge as cero', async () => {
+    const updatedData = { ...data };
+    updatedData.taxonomyAndTagsData = { ...updatedData.taxonomyAndTagsData };
+    updatedData.taxonomyAndTagsData.contentTags = [];
+    const { container, getByText } = await getComponent(updatedData);
+
+    expect(getByText('Taxonomy 1')).toBeInTheDocument();
+    expect(container.getElementsByClassName('taxonomy-tags-count-chip').length).toBe(1);
+    expect(getByText('0')).toBeInTheDocument();
+  });
+});

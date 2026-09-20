@@ -1,4 +1,7 @@
 import { renderHook } from '@testing-library/react';
+import { useRef } from 'react';
+import userEvent from '@testing-library/user-event';
+
 import {
   initializeMocks,
   cleanup,
@@ -7,7 +10,7 @@ import {
   waitFor,
   makeQueryClientWrapper,
 } from '../testUtils';
-import { useWaffleFlags, useUpdateCourseAppStatus, useUpdateCourseAdvancedSettings } from './apiHooks';
+import { useWaffleFlags, useUpdateCourseAppStatus, createGlobalState, useUpdateCourseAdvancedSettings } from './apiHooks';
 import { getApiWaffleFlagsUrl, getCourseAppsApiUrl, getCourseAdvancedSettingsApiUrl } from './api';
 
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
@@ -153,5 +156,62 @@ describe('useUpdateCourseAdvancedSettings', () => {
     expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({ course_display_name: { value: 'New Name' } });
     expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['courseSettings', courseId] });
     expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['courseApps', courseId] });
+  });
+});
+
+// A little component for testing the global state hooks.
+const useCounter = createGlobalState<{ count: number; }>(() => ['test', 'counter'], { count: 0 });
+
+const CounterComponent = () => {
+  const { data, setData, resetData } = useCounter();
+  const firstSetData = useRef(setData);
+  const firstResetData = useRef(resetData);
+  const callbacksKeptIdentity = setData === firstSetData.current && resetData === firstResetData.current;
+
+  return (
+    <ul>
+      <li aria-label="count">{data?.count ?? 'none'}</li>
+      <li aria-label="callbacks">{callbacksKeptIdentity ? 'same' : 'recreated'}</li>
+      <li>
+        <button type="button" onClick={() => setData({ count: (data?.count ?? 0) + 1 })}>increment</button>
+      </li>
+      <li>
+        <button
+          type="button"
+          onClick={() => {
+            void resetData();
+          }}
+        >
+          reset
+        </button>
+      </li>
+    </ul>
+  );
+};
+
+describe('createGlobalState', () => {
+  it('keeps its callbacks across renders, so effects depending on them do not re-run', async () => {
+    const user = userEvent.setup();
+    initializeMocks();
+    render(<CounterComponent />);
+    await waitFor(() => expect(screen.getByLabelText('count')).toHaveTextContent('0'));
+
+    await user.click(screen.getByRole('button', { name: 'increment' }));
+    await waitFor(() => expect(screen.getByLabelText('count')).toHaveTextContent('1'));
+
+    expect(screen.getByLabelText('callbacks')).toHaveTextContent('same');
+  });
+
+  it('resets the value it stores', async () => {
+    const user = userEvent.setup();
+    initializeMocks();
+    render(<CounterComponent />);
+    await waitFor(() => expect(screen.getByLabelText('count')).toHaveTextContent('0'));
+
+    await user.click(screen.getByRole('button', { name: 'increment' }));
+    await waitFor(() => expect(screen.getByLabelText('count')).toHaveTextContent('1'));
+
+    await user.click(screen.getByRole('button', { name: 'reset' }));
+    await waitFor(() => expect(screen.getByLabelText('count')).toHaveTextContent('0'));
   });
 });

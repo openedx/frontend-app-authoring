@@ -44,6 +44,7 @@ export const COURSE_PERMISSIONS = {
 
   VIEW_COURSE_TEAM: 'courses.view_course_team',
 
+  VIEW_GROUP_CONFIGURATIONS: 'courses.view_group_configurations',
   MANAGE_GROUP_CONFIGURATIONS: 'courses.manage_group_configurations',
 
   VIEW_CERTIFICATES: 'courses.view_certificates',
@@ -53,4 +54,6 @@ export const COURSE_PERMISSIONS = {
   IMPORT_COURSE: 'courses.import_course',
   EXPORT_COURSE: 'courses.export_course',
   EXPORT_TAGS: 'courses.export_tags',
+
+  MANAGE_TAGS: 'courses.manage_tags',
 };

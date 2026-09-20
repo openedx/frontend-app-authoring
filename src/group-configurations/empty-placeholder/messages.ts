@@ -6,6 +6,11 @@ const messages = defineMessages({
     defaultMessage: 'You have not created any content groups yet.',
     description: 'Title displayed when there are no content groups created yet.',
   },
+  readOnlyTitle: {
+    id: 'course-authoring.group-configurations.empty-placeholder.read-only.title',
+    defaultMessage: 'No group configurations have been added to this course yet.',
+    description: 'Title displayed when there are no group configurations and the user cannot create them.',
+  },
   experimentalTitle: {
     id: 'course-authoring.group-configurations.experimental-empty-placeholder.title',
     defaultMessage: 'You have not created any group configurations yet.',

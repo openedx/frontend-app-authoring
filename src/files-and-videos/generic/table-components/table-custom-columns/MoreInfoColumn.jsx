@@ -122,7 +122,7 @@ const MoreInfoColumn = ({
             variant="tertiary"
             onClick={() => handleOpenFileInfo(row.original)}
           >
-            <FormattedMessage {...messages.infoTitle} />
+            <FormattedMessage {...(fileType === 'video' ? messages.infoAndTranscriptsTitle : messages.infoTitle)} />
           </MenuItem>
 
           {permissions.canDeleteFiles && (

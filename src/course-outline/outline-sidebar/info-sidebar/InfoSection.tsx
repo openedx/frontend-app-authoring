@@ -1,6 +1,8 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle } from '@openedx/paragon';
 import { SchoolOutline, Tag } from '@openedx/paragon/icons';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getTagsPermissions } from '@src/authz/permissionHelpers';
 import { ContentTagsDrawerSheet, ContentTagsSnippet } from '@src/content-tags-drawer';
 import { invalidateLinksQuery } from '@src/course-libraries/data/apiHooks';
 import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
@@ -32,6 +34,7 @@ export const InfoSection = ({ itemId }: Props) => {
   const { courseId } = useCourseAuthoringContext();
 
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
+  const { canManageTags } = useCourseUserPermissions(courseId, getTagsPermissions(courseId));
 
   /**
    * Called after a library component sync operation completes (e.g. accepting or ignoring
@@ -76,12 +79,14 @@ export const InfoSection = ({ itemId }: Props) => {
         <SidebarSection
           title={intl.formatMessage(messages.sidebarSectionTaxonomy)}
           icon={Tag}
-          actions={[
-            {
-              label: intl.formatMessage(messages.sidebarSectionTaxonomyManageTags),
-              onClick: openManageTagsDrawer,
-            },
-          ]}
+          actions={canManageTags ?
+            [
+              {
+                label: intl.formatMessage(messages.sidebarSectionTaxonomyManageTags),
+                onClick: openManageTagsDrawer,
+              },
+            ] :
+            undefined}
         >
           <ContentTagsSnippet contentId={itemId} />
         </SidebarSection>

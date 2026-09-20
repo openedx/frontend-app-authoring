@@ -38,3 +38,9 @@
     max-width: 100%;
     max-height: 100%;
 }
+
+/* The sort menu is wider than its toggle; anchor it right so it stays inside the modal. */
+.search-sort-menu .pgn__menu-select-popup > div {
+    left: auto !important;
+    right: 0 !important;
+}

@@ -79,3 +79,13 @@
 .video-upload-warning-text {
   font-size: 18px;
 }
+
+.transcript-upload-button {
+  border-radius: 5px;
+  border: 2px solid;
+
+  &:focus::before,
+  &:focus-visible::before {
+    display: none !important;
+  }
+}

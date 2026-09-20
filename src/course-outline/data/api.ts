@@ -19,7 +19,8 @@ export const getCourseOutlineIndexApiUrl = (
   courseId: string,
 ) => `${getApiBaseUrl()}/api/contentstore/v1/course_index/${courseId}`;
 
-export const getCourseDetailsApiUrl = (courseId) => `${getApiBaseUrl()}/api/contentstore/v1/course_details/${courseId}`;
+export const getCourseDetailsApiUrl = (courseId) =>
+  `${getApiBaseUrl()}/api/contentstore/v3/course_details/${courseId}/`;
 
 export const getCourseBestPracticesApiUrl = ({
   courseId,

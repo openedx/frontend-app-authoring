@@ -41,7 +41,7 @@ const mockCoursePermissions = (
     canViewScheduleAndDetails: true,
     canViewGradingSettings: true,
     canViewCourseTeam: true,
-    canManageGroupConfigurations: true,
+    canViewGroupConfigurations: true,
     canViewAdvancedSettings: true,
     ...permissions,
   } as unknown as ReturnType<typeof useCourseUserPermissions>);
@@ -90,7 +90,7 @@ describe('HelpSidebar', () => {
     it.each([
       ['canViewScheduleAndDetails', messages.sidebarLinkToScheduleAndDetails],
       ['canViewGradingSettings', messages.sidebarLinkToGrading],
-      ['canManageGroupConfigurations', messages.sidebarLinkToGroupConfigurations],
+      ['canViewGroupConfigurations', messages.sidebarLinkToGroupConfigurations],
       ['canViewAdvancedSettings', messages.sidebarLinkToAdvancedSettings],
     ])('renders the %s link only when the permission is granted', async (permission, message) => {
       mockCoursePermissions({ [permission]: true });
@@ -129,7 +129,7 @@ describe('HelpSidebar', () => {
         canViewScheduleAndDetails: false,
         canViewGradingSettings: false,
         canViewCourseTeam: false,
-        canManageGroupConfigurations: false,
+        canViewGroupConfigurations: false,
         canViewAdvancedSettings: false,
       }, { isLoading: true });
       const { queryByText } = renderHelpSidebar(props);
