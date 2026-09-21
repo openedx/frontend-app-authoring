@@ -88,7 +88,7 @@
       // effect on layout on three sides; the uncancelled right margin is
       // the icon-to-label gap.
       padding: $disclosure-hit-area-inset;
-      margin: (-$disclosure-hit-area-inset) 0 (-$disclosure-hit-area-inset) (-$disclosure-hit-area-inset); // top right bottom left
+      margin: (-$disclosure-hit-area-inset) 8px (-$disclosure-hit-area-inset) (-$disclosure-hit-area-inset); // top right bottom left
 
       .btn-icon__icon-container,
       .pgn__icon.btn-icon__icon {
@@ -129,9 +129,10 @@
 
   .competency-row--root {
     border: none;
-    // Clears the chevron's hover/focus circle; group rows get equivalent
-    // room from `.competency-group`'s own padding, the root has no wrapper.
-    margin-bottom: 12px + $disclosure-hit-area-inset;
+  }
+
+  .competency-row--root + ul {
+    margin-top: 12px + $disclosure-hit-area-inset;
   }
 
   // Any node with children is a "group", keyed off this class (not a depth
@@ -179,6 +180,11 @@
   // so every row's label lands at the same 25px inset regardless of variant.
   li:not(.competency-group) > .competency-row {
     padding-left: 4px;
+
+    &:hover {
+      background-color: var(--pgn-color-info-100);
+      border-color: var(--pgn-color-info-200);
+    }
   }
 
   .competency-group > ul {
