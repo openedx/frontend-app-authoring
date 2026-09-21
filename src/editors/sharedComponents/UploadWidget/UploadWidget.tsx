@@ -63,7 +63,7 @@ const UploadWidget = ({
   const setAddOpen = () => undefined;
   const mutation = useAssetUpload({ blockId, isLibrary });
   const saver = saveField ||
-    ((args: FieldSaverArgs<string>) => void args.control.setValue(args.value)); // eslint-disable-line no-void
+    ((args: FieldSaverArgs<string>) => void args.control.setValue(args.value));
 
   const onAddFile = (files: File[]) => {
     const file = files[0];
