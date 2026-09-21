@@ -178,6 +178,23 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       });
     });
 
+    it('shows the "no matching courses" message, not "no accessible courses", when only a date filter (no search text) narrows the results to zero', async () => {
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
+      render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+      await screen.findByText('Intro to Testing');
+
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([]));
+      fireEvent.click(screen.getByLabelText('Start Date'));
+      const startDay = screen.getByText('10').closest('.react-datepicker__day') as HTMLElement;
+      fireEvent.click(startDay);
+
+      // No search text is active here - only the date filter - so the
+      // narrowed-by-a-filter wording is the correct one, not the
+      // no-filters-at-all "no accessible courses" wording.
+      expect(await screen.findByText('No courses match your search.')).toBeInTheDocument();
+      expect(screen.queryByText('You do not have access to any courses.')).not.toBeInTheDocument();
+    });
+
     it('debounces the search field by 400ms and resets the page back to 1', async () => {
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()], 3));
       render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
@@ -269,7 +286,11 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       // reset in separate renders instead of the same state-update batch.
       const requestsSinceChange = axiosMock.history.get.slice(requestCountBeforeChange);
       expect(requestsSinceChange).toHaveLength(1);
-      expect(requestsSinceChange[0].params.start_date_on_or_after).toBeTruthy();
+      // Plain `YYYY-MM-DD`, not a full datetime - the backend's
+      // `get_date_param` 400s on anything else, and only asserting
+      // truthiness here previously let a full ISO datetime string through
+      // unnoticed.
+      expect(requestsSinceChange[0].params.start_date_on_or_after).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(requestsSinceChange[0].params.start_date_on_or_before).toBeUndefined();
       expect(requestsSinceChange[0].params).toMatchObject({ page: 1 });
     });
@@ -296,8 +317,8 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
       const requestsSinceChange = axiosMock.history.get.slice(requestCountBeforeChange);
       expect(requestsSinceChange).toHaveLength(1);
-      expect(requestsSinceChange[0].params.start_date_on_or_after).toBeTruthy();
-      expect(requestsSinceChange[0].params.start_date_on_or_before).toBeTruthy();
+      expect(requestsSinceChange[0].params.start_date_on_or_after).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(requestsSinceChange[0].params.start_date_on_or_before).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     });
 
     it('omits start_date_on_or_after and start_date_on_or_before from the request when neither date is set', async () => {

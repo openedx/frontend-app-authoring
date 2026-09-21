@@ -81,6 +81,20 @@ describe('<ResizableBox />', () => {
     });
   });
 
+  describe('stretchContent', () => {
+    it('does not wrap children when false (the default)', () => {
+      const { box } = renderBox();
+      expect(box.querySelector('.w-100')).toBeNull();
+    });
+
+    it('wraps children in a width-100% div when true', () => {
+      const { box } = renderBox({ stretchContent: true });
+      const wrapper = box.querySelector('.w-100');
+      expect(wrapper).not.toBeNull();
+      expect(wrapper).toHaveTextContent('Content');
+    });
+  });
+
   describe('handleSide="right"', () => {
     it('grows when dragging right and shrinks when dragging left', () => {
       const { handle, box } = renderBox({ handleSide: 'right' });

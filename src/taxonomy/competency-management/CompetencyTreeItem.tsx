@@ -70,14 +70,17 @@ const CompetencyTreeItem = ({
   return (
     <li className={hasChildren ? 'competency-group' : undefined}>
       <div
-        // `role="button"` on this existing row `<div>`, rather than wrapping its
-        // icon+label+badge markup in a real `<button>`, which would need its own
-        // style reset (Bootstrap's button padding/border/background) to keep the
-        // row's current look.
+        // No `role="button"` here: axe's `aria-allowed-attr` rule rejects
+        // `aria-selected` on that role (it's restricted to roles like
+        // `option`/`tab`/`treeitem`), and a real `role="button"` ancestor
+        // around the nested chevron `<button>` below (`ExpandCollapseIconButton`)
+        // trips `nested-interactive` too. `tabIndex`/`onClick`/`onKeyDown`
+        // below keep this row keyboard- and mouse-operable without either
+        // problem; `aria-current` (allowed on any role) reports the
+        // selection state instead of `aria-selected`.
         className={isSelected ? 'competency-row competency-row--selected' : 'competency-row'}
-        role={isSelectable ? 'button' : undefined}
         tabIndex={isSelectable ? 0 : undefined}
-        aria-selected={isSelectable ? isSelected : undefined}
+        aria-current={isSelected ? 'true' : undefined}
         aria-label={isSelected
           ? intl.formatMessage(messages.selectedCompetencyAccessibleLabel, { competencyName: node.value })
           : undefined}

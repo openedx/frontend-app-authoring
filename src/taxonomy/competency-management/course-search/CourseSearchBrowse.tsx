@@ -20,13 +20,13 @@ import {
 } from '@openedx/paragon';
 import { Calendar, Close } from '@openedx/paragon/icons';
 import { debounce } from 'lodash';
+import moment from 'moment';
 import DatePicker from 'react-datepicker';
 
 import AlertMessage from '@src/generic/alert-message';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { DATE_FORMAT } from '@src/constants';
 import { useStudioHomeCoursesV2 } from '@src/studio-home/data/apiHooks';
-import { convertToStringFromDate } from '@src/utils';
 import type { CompetencyTreeNode } from '../CompetencyTree';
 import CourseRow from './CourseRow';
 import messages from './messages';
@@ -43,6 +43,14 @@ export interface CourseSearchBrowseProps {
 }
 
 const PAGE_SIZE = 10;
+
+// The backend's `start_date_on_or_after`/`start_date_on_or_before` filters
+// (`get_date_param`) 400 on anything but a plain `YYYY-MM-DD` value, so this
+// formats the calendar day the user actually picked, in their own local
+// time, rather than reusing `convertToStringFromDate` (a UTC-converting
+// datetime string meant for a different kind of API field, and one the
+// backend would reject here).
+const formatDateOnlyParam = (date: Date) => moment(date).format('YYYY-MM-DD');
 
 // A stable no-op for `SearchField`'s required `onSubmit` prop. Paragon's
 // `SearchFieldAdvanced` re-invokes its own `onChange` handler whenever that
@@ -174,8 +182,8 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
     pageSize: PAGE_SIZE,
     search,
     order: 'display_name',
-    startDateOnOrAfter: dateRange[0] ? convertToStringFromDate(dateRange[0]) : undefined,
-    startDateOnOrBefore: dateRange[1] ? convertToStringFromDate(dateRange[1]) : undefined,
+    startDateOnOrAfter: dateRange[0] ? formatDateOnlyParam(dateRange[0]) : undefined,
+    startDateOnOrBefore: dateRange[1] ? formatDateOnlyParam(dateRange[1]) : undefined,
   });
 
   const courses = data?.results.courses ?? [];
@@ -199,7 +207,9 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
     body = (
       <div className="mt-4">
         <p>
-          {intl.formatMessage(search ? messages.noMatchingCourses : messages.noAccessibleCourses)}
+          {intl.formatMessage(
+            search || dateRange[0] ? messages.noMatchingCourses : messages.noAccessibleCourses,
+          )}
         </p>
         {search && (
           <Button variant="primary" onClick={handleClearSearch}>

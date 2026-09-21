@@ -46,7 +46,7 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
       // the two columns start flush at the top instead of the shorter one
       // being vertically centered against the taller.
       <Stack direction="horizontal" gap={selectedCompetency ? 3.5 : 0} className="align-items-stretch">
-        <ResizableBox handleSide="right" fullWidth={!selectedCompetency}>
+        <ResizableBox handleSide="right" fullWidth={!selectedCompetency} stretchContent>
           {tree}
         </ResizableBox>
         {selectedCompetency && (
@@ -60,11 +60,11 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
 
   return (
     <Row>
-      <Col xs={12} lg={selectedCompetency ? 4 : 12}>
+      <Col xs={12}>
         {tree}
       </Col>
       {selectedCompetency && (
-        <Col xs={12} lg={8}>
+        <Col xs={12}>
           <CourseSearchBrowse activeCompetency={selectedCompetency} />
         </Col>
       )}

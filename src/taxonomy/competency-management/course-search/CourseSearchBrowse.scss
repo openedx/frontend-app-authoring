@@ -3,15 +3,6 @@
 // Color/shadow/radius literals below match `CompetencyTree.scss`'s own
 // toolbar/container/row look, redeclared rather than shared through a
 // partial - not enough call sites yet to justify one.
-//
-// Figma's "COMPETENCY CRITERIA ASSOCIATIONS"/"COURSES & CONTENT" header
-// layers specify Roboto Mono, not loaded anywhere else in this app - only
-// existing precedent is `src/editors/data/constants/tinyMCEStyles.js`'s own
-// `@import`, for a separate iframe document. A URL string starting with
-// `https://` is one of Sass's own rules for treating an `@import` as a
-// plain passthrough CSS import rather than a Sass partial lookup.
-@import "https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap";
-
 .course-search-browse {
   $line-color: rgb(0 0 0 / .08);
   $shadow-color: rgb(0 0 0 / .12);
@@ -77,7 +68,7 @@
   // browse`, see above) lets it absorb any extra height the root picks up
   // from matching the competency tree's own height.
   &__panel {
-    background-color: #FFFFFF;
+    background-color: var(--pgn-color-white);
     border-radius: $border-radius;
     overflow: hidden;
     display: flex;
@@ -110,7 +101,7 @@
     padding: 4px 8px;
     background-color: var(--pgn-color-info-100);
     text-transform: uppercase;
-    font-family: "Roboto Mono", monospace;
+    font-family: var(--pgn-typography-font-family-monospace);
     font-weight: 400;
     font-size: 12px;
     line-height: 20px;
@@ -124,7 +115,7 @@
     padding: 4px 8px;
     background-color: var(--pgn-color-info-100);
     text-transform: uppercase;
-    font-family: "Roboto Mono", monospace;
+    font-family: var(--pgn-typography-font-family-monospace);
     font-weight: 400;
     font-size: 12px;
     line-height: 20px;

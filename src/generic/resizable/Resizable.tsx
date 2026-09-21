@@ -30,6 +30,17 @@ interface ResizableBoxProps {
    * to drag. Defaults to `false`, preserving the normal resizable behavior.
    */
   fullWidth?: boolean;
+  /**
+   * When `true`, wraps `children` in a `width: 100%` div so content that
+   * doesn't size itself (e.g. `CompetencyTree`) fills the box's own width
+   * instead of shrinking to its own content width, as a flex row's default
+   * `flex-basis: auto` would otherwise leave it. Defaults to `false`,
+   * rendering `children` directly - required for a caller like `Sidebar.tsx`
+   * whose own child (`.sidebar-content`) sets its own `flex`/`overflow`
+   * CSS expecting to be a direct flex child of this box, which an added
+   * wrapper div would break.
+   */
+  stretchContent?: boolean;
 }
 
 /**
@@ -42,6 +53,7 @@ export const ResizableBox = ({
   maxWidth,
   handleSide = 'left',
   fullWidth = false,
+  stretchContent = false,
 }: ResizableBoxProps) => {
   const boxRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number>(minWidth); // initial width
@@ -98,9 +110,7 @@ export const ResizableBox = ({
           onMouseDown={onMouseDown}
         />
       )}
-      <div className="w-100">
-        {children}
-      </div>
+      {stretchContent ? <div className="w-100">{children}</div> : children}
     </div>
   );
 };
