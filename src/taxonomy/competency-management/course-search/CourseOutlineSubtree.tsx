@@ -53,7 +53,12 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
     canEditCourse,
     competencyExternalId,
   } = useCompetencyAssociations();
-  const isAssociated = associatedObjectIds.has(subsection.usageKey);
+  // `subsection.id` - not `.usageKey` - is the field the real
+  // `course_index` response actually populates with the usage-key-formatted
+  // string (e.g. `"block-v1:...+type@sequential+block@..."`); `.usageKey`
+  // is declared on the shared `XBlockBase` type but this endpoint never
+  // sends it, so it's always `undefined` here.
+  const isAssociated = associatedObjectIds.has(subsection.id);
   const canSelect = canEditCourse(courseId);
 
   return (
@@ -63,7 +68,7 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
       block
       className="course-search-browse__subsection d-flex align-items-center justify-content-between"
       data-associated={isAssociated}
-      onClick={canSelect ? () => associateSubsection(subsection.usageKey, courseId) : undefined}
+      onClick={canSelect ? () => associateSubsection(subsection.id, courseId) : undefined}
     >
       <span>{subsection.displayName}</span>
       <span className="course-search-browse__subsection-actions">

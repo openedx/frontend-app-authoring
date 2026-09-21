@@ -7,7 +7,7 @@ import {
   userEvent,
   within,
 } from '@src/testUtils';
-import { MockCompetencyAssociationsProvider } from '../testHelpers';
+import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../testHelpers';
 import CourseOutlineSubtree from './CourseOutlineSubtree';
 
 let axiosMock;
@@ -21,7 +21,13 @@ const mixedOutline = buildOutlineIndex({
       id: 'section-1',
       displayName: 'Section 1',
       children: [
-        { id: 'sub-1a', displayName: 'Subsection 1A (graded)', overrides: { graded: true } },
+        // `usageKey: undefined` mirrors the real `course_index` response,
+        // captured directly against a live devstack: a block object there
+        // only ever carries `id`, never `usage_key`. Left this way (rather
+        // than `buildOutlineIndex`'s own default of `id === usageKey`) so
+        // the association tests below only pass if `SubsectionRow` actually
+        // reads `.id`, not the never-populated `.usageKey`.
+        { id: 'sub-1a', displayName: 'Subsection 1A (graded)', overrides: { graded: true, usageKey: undefined } },
         { id: 'sub-1b', displayName: 'Subsection 1B (ungraded)', overrides: { graded: false } },
       ],
     },
@@ -78,11 +84,13 @@ const noSubsectionsOutline = buildOutlineIndex([]);
 
 // `CourseOutlineSubtree` renders `SubsectionRow`, which reads
 // `CompetencyAssociationsContext` for the already-associated marking and
-// the select control - these tests care about the outline rendering
-// itself, not that data layer, so a lightly-mocked provider is enough.
-const renderSubtree = () =>
+// the select control - most tests below care about the outline rendering
+// itself, not that data layer, so a lightly-mocked provider (with its
+// default `associatedObjectIds`/`associateSubsection`) is enough; a few
+// near the end override those two fields directly to exercise that layer.
+const renderSubtree = (contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {}) =>
   render(
-    <MockCompetencyAssociationsProvider>
+    <MockCompetencyAssociationsProvider value={contextOverrides}>
       <CourseOutlineSubtree courseId={courseId} />
     </MockCompetencyAssociationsProvider>,
   );
@@ -217,6 +225,50 @@ describe('<CourseOutlineSubtree />', () => {
 
       await screen.findByText('Section 1');
       expect(axiosMock.history.get).toHaveLength(1);
+    },
+  );
+
+  it(
+    'marks a subsection as already associated by its real id - the field the real course_index response '
+      + 'actually populates, never the always-undefined usageKey',
+    async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtree({ associatedObjectIds: new Set(['sub-1a']) });
+
+      // Expand both sections' graded subsections: `sub-1a` (Section 1) and
+      // `sub-2a` (Section 2) - `sub-1b` is ungraded, so it never renders a
+      // row at all (see the "shows a disclosure icon..." test above).
+      const expandButtons = await screen.findAllByRole('button', { name: 'Expand' });
+      await user.click(expandButtons[0]);
+      await user.click(screen.getByRole('button', { name: 'Expand' }));
+
+      expect(screen.getByRole('button', { name: 'Subsection 1A (graded)' })).toHaveAttribute(
+        'data-associated',
+        'true',
+      );
+      // A sibling row whose id isn't in the set stays unmarked - proves the
+      // lookup is a real per-row match, not something that's always true.
+      expect(screen.getByRole('button', { name: 'Subsection 2A (graded)' })).toHaveAttribute(
+        'data-associated',
+        'false',
+      );
+    },
+  );
+
+  it(
+    'calls associateSubsection with the subsection\'s real id when a selectable row is clicked - not the '
+      + 'usageKey field the real API never populates',
+    async () => {
+      const user = userEvent.setup();
+      const associateSubsection = jest.fn();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtree({ associateSubsection });
+
+      await user.click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
+      await user.click(screen.getByRole('button', { name: 'Subsection 1A (graded)' }));
+
+      expect(associateSubsection).toHaveBeenCalledWith('sub-1a', courseId);
     },
   );
 });

@@ -52,7 +52,11 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     if (!isError && data) {
       (data.courseStructure.childInfo?.children ?? []).forEach((section) => {
         (section.childInfo?.children ?? []).forEach((subsection) => {
-          names[subsection.usageKey] = subsection.displayName;
+          // `subsection.id` - not `.usageKey` - is the field the real
+          // `course_index` response actually populates with the
+          // usage-key-formatted string; see `CourseOutlineSubtree`'s own
+          // `SubsectionRow` for the same fix and the fuller explanation.
+          names[subsection.id] = subsection.displayName;
         });
       });
     }

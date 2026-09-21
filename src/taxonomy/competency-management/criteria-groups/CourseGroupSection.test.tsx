@@ -67,17 +67,27 @@ const systemDefaultProfile: CompetencyRuleProfile = {
 
 const index = buildCompetencyCriteriaGroupsIndex(response);
 
+// `usageKey: undefined` on each subsection node mirrors the real
+// `course_index` response, captured directly against a live devstack: a
+// block object there only ever carries `id`, never `usage_key` - so a
+// fixture that (like `buildOutlineIndex`'s own default) sets both `id` and
+// `usageKey` to the same value can't tell correct `.id`-based code apart
+// from the original `.usageKey`-based bug, since both would resolve to the
+// same string. Overriding `usageKey` away here means "resolves its header
+// and chip names" below only passes if `CourseGroupSection` actually reads
+// `.id`, the same field this feature's other real-outline consumer
+// (`CourseOutlineSubtree`) was fixed to read too.
 const outlineFixture = buildOutlineIndex({
   sections: [
     {
       id: 'section-1',
       displayName: 'Section 1',
-      children: [{ id: 'sub-1a', displayName: 'Subsection 1A' }],
+      children: [{ id: 'sub-1a', displayName: 'Subsection 1A', overrides: { usageKey: undefined } }],
     },
     {
       id: 'section-2',
       displayName: 'Section 2',
-      children: [{ id: 'sub-2a', displayName: 'Subsection 2A' }],
+      children: [{ id: 'sub-2a', displayName: 'Subsection 2A', overrides: { usageKey: undefined } }],
     },
   ],
   overrides: { courseStructure: { displayName: 'Demo Course' } },
