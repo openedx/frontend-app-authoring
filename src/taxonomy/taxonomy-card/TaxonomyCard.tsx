@@ -6,17 +6,15 @@ import { TaxonomyMenu } from '../taxonomy-menu';
 import { TaxonomyCardHeaderSubtitle } from './TaxonomyCardHeaderSubtitle';
 import { TaxonomyCardHeaderTitle } from './TaxonomyCardHeaderTitle';
 import { orgsCountEnabled } from './utils';
-import { TaxonomyType } from '../data/constants';
 import { TaxonomyData } from '../data/types';
 
 type TaxonomyCardFields = Pick<
   TaxonomyData,
-  'id' | 'name' | 'description' | 'readOnly' | 'tagsCount' | 'canChangeTaxonomy' | 'canDeleteTaxonomy'
+  'id' | 'name' | 'description' | 'readOnly' | 'tagsCount' | 'canChangeTaxonomy' | 'canDeleteTaxonomy' | 'taxonomyType'
 >;
 
 /** The data of the taxonomy shown on a taxonomy card */
 export interface TaxonomyCardData extends TaxonomyCardFields {
-  taxonomyType?: TaxonomyType;
   orgsCount?: number;
 }
 

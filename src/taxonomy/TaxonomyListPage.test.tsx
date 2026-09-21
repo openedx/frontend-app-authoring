@@ -71,8 +71,8 @@ describe('<TaxonomyListPage />', () => {
   it('shows the taxonomy type icon of each taxonomy', async () => {
     axiosMock.onGet(listTaxonomiesUrl).reply(200, {
       results: [
-        { ...taxonomies[0], id: 1, taxonomy_type: 'competency' },
-        { ...taxonomies[0], id: 2, taxonomy_type: 'tags' },
+        { ...taxonomies[0], id: 1, taxonomyType: 'competency' },
+        { ...taxonomies[0], id: 2, taxonomyType: 'tags' },
       ],
       canAddTaxonomy: false,
     });

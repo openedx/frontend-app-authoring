@@ -6,7 +6,7 @@ export interface TaxonomyData {
   name: string;
   description: string;
   exportId: string;
-  taxonomyType: TaxonomyType;
+  taxonomyType?: TaxonomyType;
   enabled: boolean;
   allowMultiple: boolean;
   allowFreeText: boolean;
