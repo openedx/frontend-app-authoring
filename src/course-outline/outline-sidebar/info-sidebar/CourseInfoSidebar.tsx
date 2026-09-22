@@ -28,6 +28,7 @@ const DetailsTab = () => {
   const { courseId } = useCourseAuthoringContext();
   const { data: componentData } = useGetBlockTypes(
     [`context_key = "${courseId}"`],
+    'course',
   );
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
   const { canManageTags } = useCourseUserPermissions(courseId, permissionHelpers.getTagsPermissions(courseId));

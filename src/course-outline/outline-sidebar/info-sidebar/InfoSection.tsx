@@ -28,6 +28,7 @@ export const InfoSection = ({ itemId }: Props) => {
   const { data: itemData } = useCourseItemData(itemId);
   const { data: componentData } = useGetBlockTypes(
     [`breadcrumbs.usage_key = "${itemId}"`],
+    'course',
   );
   const category = normalizeContainerType(itemData?.category || '');
   const { selectedContainerState, openContainerInfoSidebar } = useOutlineSidebarContext();
