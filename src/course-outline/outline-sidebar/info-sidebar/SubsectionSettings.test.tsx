@@ -66,7 +66,7 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
 
 // Mock contexts
 jest.mock('@src/CourseAuthoringContext', () => ({
-  useCourseAuthoringContext: () => ({ courseId: '5' }),
+  useCourseAuthoringContext: () => ({ courseId: '5', canEditCourseContent: true }),
 }));
 
 jest.mock('@src/course-outline/outline-sidebar/OutlineSidebarContext', () => ({

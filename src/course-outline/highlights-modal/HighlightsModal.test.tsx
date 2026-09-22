@@ -1,16 +1,19 @@
 import {
   initializeMocks,
-  render,
+  render as baseRender,
   fireEvent,
   screen,
   waitFor,
 } from '@src/testUtils';
+import type { RenderResult } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import * as apiHooks from '@src/course-outline/data/apiHooks';
 import * as routerDom from 'react-router-dom';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { XBlockBase } from '@src/data/types';
+import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import messages from './messages';
 import HighlightsModal, { HighlightsCard, HighlightsForm } from './HighlightsModal';
 
@@ -19,12 +22,16 @@ const currentItemMock = {
   displayName: 'Test Section',
 } as XBlockBase;
 
-jest.mock('@src/CourseAuthoringContext', () => ({
-  useCourseAuthoringContext: () => ({
-    courseId: 5,
-    courseDetails: { name: 'Test course' },
-  }),
-}));
+const courseId = 'course-v1:org+course+run';
+
+const WrapperProvider = ({ children }: { children: React.ReactNode; }) => (
+  <CourseAuthoringProvider courseId={courseId}>{children}</CourseAuthoringProvider>
+);
+
+// Local `render` that wraps every case in a real CourseAuthoringProvider, so
+// `canEditCourseContent` is driven by the mocked permissions API. Each test can
+// keep calling `render(...)` as usual.
+const render = (ui: React.ReactElement): RenderResult => baseRender(ui, { extraWrapper: WrapperProvider });
 
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   useCourseItemData: jest.fn(() => ({
@@ -175,8 +182,13 @@ describe('<HighlightsForm />', () => {
 });
 
 describe('<HighlightsCard />', () => {
+  let validateUserPermissionsMock: any;
+
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent: true });
     jest.mocked(apiHooks.useCourseItemData).mockReturnValue({
       data: currentItemMock,
     } as unknown as UseQueryResult<XBlockBase, Error>);
@@ -191,6 +203,29 @@ describe('<HighlightsCard />', () => {
     expect(await screen.findByLabelText(messages.editButton.defaultMessage)).toBeInTheDocument();
   });
 
+  it('shows the edit button in view mode when the user can edit course content', async () => {
+    validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent: true });
+    render(
+      <HighlightsCard sectionId="1" onSubmit={onSubmitMock} />,
+    );
+
+    expect(await screen.findByText('Highlight 1')).toBeInTheDocument();
+    expect(await screen.findByLabelText(messages.editButton.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('hides the edit button in view mode when the user cannot edit course content', async () => {
+    validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent: false });
+    render(
+      <HighlightsCard sectionId="1" onSubmit={onSubmitMock} />,
+    );
+
+    // Highlights are still visible, but the edit affordance is gated away once
+    // the async permissions query resolves.
+    expect(await screen.findByText('Highlight 1')).toBeInTheDocument();
+    await waitFor(() => expect(validateUserPermissionsMock).toHaveBeenCalled());
+    expect(screen.queryByLabelText(messages.editButton.defaultMessage)).not.toBeInTheDocument();
+  });
+
   it('renders empty state when no highlights exist', async () => {
     jest.mocked(apiHooks.useCourseItemData).mockReturnValue({
       data: { highlights: [], displayName: 'Test' },
@@ -202,6 +237,23 @@ describe('<HighlightsCard />', () => {
 
     expect(await screen.findByRole('button', { name: messages.addHighlightsButton.defaultMessage }))
       .toBeInTheDocument();
+  });
+
+  it('hides the empty state add button when the user cannot edit course content', async () => {
+    validateUserPermissionsMock.mockResolvedValue({ canEditCourseContent: false });
+    jest.mocked(apiHooks.useCourseItemData).mockReturnValue({
+      data: { highlights: [], displayName: 'Test' },
+    } as unknown as UseQueryResult<XBlockBase, Error>);
+
+    render(
+      <HighlightsCard sectionId="1" onSubmit={onSubmitMock} />,
+    );
+
+    // The add affordance is gated away once the async permissions query resolves.
+    await waitFor(() => expect(validateUserPermissionsMock).toHaveBeenCalled());
+    expect(
+      screen.queryByRole('button', { name: messages.addHighlightsButton.defaultMessage }),
+    ).not.toBeInTheDocument();
   });
 
   it('transitions to editing mode on edit button click', async () => {

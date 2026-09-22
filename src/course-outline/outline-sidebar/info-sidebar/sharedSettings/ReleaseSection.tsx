@@ -4,6 +4,7 @@ import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { DatepickerControl, DATEPICKER_TYPES } from '@src/generic/datepicker-control';
 import { SidebarSection } from '@src/generic/sidebar';
 import { useFieldDraft } from '@src/hooks/useFieldDraft';
+import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useMemo } from 'react';
 import messages from '../messages';
 
@@ -15,6 +16,7 @@ interface Props {
 export const ReleaseSection = ({ itemId, onChange }: Props) => {
   const intl = useIntl();
   const { data: itemData } = useCourseItemData(itemId);
+  const { canEditCourseContent } = useCourseAuthoringContext();
 
   const serverState = useMemo(() => ({ start: itemData?.start }), [itemData?.start]);
   const [localState, setLocalState] = useFieldDraft(serverState, (val) => onChange(val.start));
@@ -30,6 +32,7 @@ export const ReleaseSection = ({ itemId, onChange }: Props) => {
           label={intl.formatMessage(messages.releaseDateLabel)}
           controlName="state-date"
           onChange={(val: string) => setLocalState({ start: val })}
+          readonly={!canEditCourseContent}
         />
         <DatepickerControl
           type={DATEPICKER_TYPES.time}
@@ -37,6 +40,7 @@ export const ReleaseSection = ({ itemId, onChange }: Props) => {
           label={intl.formatMessage(messages.releaseTimeLabel)}
           controlName="start-time"
           onChange={(val: string) => setLocalState({ start: val })}
+          readonly={!canEditCourseContent}
         />
       </Stack>
     </SidebarSection>
