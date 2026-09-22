@@ -6,7 +6,7 @@
 .tox:not(.tox-tinymce-inline) .tox-editor-header {
   box-shadow: none;
   padding: 0;
-  border-bottom: 1px solid #E3E3E3;
+  border-bottom: 1px solid var(--pgn-color-gray-100);
 }
 
 .tox .tox-toolbar__group {
@@ -14,7 +14,7 @@
 }
 
 .tox:not([dir="rtl"]) .tox-toolbar__group:not(:last-of-type) {
-  border-right: 1px solid #E3E3E3;
+  border-right: 1px solid var(--pgn-color-gray-100);
 }
 
 .tox .tox-tbtn {

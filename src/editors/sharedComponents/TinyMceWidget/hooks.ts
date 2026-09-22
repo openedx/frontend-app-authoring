@@ -497,6 +497,12 @@ export const editorConfig = ({
       // Protect self-closing <script /> tags from being mangled,
       // to preserve backwards compatibility with content that relied on this behavior
       protect: [/<script[^>]*\/>/g],
+      // Paste moved into core in TinyMCE v6 with paste_data_images defaulting to true, so pasted screenshots 
+      // now land in the content as base64 data URIs (We previously used TinyMCE v5 which dropped them).
+      paste_data_images: true,
+      // Don't force 'sandbox' on iframes; it would be better to set this true, but we need to preserve backwards
+      // compatibility for authors used to being able to embed Google Forms, YouTube, etc. as iframes.
+      sandbox_iframes: false,
     },
   };
 };
