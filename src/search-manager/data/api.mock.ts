@@ -11,7 +11,8 @@ import * as api from './api';
 export async function mockContentSearchConfig(): ReturnType<typeof api.getContentSearchConfig> {
   return {
     url: 'http://mock.meilisearch.local',
-    indexName: 'studio',
+    courseIndexName: 'studio',
+    libraryIndexName: 'studio',
     apiKey: 'test-key',
   };
 }
