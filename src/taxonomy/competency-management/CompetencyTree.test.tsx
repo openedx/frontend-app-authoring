@@ -246,7 +246,7 @@ describe('<CompetencyTree />', () => {
     expect(screen.queryByText('Dup Tag')).not.toBeInTheDocument();
   });
 
-  it('selects a leaf row on click, calling onSelectCompetency with its own node data, then reflects the selection as aria-current once the parent feeds the id back in', async () => {
+  it('selects a leaf row on click, calling onSelectCompetency with its own node data, then reflects the selection as aria-selected once the parent feeds the id back in', async () => {
     axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
     const onSelectCompetency = jest.fn();
     const { rerender } = renderTree({ onSelectCompetency });
@@ -254,11 +254,10 @@ describe('<CompetencyTree />', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
     const leafRow = (await screen.findByText('Leaf A1a')).closest('.competency-row') as HTMLElement;
 
-    // `aria-current` is omitted entirely (not set to `"false"`) while
-    // unselected - `role="button"` doesn't allow `aria-selected` at all
-    // (axe's `aria-allowed-attr` rule), and `aria-current="false"` isn't
-    // standard practice either, so absence is the selected/unselected signal.
-    expect(leafRow).not.toHaveAttribute('aria-current');
+    // `role="treeitem"` (see `CompetencyTreeItem.tsx`) allows `aria-selected`
+    // directly, unlike the `role="button"` this row used briefly before.
+    expect(leafRow).toHaveAttribute('role', 'treeitem');
+    expect(leafRow).toHaveAttribute('aria-selected', 'false');
 
     fireEvent.click(leafRow);
 
@@ -282,7 +281,7 @@ describe('<CompetencyTree />', () => {
         onSelectCompetency={onSelectCompetency}
       />,
     );
-    expect(leafRow).toHaveAttribute('aria-current', 'true');
+    expect(leafRow).toHaveAttribute('aria-selected', 'true');
   });
 
   it('selects a group row on click, and its own disclosure icon only toggles expand/collapse without also selecting it', async () => {
@@ -294,12 +293,12 @@ describe('<CompetencyTree />', () => {
     const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
 
     // A group row now gets the same selection semantics a leaf row already
-    // has - `tabIndex="0"` marks it focusable/selectable. No `role="button"`
-    // here (regression check: that role, combined with the nested disclosure
-    // `<button>` below, is what axe's `nested-interactive` rule flagged -
-    // see `CompetencyTreeItem.tsx`).
+    // has - `tabIndex="0"` marks it focusable/selectable, and `role="treeitem"`
+    // (not `role="button"`, which combined with the nested disclosure
+    // `<button>` below used to trip axe's `nested-interactive` rule - see
+    // `CompetencyTreeItem.tsx`).
     expect(groupRow).toHaveAttribute('tabIndex', '0');
-    expect(groupRow).not.toHaveAttribute('role');
+    expect(groupRow).toHaveAttribute('role', 'treeitem');
 
     fireEvent.click(groupRow);
     expect(onSelectCompetency).toHaveBeenCalledTimes(1);
@@ -357,7 +356,7 @@ describe('<CompetencyTree />', () => {
     expect(onSelectCompetency).toHaveBeenCalledTimes(2);
   });
 
-  it('marks a group row aria-current when selectedCompetencyId is set to that group\'s own id', async () => {
+  it('marks a group row aria-selected when selectedCompetencyId is set to that group\'s own id', async () => {
     axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
     // Group A1's own id (see `nestedTagsResponse`) is 2.
     renderTree({ selectedCompetencyId: '2', onSelectCompetency: jest.fn() });
@@ -365,6 +364,6 @@ describe('<CompetencyTree />', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
     const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
 
-    expect(groupRow).toHaveAttribute('aria-current', 'true');
+    expect(groupRow).toHaveAttribute('aria-selected', 'true');
   });
 });

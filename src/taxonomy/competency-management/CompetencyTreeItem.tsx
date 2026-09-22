@@ -68,22 +68,27 @@ const CompetencyTreeItem = ({
   };
 
   return (
-    <li className={hasChildren ? 'competency-group' : undefined}>
+    // `role="none"` removes this `<li>` from the accessibility tree when it
+    // wraps a `treeitem` below: axe's `aria-required-parent`/`listitem`
+    // rules require a `treeitem` to be a direct accessibility-tree child of
+    // its `tree`/`group` container, which a plain (implicit `listitem`)
+    // `<li>` in between breaks - confirmed live via `axe-core`. Without
+    // selection there's no `treeitem` here to parent, so this stays a
+    // plain, validly-semantic list item instead.
+    <li className={hasChildren ? 'competency-group' : undefined} role={isSelectable ? 'none' : undefined}>
       <div
-        // No `role="button"` here: axe's `aria-allowed-attr` rule rejects
-        // `aria-selected` on that role (it's restricted to roles like
-        // `option`/`tab`/`treeitem`), and a real `role="button"` ancestor
-        // around the nested chevron `<button>` below (`ExpandCollapseIconButton`)
-        // trips `nested-interactive` too. `tabIndex`/`onClick`/`onKeyDown`
-        // below keep this row keyboard- and mouse-operable without either
-        // problem; `aria-current` (allowed on any role) reports the
-        // selection state instead of `aria-selected`.
+        // `role="treeitem"` (part of the `role="tree"`/`"group"` structure -
+        // see `CompetencyTree.tsx` and the nested `<ul>` below) allows
+        // `aria-selected` directly, unlike `role="button"`, and axe's
+        // `nested-interactive` rule (which flagged the disclosure `<button>`
+        // below when this row was `role="button"`) doesn't apply to
+        // `treeitem`. `aria-selected` itself is announced by assistive tech
+        // as part of the treeitem's own state, so there's no need for the
+        // separate accessible-label text this row used before.
         className={isSelected ? 'competency-row competency-row--selected' : 'competency-row'}
+        role={isSelectable ? 'treeitem' : undefined}
         tabIndex={isSelectable ? 0 : undefined}
-        aria-current={isSelected ? 'true' : undefined}
-        aria-label={isSelected
-          ? intl.formatMessage(messages.selectedCompetencyAccessibleLabel, { competencyName: node.value })
-          : undefined}
+        aria-selected={isSelectable ? isSelected : undefined}
         onClick={isSelectable ? handleSelect : undefined}
         onKeyDown={isSelectable ? handleKeyDown : undefined}
       >
@@ -113,7 +118,7 @@ const CompetencyTreeItem = ({
           null}
       </div>
       {isExpanded && hasChildren && (
-        <ul>
+        <ul role={isSelectable ? 'group' : undefined}>
           {node.subRows!.map((child) => (
             <CompetencyTreeItem
               key={child.id}
