@@ -2,6 +2,28 @@
   display: flex;
   align-items: center;
 
+  /*
+   * Let the status badges and the action menu drop onto their own line rather
+   * than force the header wider than its column. Without this the header has a
+   * min-content width of ~520px and any narrower column overflows, sliding the
+   * card under the sidebar panel.
+   */
+  flex-wrap: wrap;
+  row-gap: var(--pgn-spacing-spacer-1);
+
+  // The title group takes the remaining room and is the part that shrinks.
+  > .pgn__hstack {
+    flex: 1 1 12rem;
+    min-width: 0;
+  }
+
+  // Badges and the menu wrap among themselves instead of overflowing.
+  > .ml-auto {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    row-gap: var(--pgn-spacing-spacer-1);
+  }
+
   .item-card-header__title-btn {
     justify-content: flex-start;
     padding: 0;
@@ -17,7 +39,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;  /* stylelint-disable-line value-no-vendor-prefix */
-        min-width: 100px;
+        min-width: 0;
         -webkit-box-orient: vertical;  /* stylelint-disable-line value-no-vendor-prefix */
       }
   }

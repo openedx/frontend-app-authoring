@@ -101,7 +101,7 @@ export function Sidebar<T extends SidebarPages>({
   const activeKey = isOpen ? effectivePageKey : undefined;
 
   return (
-    <Stack direction="horizontal" className="align-items-baseline flex-fill overflow-hidden" gap={2}>
+    <Stack direction="horizontal" className="sidebar-inner flex-fill overflow-hidden" gap={2}>
       {(isOpen && !!currentPageKey) ?
         (
           <ResizableBox>
@@ -135,7 +135,7 @@ export function Sidebar<T extends SidebarPages>({
             </div>
           </ResizableBox>
         ) :
-        <div className="min-vh-100 border" />}
+        null}
       <div className="sidebar-toggle p-1" data-testid="sidebar-toggle">
         <IconButton
           src={isOpen ? ExpandedIcon : CollapsedIcon}

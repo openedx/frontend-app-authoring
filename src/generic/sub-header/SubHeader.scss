@@ -2,9 +2,27 @@
   display: flex;
   gap: var(--pgn-spacing-spacer-4-5);
 
+  /*
+   * The action row used to be `flex-shrink-0`, so at narrow widths the buttons
+   * squeezed the title until it broke onto three or four lines, and the row
+   * itself still overflowed the page. Let it shrink and wrap, and drop below
+   * the title when there is no room beside it.
+   */
+  flex-wrap: wrap;
+
+  .sub-header-title {
+    flex: 1 1 20rem;
+    min-width: 0;
+  }
+
   .sub-header-actions {
     margin-bottom: 1.75rem;
     align-self: flex-end;
+    // Wrap the buttons among themselves once the row itself is too narrow.
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    row-gap: var(--pgn-spacing-spacer-2);
+    min-width: 0;
   }
 }
 
