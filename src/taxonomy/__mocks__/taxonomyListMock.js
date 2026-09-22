@@ -19,6 +19,7 @@ module.exports = {
       visibleToAuthors: false,
       canChangeTaxonomy: false,
       canDeleteTaxonomy: false,
+      canTagObject: true,
     },
     {
       id: -1,
@@ -32,6 +33,7 @@ module.exports = {
       visibleToAuthors: true,
       canChangeTaxonomy: false,
       canDeleteTaxonomy: false,
+      canTagObject: true,
     },
     {
       id: 1,
@@ -45,6 +47,7 @@ module.exports = {
       visibleToAuthors: true,
       canChangeTaxonomy: true,
       canDeleteTaxonomy: true,
+      canTagObject: true,
     },
     {
       id: 2,
@@ -58,6 +61,7 @@ module.exports = {
       visibleToAuthors: true,
       canChangeTaxonomy: true,
       canDeleteTaxonomy: true,
+      canTagObject: true,
     },
   ],
 };

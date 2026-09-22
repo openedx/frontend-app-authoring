@@ -2,6 +2,11 @@
   width: 400px;
   height: 317px;
 
+  &.pgn__card {
+    display: flex;
+    flex-direction: column;
+  }
+
   .taxonomy-card-title-text {
     /* Allow the title to shrink (and truncate) next to the taxonomy type icon */
     min-width: 0;
@@ -26,5 +31,26 @@
   .taxonomy-card-body-overflow-sm {
     max-height: 190px;
     -webkit-line-clamp: 6;
+  }
+
+  .pgn__card-footer {
+    margin-top: auto;
+  }
+
+  /*
+    The footer takes two lines' worth of room away from the description. As above, each
+    max-height is the section's 20px top padding plus whole 28px lines (the bottom
+    padding is what overflow hides), so the clamp's ellipsis lands on a visible line.
+  */
+  .taxonomy-card-body-with-footer {
+    &.taxonomy-card-body-overflow-m {
+      max-height: 162px;
+      -webkit-line-clamp: 5;
+    }
+
+    &.taxonomy-card-body-overflow-sm {
+      max-height: 134px;
+      -webkit-line-clamp: 4;
+    }
   }
 }

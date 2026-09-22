@@ -4,11 +4,18 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import initializeStore from '../../store';
 import { TaxonomyType } from '../data/constants';
 import { TaxonomyCard } from '.';
 import { TaxonomyCardData } from './TaxonomyCard';
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 let store;
 const taxonomyId = 1;
@@ -20,6 +27,7 @@ const data: TaxonomyCardData = {
   readOnly: false,
   canChangeTaxonomy: true,
   canDeleteTaxonomy: true,
+  canTagObject: true,
   tagsCount: 0,
 };
 
@@ -39,6 +47,7 @@ const TaxonomyCardComponent = ({ original }: { original: TaxonomyCardData; }) =>
 
 describe('<TaxonomyCard />', () => {
   beforeEach(async () => {
+    jest.clearAllMocks();
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -133,6 +142,57 @@ describe('<TaxonomyCard />', () => {
     expect(getByTestId('taxonomy-type-icon-tags')).toBeInTheDocument();
     expect(queryByTestId('taxonomy-type-icon-competency')).not.toBeInTheDocument();
     expect(getByText(tagsIconAltText)).toBeInTheDocument();
+  });
+
+  const applyCompetenciesLabel = 'Apply Competencies';
+
+  it('shows a footer button that opens the competency management page of a competency taxonomy', () => {
+    const cardData = { ...data, taxonomyType: TaxonomyType.Competency };
+
+    const { getByRole } = render(<TaxonomyCardComponent original={cardData} />);
+    fireEvent.click(getByRole('button', { name: applyCompetenciesLabel }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${taxonomyId}/competencies`);
+    expect(window.location.pathname).not.toBe(`/taxonomy/${taxonomyId}/`);
+  });
+
+  it.each([
+    ['Enter', '{Enter}'],
+    ['Space', ' '],
+  ])(
+    'opens the competency management page, not the card link, when the footer button is activated with %s',
+    async (_label, keys) => {
+      const user = userEvent.setup();
+      const cardData = { ...data, taxonomyType: TaxonomyType.Competency };
+
+      const { getByRole } = render(<TaxonomyCardComponent original={cardData} />);
+      getByRole('button', { name: applyCompetenciesLabel }).focus();
+      await user.keyboard(keys);
+
+      expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${taxonomyId}/competencies`);
+      expect(window.location.pathname).not.toBe(`/taxonomy/${taxonomyId}/`);
+    },
+  );
+
+  it('still links the card itself to the taxonomy editing page', () => {
+    const cardData = { ...data, taxonomyType: TaxonomyType.Competency };
+
+    const { getByRole } = render(<TaxonomyCardComponent original={cardData} />);
+    expect(getByRole('link')).toHaveAttribute('href', `/taxonomy/${taxonomyId}/`);
+  });
+
+  it('does not show the footer button on tags taxonomies', () => {
+    const cardData = { ...data, taxonomyType: TaxonomyType.Tags };
+
+    const { queryByRole } = render(<TaxonomyCardComponent original={cardData} />);
+    expect(queryByRole('button', { name: applyCompetenciesLabel })).not.toBeInTheDocument();
+  });
+
+  it('does not show the footer button to users who cannot tag with the taxonomy', () => {
+    const cardData = { ...data, taxonomyType: TaxonomyType.Competency, canTagObject: false };
+
+    const { queryByRole } = render(<TaxonomyCardComponent original={cardData} />);
+    expect(queryByRole('button', { name: applyCompetenciesLabel })).not.toBeInTheDocument();
   });
 
   it('shows a type icon even when the taxonomy has no type, along with the read-only badge', () => {
