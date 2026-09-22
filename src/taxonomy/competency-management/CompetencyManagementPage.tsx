@@ -12,7 +12,7 @@ import getPageHeadTitle from '@src/generic/utils';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import taxonomyMessages from '@src/taxonomy/messages';
 import { useTaxonomyDetails } from '@src/taxonomy/data/apiHooks';
-import CompetencyTree from './CompetencyTree';
+import { CompetencyAssociationsPanel } from './associations';
 import messages from './messages';
 
 const CompetencyManagementPage = () => {
@@ -56,7 +56,7 @@ const CompetencyManagementPage = () => {
       </div>
       <div className="bg-light-400 m-4">
         <Container size="xl">
-          <CompetencyTree taxonomyId={taxonomyId} taxonomyName={taxonomy.name} />
+          <CompetencyAssociationsPanel taxonomyId={taxonomyId} taxonomyName={taxonomy.name} />
         </Container>
       </div>
     </>

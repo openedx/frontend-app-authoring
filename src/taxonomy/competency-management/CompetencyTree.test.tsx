@@ -7,7 +7,7 @@ import {
 } from '@src/testUtils';
 import { apiUrls } from '@src/taxonomy/data/api';
 import { TAXONOMY_MAX_DEPTH } from '@src/taxonomy/taxonomy-detail/constants';
-import CompetencyTree from './CompetencyTree';
+import CompetencyTree, { type CompetencyTreeNode } from './CompetencyTree';
 
 let axiosMock;
 
@@ -82,7 +82,13 @@ const buildDuplicateValueResponse = () => ({
 
 const taxonomyName = 'Test Taxonomy';
 
-const renderTree = () => render(<CompetencyTree taxonomyId={taxonomyId} taxonomyName={taxonomyName} />);
+const renderTree = (extraProps: {
+  selectedCompetencyId?: string | null;
+  onSelectCompetency?: (node: CompetencyTreeNode) => void;
+} = {}) =>
+  render(
+    <CompetencyTree taxonomyId={taxonomyId} taxonomyName={taxonomyName} {...extraProps} />,
+  );
 
 describe('<CompetencyTree />', () => {
   beforeEach(() => {
@@ -238,5 +244,126 @@ describe('<CompetencyTree />', () => {
 
     expect(await screen.findByTestId('connectionErrorAlert')).toBeInTheDocument();
     expect(screen.queryByText('Dup Tag')).not.toBeInTheDocument();
+  });
+
+  it('selects a leaf row on click, calling onSelectCompetency with its own node data, then reflects the selection as aria-selected once the parent feeds the id back in', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    const onSelectCompetency = jest.fn();
+    const { rerender } = renderTree({ onSelectCompetency });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    const leafRow = (await screen.findByText('Leaf A1a')).closest('.competency-row') as HTMLElement;
+
+    // `role="treeitem"` (see `CompetencyTreeItem.tsx`) allows `aria-selected`
+    // directly, unlike the `role="button"` this row used briefly before.
+    expect(leafRow).toHaveAttribute('role', 'treeitem');
+    expect(leafRow).toHaveAttribute('aria-selected', 'false');
+
+    fireEvent.click(leafRow);
+
+    // Checked against the fields this feature cares about (id/value/externalId),
+    // not the full raw TagData shape (which also carries API-internal fields
+    // like depth/parentValue/childCount unrelated to selection).
+    expect(onSelectCompetency).toHaveBeenCalledTimes(1);
+    expect(onSelectCompetency).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 3, value: 'Leaf A1a', externalId: 'EXT-003' }),
+    );
+
+    // `CompetencyTree` is a controlled component for selection: it has no
+    // selection state of its own, it only reports the click via
+    // `onSelectCompetency` and renders whatever `selectedCompetencyId` it's
+    // given. Simulate the parent feeding the clicked node's id back in.
+    rerender(
+      <CompetencyTree
+        taxonomyId={taxonomyId}
+        taxonomyName={taxonomyName}
+        selectedCompetencyId="3"
+        onSelectCompetency={onSelectCompetency}
+      />,
+    );
+    expect(leafRow).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('selects a group row on click, and its own disclosure icon only toggles expand/collapse without also selecting it', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    const onSelectCompetency = jest.fn();
+    renderTree({ onSelectCompetency });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
+
+    // A group row now gets the same selection semantics a leaf row already
+    // has - `tabIndex="0"` marks it focusable/selectable, and `role="treeitem"`
+    // (not `role="button"`, which combined with the nested disclosure
+    // `<button>` below used to trip axe's `nested-interactive` rule - see
+    // `CompetencyTreeItem.tsx`).
+    expect(groupRow).toHaveAttribute('tabIndex', '0');
+    expect(groupRow).toHaveAttribute('role', 'treeitem');
+
+    fireEvent.click(groupRow);
+    expect(onSelectCompetency).toHaveBeenCalledTimes(1);
+    expect(onSelectCompetency).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 2, value: 'Group A1', externalId: null }),
+    );
+    onSelectCompetency.mockClear();
+
+    // The row's own disclosure icon (distinct from the row body clicked above)
+    // still only toggles expand/collapse - its click must not also bubble up
+    // and fire the row's own selection handler.
+    const collapseIcon = within(groupRow).getByRole('button', { name: 'Collapse' });
+    fireEvent.click(collapseIcon);
+    expect(onSelectCompetency).not.toHaveBeenCalled();
+    expect(screen.queryByText('Leaf A1a')).not.toBeInTheDocument();
+  });
+
+  it('activates a disclosure icon via keyboard without also selecting the enclosing row', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    const onSelectCompetency = jest.fn();
+    renderTree({ onSelectCompetency });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
+    const collapseIcon = within(groupRow).getByRole('button', { name: 'Collapse' });
+
+    // Pressing Enter/Space while the disclosure icon itself has focus fires a
+    // keydown that bubbles up to the enclosing row's own `onKeyDown`
+    // (`CompetencyTreeItem`'s `handleKeyDown`), which treats any Enter/Space
+    // it sees as a selection, calling `preventDefault` in the process -
+    // without the icon's own keydown handler stopping that bubbling first,
+    // this cancels the icon's native Enter/Space-activates-the-button
+    // behavior before it can fire, so toggling a row's disclosure via
+    // keyboard silently selects the row instead of expanding/collapsing it
+    // (see `ExpandCollapseIconButton`'s `handleKeyDown`).
+    fireEvent.keyDown(collapseIcon, { key: 'Enter' });
+    expect(onSelectCompetency).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(collapseIcon, { key: ' ' });
+    expect(onSelectCompetency).not.toHaveBeenCalled();
+  });
+
+  it('activates leaf selection via keyboard, both Enter and Space', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    const onSelectCompetency = jest.fn();
+    renderTree({ onSelectCompetency });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    const leafRow = (await screen.findByText('Leaf A1a')).closest('.competency-row') as HTMLElement;
+
+    fireEvent.keyDown(leafRow, { key: 'Enter' });
+    expect(onSelectCompetency).toHaveBeenCalledTimes(1);
+
+    fireEvent.keyDown(leafRow, { key: ' ' });
+    expect(onSelectCompetency).toHaveBeenCalledTimes(2);
+  });
+
+  it('marks a group row aria-selected when selectedCompetencyId is set to that group\'s own id', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    // Group A1's own id (see `nestedTagsResponse`) is 2.
+    renderTree({ selectedCompetencyId: '2', onSelectCompetency: jest.fn() });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
+
+    expect(groupRow).toHaveAttribute('aria-selected', 'true');
   });
 });
