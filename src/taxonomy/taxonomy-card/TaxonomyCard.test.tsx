@@ -153,6 +153,7 @@ describe('<TaxonomyCard />', () => {
     fireEvent.click(getByRole('button', { name: applyCompetenciesLabel }));
 
     expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${taxonomyId}/competencies`);
+    expect(window.location.pathname).not.toBe(`/taxonomy/${taxonomyId}/`);
   });
 
   it.each([
@@ -169,8 +170,6 @@ describe('<TaxonomyCard />', () => {
       await user.keyboard(keys);
 
       expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${taxonomyId}/competencies`);
-      // Guards against the button's keyboard-triggered click bubbling up to the
-      // surrounding NavLink and also navigating it to the card's own href.
       expect(window.location.pathname).not.toBe(`/taxonomy/${taxonomyId}/`);
     },
   );

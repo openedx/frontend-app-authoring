@@ -92,7 +92,7 @@ export const TaxonomyCard = ({ className = '', original }: TaxonomyCardProps) =>
         </Card.Section>
       </Card.Body>
       {showApplyCompetencies && (
-        <Card.Footer className="justify-content-end">
+        <Card.Footer>
           <Button
             variant="primary"
             onClick={(e: MouseEvent) => {
