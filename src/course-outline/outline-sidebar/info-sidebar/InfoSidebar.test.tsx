@@ -1,5 +1,5 @@
 import { initializeMocks, render, screen, userEvent } from '@src/testUtils';
-import { getApiWaffleFlagsUrl, getCourseSettingsApiUrl } from '@src/data/api';
+import { getCourseSettingsApiUrl } from '@src/data/api';
 import type { SelectionState } from '@src/data/types';
 import { CourseOutlineProvider } from '@src/course-outline/CourseOutlineContext';
 import { OutlineSidebarProvider } from '@src/course-outline/outline-sidebar/OutlineSidebarContext';
@@ -92,11 +92,21 @@ let validateUserPermissionsMock: ReturnType<typeof initializeMocks>['validateUse
 
 /**
  * Authz is only consulted when its waffle flag is on; with the flag off every permission is
- * granted, so only the restricted cases need to enable it.
+ * granted, so the flag is only enabled when a test denies one of them.
  */
-const mockPermissions = (canManageTags = true) => {
-  mockWaffleFlags({ enableAuthzCourseAuthoring: !canManageTags });
-  validateUserPermissionsMock.mockResolvedValue({ canManageTags });
+const mockPermissions = (overrides: Record<string, boolean> = {}) => {
+  const permissions = {
+    canManageTags: true,
+    canViewScheduleAndDetails: true,
+    canViewGradingSettings: true,
+    canViewCourseTeam: true,
+    canViewGroupConfigurations: true,
+    canViewAdvancedSettings: true,
+    canManagePagesAndResources: true,
+    ...overrides,
+  };
+  mockWaffleFlags({ enableAuthzCourseAuthoring: Object.values(permissions).some((allowed) => !allowed) });
+  validateUserPermissionsMock.mockResolvedValue(permissions);
 };
 
 const renderComponent = () =>
@@ -269,13 +279,7 @@ describe('InfoSidebar component', () => {
     axiosMock
       .onGet(getCourseSettingsApiUrl(courseId))
       .reply(200, { mfeProctoredExamSettingsUrl: 'https://example.com/proctored-exam-settings' });
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, { enable_authz_course_authoring: true });
-    validateUserPermissionsMock.mockResolvedValue({
-      canViewAdvancedSettings: true,
-      canManagePagesAndResources: false,
-    });
+    mockPermissions({ canManagePagesAndResources: false });
     renderComponent();
     await user.click(await screen.findByRole('tab', { name: 'Settings' }));
     expect(await screen.findByRole('link', { name: 'Advanced settings' })).toBeInTheDocument();
@@ -429,7 +433,7 @@ describe('InfoSidebar component', () => {
     });
 
     it('hides the Manage tags action when the user cannot manage tags', async () => {
-      mockPermissions(false);
+      mockPermissions({ canManageTags: false });
       const taxonomySection = await renderTaxonomySection();
 
       expect(taxonomySection.querySelector('.dropdown')).toBeNull();

@@ -1,13 +1,12 @@
 import { camelCaseObject } from '@edx/frontend-platform';
 
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import {
   initializeMocks,
   render,
   screen,
-  waitFor,
   within,
 } from '@src/testUtils';
-import { getApiWaffleFlagsUrl } from '@src/data/api';
 
 import { generateCourseLaunchData } from '../factories/mockApiResponses';
 import { checklistItems } from './utils/courseChecklistData';
@@ -35,39 +34,38 @@ const renderComponent = (props) => {
   render(<ChecklistSection {...props} />);
 };
 
-let axiosMock;
-let validateUserPermissionsMock;
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
+}));
+
+/** Every update link is shown by default; tests deny the permissions they are about. */
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canManageCourseUpdates: true,
+    canEditGradingSettings: true,
+    canManageCertificates: true,
+    canEditSchedule: true,
+    canManagePagesAndResources: true,
+    ...overrides,
+  });
 
 describe('ChecklistSection', () => {
-  beforeEach(async () => {
-    ({ axiosMock, validateUserPermissionsMock } = initializeMocks());
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, {});
+  beforeEach(() => {
+    initializeMocks();
+    mockPermissions();
   });
 
   describe('authz validation', () => {
-    const allPermissions = {
-      canManageCourseUpdates: true,
-      canEditGradingSettings: true,
-      canManageCertificates: true,
-      canEditSchedule: true,
-      canManagePagesAndResources: true,
-    };
+    const updateLinkLabel = messages.updateLinkLabel.defaultMessage;
     const getUpdateLink = (checkId) =>
-      within(screen.getByTestId(`checklist-item-${checkId}`)).queryByTestId('update-link');
+      within(screen.getByTestId(`checklist-item-${checkId}`)).queryByRole('link', { name: updateLinkLabel });
 
-    beforeEach(() => {
-      axiosMock
-        .onGet(getApiWaffleFlagsUrl(courseId))
-        .reply(200, { enable_authz_course_authoring: true });
-    });
-
-    it('renders every update link when the user can make changes on all the linked pages', async () => {
-      validateUserPermissionsMock.mockResolvedValue(allPermissions);
+    it('renders every update link when the user can make changes on all the linked pages', () => {
       renderComponent(defaultProps);
 
-      await waitFor(() => expect(screen.getAllByTestId('update-link')).toHaveLength(5));
+      expect(screen.getAllByRole('link', { name: updateLinkLabel })).toHaveLength(5);
       expect(getUpdateLink('proctoringEmail')).toHaveAttribute(
         'href',
         `/course/${courseId}/pages-and-resources/proctoring/settings`,
@@ -75,20 +73,16 @@ describe('ChecklistSection', () => {
     });
 
     it.each([
-      ['welcomeMessage', 'canViewCourseUpdates', 'canManageCourseUpdates'],
-      ['gradingPolicy', 'canViewGradingSettings', 'canEditGradingSettings'],
-      ['certificate', 'canViewCertificates', 'canManageCertificates'],
-      ['courseDates', 'canViewScheduleAndDetails', 'canEditSchedule'],
-      ['proctoringEmail', 'canViewPagesAndResources', 'canManagePagesAndResources'],
-    ])('hides the %s update link with %s but without %s', async (checkId, viewPermission, updatePermission) => {
-      validateUserPermissionsMock.mockResolvedValue({
-        ...allPermissions,
-        [viewPermission]: true,
-        [updatePermission]: false,
-      });
+      ['welcomeMessage', 'canManageCourseUpdates'],
+      ['gradingPolicy', 'canEditGradingSettings'],
+      ['certificate', 'canManageCertificates'],
+      ['courseDates', 'canEditSchedule'],
+      ['proctoringEmail', 'canManagePagesAndResources'],
+    ])('hides the %s update link without %s', (checkId, updatePermission) => {
+      mockPermissions({ [updatePermission]: false });
       renderComponent(defaultProps);
 
-      await waitFor(() => expect(screen.getAllByTestId('update-link')).toHaveLength(4));
+      expect(screen.getAllByRole('link', { name: updateLinkLabel })).toHaveLength(4);
       expect(getUpdateLink(checkId)).not.toBeInTheDocument();
     });
   });
@@ -226,7 +220,7 @@ describe('ChecklistSection', () => {
     let checklistData;
     let updateLinks;
 
-    beforeEach(async () => {
+    beforeEach(() => {
       renderComponent(defaultProps);
 
       checklistData = testChecklistData.map((item) => ({
@@ -237,7 +231,7 @@ describe('ChecklistSection', () => {
         longDescription: messages[`${item.id}LongDescription`].defaultMessage,
       }));
 
-      updateLinks = await screen.findAllByTestId('update-link');
+      updateLinks = screen.getAllByTestId('update-link');
     });
 
     it('should display the correct icons based on completion status', () => {

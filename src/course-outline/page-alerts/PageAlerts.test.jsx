@@ -1,18 +1,15 @@
-import React from 'react';
-import {
-  act,
-  render,
-  fireEvent,
-  screen,
-} from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp, getConfig } from '@edx/frontend-platform';
+import { getConfig } from '@edx/frontend-platform';
 
 import { useCourseUserPermissions } from '@src/authz/hooks';
+import {
+  act,
+  fireEvent,
+  initializeMocks,
+  render,
+  screen,
+} from '@src/testUtils';
 import PageAlerts from './PageAlerts';
 import messages from './messages';
-import initializeStore from '@src/store';
 import { API_ERROR_TYPES } from '../constants';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
@@ -39,7 +36,6 @@ jest.mock('@src/authz/hooks', () => ({
   useCourseUserPermissions: jest.fn(),
 }));
 
-let store;
 const handleDismissNotification = jest.fn();
 
 const pageAlertsData = {
@@ -55,41 +51,33 @@ const pageAlertsData = {
   savingStatus: '',
 };
 
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canManagePagesAndResources: true,
+    canManageAdvancedSettings: true,
+    ...overrides,
+  });
+
 const renderComponent = (props) =>
   render(
-    <AppProvider store={store} messages={{}}>
-      <IntlProvider locale="en">
-        <PageAlerts
-          {...pageAlertsData}
-          {...props}
-        />
-      </IntlProvider>
-    </AppProvider>,
+    <PageAlerts
+      {...pageAlertsData}
+      {...props}
+    />,
   );
 
 describe('<PageAlerts />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
+    initializeMocks();
     mockNotices = {};
-    jest.mocked(useCourseUserPermissions).mockReturnValue({
-      isLoading: false,
-      isAuthzEnabled: false,
-      canManagePagesAndResources: true,
-      canManageAdvancedSettings: true,
-    });
+    mockPermissions();
   });
 
   it('renders null when no alerts are present', async () => {
     renderComponent();
-    expect(await screen.findByTestId('browser-router')).toBeEmptyDOMElement();
+    expect(await screen.findByTestId('redux-provider')).toBeEmptyDOMElement();
   });
 
   it('renders configuration alerts', async () => {
@@ -166,11 +154,7 @@ describe('<PageAlerts />', () => {
   });
 
   it('does not render the mfe settings link when the user cannot manage pages and resources', async () => {
-    jest.mocked(useCourseUserPermissions).mockReturnValue({
-      isLoading: false,
-      isAuthzEnabled: true,
-      canManagePagesAndResources: false,
-    });
+    mockPermissions({ canManagePagesAndResources: false });
     renderComponent({
       ...pageAlertsData,
       mfeProctoredExamSettingsUrl: 'mfe-url',
@@ -205,12 +189,7 @@ describe('<PageAlerts />', () => {
   });
 
   it('does not render the advanced settings link when the user cannot manage advanced settings', async () => {
-    jest.mocked(useCourseUserPermissions).mockReturnValue({
-      isLoading: false,
-      isAuthzEnabled: true,
-      canManagePagesAndResources: true,
-      canManageAdvancedSettings: false,
-    });
+    mockPermissions({ canManageAdvancedSettings: false });
     renderComponent({
       ...pageAlertsData,
       advanceSettingsUrl: '/some-url',
