@@ -88,7 +88,7 @@ const problem = createSlice({
     },
     deleteAnswer: (state, { payload }) => {
       const { id, correct, editorState } = payload;
-      const EditorsArray = (window as any).tinymce.editors;
+      const getEditor = (editorId: string) => (window as any).tinymce.get(editorId);
       if (state.answers.length === 1) {
         return {
           ...state,
@@ -120,18 +120,12 @@ const problem = createSlice({
             ...newAnswer,
             title: editorState.answers[answer.id],
           };
-          if (EditorsArray[`answer-${newId}`]) {
-            EditorsArray[`answer-${newId}`].setContent(newAnswer.title ?? '');
-          }
+          getEditor(`answer-${newId}`)?.setContent(newAnswer.title ?? '');
         }
         // Note: The following assumes selectedFeedback and unselectedFeedback is using ExpandedTextArea
         //   Content only needs to be set here when the 'next' feedback fields are shown.
-        if (EditorsArray[`selectedFeedback-${newId}`]) {
-          EditorsArray[`selectedFeedback-${newId}`].setContent(newAnswer.selectedFeedback ?? '');
-        }
-        if (EditorsArray[`unselectedFeedback-${newId}`]) {
-          EditorsArray[`unselectedFeedback-${newId}`].setContent(newAnswer.unselectedFeedback ?? '');
-        }
+        getEditor(`selectedFeedback-${newId}`)?.setContent(newAnswer.selectedFeedback ?? '');
+        getEditor(`unselectedFeedback-${newId}`)?.setContent(newAnswer.unselectedFeedback ?? '');
         return newAnswer;
       });
       const groupFeedbackList = state.groupFeedbackList.map(feedback => {
