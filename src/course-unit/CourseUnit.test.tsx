@@ -166,6 +166,7 @@ describe('<CourseUnit />', () => {
       canViewCourse: true,
       canEditCourseContent: true,
       canPublishCourseContent: true,
+      canViewLibrary: true,
     });
     axiosMock
       .onGet(getClipboardUrl())
@@ -2729,7 +2730,11 @@ describe('<CourseUnit />', () => {
       });
     await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
 
-    expect(screen.getByText(messages.alertLibraryUnitReadOnlyLinkText.defaultMessage)).toBeInTheDocument();
+    // The user can view the upstream library, so the alert links to it
+    const libraryLink = await screen.findByRole('link', {
+      name: messages.alertLibraryUnitReadOnlyLinkText.defaultMessage,
+    });
+    expect(libraryLink).toHaveAttribute('href', 'some-link');
 
     // Edit button should be enabled even for library imported units
     const unitHeaderTitle = screen.getByTestId('unit-header-title');
@@ -2751,6 +2756,50 @@ describe('<CourseUnit />', () => {
 
     // Does not render the "Add Components" section
     expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();
+  });
+
+  it('does not link to the upstream library when the user cannot view it', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
+    validateUserPermissionsMock.mockResolvedValue({
+      canViewCourse: true,
+      canEditCourseContent: true,
+      canPublishCourseContent: true,
+      canViewLibrary: false,
+    });
+    render(<RootWrapper />);
+
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          upstreamInfo: {
+            ...courseSectionVerticalMock.xblock_info,
+            upstreamRef: 'lct:org:lib:unit:unit-1',
+            upstreamLink: 'some-link',
+          },
+        },
+      });
+    await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
+
+    await waitFor(() => {
+      expect(validateUserPermissionsMock).toHaveBeenCalledWith({
+        canViewLibrary: {
+          action: 'content_libraries.view_library',
+          scope: 'lib:org:lib',
+        },
+      });
+    });
+
+    // The alert text is still shown, but "library content" is not a link
+    expect(screen.getByText(/Only certain edits are possible for library content/)).toBeInTheDocument();
+    expect(screen.queryByRole('link', {
+      name: messages.alertLibraryUnitReadOnlyLinkText.defaultMessage,
+    })).not.toBeInTheDocument();
   });
 
   it('renders new unit info/settings sidebar', async () => {
@@ -3640,7 +3689,7 @@ describe('<CourseUnit />', () => {
       });
     await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
 
-    expect(screen.getByText(messages.alertLibraryUnitReadOnlyLinkText.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(messages.alertLibraryUnitReadOnlyLinkText.defaultMessage)).toBeInTheDocument();
 
     // Does not render the "Add Components" section
     expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();
