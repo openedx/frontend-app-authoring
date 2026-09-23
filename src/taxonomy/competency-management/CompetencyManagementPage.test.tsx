@@ -63,9 +63,6 @@ const renderPage = () =>
     extraWrapper: ({ children }) => <TaxonomyContext.Provider value={context}>{children}</TaxonomyContext.Provider>,
   });
 
-const listTaxonomiesUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/?enabled=true';
-const importNewTaxonomyUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/import/';
-
 const mockSetAlertError = jest.fn();
 const context: TaxonomyContextData = {
   toastMessage: null,
@@ -76,7 +73,7 @@ const context: TaxonomyContextData = {
 
 /** Open the import wizard and walk it up to the step where the new taxonomy is described. */
 const goToPopulateStep = async () => {
-  fireEvent.click(await screen.findByTestId('import-competency-framework-button'));
+  fireEvent.click(await screen.findByRole('button', { name: 'Import Competency Framework' }));
 
   expect(await screen.findByTestId('upload-step')).toBeInTheDocument();
   fireEvent.drop(screen.getByTestId('dropzone'), {
@@ -105,7 +102,7 @@ const fillInAndImport = async (name: string) => {
 describe('<CompetencyManagementPage />', () => {
   beforeEach(() => {
     ({ axiosMock } = initializeMocks());
-    axiosMock.onGet(listTaxonomiesUrl).reply(200, { results: [], canAddTaxonomy: true });
+    axiosMock.onGet(apiUrls.taxonomyList()).reply(200, { results: [], canAddTaxonomy: true });
   });
 
   it('shows a loading spinner while the taxonomy is being fetched', () => {
@@ -162,7 +159,7 @@ describe('<CompetencyManagementPage />', () => {
     });
 
     it('is hidden from users who may not create taxonomies', async () => {
-      axiosMock.onGet(listTaxonomiesUrl).reply(200, { results: [], canAddTaxonomy: false });
+      axiosMock.onGet(apiUrls.taxonomyList()).reply(200, { results: [], canAddTaxonomy: false });
 
       renderPage();
 
@@ -187,7 +184,7 @@ describe('<CompetencyManagementPage />', () => {
       renderPage();
       await goToPopulateStep();
 
-      axiosMock.onPost(importNewTaxonomyUrl).replyOnce(200, { id: newTaxonomyId, name: 'New framework' });
+      axiosMock.onPost(apiUrls.createTaxonomyFromImport()).replyOnce(200, { id: newTaxonomyId, name: 'New framework' });
 
       await fillInAndImport('New framework');
 
@@ -200,7 +197,7 @@ describe('<CompetencyManagementPage />', () => {
       renderPage();
       await goToPopulateStep();
 
-      axiosMock.onPost(importNewTaxonomyUrl).replyOnce(400, { error: 'Invalid file' });
+      axiosMock.onPost(apiUrls.createTaxonomyFromImport()).replyOnce(400, { error: 'Invalid file' });
 
       await fillInAndImport('Broken framework');
 

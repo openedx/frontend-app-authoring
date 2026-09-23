@@ -10,13 +10,13 @@ import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import Loading from '@src/generic/Loading';
 import getPageHeadTitle from '@src/generic/utils';
 import SubHeader from '@src/generic/sub-header/SubHeader';
+import CompetencyIcon from '@src/generic/CompetencyIcon';
 import taxonomyMessages from '@src/taxonomy/messages';
 import { useTaxonomyDetails, useTaxonomyList } from '@src/taxonomy/data/apiHooks';
+import { TaxonomyType } from '@src/taxonomy/data/constants';
+import { ImportTagsWizardButton } from '@src/taxonomy/import-tags';
 import { CompetencyAssociationsPanel } from './associations';
 import messages from './messages';
-import { ImportTagsWizardButton } from '../import-tags';
-import CompetencyIcon from '@src/generic/CompetencyIcon';
-import { TaxonomyType } from '../data/constants';
 
 const CompetencyManagementPage = () => {
   const intl = useIntl();
@@ -62,7 +62,6 @@ const CompetencyManagementPage = () => {
                 <ImportTagsWizardButton
                   className="text-nowrap"
                   iconBefore={CompetencyIcon}
-                  data-testid="import-competency-framework-button"
                   defaultTaxonomyType={TaxonomyType.Competency}
                   onImportSuccess={(newTaxonomy) => navigate(`/taxonomy/${newTaxonomy.id}/competencies`)}
                 >
