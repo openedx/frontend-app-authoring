@@ -18,8 +18,11 @@
   // WCAG 2.2 AA's minimum interactive target; pads the chevron's hit area
   // back out without changing its visible size - see `.btn-icon-sm` below.
   $disclosure-hit-area-inset: 4px;
-  $group-bg-color: #F8F8F8;
+  $icon-to-label-gap: 8px;
+  $shaded-bg-color: #F8F8F8;
   $group-border-color: #DDDDDD;
+  $hover-bg-color: var(--pgn-color-info-100);
+  $hover-border-color: var(--pgn-color-info-200);
 
   .competency-row__badge {
     overflow-wrap: anywhere;
@@ -49,7 +52,10 @@
   // A plain `<div>` rather than Paragon's `Card`, whose own outline is
   // entirely a `box-shadow` - simpler to control that look directly.
   &__container {
-    background-color: var(--pgn-color-white);
+    --competency-fill: var(--pgn-color-white);
+    --competency-fill-alt: #{$shaded-bg-color};
+
+    background-color: var(--competency-fill);
     border: 1px solid $line-color;
     border-radius: $border-radius;
     box-shadow: 0 1px 4px $shadow-color;
@@ -57,6 +63,9 @@
   }
 
   ul {
+    --competency-parent-fill: var(--competency-fill);
+    --competency-parent-fill-alt: var(--competency-fill-alt);
+
     list-style: none;
     margin: 0;
     padding-left: $indent;
@@ -66,14 +75,16 @@
     }
   }
 
-  // Base row look: white, bordered, rounded - the leaf style and the row
-  // default. `position: relative` anchors the selected-row accent's
-  // `::before` below.
+  li {
+    --competency-fill: var(--competency-parent-fill-alt);
+    --competency-fill-alt: var(--competency-parent-fill);
+  }
+
   .competency-row {
     position: relative;
     display: flex;
     align-items: center;
-    background-color: var(--pgn-color-white);
+    background-color: var(--competency-fill);
     border: 1px solid $line-color;
     border-radius: $border-radius;
     padding-left: 5px;
@@ -88,7 +99,7 @@
       // effect on layout on three sides; the uncancelled right margin is
       // the icon-to-label gap.
       padding: $disclosure-hit-area-inset;
-      margin: (-$disclosure-hit-area-inset) 0 (-$disclosure-hit-area-inset) (-$disclosure-hit-area-inset); // top right bottom left
+      margin: (-$disclosure-hit-area-inset) $icon-to-label-gap (-$disclosure-hit-area-inset) (-$disclosure-hit-area-inset); // top right bottom left
 
       .btn-icon__icon-container,
       .pgn__icon.btn-icon__icon {
@@ -129,24 +140,23 @@
 
   .competency-row--root {
     border: none;
-    // Clears the chevron's hover/focus circle; group rows get equivalent
-    // room from `.competency-group`'s own padding, the root has no wrapper.
-    margin-bottom: 12px + $disclosure-hit-area-inset;
   }
 
-  // Any node with children is a "group", keyed off this class (not a depth
-  // number) so it recurses to any nesting depth. `position: relative`
-  // anchors the selected-group accent's `::before` below.
+  .competency-row--root + ul {
+    margin-top: 12px + $disclosure-hit-area-inset;
+  }
+
   .competency-group {
-    position: relative;
-    background-color: $group-bg-color;
+    background-color: var(--competency-fill);
     border: 1px solid $group-border-color;
     border-radius: $border-radius;
     padding: 5px;
   }
 
+  // A group's own header row sits flat on its envelope (same inherited fill)
+  // instead of the bordered leaf look - only true leaves keep that from the
+  // base `.competency-row` rule above.
   .competency-group > .competency-row {
-    background-color: transparent;
     border: none;
     border-radius: 0;
   }
@@ -179,6 +189,22 @@
   // so every row's label lands at the same 25px inset regardless of variant.
   li:not(.competency-group) > .competency-row {
     padding-left: 4px;
+  }
+
+  .competency-row--selectable {
+    cursor: pointer;
+  }
+
+  @media (hover: hover) {
+    .competency-row--selectable:not(.competency-row--selected):hover {
+      background-color: $hover-bg-color;
+      border-color: $hover-border-color;
+    }
+
+    .competency-group:has(> .competency-row--selectable:not(.competency-row--selected):hover) {
+      background-color: $hover-bg-color;
+      border-color: $hover-border-color;
+    }
   }
 
   .competency-group > ul {
