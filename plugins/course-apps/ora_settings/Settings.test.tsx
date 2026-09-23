@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 
 import { getCourseAppsApiUrl, getCourseAdvancedSettingsApiUrl } from 'CourseAuthoring/data/api';
 import { CourseAuthoringProvider } from 'CourseAuthoring/CourseAuthoringContext';
+import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 import { initializeMocks, render } from 'CourseAuthoring/testUtils';
 import ORASettings from './Settings';
 import messages from './messages';
@@ -21,7 +22,9 @@ ReactDOM.createPortal = jest.fn(node => node);
 const renderComponent = () =>
   render(
     <CourseAuthoringProvider courseId={courseId}>
-      <ORASettings onClose={jest.fn()} />
+      <PagesAndResourcesProvider courseId={courseId}>
+        <ORASettings onClose={jest.fn()} />
+      </PagesAndResourcesProvider>
     </CourseAuthoringProvider>,
   );
 

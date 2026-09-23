@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Hyperlink } from '@openedx/paragon';
 
 import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
-import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContext';
+import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 
 import messages from './messages';
 
 const LearningAssistantSettings = ({ onClose }) => {
-  const { courseApps } = useCourseAuthoringContext();
+  const { courseApps } = useContext(PagesAndResourcesContext);
   const appId = 'learning_assistant';
   const appInfo = courseApps.find((app) => app.id === appId);
   const intl = useIntl();

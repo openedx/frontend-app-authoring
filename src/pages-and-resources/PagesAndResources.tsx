@@ -9,6 +9,7 @@ import getPageHeadTitle from '@src/generic/utils';
 import { AdditionalCoursePluginSlot } from '@src/plugin-slots/AdditionalCoursePluginSlot';
 import { AdditionalCourseContentPluginSlot } from '@src/plugin-slots/AdditionalCourseContentPluginSlot';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { useSortedCourseApps } from '@src/data/apiHooks';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getPagesAndResourcesPermissions } from '@src/authz/permissionHelpers';
 
@@ -24,9 +25,8 @@ const PagesAndResources = () => {
   const {
     courseId,
     courseDetails,
-    courseApps,
-    courseAppsStatus,
   } = useCourseAuthoringContext();
+  const { courseApps, courseAppsStatus } = useSortedCourseApps(courseId);
   document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
 
   const {

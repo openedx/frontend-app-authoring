@@ -67,12 +67,8 @@ const AppSettingsModal = ({
   hideAppToggle = false,
 }: AppSettingsModalProps) => {
   const { formatMessage } = useIntl();
-  const { isEditable } = useContext(PagesAndResourcesContext);
-  const {
-    courseId,
-    courseApps,
-    courseAppsStatus,
-  } = useCourseAuthoringContext();
+  const { isEditable, courseApps, courseAppsStatus } = useContext(PagesAndResourcesContext);
+  const { courseId } = useCourseAuthoringContext();
   const appInfo = courseApps.find((app) => app.id === appId);
   const updateCourseAppStatusMutation = useUpdateCourseAppStatus(courseId);
 

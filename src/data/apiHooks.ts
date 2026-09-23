@@ -258,6 +258,53 @@ export const useCourseApps = (courseId: string) => (
   })
 );
 
+const COURSE_APPS_ORDER = [
+  'progress',
+  'discussion',
+  'teams',
+  'edxnotes',
+  'wiki',
+  'calculator',
+  'proctoring',
+  'live',
+  'textbooks',
+  'custom_pages',
+  'ora_settings',
+];
+
+/**
+ * Fetch the course apps installed for a course, sorted for display, along with a
+ * RequestStatus derived from the query state that's suitable for gating UI.
+ */
+export const useSortedCourseApps = (courseId: string) => {
+  const {
+    data: courseApps,
+    isPending: courseAppsIsPending,
+    failureReason: courseAppsError,
+  } = useCourseApps(courseId);
+
+  let courseAppsStatus: RequestStatusType = RequestStatus.SUCCESSFUL;
+  if (courseAppsIsPending) {
+    courseAppsStatus = RequestStatus.PENDING;
+  } else if (courseAppsError) {
+    courseAppsStatus = courseAppsError?.response?.status === 403 ? RequestStatus.DENIED : RequestStatus.FAILED;
+  }
+
+  // courseApps is the array reference held by the React Query cache; sort a copy
+  // so we don't mutate it during render (StrictMode double-renders can otherwise
+  // produce inconsistent results between the two passes).
+  const sortedCourseApps = courseApps ?
+    [...courseApps].sort((firstEl, secondEl) => (
+      COURSE_APPS_ORDER.indexOf(firstEl.id) - COURSE_APPS_ORDER.indexOf(secondEl.id)
+    )) :
+    courseApps;
+
+  return {
+    courseApps: sortedCourseApps || [],
+    courseAppsStatus,
+  };
+};
+
 /**
  * Update the enabled status of a course app.
  * Invalidates the course apps list on success.

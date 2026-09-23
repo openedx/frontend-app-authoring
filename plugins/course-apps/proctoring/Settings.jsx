@@ -73,8 +73,8 @@ const ProctoringSettings = ({ onClose }) => {
     return ltiProctoringProviders.find(p => p.name === provider)?.verbose_name || provider;
   }
 
-  const { courseId } = useContext(PagesAndResourcesContext);
-  const { courseDetails, courseApps } = useCourseAuthoringContext();
+  const { courseId, courseApps } = useContext(PagesAndResourcesContext);
+  const { courseDetails } = useCourseAuthoringContext();
   const org = courseDetails?.org;
   const appId = 'proctoring';
   const appInfo = courseApps.find((app) => app.id === appId);

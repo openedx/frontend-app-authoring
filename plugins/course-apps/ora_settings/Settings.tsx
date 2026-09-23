@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -21,17 +21,15 @@ import ConnectionErrorAlert from 'CourseAuthoring/generic/ConnectionErrorAlert';
 import { useAppSetting, useIsMobile } from 'CourseAuthoring/utils';
 import { useUpdateCourseAdvancedSettings } from 'CourseAuthoring/data/apiHooks';
 import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContext';
+import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 
 import messages from './messages';
 
 const ORASettings = ({ onClose }: { onClose: () => void; }) => {
   const { formatMessage } = useIntl();
   const alertRef = useRef<HTMLDivElement>(null);
-  const {
-    courseId,
-    courseApps,
-    courseAppsStatus,
-  } = useCourseAuthoringContext();
+  const { courseId } = useCourseAuthoringContext();
+  const { courseApps, courseAppsStatus } = useContext(PagesAndResourcesContext);
 
   const isMobile = useIsMobile();
   const modalVariant = isMobile ? 'dark' : 'default';
