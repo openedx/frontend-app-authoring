@@ -13,13 +13,21 @@ import {
 } from '@openedx/paragon';
 import { MoreHoriz } from '@openedx/paragon/icons';
 import React, { useState } from 'react';
-import { useField } from 'formik';
+import { useField, FieldInputProps, FieldMetaProps, FieldHelperProps } from 'formik';
 import type { AxiosResponse } from 'axios';
 import TextField from '@src/editors/sharedComponents/TextField';
 import { useAssetUpload } from '@src/editors/api';
 import defaultMessages from './messages';
 
-export interface UploadWidgetProps {
+export interface FieldSaverArgs<T> {
+  field: FieldInputProps<T>;
+  meta: FieldMetaProps<T>;
+  control: FieldHelperProps<T>;
+  sourceFile: File;
+  value: T;
+}
+
+export interface UploadWidgetProps<T = string> {
   id: string;
   label: string;
   supportedFileFormats?: string | string[] | Record<string, string[]>;
@@ -27,6 +35,8 @@ export interface UploadWidgetProps {
   messages?: typeof defaultMessages;
   blockId: string;
   isLibrary: boolean;
+  saveField?: (args: FieldSaverArgs<T>) => Promise<unknown>;
+  setIsBusy?: (val: boolean) => void;
 }
 
 type LibraryAsset = { path: string; };
@@ -43,13 +53,17 @@ const UploadWidget = ({
   messages = defaultMessages,
   blockId,
   isLibrary,
-}: UploadWidgetProps) => {
+  saveField,
+  setIsBusy,
+}: UploadWidgetProps<string>) => {
   const intl = useIntl();
   const [manualMode, setManualMode] = useState(false);
   const [urlField, urlFieldMeta, urlFieldControl] = useField(urlFieldName);
   const setSelectedRows = () => undefined;
   const setAddOpen = () => undefined;
   const mutation = useAssetUpload({ blockId, isLibrary });
+  const saver = saveField ||
+    ((args: FieldSaverArgs<string>) => void args.control.setValue(args.value));
 
   const onAddFile = (files: File[]) => {
     const file = files[0];
@@ -58,20 +72,24 @@ const UploadWidget = ({
       urlFieldControl.setError(intl.formatMessage(messages.fileTooLarge));
       return;
     }
+    setIsBusy?.(true);
     mutation.mutateAsync(file).then((result: AssetResponse) => {
+      let value: string;
       if (isLibrary) {
         // This will be a path like /static/something.pdf. Some post-processing in the LMS's views converts
         // the URL to the appropriate one after rendering the fragment.
         //
         // It is not clear how this would work in the case of a React-based student view.
-        void urlFieldControl.setValue(`/${(result.data as LibraryAsset).path}`); // eslint-disable-line no-void
+        value = `/${(result.data as LibraryAsset).path}`;
       } else {
-        void urlFieldControl.setValue((result.data as CourseAsset).asset.external_url); // eslint-disable-line no-void
+        value = (result.data as CourseAsset).asset.external_url;
       }
+      return saver({ field: urlField, meta: urlFieldMeta, control: urlFieldControl, sourceFile: file, value });
     }).catch(() => {
       urlFieldControl.setError(intl.formatMessage(messages.uploadError));
     }).finally(() => {
       mutation.reset();
+      setIsBusy?.(false);
     });
   };
   const fileInput = useFileInput({ onAddFile, setSelectedRows, setAddOpen });
@@ -113,6 +131,9 @@ const UploadWidget = ({
   }
 
   const fileHint = isLibrary ? messages.libraryFileHint : messages.courseFileHint;
+  // State will always be reset by a 'finally' call after upload is completed. Success means we're waiting on
+  // a callback to finish.
+  const lockLoading = mutation.isPending || mutation.isSuccess;
 
   return (
     <Form.Group as={Col} controlId={id}>
@@ -126,7 +147,7 @@ const UploadWidget = ({
           <FileInput supportedFileFormats={supportedFileFormats} fileInput={fileInput} id={id} />
           <Stack gap={3}>
             <ActionRow className="border border-gray-300 rounded px-3 py-2">
-              {mutation.isPending ? <FormattedMessage {...messages.uploading} /> : deriveFileName(urlField.value)}
+              {lockLoading ? <FormattedMessage {...messages.uploading} /> : deriveFileName(urlField.value)}
               <ActionRow.Spacer />
               <Dropdown>
                 <Dropdown.Toggle
