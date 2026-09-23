@@ -1,6 +1,7 @@
 // oxlint-disable unicorn/no-useless-spread
 /* eslint-disable react/prop-types */
 import userEvent, { UserEvent } from '@testing-library/user-event';
+import { mergeConfig } from '@edx/frontend-platform';
 
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { RenderResult } from '@testing-library/react';
@@ -431,6 +432,71 @@ describe('<AddComponent />', () => {
       parentLocator: '123',
       type: 'annotatable',
       category: 'annotatable',
+    });
+  });
+
+  it('calls handleCreateNewCourseXBlock with callback that opens editor when InVideoQuiz is selected from Advanced modal', async () => {
+    mergeConfig({
+      pluginSlots: {
+        'org.openedx.frontend.authoring.xblock_editor.invideoquiz.v1': {
+          keepDefault: false,
+          plugins: [{ op: 'insert', widget: { id: 'invideoquiz-editor' } }],
+        },
+      },
+    });
+    handleCreateNewCourseXBlockMock.mockImplementation((_params, callback) => {
+      if (callback) {
+        callback({ courseKey: 'course-v1:test', locator: 'block-v1:test+invideoquiz' });
+      }
+    });
+
+    const user = userEvent.setup();
+    const { getByRole } = renderComponent();
+    const advancedButton = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Advanced`, 'i'),
+    });
+
+    await user.click(advancedButton);
+    const modalContainer = getByRole('dialog');
+
+    const radioInput = within(modalContainer).getByRole('radio', { name: 'In Video Quiz' });
+    const sendBtn = within(modalContainer).getByRole('button', { name: messages.modalBtnText.defaultMessage });
+
+    expect(sendBtn).toBeDisabled();
+    await user.click(radioInput);
+    expect(sendBtn).not.toBeDisabled();
+
+    await user.click(sendBtn);
+
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
+      parentLocator: '123',
+      type: 'invideoquiz',
+      category: 'invideoquiz',
+    }, expect.any(Function));
+
+    mergeConfig({ pluginSlots: {} });
+  });
+
+  it('creates a plain block, with no editor callback, when no plugin is registered for the advanced module', async () => {
+    const user = userEvent.setup();
+    const { getByRole } = renderComponent();
+    const advancedButton = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Advanced`, 'i'),
+    });
+
+    await user.click(advancedButton);
+    const modalContainer = getByRole('dialog');
+
+    const radioInput = within(modalContainer).getByRole('radio', { name: 'In Video Quiz' });
+    const sendBtn = within(modalContainer).getByRole('button', { name: messages.modalBtnText.defaultMessage });
+
+    await user.click(radioInput);
+    await user.click(sendBtn);
+
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
+      type: 'invideoquiz',
+      category: 'invideoquiz',
+      parentLocator: '123',
     });
   });
 

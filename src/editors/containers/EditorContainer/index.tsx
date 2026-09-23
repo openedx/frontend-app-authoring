@@ -64,9 +64,25 @@ export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => <>{childr
 
 interface Props extends EditorComponent {
   children: React.ReactNode;
-  getContent: Function;
+  /**
+   * Not read when `onSave` is given: the override persists its own content,
+   * so there is nothing for the built-in save path to build a payload from.
+   */
+  getContent?: Function;
   isDirty: () => boolean;
   validateEntry?: Function | null;
+  /**
+   * Replaces this app's built-in save. Use it when the editor persists its own
+   * content (an out-of-tree plugin saving through its block's handler, say),
+   * because the built-in path only knows how to build payloads for the block
+   * types in `supportedEditors` and throws for anything else. `validateEntry`
+   * still runs first and a falsy result still blocks the save. May return a
+   * promise: the unsaved-changes prompt stays armed until it resolves, and a
+   * rejection shows the save-failed message. Until it settles, Save is
+   * disabled and further clicks are ignored, the title cannot be edited, and
+   * Cancel and close are refused: the request cannot be taken back.
+   */
+  onSave?: (() => void | Promise<unknown>) | null;
 }
 
 const EditorContainer: React.FC<Props> = ({
@@ -76,17 +92,30 @@ const EditorContainer: React.FC<Props> = ({
   onClose = null,
   validateEntry = null,
   returnFunction = null,
+  onSave: onSaveOverride = null,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   // Required to mark data as not dirty on save
   const [saved, setSaved] = React.useState(false);
+  // Failure of an `onSave` override. The built-in path reports through the
+  // redux request state (`saveFailed`); the override has no such state.
+  const [overrideSaveFailed, setOverrideSaveFailed] = React.useState(false);
+  // An `onSave` override that has been called and not yet settled. The ref is
+  // the guard (a double-click lands both clicks before any re-render); the
+  // state is its rendered counterpart.
+  const overrideSavingRef = React.useRef(false);
+  const [overrideSaving, setOverrideSaving] = React.useState(false);
+  const setOverridePending = (pending: boolean) => {
+    overrideSavingRef.current = pending;
+    setOverrideSaving(pending);
+  };
   const isInitialized = hooks.isInitialized();
   const { isCancelConfirmOpen, openCancelConfirmModal, closeCancelConfirmModal } = hooks.cancelConfirmModalToggle();
   const [isFullscreen, , , toggleFullscreen] = useToggle(false);
   const handleCancel = hooks.handleCancel({ onClose, returnFunction });
   const { createFailed, createFailedError } = hooks.createFailed();
-  const disableSave = !isInitialized;
+  const disableSave = !isInitialized || overrideSaving;
   const saveFailed = hooks.saveFailed();
   const clearSaveFailed = hooks.clearSaveError({ dispatch });
   const clearCreateFailed = hooks.clearCreateError({ dispatch });
@@ -99,6 +128,43 @@ const EditorContainer: React.FC<Props> = ({
   });
 
   const onSave = () => {
+    if (onSaveOverride) {
+      // One save at a time. A second request would race the first: one of them
+      // failing re-enables the editor while the other can still succeed and
+      // close it.
+      if (overrideSavingRef.current) {
+        return;
+      }
+      // Same gate the built-in path applies (see editors/hooks.ts saveBlock).
+      if (validateEntry && !validateEntry()) {
+        return;
+      }
+      // Unlike the built-in path, not optimistic: the override may wait on
+      // uploads before it sends anything, and leaving the page in that window
+      // must still warn. An override that navigates away on success has to
+      // report itself clean through `isDirty` before it does so.
+      setOverrideSaveFailed(false);
+      setOverridePending(true);
+      let result: void | Promise<unknown>;
+      try {
+        result = onSaveOverride();
+      } catch {
+        setOverridePending(false);
+        setOverrideSaveFailed(true);
+        return;
+      }
+      Promise.resolve(result).then(
+        () => {
+          setOverridePending(false);
+          setSaved(true);
+        },
+        () => {
+          setOverridePending(false);
+          setOverrideSaveFailed(true);
+        },
+      );
+      return;
+    }
     setSaved(true);
     handleSave();
   };
@@ -112,6 +178,12 @@ const EditorContainer: React.FC<Props> = ({
   });
 
   const confirmCancelIfDirty = () => {
+    // The override's request is out and cannot be taken back. Cancelling now
+    // would let the author discard an editor whose content is about to be
+    // persisted; let the save settle first.
+    if (overrideSavingRef.current) {
+      return;
+    }
     if (isDirty()) {
       openCancelConfirmModal();
     } else {
@@ -131,8 +203,14 @@ const EditorContainer: React.FC<Props> = ({
           )}
         </Toast>
       )}
-      {saveFailed && (
-        <Toast show onClose={clearSaveFailed}>
+      {(saveFailed || overrideSaveFailed) && (
+        <Toast
+          show
+          onClose={() => {
+            setOverrideSaveFailed(false);
+            clearSaveFailed();
+          }}
+        >
           {intl.formatMessage(messages.contentSaveFailed)}
         </Toast>
       )}
@@ -151,7 +229,11 @@ const EditorContainer: React.FC<Props> = ({
         <div className="d-flex flex-row justify-content-between">
           <ActionRow>
             <h2 className="h3 col pl-0">
-              <TitleHeader isInitialized={isInitialized} />
+              {
+                /* The override reads the title once, when it sends. Locked from then
+                  on, or a later edit would be dropped when the save lands. */
+              }
+              <TitleHeader isInitialized={isInitialized} isEditDisabled={overrideSaving} />
             </h2>
             <ActionRow.Spacer />
             <Stack direction="horizontal" reversed gap={1}>
@@ -160,6 +242,7 @@ const EditorContainer: React.FC<Props> = ({
                 iconAs={Icon}
                 onClick={confirmCancelIfDirty}
                 alt={intl.formatMessage(messages.exitButtonAlt)}
+                disabled={overrideSaving}
                 autoFocus
               />
               <IconButton
@@ -182,6 +265,7 @@ const EditorContainer: React.FC<Props> = ({
               aria-label={intl.formatMessage(messages.cancelButtonAriaLabel)}
               variant="tertiary"
               onClick={confirmCancelIfDirty}
+              disabled={overrideSaving}
             >
               <FormattedMessage {...messages.cancelButtonLabel} />
             </Button>

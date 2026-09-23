@@ -27,6 +27,7 @@ jest.mock('./urls', () => ({
       ({ studioEndpointUrl, learningContextId }) => `${studioEndpointUrl}/some_video_upload_url/${learningContextId}`,
     ),
   boundHandlerUrl: jest.fn().mockReturnValue('urls.handlerUrl'),
+  handlerUrl: jest.fn().mockReturnValue('urls.handlerUrl'),
   transcriptXblockV2: jest.fn().mockReturnValue('url.transcriptXblockV2'),
 }));
 
