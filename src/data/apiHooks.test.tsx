@@ -12,6 +12,7 @@ import {
 } from '../testUtils';
 import {
   useWaffleFlags,
+  useCourseApps,
   useUpdateCourseAppStatus,
   createGlobalState,
   useUpdateCourseAdvancedSettings,
@@ -145,8 +146,8 @@ describe('useUpdateCourseAppStatus', () => {
   });
 });
 
-describe('useSortedCourseApps', () => {
-  it('sorts course apps according to COURSE_APPS_ORDER and reports a successful status', async () => {
+describe('useCourseApps', () => {
+  it('sorts course apps according to their display order', async () => {
     const { axiosMock, queryClient } = initializeMocks();
     axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(200, [
       {
@@ -166,14 +167,16 @@ describe('useSortedCourseApps', () => {
     ]);
 
     const { result } = renderHook(
-      () => useSortedCourseApps(courseId),
+      () => useCourseApps(courseId),
       { wrapper: makeQueryClientWrapper(queryClient) },
     );
 
-    await waitFor(() => expect(result.current.courseAppsStatus).toBe(RequestStatus.SUCCESSFUL));
-    expect(result.current.courseApps.map(app => app.id)).toEqual(['discussion', 'wiki']);
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.map(app => app.id)).toEqual(['discussion', 'wiki']);
   });
+});
 
+describe('useSortedCourseApps', () => {
   it('reports a denied status on a 403 response', async () => {
     const { axiosMock, queryClient } = initializeMocks();
     axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(403);

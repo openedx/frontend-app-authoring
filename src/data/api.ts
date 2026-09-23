@@ -282,14 +282,31 @@ export interface CourseAppData {
   legacyLink?: string;
 }
 
+const COURSE_APPS_ORDER = [
+  'progress',
+  'discussion',
+  'teams',
+  'edxnotes',
+  'wiki',
+  'calculator',
+  'proctoring',
+  'live',
+  'textbooks',
+  'custom_pages',
+  'ora_settings',
+];
+
 /**
- * Fetches the course apps installed for provided course
+ * Fetches the course apps installed for provided course, sorted for display.
  */
 export async function getCourseApps(courseId: string): Promise<CourseAppData[]> {
   const { data } = await getAuthenticatedHttpClient()
     .get(`${getCourseAppsApiUrl()}/${courseId}`);
 
-  return camelCaseObject(data);
+  const courseApps: CourseAppData[] = camelCaseObject(data);
+  return courseApps.sort((firstEl, secondEl) => (
+    COURSE_APPS_ORDER.indexOf(firstEl.id) - COURSE_APPS_ORDER.indexOf(secondEl.id)
+  ));
 }
 
 /**
