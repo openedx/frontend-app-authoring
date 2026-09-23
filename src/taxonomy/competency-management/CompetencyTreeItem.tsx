@@ -23,8 +23,8 @@ export interface CompetencyTreeItemProps {
  *
  * Indentation comes from the `<ul>` nesting itself (see `CompetencyTree.scss`),
  * not from a depth number computed here. Whether a node's `<li>` reads
- * visually as a grey "group" envelope (wrapping its own header row and all
- * of its rendered children) or as a plain white leaf "pill" is likewise
+ * visually as a "group" envelope (wrapping its own header row and all
+ * of its rendered children) or as a leaf "pill" is likewise
  * driven by this same `hasChildren` check, via the `competency-group` class
  * below - not a depth number or a CSS structural-position selector, so it
  * holds recursively at any depth.
