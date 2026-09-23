@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { debounce } from 'lodash';
 
 import { useClipboard } from '@src/generic/clipboard';
+import { getBlockType } from '@src/generic/key-utils';
+import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { messageTypes } from '@src/course-unit/constants';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { updateSavingStatus } from '@src/course-unit/data/slice';
@@ -48,7 +50,17 @@ export const useMessageHandlers = ({
     [messageTypes.toggleCourseXBlockDropdown]: ({
       courseXBlockDropdownHeight,
     }) => setIframeOffset(courseXBlockDropdownHeight),
-    [messageTypes.editXBlock]: ({ id }) => handleShowLegacyEditXBlockModal(id),
+    [messageTypes.editXBlock]: ({ id }) => {
+      const blockType = getBlockType(id, 'empty');
+      // Only invideoquiz: other built-in editors (e.g. pdf, game) have their
+      // own separate, more specific gating elsewhere and must not be swept up
+      // by a blanket "has a built-in editor" check here.
+      if (blockType === COMPONENT_TYPES.invideoquiz) {
+        handleEditXBlock(blockType, id);
+        return;
+      }
+      handleShowLegacyEditXBlockModal(id);
+    },
     [messageTypes.closeXBlockEditorModal]: handleCloseLegacyEditorXBlockModal,
     [messageTypes.saveEditedXBlockData]: handleSaveEditedXBlockData,
     [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),

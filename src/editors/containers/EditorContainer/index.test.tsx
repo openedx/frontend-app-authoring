@@ -103,6 +103,30 @@ describe('EditorContainer', () => {
     expect(mockEvent.preventDefault).not.toHaveBeenCalled();
   });
 
+  // When a returnFunction is provided (an embedded/plugin context), closing
+  // doesn't unmount this component the way navigating away would, so the
+  // confirm modal has to be closed explicitly rather than left to linger.
+  test('closes the cancel-confirm modal explicitly when a returnFunction is provided', async () => {
+    jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(async () => (
+      { status: 200, data: snakeCaseObject(fieldsHtml) }
+    ));
+
+    isDirtyMock.mockReturnValue(true);
+    render(<EditorPage {...defaultPropsHtml} returnFunction={() => () => undefined} />);
+
+    expect(await screen.findByRole('heading', { name: /Introduction to Testing/ })).toBeInTheDocument();
+
+    const closeButton = await screen.findByRole('button', { name: 'Exit the editor' });
+    fireEvent.click(closeButton);
+    const confirmButton = await screen.findByRole('button', { name: 'Discard Changes and Exit' });
+    fireEvent.click(confirmButton);
+
+    expect(defaultPropsHtml.onClose).toHaveBeenCalled();
+    await waitFor(() => (
+      expect(screen.queryByRole('button', { name: 'Discard Changes and Exit' })).not.toBeInTheDocument()
+    ));
+  });
+
   test('it does not display any confirmation dialog when closing the editor modal if data is not changed', async () => {
     jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(async () => (
       { status: 200, data: snakeCaseObject(fieldsHtml) }

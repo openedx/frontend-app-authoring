@@ -1,0 +1,23 @@
+.quiz-item-row {
+  border: 1px solid var(--pgn-color-gray-200, #E5E5E5);
+  border-radius: 6px;
+
+  .problem-select {
+    flex: 1;
+    margin-right: 25px;
+  }
+
+  .time-input {
+    max-width: 160px;
+    margin-right: 25px;
+  }
+
+  .jump-back-input {
+    max-width: 160px;
+    margin-right: 25px;
+  }
+
+  .delete-btn {
+    margin-top: 28px;
+  }
+}

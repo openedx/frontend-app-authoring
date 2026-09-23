@@ -8,4 +8,5 @@ export const blockTypes = StrictDict({
   video_upload: 'video_upload',
   game: 'game',
   pdf: 'pdf',
+  invideoquiz: 'invideoquiz',
 });
