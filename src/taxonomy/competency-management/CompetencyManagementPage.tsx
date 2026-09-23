@@ -4,7 +4,7 @@ import {
   Container,
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import Loading from '@src/generic/Loading';
@@ -49,6 +49,10 @@ const CompetencyManagementPage = () => {
 
   if (isError || !taxonomy) {
     return <ConnectionErrorAlert />;
+  }
+
+  if (!isCompetencyTaxonomy(taxonomy) || !taxonomy.canTagObject) {
+    return <Navigate to={`/taxonomy/${taxonomyId}`} replace />;
   }
 
   return (

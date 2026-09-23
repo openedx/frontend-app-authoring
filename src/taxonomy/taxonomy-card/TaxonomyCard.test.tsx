@@ -153,7 +153,7 @@ describe('<TaxonomyCard />', () => {
     fireEvent.click(getByRole('button', { name: applyCompetenciesLabel }));
 
     expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${taxonomyId}/competencies`);
-    expect(window.location.pathname).not.toBe(`/taxonomy/${taxonomyId}/`);
+    expect(window.location.pathname).not.toBe(`/taxonomy/${taxonomyId}`);
   });
 
   it.each([
@@ -170,7 +170,7 @@ describe('<TaxonomyCard />', () => {
       await user.keyboard(keys);
 
       expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${taxonomyId}/competencies`);
-      expect(window.location.pathname).not.toBe(`/taxonomy/${taxonomyId}/`);
+      expect(window.location.pathname).not.toBe(`/taxonomy/${taxonomyId}`);
     },
   );
 
@@ -178,7 +178,7 @@ describe('<TaxonomyCard />', () => {
     const cardData = { ...data, taxonomyType: TaxonomyType.Competency };
 
     const { getByRole } = render(<TaxonomyCardComponent original={cardData} />);
-    expect(getByRole('link')).toHaveAttribute('href', `/taxonomy/${taxonomyId}/`);
+    expect(getByRole('link')).toHaveAttribute('href', `/taxonomy/${taxonomyId}`);
   });
 
   it('does not show the footer button on tags taxonomies', () => {

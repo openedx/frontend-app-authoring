@@ -55,7 +55,7 @@ export const TaxonomyCard = ({ className = '', original }: TaxonomyCardProps) =>
     <Card
       isClickable
       as={NavLink}
-      to={`/taxonomy/${id}/`}
+      to={`/taxonomy/${id}`}
       className={classNames('taxonomy-card', className)}
       data-testid={`taxonomy-card-${id}`}
     >
