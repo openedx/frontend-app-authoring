@@ -1,10 +1,19 @@
 import {
+  Route,
+  Routes,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
+
+import {
   initializeMocks,
   render,
   screen,
+  userEvent,
   within,
 } from '@src/testUtils';
 import { apiUrls } from '@src/taxonomy/data/api';
+import { TaxonomyType } from '@src/taxonomy/data/constants';
 import CompetencyManagementPage from './CompetencyManagementPage';
 
 let axiosMock;
@@ -32,6 +41,32 @@ const emptyTagListResponse = {
 
 const renderPage = () => render(<CompetencyManagementPage />, { path, params });
 
+/** Stand-in for the taxonomy detail page, so tests can tell a redirect landed there */
+const TaxonomyDetailPageStub = () => {
+  const { taxonomyId: id } = useParams();
+  const navigate = useNavigate();
+  return (
+    <>
+      <h1>Taxonomy {id} detail page</h1>
+      <button type="button" onClick={() => navigate(-1)}>Back</button>
+    </>
+  );
+};
+
+/**
+ * Renders the page alongside the routes it can redirect to. `initialEntries` is the
+ * browser history the user arrives with; the last entry is the current page.
+ */
+const renderPageWithRoutes = (initialEntries = [`/taxonomy/${taxonomyId}/competencies`]) =>
+  render(
+    <Routes>
+      <Route path="/taxonomies" element={<h1>Taxonomy list page</h1>} />
+      <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPageStub />} />
+      <Route path={path} element={<CompetencyManagementPage />} />
+    </Routes>,
+    { routerProps: { initialEntries } },
+  );
+
 describe('<CompetencyManagementPage />', () => {
   beforeEach(() => {
     ({ axiosMock } = initializeMocks());
@@ -54,6 +89,8 @@ describe('<CompetencyManagementPage />', () => {
       id: taxonomyId,
       name: 'Test taxonomy',
       description: 'This is a description',
+      taxonomy_type: TaxonomyType.Competency,
+      can_tag_object: true,
     });
     axiosMock.onGet(tagListUrl).reply(200, emptyTagListResponse);
 
@@ -77,5 +114,46 @@ describe('<CompetencyManagementPage />', () => {
     expect(await screen.findByText('Test taxonomy', { selector: '.competency-row__label' }))
       .toBeInTheDocument();
     expect(screen.queryByText('No results found')).not.toBeInTheDocument();
+  });
+
+  describe('when the user should not be on this page', () => {
+    it.each([
+      ['a tags taxonomy', { taxonomy_type: TaxonomyType.Tags, can_tag_object: true }],
+      ['a taxonomy with no type', { taxonomy_type: null, can_tag_object: true }],
+      [
+        'a competency taxonomy the user cannot tag with',
+        { taxonomy_type: TaxonomyType.Competency, can_tag_object: false },
+      ],
+    ])('redirects %s to the taxonomy detail page', async (_description, taxonomyFields) => {
+      axiosMock.onGet(apiUrls.taxonomy(taxonomyId)).reply(200, {
+        id: taxonomyId,
+        name: 'Test taxonomy',
+        ...taxonomyFields,
+      });
+
+      renderPageWithRoutes();
+
+      expect(await screen.findByRole('heading', { name: `Taxonomy ${taxonomyId} detail page` }))
+        .toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: 'Test taxonomy' })).not.toBeInTheDocument();
+      // The competency tree is never mounted, so its tags are never requested.
+      expect(axiosMock.history.get.map(({ url }) => url)).not.toContain(tagListUrl);
+    });
+
+    it('replaces the competencies page in history, so going back does not redirect again', async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(apiUrls.taxonomy(taxonomyId)).reply(200, {
+        id: taxonomyId,
+        name: 'Test taxonomy',
+        taxonomy_type: TaxonomyType.Tags,
+        can_tag_object: true,
+      });
+
+      renderPageWithRoutes(['/taxonomies', `/taxonomy/${taxonomyId}/competencies`]);
+
+      await user.click(await screen.findByRole('button', { name: 'Back' }));
+
+      expect(await screen.findByRole('heading', { name: 'Taxonomy list page' })).toBeInTheDocument();
+    });
   });
 });
