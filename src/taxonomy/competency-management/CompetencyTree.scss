@@ -21,6 +21,8 @@
   $icon-to-label-gap: 8px;
   $shaded-bg-color: #F8F8F8;
   $group-border-color: #DDDDDD;
+  $hover-bg-color: var(--pgn-color-info-100);
+  $hover-border-color: var(--pgn-color-info-200);
 
   .competency-row__badge {
     overflow-wrap: anywhere;
@@ -187,10 +189,21 @@
   // so every row's label lands at the same 25px inset regardless of variant.
   li:not(.competency-group) > .competency-row {
     padding-left: 4px;
+  }
 
-    &:hover {
-      background-color: var(--pgn-color-info-100);
-      border-color: var(--pgn-color-info-200);
+  .competency-row--selectable {
+    cursor: pointer;
+  }
+
+  @media (hover: hover) {
+    .competency-row--selectable:not(.competency-row--selected):hover {
+      background-color: $hover-bg-color;
+      border-color: $hover-border-color;
+    }
+
+    .competency-group:has(> .competency-row--selectable:not(.competency-row--selected):hover) {
+      background-color: $hover-bg-color;
+      border-color: $hover-border-color;
     }
   }
 

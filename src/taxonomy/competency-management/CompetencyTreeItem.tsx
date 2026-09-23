@@ -1,5 +1,6 @@
 import type { KeyboardEvent } from 'react';
 
+import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Badge } from '@openedx/paragon';
 
@@ -85,7 +86,10 @@ const CompetencyTreeItem = ({
         // `treeitem`. `aria-selected` itself is announced by assistive tech
         // as part of the treeitem's own state, so there's no need for the
         // separate accessible-label text this row used before.
-        className={isSelected ? 'competency-row competency-row--selected' : 'competency-row'}
+        className={classNames('competency-row', {
+          'competency-row--selectable': isSelectable,
+          'competency-row--selected': isSelected,
+        })}
         role={isSelectable ? 'treeitem' : undefined}
         tabIndex={isSelectable ? 0 : undefined}
         aria-selected={isSelectable ? isSelected : undefined}
