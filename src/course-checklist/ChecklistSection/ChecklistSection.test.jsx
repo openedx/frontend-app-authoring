@@ -1,12 +1,12 @@
 import { camelCaseObject } from '@edx/frontend-platform';
 
+import { useCourseUserPermissions } from '@src/authz/hooks';
 import {
   initializeMocks,
   render,
   screen,
   within,
 } from '@src/testUtils';
-import { getApiWaffleFlagsUrl } from '@src/data/api';
 
 import { generateCourseLaunchData } from '../factories/mockApiResponses';
 import { checklistItems } from './utils/courseChecklistData';
@@ -34,12 +34,57 @@ const renderComponent = (props) => {
   render(<ChecklistSection {...props} />);
 };
 
+jest.mock('@src/authz/hooks', () => ({
+  useCourseUserPermissions: jest.fn(),
+}));
+
+/** Every update link is shown by default; tests deny the permissions they are about. */
+const mockPermissions = (overrides = {}) =>
+  jest.mocked(useCourseUserPermissions).mockReturnValue({
+    isLoading: false,
+    isAuthzEnabled: true,
+    canManageCourseUpdates: true,
+    canEditGradingSettings: true,
+    canManageCertificates: true,
+    canEditSchedule: true,
+    canManagePagesAndResources: true,
+    ...overrides,
+  });
+
 describe('ChecklistSection', () => {
-  beforeEach(async () => {
-    const { axiosMock } = initializeMocks();
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, {});
+  beforeEach(() => {
+    initializeMocks();
+    mockPermissions();
+  });
+
+  describe('authz validation', () => {
+    const updateLinkLabel = messages.updateLinkLabel.defaultMessage;
+    const getUpdateLink = (checkId) =>
+      within(screen.getByTestId(`checklist-item-${checkId}`)).queryByRole('link', { name: updateLinkLabel });
+
+    it('renders every update link when the user can make changes on all the linked pages', () => {
+      renderComponent(defaultProps);
+
+      expect(screen.getAllByRole('link', { name: updateLinkLabel })).toHaveLength(5);
+      expect(getUpdateLink('proctoringEmail')).toHaveAttribute(
+        'href',
+        `/course/${courseId}/pages-and-resources/proctoring/settings`,
+      );
+    });
+
+    it.each([
+      ['welcomeMessage', 'canManageCourseUpdates'],
+      ['gradingPolicy', 'canEditGradingSettings'],
+      ['certificate', 'canManageCertificates'],
+      ['courseDates', 'canEditSchedule'],
+      ['proctoringEmail', 'canManagePagesAndResources'],
+    ])('hides the %s update link without %s', (checkId, updatePermission) => {
+      mockPermissions({ [updatePermission]: false });
+      renderComponent(defaultProps);
+
+      expect(screen.getAllByRole('link', { name: updateLinkLabel })).toHaveLength(4);
+      expect(getUpdateLink(checkId)).not.toBeInTheDocument();
+    });
   });
 
   it('a heading using the dataHeading prop', () => {
