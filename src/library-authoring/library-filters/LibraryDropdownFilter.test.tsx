@@ -12,10 +12,12 @@ mockContentLibrary.applyMock();
 
 const mockSetValue = jest.fn();
 let mockValue: string[] = [];
+const mockAllLibraries = { current: [] as any[] };
 jest.mock('@src/library-authoring/common/context/MultiLibraryContext', () => ({
   useMultiLibraryContext: () => ({
     selectedLibraries: mockValue,
     setSelectedLibraries: mockSetValue,
+    allLibraries: mockAllLibraries,
   }),
 }));
 
@@ -25,6 +27,7 @@ describe('LibraryDropdownFilter', () => {
   beforeEach(() => {
     initializeMocks();
     mockValue = [];
+    mockAllLibraries.current = [];
   });
 
   it('should render the loading status', async () => {
@@ -129,6 +132,39 @@ describe('LibraryDropdownFilter', () => {
 
     const dropdownTrigger = await screen.findByRole('button', { name: 'All libraries' });
     expect(dropdownTrigger).toBeInTheDocument();
+  });
+
+  it('should show count when search is active and result count matches selected count', async () => {
+    const user = userEvent.setup();
+    const mockApi = mockGetContentLibraryV2List.applyMockNoPagination();
+    // 3 libraries total on initial load (no search)
+    mockApi.mockResolvedValueOnce([
+      { id: 'lib:SampleTaxonomyOrg1:TL1', title: 'Test Library 1' },
+      { id: 'lib:SampleTaxonomyOrg1:AL1', title: 'Test Library 2' },
+      { id: 'lib:SampleTaxonomyOrg1:TL3', title: 'Test Library 3' },
+    ] as any);
+    // After search, only 2 results — coincidentally the same count as selected libraries
+    mockApi.mockResolvedValue([
+      { id: 'lib:SampleTaxonomyOrg1:TL1', title: 'Test Library 1' },
+      { id: 'lib:SampleTaxonomyOrg1:AL1', title: 'Test Library 2' },
+    ] as any);
+    // 2 out of 3 libraries selected
+    mockValue = ['lib:SampleTaxonomyOrg1:TL1', 'lib:SampleTaxonomyOrg1:AL1'];
+    renderComponent();
+
+    const dropdownTrigger = await screen.findByRole('button', { name: '2 Libraries' });
+    await user.click(dropdownTrigger);
+
+    const searchInput = await screen.findByPlaceholderText('Search Library Name');
+    await user.type(searchInput, 'Test');
+
+    // After the debounce fires and data is 2 items (matching selected count),
+    // the label must still show the count, NOT "All libraries".
+    await waitFor(() => expect(mockApi).toHaveBeenLastCalledWith({ pagination: false, search: 'Test' }), {
+      timeout: 600,
+    });
+
+    expect(await screen.findByRole('button', { name: '2 Libraries' })).toBeInTheDocument();
   });
 
   it('should filter list by search', async () => {
