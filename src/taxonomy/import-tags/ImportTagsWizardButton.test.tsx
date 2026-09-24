@@ -6,8 +6,7 @@ import {
   userEvent,
 } from '@src/testUtils';
 import { TaxonomyType } from '@src/taxonomy/data/constants';
-import { ImportTagsWizard } from './ImportTagsWizard';
-import { ImportTagsWizardButton } from './ImportTagsWizardButton';
+import { ImportTagsWizard, ImportTagsWizardButton } from '@src/taxonomy/import-tags';
 
 jest.mock('./ImportTagsWizard', () => ({
   ImportTagsWizard: jest.fn(() => <div data-testid="import-tags-wizard" />),

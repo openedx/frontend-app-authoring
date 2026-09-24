@@ -18,14 +18,14 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Helmet } from 'react-helmet';
 
-import { useOrganizationListData } from '../generic/data/apiHooks';
-import SubHeader from '../generic/sub-header/SubHeader';
-import getPageHeadTitle from '../generic/utils';
-import { ALL_TAXONOMIES, apiUrls, UNASSIGNED } from './data/api';
-import { useTaxonomyList } from './data/apiHooks';
-import { ImportTagsWizardButton } from './import-tags';
-import messages from './messages';
-import { TaxonomyCard } from './taxonomy-card';
+import { ALL_TAXONOMIES, apiUrls, UNASSIGNED } from '@src/taxonomy/data/api';
+import { useOrganizationListData } from '@src/generic/data/apiHooks';
+import { useTaxonomyList } from '@src/taxonomy/data/apiHooks';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import { ImportTagsWizardButton } from '@src/taxonomy/import-tags';
+import { TaxonomyCard } from '@src/taxonomy/taxonomy-card';
+import getPageHeadTitle from '@src/generic/utils';
+import messages from '@src/taxonomy/messages';
 
 const TaxonomyListHeaderButtons = (props: { canAddTaxonomy: boolean; }) => {
   const intl = useIntl();

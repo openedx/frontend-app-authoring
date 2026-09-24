@@ -12,8 +12,8 @@ import { apiUrls } from '@src/taxonomy/data/api';
 import CompetencyManagementPage from './CompetencyManagementPage';
 import type MockAdapter from 'axios-mock-adapter';
 
-import { TaxonomyContext, type TaxonomyContextData } from '../common/context';
-import { TaxonomyType } from '../data/constants';
+import { TaxonomyContext, type TaxonomyContextData } from '@src/taxonomy/common/context';
+import { TaxonomyType } from '@src/taxonomy/data/constants';
 
 let axiosMock: MockAdapter;
 

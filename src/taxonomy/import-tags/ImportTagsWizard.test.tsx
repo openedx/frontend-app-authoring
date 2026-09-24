@@ -15,8 +15,8 @@ import { TaxonomyContext } from '@src/taxonomy/common/context';
 import type { TaxonomyContextData } from '@src/taxonomy/common/context';
 import { TaxonomyType } from '@src/taxonomy/data/constants';
 import type { TaxonomyData } from '@src/taxonomy/data/types';
-import { ImportTagsWizard } from './ImportTagsWizard';
-import type { ImportTaxonomy } from './types';
+import { ImportTagsWizard } from '@src/taxonomy/import-tags';
+import type { ImportTaxonomy } from '@src/taxonomy/import-tags/types';
 
 let axiosMock: MockAdapter;
 
