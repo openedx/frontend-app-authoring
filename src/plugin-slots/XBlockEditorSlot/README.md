@@ -52,7 +52,10 @@ whatever this app renders by default.
 
 The consequence is that a plugin must know the block type it edits, which it
 does, and that there is no way to register one editor for several types without
-listing each. That trade is deliberate: it keeps the failure mode local.
+listing each. That trade is deliberate: it keeps the failure mode local. The
+alternative of one shared slot with a conditional `Wrap` plugin, and why it was
+not chosen, is written up in
+[ADR 0003](../../../docs/decisions/0003-per-block-type-xblock-editor-slot-ids.rst).
 
 A slot with no configuration resolves to `{ keepDefault: true, plugins: [] }`
 (`usePluginSlot` in `@openedx/frontend-plugin-framework`), so an unconfigured
