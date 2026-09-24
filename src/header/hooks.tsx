@@ -241,7 +241,7 @@ export const useLibrarySettingsMenuItems = (itemId: string, readOnly: boolean) =
       return url.toString();
     }
     if (shouldShowAdminConsoleLink) {
-      return `${adminConsoleUrl}/authz/libraries/${itemId}`;
+      return `${adminConsoleUrl}/authz?scope=${encodeURIComponent(itemId)}`;
     }
     return null;
   };
