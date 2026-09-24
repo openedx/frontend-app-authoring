@@ -1,0 +1,21 @@
+{
+  "name": "@openedx-plugins/xblock-games-editor",
+  "version": "0.1.0",
+  "description": "Authoring editor for the Games XBlock (edx-games), supplied through the XBlockEditorSlot",
+  "peerDependencies": {
+    "@edx/frontend-app-authoring": "*",
+    "@edx/frontend-platform": "*",
+    "@openedx/frontend-plugin-framework": "*",
+    "@openedx/paragon": "*",
+    "@tanstack/react-query": "*",
+    "axios": "*",
+    "react": "*",
+    "react-redux": "*"
+  },
+  "peerDependenciesMeta": {
+    "@edx/frontend-app-authoring": {
+      "optional": true
+    }
+  },
+  "main": "index.tsx"
+}

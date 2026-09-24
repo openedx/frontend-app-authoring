@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { initializeMockApp } from '@edx/frontend-platform';
+import { initializeMockApp, mergeConfig } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { Provider } from 'react-redux';
 
@@ -49,6 +49,7 @@ describe('useMessageHandlers', () => {
       handleScrollToXBlock: jest.fn(),
       handleManageXBlockAccess: jest.fn(),
       handleShowLegacyEditXBlockModal: jest.fn(),
+      handleEditXBlock: jest.fn(),
       handleCloseLegacyEditorXBlockModal: jest.fn(),
       handleSaveEditedXBlockData: jest.fn(),
       handleFinishXBlockDragging: jest.fn(),
@@ -93,5 +94,79 @@ describe('useMessageHandlers', () => {
     if (expectedArg !== undefined) {
       expect(handlers[handlerKey]).toHaveBeenCalledWith(expectedArg);
     }
+  });
+
+  describe('editXBlock routing to a plugin-supplied editor', () => {
+    const gamesUsageId = 'block-v1:Org+C+R+type@games+block@gm1';
+    const canonicalId = 'org.openedx.frontend.authoring.xblock_editor.games.v1';
+    const aliasId = 'xblock_editor_games_slot';
+    // The router counts plugin entries; it does not validate them.
+    const aPlugin = { op: 'insert', widget: { id: 'games-editor', type: 'DIRECT_PLUGIN', priority: 1 } };
+
+    afterEach(() => {
+      mergeConfig({ pluginSlots: {} });
+    });
+
+    it('opens the legacy modal when no plugin claims the block type', () => {
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: gamesUsageId });
+      });
+      expect(handlers.handleShowLegacyEditXBlockModal).toHaveBeenCalledWith(gamesUsageId);
+      expect(handlers.handleEditXBlock).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['canonical slot id', canonicalId],
+      ['documented alias', aliasId],
+    ])('opens the plugin editor when registered under the %s', (_label, slotId) => {
+      mergeConfig({ pluginSlots: { [slotId]: { keepDefault: false, plugins: [aPlugin] } } });
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: gamesUsageId });
+      });
+      expect(handlers.handleEditXBlock).toHaveBeenCalledWith('games', gamesUsageId);
+      expect(handlers.handleShowLegacyEditXBlockModal).not.toHaveBeenCalled();
+    });
+
+    // A slot entry with no plugins is the same as no entry: nothing to render.
+    // Routing it here would open the blank AdvancedEditor instead of the
+    // legacy modal.
+    it.each([
+      ['an empty plugins list', { keepDefault: false, plugins: [] }],
+      ['only keepDefault set', { keepDefault: true }],
+    ])('opens the legacy modal when the slot has %s', (_label, slotConfig) => {
+      mergeConfig({ pluginSlots: { [canonicalId]: slotConfig } });
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: gamesUsageId });
+      });
+      expect(handlers.handleShowLegacyEditXBlockModal).toHaveBeenCalledWith(gamesUsageId);
+      expect(handlers.handleEditXBlock).not.toHaveBeenCalled();
+    });
+
+    // When both the canonical id and the alias are configured, PluginSlot uses
+    // only the LAST matching entry (usePluginSlot's findLast). The router must
+    // judge the same entry, or it would route a block to an editor that the
+    // slot will then render without any plugin.
+    describe('when both the canonical id and the alias are configured', () => {
+      const populated = { keepDefault: false, plugins: [aPlugin] };
+      const empty = { keepDefault: false, plugins: [] };
+
+      it('opens the legacy modal when the later entry is empty', () => {
+        mergeConfig({ pluginSlots: { [canonicalId]: populated, [aliasId]: empty } });
+        act(() => {
+          result.current[messageTypes.editXBlock]({ id: gamesUsageId });
+        });
+        expect(handlers.handleShowLegacyEditXBlockModal).toHaveBeenCalledWith(gamesUsageId);
+        expect(handlers.handleEditXBlock).not.toHaveBeenCalled();
+      });
+
+      it('opens the plugin editor when the later entry has a plugin', () => {
+        mergeConfig({ pluginSlots: { [aliasId]: empty, [canonicalId]: populated } });
+        act(() => {
+          result.current[messageTypes.editXBlock]({ id: gamesUsageId });
+        });
+        expect(handlers.handleEditXBlock).toHaveBeenCalledWith('games', gamesUsageId);
+        expect(handlers.handleShowLegacyEditXBlockModal).not.toHaveBeenCalled();
+      });
+    });
   });
 });
