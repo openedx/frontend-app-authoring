@@ -5,6 +5,16 @@ const mergedConfig = createConfig('jest', {
     'jest-expect-message',
     '<rootDir>/src/setupTest.js',
   ],
+  // The default from @openedx/frontend-build only scans src/**, so this
+  // plugin would otherwise show as 0% (uninstrumented) rather than
+  // uncovered, silently skewing coverage. Scoped to just this plugin, not
+  // all of plugins/**, since the other pre-existing course-apps plugins
+  // were never covered and adding them here would surface their existing
+  // gaps as if this PR introduced them.
+  collectCoverageFrom: [
+    'src/**/*.{js,jsx,ts,tsx}',
+    'plugins/xblock-invideoquiz-editor/**/*.{js,jsx,ts,tsx}',
+  ],
   coveragePathIgnorePatterns: [
     'src/setupTest.js',
     'src/i18n',

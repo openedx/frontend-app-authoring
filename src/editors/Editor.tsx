@@ -3,6 +3,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
+import XBlockEditorSlot from '@src/plugin-slots/XBlockEditorSlot';
+
 import * as hooks from './hooks';
 
 import supportedEditors from './supportedEditors';
@@ -46,16 +48,26 @@ const Editor: React.FC<Props> = ({
     return null;
   }
 
-  if (EditorComponent === undefined && blockId) {
-    return (
-      <AdvancedEditor
-        usageKey={blockId}
-        onClose={onClose}
-      />
-    );
-  }
+  // Unchanged behaviour, now the slot's default content: a built-in editor when
+  // this app has one for the block type, otherwise the generic AdvancedEditor.
+  const defaultEditor = EditorComponent === undefined
+    ? (blockId && <AdvancedEditor usageKey={blockId} onClose={onClose} />)
+    : <EditorComponent {...{ onClose, returnFunction, extraProps }} />;
 
-  return <EditorComponent {...{ onClose, returnFunction, extraProps }} />;
+  return (
+    <XBlockEditorSlot
+      blockType={blockType}
+      blockId={blockId}
+      learningContextId={learningContextId}
+      lmsEndpointUrl={lmsEndpointUrl}
+      studioEndpointUrl={studioEndpointUrl}
+      onClose={onClose}
+      returnFunction={returnFunction}
+      extraProps={extraProps}
+    >
+      {defaultEditor}
+    </XBlockEditorSlot>
+  );
 };
 
 export default Editor;
