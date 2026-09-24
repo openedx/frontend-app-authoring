@@ -14,6 +14,8 @@ import CompetencyIcon from '@src/generic/CompetencyIcon';
 import taxonomyMessages from '@src/taxonomy/messages';
 import { useTaxonomyDetails, useTaxonomyList } from '@src/taxonomy/data/apiHooks';
 import { TaxonomyType } from '@src/taxonomy/data/constants';
+import type { TaxonomyData } from '@src/taxonomy/data/types';
+import { isCompetencyTaxonomy } from '@src/taxonomy/data/utils';
 import { ImportTagsWizardButton } from '@src/taxonomy/import-tags';
 import { CompetencyAssociationsPanel } from './associations';
 import messages from './messages';
@@ -32,6 +34,14 @@ const CompetencyManagementPage = () => {
     isError,
     isFetched,
   } = useTaxonomyDetails(taxonomyId);
+
+  const handleImportSuccess = (newTaxonomy: TaxonomyData) => {
+    navigate(
+      isCompetencyTaxonomy(newTaxonomy) ?
+        `/taxonomy/${newTaxonomy.id}/competencies` :
+        `/taxonomy/${newTaxonomy.id}`,
+    );
+  };
 
   if (!isFetched) {
     return <Loading />;
@@ -63,7 +73,7 @@ const CompetencyManagementPage = () => {
                   className="text-nowrap"
                   iconBefore={CompetencyIcon}
                   defaultTaxonomyType={TaxonomyType.Competency}
-                  onImportSuccess={(newTaxonomy) => navigate(`/taxonomy/${newTaxonomy.id}/competencies`)}
+                  onImportSuccess={handleImportSuccess}
                 >
                   {intl.formatMessage(messages.importCompetencyFrameworkButton)}
                 </ImportTagsWizardButton>

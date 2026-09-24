@@ -184,13 +184,36 @@ describe('<CompetencyManagementPage />', () => {
       renderPage();
       await goToPopulateStep();
 
-      axiosMock.onPost(apiUrls.createTaxonomyFromImport()).replyOnce(200, { id: newTaxonomyId, name: 'New framework' });
+      axiosMock.onPost(apiUrls.createTaxonomyFromImport()).replyOnce(200, {
+        id: newTaxonomyId,
+        name: 'New framework',
+        taxonomy_type: TaxonomyType.Competency,
+      });
 
       await fillInAndImport('New framework');
 
       await waitFor(() => {
         expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${newTaxonomyId}/competencies`);
       });
+    });
+
+    it('navigates to the new taxonomy\'s tags page when the type was switched to Tags', async () => {
+      renderPage();
+      await goToPopulateStep();
+
+      fireEvent.change(screen.getByTestId('taxonomy-type-select'), { target: { value: TaxonomyType.Tags } });
+      axiosMock.onPost(apiUrls.createTaxonomyFromImport()).replyOnce(200, {
+        id: newTaxonomyId,
+        name: 'New tags',
+        taxonomy_type: TaxonomyType.Tags,
+      });
+
+      await fillInAndImport('New tags');
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith(`/taxonomy/${newTaxonomyId}`);
+      });
+      expect(mockNavigate).not.toHaveBeenCalledWith(`/taxonomy/${newTaxonomyId}/competencies`);
     });
 
     it('does not navigate away when the import fails', async () => {
