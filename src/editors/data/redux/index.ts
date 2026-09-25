@@ -64,6 +64,7 @@ export interface EditorState {
         display_name: string; // e.g. "A Text Component"
         category?: string; // e.g. "html". Only for blocks from courses
         data: string | Record<string, any>;
+        // Settings-scoped fields, e.g. `include_theme` on Text blocks.
         metadata: Record<string, any>;
         [otherKey: string]: any;
       };

@@ -312,13 +312,18 @@ export const apiMethods = {
   }) => {
     let response = {};
     if (blockType === 'html') {
+      // The Text editor returns the HTML string plus any settings-scoped fields
+      // (e.g. `include_theme`). The block API only accepts a string in `data`,
+      // so the remaining keys are sent as `metadata`. Accepting a bare string
+      // keeps this working for callers that only supply the HTML.
+      const { data, ...settings } = typeof content === 'string' ? { data: content } : content;
       response = {
         category: blockType,
         courseKey: learningContextId,
-        data: content,
+        data,
         has_changes: true,
         id: blockId,
-        metadata: { display_name: title },
+        metadata: { display_name: title, ...settings },
       };
     } else if (blockType === 'problem') {
       response = {

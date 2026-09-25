@@ -186,6 +186,24 @@ describe('cms api', () => {
           metadata: { display_name: title },
         });
       });
+      test('sends html settings as metadata, keeping data a string', () => {
+        // The block API rejects a non-string `data`, so settings-scoped fields
+        // such as include_theme have to travel in `metadata` instead.
+        expect(apiMethods.normalizeContent({
+          blockId,
+          blockType: 'html',
+          content: { data: '<p>Some text</p>', include_theme: true },
+          learningContextId,
+          title,
+        })).toEqual({
+          category: 'html',
+          courseKey: learningContextId,
+          data: '<p>Some text</p>',
+          has_changes: true,
+          id: blockId,
+          metadata: { display_name: title, include_theme: true },
+        });
+      });
       test('return value for blockType: video', () => {
         const content = {
           videoSource: 'viDeOSouRCE',

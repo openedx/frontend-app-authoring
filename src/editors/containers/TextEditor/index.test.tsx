@@ -1,4 +1,5 @@
 import React from 'react';
+import userEvent from '@testing-library/user-event';
 import { render, screen, initializeMocks } from '@src/testUtils';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
@@ -41,14 +42,30 @@ jest.mock('../../data/redux', () => ({
 }));
 
 describe('TextEditor', () => {
+  // Mirrors what the block fetch puts in the store: an AxiosResponse whose
+  // `data` holds the HTML body and the settings-scoped `metadata`.
+  const blockValue = (includeTheme?: boolean) => ({
+    data: {
+      id: 'block-id-123',
+      display_name: 'Text',
+      category: 'html',
+      data: 'eDiTablE Text',
+      metadata: includeTheme === undefined
+        ? { display_name: 'Text' }
+        : { display_name: 'Text', include_theme: includeTheme },
+    },
+  });
+
   const props = {
     onClose: jest.fn().mockName('props.onClose'),
     // redux
-    blockValue: { data: { data: 'eDiTablE Text' } },
+    blockValue: blockValue(),
+    blockId: 'block-id-123',
     blockFailed: false,
     initializeEditor: jest.fn().mockName('args.intializeEditor'),
     showRawEditor: false,
     blockFinished: true,
+    isCreateWorkflow: false,
     learningContextId: 'course+org+run',
     images: {},
     isLibrary: false,
@@ -70,7 +87,9 @@ describe('TextEditor', () => {
     test('renders static images with relative paths', () => {
       const updatedProps = {
         ...props,
-        blockValue: { data: { data: 'eDiTablE Text with <img src="/static/img.jpg" />' } },
+        blockValue: {
+          data: { ...blockValue().data, data: 'eDiTablE Text with <img src="/static/img.jpg" />' },
+        },
       };
       const { container } = render(<TextEditor {...updatedProps} />);
       const element = container.querySelector('tinymcewidget');
@@ -91,6 +110,35 @@ describe('TextEditor', () => {
       render(<TextEditor {...props} blockFailed isLibrary />);
       expect(screen.getByRole('alert')).toBeInTheDocument();
       expect(screen.getByText('Error: Could Not Load Text Content')).toBeInTheDocument();
+    });
+  });
+
+  describe('include_theme toggle', () => {
+    beforeEach(() => {
+      initializeMocks();
+    });
+
+    test('is unchecked for an existing block with no stored value', () => {
+      render(<TextEditor {...props} />);
+      expect(screen.getByRole('checkbox', { name: /use mfe theme/i })).not.toBeChecked();
+    });
+
+    test('reflects the value stored in block metadata', () => {
+      render(<TextEditor {...props} blockValue={blockValue(true)} />);
+      expect(screen.getByRole('checkbox', { name: /use mfe theme/i })).toBeChecked();
+    });
+
+    test('defaults to checked for newly created blocks', () => {
+      render(<TextEditor {...props} isCreateWorkflow />);
+      expect(screen.getByRole('checkbox', { name: /use mfe theme/i })).toBeChecked();
+    });
+
+    test('can be toggled by the author', async () => {
+      const user = userEvent.setup();
+      render(<TextEditor {...props} />);
+      const checkbox = screen.getByRole('checkbox', { name: /use mfe theme/i });
+      await user.click(checkbox);
+      expect(checkbox).toBeChecked();
     });
   });
 

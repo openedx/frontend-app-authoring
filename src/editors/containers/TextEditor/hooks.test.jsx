@@ -48,17 +48,25 @@ describe('TextEditor hooks', () => {
         tinyMceHookKeys.setAssetToStaticUrl,
       ).mockReturnValueOnce(rawContent);
       test('returns correct content based on showRawEditor equals false', () => {
-        const getContent = module.getContent({ editorRef, showRawEditor: false })();
+        const getContent = module.getContent({
+          editorRef,
+          showRawEditor: false,
+          includeTheme: true,
+        })();
         expect(spies.visualHtml.mock.calls.length).toEqual(1);
         expect(spies.visualHtml).toHaveBeenCalledWith({ editorValue: visualContent });
-        expect(getContent).toEqual(visualContent);
+        expect(getContent).toEqual({ data: visualContent, include_theme: true });
       });
       test('returns correct content based on showRawEditor equals true', () => {
         jest.clearAllMocks();
-        const getContent = module.getContent({ editorRef, showRawEditor: true })();
+        const getContent = module.getContent({
+          editorRef,
+          showRawEditor: true,
+          includeTheme: false,
+        })();
         expect(spies.rawHtml.mock.calls.length).toEqual(1);
         expect(spies.rawHtml).toHaveBeenCalledWith({ editorValue: rawContent });
-        expect(getContent).toEqual(rawContent);
+        expect(getContent).toEqual({ data: rawContent, include_theme: false });
       });
     });
 
