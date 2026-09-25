@@ -45,6 +45,7 @@ describe('TextEditor', () => {
     onClose: jest.fn().mockName('props.onClose'),
     // redux
     blockValue: { data: { data: 'eDiTablE Text' } },
+    blockId: 'block-id-123',
     blockFailed: false,
     initializeEditor: jest.fn().mockName('args.intializeEditor'),
     showRawEditor: false,
@@ -96,7 +97,7 @@ describe('TextEditor', () => {
 
   describe('mapStateToProps', () => {
     // type set to any to prevent warning on not matchig expected type on the selectors
-    const testState: any = { A: 'pple', B: 'anana', C: 'ucumber' };
+    const testState: any = { A: 'pple', B: 'anana', C: 'cucumber' };
     test('blockValue from app.blockValue', () => {
       expect(
         mapStateToProps(testState).blockValue,
