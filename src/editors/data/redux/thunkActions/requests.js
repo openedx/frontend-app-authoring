@@ -168,7 +168,9 @@ export const removeTemporalLink = (response, asset, content, resolve) => {
     const imageBS64 = /** @type {string} */ (reader.result);
     const parsedContent = typeof content === 'string'
       ? content.replace(imageBS64, imagePath)
-      : { ...content, olx: content.olx.replace(imageBS64, imagePath) };
+      : 'olx' in content
+      ? { ...content, olx: content.olx.replace(imageBS64, imagePath) }
+      : { ...content, data: content.data.replace(imageBS64, imagePath) };
     URL.revokeObjectURL(asset);
     resolve(parsedContent);
   });

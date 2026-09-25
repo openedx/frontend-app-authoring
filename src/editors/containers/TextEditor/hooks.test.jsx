@@ -48,17 +48,25 @@ describe('TextEditor hooks', () => {
         tinyMceHookKeys.setAssetToStaticUrl,
       ).mockReturnValueOnce(rawContent);
       test('returns correct content based on showRawEditor equals false', () => {
-        const getContent = module.getContent({ editorRef, showRawEditor: false })();
+        const getContent = module.getContent({
+          editorRef,
+          showRawEditor: false,
+          includeTheme: true,
+        })();
         expect(spies.visualHtml.mock.calls.length).toEqual(1);
         expect(spies.visualHtml).toHaveBeenCalledWith({ editorValue: visualContent });
-        expect(getContent).toEqual(visualContent);
+        expect(getContent).toEqual({ data: visualContent, include_theme: true });
       });
       test('returns correct content based on showRawEditor equals true', () => {
         jest.clearAllMocks();
-        const getContent = module.getContent({ editorRef, showRawEditor: true })();
+        const getContent = module.getContent({
+          editorRef,
+          showRawEditor: true,
+          includeTheme: false,
+        })();
         expect(spies.rawHtml.mock.calls.length).toEqual(1);
         expect(spies.rawHtml).toHaveBeenCalledWith({ editorValue: rawContent });
-        expect(getContent).toEqual(rawContent);
+        expect(getContent).toEqual({ data: rawContent, include_theme: false });
       });
     });
 
@@ -79,6 +87,34 @@ describe('TextEditor hooks', () => {
           },
         };
         const isDirty = module.isDirty({ editorRef, showRawEditor: true })();
+        expect(isDirty).toEqual(true);
+      });
+      test('is clean when the editor is untouched and the toggle is unchanged', () => {
+        const editorRef = {
+          current: {
+            isNotDirty: true,
+          },
+        };
+        const isDirty = module.isDirty({
+          editorRef,
+          showRawEditor: false,
+          includeTheme: false,
+          initialIncludeTheme: false,
+        })();
+        expect(isDirty).toEqual(false);
+      });
+      test('is dirty when only the toggle changed', () => {
+        const editorRef = {
+          current: {
+            isNotDirty: true,
+          },
+        };
+        const isDirty = module.isDirty({
+          editorRef,
+          showRawEditor: false,
+          includeTheme: true,
+          initialIncludeTheme: false,
+        })();
         expect(isDirty).toEqual(true);
       });
     });
