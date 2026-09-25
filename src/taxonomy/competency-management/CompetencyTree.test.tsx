@@ -254,6 +254,9 @@ describe('<CompetencyTree />', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
     const leafRow = (await screen.findByText('Leaf A1a')).closest('.competency-row') as HTMLElement;
 
+    // `role="treeitem"` (see `CompetencyTreeItem.tsx`) allows `aria-selected`
+    // directly, unlike the `role="button"` this row used briefly before.
+    expect(leafRow).toHaveAttribute('role', 'treeitem');
     expect(leafRow).toHaveAttribute('aria-selected', 'false');
 
     fireEvent.click(leafRow);
@@ -289,9 +292,11 @@ describe('<CompetencyTree />', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
     const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
 
-    // A group (or higher) node is expand/collapse-only: no selection
-    // semantics at all, unlike a leaf row.
-    expect(groupRow).not.toHaveAttribute('role', 'button');
+    // A group (or higher) node is expand/collapse-only: it still gets
+    // `role="treeitem"` (so its own selectable leaf descendants have a valid
+    // `treeitem`/`group` ancestor chain - see `CompetencyTreeItem.tsx`), but
+    // none of the actual selection semantics a leaf row has.
+    expect(groupRow).toHaveAttribute('role', 'treeitem');
     expect(groupRow).not.toHaveAttribute('tabIndex');
     expect(groupRow).not.toHaveAttribute('aria-selected');
 

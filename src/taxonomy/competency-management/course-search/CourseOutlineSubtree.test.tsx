@@ -271,4 +271,31 @@ describe('<CourseOutlineSubtree />', () => {
       expect(associateSubsection).toHaveBeenCalledWith('sub-1a', courseId);
     },
   );
+
+  it(
+    'renders the Competency ID badge on an already-associated row when competencyExternalId is set '
+      + '(moved here from CourseSearchBrowse.test.tsx along with the badge itself)',
+    async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtree({ associatedObjectIds: new Set(['sub-1a']), competencyExternalId: 'EXT-042' });
+
+      await userEvent.setup().click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
+      // The badge's own text becomes part of the button's accessible name
+      // once set, so find the row by its label text instead of `getByRole`.
+      const row = (await screen.findByText('Subsection 1A (graded)')).closest('button') as HTMLElement;
+
+      expect(within(row).getByText('EXT-042')).toHaveAttribute('aria-hidden', 'true');
+      expect(within(row).getByText('Competency ID: EXT-042')).toBeInTheDocument();
+    },
+  );
+
+  it('renders no Competency ID badge on an already-associated row when competencyExternalId is falsy', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+    renderSubtree({ associatedObjectIds: new Set(['sub-1a']), competencyExternalId: null });
+
+    await userEvent.setup().click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
+    const row = (await screen.findByText('Subsection 1A (graded)')).closest('button') as HTMLElement;
+
+    expect(within(row).queryByText('Competency ID:', { exact: false })).not.toBeInTheDocument();
+  });
 });
