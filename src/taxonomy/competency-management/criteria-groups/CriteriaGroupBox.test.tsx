@@ -18,10 +18,11 @@ const ruleKey = 'grade:gte:0.7:percent';
 const renderBox = (
   contextOverrides: MockCompetencyAssociationsOverrides = {},
   subsectionNamesByUsageKey: Record<string, string> = {},
+  canEdit: boolean = false,
 ) => (
   render(
     <MockCompetencyAssociationsProvider value={contextOverrides}>
-      <CriteriaGroupBox group={group} subsectionNamesByUsageKey={subsectionNamesByUsageKey} />
+      <CriteriaGroupBox group={group} subsectionNamesByUsageKey={subsectionNamesByUsageKey} canEdit={canEdit} />
     </MockCompetencyAssociationsProvider>,
   )
 );
