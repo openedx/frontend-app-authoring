@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 import {
   Spinner,
@@ -19,7 +18,28 @@ import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
 
-const TextEditor = ({
+interface BlockValue {
+  data: {
+    data: string | Record<string, any>;
+  };
+}
+
+interface TextEditorProps {
+  onClose: (() => void) | null;
+  returnFunction?: ((prevPath?: string) => (newData: Record<string, any> | undefined) => void) | null;
+  // redux
+  showRawEditor: boolean;
+  blockValue: BlockValue | null;
+  blockId: string;
+  blockFailed: boolean;
+  initializeEditor: () => void;
+  blockFinished: boolean;
+  learningContextId: string;
+  images: Record<string, any>;
+  isLibrary: boolean;
+}
+
+const TextEditor: React.FC<TextEditorProps> = ({
   onClose,
   returnFunction,
   // redux
@@ -35,13 +55,14 @@ const TextEditor = ({
 }) => {
   const intl = useIntl();
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-  const initialContent = blockValue ? blockValue.data.data : '';
+
+  const initialContent = blockValue ? (blockValue.data.data as string) : '';
   const newContent = replaceStaticWithAsset({
     initialContent,
     learningContextId,
   });
-  const editorContent = newContent || initialContent;
-  let staticRootUrl;
+  const editorContent = (newContent || initialContent) as string;
+  let staticRootUrl: string;
   if (isLibrary) {
     staticRootUrl = `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}/`;
   }
@@ -53,11 +74,13 @@ const TextEditor = ({
       return (
         <RawEditor
           editorRef={editorRef}
+          // @ts-ignore FIXME: RawEditor content doesn't match the type of blockValue. It only supports data as string
           content={blockValue}
         />
       );
     }
     return (
+      // @ts-ignore FIXME: need to fix types from TinyMceWidget
       <TinyMceWidget
         editorType="text"
         editorRef={editorRef}
@@ -94,38 +117,17 @@ const TextEditor = ({
               <Spinner
                 animation="border"
                 className="m-3"
-                screenreadertext={intl.formatMessage(messages.spinnerScreenReaderText)}
+                screenReaderText={intl.formatMessage(messages.spinnerScreenReaderText)}
               />
             </div>
-          ) :
-          (selectEditor())}
+          )
+          : (selectEditor())}
       </div>
     </EditorContainer>
   );
 };
-TextEditor.defaultProps = {
-  blockValue: null,
-  blockFinished: null,
-  returnFunction: null,
-};
-TextEditor.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  returnFunction: PropTypes.func,
-  // redux
-  blockValue: PropTypes.shape({
-    data: PropTypes.shape({ data: PropTypes.string }),
-  }),
-  blockId: PropTypes.string,
-  blockFailed: PropTypes.bool.isRequired,
-  initializeEditor: PropTypes.func.isRequired,
-  showRawEditor: PropTypes.bool.isRequired,
-  blockFinished: PropTypes.bool,
-  learningContextId: PropTypes.string, // This should be required but is NULL when the store is in initial state :/
-  images: PropTypes.shape({}).isRequired,
-  isLibrary: PropTypes.bool.isRequired,
-};
 
-export const mapStateToProps = (state) => ({
+export const mapStateToProps = (state: any) => ({
   blockValue: selectors.app.blockValue(state),
   blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
   blockId: selectors.app.blockId(state),
