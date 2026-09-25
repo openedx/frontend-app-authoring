@@ -94,22 +94,15 @@ const messages = defineMessages({
   },
   noAssociationsMessage: {
     id: 'course-authoring.competency-management.course-search.no-associations-message',
-    defaultMessage: 'No content associated with {competencyName} yet.',
-    description: 'First line of the static empty state shown in the associations block, since there is no '
-      + 'backend endpoint yet to list a competency\'s actual associations. {competencyName} names the currently '
-      + 'active competency.',
+    defaultMessage: 'No content associated.',
+    description: 'First line of the empty state shown in the associations block when the selected competency '
+      + 'has no course content associated with it yet.',
   },
   noAssociationsPromptMessage: {
     id: 'course-authoring.competency-management.course-search.no-associations-prompt-message',
-    defaultMessage: 'Make content selections to create competency criteria associations.',
+    defaultMessage: 'Make content selections to associate this competency with course content.',
     description: 'Second line of the static empty state shown in the associations block, prompting the user '
       + 'to make content selections below.',
-  },
-  competencyIdAccessibleLabel: {
-    id: 'course-authoring.competency-management.course-search.competency-id.accessible-label',
-    defaultMessage: 'Competency ID: {externalId}',
-    description: 'Accessible name for the Competency ID badge shown next to the "Demonstrate Mastery For" line, '
-      + 'read by screen readers since the badge itself is aria-hidden.',
   },
 });
 

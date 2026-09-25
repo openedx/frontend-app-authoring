@@ -25,6 +25,8 @@ interface Props {
   isInvalid?: boolean;
   controlName: string;
   onChange: (value: string) => void;
+  minDate?: Date;
+  maxDate?: Date;
 }
 
 const DatepickerControl = ({
@@ -37,6 +39,8 @@ const DatepickerControl = ({
   isInvalid = false,
   controlName,
   onChange,
+  minDate,
+  maxDate,
 }: Props) => {
   const intl = useIntl();
   const formattedDate = convertToDateFromString(value);
@@ -94,6 +98,8 @@ const DatepickerControl = ({
             'datepicker-custom-control_isInvalid': isInvalid,
           })}
           autoComplete="off"
+          minDate={minDate}
+          maxDate={maxDate}
           showTimeSelect={type === DATEPICKER_TYPES.time}
           showTimeSelectOnly={type === DATEPICKER_TYPES.time}
           placeholderText={inputFormat[type].toLocaleUpperCase()}
