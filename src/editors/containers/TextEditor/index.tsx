@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
-
 import {
   Spinner,
   Toast,
+  Form,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -19,8 +19,17 @@ import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
 
 interface BlockValue {
+  // This is the AxiosResponse from the block fetch, so the API payload (which
+  // holds `data` and `metadata`) sits under `.data`.
   data: {
+    id: string;
+    display_name: string;
+    category?: string;
     data: string | Record<string, any>;
+    metadata?: {
+      display_name?: string;
+      include_theme?: boolean;
+    };
   };
 }
 
@@ -34,6 +43,7 @@ interface TextEditorProps {
   blockFailed: boolean;
   initializeEditor: () => void;
   blockFinished: boolean;
+  isCreateWorkflow: boolean;
   learningContextId: string;
   images: Record<string, any>;
   isLibrary: boolean;
@@ -49,12 +59,21 @@ const TextEditor: React.FC<TextEditorProps> = ({
   blockFailed,
   initializeEditor,
   blockFinished,
+  isCreateWorkflow,
   learningContextId,
   images,
   isLibrary,
 }) => {
   const intl = useIntl();
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
+
+  // `include_theme` is settings-scoped, so the block API returns it in
+  // `metadata` alongside the HTML body in `data`.
+  // New Text blocks opt in by default; blocks that predate the field (and so
+  // carry no value yet) keep the legacy, unthemed rendering.
+  const [includeTheme, setIncludeTheme] = useState<boolean>(
+    blockValue?.data?.metadata?.include_theme ?? isCreateWorkflow,
+  );
 
   const initialContent = blockValue ? (blockValue.data.data as string) : '';
   const newContent = replaceStaticWithAsset({
@@ -68,6 +87,10 @@ const TextEditor: React.FC<TextEditorProps> = ({
   }
 
   if (!refReady) { return null; }
+
+  const handleIncludeThemeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIncludeTheme(e.target.checked);
+  };
 
   const selectEditor = () => {
     if (showRawEditor) {
@@ -101,7 +124,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
   return (
     <EditorContainer
-      getContent={hooks.getContent({ editorRef, showRawEditor })}
+      getContent={hooks.getContent({ editorRef, showRawEditor, includeTheme })}
       isDirty={hooks.isDirty({ editorRef, showRawEditor })}
       onClose={onClose}
       returnFunction={returnFunction}
@@ -121,7 +144,23 @@ const TextEditor: React.FC<TextEditorProps> = ({
               />
             </div>
           )
-          : (selectEditor())}
+          : (
+            <>
+              <div className="px-3 pt-3">
+                <Form.Checkbox
+                  name="include_theme"
+                  checked={includeTheme}
+                  onChange={handleIncludeThemeChange}
+                >
+                  {intl.formatMessage(messages.includeThemeLabel)}
+                </Form.Checkbox>
+                <p className="small text-muted mt-1 mb-0">
+                  {intl.formatMessage(messages.includeThemeHelp)}
+                </p>
+              </div>
+              {selectEditor()}
+            </>
+          )}
       </div>
     </EditorContainer>
   );
@@ -134,6 +173,7 @@ export const mapStateToProps = (state: any) => ({
   showRawEditor: selectors.app.showRawEditor(state),
   blockFinished: selectors.app.shouldCreateBlock(state)
     || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
+  isCreateWorkflow: Boolean(selectors.app.shouldCreateBlock(state)),
   learningContextId: selectors.app.learningContextId(state),
   images: selectors.app.images(state),
   isLibrary: selectors.app.isLibrary(state),
