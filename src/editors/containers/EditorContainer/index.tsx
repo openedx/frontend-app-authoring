@@ -46,6 +46,7 @@ export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void; 
       isOpen
       onClose={onClose}
       title={title}
+      className="editor-modal"
       size={fullscreen ? 'fullscreen' : 'xl'}
       isOverflowVisible={false}
       hasCloseButton={false}
