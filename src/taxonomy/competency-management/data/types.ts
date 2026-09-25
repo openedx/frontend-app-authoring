@@ -3,9 +3,10 @@
  * `docs/openedx_learning/decisions/0002-competency-criteria-model.rst`
  * (ADR 0002) in `openedx-core`. Every read-hook response is normalized
  * through `camelCaseObject` (see `./apiHooks.ts`), so these describe the
- * camelCase shape the app consumes, never the wire snake_case - except
- * `CreateCompetencyCriterionPayload`, a request body, which goes out as the
- * API expects (snake_case).
+ * camelCase shape the app consumes, never the wire snake_case - except the
+ * request-body payload types (`CreateCompetencyCriterionPayload`,
+ * `UpdateCompetencyCriteriaGroupPayload`, `UpdateCompetencyCriteriaRulePayload`),
+ * which go out as the API expects (snake_case).
  */
 
 /** How a group's immediate children combine: "AND" (all) or "OR" (any). A
@@ -164,3 +165,27 @@ export interface CreateCompetencyCriterionPayload {
  * linking the content object to the competency.
  */
 export type CreateCompetencyCriterionResponse = Omit<CompetencyCriterion, 'objectId'> & { objectTagId: number; };
+
+/** Request body for updating a bottom-tier group's any/all combining logic
+ * (`#760`). `logic_operator` is the only field, so this is just
+ * `CompetencyGroupLogicOperator` under its own wire key - named separately
+ * from `CompetencyGroupLogicOperator` itself for symmetry with
+ * `CreateCompetencyCriterionPayload`/`UpdateCompetencyCriteriaRulePayload`,
+ * the other request-body types in this file.
+ */
+export interface UpdateCompetencyCriteriaGroupPayload {
+  logic_operator: CompetencyGroupLogicOperator;
+}
+
+/** Request body for updating a rule box's score threshold (`#759`), batched
+ * across every criterion that currently shares the box. Always carries
+ * explicit override values, never a `competency_rule_profile_id` - the
+ * backend reassigns a criterion back to its default profile itself when
+ * the submitted value matches it, so "reset to default" needs no special
+ * payload here.
+ */
+export interface UpdateCompetencyCriteriaRulePayload {
+  criterion_ids: number[];
+  rule_type_override: string;
+  rule_payload_override: GradeRulePayload;
+}
