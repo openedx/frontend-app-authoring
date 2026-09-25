@@ -110,7 +110,7 @@ describe('<CompetencyAssociationsPanel />', () => {
     expect(screen.getByRole('searchbox')).toBeInTheDocument();
   });
 
-  it('populates the right panel when a group (non-leaf) competency is selected too', async () => {
+  it('mounts no right-hand column at all when a group (non-leaf) competency is clicked', async () => {
     renderPanel();
     await screen.findByText(taxonomyName);
     fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
@@ -118,11 +118,11 @@ describe('<CompetencyAssociationsPanel />', () => {
     const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
     fireEvent.click(groupRow);
 
-    // A group row is now selectable just like a leaf row (see
-    // CompetencyTreeItem.tsx), so selecting one also mounts the right panel
-    // and fires the course-list query.
-    expect(await screen.findByRole('searchbox')).toBeInTheDocument();
-    expect(axiosMock.history.get.filter((req) => req.url === coursesApiUrl)).toHaveLength(1);
+    // A group (or higher) node is expand/collapse-only (see
+    // CompetencyTreeItem.tsx) - clicking it must not select anything, so the
+    // right panel never mounts and no course-list request ever fires.
+    expect(screen.queryByRole('searchbox')).not.toBeInTheDocument();
+    expect(axiosMock.history.get.filter((req) => req.url === coursesApiUrl)).toHaveLength(0);
   });
 
   it('preserves the right panel\'s own state when switching from one leaf competency to a different one', async () => {
@@ -190,10 +190,15 @@ describe('<CompetencyAssociationsPanel />', () => {
   });
 
   it('keeps the tree\'s own expand/collapse state when selecting a competency mounts the right panel', async () => {
-    // Regression test: remounting `CompetencyTree` would reset its local
-    // `expandedIds` state. Expands one branch by hand (not "Expand All",
-    // which would always re-expand everything regardless) so a remount is
-    // distinguishable from a correct re-render.
+    // Regression test for the bug described in `CompetencyAssociationsPanel.tsx`:
+    // a naive fix that only wrapped the tree in `ResizableBox` once something
+    // is selected would move `CompetencyTree` to a different position in the
+    // element tree between the two states, and React would remount it -
+    // silently discarding its own local `expandedIds` state right when the
+    // user selects a competency. This test expands one branch of the tree by
+    // hand (not "Expand All", which would always re-expand everything and so
+    // couldn't tell a remount apart from a correct re-render), then selects a
+    // leaf and checks the expanded branch is still expanded afterward.
     render(
       <ResponsiveContext.Provider value={{ width: breakpoints.large.minWidth }}>
         <CompetencyAssociationsPanel taxonomyId={taxonomyId} taxonomyName={taxonomyName} />

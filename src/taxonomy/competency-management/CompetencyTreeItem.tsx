@@ -47,11 +47,20 @@ const CompetencyTreeItem = ({
   // `externalId: ''`), so use a truthiness check rather than `!== null`.
   const { externalId } = node;
 
-  // Every row is selectable, group or leaf, as long as a selection handler was
-  // passed down - a group row keeps its own separate expand/collapse control
-  // (see `ExpandCollapseIconButton`, which stops its click and keydown from
-  // also reaching this row's own `onClick`/`onKeyDown` below).
-  const isSelectable = !!onSelectCompetency;
+  // Whether the tree is in "selection mode" at all - i.e. a selection handler
+  // was passed down. This gates the ARIA tree-structural roles below
+  // (`treeitem`/`group`/`none`), independently of whether *this particular*
+  // node can itself be selected, so a non-selectable group row still parents
+  // its selectable leaf descendants correctly in the accessibility tree.
+  const isSelectionEnabled = !!onSelectCompetency;
+  // Only a leaf competency is selectable - a bottom-tier or higher group
+  // node is expand/collapse-only, matching the CBE model where a parent
+  // competency's mastery rolls up from its children rather than being
+  // directly associated. A group row keeps its own separate expand/collapse
+  // control regardless (see `ExpandCollapseIconButton`, which stops its
+  // click and keydown from also reaching this row's own `onClick`/
+  // `onKeyDown` below).
+  const isSelectable = isSelectionEnabled && !hasChildren;
   const isSelected = isSelectable && selectedCompetencyId != null && nodeId === selectedCompetencyId;
 
   const handleSelect = () => {
@@ -72,21 +81,26 @@ const CompetencyTreeItem = ({
     // wraps a `treeitem` below: axe's `aria-required-parent`/`listitem`
     // rules require a `treeitem` to be a direct accessibility-tree child of
     // its `tree`/`group` container, which a plain (implicit `listitem`)
-    // `<li>` in between breaks - confirmed live via `axe-core`. Without
-    // selection there's no `treeitem` here to parent, so this stays a
-    // plain, validly-semantic list item instead.
-    <li className={hasChildren ? 'competency-group' : undefined} role={isSelectable ? 'none' : undefined}>
+    // `<li>` in between breaks - confirmed live via `axe-core`. Gated on
+    // `isSelectionEnabled` (not `isSelectable`): a non-selectable group row
+    // still wraps a `treeitem` below (its own row, structurally) and its
+    // selectable leaf descendants, so it needs this too, even though it
+    // isn't itself a selection target.
+    <li className={hasChildren ? 'competency-group' : undefined} role={isSelectionEnabled ? 'none' : undefined}>
       <div
         // `role="treeitem"` (part of the `role="tree"`/`"group"` structure -
         // see `CompetencyTree.tsx` and the nested `<ul>` below) allows
         // `aria-selected` directly, unlike `role="button"`, and axe's
         // `nested-interactive` rule (which flagged the disclosure `<button>`
         // below when this row was `role="button"`) doesn't apply to
-        // `treeitem`. `aria-selected` itself is announced by assistive tech
-        // as part of the treeitem's own state, so there's no need for the
-        // separate accessible-label text this row used before.
+        // `treeitem`. Also gated on `isSelectionEnabled`, not `isSelectable`:
+        // a group row is still a `treeitem` in the tree (just one that only
+        // expands/collapses, never selects) - dropping the role entirely for
+        // group rows would leave their selectable leaf descendants without a
+        // valid `treeitem`/`group` ancestor chain. `aria-selected` itself
+        // (below) stays leaf-only, since that's the actual selection state.
         className={isSelected ? 'competency-row competency-row--selected' : 'competency-row'}
-        role={isSelectable ? 'treeitem' : undefined}
+        role={isSelectionEnabled ? 'treeitem' : undefined}
         tabIndex={isSelectable ? 0 : undefined}
         aria-selected={isSelectable ? isSelected : undefined}
         onClick={isSelectable ? handleSelect : undefined}
@@ -118,7 +132,7 @@ const CompetencyTreeItem = ({
           null}
       </div>
       {isExpanded && hasChildren && (
-        <ul role={isSelectable ? 'group' : undefined}>
+        <ul role={isSelectionEnabled ? 'group' : undefined}>
           {node.subRows!.map((child) => (
             <CompetencyTreeItem
               key={child.id}
