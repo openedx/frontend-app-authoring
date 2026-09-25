@@ -716,13 +716,18 @@ export const useCreateLibraryContainer = (libraryId: string) => {
 };
 
 /**
- * Get the metadata for a container in a library
+ * Get the metadata for a container in a library.
+ *
+ * `courseId` is optional and only needed when the caller is reviewing this container from
+ * within a course it doesn't otherwise have library access from (e.g. previewing pending
+ * library updates); it lets the backend grant access via the course's `view_library_updates`
+ * permission instead of requiring direct library permissions.
  */
-export const useContainer = (containerId?: string) => (
+export const useContainer = (containerId?: string, courseId?: string) => (
   useQuery({
     enabled: !!containerId,
     queryKey: libraryAuthoringQueryKeys.container(containerId!),
-    queryFn: () => api.getContainerMetadata(containerId!),
+    queryFn: () => api.getContainerMetadata(containerId!, courseId),
   })
 );
 
@@ -826,11 +831,12 @@ export const useContainerChildren = <
 >(
   containerId?: string,
   published: boolean = false,
+  courseId?: string,
 ) => (
   useQuery({
     enabled: !!containerId,
     queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
-    queryFn: () => api.getLibraryContainerChildren<ChildType>(containerId!, published),
+    queryFn: () => api.getLibraryContainerChildren<ChildType>(containerId!, published, courseId),
     structuralSharing: (oldData: ChildType[], newData: ChildType[]) => {
       // This just sets `isNew` flag to new children components
       if (oldData) {
