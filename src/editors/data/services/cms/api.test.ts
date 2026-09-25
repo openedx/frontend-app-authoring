@@ -169,8 +169,11 @@ describe('cms api', () => {
 
     describe('normalizeContent', () => {
       test('return value for blockType: html', () => {
-        const content =
-          'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
+        const content = {
+          data:
+            'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.',
+          include_theme: false,
+        };
         expect(apiMethods.normalizeContent({
           blockId,
           blockType: 'html',
@@ -180,10 +183,28 @@ describe('cms api', () => {
         })).toEqual({
           category: 'html',
           courseKey: learningContextId,
-          data: content,
+          data: content.data,
           has_changes: true,
           id: blockId,
-          metadata: { display_name: title },
+          metadata: { display_name: title, include_theme: false },
+        });
+      });
+      test('sends html settings as metadata, keeping data a string', () => {
+        // The block API rejects a non-string `data`, so settings-scoped fields
+        // such as include_theme have to travel in `metadata` instead.
+        expect(apiMethods.normalizeContent({
+          blockId,
+          blockType: 'html',
+          content: { data: '<p>Some text</p>', include_theme: true },
+          learningContextId,
+          title,
+        })).toEqual({
+          category: 'html',
+          courseKey: learningContextId,
+          data: '<p>Some text</p>',
+          has_changes: true,
+          id: blockId,
+          metadata: { display_name: title, include_theme: true },
         });
       });
       test('return value for blockType: video', () => {
@@ -257,8 +278,11 @@ describe('cms api', () => {
     });
 
     describe('saveBlock', () => {
-      const content =
-        'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.';
+      const content = {
+        data:
+          'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.',
+        include_theme: false,
+      };
       it('should call post with urls.block and normalizeContent', async () => {
         await apiMethods.saveBlock({
           blockId,
