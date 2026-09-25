@@ -3,9 +3,10 @@
  * `docs/openedx_learning/decisions/0002-competency-criteria-model.rst`
  * (ADR 0002) in `openedx-core`. Every read-hook response is normalized
  * through `camelCaseObject` (see `./apiHooks.ts`), so these describe the
- * camelCase shape the app consumes, never the wire snake_case - except
- * `CreateCompetencyCriterionPayload`, a request body, which goes out as the
- * API expects (snake_case).
+ * camelCase shape the app consumes, never the wire snake_case - except the
+ * request-body payload types (`CreateCompetencyCriterionPayload`,
+ * `UpdateCompetencyCriteriaGroupPayload`, `UpdateCompetencyCriteriaRulePayload`),
+ * which go out as the API expects (snake_case).
  */
 
 /** How a group's immediate children combine: "and" (all) or "or" (any). A
@@ -146,4 +147,26 @@ export interface CreateCompetencyCriterionPayload {
   group_id?: number;
   rule_type_override?: string;
   rule_payload_override?: GradeRulePayload;
+}
+
+/** Request body for updating a bottom-tier group's any/all combining logic
+ * (`#760`). The wire value is uppercase; `data/api.ts`'s
+ * `updateCompetencyCriteriaGroupOperator` handles the casing transform to
+ * and from `CompetencyGroupLogicOperator`'s lowercase form.
+ */
+export interface UpdateCompetencyCriteriaGroupPayload {
+  logic_operator: 'AND' | 'OR';
+}
+
+/** Request body for updating a rule box's score threshold (`#759`), batched
+ * across every criterion that currently shares the box. Always carries
+ * explicit override values, never a `competency_rule_profile_id` - the
+ * backend reassigns a criterion back to its default profile itself when
+ * the submitted value matches it, so "reset to default" needs no special
+ * payload here.
+ */
+export interface UpdateCompetencyCriteriaRulePayload {
+  criterion_ids: number[];
+  rule_type_override: string;
+  rule_payload_override: GradeRulePayload;
 }

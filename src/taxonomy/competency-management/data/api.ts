@@ -1,11 +1,16 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import type {
+  CompetencyCriteriaGroup,
   CompetencyCriteriaGroupsResponse,
   CompetencyCriterion,
+  CompetencyGroupLogicOperator,
   CompetencyRuleProfile,
   CompetencyRuleProfileListResponse,
   CreateCompetencyCriterionPayload,
+  GradeRulePayload,
+  UpdateCompetencyCriteriaGroupPayload,
+  UpdateCompetencyCriteriaRulePayload,
 } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
@@ -60,6 +65,12 @@ export const apiUrls = {
   defaultCompetencyRuleProfile: () => makeCbeV1Url('rule_profiles/'),
   /** POST: create a new criterion under this competency (tag). Backs `#665`. */
   createCompetencyCriterion: (tagId: number) => makeUrl(`${tagId}/criteria/`),
+  /** PATCH: update a bottom-tier group's any/all combining logic. Backs `#760`. */
+  updateCompetencyCriteriaGroup: (tagId: number, groupId: number) => makeUrl(`${tagId}/criteria-groups/${groupId}/`),
+  /** PATCH: batch-update a rule box's score across every criterion sharing it. Backs `#759` -
+   * not nested under `competencies/<tagId>/`, so built with `makeCbeV1Url` instead of `makeUrl`.
+   */
+  updateCompetencyCriteriaRule: (groupId: number) => makeCbeV1Url(`criteria-groups/${groupId}/criteria/bulk-update/`),
 } satisfies Record<string, (...args: any[]) => string>;
 
 /**
@@ -110,5 +121,60 @@ export async function createCompetencyCriterion(
   payload: CreateCompetencyCriterionPayload,
 ): Promise<CompetencyCriterion> {
   const { data } = await getAuthenticatedHttpClient().post(apiUrls.createCompetencyCriterion(tagId), payload);
+  return camelCaseObject(data);
+}
+
+/**
+ * Update a bottom-tier group's any/all combining logic (`#760`).
+ *
+ * The wire value is uppercase (`'AND'`/`'OR'`) while the app's own type is
+ * lowercase, and `camelCaseObject` only rewrites keys, never values - so
+ * this function converts the casing both ways itself.
+ * @param tagId The competency (tag) the group belongs to.
+ * @param groupId The bottom-tier group to update.
+ * @param logicOperator The new operator, in the app's own lowercase form.
+ */
+export async function updateCompetencyCriteriaGroupOperator(
+  tagId: number,
+  groupId: number,
+  logicOperator: CompetencyGroupLogicOperator,
+): Promise<CompetencyCriteriaGroup> {
+  const payload: UpdateCompetencyCriteriaGroupPayload = { logic_operator: logicOperator.toUpperCase() as 'AND' | 'OR' };
+  const { data } = await getAuthenticatedHttpClient().patch(
+    apiUrls.updateCompetencyCriteriaGroup(tagId, groupId),
+    payload,
+  );
+  const { logicOperator: wireLogicOperator, ...rest } = camelCaseObject(data);
+  return { ...rest, logicOperator: wireLogicOperator.toLowerCase() } as CompetencyCriteriaGroup;
+}
+
+/**
+ * Batch-update a rule box's score threshold, across every criterion that
+ * currently shares it (`#759`). Always sends explicit override values,
+ * never a shared rule-profile reference - the backend reassigns a
+ * criterion back to a matching default profile itself when the submitted
+ * value matches it. Atomic; a `criterionIds` entry outside the target
+ * group, or nonexistent, rejects the whole request and changes nothing.
+ * @param groupId The bottom-tier group the batched criteria belong to.
+ * @param criterionIds Every criterion currently in the rule box being edited.
+ * @param ruleType The rule box's own rule type, pinned unchanged - only the
+ * numeric value is user-editable (`#794`'s own scope).
+ * @param rulePayload The new score threshold, applied to every listed criterion.
+ * @returns The updated criteria as actually persisted - the caller derives
+ * the box's new focus key from this, not from the request, since a "reset
+ * to default" edit may echo back a profile reference instead.
+ */
+export async function updateCompetencyCriteriaRule(
+  groupId: number,
+  criterionIds: number[],
+  ruleType: string,
+  rulePayload: GradeRulePayload,
+): Promise<CompetencyCriterion[]> {
+  const payload: UpdateCompetencyCriteriaRulePayload = {
+    criterion_ids: criterionIds,
+    rule_type_override: ruleType,
+    rule_payload_override: rulePayload,
+  };
+  const { data } = await getAuthenticatedHttpClient().patch(apiUrls.updateCompetencyCriteriaRule(groupId), payload);
   return camelCaseObject(data);
 }
