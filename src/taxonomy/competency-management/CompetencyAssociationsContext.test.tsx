@@ -51,6 +51,8 @@ const profileUrl = apiUrls.defaultCompetencyRuleProfile();
 const createUrl = apiUrls.createCompetencyCriterion(tagId);
 const courseAOutlineUrl = getCourseOutlineIndexApiUrl(courseA);
 const courseBOutlineUrl = getCourseOutlineIndexApiUrl(courseB);
+const updateGroupOperatorUrl = apiUrls.updateCompetencyCriteriaGroup(tagId, 10);
+const updateRuleScoreUrl = apiUrls.updateCompetencyCriteriaRule(10);
 
 const outlineFixture = buildOutlineIndex();
 
@@ -92,6 +94,14 @@ const TestConsumer = () => {
     ['Associate in course B', () => ctx.associateSubsection('new-sub', courseB)],
     ['Associate in another course', () => ctx.associateSubsection('new-sub', courseOther)],
     ['Associate duplicate', () => ctx.associateSubsection('existing-sub', courseA)],
+    ['Update group operator', () => ctx.updateGroupOperator(10, 'OR')],
+    [
+      'Update rule score',
+      // The rejection is covered by the toast assertion, so it is swallowed here to avoid an unhandled rejection.
+      () => {
+        ctx.updateRuleScore(10, [900], { op: 'gte', value: 0.8, scale: 'percent' }).catch(() => {});
+      },
+    ],
     [
       'Associate two in one tick',
       () => {
@@ -1074,6 +1084,107 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Associate in course A');
 
       await waitFor(() => expectToast(createFailedMessage, ErrorIcon));
+    });
+  });
+
+  describe('updateGroupOperator', () => {
+    it('sends the operator, with no toast, on success', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      axiosMock.onPatch(updateGroupOperatorUrl).reply(200, {
+        id: 10,
+        parent_id: 1,
+        tag_id: tagId,
+        course_key: null,
+        name: 'group',
+        ordering: 0,
+        logic_operator: 'OR',
+      });
+      renderProvider();
+      await waitForSuccess();
+
+      await click('Update group operator');
+
+      await waitFor(() => expect(axiosMock.history.patch).toHaveLength(1));
+      expect(axiosMock.history.patch[0].url).toEqual(updateGroupOperatorUrl);
+      expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({ logic_operator: 'OR' });
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
+
+    it('shows a failure toast on rejection', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      axiosMock.onPatch(updateGroupOperatorUrl).reply(500);
+      renderProvider();
+      await waitForSuccess();
+
+      await click('Update group operator');
+
+      await waitFor(() => {
+        expectToast('There was a problem updating this group\'s logic. Please try again.', ErrorIcon);
+      });
+    });
+  });
+
+  describe('updateRuleScore', () => {
+    it('sends the batch payload and focuses the rule box keyed from the response on success', async () => {
+      // The refetch after the save returns the edited rule, as the server would.
+      let groupsReply = singleGroupResponse;
+      axiosMock.onGet(groupsUrl).reply(() => [200, groupsReply]);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      axiosMock.onPatch(updateRuleScoreUrl).reply(() => {
+        groupsReply = {
+          ...singleGroupResponse,
+          criteria: [criterion(900, 'existing-sub', 10, {
+            ruleProfileId: null,
+            ruleTypeOverride: 'grade',
+            rulePayloadOverride: { op: 'gte', value: 0.8, scale: 'percent' },
+          })],
+        };
+        return [200, [
+          {
+            id: 900,
+            object_id: 'existing-sub',
+            group_id: 10,
+            rule_profile_id: null,
+            rule_type_override: 'grade',
+            rule_payload_override: { op: 'gte', value: 0.8, scale: 'percent' },
+          },
+        ]];
+      });
+      renderProvider();
+      await waitForSuccess();
+
+      await click('Update rule score');
+
+      await waitFor(() => expect(axiosMock.history.patch).toHaveLength(1));
+      expect(axiosMock.history.patch[0].url).toEqual(updateRuleScoreUrl);
+      // Criterion 900 has no override, so the rule type comes from the system default profile.
+      expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
+        criterion_ids: [900],
+        rule_type_override: 'grade',
+        rule_payload_override: { op: 'gte', value: 0.8, scale: 'percent' },
+      });
+      expect(await screen.findByText(focusOn(10, 'grade:gte:0.8:percent'))).toBeInTheDocument();
+    });
+
+    it('shows a failure toast on rejection, without changing focus', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      axiosMock.onPatch(updateRuleScoreUrl).reply(500);
+      renderProvider();
+      expect(await screen.findByText(focusOn(10, gteKey))).toBeInTheDocument();
+
+      await click('Update rule score');
+
+      await waitFor(() => {
+        expectToast('There was a problem updating this rule\'s score. Please try again.', ErrorIcon);
+      });
+      expect(screen.getByText(focusOn(10, gteKey))).toBeInTheDocument();
     });
   });
 });

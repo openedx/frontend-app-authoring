@@ -116,6 +116,13 @@
     &__header-operator {
       font-weight: 700;
       line-height: 1.5rem;
+
+      // An editable operator is a Paragon `Dropdown` (a `<div>`), which would break the sentence across lines.
+      display: inline-block;
+
+      .dropdown-toggle {
+        vertical-align: baseline;
+      }
     }
 
     &__rules {
@@ -174,6 +181,13 @@
 
   .score-threshold-field__value {
     color: var(--pgn-color-info-600);
+  }
+
+  // `display: block` from `Form.Control` would stretch this input across the whole rule box.
+  .score-threshold-field__input {
+    display: inline-block;
+    width: 3.5em;
+    text-align: center;
   }
 
   // `max-width` makes Paragon's own label truncation apply.
