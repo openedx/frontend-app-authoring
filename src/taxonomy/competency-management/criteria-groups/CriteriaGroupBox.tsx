@@ -10,6 +10,12 @@ import messages from './messages';
 export interface CriteriaGroupBoxProps {
   group: BottomTierCompetencyCriteriaGroup;
   subsectionNamesByUsageKey: Record<string, string>;
+  /** Whether the signed-in author can edit this group's own any/all logic
+   * and its rule boxes' scores - resolved once by `CourseGroupSection` via
+   * `canEditCourse(courseGroup.courseKey)` and threaded down as a plain
+   * prop, rather than re-derived here from `index`.
+   */
+  canEdit: boolean;
 }
 
 /** One bottom-tier group's "By completing any/all of the following"
@@ -20,9 +26,9 @@ export interface CriteriaGroupBoxProps {
  * being the more specific/innermost target, scrolls itself instead (see
  * `RuleBox`), so exactly one of the two ever scrolls for a given focus.
  */
-const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBoxProps) => {
+const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: CriteriaGroupBoxProps) => {
   const intl = useIntl();
-  const { focus, focusGroup, index, systemDefaultProfile } = useCompetencyAssociations();
+  const { focus, focusGroup, index, systemDefaultProfile, updateGroupOperator } = useCompetencyAssociations();
   const ref = useRef<HTMLDivElement>(null);
 
   const isFocused = focus?.groupId === group.id;
@@ -41,6 +47,12 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBox
   };
 
   const handleKeyDown: React.KeyboardEventHandler = (event) => {
+    // Only this wrapper's own key events, not ones bubbled up from the
+    // any/all dropdown once `canEdit` is true - otherwise this handler's
+    // `preventDefault` would swallow the dropdown's own Enter/Space.
+    if (event.target !== event.currentTarget) {
+      return;
+    }
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       focusGroup(group.id);
@@ -72,6 +84,7 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBox
                 and: intl.formatMessage(messages.logicOperatorAllLabel),
                 or: intl.formatMessage(messages.logicOperatorAnyLabel),
               }}
+              onChange={canEdit ? (logicOperator) => updateGroupOperator(group.id, logicOperator) : undefined}
             />
           ),
         })}
@@ -83,6 +96,7 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBox
             index={index}
             systemDefaultProfile={systemDefaultProfile}
             subsectionNamesByUsageKey={subsectionNamesByUsageKey}
+            canEdit={canEdit}
           />
         </div>
       )}

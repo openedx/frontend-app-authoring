@@ -10,6 +10,7 @@ import type {
   BottomTierCompetencyCriteriaGroup,
   CompetencyCriteriaGroupsResponse,
   CompetencyRuleProfile,
+  CourseCompetencyCriteriaGroup,
 } from '../data/types';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import CriteriaGroupBox from './CriteriaGroupBox';
@@ -19,6 +20,22 @@ const systemDefaultProfile: CompetencyRuleProfile = {
   scopeType: 'system_default',
   ruleType: 'grade',
   rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
+  archived: false,
+};
+
+// A real course-level parent for the bottom-tier group below - a bottom-tier
+// group never exists without one in the real API response. Without this,
+// any `canEdit`/course-id resolution derived from the tree would silently
+// default to false, and a "renders read-only" test would keep passing for
+// the wrong reason.
+const courseGroup: CourseCompetencyCriteriaGroup = {
+  id: 1,
+  parentId: null,
+  tagId: 42,
+  courseKey: 'course-v1:OrgX+CS101+2024',
+  name: 'course',
+  ordering: 0,
+  logicOperator: 'AND',
   archived: false,
 };
 
@@ -34,7 +51,7 @@ const group: BottomTierCompetencyCriteriaGroup = {
 };
 
 const response: CompetencyCriteriaGroupsResponse = {
-  groups: [group],
+  groups: [courseGroup, group],
   criteria: [
     {
       id: 101,
@@ -52,10 +69,13 @@ const index = buildCompetencyCriteriaGroupsIndex(response);
 const renderBox = (
   contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {},
   subsectionNamesByUsageKey: Record<string, string> = {},
+  // Defaults to `true`, matching `testHelpers.tsx`'s own `canEditCourse: () => true`
+  // convention (tests default to "editable," and opt out explicitly).
+  canEdit: boolean = true,
 ) => (
   render(
     <MockCompetencyAssociationsProvider value={{ index, systemDefaultProfile, ...contextOverrides }}>
-      <CriteriaGroupBox group={group} subsectionNamesByUsageKey={subsectionNamesByUsageKey} />
+      <CriteriaGroupBox group={group} subsectionNamesByUsageKey={subsectionNamesByUsageKey} canEdit={canEdit} />
     </MockCompetencyAssociationsProvider>,
   )
 );
@@ -70,8 +90,8 @@ describe('<CriteriaGroupBox />', () => {
     jest.clearAllMocks();
   });
 
-  it('renders the group\'s any/all label as plain text with no control', () => {
-    const { container } = renderBox({}, { 'block-a': 'Subsection A' });
+  it('renders the group\'s any/all label as plain text with no control when canEdit is false', () => {
+    const { container } = renderBox({}, { 'block-a': 'Subsection A' }, false);
 
     // The header sentence is split across sibling text nodes (plain text +
     // the any/all `<span>`), so its full text is checked via textContent
@@ -79,9 +99,9 @@ describe('<CriteriaGroupBox />', () => {
     expect(container.querySelector('.criteria-group-box__header')).toHaveTextContent(
       'By completing all of the following',
     );
-    // Two `role="button"` elements exist (the group's own header band and the
-    // one rendered rule box) - neither is a `SelectMenu` trigger, since no
-    // `onChange` was given to the any/all control.
+    // Two `role="button"` elements exist (the group's own header band and
+    // the one rendered rule box) - neither is a `Dropdown` trigger, since
+    // `canEdit` is false here.
     expect(screen.getAllByRole('button')).toHaveLength(2);
     expect(screen.getByText('Subsection A')).toBeInTheDocument();
   });
@@ -128,8 +148,11 @@ describe('<CriteriaGroupBox />', () => {
     const focusRuleBox = jest.fn();
     renderBox({ focusGroup, focusRuleBox });
 
-    // The rule box is the second `role="button"` (the header band is first).
-    fireEvent.click(screen.getAllByRole('button')[1]);
+    // With the default `canEdit: true`, three `role="button"` elements
+    // exist: the header band, the any/all `Dropdown` trigger, and the rule
+    // box itself - the rule box is the third, not the second.
+    expect(screen.getAllByRole('button')).toHaveLength(3);
+    fireEvent.click(screen.getAllByRole('button')[2]);
 
     expect(focusRuleBox).toHaveBeenCalledTimes(1);
     expect(focusGroup).not.toHaveBeenCalled();
