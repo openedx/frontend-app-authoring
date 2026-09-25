@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Card } from '@openedx/paragon';
 import classNames from 'classnames';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
-import type { CompetencyCriterion, EffectiveRule } from '../data/types';
+import type { CompetencyCriterion, EffectiveRule, GradeRulePayload } from '../data/types';
 import CriterionChipList from './CriterionChipList';
 import ScoreThresholdField from './ScoreThresholdField';
 
@@ -20,6 +20,17 @@ export interface RuleBoxProps {
   rule: EffectiveRule;
   criteria: CompetencyCriterion[];
   subsectionNamesByUsageKey: Record<string, string>;
+  /** Threaded down from `RuleBoxList` (originally resolved by
+   * `CourseGroupSection` via `canEditCourse`) - see `CriteriaGroupBoxProps.canEdit`.
+   * Optional, defaulting to `false`, so every caller that predates this prop
+   * keeps working unchanged.
+   */
+  canEdit?: boolean;
+  /** Built once by `RuleBoxList` for this specific box (the duplicate-score
+   * check) - passed straight through to `ScoreThresholdField`. Only
+   * meaningful when `canEdit` is true.
+   */
+  getInlineValidationMessage?: (value: string) => string;
 }
 
 /** One rule box: the rule it's given, its chips, and focus/click behavior.
@@ -33,8 +44,10 @@ const RuleBox = ({
   rule,
   criteria,
   subsectionNamesByUsageKey,
+  canEdit = false,
+  getInlineValidationMessage,
 }: RuleBoxProps) => {
-  const { focus, focusRuleBox } = useCompetencyAssociations();
+  const { focus, focusRuleBox, updateRuleScore } = useCompetencyAssociations();
   const isFocused = focus?.groupId === groupId && focus?.ruleKey === ruleKey;
   const ref = useRef<HTMLDivElement>(null);
 
@@ -53,12 +66,22 @@ const RuleBox = ({
   };
 
   const handleKeyDown: React.KeyboardEventHandler = (event) => {
+    // Only this wrapper's own key events, not ones bubbled up from the
+    // score input once `canEdit` is true - otherwise this handler's
+    // `preventDefault` would swallow the input's own Enter/Escape.
+    if (event.target !== event.currentTarget) {
+      return;
+    }
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       event.stopPropagation();
       focusRuleBox(groupId, ruleKey);
     }
   };
+
+  const handleScoreChange = (rulePayload: GradeRulePayload): Promise<void> => (
+    updateRuleScore(groupId, criteria.map((criterion) => criterion.id), rulePayload)
+  );
 
   return (
     // The interactive/focus/scroll semantics live on this plain wrapping
@@ -76,7 +99,11 @@ const RuleBox = ({
     >
       <Card>
         <Card.Body className="rule-box__body">
-          <ScoreThresholdField rulePayload={rule.rulePayload} />
+          <ScoreThresholdField
+            rulePayload={rule.rulePayload}
+            onChange={canEdit ? handleScoreChange : undefined}
+            getInlineValidationMessage={canEdit ? getInlineValidationMessage : undefined}
+          />
           <CriterionChipList criteria={criteria} subsectionNamesByUsageKey={subsectionNamesByUsageKey} />
         </Card.Body>
       </Card>

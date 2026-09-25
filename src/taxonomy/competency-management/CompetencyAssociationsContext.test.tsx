@@ -22,6 +22,8 @@ const courseOther = 'course-v1:OrgX+CS999+2024';
 const groupsUrl = apiUrls.competencyCriteriaGroups(tagId);
 const profileUrl = apiUrls.defaultCompetencyRuleProfile();
 const createUrl = apiUrls.createCompetencyCriterion(tagId);
+const updateGroupOperatorUrl = apiUrls.updateCompetencyCriteriaGroup(tagId, 10);
+const updateRuleScoreUrl = apiUrls.updateCompetencyCriteriaRule(10);
 
 const systemDefaultProfile: CompetencyRuleProfile = {
   id: 1,
@@ -155,6 +157,19 @@ const TestConsumer = () => {
         onClick={() => ctx.associateSubsection('existing-sub', courseA)}
       >
         associate-duplicate
+      </button>
+      <button type="button" onClick={() => ctx.updateGroupOperator(10, 'or')}>update-group-operator</button>
+      <button
+        type="button"
+        onClick={() => {
+          // The returned promise's own rejection is only relevant to
+          // `ScoreThresholdField`'s local-input revert (see `RuleBox.tsx`) -
+          // irrelevant to this test consumer, so it's caught here to avoid
+          // an unhandled rejection.
+          ctx.updateRuleScore(10, [900], { op: 'gte', value: 0.8, scale: 'percent' }).catch(() => {});
+        }}
+      >
+        update-rule-score
       </button>
     </div>
   );
@@ -432,6 +447,113 @@ describe('CompetencyAssociationsProvider', () => {
         expect(screen.getByTestId('focus')).toHaveTextContent('"groupId":999');
       });
       expect(screen.getByTestId('focus')).toHaveTextContent('"ruleKey":"grade:eq:1:percent"');
+    });
+  });
+
+  describe('updateGroupOperator', () => {
+    it('sends the uppercased operator, with no toast, on success', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
+      axiosMock.onPatch(updateGroupOperatorUrl).reply(200, {
+        id: 10,
+        parent_id: 1,
+        depth: 2,
+        ordering: 0,
+        logic_operator: 'OR',
+      });
+      renderProvider();
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+
+      fireEvent.click(screen.getByText('update-group-operator'));
+
+      await waitFor(() => expect(axiosMock.history.patch).toHaveLength(1));
+      expect(axiosMock.history.patch[0].url).toEqual(updateGroupOperatorUrl);
+      expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({ logic_operator: 'OR' });
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
+
+    it('shows a failure toast on rejection', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
+      axiosMock.onPatch(updateGroupOperatorUrl).reply(500);
+      renderProvider();
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+
+      fireEvent.click(screen.getByText('update-group-operator'));
+
+      await waitFor(() => {
+        expect(mockShowToast).toHaveBeenCalledWith(
+          'There was a problem updating this group\'s logic. Please try again.',
+        );
+      });
+    });
+  });
+
+  describe('updateRuleScore', () => {
+    it('sends the batch payload and repairs focus from the response on success', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
+      axiosMock.onPatch(updateRuleScoreUrl).reply(200, [
+        {
+          id: 900,
+          object_id: 'existing-sub',
+          competency_criteria_group_id: 10,
+          rule_profile_id: null,
+          rule_type_override: 'grade',
+          rule_payload_override: { op: 'gte', value: 0.8, scale: 'percent' },
+        },
+      ]);
+      renderProvider();
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+
+      fireEvent.click(screen.getByText('update-rule-score'));
+
+      await waitFor(() => expect(axiosMock.history.patch).toHaveLength(1));
+      expect(axiosMock.history.patch[0].url).toEqual(updateRuleScoreUrl);
+      expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
+        criterion_ids: [900],
+        // `existing-sub` (criterion 900) carries no override of its own in
+        // `singleGroupResponse` - its effective rule type is resolved from
+        // the system default profile (`'grade'`), pinned unchanged, not
+        // accepted from the test consumer's own call.
+        rule_type_override: 'grade',
+        rule_payload_override: { op: 'gte', value: 0.8, scale: 'percent' },
+      });
+
+      // The new key is computed from the response's own echoed value
+      // (0.8), not the request - proven distinctly since both happen to
+      // agree here, but the assertion still pins the exact expected key.
+      await waitFor(() => {
+        expect(screen.getByTestId('focus')).toHaveTextContent('"groupId":10');
+      });
+      expect(screen.getByTestId('focus')).toHaveTextContent('"ruleKey":"grade:gte:0.8:percent"');
+    });
+
+    it('shows a failure toast on rejection, without changing focus', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
+      axiosMock.onPatch(updateRuleScoreUrl).reply(500);
+      renderProvider();
+      // `singleGroupResponse` has exactly one bottom-tier group, so the
+      // initial-focus effect (covered above under "initial focus") already
+      // auto-focuses it once the queries resolve - captured here as the
+      // known-good baseline this test proves a rejection leaves untouched.
+      await waitFor(() => {
+        expect(screen.getByTestId('focus')).toHaveTextContent('"ruleKey":"grade:gte:0.7:percent"');
+      });
+
+      fireEvent.click(screen.getByText('update-rule-score'));
+
+      await waitFor(() => {
+        expect(mockShowToast).toHaveBeenCalledWith(
+          'There was a problem updating this rule\'s score. Please try again.',
+        );
+      });
+      expect(screen.getByTestId('focus')).toHaveTextContent('"ruleKey":"grade:gte:0.7:percent"');
     });
   });
 });

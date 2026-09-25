@@ -61,6 +61,19 @@
     // `LogicOperatorSelect`'s own `className` from `CriteriaGroupBox.tsx`.
     &__header-operator {
       font-weight: 700;
+
+      // Once `canEdit` is true, this class lands on a Paragon `Dropdown`
+      // (a `<div>`), which has no `display` rule of its own and would
+      // otherwise break "By completing [x] of the following" onto separate
+      // lines.
+      display: inline-block;
+
+      // Nudges the toggle's baseline to line up with the surrounding
+      // sentence text - the one thing `.btn-inline` doesn't already handle
+      // for a `Dropdown.Toggle` specifically.
+      .dropdown-toggle {
+        vertical-align: baseline;
+      }
     }
 
     &__rules {
@@ -84,6 +97,16 @@
     &__body > * + * {
       margin-top: 8px;
     }
+  }
+
+  // "With a score of [input]% or higher" - the editable percent input
+  // itself. Paragon's `Form.Control` renders block-level and full-width by
+  // default, which would otherwise blow out this inline sentence to the
+  // width of the whole rule box.
+  .score-threshold-field__input {
+    display: inline-block;
+    width: 3.5em;
+    text-align: center;
   }
 
   // Each chip's own truncation - a long subsection name shows an ellipsis

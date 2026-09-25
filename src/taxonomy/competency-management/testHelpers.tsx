@@ -14,11 +14,14 @@ import {
 export const buildMockCompetencyAssociationsContextValue = (
   overrides: Partial<CompetencyAssociationsContextValue> = {},
 ): CompetencyAssociationsContextValue => ({
+  tagId: 42,
   focus: null,
   focusGroup: jest.fn(),
   focusRuleBox: jest.fn(),
   notifyCourseExpanded: jest.fn(),
   associateSubsection: jest.fn(),
+  updateGroupOperator: jest.fn(),
+  updateRuleScore: jest.fn().mockResolvedValue(undefined),
   canEditCourse: () => true,
   groupsQuery: {
     isLoading: false,

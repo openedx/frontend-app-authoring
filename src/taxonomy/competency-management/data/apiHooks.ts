@@ -7,7 +7,7 @@ import { useWaffleFlags } from '@src/data/apiHooks';
 import type { PermissionValidationQuery } from '@src/authz/types';
 
 import * as api from './api';
-import type { CreateCompetencyCriterionPayload } from './types';
+import type { CompetencyGroupLogicOperator, CreateCompetencyCriterionPayload, GradeRulePayload } from './types';
 
 /**
  * Query key factory for competency-management data, following the same
@@ -65,6 +65,51 @@ export const useCreateCompetencyCriterion = () => {
     mutationFn: (
       { tagId, payload }: { tagId: number; payload: CreateCompetencyCriterionPayload; },
     ) => api.createCompetencyCriterion(tagId, payload),
+    onSuccess: (_data, { tagId }) => {
+      queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
+    },
+  });
+};
+
+/**
+ * Build the mutation to update a bottom-tier group's any/all combining
+ * logic (`#760`). Invalidates that competency's criteria-groups query on
+ * success so the new operator shows up without a manual refetch.
+ */
+export const useUpdateCompetencyCriteriaGroupOperator = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (
+      { tagId, groupId, logicOperator }: {
+        tagId: number;
+        groupId: number;
+        logicOperator: CompetencyGroupLogicOperator;
+      },
+    ) => api.updateCompetencyCriteriaGroupOperator(tagId, groupId, logicOperator),
+    onSuccess: (_data, { tagId }) => {
+      queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
+    },
+  });
+};
+
+/**
+ * Build the mutation to batch-update a rule box's score threshold (`#759`).
+ * Invalidates that competency's criteria-groups query on success. `tagId`
+ * is only used for that invalidation - the endpoint's own URL isn't nested
+ * under a competency.
+ */
+export const useUpdateCompetencyCriteriaRule = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (
+      { groupId, criterionIds, ruleType, rulePayload }: {
+        tagId: number;
+        groupId: number;
+        criterionIds: number[];
+        ruleType: string;
+        rulePayload: GradeRulePayload;
+      },
+    ) => api.updateCompetencyCriteriaRule(groupId, criterionIds, ruleType, rulePayload),
     onSuccess: (_data, { tagId }) => {
       queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
     },

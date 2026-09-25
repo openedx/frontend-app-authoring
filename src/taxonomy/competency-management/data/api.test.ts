@@ -4,6 +4,8 @@ import {
   createCompetencyCriterion,
   getCompetencyCriteriaGroups,
   getDefaultCompetencyRuleProfile,
+  updateCompetencyCriteriaGroupOperator,
+  updateCompetencyCriteriaRule,
 } from './api';
 import type { CompetencyCriteriaGroupsResponse } from './types';
 
@@ -127,5 +129,67 @@ describe('competency-management api calls', () => {
       ruleTypeOverride: null,
       rulePayloadOverride: null,
     });
+  });
+
+  it('updates a group\'s operator, uppercasing the request and lowercasing the response', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onPatch(apiUrls.updateCompetencyCriteriaGroup(tagId, 10)).reply(200, {
+      id: 10,
+      parent_id: 1,
+      depth: 2,
+      ordering: 0,
+      logic_operator: 'OR',
+    });
+
+    const result = await updateCompetencyCriteriaGroupOperator(tagId, 10, 'or');
+
+    expect(axiosMock.history.patch[0].url).toEqual(apiUrls.updateCompetencyCriteriaGroup(tagId, 10));
+    expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({ logic_operator: 'OR' });
+    expect(result).toEqual({
+      id: 10,
+      parentId: 1,
+      depth: 2,
+      ordering: 0,
+      logicOperator: 'or',
+    });
+  });
+
+  it('batch-updates a rule box\'s score, sending a snake_case payload and camelCasing the response', async () => {
+    const { axiosMock } = initializeMocks();
+    const groupId = 10;
+    axiosMock.onPatch(apiUrls.updateCompetencyCriteriaRule(groupId)).reply(200, [
+      {
+        id: 101,
+        object_id: 'block-a',
+        competency_criteria_group_id: groupId,
+        rule_profile_id: null,
+        rule_type_override: 'grade',
+        rule_payload_override: { op: 'gte', value: 0.8, scale: 'percent' },
+      },
+    ]);
+
+    const result = await updateCompetencyCriteriaRule(
+      groupId,
+      [101],
+      'grade',
+      { op: 'gte', value: 0.8, scale: 'percent' },
+    );
+
+    expect(axiosMock.history.patch[0].url).toEqual(apiUrls.updateCompetencyCriteriaRule(groupId));
+    expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
+      criterion_ids: [101],
+      rule_type_override: 'grade',
+      rule_payload_override: { op: 'gte', value: 0.8, scale: 'percent' },
+    });
+    expect(result).toEqual([
+      {
+        id: 101,
+        objectId: 'block-a',
+        competencyCriteriaGroupId: groupId,
+        ruleProfileId: null,
+        ruleTypeOverride: 'grade',
+        rulePayloadOverride: { op: 'gte', value: 0.8, scale: 'percent' },
+      },
+    ]);
   });
 });

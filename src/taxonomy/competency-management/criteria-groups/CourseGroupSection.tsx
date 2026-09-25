@@ -37,7 +37,7 @@ export interface CourseGroupSectionProps {
  */
 const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   const intl = useIntl();
-  const { index } = useCompetencyAssociations();
+  const { index, canEditCourse } = useCompetencyAssociations();
   const [isCollapsed, setIsCollapsed] = useState(false);
   // `refetchOnMount: false`: mirrors `CourseOutlineSubtree`'s own reasoning -
   // this section's mount/unmount lifecycle already gates whether the data
@@ -98,6 +98,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
               <CriteriaGroupBox
                 group={group}
                 subsectionNamesByUsageKey={subsectionNamesByUsageKey}
+                canEdit={canEditCourse(courseGroup.courseKey)}
               />
             </Fragment>
           ))}

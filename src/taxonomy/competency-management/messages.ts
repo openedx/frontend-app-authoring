@@ -48,6 +48,16 @@ const messages = defineMessages({
     description: 'Toast shown when creating a new criterion (associating a subsection with the active '
       + 'competency) fails.',
   },
+  updateGroupOperatorFailedToastMessage: {
+    id: 'course-authoring.competency-management.update-group-operator-failed-toast-message',
+    defaultMessage: 'There was a problem updating this group\'s logic. Please try again.',
+    description: 'Toast shown when changing a bottom-tier group\'s any/all combining logic fails.',
+  },
+  updateRuleScoreFailedToastMessage: {
+    id: 'course-authoring.competency-management.update-rule-score-failed-toast-message',
+    defaultMessage: 'There was a problem updating this rule\'s score. Please try again.',
+    description: 'Toast shown when changing a rule box\'s score threshold fails.',
+  },
 });
 
 export default messages;

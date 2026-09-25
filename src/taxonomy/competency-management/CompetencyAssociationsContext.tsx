@@ -26,9 +26,12 @@ import {
   useCourseTaggingPermissions,
   useCreateCompetencyCriterion,
   useDefaultCompetencyRuleProfile,
+  useUpdateCompetencyCriteriaGroupOperator,
+  useUpdateCompetencyCriteriaRule,
 } from './data/apiHooks';
 import type {
   CompetencyCriteriaGroupsResponse,
+  CompetencyGroupLogicOperator,
   CompetencyRuleProfile,
   CourseCompetencyCriteriaGroup,
   CreateCompetencyCriterionPayload,
@@ -40,6 +43,7 @@ import {
   associatedObjectIds,
   bottomTierGroupsForCourse,
   buildCompetencyCriteriaGroupsIndex,
+  effectiveRuleOf,
   lastRealRuleKeyIn,
   ruleBoxesForGroup,
   ruleKeyOf,
@@ -59,6 +63,10 @@ export interface CriteriaFocus {
 }
 
 export interface CompetencyAssociationsContextValue {
+  /** The active competency's own id (tag id) - needed for `#760`'s URL and
+   * for `updateGroupOperator`/`updateRuleScore`'s own cache invalidation.
+   */
+  tagId: number;
   /** Both start unset (`null`); see `CriteriaFocus` above for why the pair
    * is always written together.
    */
@@ -89,6 +97,21 @@ export interface CompetencyAssociationsContextValue {
    * target-selection and duplicate-guard rules.
    */
   associateSubsection: (objectId: string, courseId: string) => void;
+  /** Updates a bottom-tier group's any/all combining logic (`#760`). A
+   * rejected save is a no-op besides a failure toast: `group.logicOperator`
+   * is only ever written by the next successful `groupsQuery` refetch.
+   */
+  updateGroupOperator: (groupId: number, logicOperator: CompetencyGroupLogicOperator) => void;
+  /** Updates a rule box's score threshold, across every criterion listed in
+   * `criterionIds` (`#759`). The rule type is pinned to the box's current
+   * effective rule, resolved here rather than accepted from the caller,
+   * since only the numeric value is user-editable. On success, repairs
+   * focus using the mutation's own response rather than the request, since
+   * a "reset to default" edit can be echoed back differently than it was
+   * sent. Returns a `Promise` (not `void`) so `ScoreThresholdField` can
+   * revert its own local input on rejection, without owning the mutation.
+   */
+  updateRuleScore: (groupId: number, criterionIds: number[], rulePayload: GradeRulePayload) => Promise<void>;
   /**
    * Whether the signed-in author can create/manage associations for the
    * given course, via `useCourseTaggingPermissions`'s `courses.manage_tags`
@@ -186,6 +209,8 @@ export const CompetencyAssociationsProvider = ({
   const groupsQuery = useCompetencyCriteriaGroups(tagId);
   const profileQuery = useDefaultCompetencyRuleProfile();
   const createCriterion = useCreateCompetencyCriterion();
+  const updateGroupOperatorMutation = useUpdateCompetencyCriteriaGroupOperator();
+  const updateRuleScoreMutation = useUpdateCompetencyCriteriaRule();
 
   const index = useMemo(
     () => (groupsQuery.data ? buildCompetencyCriteriaGroupsIndex(groupsQuery.data) : undefined),
@@ -378,12 +403,62 @@ export const CompetencyAssociationsProvider = ({
     });
   }, [associatedIds, index, systemDefaultProfile, focus, tagId, createCriterion, showToast, intl]);
 
+  const updateGroupOperator = useCallback((groupId: number, logicOperator: CompetencyGroupLogicOperator) => {
+    updateGroupOperatorMutation.mutate({ tagId, groupId, logicOperator }, {
+      onError: () => {
+        // No local rollback needed: `LogicOperatorSelect` always renders
+        // from `group.logicOperator`, which a rejected mutation never touches.
+        showToast(intl.formatMessage(messages.updateGroupOperatorFailedToastMessage));
+      },
+    });
+  }, [tagId, updateGroupOperatorMutation, showToast, intl]);
+
+  const updateRuleScore = useCallback((
+    groupId: number,
+    criterionIds: number[],
+    rulePayload: GradeRulePayload,
+  ): Promise<void> => {
+    if (!index || !systemDefaultProfile) {
+      // Shouldn't happen: a rule box is only ever rendered - let alone made
+      // editable - once both queries have resolved.
+      return Promise.resolve();
+    }
+    // Rule type is pinned to the box's current effective rule, resolved
+    // from any one criterion already in it (they all share it, by definition).
+    const groupCriteria = index.criteriaByGroupId.get(groupId) ?? [];
+    const anchorCriterion = groupCriteria.find((criterion) => criterionIds.includes(criterion.id));
+    if (!anchorCriterion) {
+      return Promise.resolve();
+    }
+    const { ruleType } = effectiveRuleOf(anchorCriterion, systemDefaultProfile);
+
+    return updateRuleScoreMutation.mutateAsync({ tagId, groupId, criterionIds, ruleType, rulePayload })
+      .then((updatedCriteria) => {
+        // From the response, not the request: a "reset to default" edit can
+        // echo back a shared profile reference instead of the sent values,
+        // so the new focus key has to come from what was actually persisted.
+        const [updatedCriterion] = updatedCriteria;
+        if (updatedCriterion) {
+          setFocus({ groupId, ruleKey: ruleKeyOf(updatedCriterion, systemDefaultProfile) });
+        }
+      })
+      .catch((error) => {
+        showToast(intl.formatMessage(messages.updateRuleScoreFailedToastMessage));
+        // Re-thrown so ScoreThresholdField's own commit handler also sees
+        // the rejection and reverts its local input.
+        throw error;
+      });
+  }, [index, systemDefaultProfile, tagId, updateRuleScoreMutation, showToast, intl]);
+
   const contextValue = useMemo<CompetencyAssociationsContextValue>(() => ({
+    tagId,
     focus,
     focusGroup,
     focusRuleBox,
     notifyCourseExpanded,
     associateSubsection,
+    updateGroupOperator,
+    updateRuleScore,
     canEditCourse,
     groupsQuery,
     profileQuery,
@@ -393,11 +468,14 @@ export const CompetencyAssociationsProvider = ({
     accessibleCourseGroups,
     competencyExternalId,
   }), [
+    tagId,
     focus,
     focusGroup,
     focusRuleBox,
     notifyCourseExpanded,
     associateSubsection,
+    updateGroupOperator,
+    updateRuleScore,
     canEditCourse,
     groupsQuery,
     profileQuery,
