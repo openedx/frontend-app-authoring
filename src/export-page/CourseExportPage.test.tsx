@@ -188,6 +188,29 @@ describe('<CourseExportPage />', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
+  it('keeps polling the export status after a failed status request', async () => {
+    let statusRequests = 0;
+    axiosMock
+      .onGet(getExportStatusApiUrl(courseId))
+      .reply(() => {
+        statusRequests += 1;
+        return statusRequests === 1
+          ? [500]
+          : [200, { exportStatus: EXPORT_STAGES.SUCCESS, exportOutput: '/test-download-path.test' }];
+      });
+    const user = userEvent.setup();
+    const { container } = renderComponent();
+    const startExportButton = container.querySelector('.btn-primary')!;
+    await user.click(startExportButton);
+    const downloadButton = await screen.findByText(
+      stepperMessages.downloadCourseButtonTitle.defaultMessage,
+      {},
+      { timeout: 5000 },
+    );
+    expect(downloadButton).toBeInTheDocument();
+    expect(statusRequests).toBeGreaterThan(1);
+  }, 10000);
+
   it('shows PermissionDeniedAlert when user lacks export permission', async () => {
     mockPermissions({ canExportCourse: false });
     renderComponent();

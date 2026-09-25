@@ -97,12 +97,19 @@ export const CourseExportProvider = ({ children }: CourseExportProviderProps) =>
   }, []);
 
   // Stop fetching the export status once the process has reached a terminal state:
-  // successful completion, a network/request failure, or an application-level export error.
+  // successful completion, an application-level export error, a failure to start the
+  // export, or a permission denial. A failed status request on its own is not terminal
+  // (it may be transient), so keep polling until one of the above happens.
   useEffect(() => {
-    if (currentStage === EXPORT_STAGES.SUCCESS || anyRequestFailed || fetchExportErrorMessage) {
+    if (
+      currentStage === EXPORT_STAGES.SUCCESS
+      || fetchExportErrorMessage
+      || exportMutation.isError
+      || isLoadingDenied
+    ) {
       setStopFetching(true);
     }
-  }, [currentStage, anyRequestFailed, fetchExportErrorMessage]);
+  }, [currentStage, fetchExportErrorMessage, exportMutation.isError, isLoadingDenied]);
 
   const handleStartExportingCourse = async () => {
     reset();
