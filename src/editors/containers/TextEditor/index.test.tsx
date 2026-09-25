@@ -45,6 +45,7 @@ describe('TextEditor', () => {
     onClose: jest.fn().mockName('props.onClose'),
     // redux
     blockValue: { data: { data: 'eDiTablE Text' } },
+    blockId: 'block-id-123',
     blockFailed: false,
     initializeEditor: jest.fn().mockName('args.intializeEditor'),
     showRawEditor: false,

@@ -108,6 +108,11 @@ export const replaceStaticWithAsset = ({
   learningContextId,
   editorType,
   lmsEndpointUrl,
+}:{
+  initialContent: string;
+  learningContextId: string;
+  editorType?: string;
+  lmsEndpointUrl?: string;
 }) => {
   let content = initialContent;
   let hasChanges = false;
@@ -131,7 +136,8 @@ export const replaceStaticWithAsset = ({
       const staticName = assetSrc.substring(8);
       const assetName = parseAssetName(src);
       const displayName = isStatic ? staticName : assetName;
-      const isCorrectAssetFormat = assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
+      const assetFormatRegex = /\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/;
+      const isCorrectAssetFormat = assetFormatRegex.test(assetSrc);
 
       // assets in expandable text areas do not support relative urls so all assets must have the lms
       // endpoint prepended to the relative url
