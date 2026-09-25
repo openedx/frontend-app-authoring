@@ -9,7 +9,7 @@ import {
 } from '@src/testUtils';
 import { CompetencyAssociationsProvider, useCompetencyAssociations } from './CompetencyAssociationsContext';
 import { apiUrls } from './data/api';
-import type { CompetencyCriteriaGroupsResponse, CompetencyRuleProfile } from './data/types';
+import type { CompetencyCriteriaGroupsResponse } from './data/types';
 
 let axiosMock: ReturnType<typeof initializeMocks>['axiosMock'];
 let mockShowToast: ReturnType<typeof initializeMocks>['mockShowToast'];
@@ -23,13 +23,6 @@ const groupsUrl = apiUrls.competencyCriteriaGroups(tagId);
 const profileUrl = apiUrls.defaultCompetencyRuleProfile();
 const createUrl = apiUrls.createCompetencyCriterion(tagId);
 
-const systemDefaultProfile: CompetencyRuleProfile = {
-  id: 1,
-  scopeType: 'system_default',
-  ruleType: 'grade',
-  rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
-  archived: false,
-};
 /** `#773`'s real response envelope: a paginated list, not a single object -
  * see `CompetencyRuleProfileListResponse` in `./data/types`.
  */

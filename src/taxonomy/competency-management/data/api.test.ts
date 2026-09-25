@@ -100,7 +100,9 @@ describe('competency-management api calls', () => {
       }],
     });
 
-    await expect(getDefaultCompetencyRuleProfile()).rejects.toThrow();
+    await expect(getDefaultCompetencyRuleProfile()).rejects.toThrow(
+      'No system_default competency rule profile was found in the rule_profiles response.',
+    );
   });
 
   it('creates a new criterion, sending a snake_case payload and camelCasing the response', async () => {

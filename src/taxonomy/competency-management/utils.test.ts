@@ -92,10 +92,10 @@ describe('buildCompetencyCriteriaGroupsIndex', () => {
     expect(index.groupsById.get(1)).toEqual(fixtureResponse.groups[0]);
 
     const childrenOfCourseGroup = index.childGroupsByParentId.get(1) ?? [];
-    expect(childrenOfCourseGroup.map((g) => g.id).sort()).toEqual([10, 11]);
+    expect(childrenOfCourseGroup.map((g) => g.id).sort((a, b) => a - b)).toEqual([10, 11]);
     expect(index.childGroupsByParentId.get(10)).toBeUndefined();
 
-    expect((index.criteriaByGroupId.get(10) ?? []).map((c) => c.id).sort()).toEqual([101, 102, 104]);
+    expect((index.criteriaByGroupId.get(10) ?? []).map((c) => c.id).sort((a, b) => a - b)).toEqual([101, 102, 104]);
     expect((index.criteriaByGroupId.get(11) ?? []).map((c) => c.id)).toEqual([103]);
 
     expect(index.courseGroups).toEqual([fixtureResponse.groups[0]]);
@@ -147,7 +147,7 @@ describe('ruleBoxesForGroup', () => {
     expect(boxes).toHaveLength(2);
     // Sorted by lowest criterion id ascending: the 101/102 box (min id
     // 101) comes before the 104 box (min id 104).
-    expect(boxes[0].criteria.map((c) => c.id).sort()).toEqual([101, 102]);
+    expect(boxes[0].criteria.map((c) => c.id).sort((a, b) => a - b)).toEqual([101, 102]);
     expect(boxes[0].rule).toEqual({ ruleType: 'grade', rulePayload: { op: 'gte', value: 0.7, scale: 'percent' } });
     expect(boxes[1].criteria.map((c) => c.id)).toEqual([104]);
     expect(boxes[1].rule).toEqual({ ruleType: 'grade', rulePayload: { op: 'lte', value: 0.9, scale: 'percent' } });
