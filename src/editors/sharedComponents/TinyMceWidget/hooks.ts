@@ -7,6 +7,7 @@ import {
 import { getConfig } from '@edx/frontend-platform';
 import { getLocale, isRtl } from '@edx/frontend-platform/i18n';
 import { isEmpty } from 'lodash';
+import type { Editor } from 'tinymce';
 import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
 import pluginConfig from './pluginConfig';
@@ -108,7 +109,7 @@ export const replaceStaticWithAsset = ({
   learningContextId,
   editorType,
   lmsEndpointUrl,
-}:{
+}: {
   initialContent: string;
   learningContextId: string;
   editorType?: string;
@@ -429,8 +430,102 @@ export const setupCustomBehavior = ({
   editor.on('ObjectResized', getImageResizeHandler({ editor, imagesRef: images, setImage }));
 };
 
+type ThemeUrlEntry = {
+  urls?: { brandOverride?: string; default?: string; };
+  url?: string;
+};
+
+type ThemeUrls = {
+  defaults?: { light?: string; dark?: string; };
+  variants?: Record<string, ThemeUrlEntry>;
+  core?: ThemeUrlEntry;
+};
+
+/**
+ * Work out which theme variant is active.
+ *
+ * Two shapes are published in practice: frontend-base's `Theme`
+ * (https://github.com/openedx/frontend-base/blob/main/types.ts) carries a
+ * `defaults` map naming the active light and dark variants, while tutor-indigo
+ * (https://github.com/overhangio/tutor-indigo) ships only a `variants` map with
+ * nothing pointing at one. So read `defaults` when it is there, and otherwise
+ * take the first variant present rather than dropping a configured theme.
+ *
+ * Mirrors `activeVariant` in the XBlock's `html_block.js`, which has to resolve
+ * the same way or the preview shows a different theme than the learner view.
+ */
+const activeVariant = (themeUrls: ThemeUrls): string | undefined => {
+  if (themeUrls.defaults?.light) {
+    return themeUrls.defaults.light;
+  }
+  if (themeUrls.variants?.light) {
+    return 'light';
+  }
+  const names = Object.keys(themeUrls.variants || {});
+  return names.length ? names[0] : undefined;
+};
+
+/**
+ * Pick the stylesheet URL out of a `core` or `variants` entry.
+ *
+ * Entries appear either nested (`{urls: {default, brandOverride}}`, as
+ * tutor-indigo publishes) or flat (`{url}`). Prefer `brandOverride` so the
+ * deployment's theme layers on top of the CDN build. Mirrors `pickUrl` in the
+ * XBlock's `html_block.js`.
+ */
+const pickUrl = (entry?: ThemeUrlEntry): string | undefined => {
+  if (!entry) {
+    return undefined;
+  }
+  if (entry.urls) {
+    return entry.urls.brandOverride || entry.urls.default || entry.url;
+  }
+  return entry.url;
+};
+
+/**
+ * Build the stylesheet injected into the TinyMCE editing area.
+ *
+ * `content_style` is the only styling hook that reaches the author's content:
+ * `content_css` is explicitly disabled and the skin is off, so anything not in
+ * this string is unstyled in the editor.
+ *
+ * When the block has `include_theme` set, the learner view renders the same
+ * content inside a shadow root with the deployment's Paragon theme attached, so
+ * the editor previews those stylesheets to keep what the author sees and what
+ * ships in agreement.
+ *
+ * The layers are read from `PARAGON_THEME_URLS` -- the same MFE config key the
+ * block fetches, and the only place that knows the theme URLs -- and applied in
+ * the same order the block applies them: core, theme, then the deployment's own variant.
+ *
+ * The `@import`s are prepended because CSS requires `@import` to precede every
+ * other rule, and `tinyMCEStyles` opens with one of its own.
+ */
+export const contentStyle = ({ editorType, includeTheme }: {
+  editorType?: string;
+  includeTheme?: boolean;
+}): string => {
+  if (editorType !== 'text' || !includeTheme) {
+    return tinyMCEStyles;
+  }
+  const themeUrls = (getConfig() as Record<string, any>).PARAGON_THEME_URLS as ThemeUrls | undefined;
+  if (!themeUrls) {
+    return tinyMCEStyles;
+  }
+  const variantName = activeVariant(themeUrls);
+  const variant = variantName ? themeUrls.variants?.[variantName] : undefined;
+  const urls = [pickUrl(themeUrls.core), pickUrl(variant)]
+    .filter((url): url is string => Boolean(url));
+  if (!urls.length) {
+    return tinyMCEStyles;
+  }
+  return `${urls.map((url) => `@import url("${url}");`).join('\n')}\n${tinyMCEStyles}`;
+};
+
 export const editorConfig = ({
   editorType,
+  includeTheme,
   setEditorRef,
   editorContentHtml,
   images,
@@ -471,7 +566,7 @@ export const editorConfig = ({
       ...config,
       skin: false,
       content_css: false,
-      content_style: tinyMCEStyles,
+      content_style: contentStyle({ editorType, includeTheme }),
       min_height: minHeight,
       max_height: maxHeight,
       contextmenu: 'link table',
@@ -515,9 +610,9 @@ export const editorConfig = ({
 
 export const prepareEditorRef = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const editorRef = useRef(null);
+  const editorRef = useRef<Editor | null>(null);
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const setEditorRef = useCallback((ref) => {
+  const setEditorRef = useCallback((ref: Editor | null) => {
     editorRef.current = ref;
   }, []);
   const [refReady, setRefReady] = state.refReady(false);

@@ -1,6 +1,8 @@
 import type { AxiosRequestConfig } from 'axios';
+
 import { snakeCaseKeys, camelizeKeys } from '@src/editors/utils';
-import { isLibraryKey } from '../../../../generic/key-utils';
+import { isLibraryKey } from '@src/generic/key-utils';
+
 import * as urls from './urls';
 import {
   get,
@@ -306,19 +308,20 @@ export const apiMethods = {
   }: {
     blockId: string;
     blockType: string;
-    content: any; // string for 'html' blocks, otherwise Record<string, any>
+    content: Record<string, any>;
     learningContextId: string;
     title: string;
   }) => {
     let response = {};
     if (blockType === 'html') {
+      const { data, ...settings } = content;
       response = {
         category: blockType,
         courseKey: learningContextId,
-        data: content,
+        data,
         has_changes: true,
         id: blockId,
-        metadata: { display_name: title },
+        metadata: { display_name: title, ...settings },
       };
     } else if (blockType === 'problem') {
       response = {

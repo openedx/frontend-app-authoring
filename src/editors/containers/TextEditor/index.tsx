@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
-
 import {
   Spinner,
   Toast,
+  Form,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -19,8 +19,17 @@ import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
 
 interface BlockValue {
+  // This is the AxiosResponse from the block fetch, so the API payload (which
+  // holds `data` and `metadata`) sits under `.data`.
   data: {
+    id: string;
+    display_name: string;
+    category?: string;
     data: string | Record<string, any>;
+    metadata?: {
+      display_name?: string;
+      include_theme?: boolean;
+    };
   };
 }
 
@@ -56,6 +65,22 @@ const TextEditor: React.FC<TextEditorProps> = ({
   const intl = useIntl();
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
 
+  // The value the block was loaded with, before the user touched the toggle.
+  // Kept separately from `includeTheme` so isDirty can tell a toggle-only
+  // change from an untouched editor.
+  const initialIncludeTheme = Boolean(blockValue?.data?.metadata?.include_theme);
+
+  const [includeThemeOverride, setIncludeThemeOverride] = useState<boolean | null>(null);
+  const includeTheme = includeThemeOverride ?? initialIncludeTheme;
+
+  // `content_style` is only read when the editor initializes, so toggling the
+  // theme has to rebuild the editor for the preview to follow.
+  // uncontrolled -- its content is read from the live instance at save time
+  // rather than mirrored into the store -- so the content is snapshotted before
+  // the rebuild and handed to the new instance as its initial value, otherwise
+  // the unsaved edits go down with the old one.
+  const [contentSnapshot, setContentSnapshot] = useState<{ blockId: string; content: string; } | null>(null);
+
   const initialContent = blockValue ? (blockValue.data.data as string) : '';
   const newContent = replaceStaticWithAsset({
     initialContent,
@@ -69,12 +94,20 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
   if (!refReady) { return null; }
 
+  const handleIncludeThemeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Only the mounted TinyMCE instance holds unsaved edits; in raw mode the
+    // content lives in the RawEditor, which the rebuild does not touch.
+    if (editorRef.current && !showRawEditor) {
+      setContentSnapshot({ blockId, content: editorRef.current.getContent() });
+    }
+    setIncludeThemeOverride(e.target.checked);
+  };
+
   const selectEditor = () => {
     if (showRawEditor) {
       return (
         <RawEditor
           editorRef={editorRef}
-          // @ts-ignore FIXME: RawEditor content doesn't match the type of blockValue. It only supports data as string
           content={blockValue}
         />
       );
@@ -82,13 +115,17 @@ const TextEditor: React.FC<TextEditorProps> = ({
     return (
       // @ts-ignore FIXME: need to fix types from TinyMceWidget
       <TinyMceWidget
+        // Rebuilds the editor when the theme toggle flips, so the themed
+        // content_style takes effect without reopening the block.
+        key={String(includeTheme)}
         editorType="text"
         editorRef={editorRef}
-        editorContentHtml={editorContent}
+        editorContentHtml={contentSnapshot?.blockId === blockId ? contentSnapshot.content : editorContent}
         setEditorRef={setEditorRef}
         minHeight={500}
         maxHeight={500}
         initializeEditor={initializeEditor}
+        includeTheme={includeTheme}
         {...{
           images,
           isLibrary,
@@ -101,8 +138,13 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
   return (
     <EditorContainer
-      getContent={hooks.getContent({ editorRef, showRawEditor })}
-      isDirty={hooks.isDirty({ editorRef, showRawEditor })}
+      getContent={hooks.getContent({ editorRef, showRawEditor, includeTheme })}
+      isDirty={hooks.isDirty({
+        editorRef,
+        showRawEditor,
+        includeTheme,
+        initialIncludeTheme,
+      })}
       onClose={onClose}
       returnFunction={returnFunction}
     >
@@ -121,7 +163,22 @@ const TextEditor: React.FC<TextEditorProps> = ({
               />
             </div>
           )
-          : (selectEditor())}
+          : (
+            <>
+              <div className="py-3 px-1">
+                <Form.Switch
+                  name="include_theme"
+                  checked={includeTheme}
+                  onChange={handleIncludeThemeChange}
+                  floatLabelLeft
+                  className="mb-0"
+                >
+                  {intl.formatMessage(messages.includeThemeLabel)}
+                </Form.Switch>
+              </div>
+              {selectEditor()}
+            </>
+          )}
       </div>
     </EditorContainer>
   );
