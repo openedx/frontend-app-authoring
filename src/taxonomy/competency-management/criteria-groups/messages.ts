@@ -79,6 +79,19 @@ const messages = defineMessages({
     description: 'Inline error message shown when loading a competency\'s existing criteria groups, or the '
       + 'system default rule profile, fails.',
   },
+  scoreThresholdInputAccessibleLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.score-threshold-input-accessible-label',
+    defaultMessage: 'Score threshold percentage',
+    description: 'Accessible name for the editable score-threshold input, which otherwise relies on the '
+      + 'surrounding sentence ("With a score of ___% or higher") for sighted users only.',
+  },
+  duplicateScoreValidationMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.duplicate-score-validation-message',
+    defaultMessage: 'Another rule box in this group already uses this score.',
+    description: 'Inline validation message shown while editing a rule box\'s score threshold, when the typed '
+      + 'value would exactly duplicate another rule box\'s own score, rule type, and comparison in the same '
+      + 'group.',
+  },
 });
 
 export default messages;
