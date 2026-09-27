@@ -32,6 +32,18 @@ export async function getXpertSettings(courseId: string): Promise<XpertSettings>
   return data.response;
 }
 
+/**
+ * The ai-aside API reports failures in the body as `{ response: { success: false } }`.
+ * Currently those always come with an error status, but make sure we don't
+ * treat one as a success if that ever changes.
+ */
+function checkXpertResponse(data: XpertResponse): XpertResponse {
+  if (!data?.response?.success) {
+    throw new Error('Xpert settings request was not successful');
+  }
+  return data;
+}
+
 export async function postXpertSettings(courseId: string, state: XpertSettingsState): Promise<XpertResponse> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getXpertSettingsUrl(courseId), {
@@ -39,12 +51,12 @@ export async function postXpertSettings(courseId: string, state: XpertSettingsSt
       reset: state.reset || false,
     });
 
-  return data;
+  return checkXpertResponse(data);
 }
 
 export async function deleteXpertSettings(courseId: string): Promise<XpertResponse> {
   const { data } = await getAuthenticatedHttpClient()
     .delete(getXpertSettingsUrl(courseId));
 
-  return data;
+  return checkXpertResponse(data);
 }

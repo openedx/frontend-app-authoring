@@ -135,11 +135,13 @@ const ResetUnitsButton = ({
 
   useEffect(() => {
     if (updateSettingsMutation.isSuccess) {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         updateSettingsMutation.reset();
       }, 2000);
+      return () => clearTimeout(timeout);
     }
-  }, [updateSettingsMutation]);
+    return undefined;
+  }, [updateSettingsMutation.status]);
 
   const handleResetUnits = () => {
     updateSettingsMutation.mutate({ enabled: checked === 'true', reset: true });
@@ -251,24 +253,21 @@ const SettingsModal = ({
     } else if (saveIsError) {
       alertRef?.current.scrollIntoView();
     }
-  }, [
-    saveIsSuccess,
-    saveIsError,
-    updateSettingsMutation,
-    deleteSettingsMutation,
-  ]);
+  }, [saveIsSuccess, saveIsError, updateSettingsMutation.status, deleteSettingsMutation.status]);
 
   const handleFormSubmit = async ({ enabled, checked, ...rest }) => {
     const values = { ...rest, enabled: enabled ? checked === 'true' : undefined };
-    let success = false;
-    if (enabled) {
-      await updateSettingsMutation.mutateAsync(values);
-      success = updateSettingsMutation.isSuccess;
-    } else {
-      await deleteSettingsMutation.mutateAsync();
-      success = updateSettingsMutation.isSuccess;
+    try {
+      if (enabled) {
+        await updateSettingsMutation.mutateAsync(values);
+      } else {
+        await deleteSettingsMutation.mutateAsync();
+      }
+    } catch {
+      // The error alert is shown from the mutations' `isError` state.
+      return;
     }
-    if (success && onSettingsSave) {
+    if (onSettingsSave) {
       await onSettingsSave(values);
     }
   };

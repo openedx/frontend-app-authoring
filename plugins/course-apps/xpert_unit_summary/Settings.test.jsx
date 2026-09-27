@@ -17,6 +17,8 @@ let container;
 
 // Modal creates a portal. Overriding ReactDOM.createPortal allows portals to be tested in jest.
 ReactDOM.createPortal = jest.fn(node => node);
+// jsdom doesn't implement scrollIntoView; SettingsModal calls it when showing a save error.
+window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
 function renderComponent() {
   const wrapper = render(
@@ -181,6 +183,44 @@ describe('XpertUnitSummarySettings', () => {
       await user.click(container.querySelector('#enable-xpert-unit-summary-toggle'));
       await user.click(screen.getByText('Save'));
       await waitFor(() => expect(API.deleteXpertSettings).toBeCalled());
+    });
+  });
+
+  describe('saving fails with a successful HTTP status', () => {
+    beforeEach(() => {
+      axiosMock.onGet(API.getXpertSettingsUrl(courseId))
+        .reply(
+          200,
+          generateCourseLevelAPIResponse({
+            success: true,
+            enabled: true,
+          }),
+        );
+
+      axiosMock.onPost(API.getXpertSettingsUrl(courseId))
+        .reply(200, generateCourseLevelAPIResponse({ success: false }));
+      axiosMock.onDelete(API.getXpertSettingsUrl(courseId))
+        .reply(200, generateCourseLevelAPIResponse({ success: false }));
+
+      renderComponent();
+    });
+
+    test('Shows an error when saving the configuration is not successful', async () => {
+      const user = userEvent.setup();
+
+      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
+      await user.click(screen.getByTestId('disable-radio'));
+      await user.click(screen.getByText('Save'));
+      expect(await screen.findByText('We couldn\'t apply your changes.')).toBeInTheDocument();
+    });
+
+    test('Shows an error when removing the configuration is not successful', async () => {
+      const user = userEvent.setup();
+
+      await waitFor(() => expect(container.querySelector('#enable-xpert-unit-summary-toggle')).toBeTruthy());
+      await user.click(container.querySelector('#enable-xpert-unit-summary-toggle'));
+      await user.click(screen.getByText('Save'));
+      expect(await screen.findByText('We couldn\'t apply your changes.')).toBeInTheDocument();
     });
   });
 
