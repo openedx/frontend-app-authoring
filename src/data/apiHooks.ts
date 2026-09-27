@@ -267,7 +267,7 @@ export const useSortedCourseApps = (courseId: string) => {
   const {
     data: courseApps,
     isPending: courseAppsIsPending,
-    failureReason: courseAppsError,
+    error: courseAppsError,
   } = useCourseApps(courseId);
 
   let courseAppsStatus: RequestStatusType = RequestStatus.SUCCESSFUL;
