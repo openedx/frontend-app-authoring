@@ -84,6 +84,7 @@ const AppSettingsModal = ({
 
   const handleFormSubmit = async (values) => {
     if (!appInfo) {
+      setIsSavingCallbackSuccess(false);
       return;
     }
     setIsSubmitting(true);
