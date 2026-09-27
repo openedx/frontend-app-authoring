@@ -1,6 +1,7 @@
-import { snakeCase } from 'lodash/string';
+import { camelCase, snakeCase } from 'lodash';
 import { camelCaseObject, getConfig, snakeCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { convertObjectToSnakeCase } from '@src/utils';
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL as string;
 export const getCourseDetailsUrl = (courseId: string, username: string) => (
@@ -267,7 +268,8 @@ export async function getCourseSettings(courseId: string): Promise<CourseSetting
 }
 
 export const getCourseAppsApiUrl = () => `${getStudioBaseUrl()}/api/course_apps/v1/apps`;
-export const getCourseAdvancedSettingsApiUrl = () => `${getStudioBaseUrl()}/api/contentstore/v0/advanced_settings`;
+export const getCourseAdvancedSettingsApiUrl = (courseId: string) =>
+  `${getStudioBaseUrl()}/api/contentstore/v0/advanced_settings/${courseId}`;
 
 export interface CourseAppData {
   id: string;
@@ -324,32 +326,51 @@ export async function updateCourseApp(courseId: string, appId: string, state: bo
 }
 
 /**
- * Get's advanced setting for a course.
+ * Camel-cases an advanced settings response, but keeps each setting's `value`
+ * exactly as the server sent it: values are arbitrary user data (e.g. JSON
+ * dicts) whose keys must not be rewritten.
  */
-export async function getCourseAdvancedSettings(
-  courseId: string,
-  settings: string[],
-): Promise<any> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`, {
-      params: {
-        filter_fields: settings.map(snakeCase).join(','),
-      },
-    });
-
-  return camelCaseObject(data);
+function formatAdvancedSettingsResponse(data: Record<string, any>): Record<string, any> {
+  const keepValues = {};
+  Object.keys(data).forEach((key) => {
+    keepValues[camelCase(key)] = { value: data[key].value };
+  });
+  const formattedData = {};
+  const formattedCamelCaseData = camelCaseObject(data);
+  Object.keys(formattedCamelCaseData).forEach((key) => {
+    formattedData[key] = {
+      ...formattedCamelCaseData[key],
+      value: keepValues[key]?.value,
+    };
+  });
+  return formattedData;
 }
 
 /**
- * Get's advanced setting for a course.
+ * Gets the advanced settings for a course. If `settings` (camelCase names) is
+ * given, only those are fetched; otherwise all of them are.
+ */
+export async function getCourseAdvancedSettings(
+  courseId: string,
+  settings?: string[],
+): Promise<Record<string, any>> {
+  const params = settings
+    ? { filter_fields: settings.map(snakeCase).join(',') }
+    : { fetch_all: 0 };
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getCourseAdvancedSettingsApiUrl(courseId), { params });
+  return formatAdvancedSettingsResponse(data);
+}
+
+/**
+ * Updates advanced settings for a course, given a mapping of camelCase setting
+ * names to their new values.
  */
 export async function updateCourseAdvancedSettings(
   courseId: string,
-  setting: string,
-  value: any,
+  settings: Record<string, any>,
 ): Promise<Record<string, any>> {
   const { data } = await getAuthenticatedHttpClient()
-    .patch(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`, { [snakeCase(setting)]: { value } });
-
-  return camelCaseObject(data);
+    .patch(getCourseAdvancedSettingsApiUrl(courseId), convertObjectToSnakeCase(settings));
+  return formatAdvancedSettingsResponse(data);
 }

@@ -1,9 +1,10 @@
+import { camelCaseObject } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Form } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 
 import { FieldArray } from 'formik';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { v4 as uuid } from 'uuid';
 import * as Yup from 'yup';
 import { GroupTypes, TeamSizes } from 'CourseAuthoring/data/constants';
@@ -23,7 +24,8 @@ const TeamSettings = ({
   const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();
   const settingName = 'teamsConfiguration';
-  const teamsConfiguration = useAppSetting(settingName);
+  const rawTeamsConfiguration = useAppSetting(settingName);
+  const teamsConfiguration = useMemo(() => camelCaseObject(rawTeamsConfiguration), [rawTeamsConfiguration]);
   const updateCourseAdvancedSettingsMutation = useUpdateCourseAdvancedSettings(courseId);
   const blankNewGroup = {
     name: '',
@@ -47,8 +49,7 @@ const TeamSettings = ({
     }));
     try {
       await updateCourseAdvancedSettingsMutation.mutateAsync({
-        setting: settingName,
-        value: {
+        [settingName]: {
           team_sets: groups,
           max_team_size: values.maxTeamSize,
           enabled: values.enabled,

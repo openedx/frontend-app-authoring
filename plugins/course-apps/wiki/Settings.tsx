@@ -18,8 +18,7 @@ const WikiSettings = ({ onClose }: { onClose: () => void; }) => {
   const handleSettingsSave = async (values) => {
     try {
       await updateCourseAdvancedSettingsMutation.mutateAsync({
-        setting: settingName,
-        value: values.enablePublicWiki,
+        [settingName]: values.enablePublicWiki,
       });
       return true;
     } catch {

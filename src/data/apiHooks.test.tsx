@@ -15,6 +15,8 @@ import {
   useCourseApps,
   useUpdateCourseAppStatus,
   createGlobalState,
+  advancedSettingsQueryKeys,
+  useCourseAdvancedSettings,
   useUpdateCourseAdvancedSettings,
   useSortedCourseApps,
 } from './apiHooks';
@@ -204,10 +206,52 @@ describe('useSortedCourseApps', () => {
   });
 });
 
-describe('useUpdateCourseAdvancedSettings', () => {
-  it('sends a PATCH request and invalidates the course settings and apps queries on success', async () => {
+describe('useCourseAdvancedSettings', () => {
+  it('fetches all the settings when no filter is given', async () => {
     const { axiosMock, queryClient } = initializeMocks();
-    axiosMock.onPatch(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`).reply(200, {});
+    axiosMock.onGet(getCourseAdvancedSettingsApiUrl(courseId)).reply(200, {
+      course_display_name: { display_name: 'Course Display Name', value: 'Demo' },
+    });
+
+    const { result } = renderHook(
+      () => useCourseAdvancedSettings(courseId),
+      { wrapper: makeQueryClientWrapper(queryClient) },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosMock.history.get[0].params).toEqual({ fetch_all: 0 });
+    expect(result.current.data).toEqual({
+      courseDisplayName: { displayName: 'Course Display Name', value: 'Demo' },
+    });
+    expect(queryClient.getQueryData(advancedSettingsQueryKeys.courseAdvancedSettings(courseId))).toBeDefined();
+  });
+
+  it('fetches only the given settings, cached separately from the unfiltered ones', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(getCourseAdvancedSettingsApiUrl(courseId)).reply(200, {
+      teams_configuration: { value: { max_team_size: 4 } },
+    });
+
+    const { result } = renderHook(
+      () => useCourseAdvancedSettings(courseId, ['teamsConfiguration']),
+      { wrapper: makeQueryClientWrapper(queryClient) },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosMock.history.get[0].params).toEqual({ filter_fields: 'teams_configuration' });
+    // The value is kept as the server sent it
+    expect(result.current.data).toEqual({ teamsConfiguration: { value: { max_team_size: 4 } } });
+    expect(queryClient.getQueryData(
+      advancedSettingsQueryKeys.courseAdvancedSettings(courseId, ['teamsConfiguration']),
+    )).toBeDefined();
+    expect(queryClient.getQueryData(advancedSettingsQueryKeys.courseAdvancedSettings(courseId))).toBeUndefined();
+  });
+});
+
+describe('useUpdateCourseAdvancedSettings', () => {
+  it('sends a PATCH request and invalidates the advanced settings and course apps queries', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onPatch(getCourseAdvancedSettingsApiUrl(courseId)).reply(200, {});
     const invalidateQueriesSpy = jest.spyOn(queryClient, 'invalidateQueries');
 
     const { result } = renderHook(
@@ -215,12 +259,15 @@ describe('useUpdateCourseAdvancedSettings', () => {
       { wrapper: makeQueryClientWrapper(queryClient) },
     );
 
-    result.current.mutate({ setting: 'courseDisplayName', value: 'New Name' });
+    result.current.mutate({ courseDisplayName: 'New Name', maxAttempts: 3 });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(axiosMock.history.patch[0].url).toBe(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`);
-    expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({ course_display_name: { value: 'New Name' } });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['courseSettings', courseId] });
+    expect(axiosMock.history.patch[0].url).toBe(getCourseAdvancedSettingsApiUrl(courseId));
+    expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
+      course_display_name: { value: 'New Name' },
+      max_attempts: { value: 3 },
+    });
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['advancedSettings', courseId] });
     expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['courseApps', courseId] });
   });
 });

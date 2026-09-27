@@ -43,7 +43,7 @@ const mockCourseApps = ({ apiStatus = 200, enabled = true } = {}) => {
 };
 
 const mockAdvancedSettings = ({ enabled = true } = {}) => {
-  axiosMock.onGet(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`).reply(
+  axiosMock.onGet(getCourseAdvancedSettingsApiUrl(courseId)).reply(
     200,
     { force_on_flexible_peer_openassessments: { value: enabled } },
   );

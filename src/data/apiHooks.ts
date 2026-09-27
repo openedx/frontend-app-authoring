@@ -295,27 +295,37 @@ export const useUpdateCourseAppStatus = (courseId: string) => {
   });
 };
 
+export const advancedSettingsQueryKeys = {
+  all: ['advancedSettings'],
+  /** Key for the advanced settings of a course, optionally filtered to the given setting names */
+  courseAdvancedSettings: (courseId: string, settings?: string[]) => (
+    settings
+      ? [...advancedSettingsQueryKeys.all, courseId, 'filtered', settings]
+      : [...advancedSettingsQueryKeys.all, courseId]
+  ),
+};
+
 /**
- * Fetch advanced settings for a course, filtered to the given setting names.
+ * Fetch the advanced settings for a course. If `settings` is given, only
+ * those are fetched; otherwise all of them are.
  */
-export const useCourseAdvancedSettings = (courseId: string, settings: string[]) => (
-  useQuery({
-    queryKey: ['courseSettings', courseId],
+export const useCourseAdvancedSettings = (courseId: string, settings?: string[]) => (
+  useQuery<Record<string, any>, AxiosError>({
+    queryKey: advancedSettingsQueryKeys.courseAdvancedSettings(courseId, settings),
     queryFn: () => getCourseAdvancedSettings(courseId, settings),
   })
 );
 
 /**
- * Update a single advanced setting for a course.
+ * Update one or more advanced settings for a course.
+ * Invalidates all the advanced settings queries of the course and its course apps list.
  */
 export const useUpdateCourseAdvancedSettings = (courseId: string) => {
   const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ setting, value }: { setting: string; value: unknown; }) => (
-      updateCourseAdvancedSettings(courseId, setting, value)
-    ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['courseSettings', courseId] });
+  return useMutation<Record<string, any>, AxiosError, Record<string, any>>({
+    mutationFn: (settings) => updateCourseAdvancedSettings(courseId, settings),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: advancedSettingsQueryKeys.courseAdvancedSettings(courseId) });
       queryClient.invalidateQueries({ queryKey: ['courseApps', courseId] });
     },
   });

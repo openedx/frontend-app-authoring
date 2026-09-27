@@ -21,8 +21,7 @@ const ProgressSettings = ({ onClose }: { onClose: () => void; }) => {
     if (showProgressGraphSetting) {
       try {
         await updateCourseAdvancedSettingsMutation.mutateAsync({
-          setting: settingsName,
-          value: !values.enableProgressGraph,
+          [settingsName]: !values.enableProgressGraph,
         });
         return true;
       } catch {

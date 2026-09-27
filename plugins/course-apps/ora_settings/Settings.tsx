@@ -50,8 +50,7 @@ const ORASettings = ({ onClose }: { onClose: () => void; }) => {
   const submitButtonState = updateCourseAdvancedSettingsMutation.isPending ? 'pending' : 'default';
   const handleSettingsSave = (values) =>
     updateCourseAdvancedSettingsMutation.mutate({
-      setting: settingName,
-      value: values.enableFlexiblePeerGrade,
+      [settingName]: values.enableFlexiblePeerGrade,
     });
 
   const handleSubmit = async (event) => {
