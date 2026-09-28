@@ -260,26 +260,19 @@ export const useCourseApps = (courseId: string) => (
 
 /**
  * Fetch the course apps installed for a course (already sorted for display by
- * `getCourseApps`), along with a RequestStatus derived from the query state
- * that's suitable for gating UI.
+ * `getCourseApps`), along with the query status and error.
  */
 export const useSortedCourseApps = (courseId: string) => {
   const {
     data: courseApps,
-    isPending: courseAppsIsPending,
+    status: courseAppsStatus,
     error: courseAppsError,
   } = useCourseApps(courseId);
-
-  let courseAppsStatus: RequestStatusType = RequestStatus.SUCCESSFUL;
-  if (courseAppsIsPending) {
-    courseAppsStatus = RequestStatus.PENDING;
-  } else if (courseAppsError) {
-    courseAppsStatus = courseAppsError?.response?.status === 403 ? RequestStatus.DENIED : RequestStatus.FAILED;
-  }
 
   return {
     courseApps: courseApps || [],
     courseAppsStatus,
+    courseAppsError,
   };
 };
 

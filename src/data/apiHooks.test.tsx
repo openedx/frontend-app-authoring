@@ -20,7 +20,6 @@ import {
   useUpdateCourseAdvancedSettings,
   useSortedCourseApps,
 } from './apiHooks';
-import { RequestStatus } from './constants';
 import { getApiWaffleFlagsUrl, getCourseAppsApiUrl, getCourseAdvancedSettingsApiUrl } from './api';
 
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
@@ -179,7 +178,7 @@ describe('useCourseApps', () => {
 });
 
 describe('useSortedCourseApps', () => {
-  it('reports a denied status on a 403 response', async () => {
+  it('reports an error status with the 403 response on a denied request', async () => {
     const { axiosMock, queryClient } = initializeMocks();
     axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(403);
 
@@ -188,11 +187,12 @@ describe('useSortedCourseApps', () => {
       { wrapper: makeQueryClientWrapper(queryClient) },
     );
 
-    await waitFor(() => expect(result.current.courseAppsStatus).toBe(RequestStatus.DENIED));
+    await waitFor(() => expect(result.current.courseAppsStatus).toBe('error'));
+    expect(result.current.courseAppsError?.response?.status).toBe(403);
     expect(result.current.courseApps).toEqual([]);
   });
 
-  it('reports a failed status on a non-403 error response', async () => {
+  it('reports an error status on a non-403 error response', async () => {
     const { axiosMock, queryClient } = initializeMocks();
     axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(500);
 
@@ -201,7 +201,8 @@ describe('useSortedCourseApps', () => {
       { wrapper: makeQueryClientWrapper(queryClient) },
     );
 
-    await waitFor(() => expect(result.current.courseAppsStatus).toBe(RequestStatus.FAILED));
+    await waitFor(() => expect(result.current.courseAppsStatus).toBe('error'));
+    expect(result.current.courseAppsError?.response?.status).toBe(500);
     expect(result.current.courseApps).toEqual([]);
   });
 });

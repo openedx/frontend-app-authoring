@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
+import { QueryStatus } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 import { CourseAppData } from '@src/data/api';
-import { RequestStatusType } from '@src/data/constants';
 import { useSortedCourseApps } from '@src/data/apiHooks';
 
 interface PagesAndResourcesContextData {
@@ -9,7 +10,8 @@ interface PagesAndResourcesContextData {
   path?: string;
   isEditable?: boolean;
   courseApps: CourseAppData[];
-  courseAppsStatus?: RequestStatusType;
+  courseAppsStatus?: QueryStatus;
+  courseAppsError?: AxiosError | null;
 }
 export const PagesAndResourcesContext = React.createContext<PagesAndResourcesContextData>({
   isEditable: false,
@@ -34,14 +36,15 @@ const PagesAndResourcesProvider = ({
   isEditable = true,
   children,
 }: PagesAndResourcesProviderProps) => {
-  const { courseApps, courseAppsStatus } = useSortedCourseApps(courseId);
+  const { courseApps, courseAppsStatus, courseAppsError } = useSortedCourseApps(courseId);
   const contextValue = useMemo(() => ({
     courseId,
     path: `/course/${courseId}/pages-and-resources`,
     isEditable,
     courseApps,
     courseAppsStatus,
-  }), [courseId, isEditable, courseApps, courseAppsStatus]);
+    courseAppsError,
+  }), [courseId, isEditable, courseApps, courseAppsStatus, courseAppsError]);
   return (
     <PagesAndResourcesContext.Provider
       value={contextValue}

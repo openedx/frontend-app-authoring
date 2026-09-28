@@ -23,7 +23,6 @@ import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import FormSwitchGroup from '@src/generic/FormSwitchGroup';
 import Loading from '@src/generic/Loading';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
-import { RequestStatus } from '@src/data/constants';
 import { useIsMobile } from '@src/utils';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useUpdateCourseAppStatus } from '@src/data/apiHooks';
@@ -69,7 +68,7 @@ const AppSettingsModal = ({
   isLoading = false,
 }: AppSettingsModalProps) => {
   const { formatMessage } = useIntl();
-  const { isEditable, courseApps, courseAppsStatus } = useContext(PagesAndResourcesContext);
+  const { isEditable, courseApps, courseAppsStatus, courseAppsError } = useContext(PagesAndResourcesContext);
   const { courseId } = useCourseAuthoringContext();
   const appInfo = courseApps.find((app) => app.id === appId);
   const updateCourseAppStatusMutation = useUpdateCourseAppStatus(courseId);
@@ -139,9 +138,9 @@ const AppSettingsModal = ({
     </Hyperlink>
   );
 
-  const isLoadingSettings = courseAppsStatus === RequestStatus.SUCCESSFUL && isLoading;
+  const isLoadingSettings = courseAppsStatus === 'success' && isLoading;
 
-  if (courseAppsStatus === RequestStatus.SUCCESSFUL && !isLoading) {
+  if (courseAppsStatus === 'success' && !isLoading) {
     return (
       <Formik
         initialValues={{
@@ -241,9 +240,10 @@ const AppSettingsModal = ({
       variant={modalVariant}
       isMobile={isMobile}
     >
-      {(courseAppsStatus === RequestStatus.PENDING || isLoadingSettings) && <Loading />}
-      {courseAppsStatus === RequestStatus.FAILED && <ConnectionErrorAlert />}
-      {courseAppsStatus === RequestStatus.DENIED && <PermissionDeniedAlert />}
+      {(courseAppsStatus === 'pending' || isLoadingSettings) && <Loading />}
+      {courseAppsStatus === 'error' && (
+        courseAppsError?.response?.status === 403 ? <PermissionDeniedAlert /> : <ConnectionErrorAlert />
+      )}
     </AppSettingsModalBase>
   );
 };

@@ -18,7 +18,6 @@ import DiscussionsSettings from './discussions';
 import PageGrid from './pages/PageGrid';
 import PagesAndResourcesProvider from './PagesAndResourcesProvider';
 import SettingsComponent from './SettingsComponent';
-import { RequestStatus } from '@src/data/constants';
 
 const PagesAndResources = () => {
   const intl = useIntl();
@@ -26,7 +25,7 @@ const PagesAndResources = () => {
     courseId,
     courseDetails,
   } = useCourseAuthoringContext();
-  const { courseApps, courseAppsStatus } = useSortedCourseApps(courseId);
+  const { courseApps, courseAppsStatus, courseAppsError } = useSortedCourseApps(courseId);
   document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
 
   const {
@@ -47,13 +46,13 @@ const PagesAndResources = () => {
   const contentPermissionsPages = courseApps.filter(app => separateAppIds.includes(app.id));
   const regularPages = courseApps.filter(app => !separateAppIds.includes(app.id));
 
-  if (courseAppsStatus === RequestStatus.PENDING || isLoadingUserPermissions) {
+  if (courseAppsStatus === 'pending' || isLoadingUserPermissions) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
 
   // Gate: if user has neither VIEW nor MANAGE permission, show permission denied
-  const hasNoAccess = (!isAuthzEnabled && courseAppsStatus === RequestStatus.DENIED)
+  const hasNoAccess = (!isAuthzEnabled && courseAppsError?.response?.status === 403)
     || (isAuthzEnabled && !canViewPagesAndResources && !canManagePagesAndResources);
 
   if (hasNoAccess) {

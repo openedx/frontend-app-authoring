@@ -13,7 +13,6 @@ import {
 } from '@openedx/paragon';
 import { Info } from '@openedx/paragon/icons';
 
-import { RequestStatus } from 'CourseAuthoring/data/constants';
 import FormSwitchGroup from 'CourseAuthoring/generic/FormSwitchGroup';
 import Loading from 'CourseAuthoring/generic/Loading';
 import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
@@ -29,7 +28,7 @@ const ORASettings = ({ onClose }: { onClose: () => void; }) => {
   const { formatMessage } = useIntl();
   const alertRef = useRef<HTMLDivElement>(null);
   const { courseId } = useCourseAuthoringContext();
-  const { courseApps, courseAppsStatus } = useContext(PagesAndResourcesContext);
+  const { courseApps, courseAppsStatus, courseAppsError } = useContext(PagesAndResourcesContext);
 
   const isMobile = useIsMobile();
   const modalVariant = isMobile ? 'dark' : 'default';
@@ -76,7 +75,7 @@ const ORASettings = ({ onClose }: { onClose: () => void; }) => {
 
   const renderBody = () => {
     switch (courseAppsStatus) {
-      case RequestStatus.SUCCESSFUL:
+      case 'success':
         if (isLoading) {
           return <Loading />;
         }
@@ -123,10 +122,8 @@ const ORASettings = ({ onClose }: { onClose: () => void; }) => {
             />
           </>
         );
-      case RequestStatus.DENIED:
-        return <PermissionDeniedAlert />;
-      case RequestStatus.FAILED:
-        return <ConnectionErrorAlert />;
+      case 'error':
+        return courseAppsError?.response?.status === 403 ? <PermissionDeniedAlert /> : <ConnectionErrorAlert />;
       default:
         return <Loading />;
     }
