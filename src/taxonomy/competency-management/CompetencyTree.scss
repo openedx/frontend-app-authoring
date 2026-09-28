@@ -110,7 +110,7 @@
   }
 
   .competency-row--selected {
-    background-color: var(--pgn-color-info-100);
+    background-color: $hover-bg-color;
   }
 
   // A separate filled overlay, not a thicker `border-left`: this row's
@@ -147,6 +147,7 @@
   }
 
   .competency-group {
+    position: relative;
     background-color: var(--competency-fill);
     border: 1px solid $group-border-color;
     border-radius: $border-radius;
@@ -161,13 +162,12 @@
     border-radius: 0;
   }
 
-  // A selected group tints its whole envelope, not just the header row -
-  // `:has()` matches the group from its selected child, `.competency-group
-  // > .competency-row`'s own `background-color: transparent` above then
-  // lets this show through the header row too instead of needing a
-  // separate row-level override.
+  // A selected group tints its whole envelope, not just the header row:
+  // `.competency-row--selected` above only paints the row itself, so the
+  // group needs this separate rule to also tint the padding around it.
+  // `:has()` matches the group from its selected child.
   .competency-group:has(> .competency-row--selected) {
-    background-color: var(--pgn-color-info-100);
+    background-color: $hover-bg-color;
   }
 
   // Flush with the group's own outer edge (rounded, matching a leaf row's
