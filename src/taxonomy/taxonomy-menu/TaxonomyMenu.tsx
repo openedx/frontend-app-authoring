@@ -18,8 +18,8 @@ import DeleteDialog from '../delete-dialog';
 import { ImportTagsWizard } from '../import-tags';
 import { ManageOrgsModal } from '../manage-orgs';
 import messages from './messages';
-import { isCompetencyTaxonomy } from '../data/utils';
-import type { TaxonomyData } from '../data/types';
+import { canApplyCompetencies } from '@src/taxonomy/data/utils';
+import type { TaxonomyData } from '@src/taxonomy/data/types';
 
 // Note: to make mocking easier for tests, the types below only specify the subset of TaxonomyData that we actually use.
 interface Props {
@@ -103,7 +103,7 @@ const TaxonomyMenu = ({
     applyCompetencies: {
       title: intl.formatMessage(messages.applyCompetenciesMenu),
       action: () => navigate(`/taxonomy/${taxonomy.id}/competencies`),
-      show: taxonomy.canTagObject && isCompetencyTaxonomy(taxonomy),
+      show: canApplyCompetencies(taxonomy),
     },
   };
 

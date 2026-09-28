@@ -15,7 +15,7 @@ import taxonomyMessages from '@src/taxonomy/messages';
 import { useTaxonomyDetails, useTaxonomyList } from '@src/taxonomy/data/apiHooks';
 import { TaxonomyType } from '@src/taxonomy/data/constants';
 import type { TaxonomyData } from '@src/taxonomy/data/types';
-import { isCompetencyTaxonomy } from '@src/taxonomy/data/utils';
+import { canApplyCompetencies, isCompetencyTaxonomy } from '@src/taxonomy/data/utils';
 import { ImportTagsWizardButton } from '@src/taxonomy/import-tags';
 import { CompetencyAssociationsPanel } from './associations';
 import messages from './messages';
@@ -51,7 +51,7 @@ const CompetencyManagementPage = () => {
     return <ConnectionErrorAlert />;
   }
 
-  if (!isCompetencyTaxonomy(taxonomy) || !taxonomy.canTagObject) {
+  if (!canApplyCompetencies(taxonomy)) {
     return <Navigate to={`/taxonomy/${taxonomyId}`} replace />;
   }
 
