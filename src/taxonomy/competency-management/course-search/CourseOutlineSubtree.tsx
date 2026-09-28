@@ -1,12 +1,25 @@
 import { type ReactNode, useState } from 'react';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, IconButton } from '@openedx/paragon';
-import { ExpandLess, ExpandMore } from '@openedx/paragon/icons';
+import {
+  Badge,
+  Button,
+  Icon,
+  IconButton,
+} from '@openedx/paragon';
+import {
+  AddCircleOutline,
+  AdsClick,
+  CheckCircle,
+  ExpandLess,
+  ExpandMore,
+} from '@openedx/paragon/icons';
 
 import { useCourseOutlineIndex } from '@src/course-outline/data';
 import type { XBlock } from '@src/data/types';
 import { LoadingSpinner } from '@src/generic/Loading';
+import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
+import rootMessages from '../messages';
 import messages from './messages';
 
 export interface CourseOutlineSubtreeProps {
@@ -15,29 +28,88 @@ export interface CourseOutlineSubtreeProps {
 
 interface SubsectionRowProps {
   subsection: XBlock;
-  isAssociated: boolean;
+  courseId: string;
 }
 
 /**
  * One row for a single graded subsection.
  *
- * `isAssociated` is a typed seam for a later, separately-scoped ticket that
- * will show a visual "already associated with the active competency" state.
- * `CourseOutlineSubtree` always passes `false` today (no fetch backs it
- * yet), and it is only surfaced as a `data-associated` attribute, so it
- * produces no visible difference right now.
+ * Clicking the row calls `associateSubsection` (via
+ * `CompetencyAssociationsContext`), unless `canEditCourse(courseId)` is
+ * false, in which case the row has no click behavior at all. Whenever this
+ * subsection is already associated with the active competency
+ * (`associatedObjectIds`), the row shows a badge naming the competency and
+ * a small marker icon - both appear together on an already-associated row
+ * regardless of `canEditCourse`, so a course the author can see but not
+ * edit still shows what's already associated with no way to add to it.
+ * Clicking an already-associated row again hits the duplicate guard inside
+ * `associateSubsection` (an informational toast), not a failed request.
  */
-const SubsectionRow = ({ subsection, isAssociated }: SubsectionRowProps) => (
-  <Button
-    variant="tertiary"
-    type="button"
-    block
-    className="course-search-browse__subsection"
-    data-associated={isAssociated}
-  >
-    {subsection.displayName}
-  </Button>
-);
+const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
+  const intl = useIntl();
+  const {
+    associatedObjectIds,
+    associateSubsection,
+    canEditCourse,
+    competencyExternalId,
+  } = useCompetencyAssociations();
+  // `subsection.id` - not `.usageKey` - is the field the real
+  // `course_index` response actually populates with the usage-key-formatted
+  // string (e.g. `"block-v1:...+type@sequential+block@..."`); `.usageKey`
+  // is declared on the shared `XBlockBase` type but this endpoint never
+  // sends it, so it's always `undefined` here.
+  const isAssociated = associatedObjectIds.has(subsection.id);
+  const canSelect = canEditCourse(courseId);
+
+  return (
+    <Button
+      variant="tertiary"
+      type="button"
+      block
+      className="course-search-browse__subsection d-flex align-items-center justify-content-between"
+      data-associated={isAssociated}
+      onClick={canSelect ? () => associateSubsection(subsection.id, courseId) : undefined}
+    >
+      <span>{subsection.displayName}</span>
+      <span className="course-search-browse__subsection-actions">
+        {isAssociated && (
+          <>
+            {competencyExternalId && (
+              <>
+                <span className="sr-only">
+                  {intl.formatMessage(rootMessages.competencyIdAccessibleLabel, { externalId: competencyExternalId })}
+                </span>
+                <Badge
+                  variant="info"
+                  pill
+                  className="course-search-browse__subsection-badge"
+                  aria-hidden="true"
+                >
+                  <Icon src={AdsClick} size="xs" />
+                  {competencyExternalId}
+                </Badge>
+              </>
+            )}
+            <Icon
+              src={CheckCircle}
+              size="xs"
+              className="course-search-browse__subsection-associated-icon"
+              aria-hidden="true"
+            />
+          </>
+        )}
+        {canSelect && (
+          <Icon
+            src={AddCircleOutline}
+            size="xs"
+            className="course-search-browse__subsection-select-icon"
+            aria-hidden="true"
+          />
+        )}
+      </span>
+    </Button>
+  );
+};
 
 interface SectionHeaderProps {
   displayName: string;
@@ -169,7 +241,7 @@ const CourseOutlineSubtree = ({ courseId }: CourseOutlineSubtreeProps) => {
               <SubsectionRow
                 key={subsection.id}
                 subsection={subsection}
-                isAssociated={false}
+                courseId={courseId}
               />
             ))}
           </div>

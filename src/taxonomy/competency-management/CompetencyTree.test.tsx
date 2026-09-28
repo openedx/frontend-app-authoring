@@ -284,7 +284,7 @@ describe('<CompetencyTree />', () => {
     expect(leafRow).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('selects a group row on click, and its own disclosure icon only toggles expand/collapse without also selecting it', async () => {
+  it('does not select a group row on click - only its own disclosure icon toggles expand/collapse', async () => {
     axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
     const onSelectCompetency = jest.fn();
     renderTree({ onSelectCompetency });
@@ -292,54 +292,30 @@ describe('<CompetencyTree />', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
     const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
 
-    // A group row now gets the same selection semantics a leaf row already
-    // has - `tabIndex="0"` marks it focusable/selectable, and `role="treeitem"`
-    // (not `role="button"`, which combined with the nested disclosure
-    // `<button>` below used to trip axe's `nested-interactive` rule - see
-    // `CompetencyTreeItem.tsx`).
-    expect(groupRow).toHaveAttribute('tabIndex', '0');
+    // A group (or higher) node is expand/collapse-only: it still gets
+    // `role="treeitem"` (so its own selectable leaf descendants have a valid
+    // `treeitem`/`group` ancestor chain - see `CompetencyTreeItem.tsx`), but
+    // none of the actual selection semantics a leaf row has.
     expect(groupRow).toHaveAttribute('role', 'treeitem');
+    expect(groupRow).not.toHaveAttribute('tabIndex');
+    expect(groupRow).not.toHaveAttribute('aria-selected');
 
     fireEvent.click(groupRow);
-    expect(onSelectCompetency).toHaveBeenCalledTimes(1);
-    expect(onSelectCompetency).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 2, value: 'Group A1', externalId: null }),
-    );
-    onSelectCompetency.mockClear();
+    expect(onSelectCompetency).not.toHaveBeenCalled();
 
-    // The row's own disclosure icon (distinct from the row body clicked above)
-    // still only toggles expand/collapse - its click must not also bubble up
-    // and fire the row's own selection handler.
+    // The row's own disclosure icon (distinct from the row body clicked
+    // above) still toggles expand/collapse.
     const collapseIcon = within(groupRow).getByRole('button', { name: 'Collapse' });
     fireEvent.click(collapseIcon);
-    expect(onSelectCompetency).not.toHaveBeenCalled();
     expect(screen.queryByText('Leaf A1a')).not.toBeInTheDocument();
   });
 
-  it('activates a disclosure icon via keyboard without also selecting the enclosing row', async () => {
-    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
-    const onSelectCompetency = jest.fn();
-    renderTree({ onSelectCompetency });
-    await screen.findByText(taxonomyName);
-    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
-    const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
-    const collapseIcon = within(groupRow).getByRole('button', { name: 'Collapse' });
-
-    // Pressing Enter/Space while the disclosure icon itself has focus fires a
-    // keydown that bubbles up to the enclosing row's own `onKeyDown`
-    // (`CompetencyTreeItem`'s `handleKeyDown`), which treats any Enter/Space
-    // it sees as a selection, calling `preventDefault` in the process -
-    // without the icon's own keydown handler stopping that bubbling first,
-    // this cancels the icon's native Enter/Space-activates-the-button
-    // behavior before it can fire, so toggling a row's disclosure via
-    // keyboard silently selects the row instead of expanding/collapsing it
-    // (see `ExpandCollapseIconButton`'s `handleKeyDown`).
-    fireEvent.keyDown(collapseIcon, { key: 'Enter' });
-    expect(onSelectCompetency).not.toHaveBeenCalled();
-
-    fireEvent.keyDown(collapseIcon, { key: ' ' });
-    expect(onSelectCompetency).not.toHaveBeenCalled();
-  });
+  // Keyboard-activation-isolation coverage for the disclosure icon itself
+  // (an Enter/Space keydown must not bubble up to an enclosing element) now
+  // lives in `ExpandCollapseIconButton.test.tsx` - a group row's own
+  // `onKeyDown` no longer exists in this tree for that keydown to
+  // (incorrectly) reach, so the hazard this used to guard against doesn't
+  // arise here anymore.
 
   it('activates leaf selection via keyboard, both Enter and Space', async () => {
     axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
@@ -356,14 +332,16 @@ describe('<CompetencyTree />', () => {
     expect(onSelectCompetency).toHaveBeenCalledTimes(2);
   });
 
-  it('marks a group row aria-selected when selectedCompetencyId is set to that group\'s own id', async () => {
+  it('never marks a group row aria-selected, even when selectedCompetencyId is set to that group\'s own id', async () => {
     axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
-    // Group A1's own id (see `nestedTagsResponse`) is 2.
+    // Group A1's own id (see `nestedTagsResponse`) is 2 - a group id can
+    // reach here as `selectedCompetencyId` only via a stale/invalid value,
+    // since a group can no longer be selected in the first place.
     renderTree({ selectedCompetencyId: '2', onSelectCompetency: jest.fn() });
     await screen.findByText(taxonomyName);
     fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
     const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
 
-    expect(groupRow).toHaveAttribute('aria-selected', 'true');
+    expect(groupRow).not.toHaveAttribute('aria-selected');
   });
 });
