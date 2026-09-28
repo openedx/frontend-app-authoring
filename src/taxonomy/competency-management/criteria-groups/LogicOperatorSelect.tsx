@@ -14,10 +14,8 @@ export interface LogicOperatorSelectProps {
    * control serves both contexts with different wording.
    */
   labels: LogicOperatorSelectLabels;
-  /** Omitted by `#672`, which only ever reads this value: renders plain,
-   * non-interactive text in that case. A later ticket that lets a user
-   * change the operator passes this to get the interactive `SelectMenu`
-   * instead.
+  /** Omitted where only the value is read: renders plain, non-interactive
+   * text in that case. Passing it renders the interactive `SelectMenu`.
    */
   onChange?: (value: CompetencyGroupLogicOperator) => void;
   className?: string;
@@ -25,8 +23,7 @@ export interface LogicOperatorSelectProps {
 
 /** Shared any/all (bottom-tier group) or Or/And (connector) control for how
  * a group's children combine. Read-only (plain text) unless `onChange` is
- * given, per the plan's architecture decision to shape this for later
- * editing without building that editing UI now.
+ * given.
  */
 const LogicOperatorSelect = ({
   value,

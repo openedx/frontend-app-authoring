@@ -14,8 +14,8 @@ export interface RuleBoxProps {
   groupId: number;
   ruleKey: string;
   /** The rule this box displays, given as a prop rather than read from a
-   * criterion - so this same component will later serve a not-yet-saved
-   * box (a later ticket's concern) that has no criterion of its own yet.
+   * criterion - so this same component can later serve a not-yet-saved box
+   * that has no criterion of its own yet.
    */
   rule: EffectiveRule;
   criteria: CompetencyCriterion[];
@@ -61,11 +61,9 @@ const RuleBox = ({
   };
 
   return (
-    // The interactive/focus/scroll semantics live on this plain wrapping
-    // `<div>`, not on `Card` itself: `Card`'s own `ref` forwarding doesn't
-    // reliably reach a real DOM node (confirmed directly - `ref.current`
-    // ends up with no `scrollIntoView`), so `Card` here is purely the
-    // visual bordered box.
+    // Interactive/focus/scroll semantics live on this wrapping `<div>`, not
+    // `Card` itself: `Card`'s `ref` forwarding doesn't reliably reach a real
+    // DOM node (confirmed directly - `ref.current` had no `scrollIntoView`).
     <div
       ref={ref}
       className={classNames('rule-box', { 'rule-box--focused': isFocused })}

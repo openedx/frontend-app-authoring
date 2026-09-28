@@ -108,12 +108,8 @@ describe('<CourseGroupList />', () => {
         profileQuery: loadedProfileQuery,
         index: buildCompetencyCriteriaGroupsIndex(populatedGroupsResponse),
         systemDefaultProfile,
-        // The one course-level group in `populatedGroupsResponse` didn't
-        // pass `CompetencyAssociationsContext`'s own outline-accessibility
-        // check (see that context's own tests for how it's computed) - so
-        // it must render identically to "no associations at all", per the
-        // ticket's own "a competency whose associations are all in courses
-        // I cannot see" acceptance criterion.
+        // The one course-level group didn't pass the outline-accessibility
+        // check, so it must render identically to no associations at all.
         accessibleCourseGroups: [],
       });
       expect(screen.getByText('No content associated.')).toBeInTheDocument();
@@ -130,11 +126,9 @@ describe('<CourseGroupList />', () => {
       accessibleCourseGroups: index.courseGroups,
     });
     expect(screen.queryByText('No content associated.')).not.toBeInTheDocument();
-    // The course's outline isn't mocked here (out of scope for this
-    // component's own tests - see `CourseGroupSection.test.tsx`), so its
-    // own outline fetch fails and it degrades to the raw course id via its
-    // own defensive fallback - this alone is enough to prove a real
-    // `CourseGroupSection` was mounted for the one accessible course group.
+    // The outline isn't mocked here, so it degrades to the raw course id via
+    // its defensive fallback - enough to prove a real `CourseGroupSection`
+    // was mounted.
     expect(await screen.findByText('course-v1:OrgX+CS101+2024')).toBeInTheDocument();
   });
 });

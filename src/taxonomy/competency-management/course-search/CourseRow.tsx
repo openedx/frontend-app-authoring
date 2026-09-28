@@ -32,15 +32,11 @@ const CourseRow = ({ course }: CourseRowProps) => {
     : intl.formatMessage(messages.expandRowButtonLabel);
 
   const handleToggle = () => {
-    // Read `isExpanded` directly rather than via the functional-updater
-    // form: `handleToggle` is a plain synchronous event handler with
-    // `isExpanded` already in scope, so there's no batching/stale-closure
-    // reason to use that form here - and React is explicitly allowed to
-    // invoke a functional updater more than once, so calling
-    // `notifyCourseExpanded` (a different component's state setter) as a
-    // side effect from inside one is a real bug, not just a lint nit; it's
-    // exactly what triggers React's "Cannot update a component while
-    // rendering a different component" warning.
+    // Reads `isExpanded` directly rather than a functional updater: React
+    // may invoke a functional updater more than once, so calling
+    // `notifyCourseExpanded` (another component's state setter) from inside
+    // one would risk React's "Cannot update a component while rendering a
+    // different component" warning.
     const next = !isExpanded;
     if (next) {
       // Only on expand, never on collapse - see `notifyCourseExpanded`'s

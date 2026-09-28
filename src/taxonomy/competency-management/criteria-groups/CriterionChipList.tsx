@@ -17,7 +17,7 @@ export interface CriterionChipListProps {
  *
  * Empty (renders nothing) when given no criteria - not expected for a
  * persisted box per ADR 0002's "no empty groups" rule, but a freshly
- * created, not-yet-saved box (a later ticket's concern) can start with none.
+ * created, not-yet-saved box can start with none.
  */
 const CriterionChipList = ({ criteria, subsectionNamesByUsageKey }: CriterionChipListProps) => {
   const intl = useIntl();

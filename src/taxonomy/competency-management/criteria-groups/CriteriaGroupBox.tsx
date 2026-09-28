@@ -31,9 +31,8 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBox
   const ref = useRef<HTMLDivElement>(null);
 
   const isFocused = focus?.groupId === group.id;
-  // The rule key to hand down to this group's own `RuleBoxList` - `null`
-  // whenever this group isn't the focused one at all, so a `RuleBox`
-  // elsewhere in the tree (a different group) never matches it by accident.
+  // `null` whenever this group isn't the focused one, so a `RuleBox` in a
+  // different group never matches it by accident.
   const focusedRuleKey = isFocused ? focus!.ruleKey : null;
 
   useEffect(() => {
@@ -56,10 +55,9 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBox
   };
 
   return (
-    // The interactive/focus/scroll semantics live on this plain wrapping
-    // `<div>`, not on `Card` itself - see `RuleBox.tsx`'s own identical
-    // comment for why (`Card`'s `ref` forwarding doesn't reliably reach a
-    // real DOM node).
+    // Interactive/focus/scroll semantics live on this wrapping `<div>`, not
+    // `Card` itself: `Card`'s `ref` forwarding doesn't reliably reach a real
+    // DOM node (see `RuleBox.tsx`).
     <div
       ref={ref}
       className={classNames('criteria-group-box', { 'criteria-group-box--focused': isFocused })}

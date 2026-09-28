@@ -22,11 +22,8 @@ const mixedOutline = buildOutlineIndex({
       displayName: 'Section 1',
       children: [
         // `usageKey: undefined` mirrors the real `course_index` response,
-        // captured directly against a live devstack: a block object there
-        // only ever carries `id`, never `usage_key`. Left this way (rather
-        // than `buildOutlineIndex`'s own default of `id === usageKey`) so
-        // the association tests below only pass if `SubsectionRow` actually
-        // reads `.id`, not the never-populated `.usageKey`.
+        // which never populates `usage_key` - so these tests only pass if
+        // `SubsectionRow` reads `.id`, not `.usageKey`.
         { id: 'sub-1a', displayName: 'Subsection 1A (graded)', overrides: { graded: true, usageKey: undefined } },
         { id: 'sub-1b', displayName: 'Subsection 1B (ungraded)', overrides: { graded: false } },
       ],
@@ -82,12 +79,9 @@ const allUngradedOutline = buildOutlineIndex({
 
 const noSubsectionsOutline = buildOutlineIndex([]);
 
-// `CourseOutlineSubtree` renders `SubsectionRow`, which reads
-// `CompetencyAssociationsContext` for the already-associated marking and
-// the select control - most tests below care about the outline rendering
-// itself, not that data layer, so a lightly-mocked provider (with its
-// default `associatedObjectIds`/`associateSubsection`) is enough; a few
-// near the end override those two fields directly to exercise that layer.
+// Most tests below care about outline rendering, not the association data
+// layer, so a lightly-mocked provider is enough; a few near the end
+// override `associatedObjectIds`/`associateSubsection` directly.
 const renderSubtree = (contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {}) =>
   render(
     <MockCompetencyAssociationsProvider value={contextOverrides}>
@@ -216,10 +210,8 @@ describe('<CourseOutlineSubtree />', () => {
       await screen.findByText('Section 1');
       expect(axiosMock.history.get).toHaveLength(1);
 
-      // Simulate the parent CourseRow collapsing (unmount) then re-expanding
-      // (remount) the same course while still within the query cache's normal
-      // staleTime. With `refetchOnMount: false`, this must serve the cached
-      // data without firing a second request.
+      // Simulate the parent CourseRow collapsing then re-expanding the same
+      // course within the query cache's staleTime: must serve cached data.
       unmount();
       renderSubtree();
 

@@ -14,13 +14,10 @@ export interface CriteriaAssociationsSectionProps {
  * competency's existing criteria groups, rendered as a tree of course-level
  * groups, bottom-tier groups, and rule boxes.
  *
- * Extracted from `CourseSearchBrowse.tsx`'s former static placeholder block
- * so `CourseGroupList` has a real, separate parent. `CourseGroupList` reads
- * its own data and focus state from `CompetencyAssociationsContext` (the
- * provider is mounted above this component, in
- * `associations/CompetencyAssociationsPanel.tsx`) - this component only
- * renders the static label/mastery lines, which need `competencyName`
- * directly since the context doesn't track it.
+ * `CourseGroupList` reads its own data and focus state from
+ * `CompetencyAssociationsContext`; this component only renders the static
+ * label/mastery lines, which need `competencyName` directly since the
+ * context doesn't track it.
  */
 const CriteriaAssociationsSection = ({ competencyName }: CriteriaAssociationsSectionProps) => {
   const intl = useIntl();

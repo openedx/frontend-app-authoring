@@ -5,9 +5,9 @@ import messages from './messages';
 
 export interface ScoreThresholdFieldProps {
   rulePayload: GradeRulePayload;
-  /** Not exercised by `#672` (nothing here is editable): reserved so `#671`
-   * and a later sibling editing ticket can wire in a change handler without
-   * this component needing to be reshaped.
+  /** Not exercised yet (nothing here is editable): reserved so a later
+   * editing ticket can wire in a change handler without this component
+   * needing to be reshaped.
    */
   onChange?: (rulePayload: GradeRulePayload) => void;
   /** Same reservation as `onChange`, mirroring `EditableCell`'s prop of the
@@ -26,9 +26,9 @@ const SUFFIX_MESSAGE_BY_OP: Record<GradeRulePayload['op'], MessageDescriptor | n
 };
 
 /** Closed-state label for a rule's score threshold: "With a score of X%
- * or higher"/"or lower"/(no suffix, for an exact match). Read-only in
- * `#672` - see `onChange`/`getInlineValidationMessage` above for why the
- * props still exist.
+ * or higher"/"or lower"/(no suffix, for an exact match). Read-only - see
+ * `onChange`/`getInlineValidationMessage` above for why the props still
+ * exist.
  */
 const ScoreThresholdField = ({ rulePayload }: ScoreThresholdFieldProps) => {
   const intl = useIntl();

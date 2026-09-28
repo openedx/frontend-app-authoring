@@ -158,10 +158,8 @@ describe('<CompetencyAssociationsPanel />', () => {
     );
     await screen.findByText(taxonomyName);
 
-    // `.pgn__hstack`'s own CSS sets `align-items: center`, which would
-    // vertically center whichever column is shorter against the taller one.
-    // The `align-items-stretch` utility class overrides that so the two
-    // columns start flush at the same top instead.
+    // `.pgn__hstack`'s default `align-items: center` would vertically center
+    // the shorter column; `align-items-stretch` overrides that.
     const hstack = container.querySelector('.pgn__hstack') as HTMLElement | null;
     expect(hstack).not.toBeNull();
     expect(hstack).toHaveClass('align-items-stretch');
@@ -175,30 +173,21 @@ describe('<CompetencyAssociationsPanel />', () => {
     );
     await screen.findByText(taxonomyName);
 
-    // The right-hand `.flex-grow-1` column must not be rendered at all before
-    // selection - not merely empty - since `flex-grow-1` still claims its
-    // share of the row's width even around empty content (the bug this
-    // change fixes).
+    // Must not be rendered at all, not merely empty: `flex-grow-1` still
+    // claims its share of row width even around empty content.
     expect(container.querySelector('.flex-grow-1')).not.toBeInTheDocument();
 
-    // With no sibling column to size against yet, the tree's own box spans
-    // the full row instead of its usual fixed pixel width, and has no drag
-    // handle (`ResizableBox`'s `fullWidth` prop - see `Resizable.test.tsx`).
+    // With no sibling column to size against, the tree spans the full row
+    // instead of its usual fixed width, with no drag handle.
     const resizableBox = container.querySelector('.resizable') as HTMLElement;
     expect(resizableBox.style.width).toBe('100%');
     expect(container.querySelector('.resizable-handle')).not.toBeInTheDocument();
   });
 
   it('keeps the tree\'s own expand/collapse state when selecting a competency mounts the right panel', async () => {
-    // Regression test for the bug described in `CompetencyAssociationsPanel.tsx`:
-    // a naive fix that only wrapped the tree in `ResizableBox` once something
-    // is selected would move `CompetencyTree` to a different position in the
-    // element tree between the two states, and React would remount it -
-    // silently discarding its own local `expandedIds` state right when the
-    // user selects a competency. This test expands one branch of the tree by
-    // hand (not "Expand All", which would always re-expand everything and so
-    // couldn't tell a remount apart from a correct re-render), then selects a
-    // leaf and checks the expanded branch is still expanded afterward.
+    // Expands one branch by hand rather than "Expand All", which would
+    // always re-expand everything and so couldn't tell a remount apart from
+    // a correct re-render.
     render(
       <ResponsiveContext.Provider value={{ width: breakpoints.large.minWidth }}>
         <CompetencyAssociationsPanel taxonomyId={taxonomyId} taxonomyName={taxonomyName} />
@@ -206,10 +195,6 @@ describe('<CompetencyAssociationsPanel />', () => {
     );
     await screen.findByText(taxonomyName);
 
-    // The taxonomy root starts expanded (its immediate children, like "Root
-    // A", are already visible), so only "Root A" and "Group A1" need their
-    // own explicit disclosure click, one icon at a time, until the leaf
-    // "Leaf A1a" is visible.
     await screen.findByText('Root A');
     fireEvent.click(screen.getByRole('button', { name: 'Expand' }));
     await screen.findByText('Group A1');
@@ -219,12 +204,8 @@ describe('<CompetencyAssociationsPanel />', () => {
     fireEvent.click(leafRow);
     await screen.findByRole('searchbox'); // right panel now mounted
 
-    // If `CompetencyTree` had been remounted when the right panel appeared,
-    // its `expandedIds` state would have reset to its initial (root-only)
-    // value, and "Leaf A1a" - only reachable through "Group A1" staying
-    // expanded - would no longer be in the DOM. Scoped to the tree's own row
-    // label, since the right panel's associations empty state now also
-    // names the competency (in a `<strong>`, not this class).
+    // Scoped to the tree's own row label, since the right panel's empty
+    // state also names the competency (in a `<strong>`, not this class).
     expect(screen.getByText('Leaf A1a', { selector: '.competency-row__label' })).toBeInTheDocument();
   });
 });

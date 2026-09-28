@@ -19,30 +19,19 @@ export interface CourseGroupSectionProps {
  * **{course name}** ...") and its bottom-tier group cards, connected
  * pairwise by `GroupConnector`.
  *
- * `CourseGroupList` only ever mounts this for a course-level group already
- * confirmed accessible - `CompetencyAssociationsContext`'s own
- * `accessibleCourseGroups` only includes a course whose outline fetch has
- * already resolved successfully (see that context's own docstring and
- * `utils.ts`'s `visibleCourseGroups`), which is exactly this ticket's own
- * "a course-level group for a course I cannot see is not shown" acceptance
- * criterion. So by the time this mounts, its own `useCourseOutlineIndex`
- * call below - the same hook and query key `CourseOutlineSubtree` already
- * uses when a course is expanded, so an already-expanded (or
- * later-expanded) course costs no extra request and never disagrees about
- * a name - is reading an already-resolved, already-cached success; the
- * `isError`/raw-course-key fallback below is defensive only (e.g. a cache
- * eviction between the visibility check and this render), not a real
- * user-facing "inaccessible course" state - that state is never rendered
- * at all, not even with this fallback.
+ * `CourseGroupList` only mounts this for a course already confirmed
+ * accessible, so `useCourseOutlineIndex` below is normally reading an
+ * already-resolved, already-cached success (same hook/query key
+ * `CourseOutlineSubtree` uses). The `isError`/raw-course-key fallback is
+ * defensive only (e.g. a cache eviction between the check and this render),
+ * not a real "inaccessible course" state.
  */
 const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   const intl = useIntl();
   const { index } = useCompetencyAssociations();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  // `refetchOnMount: false`: mirrors `CourseOutlineSubtree`'s own reasoning -
-  // this section's mount/unmount lifecycle already gates whether the data
-  // is needed, so a background refetch of already-cached data on every
-  // mount would be wasted.
+  // `refetchOnMount: false`: mirrors `CourseOutlineSubtree` - avoids a
+  // wasted refetch of already-cached data on every mount.
   const { data, isError } = useCourseOutlineIndex(courseGroup.courseKey, { refetchOnMount: false });
 
   const courseDisplayName = (!isError && data) ? data.courseStructure.displayName : courseGroup.courseKey;
@@ -52,10 +41,8 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     if (!isError && data) {
       (data.courseStructure.childInfo?.children ?? []).forEach((section) => {
         (section.childInfo?.children ?? []).forEach((subsection) => {
-          // `subsection.id` - not `.usageKey` - is the field the real
-          // `course_index` response actually populates with the
-          // usage-key-formatted string; see `CourseOutlineSubtree`'s own
-          // `SubsectionRow` for the same fix and the fuller explanation.
+          // The real `course_index` response populates `.id`, never
+          // `.usageKey` (see `CourseOutlineSubtree`'s `SubsectionRow`).
           names[subsection.id] = subsection.displayName;
         });
       });
@@ -63,9 +50,8 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     return names;
   }, [data, isError]);
 
-  // `index` is only `undefined` while `CourseGroupList`'s own loading/error
-  // states are showing - it never renders this component until the groups
-  // query has resolved.
+  // `index` is only `undefined` during `CourseGroupList`'s own loading/error
+  // states, before this component ever mounts.
   const bottomTierGroups = index ? bottomTierGroupsForCourse(index, courseGroup.courseKey) : [];
 
   const toggleLabel = isCollapsed

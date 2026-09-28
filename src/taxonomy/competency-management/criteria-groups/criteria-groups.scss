@@ -1,32 +1,20 @@
-// Scoped styling for the criteria-associations tree rendered above
-// "Courses & Content" (course-level group cards, their bottom-tier group
-// cards, rule boxes, and the connector between sibling bottom-tier groups).
 // Scoped under `.course-group-list` (this subtree's own root - see
-// `CourseGroupList.tsx`, the only place this file is imported from) so
-// nothing here reaches any other page, mirroring `../CompetencyTree.scss`
-// and `../course-search/CourseSearchBrowse.scss`'s own single-root-class
-// scoping.
+// `CourseGroupList.tsx`), mirroring `../CompetencyTree.scss` and
+// `../course-search/CourseSearchBrowse.scss`'s own single-root-class scoping.
 //
-// `Card`/`Card.Body` (Paragon) supply every box's own border/radius/fill;
-// nothing here overrides those. What's added here is what Paragon has no
-// prop for: the inline-sentence layout of "By completing any of the
-// following" and "With a score of X% or higher" (a label+value pair would
-// need its own prop Paragon doesn't have - these read as one sentence, not
-// a form field), the connector line between sibling bottom-tier groups, and
+// `Card`/`Card.Body` (Paragon) supply every box's own border/radius/fill.
+// What's added here is what Paragon has no prop for: the inline-sentence
+// layout of "By completing any of the following" and "With a score of X%
+// or higher", the connector line between sibling bottom-tier groups, and
 // chip truncation.
 .course-group-list {
-  // "By completing ... of the following"'s band fill, and the connector
-  // line/card-border color - both read directly off the ticket's own
-  // screenshot (see the plan's visual reference), not available as an
-  // existing Paragon or app-wide token.
+  // Band fill and connector line/card-border color, read off the design
+  // screenshot; not an existing Paragon or app-wide token.
   $sentence-band-bg: #F6F6F5;
   $connector-line-color: #DDDDDD;
   // Reuses this feature's own established accent blue (`../CompetencyTree.scss`'s
   // `.badge-info` retint and `../course-search/CourseSearchBrowse.scss`'s
-  // section-label text both already use this literal) for the focused-state
-  // accent below, rather than introducing a third, slightly different blue -
-  // the screenshot's own focused-card border sample is close but not
-  // identical to this.
+  // section-label text) rather than introducing a third, similar blue.
   $focused-accent-color: #006DAA;
 
   // Vertical gap between adjacent course-level group cards.

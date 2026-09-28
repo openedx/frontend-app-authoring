@@ -11,18 +11,13 @@ import './criteria-groups.scss';
 
 /** The top-of-panel associations tree for the currently selected
  * competency: loading, failed, empty, or the list of accessible course-level
- * groups. Reads everything - the two data queries, the built index, and the
- * focus state each `CourseGroupSection` needs - from
- * `CompetencyAssociationsContext`.
+ * groups. Reads everything from `CompetencyAssociationsContext`.
  *
- * "Loading" covers both the groups query and the default-rule-profile
- * query - `effectiveRuleOf` needs the profile to resolve any criterion
- * that carries no override of its own, so content can't render correctly
- * until both have resolved. The empty state is decided on
- * `accessibleCourseGroups` (the context's own already-filtered list - see
- * its own docstring), never the raw `#681` payload's own counts, so "every
- * association is in a course this author can't see" renders identically to
- * "no associations at all" - and a failed load never renders as either.
+ * "Loading" covers both the groups query and the default-rule-profile query,
+ * since `effectiveRuleOf` needs the profile to resolve an unoverridden
+ * criterion. The empty state is decided on `accessibleCourseGroups` (already
+ * filtered), never the raw payload's own counts, so a course the author
+ * can't see renders identically to no associations at all.
  */
 const CourseGroupList = () => {
   const intl = useIntl();

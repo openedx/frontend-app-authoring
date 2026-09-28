@@ -13,11 +13,9 @@ import { useQueries } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
 
 import { getCourseOutlineIndex } from '@src/course-outline/data';
-// Reaches past `@src/course-outline/data`'s own public barrel (which doesn't
-// re-export this) deliberately: this is the exact query key
-// `useCourseOutlineIndex` itself uses, so the `useQueries` calls below share
-// its cache instead of issuing a second request per course. Worth revisiting
-// if `course-outline/data` ever exports this properly.
+// Bypasses the public barrel deliberately: this is the same query key
+// `useCourseOutlineIndex` uses, so the `useQueries` calls below share its
+// cache instead of refetching per course.
 import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import { useToastContext } from '@src/generic/toast-context';
 
@@ -46,12 +44,9 @@ import {
   visibleCourseGroups,
 } from './utils';
 
-/** Identifies which bottom-tier group and, within it, which rule box
- * currently has focus. A rule box only means anything inside a particular
- * group, so the two are always written together (see `focusGroup`/
- * `focusRuleBox` below) - never one without the other, and never `null`
- * once either write happens. `ruleKey` is `null` when the focused group has
- * no rule box yet (e.g. `lastRealRuleKeyIn` found none).
+/** A rule box only means anything inside its own group, so `groupId` and
+ * `ruleKey` are always written together (see `focusGroup`/`focusRuleBox`).
+ * `ruleKey` is `null` when the focused group has no rule box yet.
  */
 export interface CriteriaFocus {
   groupId: number;
@@ -59,59 +54,40 @@ export interface CriteriaFocus {
 }
 
 export interface CompetencyAssociationsContextValue {
-  /** Both start unset (`null`); see `CriteriaFocus` above for why the pair
-   * is always written together.
-   */
   focus: CriteriaFocus | null;
-  /** Focuses a group and, with it, its own last real rule box
-   * (`lastRealRuleKeyIn`). A no-op when `groupId` is already focused - does
-   * NOT re-resolve the default rule box in that case, so re-clicking the
-   * group heading never throws away a rule box the author had selected
-   * inside it.
+  /** Focuses a group and its last real rule box (`lastRealRuleKeyIn`). A
+   * no-op when `groupId` is already focused, so re-clicking the group
+   * heading doesn't discard a rule box the author had selected inside it.
    */
   focusGroup: (groupId: number) => void;
   /** Focuses one specific rule box, and the group it belongs to, together. */
   focusRuleBox: (groupId: number, ruleKey: string) => void;
-  /**
-   * Notify the provider that a course was expanded in the content panel
-   * below. Call this ONLY from that panel's own per-course chevron toggle,
-   * and only when it EXPANDS a course - never on collapse, and never from
-   * a page-level "Expand All" control. The provider has no way to enforce
-   * this itself. Growing the set of courses this way lets `canEditCourse`
-   * resolve a real answer for a group-less course the author just opened,
-   * not just the courses this competency already has groups in. It has no
-   * effect on the one-time initial-focus mechanism, which only ever counts
-   * bottom-tier groups already in the tree.
+  /** Notify the provider that a course was expanded in the content panel.
+   * Call only from that panel's own per-course chevron on expand, never on
+   * collapse or from a page-level "Expand All": this feeds `canEditCourse`
+   * for a group-less course, and has no effect on initial focus.
    */
   notifyCourseExpanded: (courseId: string) => void;
   /** Associates a piece of course content (a gradable subsection) with the
-   * active competency. See the provider's own implementation for the
-   * target-selection and duplicate-guard rules.
+   * active competency.
    */
   associateSubsection: (objectId: string, courseId: string) => void;
-  /**
-   * Whether the signed-in author can create/manage associations for the
-   * given course, via `useCourseTaggingPermissions`'s `courses.manage_tags`
-   * check.
+  /** Whether the signed-in author can create/manage associations for the
+   * given course (`useCourseTaggingPermissions`'s `courses.manage_tags`).
    */
   canEditCourse: (courseId: string) => boolean;
   groupsQuery: UseQueryResult<CompetencyCriteriaGroupsResponse>;
   profileQuery: UseQueryResult<CompetencyRuleProfile>;
   /** Built from `groupsQuery.data`; `undefined` until that query resolves. */
   index: CompetencyCriteriaGroupsIndex | undefined;
-  /** `profileQuery.data`, under the name every rule-resolution helper in
-   * `./utils` expects.
-   */
   systemDefaultProfile: CompetencyRuleProfile | undefined;
   /** Every already-associated criterion's `objectId`, across the whole
-   * tree - the create mutation's duplicate guard, and every "already
-   * associated" marking in the content panel below, read this.
+   * tree: the create mutation's duplicate guard and the content panel's
+   * "already associated" marking both read this.
    */
   associatedObjectIds: Set<string>;
-  /** Every course-level group whose own course the author can actually
-   * see - i.e. `utils.ts`'s `visibleCourseGroups`, already filtered by this
-   * provider's own per-course outline-fetch results. `CourseGroupList` maps
-   * over this directly instead of calling `visibleCourseGroups` itself.
+  /** `utils.ts`'s `visibleCourseGroups`, filtered by this provider's own
+   * per-course outline-fetch results.
    */
   accessibleCourseGroups: CourseCompetencyCriteriaGroup[];
   /** The active competency's short external id (e.g. "CCRS-1.3"), shown on
@@ -121,18 +97,14 @@ export interface CompetencyAssociationsContextValue {
   competencyExternalId: string | null;
 }
 
-// Exported (alongside the provider and hook above) so component tests can
-// render a hand-built value via `<CompetencyAssociationsContext.Provider>`
-// directly, without needing to mock every HTTP request the real provider
-// would otherwise issue - see e.g. `criteria-groups/RuleBox.test.tsx`.
+// Exported so component tests can render a hand-built value via
+// `<CompetencyAssociationsContext.Provider>` without mocking every HTTP
+// request the real provider would issue - see e.g. `criteria-groups/RuleBox.test.tsx`.
 export const CompetencyAssociationsContext = createContext<CompetencyAssociationsContextValue | undefined>(undefined);
 
-/** Reads the current competency-associations context.
- *
- * Throws if called outside a `<CompetencyAssociationsProvider>` ancestor
- * rather than falling back to a no-op default: every real consumer of this
- * context is built to exist only inside the provider, so a silent no-op
- * default would hide a missing-provider bug instead of surfacing it.
+/** Reads the current competency-associations context. Throws outside a
+ * `<CompetencyAssociationsProvider>` ancestor rather than a no-op default,
+ * so a missing provider surfaces instead of failing silently.
  */
 export function useCompetencyAssociations(): CompetencyAssociationsContextValue {
   const ctx = useContext(CompetencyAssociationsContext);
@@ -156,13 +128,10 @@ export interface CompetencyAssociationsProviderProps {
 /** Provides per-competency criteria-association state to the right-hand
  * course panel.
  *
- * Deliberately never remounted (no `key={tagId}`) so it doesn't reset
- * `CourseSearchBrowse`'s own state when the selected competency changes;
- * instead it resets its own state - `focus`, the one-time initial-focus
- * guard, and the tracked expanded-course set - by comparing the incoming
- * `tagId` against the previous render's value, all in the same render-time
- * block. React's documented alternative to a remounting `key`, and not an
- * effect.
+ * Never remounted (no `key={tagId}`), so it doesn't reset
+ * `CourseSearchBrowse`'s own state on competency change; instead it resets
+ * its own state by comparing the incoming `tagId` against the previous
+ * render's value, React's documented alternative to a remounting `key`.
  */
 export const CompetencyAssociationsProvider = ({
   tagId,
@@ -201,14 +170,10 @@ export const CompetencyAssociationsProvider = ({
     setExpandedCourseIds((prev) => (prev.has(courseId) ? prev : new Set(prev).add(courseId)));
   }, []);
 
-  // The course keys of every course-level group in the raw `#681` response,
-  // unfiltered - every one of these must be fetched to find out whether its
-  // course is actually accessible (see `accessibleCourseIds` below); a
-  // course can't be excluded from that check before the check itself has
-  // run. Used for two other, unrelated things too: the initial-focus
-  // effect's own outline-resolution gate (below), and, unioned with
-  // `expandedCourseIds`, `canEditCourse`'s permission check (which needs an
-  // answer for a group-less course the author just expanded too).
+  // Every course-level group's course key, unfiltered - each must be
+  // fetched to determine accessibility (see `accessibleCourseIds` below).
+  // Also feeds the initial-focus gate and, unioned with `expandedCourseIds`,
+  // `canEditCourse`'s permission check.
   const courseIdsWithGroups = useMemo(
     () => (index ? index.courseGroups.map((courseGroup) => courseGroup.courseKey) : []),
     [index],
@@ -223,14 +188,9 @@ export const CompetencyAssociationsProvider = ({
   });
   const allVisibleCourseOutlinesResolved = outlineQueries.every((query) => !query.isLoading);
 
-  // A course counts as accessible only once its own outline fetch has
-  // resolved successfully - matching the ticket's own "a course-level
-  // group for a course I cannot see is not shown" acceptance criterion
-  // (and its own "not shown with a missing, blank, or placeholder course
-  // name instead" clause: this is why a failed fetch is excluded entirely,
-  // never degraded to a raw-id fallback). Still loading doesn't count as
-  // accessible either - only a confirmed success does, so a course-level
-  // group never renders before its own fetch has actually confirmed it.
+  // A course counts as accessible only once its outline fetch succeeds - a
+  // failed fetch is excluded entirely rather than shown with a placeholder
+  // name, and a still-loading one doesn't count as accessible either.
   const accessibleCourseIds = useMemo(() => {
     const ids = new Set<string>();
     courseIdsWithGroups.forEach((courseId, i) => {
@@ -263,20 +223,13 @@ export const CompetencyAssociationsProvider = ({
     setFocus({ groupId, ruleKey });
   }, []);
 
-  // Runs at most once per competency (guarded by `hasRunInitialFocusRef`,
-  // reset alongside `focus` above): once the groups query, the default
-  // profile, and every course-with-a-group's own outline have all
-  // resolved, focus the sole bottom-tier group if exactly one exists across
-  // the *accessible* course-level groups - counting `accessibleCourseGroups`,
-  // never `index.courseGroups` unfiltered, so a bottom-tier group that
-  // belongs to a course the author can't see is never eligible for
-  // auto-focus (it isn't rendered, so focusing it would point at nothing).
-  // Deliberately independent of `expandedCourseIds`/`notifyCourseExpanded`:
-  // a course the author expands that has no group for this competency yet
-  // has no bearing on this count, and must not delay this gate. A click
-  // that already set `focus` before the gate resolved beats this
-  // auto-focus; the effect still marks itself as having run (so it never
-  // fires later), it just skips writing anything.
+  // Runs at most once per competency: once groups, profile, and every
+  // course-with-a-group's outline have resolved, focus the sole bottom-tier
+  // group if exactly one exists among *accessible* course-level groups (an
+  // inaccessible one isn't rendered, so it must never be auto-focus
+  // eligible). Independent of `expandedCourseIds`, which must not delay
+  // this gate. A click that sets focus first beats this auto-focus; the
+  // effect still marks itself as run, it just skips writing.
   useEffect(() => {
     if (hasRunInitialFocusRef.current) {
       return;
@@ -303,11 +256,9 @@ export const CompetencyAssociationsProvider = ({
     focusGroup,
   ]);
 
-  // `canEditCourse`'s own course list: every course this competency already
-  // has a group in, plus every course the author has expanded in the
-  // content panel (even one with no group yet) - the union the ticket's
-  // text actually describes for the permission check (not the initial-focus
-  // gate above, which this list must not influence).
+  // `canEditCourse`'s course list: every course with a group plus every
+  // course expanded in the content panel (even group-less). Must not feed
+  // the initial-focus gate above.
   const courseIdsForPermissions = useMemo(() => {
     const ids = new Set(expandedCourseIds);
     courseIdsWithGroups.forEach((courseId) => ids.add(courseId));

@@ -82,21 +82,15 @@ export interface UseCourseTaggingPermissionsReturn {
  * each of the given courses, via the studio-wide `courses.manage_tags`
  * authz action (`COURSE_PERMISSIONS.MANAGE_TAGS`).
  *
- * Reproduces `useCourseUserPermissions`'s (`src/authz/hooks.ts`) own
- * fallback rules for a *list* of courses rather than one course's fixed set
- * of named permissions: every course resolves to `true` when the
- * `enableAuthzCourseAuthoring` waffle flag is off (its default, so the
- * feature isn't permanently read-only wherever authz isn't enabled), and to
- * `false` while either that flag or the permissions call is still loading,
- * so a control never flashes enabled before disabling.
+ * Reproduces `useCourseUserPermissions`'s fallback rules for a *list* of
+ * courses: every course resolves to `true` when `enableAuthzCourseAuthoring`
+ * is off, and to `false` while that flag or the permissions call is loading.
  *
- * A course id's last-known answer survives a later call with a bigger
- * `courseIds` list (e.g. the content panel expanding a second course):
- * `useUserPermissions`'s cache key embeds the whole query object, so a
- * bigger course set is a brand new query, momentarily `isLoading` again -
- * without this, every previously-resolved course would flash back to
- * `false` too. Only a course with no answer at all yet defaults to `false`
- * while loading.
+ * A course id's last-known answer survives a later, bigger `courseIds` call
+ * (e.g. expanding a second course): `useUserPermissions`'s cache key embeds
+ * the whole query object, so a bigger set is a new, momentarily-loading
+ * query, and without this every already-resolved course would flash back to
+ * `false` too.
  */
 export const useCourseTaggingPermissions = (courseIds: string[]): UseCourseTaggingPermissionsReturn => {
   // The studio-wide endpoint returns the same flag regardless of course, so

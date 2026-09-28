@@ -40,20 +40,13 @@ const buildResponse = (courses: Course[], numPages: number = 1) => ({
   count: courses.length,
 });
 
-// Scoped to the courses-list endpoint specifically: with the real
-// `CompetencyAssociationsProvider` now mounted too, `axiosMock.history.get`
-// also holds its own (paramless) requests, so the plain "last GET" this
-// helper used to mean no longer identifies a courses-list request.
+// Scoped to the courses-list endpoint: `axiosMock.history.get` also holds
+// `CompetencyAssociationsProvider`'s own requests.
 const lastRequestParams = () => {
   const courseRequests = axiosMock.history.get.filter((req) => req.url === coursesApiUrl);
   return courseRequests[courseRequests.length - 1].params;
 };
 
-// `CourseSearchBrowse` mounts `CriteriaAssociationsSection`, which reads
-// `CompetencyAssociationsContext` - the real provider is used here (not a
-// lightly-mocked one) since `beforeEach` below already mocks its two HTTP
-// requests to the empty-associations shape, which the first test asserts
-// on directly.
 const renderCourseSearchBrowse = () =>
   render(
     <CompetencyAssociationsProvider tagId={Number(activeCompetency.id)} competencyExternalId={null}>
@@ -75,11 +68,9 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
   beforeEach(() => {
     ({ axiosMock } = initializeMocks());
-    // The associations section (`CriteriaAssociationsSection`/`CourseGroupList`)
-    // mounts alongside the course list below it and fires its own two
-    // requests - mocked here, to the empty-associations shape, so every
-    // test in this file that doesn't care about the associations section
-    // isn't left with it stuck in a loading/error state of its own.
+    // The associations section mounts alongside the course list and fires
+    // its own requests; mocked here to the empty-associations shape so
+    // tests that don't care about it aren't left in a loading state.
     axiosMock.onGet(competencyManagementApiUrls.competencyCriteriaGroups(Number(activeCompetency.id)))
       .reply(200, { groups: [], criteria: [] });
     axiosMock.onGet(competencyManagementApiUrls.defaultCompetencyRuleProfile())
@@ -216,11 +207,8 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
         expect(axiosMock.history.get.length).toBeGreaterThan(requestCountBeforeTyping);
       });
 
-      // Exactly one request should fire once the debounce settles: the
-      // corrected `{ search: 'physics', page: 1 }`. An intermediate request
-      // pairing the new search with the old page (e.g. `{ page: 2 }`) would
-      // mean `search` and `page` were reset in separate renders instead of
-      // the same state-update batch.
+      // Exactly one request: an intermediate one pairing the new search
+      // with the old page would mean the two were reset in separate renders.
       const requestsSinceTyping = axiosMock.history.get.slice(requestCountBeforeTyping);
       expect(requestsSinceTyping).toHaveLength(1);
       expect(requestsSinceTyping[0].params).toMatchObject({ search: 'physics', page: 1 });
@@ -274,16 +262,11 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
         expect(axiosMock.history.get.length).toBeGreaterThan(requestCountBeforeChange);
       });
 
-      // Exactly one request should fire: the corrected
-      // `{ start_date_on_or_after: ..., page: 1 }`. An intermediate request pairing
-      // the new date with the old page would mean the date and page were
-      // reset in separate renders instead of the same state-update batch.
+      // Exactly one request: an intermediate one pairing the new date with
+      // the old page would mean the two were reset in separate renders.
       const requestsSinceChange = axiosMock.history.get.slice(requestCountBeforeChange);
       expect(requestsSinceChange).toHaveLength(1);
-      // Plain `YYYY-MM-DD`, not a full datetime - the backend's
-      // `get_date_param` 400s on anything else, and only asserting
-      // truthiness here previously let a full ISO datetime string through
-      // unnoticed.
+      // Plain `YYYY-MM-DD`: the backend's `get_date_param` 400s on anything else.
       expect(requestsSinceChange[0].params.start_date_on_or_after).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(requestsSinceChange[0].params.start_date_on_or_before).toBeUndefined();
       expect(requestsSinceChange[0].params).toMatchObject({ page: 1 });
@@ -320,11 +303,9 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       renderCourseSearchBrowse();
       await screen.findByText('Intro to Testing');
 
-      // The mock adapter records the params object exactly as handed to axios,
-      // before axios serializes it into a query string - so the key can still
-      // be present here with an `undefined` value. That's the value axios's
-      // own serializer drops the key for; a value of `''` would instead be
-      // sent as an empty query param, which is what these assertions rule out.
+      // The mock adapter records params before axios serializes them, so an
+      // `undefined` value (the key axios's serializer drops) is still
+      // distinguishable here from `''` (sent as an empty query param).
       expect(lastRequestParams().start_date_on_or_after).toBeUndefined();
       expect(lastRequestParams().start_date_on_or_before).toBeUndefined();
     });

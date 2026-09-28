@@ -25,13 +25,10 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
   const [selectedCompetency, setSelectedCompetency] = useState<CompetencyTreeNode | null>(null);
   const isDesktop = useIsDesktop();
 
-  // Rendered once and reused, bare, in both the "with selection" and
-  // "without selection" paths of each branch below: `CompetencyTree` keeps
-  // its own expand/collapse state locally (`expandedIds`), so it must stay
-  // at the exact same position in the element tree in both states - moving
-  // it in or out of `ResizableBox`/`Col` between states would change its
-  // ancestor structure and make React remount it, silently resetting
-  // whatever the user had expanded right when they select a competency.
+  // Rendered once and reused in both branches below at the same element-tree
+  // position: `CompetencyTree` keeps its own expand/collapse state locally,
+  // so moving it between states would make React remount it and silently
+  // reset what the user had expanded.
   const tree = (
     <CompetencyTree
       taxonomyId={taxonomyId}
@@ -43,15 +40,10 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
 
   if (isDesktop) {
     return (
-      // `gap={3.5}`: Paragon's spacing scale supports half-steps (0, 0.5, 1,
-      // ..., 6), each `N * 16px` (this app's root font-size, per
-      // `--pgn-spacing-spacer-base: 1rem`) - `3.5` is the exact scale value
-      // for the original `20px` gap, not an approximation. Collapsed to `0`
-      // before a competency is selected, since there's no second column to
-      // put a gap against yet. `align-items-stretch` overrides
-      // `.pgn__hstack`'s default `center`, so the two columns start flush at
-      // the top instead of the shorter one being vertically centered against
-      // the taller.
+      // `gap={3.5}` is Paragon's exact spacing-scale value for the 20px gap
+      // (0 before selection, with no second column to gap against).
+      // `align-items-stretch` overrides `.pgn__hstack`'s default `center` so
+      // columns start flush at the top instead of the shorter one centering.
       <Stack direction="horizontal" gap={selectedCompetency ? 3.5 : 0} className="align-items-stretch">
         <ResizableBox handleSide="right" fullWidth={!selectedCompetency} stretchContent>
           {tree}

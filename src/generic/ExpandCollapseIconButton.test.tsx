@@ -36,9 +36,6 @@ describe('<ExpandCollapseIconButton />', () => {
       />,
     );
 
-    // The accessible name comes from `aria-label`, which this component
-    // sets to `expandLabel` while collapsed and `collapseLabel` while
-    // expanded.
     const button = screen.getByRole('button', { name: 'Expand' });
     expect(button).toHaveAttribute('aria-expanded', 'false');
 
@@ -64,11 +61,8 @@ describe('<ExpandCollapseIconButton />', () => {
     'stops an Enter/Space keydown from bubbling to a wrapping element, so an enclosing row\'s own key '
       + 'handler never fires for it',
     () => {
-      // A caller whose own row is independently clickable/keyboard-activatable
-      // (e.g. a selectable competency tree leaf row) relies on this: without
-      // it, an Enter/Space press meant only to toggle this button would also
-      // reach the row's own keydown handler and could be treated as a
-      // selection there.
+      // A selectable row's own keydown handler must not see this keypress,
+      // or it would treat the button toggle as a row selection too.
       const onToggle = jest.fn();
       const onWrapperKeyDown = jest.fn();
       render(

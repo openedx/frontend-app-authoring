@@ -67,16 +67,9 @@ const systemDefaultProfile: CompetencyRuleProfile = {
 
 const index = buildCompetencyCriteriaGroupsIndex(response);
 
-// `usageKey: undefined` on each subsection node mirrors the real
-// `course_index` response, captured directly against a live devstack: a
-// block object there only ever carries `id`, never `usage_key` - so a
-// fixture that (like `buildOutlineIndex`'s own default) sets both `id` and
-// `usageKey` to the same value can't tell correct `.id`-based code apart
-// from the original `.usageKey`-based bug, since both would resolve to the
-// same string. Overriding `usageKey` away here means "resolves its header
-// and chip names" below only passes if `CourseGroupSection` actually reads
-// `.id`, the same field this feature's other real-outline consumer
-// (`CourseOutlineSubtree`) was fixed to read too.
+// `usageKey: undefined` mirrors the real `course_index` response, which
+// never populates `usage_key` - so these tests only pass if
+// `CourseGroupSection` reads `.id`, not `.usageKey`.
 const outlineFixture = buildOutlineIndex({
   sections: [
     {
@@ -123,15 +116,10 @@ describe('<CourseGroupSection />', () => {
   });
 
   it(
-    'does not throw if its own outline fetch fails (defensive only - CourseGroupList never actually '
-      + 'mounts this component for a course whose outline fetch failed, per CompetencyAssociationsContext\'s '
-      + 'own accessibleCourseGroups filtering)',
+    'does not throw if its own outline fetch fails (defensive only)',
     async () => {
       axiosMock.onGet(outlineApiUrl).reply(403);
       expect(() => renderSection()).not.toThrow();
-      // The fallback still renders *something* rather than blanking the
-      // section entirely - a defensive last resort, never exercised by a
-      // real, accessible course in production.
       expect(await screen.findByText(courseKey)).toBeInTheDocument();
     },
   );

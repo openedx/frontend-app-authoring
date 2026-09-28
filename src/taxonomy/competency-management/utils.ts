@@ -172,16 +172,12 @@ export function lastBottomTierGroupForCourse(
 
 /** Every course-level group whose own course the author can actually see.
  *
- * `index.courseGroups` alone isn't enough: `#681`'s response can carry an
+ * `index.courseGroups` alone isn't enough: the response can carry an
  * association for a course the content-search lookup doesn't return for
- * this author (see the ticket's own "A course-level group for a course I
- * cannot see is not shown" acceptance criterion) - a course-level group for
- * such a course must never render, not even with a placeholder/blank name.
+ * this author, which must never render, not even with a placeholder name.
  * `accessibleCourseIds` is `CompetencyAssociationsContext`'s own answer to
- * "did this course's outline fetch resolve successfully," built from the
- * same per-course `useCourseOutlineIndex` queries `CourseGroupSection`
- * reads for display names - this file has no fetch of its own, so the
- * caller must supply that answer.
+ * whether a course's outline fetch resolved successfully; this file has no
+ * fetch of its own, so the caller supplies that answer.
  */
 export function visibleCourseGroups(
   index: CompetencyCriteriaGroupsIndex,
