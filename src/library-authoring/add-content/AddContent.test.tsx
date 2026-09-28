@@ -1,5 +1,6 @@
 import MockAdapter from 'axios-mock-adapter/types';
 import userEvent from '@testing-library/user-event';
+import { getConfig } from '@edx/frontend-platform';
 
 import { mockClipboardEmpty, mockClipboardHtml } from '@src/generic/data/api.mock';
 import {
@@ -18,6 +19,7 @@ import {
   mockBlockTypesMetadata,
   mockXBlockFields,
 } from '../data/api.mocks';
+import * as libraryApi from '../data/api';
 import {
   getContentLibraryApiUrl,
   getCreateLibraryBlockUrl,
@@ -28,6 +30,7 @@ import {
 } from '../data/api';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import AddContent from './AddContent';
+import messages from './messages';
 import { ComponentEditorModal } from '../components/ComponentEditorModal';
 
 // mockCreateLibraryBlock.applyMock();
@@ -140,6 +143,46 @@ describe('<AddContent />', () => {
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
+  });
+
+  // The Games editor works through the block's own handlers, so the block has
+  // to exist before the editor opens. The other editors create it on Save.
+  it('creates a Games block first, then opens its editor on the new block', async () => {
+    mockClipboardEmpty.applyMock();
+    jest.spyOn(libraryApi, 'getBlockTypes').mockResolvedValue([
+      ...mockBlockTypesMetadata.blockTypesMetadata,
+      { blockType: 'games', displayName: 'Games' },
+    ]);
+    const createUrl = getCreateLibraryBlockUrl(libraryId);
+    const usageKey = 'lb:Axim:TEST:games:new-games-block';
+    const settingsResolverUrl =
+      `${getConfig().STUDIO_BASE_URL}/api/xblock/v2/xblocks/${usageKey}/handler_url/get_settings/`;
+    axiosMock.onPost(createUrl).reply(200, { id: usageKey });
+    axiosMock.onGet(settingsResolverUrl).reply(200, { handler_url: 'http://studio/handlers/get_settings' });
+    axiosMock.onPost('http://studio/handlers/get_settings').reply(200, {});
+    render();
+
+    fireEvent.click(await screen.findByRole('button', { name: /advanced \/ other/i }));
+    fireEvent.click(await screen.findByRole('button', { name: /games/i }));
+
+    // Created before any editor opened...
+    await waitFor(() => expect(axiosMock.history.post.map((r) => r.url)).toContain(createUrl));
+    // ...and the editor then loads that block's settings, not an empty one's.
+    await waitFor(() => expect(axiosMock.history.get.map((r) => r.url)).toContain(settingsResolverUrl));
+    expect(mockShowToast).not.toHaveBeenCalled();
+  });
+
+  it('confirms with a toast when an advanced block with no editor here is created', async () => {
+    mockBlockTypesMetadata.applyMock();
+    mockClipboardEmpty.applyMock();
+    const url = getCreateLibraryBlockUrl(libraryId);
+    axiosMock.onPost(url).reply(200, { id: 'lb:Axim:TEST:survey:new-survey' });
+    render();
+
+    fireEvent.click(await screen.findByRole('button', { name: /advanced \/ other/i }));
+    fireEvent.click(await screen.findByRole('button', { name: /survey/i }));
+
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith(messages.successCreateMessage.defaultMessage));
   });
 
   it('should open the editor modal to create a content when the block is supported', async () => {

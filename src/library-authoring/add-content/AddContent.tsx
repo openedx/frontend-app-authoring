@@ -18,7 +18,7 @@ import { ToastContext } from '@src/generic/toast-context';
 import { getItemIcon } from '@src/generic/block-type-utils';
 import { useClipboard } from '@src/generic/clipboard';
 import { getCanEdit } from '@src/course-unit/data/selectors';
-import { blockTypes } from '@src/editors/data/constants/app';
+import { blockTypes, editorsNeedingExistingBlock } from '@src/editors/data/constants/app';
 import { ContainerType } from '@src/generic/key-utils';
 
 import {
@@ -463,7 +463,8 @@ const AddContent = () => {
 
   const onCreateBlock = (blockType: string) => {
     const suportedEditorTypes = Object.values(blockTypes);
-    if (suportedEditorTypes.includes(blockType)) {
+    const editorCreatesOnSave = suportedEditorTypes.includes(blockType) && !editorsNeedingExistingBlock.has(blockType);
+    if (editorCreatesOnSave) {
       // linkComponent on editor close.
       openComponentEditor?.('', (data) => data && linkComponent(data.id), blockType);
     } else {
@@ -472,9 +473,14 @@ const AddContent = () => {
         blockType,
         definitionId: `${uuid4()}`,
       }).then((data) => {
-        // We can't start editing this right away so just show a toast message:
-        showToast(intl.formatMessage(messages.successCreateMessage));
         linkComponent(data.id);
+        if (editorsNeedingExistingBlock.has(blockType)) {
+          // The block exists now, so its editor can open on it.
+          openComponentEditor?.(data.id);
+        } else {
+          // We can't start editing this right away so just show a toast message:
+          showToast(intl.formatMessage(messages.successCreateMessage));
+        }
       }).catch((error) => {
         showToast(parseErrorMsg(
           intl,
