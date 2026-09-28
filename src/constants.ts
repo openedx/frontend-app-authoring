@@ -82,6 +82,9 @@ export const REGEX_RULES = {
   noSpaceRule: /^\S*$/,
 };
 
+/** Height floor for the XBlock iframe in the advanced editor outside fullscreen; 70vh is the value it had inline. */
+export const ADVANCED_EDITOR_MIN_HEIGHT = '70vh';
+
 /**
  * Feature policy for iframe, allowing access to certain courseware-related media.
  *
