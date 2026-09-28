@@ -1,5 +1,6 @@
 import type { KeyboardEvent } from 'react';
 
+import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Badge } from '@openedx/paragon';
 
@@ -23,8 +24,8 @@ export interface CompetencyTreeItemProps {
  *
  * Indentation comes from the `<ul>` nesting itself (see `CompetencyTree.scss`),
  * not from a depth number computed here. Whether a node's `<li>` reads
- * visually as a grey "group" envelope (wrapping its own header row and all
- * of its rendered children) or as a plain white leaf "pill" is likewise
+ * visually as a "group" envelope (wrapping its own header row and all
+ * of its rendered children) or as a leaf "pill" is likewise
  * driven by this same `hasChildren` check, via the `competency-group` class
  * below - not a depth number or a CSS structural-position selector, so it
  * holds recursively at any depth.
@@ -85,7 +86,10 @@ const CompetencyTreeItem = ({
         // `treeitem`. `aria-selected` itself is announced by assistive tech
         // as part of the treeitem's own state, so there's no need for the
         // separate accessible-label text this row used before.
-        className={isSelected ? 'competency-row competency-row--selected' : 'competency-row'}
+        className={classNames('competency-row', {
+          'competency-row--selectable': isSelectable,
+          'competency-row--selected': isSelected,
+        })}
         role={isSelectable ? 'treeitem' : undefined}
         tabIndex={isSelectable ? 0 : undefined}
         aria-selected={isSelectable ? isSelected : undefined}
