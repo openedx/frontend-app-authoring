@@ -11,7 +11,7 @@ import messages from './messages';
 const WikiSettings = ({ onClose }: { onClose: () => void; }) => {
   const intl = useIntl();
   const settingName = 'allowPublicWikiAccess';
-  const enablePublicWiki = useAppSetting(settingName);
+  const { value: enablePublicWiki, isLoading } = useAppSetting(settingName);
   const { courseId } = useCourseAuthoringContext();
 
   const updateCourseAdvancedSettingsMutation = useUpdateCourseAdvancedSettings(courseId);
@@ -38,6 +38,7 @@ const WikiSettings = ({ onClose }: { onClose: () => void; }) => {
       validationSchema={{ enablePublicWiki: Yup.boolean() }}
       onSettingsSave={handleSettingsSave}
       enableReinitialize
+      isLoading={isLoading}
     >
       {({ values, handleChange, handleBlur }) => (
         <FormSwitchGroup

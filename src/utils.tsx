@@ -129,13 +129,21 @@ export function getPagePath(courseId: string | undefined, isMfePageEnabled: stri
   return `${getConfig().STUDIO_BASE_URL}/${urlParameter}/${courseId}`;
 }
 
-export function useAppSetting(settingName: string): any {
+/**
+ * Get the value of an advanced setting used by a course app, and whether it's
+ * still loading.
+ */
+export function useAppSetting(settingName: string): { value: any; isLoading: boolean; } {
   const { courseId } = useCourseAuthoringContext();
 
   const {
     data: settingValue,
+    isPending,
   } = useCourseAdvancedSettings(courseId, [settingName]);
-  return settingValue?.[settingName]?.value;
+  return {
+    value: settingValue?.[settingName]?.value,
+    isLoading: isPending,
+  };
 }
 
 export const getLabelById = (options: any[], id: any) => {

@@ -39,7 +39,7 @@ const ORASettings = ({ onClose }: { onClose: () => void; }) => {
   const updateCourseAdvancedSettingsMutation = useUpdateCourseAdvancedSettings(courseId);
   const settingName = 'forceOnFlexiblePeerOpenassessments';
 
-  const enableFlexiblePeerGrade = useAppSetting(settingName);
+  const { value: enableFlexiblePeerGrade, isLoading } = useAppSetting(settingName);
 
   const [formValues, setFormValues] = useState({ enableFlexiblePeerGrade });
 
@@ -77,6 +77,9 @@ const ORASettings = ({ onClose }: { onClose: () => void; }) => {
   const renderBody = () => {
     switch (courseAppsStatus) {
       case RequestStatus.SUCCESSFUL:
+        if (isLoading) {
+          return <Loading />;
+        }
         return (
           <>
             {updateCourseAdvancedSettingsMutation.isError && (

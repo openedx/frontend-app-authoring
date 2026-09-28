@@ -24,7 +24,7 @@ const TeamSettings = ({
   const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();
   const settingName = 'teamsConfiguration';
-  const rawTeamsConfiguration = useAppSetting(settingName);
+  const { value: rawTeamsConfiguration, isLoading } = useAppSetting(settingName);
   const teamsConfiguration = useMemo(() => camelCaseObject(rawTeamsConfiguration), [rawTeamsConfiguration]);
   const updateCourseAdvancedSettingsMutation = useUpdateCourseAdvancedSettings(courseId);
   const blankNewGroup = {
@@ -73,6 +73,7 @@ const TeamSettings = ({
       enableAppLabel={intl.formatMessage(messages.enableTeamsLabel)}
       learnMoreText={intl.formatMessage(messages.enableTeamsLink)}
       onClose={onClose}
+      isLoading={isLoading}
       // Topic is supported for backwards compatibility, the new field is team_sets:
       // ref: https://github.com/openedx/edx-platform/blob/15461d3b6e6c0a724a7b8ed09241d970f201e5e7/openedx/core/lib/teams_config.py#L104-L108
       initialValues={{

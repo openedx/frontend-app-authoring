@@ -48,6 +48,7 @@ export interface AppSettingsModalProps {
   configureBeforeEnable?: boolean;
   enableReinitialize?: boolean;
   hideAppToggle?: boolean;
+  isLoading?: boolean;
 }
 
 const AppSettingsModal = ({
@@ -65,6 +66,7 @@ const AppSettingsModal = ({
   learnMoreText,
   enableReinitialize = false,
   hideAppToggle = false,
+  isLoading = false,
 }: AppSettingsModalProps) => {
   const { formatMessage } = useIntl();
   const { isEditable, courseApps, courseAppsStatus } = useContext(PagesAndResourcesContext);
@@ -137,7 +139,9 @@ const AppSettingsModal = ({
     </Hyperlink>
   );
 
-  if (courseAppsStatus === RequestStatus.SUCCESSFUL) {
+  const isLoadingSettings = courseAppsStatus === RequestStatus.SUCCESSFUL && isLoading;
+
+  if (courseAppsStatus === RequestStatus.SUCCESSFUL && !isLoading) {
     return (
       <Formik
         initialValues={{
@@ -237,7 +241,7 @@ const AppSettingsModal = ({
       variant={modalVariant}
       isMobile={isMobile}
     >
-      {courseAppsStatus === RequestStatus.PENDING && <Loading />}
+      {(courseAppsStatus === RequestStatus.PENDING || isLoadingSettings) && <Loading />}
       {courseAppsStatus === RequestStatus.FAILED && <ConnectionErrorAlert />}
       {courseAppsStatus === RequestStatus.DENIED && <PermissionDeniedAlert />}
     </AppSettingsModalBase>

@@ -14,8 +14,7 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('CourseAuthoring/utils', () => ({
   ...jest.requireActual('CourseAuthoring/utils'),
-  // Real useAppSetting() returns a single value (not a [value, setter] tuple).
-  useAppSetting: () => false,
+  useAppSetting: () => ({ value: false, isLoading: false }),
   useIsMobile: () => false,
 }));
 

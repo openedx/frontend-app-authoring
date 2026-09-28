@@ -13,7 +13,7 @@ const ProgressSettings = ({ onClose }: { onClose: () => void; }) => {
   const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();
   const settingsName = 'disableProgressGraph';
-  const disableProgressGraph = useAppSetting(settingsName);
+  const { value: disableProgressGraph, isLoading } = useAppSetting(settingsName);
   const updateCourseAdvancedSettingsMutation = useUpdateCourseAdvancedSettings(courseId);
   const showProgressGraphSetting = getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS.toString().toLowerCase() === 'true';
 
@@ -42,6 +42,7 @@ const ProgressSettings = ({ onClose }: { onClose: () => void; }) => {
       initialValues={{ enableProgressGraph: !disableProgressGraph }}
       validationSchema={{ enableProgressGraph: Yup.boolean() }}
       onSettingsSave={handleSettingsSave}
+      isLoading={isLoading}
     >
       {({ handleChange, handleBlur, values }) => (
         showProgressGraphSetting && (
