@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import {
   Container,
@@ -19,6 +19,7 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import InternetConnectionAlert from '@src/generic/internet-connection-alert';
 import { parseArrayOrObjectValues } from '@src/utils';
 import { RequestStatus } from '@src/data/constants';
+import { useCourseAdvancedSettings, useUpdateCourseAdvancedSettings } from '@src/data/apiHooks';
 import SubHeader from '@src/generic/sub-header/SubHeader';
 import AlertMessage from '@src/generic/alert-message';
 import getPageHeadTitle from '@src/generic/utils';
@@ -29,7 +30,15 @@ import SettingsSidebar from './settings-sidebar/SettingsSidebar';
 import validateAdvancedSettingsData from './utils';
 import messages from './messages';
 import ModalError from './modal-error/ModalError';
-import { useCourseAdvancedSettings, useProctoringExamErrors, useUpdateCourseAdvancedSettings } from './data/apiHooks';
+import { useProctoringExamErrors } from './data/apiHooks';
+
+const sortSettingsByDisplayName = (settings: Record<string, any>): Record<string, any> => (
+  Object.fromEntries(
+    Object.entries(settings).sort(
+      ([, v1], [, v2]) => v1.displayName.localeCompare(v2.displayName),
+    ),
+  )
+);
 
 const AdvancedSettings = () => {
   const intl = useIntl();
@@ -51,10 +60,14 @@ const AdvancedSettings = () => {
   } = useCourseUserPermissions(courseId, getAdvancedSettingsPermissions(courseId));
 
   const {
-    data: advancedSettingsData = {},
+    data: unsortedAdvancedSettingsData,
     isPending: isPendingSettingsStatus,
     failureReason: settingsStatusError,
   } = useCourseAdvancedSettings(courseId);
+  const advancedSettingsData = useMemo(
+    () => sortSettingsByDisplayName(unsortedAdvancedSettingsData ?? {}),
+    [unsortedAdvancedSettingsData],
+  );
 
   const {
     data: proctoringExamErrors = {},

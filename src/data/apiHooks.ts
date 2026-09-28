@@ -28,6 +28,11 @@ import {
   waffleFlagDefaults,
   getCourseSettings,
   CourseSettingsData,
+  CourseAppData,
+  getCourseApps,
+  updateCourseApp,
+  getCourseAdvancedSettings,
+  updateCourseAdvancedSettings,
 } from './api';
 import { RequestStatus, RequestStatusType } from './constants';
 
@@ -242,3 +247,79 @@ export const useCourseSettings = (courseId: string) => (
     queryFn: () => getCourseSettings(courseId),
   })
 );
+
+/**
+ * Fetch the course apps installed for a course.
+ */
+export const useCourseApps = (courseId: string) => (
+  useQuery<CourseAppData[], AxiosError>({
+    queryKey: ['courseApps', courseId],
+    queryFn: () => getCourseApps(courseId),
+  })
+);
+
+/**
+ * Fetch the course apps installed for a course (already sorted for display by
+ * `getCourseApps`), along with the query status and error.
+ */
+export const useSortedCourseApps = (courseId: string) => {
+  const {
+    data: courseApps,
+    status: courseAppsStatus,
+    error: courseAppsError,
+  } = useCourseApps(courseId);
+
+  return {
+    courseApps: courseApps || [],
+    courseAppsStatus,
+    courseAppsError,
+  };
+};
+
+/**
+ * Update the enabled status of a course app.
+ * Invalidates the course apps list on success.
+ */
+export const useUpdateCourseAppStatus = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ appId, state }: { appId: string; state: boolean; }) => updateCourseApp(courseId, appId, state),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['courseApps', courseId] }),
+  });
+};
+
+export const advancedSettingsQueryKeys = {
+  all: ['advancedSettings'],
+  /** Key for the advanced settings of a course, optionally filtered to the given setting names */
+  courseAdvancedSettings: (courseId: string, settings?: string[]) => (
+    settings
+      ? [...advancedSettingsQueryKeys.all, courseId, 'filtered', settings]
+      : [...advancedSettingsQueryKeys.all, courseId]
+  ),
+};
+
+/**
+ * Fetch the advanced settings for a course. If `settings` is given, only
+ * those are fetched; otherwise all of them are.
+ */
+export const useCourseAdvancedSettings = (courseId: string, settings?: string[]) => (
+  useQuery<Record<string, any>, AxiosError>({
+    queryKey: advancedSettingsQueryKeys.courseAdvancedSettings(courseId, settings),
+    queryFn: () => getCourseAdvancedSettings(courseId, settings),
+  })
+);
+
+/**
+ * Update one or more advanced settings for a course.
+ * Invalidates all the advanced settings queries of the course and its course apps list.
+ */
+export const useUpdateCourseAdvancedSettings = (courseId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation<Record<string, any>, AxiosError, Record<string, any>>({
+    mutationFn: (settings) => updateCourseAdvancedSettings(courseId, settings),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: advancedSettingsQueryKeys.courseAdvancedSettings(courseId) });
+      queryClient.invalidateQueries({ queryKey: ['courseApps', courseId] });
+    },
+  });
+};

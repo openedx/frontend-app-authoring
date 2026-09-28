@@ -8,8 +8,8 @@ import {
   initializeMocks,
   screen,
 } from '@src/testUtils';
+import { getCourseAdvancedSettingsApiUrl } from '@src/data/api';
 import { advancedSettingsMock } from './__mocks__';
-import { getCourseAdvancedSettingsApiUrl } from './data/api';
 import AdvancedSettings from './AdvancedSettings';
 import messages from './messages';
 
@@ -44,7 +44,7 @@ describe('<AdvancedSettings />', () => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
     axiosMock
-      .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
+      .onGet(getCourseAdvancedSettingsApiUrl(courseId), { params: { fetch_all: 0 } })
       .reply(200, advancedSettingsMock);
 
     mockWaffleFlags({ enableAuthzCourseAuthoring: false });
@@ -59,7 +59,7 @@ describe('<AdvancedSettings />', () => {
 
   it('should render placeholder when settings fetch returns 403', async () => {
     axiosMock
-      .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
+      .onGet(getCourseAdvancedSettingsApiUrl(courseId), { params: { fetch_all: 0 } })
       .reply(403);
     render();
     expect(await screen.findByText(/Under Construction/i)).toBeInTheDocument();
@@ -147,7 +147,7 @@ describe('<AdvancedSettings />', () => {
     fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
     expect(textarea).toHaveValue('[3, 2, 1]');
     axiosMock
-      .onPatch(`${getCourseAdvancedSettingsApiUrl(courseId)}`)
+      .onPatch(getCourseAdvancedSettingsApiUrl(courseId))
       .reply(200, {
         ...advancedSettingsMock,
         advancedModules: {
@@ -165,7 +165,7 @@ describe('<AdvancedSettings />', () => {
     const textarea = await screen.findByLabelText(/Advanced Module List/i);
     fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
     axiosMock
-      .onPatch(`${getCourseAdvancedSettingsApiUrl(courseId)}`)
+      .onPatch(getCourseAdvancedSettingsApiUrl(courseId))
       .reply(500);
     await user.click(screen.getByText('Save changes'));
     expect(await screen.findByText('Validation error while saving')).toBeInTheDocument();
@@ -208,7 +208,7 @@ describe('<AdvancedSettings />', () => {
       canViewAdvancedSettings: false,
     } as ReturnType<typeof useCourseUserPermissions>);
     axiosMock
-      .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
+      .onGet(getCourseAdvancedSettingsApiUrl(courseId), { params: { fetch_all: 0 } })
       .reply(403);
     render();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
