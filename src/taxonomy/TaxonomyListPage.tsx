@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Button,
   CardView,
   Container,
   DataTable,
@@ -10,7 +9,6 @@ import {
   Tooltip,
   SelectMenu,
   MenuItem,
-  useToggle,
 } from '@openedx/paragon';
 import {
   Add,
@@ -20,28 +18,20 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Helmet } from 'react-helmet';
 
-import { useOrganizationListData } from '../generic/data/apiHooks';
-import SubHeader from '../generic/sub-header/SubHeader';
-import getPageHeadTitle from '../generic/utils';
-import { ALL_TAXONOMIES, apiUrls, UNASSIGNED } from './data/api';
-import { useTaxonomyList } from './data/apiHooks';
-import { ImportTagsWizard } from './import-tags';
-import messages from './messages';
-import { TaxonomyCard } from './taxonomy-card';
+import { ALL_TAXONOMIES, apiUrls, UNASSIGNED } from '@src/taxonomy/data/api';
+import { useOrganizationListData } from '@src/generic/data/apiHooks';
+import { useTaxonomyList } from '@src/taxonomy/data/apiHooks';
+import SubHeader from '@src/generic/sub-header/SubHeader';
+import { ImportTagsWizardButton } from '@src/taxonomy/import-tags';
+import { TaxonomyCard } from '@src/taxonomy/taxonomy-card';
+import getPageHeadTitle from '@src/generic/utils';
+import messages from '@src/taxonomy/messages';
 
 const TaxonomyListHeaderButtons = (props: { canAddTaxonomy: boolean; }) => {
   const intl = useIntl();
 
-  const [isImportModalOpen, importModalOpen, importModalClose] = useToggle(false);
-
   return (
     <>
-      {isImportModalOpen && (
-        <ImportTagsWizard
-          isOpen={isImportModalOpen}
-          onClose={importModalClose}
-        />
-      )}
       <OverlayTrigger
         placement="top"
         overlay={
@@ -74,14 +64,13 @@ const TaxonomyListHeaderButtons = (props: { canAddTaxonomy: boolean; }) => {
           </Dropdown.Menu>
         </Dropdown>
       </OverlayTrigger>
-      <Button
+      <ImportTagsWizardButton
         iconBefore={Add}
-        onClick={importModalOpen}
         data-testid="taxonomy-import-button"
         disabled={!props.canAddTaxonomy}
       >
         {intl.formatMessage(messages.importButtonLabel)}
-      </Button>
+      </ImportTagsWizardButton>
     </>
   );
 };

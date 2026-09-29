@@ -82,7 +82,7 @@ export const taxonomyQueryKeys = {
  * Builds the query to get the taxonomy list
  * @param {string} [org] Filter the list to only show taxonomies assigned to this org
  */
-export const useTaxonomyList = (org) => (
+export const useTaxonomyList = (org?: string) => (
   useQuery({
     queryKey: taxonomyQueryKeys.taxonomyList(org),
     queryFn: () => api.getTaxonomyListData(org),
