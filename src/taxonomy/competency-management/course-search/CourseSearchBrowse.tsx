@@ -5,13 +5,11 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Badge,
   Button,
   IconButton,
   Pagination,
@@ -29,8 +27,8 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import { DATE_FORMAT } from '@src/constants';
 import { useStudioHomeCoursesV2 } from '@src/studio-home/data/apiHooks';
 import type { CompetencyTreeNode } from '../CompetencyTree';
-import { CompetencyTooltip, useCompetencyTooltip } from '@src/taxonomy/competency-management/competency-tooltip';
 import CourseRow from './CourseRow';
+import CriteriaAssociationsSection from './CriteriaAssociationsSection';
 import messages from './messages';
 // @ts-ignore
 import './CourseSearchBrowse.scss';
@@ -183,28 +181,6 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
 
   const handleClearDateRange = () => handleDateRangeChange([null, null]);
 
-  const headingRef = useRef<HTMLDivElement>(null);
-  const nameRef = useRef<HTMLSpanElement>(null);
-  const badgeRef = useRef<HTMLElement>(null);
-  const [isHeadingTruncated, setIsHeadingTruncated] = useState(false);
-
-  const measureHeading = useCallback(
-    () => [nameRef.current, badgeRef.current].some((el) => !!el && el.scrollWidth > el.clientWidth),
-    [],
-  );
-
-  // Catches width changes from dragging the tree/course divider as well as window resizes.
-  useEffect(() => {
-    const heading = headingRef.current;
-    if (!heading) { return undefined; }
-    setIsHeadingTruncated(measureHeading());
-    const resizeObserver = new ResizeObserver(() => setIsHeadingTruncated(measureHeading()));
-    resizeObserver.observe(heading);
-    return () => resizeObserver.disconnect();
-  }, [measureHeading, activeCompetency]);
-
-  const tooltip = useCompetencyTooltip(measureHeading);
-
   const { data, isLoading, isError } = useStudioHomeCoursesV2({
     page,
     pageSize: PAGE_SIZE,
@@ -299,57 +275,7 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
         </Stack>
       </div>
       <div className="course-search-browse__panel">
-        <div className="course-search-browse__associations">
-          <div className="course-search-browse__associations-label">
-            {intl.formatMessage(messages.associationsSectionLabel)}
-          </div>
-          <div
-            className="course-search-browse__associations-mastery d-flex align-items-center"
-            ref={headingRef}
-            tabIndex={isHeadingTruncated ? 0 : undefined}
-            onMouseEnter={tooltip.openOnHover}
-            onMouseLeave={tooltip.close}
-            onFocus={tooltip.openOnFocus}
-            onBlur={tooltip.close}
-          >
-            <span className="text-truncate" ref={nameRef}>
-              {intl.formatMessage(messages.demonstrateMasteryForLabel, {
-                competencyName: <strong>{activeCompetency.value}</strong>,
-              })}
-            </span>
-            {activeCompetency.externalId && (
-              <>
-                <span className="sr-only">
-                  {intl.formatMessage(messages.competencyIdAccessibleLabel, {
-                    externalId: activeCompetency.externalId,
-                  })}
-                </span>
-                <Badge
-                  variant="info"
-                  className="competency-row__badge text-truncate ml-2"
-                  aria-hidden="true"
-                  ref={badgeRef}
-                >
-                  {activeCompetency.externalId}
-                </Badge>
-              </>
-            )}
-            <CompetencyTooltip
-              anchorRef={headingRef}
-              name={activeCompetency.value}
-              externalId={activeCompetency.externalId}
-              {...tooltip.tooltipProps}
-            />
-          </div>
-          <div className="course-search-browse__associations-empty-state">
-            <p>
-              {intl.formatMessage(messages.noAssociationsMessage, {
-                competencyName: <strong>{activeCompetency.value}</strong>,
-              })}
-            </p>
-            <p>{intl.formatMessage(messages.noAssociationsPromptMessage)}</p>
-          </div>
-        </div>
+        <CriteriaAssociationsSection competency={activeCompetency} />
         <div className="course-search-browse__container">
           <div className="course-search-browse__section-label">
             {intl.formatMessage(messages.coursesAndContentLabel)}

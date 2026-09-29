@@ -7,6 +7,7 @@ import {
   userEvent,
   within,
 } from '@src/testUtils';
+import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../testHelpers';
 import CourseOutlineSubtree from './CourseOutlineSubtree';
 
 let axiosMock;
@@ -20,7 +21,10 @@ const mixedOutline = buildOutlineIndex({
       id: 'section-1',
       displayName: 'Section 1',
       children: [
-        { id: 'sub-1a', displayName: 'Subsection 1A (graded)', overrides: { graded: true } },
+        // `usageKey: undefined` mirrors the real `course_index` response,
+        // which never populates `usage_key` - so these tests only pass if
+        // `SubsectionRow` reads `.id`, not `.usageKey`.
+        { id: 'sub-1a', displayName: 'Subsection 1A (graded)', overrides: { graded: true, usageKey: undefined } },
         { id: 'sub-1b', displayName: 'Subsection 1B (ungraded)', overrides: { graded: false } },
       ],
     },
@@ -75,6 +79,16 @@ const allUngradedOutline = buildOutlineIndex({
 
 const noSubsectionsOutline = buildOutlineIndex([]);
 
+// Most tests below care about outline rendering, not the association data
+// layer, so a lightly-mocked provider is enough; a few near the end
+// override `associatedObjectIds`/`associateSubsection` directly.
+const renderSubtree = (contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {}) =>
+  render(
+    <MockCompetencyAssociationsProvider value={contextOverrides}>
+      <CourseOutlineSubtree courseId={courseId} />
+    </MockCompetencyAssociationsProvider>,
+  );
+
 describe('<CourseOutlineSubtree />', () => {
   beforeEach(() => {
     ({ axiosMock } = initializeMocks());
@@ -82,14 +96,14 @@ describe('<CourseOutlineSubtree />', () => {
 
   it('renders a loading state while the outline request is pending', () => {
     axiosMock.onGet(outlineApiUrl).reply(() => new Promise(() => {}));
-    render(<CourseOutlineSubtree courseId={courseId} />);
+    renderSubtree();
 
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('renders a scoped inline error, not the panel-level error, when the outline request fails', async () => {
     axiosMock.onGet(outlineApiUrl).reply(500);
-    render(<CourseOutlineSubtree courseId={courseId} />);
+    renderSubtree();
 
     const error = await screen.findByText('There was a problem loading this course\'s outline.');
     expect(error).toBeInTheDocument();
@@ -102,7 +116,7 @@ describe('<CourseOutlineSubtree />', () => {
     async () => {
       const user = userEvent.setup();
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      render(<CourseOutlineSubtree courseId={courseId} />);
+      renderSubtree();
 
       expect(await screen.findByText('Section 1')).toBeInTheDocument();
       expect(screen.getByText('Section 2')).toBeInTheDocument();
@@ -131,7 +145,7 @@ describe('<CourseOutlineSubtree />', () => {
     async () => {
       const user = userEvent.setup();
       axiosMock.onGet(outlineApiUrl).reply(200, partiallyGradedOutline);
-      render(<CourseOutlineSubtree courseId={courseId} />);
+      renderSubtree();
 
       expect(await screen.findByText('Section 1')).toBeInTheDocument();
       const section2Header = screen.getByText('Section 2');
@@ -157,7 +171,7 @@ describe('<CourseOutlineSubtree />', () => {
       + 'subsection is ungraded',
     async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, allUngradedOutline);
-      render(<CourseOutlineSubtree courseId={courseId} />);
+      renderSubtree();
 
       expect(await screen.findByText('This course has no gradeable subsections.')).toBeInTheDocument();
       expect(screen.queryByText('Section 1')).not.toBeInTheDocument();
@@ -167,7 +181,7 @@ describe('<CourseOutlineSubtree />', () => {
 
   it('renders the whole-course no-gradeable-subsections message when there are no subsections at all', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, noSubsectionsOutline);
-    render(<CourseOutlineSubtree courseId={courseId} />);
+    renderSubtree();
 
     expect(await screen.findByText('This course has no gradeable subsections.')).toBeInTheDocument();
   });
@@ -175,7 +189,7 @@ describe('<CourseOutlineSubtree />', () => {
   it('does nothing when a section with no graded subsections is clicked', async () => {
     const user = userEvent.setup();
     axiosMock.onGet(outlineApiUrl).reply(200, partiallyGradedOutline);
-    render(<CourseOutlineSubtree courseId={courseId} />);
+    renderSubtree();
 
     const header = await screen.findByText('Section 2');
     await user.click(header);
@@ -191,20 +205,89 @@ describe('<CourseOutlineSubtree />', () => {
       + 'one request in total',
     async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      const { unmount } = render(<CourseOutlineSubtree courseId={courseId} />);
+      const { unmount } = renderSubtree();
 
       await screen.findByText('Section 1');
       expect(axiosMock.history.get).toHaveLength(1);
 
-      // Simulate the parent CourseRow collapsing (unmount) then re-expanding
-      // (remount) the same course while still within the query cache's normal
-      // staleTime. With `refetchOnMount: false`, this must serve the cached
-      // data without firing a second request.
+      // Simulate the parent CourseRow collapsing then re-expanding the same
+      // course within the query cache's staleTime: must serve cached data.
       unmount();
-      render(<CourseOutlineSubtree courseId={courseId} />);
+      renderSubtree();
 
       await screen.findByText('Section 1');
       expect(axiosMock.history.get).toHaveLength(1);
     },
   );
+
+  it(
+    'marks a subsection as already associated by its real id - the field the real course_index response '
+      + 'actually populates, never the always-undefined usageKey',
+    async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtree({ associatedObjectIds: new Set(['sub-1a']) });
+
+      // Expand both sections' graded subsections: `sub-1a` (Section 1) and
+      // `sub-2a` (Section 2) - `sub-1b` is ungraded, so it never renders a
+      // row at all (see the "shows a disclosure icon..." test above).
+      const expandButtons = await screen.findAllByRole('button', { name: 'Expand' });
+      await user.click(expandButtons[0]);
+      await user.click(screen.getByRole('button', { name: 'Expand' }));
+
+      expect(screen.getByRole('button', { name: 'Subsection 1A (graded)' })).toHaveAttribute(
+        'data-associated',
+        'true',
+      );
+      // A sibling row whose id isn't in the set stays unmarked - proves the
+      // lookup is a real per-row match, not something that's always true.
+      expect(screen.getByRole('button', { name: 'Subsection 2A (graded)' })).toHaveAttribute(
+        'data-associated',
+        'false',
+      );
+    },
+  );
+
+  it(
+    'calls associateSubsection with the subsection\'s real id when a selectable row is clicked - not the '
+      + 'usageKey field the real API never populates',
+    async () => {
+      const user = userEvent.setup();
+      const associateSubsection = jest.fn();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtree({ associateSubsection });
+
+      await user.click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
+      await user.click(screen.getByRole('button', { name: 'Subsection 1A (graded)' }));
+
+      expect(associateSubsection).toHaveBeenCalledWith('sub-1a', courseId);
+    },
+  );
+
+  it(
+    'renders the Competency ID badge on an already-associated row when competencyExternalId is set '
+      + '(moved here from CourseSearchBrowse.test.tsx along with the badge itself)',
+    async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtree({ associatedObjectIds: new Set(['sub-1a']), competencyExternalId: 'EXT-042' });
+
+      await userEvent.setup().click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
+      // The badge's own text becomes part of the button's accessible name
+      // once set, so find the row by its label text instead of `getByRole`.
+      const row = (await screen.findByText('Subsection 1A (graded)')).closest('button') as HTMLElement;
+
+      expect(within(row).getByText('EXT-042')).toHaveAttribute('aria-hidden', 'true');
+      expect(within(row).getByText('Competency ID: EXT-042')).toBeInTheDocument();
+    },
+  );
+
+  it('renders no Competency ID badge on an already-associated row when competencyExternalId is falsy', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+    renderSubtree({ associatedObjectIds: new Set(['sub-1a']), competencyExternalId: null });
+
+    await userEvent.setup().click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
+    const row = (await screen.findByText('Subsection 1A (graded)')).closest('button') as HTMLElement;
+
+    expect(within(row).queryByText('Competency ID:', { exact: false })).not.toBeInTheDocument();
+  });
 });

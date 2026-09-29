@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import { ResizableBox } from '@src/generic/resizable/Resizable';
 import { useIsDesktop } from '@src/utils';
+import { CompetencyAssociationsProvider } from '../CompetencyAssociationsContext';
 import CompetencyTree, { type CompetencyTreeNode } from '../CompetencyTree';
 import { CourseSearchBrowse } from '../course-search';
 import './CompetencyAssociationsPanel.scss';
@@ -26,10 +27,10 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
   const [selectedCompetency, setSelectedCompetency] = useState<CompetencyTreeNode | null>(null);
   const isDesktop = useIsDesktop();
 
-  // Rendered once and reused, bare, in both branches below: `CompetencyTree`
-  // keeps its own expand/collapse state locally, so moving it to a different
-  // position in the element tree between states would remount it and reset
-  // that state.
+  // Rendered once and reused in both branches below at the same element-tree
+  // position: `CompetencyTree` keeps its own expand/collapse state locally,
+  // so moving it between states would make React remount it and silently
+  // reset what the user had expanded.
   const tree = (
     <CompetencyTree
       taxonomyId={taxonomyId}
@@ -41,12 +42,10 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
 
   if (isDesktop) {
     return (
-      // `gap={3.5}` is Paragon's spacing-scale value for the original 20px
-      // gap (each step is `N * 16px`), collapsed to `0` before a competency
-      // is selected since there's no second column to put a gap against yet.
-      // `align-items-stretch` overrides `.pgn__hstack`'s default `center`, so
-      // the two columns start flush at the top instead of the shorter one
-      // being vertically centered against the taller.
+      // `gap={3.5}` is Paragon's exact spacing-scale value for the 20px gap
+      // (0 before selection, with no second column to gap against).
+      // `align-items-stretch` overrides `.pgn__hstack`'s default `center` so
+      // columns start flush at the top instead of the shorter one centering.
       <Stack
         direction="horizontal"
         gap={selectedCompetency ? 3.5 : 0}
@@ -59,7 +58,12 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
         </ResizableBox>
         {selectedCompetency && (
           <div className="flex-grow-1 competency-associations__course-column">
-            <CourseSearchBrowse activeCompetency={selectedCompetency} />
+            <CompetencyAssociationsProvider
+              tagId={Number(selectedCompetency.id)}
+              competencyExternalId={selectedCompetency.externalId ?? null}
+            >
+              <CourseSearchBrowse activeCompetency={selectedCompetency} />
+            </CompetencyAssociationsProvider>
           </div>
         )}
       </Stack>
@@ -68,12 +72,17 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
 
   return (
     <Row>
-      <Col xs={12}>
+      <Col xs={12} lg={selectedCompetency ? 4 : 12}>
         {tree}
       </Col>
       {selectedCompetency && (
-        <Col xs={12}>
-          <CourseSearchBrowse activeCompetency={selectedCompetency} />
+        <Col xs={12} lg={8}>
+          <CompetencyAssociationsProvider
+            tagId={Number(selectedCompetency.id)}
+            competencyExternalId={selectedCompetency.externalId ?? null}
+          >
+            <CourseSearchBrowse activeCompetency={selectedCompetency} />
+          </CompetencyAssociationsProvider>
         </Col>
       )}
     </Row>

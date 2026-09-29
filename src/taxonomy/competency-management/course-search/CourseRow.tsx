@@ -5,6 +5,7 @@ import { IconButton } from '@openedx/paragon';
 import { ExpandLess, ExpandMore } from '@openedx/paragon/icons';
 
 import type { Course } from '@src/studio-home/data/api';
+import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import CourseOutlineSubtree from './CourseOutlineSubtree';
 import messages from './messages';
 
@@ -23,11 +24,27 @@ export interface CourseRowProps {
  */
 const CourseRow = ({ course }: CourseRowProps) => {
   const intl = useIntl();
+  const { notifyCourseExpanded } = useCompetencyAssociations();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleLabel = isExpanded
     ? intl.formatMessage(messages.collapseRowButtonLabel)
     : intl.formatMessage(messages.expandRowButtonLabel);
+
+  const handleToggle = () => {
+    // Reads `isExpanded` directly rather than a functional updater: React
+    // may invoke a functional updater more than once, so calling
+    // `notifyCourseExpanded` (another component's state setter) from inside
+    // one would risk React's "Cannot update a component while rendering a
+    // different component" warning.
+    const next = !isExpanded;
+    if (next) {
+      // Only on expand, never on collapse - see `notifyCourseExpanded`'s
+      // own docstring for why this direction matters.
+      notifyCourseExpanded(course.courseKey);
+    }
+    setIsExpanded(next);
+  };
 
   return (
     <div className="course-search-browse__group course-search-browse__group--course">
@@ -38,7 +55,7 @@ const CourseRow = ({ course }: CourseRowProps) => {
           aria-label={toggleLabel}
           aria-expanded={isExpanded}
           size="sm"
-          onClick={() => setIsExpanded((prev) => !prev)}
+          onClick={handleToggle}
         />
         <div className="course-search-browse__course-title ml-2">{course.displayName}</div>
       </div>
