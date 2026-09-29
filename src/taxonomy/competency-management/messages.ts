@@ -31,6 +31,31 @@ const messages = defineMessages({
     defaultMessage: 'Competency ID: {externalId}',
     description: 'Accessible name for the Competency ID badge, read by screen readers since there is no column header to associate it with.',
   },
+  selectedCompetencyAccessibleLabel: {
+    id: 'course-authoring.competency-management.selected-competency.accessible-label',
+    defaultMessage: '{competencyName}, selected',
+    description: 'Accessible name for a competency tree leaf row once it is the selected competency, read by screen readers in place of the row\'s default text-derived name so the selected state is announced along with the competency name.',
+  },
+  alreadyAssociatedToastMessage: {
+    id: 'course-authoring.competency-management.already-associated-toast-message',
+    defaultMessage: 'This content is already associated with this competency.',
+    description: 'Informational toast shown when the author selects a subsection that already has a '
+      + 'criterion for the active competency, instead of sending a request that would only fail.',
+  },
+  createCriterionFailedToastMessage: {
+    id: 'course-authoring.competency-management.create-criterion-failed-toast-message',
+    defaultMessage: 'There was a problem creating this association. Please try again.',
+    description: 'Toast shown when creating a new criterion (associating a subsection with the active '
+      + 'competency) fails.',
+  },
+  createCriterionHierarchyConflictToastMessage: {
+    id: 'course-authoring.competency-management.create-criterion-hierarchy-conflict-toast-message',
+    defaultMessage: 'This competency can\'t be associated with this content because a parent or child '
+      + 'competency already has criteria in this course.',
+    description: 'Toast shown in place of the generic create-criterion failure when the backend rejects the '
+      + 'new criterion because an ancestor or descendant competency already has criteria in the same course '
+      + '(a 400 response with a "tag_id" field error).',
+  },
 });
 
 export default messages;
