@@ -8,7 +8,7 @@
   $shadow-color: rgb(0 0 0 / .12);
   $border-radius: 8px;
   $container-padding-y: 12px;
-  $container-padding-x: 16px;
+  $container-padding-x: var(--pgn-spacing-spacer-3);
   // One consistent indent step between nesting levels (course -> section ->
   // subsection), mirroring `../CompetencyTree.scss`'s own `$indent`.
   $indent-step: 20px;
@@ -18,9 +18,9 @@
   $group-border-color-course: var(--pgn-color-gray-600); // #5C5C5C
   $group-border-color-section: var(--pgn-color-gray-400); // #8F8F8F
   $group-border-color-subsection: var(--pgn-color-gray-200); // #CCCCCC
-  // Two-layer "soft elevation" shadow read off Figma, shared by every
-  // bordered box in the outline.
-  $block-shadow: 0 0 4px rgb(0 0 0 / .15), 0 0 2px rgb(0 0 0 / .15);
+  // Figma's "Elevation Level 1 (Centered)" style, shared by every bordered
+  // box in the outline.
+  $block-shadow: var(--pgn-elevation-box-shadow-centered-1);
 
   // `height: 100%` resolves against `CompetencyAssociationsPanel.tsx`'s
   // `.flex-grow-1` wrapper, which is itself stretched to the competency
@@ -49,17 +49,17 @@
   // starts at the same vertical offset as the tree's "Expand All" button.
   &__toolbar {
     background-color: var(--pgn-color-light-400);
-    padding: 24px 0;
+    padding: var(--pgn-spacing-spacer-4) 0;
   }
 
-  // Figma calls for `Radius: 6px` on this field; `overflow: hidden` is also
-  // needed since the child `.pgn__searchfield-form` has its own opaque,
-  // square-cornered background that otherwise paints over the rounding.
+  // `overflow: hidden` is needed since the child `.pgn__searchfield-form`
+  // has its own opaque, square-cornered background that otherwise paints
+  // over the rounding.
   &__toolbar .pgn__searchfield {
-    border-radius: 6px;
+    border-radius: var(--pgn-size-border-radius-base);
     overflow: hidden;
 
-    --pgn-size-search-field-border-radius: 6px;
+    --pgn-size-search-field-border-radius: var(--pgn-size-border-radius-base);
   }
 
   // Shared white envelope for `&__associations` and `&__container` below,
@@ -95,10 +95,14 @@
     margin-top: 16px;
   }
 
+  &__pagination {
+    border-top: 1px solid var(--pgn-color-gray-100);
+  }
+
   // Persistent "Courses & Content" header strip, always the container's
   // first child regardless of loading/error/empty/populated state.
   &__section-label {
-    padding: 4px 8px;
+    padding: var(--pgn-spacing-spacer-1) var(--pgn-spacing-spacer-2);
     background-color: var(--pgn-color-info-100);
     text-transform: uppercase;
     font-family: var(--pgn-typography-font-family-monospace);
@@ -112,7 +116,7 @@
   // Styled identically to `&__section-label` for visual consistency between
   // the two header strips in this column.
   &__associations-label {
-    padding: 4px 8px;
+    padding: var(--pgn-spacing-spacer-1) var(--pgn-spacing-spacer-2);
     background-color: var(--pgn-color-info-100);
     text-transform: uppercase;
     font-family: var(--pgn-typography-font-family-monospace);
