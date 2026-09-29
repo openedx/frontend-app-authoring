@@ -51,6 +51,13 @@
 
   // A plain `<div>` rather than Paragon's `Card`, whose own outline is
   // entirely a `box-shadow` - simpler to control that look directly.
+  // `max-height`/`overflow-y` cap how far "Expand All" (or expanding deep
+  // nesting by hand) can grow this box: without a cap, a fully-expanded tree
+  // pushes the whole page down well past the course-search column next to
+  // it, leaving a large empty gap under that column instead of just
+  // scrolling the tree's own content. The value is a practical viewport
+  // budget, not a design-spec number - adjust it if it feels off in
+  // practice.
   &__container {
     --competency-fill: var(--pgn-color-white);
     --competency-fill-alt: #{$shaded-bg-color};
@@ -60,6 +67,8 @@
     border-radius: $border-radius;
     box-shadow: 0 1px 4px $shadow-color;
     padding: 12px 16px;
+    max-height: calc(100vh - 260px);
+    overflow-y: auto;
   }
 
   ul {

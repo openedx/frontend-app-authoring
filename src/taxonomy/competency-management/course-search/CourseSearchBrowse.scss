@@ -82,10 +82,16 @@
   // both share `&__panel`'s single envelope. `flex: 1` (a flex child of
   // `&__panel`) is what actually grows to fill the extra height - `&__panel`
   // growing alone would otherwise leave the added space unused above this
-  // box's own bottom edge.
+  // box's own bottom edge. `min-height` is sized for a full page of results
+  // (`PAGE_SIZE` courses in `CourseSearchBrowse.tsx`, collapsed) so the box
+  // doesn't visibly shrink and shift the page below it every time a
+  // narrower search returns fewer courses - approximate, based on
+  // `&__group--course`'s own padding/shadow rather than a design spec, so
+  // treat it as adjustable rather than exact.
   &__container {
     border-top: 1px solid $line-color;
     flex: 1;
+    min-height: 640px;
     padding: $container-padding-y $container-padding-x;
   }
 
