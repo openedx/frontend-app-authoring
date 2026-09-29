@@ -8,41 +8,51 @@
  * API expects (snake_case).
  */
 
-/** How a group's immediate children combine: "and" (all) or "or" (any). A
+/** How a group's immediate children combine: "AND" (all) or "OR" (any). A
  * course-level group's operator governs how its bottom-tier children
  * combine; a bottom-tier group's own operator governs how its rule boxes
  * combine.
  */
-export type CompetencyGroupLogicOperator = 'and' | 'or';
+export type CompetencyGroupLogicOperator = 'AND' | 'OR';
 
-interface CompetencyCriteriaGroupBase {
+/** One criteria-group row, as returned flat in
+ * `CompetencyCriteriaGroupsResponse.groups`. The API models a three-level
+ * tree per competency (tag) with no `depth` field of its own, so a group's
+ * level is inferred structurally from `parentId`/`courseKey`:
+ * - root: `parentId: null`, `courseKey: null` - one per competency,
+ *   instance-wide. Never rendered.
+ * - course-level: `parentId` is the root's id, `courseKey` set - one per
+ *   course this competency has any criteria in.
+ * - leaf ("bottom-tier"): `parentId` is a course-level group's id,
+ *   `courseKey: null`. Holds criteria directly; the backend rejects a
+ *   persisted group with no criteria (ADR 0002).
+ */
+export interface CompetencyCriteriaGroup {
   id: number;
-  /** `null` for a depth-1 (course-level) group - ADR 0002's tree root
-   * (depth 0, the competency itself) is never a modeled row, so a
-   * course-level group is the top of this flat array.
-   */
   parentId: number | null;
+  /** The competency (tag) this group belongs to. */
+  tagId: number;
+  courseKey: string | null;
+  name: string;
   /** Sibling ordering within the same parent, ascending. */
   ordering: number;
   logicOperator: CompetencyGroupLogicOperator;
+  archived: boolean;
 }
 
-/** Depth 1: a course-scoped group - one per course this competency has any
- * criteria in.
+/** A course-level group, narrowed to guarantee `courseKey` is set - see
+ * `CompetencyCriteriaGroup`.
  */
-export interface CourseCompetencyCriteriaGroup extends CompetencyCriteriaGroupBase {
-  depth: 1;
+export interface CourseCompetencyCriteriaGroup extends CompetencyCriteriaGroup {
   courseKey: string;
 }
 
-/** Depth 2: a bottom-tier group. Holds criteria directly; the backend
- * rejects a persisted group with no criteria (ADR 0002).
+/** A leaf ("bottom-tier") group, narrowed to guarantee `courseKey` is
+ * `null` - see `CompetencyCriteriaGroup`.
  */
-export interface BottomTierCompetencyCriteriaGroup extends CompetencyCriteriaGroupBase {
-  depth: 2;
+export interface BottomTierCompetencyCriteriaGroup extends CompetencyCriteriaGroup {
+  courseKey: null;
 }
-
-export type CompetencyCriteriaGroup = CourseCompetencyCriteriaGroup | BottomTierCompetencyCriteriaGroup;
 
 /** The "Grade" rule payload - the only rule type ADR 0002 documents today. */
 export interface GradeRulePayload {
@@ -64,17 +74,18 @@ export interface CompetencyCriterion {
   id: number;
   /** The associated content object's id (e.g. a subsection's usage key). */
   objectId: string;
-  /** The bottom-tier (depth-2) group this criterion belongs to. */
-  competencyCriteriaGroupId: number;
+  /** The leaf (bottom-tier) group this criterion belongs to. */
+  groupId: number;
   ruleProfileId: number | null;
   ruleTypeOverride: string | null;
   rulePayloadOverride: GradeRulePayload | null;
 }
 
-/** `#681`'s documented response shape: a flat `groups` array (depth 1 and
- * depth 2, mixed) plus a flat `criteria` array, each criterion pointing at
- * its bottom-tier group by id. See `buildCompetencyCriteriaGroupsIndex` in
- * `../utils` for the tree this gets indexed into.
+/** `#681`'s documented response shape: a flat `groups` array (root,
+ * course-level, and leaf rows mixed - see `CompetencyCriteriaGroup`) plus a
+ * flat `criteria` array, each criterion pointing at its leaf group by id.
+ * See `buildCompetencyCriteriaGroupsIndex` in `../utils` for the tree this
+ * gets indexed into.
  */
 export interface CompetencyCriteriaGroupsResponse {
   groups: CompetencyCriteriaGroup[];
@@ -147,3 +158,9 @@ export interface CreateCompetencyCriterionPayload {
   rule_type_override?: string;
   rule_payload_override?: GradeRulePayload;
 }
+
+/** `createCompetencyCriterion`'s 201 response: no `objectId` (write-only on
+ * the create endpoint), plus `objectTagId`, the id of the object-tag row
+ * linking the content object to the competency.
+ */
+export type CreateCompetencyCriterionResponse = Omit<CompetencyCriterion, 'objectId'> & { objectTagId: number; };

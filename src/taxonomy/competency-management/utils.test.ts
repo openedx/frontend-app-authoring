@@ -27,15 +27,16 @@ const systemDefaultProfile: CompetencyRuleProfile = {
 const buildCriterion = (overrides: Partial<CompetencyCriterion> = {}): CompetencyCriterion => ({
   id: 1,
   objectId: 'block-a',
-  competencyCriteriaGroupId: 10,
+  groupId: 10,
   ruleProfileId: null,
   ruleTypeOverride: null,
   rulePayloadOverride: null,
   ...overrides,
 });
 
-// One course (id 1, "course-v1:OrgX+CS101+2024") with two bottom-tier
-// groups: group 10 (ordering 0) holds two rule boxes (criteria 101+102
+// The competency's root group (id 100, instance-wide, never rendered), one
+// course-level group under it (id 1, "course-v1:OrgX+CS101+2024") with two
+// leaf groups: group 10 (ordering 0) holds two rule boxes (criteria 101+102
 // share the default profile's rule, criterion 104 overrides to a
 // different one); group 11 (ordering 1) holds one rule box (criterion
 // 103). Group ids and array order are deliberately out of numeric/array
@@ -44,39 +45,69 @@ const buildCriterion = (overrides: Partial<CompetencyCriterion> = {}): Competenc
 const fixtureResponse: CompetencyCriteriaGroupsResponse = {
   groups: [
     {
-      id: 1,
+      id: 100,
       parentId: null,
-      depth: 1,
+      tagId: 42,
+      courseKey: null,
+      name: 'root',
       ordering: 0,
-      logicOperator: 'and',
-      courseKey: 'course-v1:OrgX+CS101+2024',
+      logicOperator: 'AND',
+      archived: false,
     },
-    { id: 11, parentId: 1, depth: 2, ordering: 1, logicOperator: 'or' },
-    { id: 10, parentId: 1, depth: 2, ordering: 0, logicOperator: 'and' },
+    {
+      id: 1,
+      parentId: 100,
+      tagId: 42,
+      courseKey: 'course-v1:OrgX+CS101+2024',
+      name: 'course',
+      ordering: 0,
+      logicOperator: 'AND',
+      archived: false,
+    },
+    {
+      id: 11,
+      parentId: 1,
+      tagId: 42,
+      courseKey: null,
+      name: 'leaf',
+      ordering: 1,
+      logicOperator: 'OR',
+      archived: false,
+    },
+    {
+      id: 10,
+      parentId: 1,
+      tagId: 42,
+      courseKey: null,
+      name: 'leaf',
+      ordering: 0,
+      logicOperator: 'AND',
+      archived: false,
+    },
   ],
   criteria: [
     buildCriterion({
       id: 101,
       objectId: 'block-a',
-      competencyCriteriaGroupId: 10,
+      groupId: 10,
       ruleTypeOverride: 'grade',
       rulePayloadOverride: { op: 'gte', value: 0.7, scale: 'percent' },
     }),
     // No override: resolves through `systemDefaultProfile`, which happens
     // to carry the exact same rule as criterion 101's override above - so
     // this criterion must land in the *same* rule box as 101.
-    buildCriterion({ id: 102, objectId: 'block-b', competencyCriteriaGroupId: 10 }),
+    buildCriterion({ id: 102, objectId: 'block-b', groupId: 10 }),
     buildCriterion({
       id: 104,
       objectId: 'block-d',
-      competencyCriteriaGroupId: 10,
+      groupId: 10,
       ruleTypeOverride: 'grade',
       rulePayloadOverride: { op: 'lte', value: 0.9, scale: 'percent' },
     }),
     buildCriterion({
       id: 103,
       objectId: 'block-c',
-      competencyCriteriaGroupId: 11,
+      groupId: 11,
       ruleTypeOverride: 'grade',
       rulePayloadOverride: { op: 'lte', value: 0.5, scale: 'percent' },
     }),
@@ -87,9 +118,10 @@ describe('buildCompetencyCriteriaGroupsIndex', () => {
   it('indexes groups by id, by parent, and criteria by containing group', () => {
     const index = buildCompetencyCriteriaGroupsIndex(fixtureResponse);
 
-    expect(index.groupsById.get(10)).toEqual(fixtureResponse.groups[2]);
-    expect(index.groupsById.get(11)).toEqual(fixtureResponse.groups[1]);
-    expect(index.groupsById.get(1)).toEqual(fixtureResponse.groups[0]);
+    expect(index.groupsById.get(100)).toEqual(fixtureResponse.groups[0]);
+    expect(index.groupsById.get(1)).toEqual(fixtureResponse.groups[1]);
+    expect(index.groupsById.get(11)).toEqual(fixtureResponse.groups[2]);
+    expect(index.groupsById.get(10)).toEqual(fixtureResponse.groups[3]);
 
     const childrenOfCourseGroup = index.childGroupsByParentId.get(1) ?? [];
     expect(childrenOfCourseGroup.map((g) => g.id).sort((a, b) => a - b)).toEqual([10, 11]);
@@ -98,7 +130,14 @@ describe('buildCompetencyCriteriaGroupsIndex', () => {
     expect((index.criteriaByGroupId.get(10) ?? []).map((c) => c.id).sort((a, b) => a - b)).toEqual([101, 102, 104]);
     expect((index.criteriaByGroupId.get(11) ?? []).map((c) => c.id)).toEqual([103]);
 
-    expect(index.courseGroups).toEqual([fixtureResponse.groups[0]]);
+    expect(index.courseGroups).toEqual([fixtureResponse.groups[1]]);
+  });
+
+  it('excludes the root group row from courseGroups, even though it\'s still indexed by id', () => {
+    const index = buildCompetencyCriteriaGroupsIndex(fixtureResponse);
+
+    expect(index.groupsById.get(100)).toBeDefined();
+    expect(index.courseGroups.map((g) => g.id)).not.toContain(100);
   });
 });
 
@@ -203,14 +242,34 @@ describe('lastBottomTierGroupForCourse', () => {
       groups: [
         {
           id: 1,
-          parentId: null,
-          depth: 1,
-          ordering: 0,
-          logicOperator: 'and',
+          parentId: 100,
+          tagId: 42,
           courseKey: 'course-v1:OrgX+CS101+2024',
+          name: 'course',
+          ordering: 0,
+          logicOperator: 'AND',
+          archived: false,
         },
-        { id: 20, parentId: 1, depth: 2, ordering: 0, logicOperator: 'and' },
-        { id: 21, parentId: 1, depth: 2, ordering: 0, logicOperator: 'and' },
+        {
+          id: 20,
+          parentId: 1,
+          tagId: 42,
+          courseKey: null,
+          name: 'leaf',
+          ordering: 0,
+          logicOperator: 'AND',
+          archived: false,
+        },
+        {
+          id: 21,
+          parentId: 1,
+          tagId: 42,
+          courseKey: null,
+          name: 'leaf',
+          ordering: 0,
+          logicOperator: 'AND',
+          archived: false,
+        },
       ],
       criteria: [],
     };
@@ -229,11 +288,13 @@ describe('lastBottomTierGroupForCourse', () => {
       groups: [
         {
           id: 1,
-          parentId: null,
-          depth: 1,
-          ordering: 0,
-          logicOperator: 'and',
+          parentId: 100,
+          tagId: 42,
           courseKey: 'course-v1:OrgX+CS101+2024',
+          name: 'course',
+          ordering: 0,
+          logicOperator: 'AND',
+          archived: false,
         },
       ],
       criteria: [],
@@ -246,7 +307,7 @@ describe('lastBottomTierGroupForCourse', () => {
 describe('visibleCourseGroups', () => {
   it('returns a course-level group whose course is in accessibleCourseIds', () => {
     const index = buildCompetencyCriteriaGroupsIndex(fixtureResponse);
-    expect(visibleCourseGroups(index, new Set(['course-v1:OrgX+CS101+2024']))).toEqual([fixtureResponse.groups[0]]);
+    expect(visibleCourseGroups(index, new Set(['course-v1:OrgX+CS101+2024']))).toEqual([fixtureResponse.groups[1]]);
   });
 
   it('excludes a course-level group whose course isn\'t in accessibleCourseIds', () => {

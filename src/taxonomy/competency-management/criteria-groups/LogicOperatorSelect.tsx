@@ -31,7 +31,7 @@ const LogicOperatorSelect = ({
   onChange,
   className,
 }: LogicOperatorSelectProps) => {
-  const label = value === 'and' ? labels.and : labels.or;
+  const label = value === 'AND' ? labels.and : labels.or;
 
   if (!onChange) {
     return <span className={className}>{label}</span>;
@@ -42,8 +42,8 @@ const LogicOperatorSelect = ({
       className={className}
       defaultMessage={label}
     >
-      <MenuItem onClick={() => onChange('and')}>{labels.and}</MenuItem>
-      <MenuItem onClick={() => onChange('or')}>{labels.or}</MenuItem>
+      <MenuItem onClick={() => onChange('AND')}>{labels.and}</MenuItem>
+      <MenuItem onClick={() => onChange('OR')}>{labels.or}</MenuItem>
     </SelectMenu>
   );
 };

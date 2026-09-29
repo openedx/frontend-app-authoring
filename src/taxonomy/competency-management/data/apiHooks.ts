@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
 
 import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { COURSE_PERMISSIONS } from '@src/authz/constants';
@@ -7,7 +8,7 @@ import { useWaffleFlags } from '@src/data/apiHooks';
 import type { PermissionValidationQuery } from '@src/authz/types';
 
 import * as api from './api';
-import type { CreateCompetencyCriterionPayload } from './types';
+import type { CreateCompetencyCriterionPayload, CreateCompetencyCriterionResponse } from './types';
 
 /**
  * Query key factory for competency-management data, following the same
@@ -61,7 +62,11 @@ export const useDefaultCompetencyRuleProfile = () => (
  */
 export const useCreateCompetencyCriterion = () => {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutation<
+    CreateCompetencyCriterionResponse,
+    AxiosError<Record<string, string[]>>,
+    { tagId: number; payload: CreateCompetencyCriterionPayload; }
+  >({
     mutationFn: (
       { tagId, payload }: { tagId: number; payload: CreateCompetencyCriterionPayload; },
     ) => api.createCompetencyCriterion(tagId, payload),

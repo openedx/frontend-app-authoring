@@ -48,6 +48,14 @@ const messages = defineMessages({
     description: 'Toast shown when creating a new criterion (associating a subsection with the active '
       + 'competency) fails.',
   },
+  createCriterionHierarchyConflictToastMessage: {
+    id: 'course-authoring.competency-management.create-criterion-hierarchy-conflict-toast-message',
+    defaultMessage: 'This competency can\'t be associated with this content because a parent or child '
+      + 'competency already has criteria in this course.',
+    description: 'Toast shown in place of the generic create-criterion failure when the backend rejects the '
+      + 'new criterion because an ancestor or descendant competency already has criteria in the same course '
+      + '(a 400 response with a "tag_id" field error).',
+  },
 });
 
 export default messages;

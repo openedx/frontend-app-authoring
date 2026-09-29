@@ -12,7 +12,7 @@ const criteria: CompetencyCriterion[] = [
   {
     id: 1,
     objectId: 'block-a',
-    competencyCriteriaGroupId: 10,
+    groupId: 10,
     ruleProfileId: null,
     ruleTypeOverride: 'grade',
     rulePayloadOverride: { op: 'gte', value: 0.7, scale: 'percent' },

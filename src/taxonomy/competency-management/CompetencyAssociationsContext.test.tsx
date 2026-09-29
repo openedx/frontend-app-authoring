@@ -41,27 +41,40 @@ const profileResponse = {
   ],
 };
 
-/** One course-level group (courseA, id 1) holding one bottom-tier group
- * (id 10) with one criterion (`existing-sub`, no override - resolves
- * through the default profile above).
+/** The competency's root group (id 500, instance-wide, never rendered),
+ * one course-level group (courseA, id 1) holding one leaf group (id 10)
+ * with one criterion (`existing-sub`, no override - resolves through the
+ * default profile above).
  */
 const singleGroupResponse: CompetencyCriteriaGroupsResponse = {
   groups: [
     {
-      id: 1,
+      id: 500,
       parentId: null,
-      depth: 1,
+      tagId,
+      courseKey: null,
+      name: 'root',
       ordering: 0,
-      logicOperator: 'and',
-      courseKey: courseA,
+      logicOperator: 'AND',
+      archived: false,
     },
-    { id: 10, parentId: 1, depth: 2, ordering: 0, logicOperator: 'and' },
+    {
+      id: 1,
+      parentId: 500,
+      tagId,
+      courseKey: courseA,
+      name: 'course',
+      ordering: 0,
+      logicOperator: 'AND',
+      archived: false,
+    },
+    { id: 10, parentId: 1, tagId, courseKey: null, name: 'leaf', ordering: 0, logicOperator: 'AND', archived: false },
   ],
   criteria: [
     {
       id: 900,
       objectId: 'existing-sub',
-      competencyCriteriaGroupId: 10,
+      groupId: 10,
       ruleProfileId: 1,
       ruleTypeOverride: null,
       rulePayloadOverride: null,
@@ -69,52 +82,78 @@ const singleGroupResponse: CompetencyCriteriaGroupsResponse = {
   ],
 };
 
-/** Same course-level group, but two bottom-tier groups (10 and 11) - so
- * "exactly one bottom-tier group" is false.
+/** Same course-level group, but two leaf groups (10 and 11) - so "exactly
+ * one bottom-tier group" is false.
  */
 const twoGroupsResponse: CompetencyCriteriaGroupsResponse = {
   groups: [
     {
-      id: 1,
+      id: 500,
       parentId: null,
-      depth: 1,
+      tagId,
+      courseKey: null,
+      name: 'root',
       ordering: 0,
-      logicOperator: 'and',
-      courseKey: courseA,
+      logicOperator: 'AND',
+      archived: false,
     },
-    { id: 10, parentId: 1, depth: 2, ordering: 0, logicOperator: 'and' },
-    { id: 11, parentId: 1, depth: 2, ordering: 1, logicOperator: 'and' },
+    {
+      id: 1,
+      parentId: 500,
+      tagId,
+      courseKey: courseA,
+      name: 'course',
+      ordering: 0,
+      logicOperator: 'AND',
+      archived: false,
+    },
+    { id: 10, parentId: 1, tagId, courseKey: null, name: 'leaf', ordering: 0, logicOperator: 'AND', archived: false },
+    { id: 11, parentId: 1, tagId, courseKey: null, name: 'leaf', ordering: 1, logicOperator: 'AND', archived: false },
   ],
   criteria: [],
 };
 
 const noGroupsResponse: CompetencyCriteriaGroupsResponse = { groups: [], criteria: [] };
 
-/** Two course-level groups: courseA (id 1, bottom-tier group 10) and
- * courseB (id 2, bottom-tier group 20) - used to prove a course whose own
+/** Two course-level groups under the same root: courseA (id 1, leaf group
+ * 10) and courseB (id 2, leaf group 20) - used to prove a course whose own
  * outline fetch fails is excluded from `accessibleCourseGroups` while a
  * sibling course whose outline succeeds is not.
  */
 const twoCoursesResponse: CompetencyCriteriaGroupsResponse = {
   groups: [
     {
-      id: 1,
+      id: 500,
       parentId: null,
-      depth: 1,
+      tagId,
+      courseKey: null,
+      name: 'root',
       ordering: 0,
-      logicOperator: 'and',
-      courseKey: courseA,
+      logicOperator: 'AND',
+      archived: false,
     },
-    { id: 10, parentId: 1, depth: 2, ordering: 0, logicOperator: 'and' },
+    {
+      id: 1,
+      parentId: 500,
+      tagId,
+      courseKey: courseA,
+      name: 'course',
+      ordering: 0,
+      logicOperator: 'AND',
+      archived: false,
+    },
+    { id: 10, parentId: 1, tagId, courseKey: null, name: 'leaf', ordering: 0, logicOperator: 'AND', archived: false },
     {
       id: 2,
-      parentId: null,
-      depth: 1,
-      ordering: 1,
-      logicOperator: 'and',
+      parentId: 500,
+      tagId,
       courseKey: courseB,
+      name: 'course',
+      ordering: 1,
+      logicOperator: 'AND',
+      archived: false,
     },
-    { id: 20, parentId: 2, depth: 2, ordering: 0, logicOperator: 'and' },
+    { id: 20, parentId: 2, tagId, courseKey: null, name: 'leaf', ordering: 0, logicOperator: 'AND', archived: false },
   ],
   criteria: [],
 };
@@ -322,11 +361,11 @@ describe('CompetencyAssociationsProvider', () => {
       axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
       axiosMock.onPost(createUrl).reply(201, {
         id: 901,
-        object_id: 'new-sub',
-        competency_criteria_group_id: 10,
+        group_id: 10,
         rule_profile_id: null,
         rule_type_override: 'grade',
         rule_payload_override: { op: 'gte', value: 0.7, scale: 'percent' },
+        object_tag_id: tagId,
       });
       renderProvider();
       // `associateSubsection` no-ops until the groups/profile queries have
@@ -351,11 +390,11 @@ describe('CompetencyAssociationsProvider', () => {
       axiosMock.onGet(profileUrl).reply(200, profileResponse);
       axiosMock.onPost(createUrl).reply(201, {
         id: 902,
-        object_id: 'new-sub',
-        competency_criteria_group_id: 20,
+        group_id: 20,
         rule_profile_id: 1,
         rule_type_override: null,
         rule_payload_override: null,
+        object_tag_id: tagId,
       });
       renderProvider();
       await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
@@ -372,11 +411,11 @@ describe('CompetencyAssociationsProvider', () => {
       axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
       axiosMock.onPost(createUrl).reply(201, {
         id: 903,
-        object_id: 'new-sub',
-        competency_criteria_group_id: 20,
+        group_id: 20,
         rule_profile_id: 1,
         rule_type_override: null,
         rule_payload_override: null,
+        object_tag_id: tagId,
       });
       renderProvider();
       await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
@@ -410,11 +449,11 @@ describe('CompetencyAssociationsProvider', () => {
       // local index, it would find nothing and resolve a `null` rule key.
       axiosMock.onPost(createUrl).reply(201, {
         id: 904,
-        object_id: 'new-sub',
-        competency_criteria_group_id: 999,
+        group_id: 999,
         rule_profile_id: null,
         rule_type_override: 'grade',
         rule_payload_override: { op: 'eq', value: 1, scale: 'percent' },
+        object_tag_id: tagId,
       });
       renderProvider();
       await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
@@ -425,6 +464,41 @@ describe('CompetencyAssociationsProvider', () => {
         expect(screen.getByTestId('focus')).toHaveTextContent('"groupId":999');
       });
       expect(screen.getByTestId('focus')).toHaveTextContent('"ruleKey":"grade:eq:1:percent"');
+    });
+
+    it('shows a specific toast when the create request 400s with a tag_id field error', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
+      axiosMock.onPost(createUrl).reply(400, {
+        tag_id: ['A parent or child competency already has criteria in this course.'],
+      });
+      renderProvider();
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+
+      fireEvent.click(screen.getByText('associate-course-a'));
+
+      await waitFor(() => {
+        expect(mockShowToast).toHaveBeenCalledWith(
+          'This competency can\'t be associated with this content because a parent or child '
+            + 'competency already has criteria in this course.',
+        );
+      });
+    });
+
+    it('shows the generic toast for a 400 that is not a tag_id field error', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
+      axiosMock.onPost(createUrl).reply(400, { object_id: ['This field is required.'] });
+      renderProvider();
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+
+      fireEvent.click(screen.getByText('associate-course-a'));
+
+      await waitFor(() => {
+        expect(mockShowToast).toHaveBeenCalledWith('There was a problem creating this association. Please try again.');
+      });
     });
   });
 });

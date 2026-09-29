@@ -293,7 +293,7 @@ export const CompetencyAssociationsProvider = ({
       const focusedGroup = index.groupsById.get(focus.groupId);
       if (focusedGroup && focusedGroup.parentId !== null) {
         const courseGroup = index.groupsById.get(focusedGroup.parentId);
-        if (courseGroup?.depth === 1 && courseGroup.courseKey === courseId && focus.ruleKey !== null) {
+        if (courseGroup?.courseKey === courseId && focus.ruleKey !== null) {
           const box = ruleBoxesForGroup(focus.groupId, index, systemDefaultProfile)
             .find((candidate) => candidate.key === focus.ruleKey);
           if (box) {
@@ -319,12 +319,22 @@ export const CompetencyAssociationsProvider = ({
         // tree still doesn't know about this brand-new criterion (or
         // group) and would resolve a stale/`null` rule key.
         setFocus({
-          groupId: criterion.competencyCriteriaGroupId,
+          groupId: criterion.groupId,
           ruleKey: ruleKeyOf(criterion, systemDefaultProfile),
         });
       },
-      onError: () => {
-        showToast(intl.formatMessage(messages.createCriterionFailedToastMessage));
+      onError: (error) => {
+        // The backend's hierarchy dominance check (ADR 0002): rejects a new
+        // criterion when an ancestor or descendant competency already has
+        // criteria in the same course, as a 400 with a `tag_id` field error.
+        const { response } = error;
+        const isHierarchyConflict = response?.status === 400
+          && typeof response.data === 'object' && response.data !== null && 'tag_id' in response.data;
+        showToast(intl.formatMessage(
+          isHierarchyConflict
+            ? messages.createCriterionHierarchyConflictToastMessage
+            : messages.createCriterionFailedToastMessage,
+        ));
       },
     });
   }, [associatedIds, index, systemDefaultProfile, focus, tagId, createCriterion, showToast, intl]);

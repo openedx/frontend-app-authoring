@@ -114,11 +114,11 @@ describe('useCreateCompetencyCriterion', () => {
     const { axiosMock, queryClient } = initializeMocks();
     axiosMock.onPost(apiUrls.createCompetencyCriterion(tagId)).reply(201, {
       id: 999,
-      object_id: 'block-a',
-      competency_criteria_group_id: 10,
+      group_id: 10,
       rule_profile_id: 1,
       rule_type_override: null,
       rule_payload_override: null,
+      object_tag_id: tagId,
     });
     queryClient.setQueryData(competencyQueryKeys.competencyCriteriaGroups(tagId), { groups: [], criteria: [] });
 
@@ -141,11 +141,11 @@ describe('useCreateCompetencyCriterion', () => {
     const otherTagId = 7;
     axiosMock.onPost(apiUrls.createCompetencyCriterion(tagId)).reply(201, {
       id: 999,
-      object_id: 'block-a',
-      competency_criteria_group_id: 10,
+      group_id: 10,
       rule_profile_id: 1,
       rule_type_override: null,
       rule_payload_override: null,
+      object_tag_id: tagId,
     });
     queryClient.setQueryData(competencyQueryKeys.competencyCriteriaGroups(otherTagId), { groups: [], criteria: [] });
 

@@ -18,12 +18,24 @@ const emptyGroupsResponse: CompetencyCriteriaGroupsResponse = { groups: [], crit
 const populatedGroupsResponse: CompetencyCriteriaGroupsResponse = {
   groups: [
     {
-      id: 1,
+      id: 100,
       parentId: null,
-      depth: 1,
+      tagId: 42,
+      courseKey: null,
+      name: 'root',
       ordering: 0,
-      logicOperator: 'and',
+      logicOperator: 'AND',
+      archived: false,
+    },
+    {
+      id: 1,
+      parentId: 100,
+      tagId: 42,
       courseKey: 'course-v1:OrgX+CS101+2024',
+      name: 'course',
+      ordering: 0,
+      logicOperator: 'AND',
+      archived: false,
     },
   ],
   criteria: [],

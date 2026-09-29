@@ -6,14 +6,14 @@ describe('<GroupConnector />', () => {
     initializeMocks();
   });
 
-  it('renders \'And\' as plain text with no control for an and operator', () => {
-    render(<GroupConnector logicOperator="and" />);
+  it('renders \'And\' as plain text with no control for an AND operator', () => {
+    render(<GroupConnector logicOperator="AND" />);
     expect(screen.getByText('And')).toBeInTheDocument();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('renders \'Or\' as plain text for an or operator', () => {
-    render(<GroupConnector logicOperator="or" />);
+  it('renders \'Or\' as plain text for an OR operator', () => {
+    render(<GroupConnector logicOperator="OR" />);
     expect(screen.getByText('Or')).toBeInTheDocument();
   });
 });

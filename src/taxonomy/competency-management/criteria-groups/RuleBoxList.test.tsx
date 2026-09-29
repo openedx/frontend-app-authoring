@@ -16,13 +16,22 @@ const systemDefaultProfile: CompetencyRuleProfile = {
 // and one with a different override (103).
 const response: CompetencyCriteriaGroupsResponse = {
   groups: [
-    { id: 10, parentId: null, depth: 2, ordering: 0, logicOperator: 'and' },
+    {
+      id: 10,
+      parentId: null,
+      tagId: 42,
+      courseKey: null,
+      name: 'leaf',
+      ordering: 0,
+      logicOperator: 'AND',
+      archived: false,
+    },
   ],
   criteria: [
     {
       id: 101,
       objectId: 'block-a',
-      competencyCriteriaGroupId: 10,
+      groupId: 10,
       ruleProfileId: 1,
       ruleTypeOverride: null,
       rulePayloadOverride: null,
@@ -30,7 +39,7 @@ const response: CompetencyCriteriaGroupsResponse = {
     {
       id: 102,
       objectId: 'block-b',
-      competencyCriteriaGroupId: 10,
+      groupId: 10,
       ruleProfileId: 1,
       ruleTypeOverride: null,
       rulePayloadOverride: null,
@@ -38,7 +47,7 @@ const response: CompetencyCriteriaGroupsResponse = {
     {
       id: 103,
       objectId: 'block-c',
-      competencyCriteriaGroupId: 10,
+      groupId: 10,
       ruleProfileId: null,
       ruleTypeOverride: 'grade',
       rulePayloadOverride: { op: 'lte', value: 0.9, scale: 'percent' },

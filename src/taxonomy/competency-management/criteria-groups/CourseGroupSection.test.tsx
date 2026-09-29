@@ -22,26 +22,57 @@ const outlineApiUrl = getCourseOutlineIndexApiUrl(courseKey);
 
 const courseGroup: CourseCompetencyCriteriaGroup = {
   id: 1,
-  parentId: null,
-  depth: 1,
+  parentId: 100,
+  tagId: 42,
+  name: 'course',
   ordering: 0,
-  logicOperator: 'or',
+  logicOperator: 'OR',
+  archived: false,
   courseKey,
 };
 
-// Two bottom-tier groups (10, 11) under the same course, each with one
-// criterion pointing at a real subsection in the outline fixture below.
+// The competency's root group (id 100, never rendered), plus two leaf
+// groups (10, 11) under the same course, each with one criterion pointing
+// at a real subsection in the outline fixture below.
 const response: CompetencyCriteriaGroupsResponse = {
   groups: [
+    {
+      id: 100,
+      parentId: null,
+      tagId: 42,
+      courseKey: null,
+      name: 'root',
+      ordering: 0,
+      logicOperator: 'AND',
+      archived: false,
+    },
     courseGroup,
-    { id: 10, parentId: 1, depth: 2, ordering: 0, logicOperator: 'and' },
-    { id: 11, parentId: 1, depth: 2, ordering: 1, logicOperator: 'and' },
+    {
+      id: 10,
+      parentId: 1,
+      tagId: 42,
+      courseKey: null,
+      name: 'leaf',
+      ordering: 0,
+      logicOperator: 'AND',
+      archived: false,
+    },
+    {
+      id: 11,
+      parentId: 1,
+      tagId: 42,
+      courseKey: null,
+      name: 'leaf',
+      ordering: 1,
+      logicOperator: 'AND',
+      archived: false,
+    },
   ],
   criteria: [
     {
       id: 101,
       objectId: 'sub-1a',
-      competencyCriteriaGroupId: 10,
+      groupId: 10,
       ruleProfileId: 1,
       ruleTypeOverride: null,
       rulePayloadOverride: null,
@@ -49,7 +80,7 @@ const response: CompetencyCriteriaGroupsResponse = {
     {
       id: 102,
       objectId: 'sub-2a',
-      competencyCriteriaGroupId: 11,
+      groupId: 11,
       ruleProfileId: 1,
       ruleTypeOverride: null,
       rulePayloadOverride: null,

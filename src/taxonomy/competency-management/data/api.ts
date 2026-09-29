@@ -2,10 +2,10 @@ import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import type {
   CompetencyCriteriaGroupsResponse,
-  CompetencyCriterion,
   CompetencyRuleProfile,
   CompetencyRuleProfileListResponse,
   CreateCompetencyCriterionPayload,
+  CreateCompetencyCriterionResponse,
 } from './types';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
@@ -82,7 +82,7 @@ export async function getDefaultCompetencyRuleProfile(): Promise<CompetencyRuleP
 export async function createCompetencyCriterion(
   tagId: number,
   payload: CreateCompetencyCriterionPayload,
-): Promise<CompetencyCriterion> {
+): Promise<CreateCompetencyCriterionResponse> {
   const { data } = await getAuthenticatedHttpClient().post(apiUrls.createCompetencyCriterion(tagId), payload);
   return camelCaseObject(data);
 }

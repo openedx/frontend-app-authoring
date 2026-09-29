@@ -24,9 +24,12 @@ const systemDefaultProfile: CompetencyRuleProfile = {
 const group: BottomTierCompetencyCriteriaGroup = {
   id: 10,
   parentId: 1,
-  depth: 2,
+  tagId: 42,
+  courseKey: null,
+  name: 'leaf',
   ordering: 0,
-  logicOperator: 'and',
+  logicOperator: 'AND',
+  archived: false,
 };
 
 const response: CompetencyCriteriaGroupsResponse = {
@@ -35,7 +38,7 @@ const response: CompetencyCriteriaGroupsResponse = {
     {
       id: 101,
       objectId: 'block-a',
-      competencyCriteriaGroupId: 10,
+      groupId: 10,
       ruleProfileId: 1,
       ruleTypeOverride: null,
       rulePayloadOverride: null,

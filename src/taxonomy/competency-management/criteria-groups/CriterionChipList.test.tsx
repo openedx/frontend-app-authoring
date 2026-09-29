@@ -5,7 +5,7 @@ import CriterionChipList from './CriterionChipList';
 const buildCriterion = (overrides: Partial<CompetencyCriterion> = {}): CompetencyCriterion => ({
   id: 1,
   objectId: 'block-a',
-  competencyCriteriaGroupId: 10,
+  groupId: 10,
   ruleProfileId: 1,
   ruleTypeOverride: null,
   rulePayloadOverride: null,

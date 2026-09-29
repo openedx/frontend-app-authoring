@@ -110,11 +110,11 @@ describe('competency-management api calls', () => {
     const payload = { object_id: 'block-a', group_id: 10 };
     axiosMock.onPost(apiUrls.createCompetencyCriterion(tagId)).reply(201, {
       id: 999,
-      object_id: 'block-a',
-      competency_criteria_group_id: 10,
+      group_id: 10,
       rule_profile_id: 1,
       rule_type_override: null,
       rule_payload_override: null,
+      object_tag_id: tagId,
     });
 
     const result = await createCompetencyCriterion(tagId, payload);
@@ -123,11 +123,11 @@ describe('competency-management api calls', () => {
     expect(JSON.parse(axiosMock.history.post[0].data)).toEqual(payload);
     expect(result).toEqual({
       id: 999,
-      objectId: 'block-a',
-      competencyCriteriaGroupId: 10,
+      groupId: 10,
       ruleProfileId: 1,
       ruleTypeOverride: null,
       rulePayloadOverride: null,
+      objectTagId: tagId,
     });
   });
 });

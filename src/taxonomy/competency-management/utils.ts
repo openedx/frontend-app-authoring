@@ -15,18 +15,19 @@ import type {
  * flat arrays.
  */
 export interface CompetencyCriteriaGroupsIndex {
-  /** Every group (course-level or bottom-tier), keyed by its own id. */
+  /** Every group (root, course-level, or leaf), keyed by its own id. */
   groupsById: Map<number, CompetencyCriteriaGroup>;
-  /** Every group's direct children, keyed by parent id. A course-level
-   * group's children are its bottom-tier groups; a bottom-tier group has
-   * no entry here (it has no children).
+  /** Every group's direct children, keyed by parent id. The root's
+   * children are course-level groups; a course-level group's children are
+   * its leaf (bottom-tier) groups; a leaf group has no entry here (it has
+   * no children).
    */
   childGroupsByParentId: Map<number, CompetencyCriteriaGroup[]>;
-  /** Every criterion belonging to one bottom-tier group, keyed by that
-   * group's id.
-   */
+  /** Every criterion belonging to one leaf group, keyed by that group's id. */
   criteriaByGroupId: Map<number, CompetencyCriterion[]>;
-  /** Every course-level (depth-1) group, in the order the API returned them. */
+  /** Every course-level group (`courseKey !== null`), in the order the API
+   * returned them.
+   */
   courseGroups: CourseCompetencyCriteriaGroup[];
 }
 
@@ -43,8 +44,8 @@ export function buildCompetencyCriteriaGroupsIndex(
 
   response.groups.forEach((group) => {
     groupsById.set(group.id, group);
-    if (group.depth === 1) {
-      courseGroups.push(group);
+    if (group.courseKey !== null) {
+      courseGroups.push(group as CourseCompetencyCriteriaGroup);
     }
     if (group.parentId !== null) {
       const siblings = childGroupsByParentId.get(group.parentId) ?? [];
@@ -55,9 +56,9 @@ export function buildCompetencyCriteriaGroupsIndex(
 
   const criteriaByGroupId = new Map<number, CompetencyCriterion[]>();
   response.criteria.forEach((criterion) => {
-    const siblings = criteriaByGroupId.get(criterion.competencyCriteriaGroupId) ?? [];
+    const siblings = criteriaByGroupId.get(criterion.groupId) ?? [];
     siblings.push(criterion);
-    criteriaByGroupId.set(criterion.competencyCriteriaGroupId, siblings);
+    criteriaByGroupId.set(criterion.groupId, siblings);
   });
 
   return {
@@ -74,7 +75,7 @@ export function buildCompetencyCriteriaGroupsIndex(
  * reference} or {both override fields}, never both, never neither.
  */
 export function effectiveRuleOf(
-  criterion: CompetencyCriterion,
+  criterion: Pick<CompetencyCriterion, 'ruleTypeOverride' | 'rulePayloadOverride'>,
   systemDefaultProfile: CompetencyRuleProfile,
 ): EffectiveRule {
   if (criterion.ruleTypeOverride !== null && criterion.rulePayloadOverride !== null) {
@@ -89,13 +90,16 @@ export function effectiveRuleOf(
  * two otherwise-identical payloads (e.g. one built by the API client, one
  * reconstructed from a form).
  */
-export function ruleKeyOf(criterion: CompetencyCriterion, systemDefaultProfile: CompetencyRuleProfile): string {
+export function ruleKeyOf(
+  criterion: Pick<CompetencyCriterion, 'ruleTypeOverride' | 'rulePayloadOverride'>,
+  systemDefaultProfile: CompetencyRuleProfile,
+): string {
   const { ruleType, rulePayload } = effectiveRuleOf(criterion, systemDefaultProfile);
   const { op, value, scale } = rulePayload;
   return `${ruleType}:${op}:${value}:${scale}`;
 }
 
-/** Groups one bottom-tier group's criteria into rule boxes by
+/** Groups one leaf group's criteria into rule boxes by
  * `ruleKeyOf` - criteria sharing the same effective rule render as a
  * single box. Boxes are ordered by their lowest criterion `id` ascending,
  * rule key as a tie-break.

@@ -14,24 +14,24 @@ describe('<LogicOperatorSelect />', () => {
   });
 
   it('renders plain, non-interactive text when no onChange is given', () => {
-    render(<LogicOperatorSelect value="and" labels={labels} />);
+    render(<LogicOperatorSelect value="AND" labels={labels} />);
 
     expect(screen.getByText('all')).toBeInTheDocument();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('renders the \'or\' label\'s text when value is \'or\'', () => {
-    render(<LogicOperatorSelect value="or" labels={labels} />);
+  it('renders the \'OR\' label\'s text when value is \'OR\'', () => {
+    render(<LogicOperatorSelect value="OR" labels={labels} />);
     expect(screen.getByText('any')).toBeInTheDocument();
   });
 
   it('renders an interactive control and calls onChange when given', () => {
     const onChange = jest.fn();
-    render(<LogicOperatorSelect value="and" labels={labels} onChange={onChange} />);
+    render(<LogicOperatorSelect value="AND" labels={labels} onChange={onChange} />);
 
     fireEvent.click(screen.getByRole('button'));
     fireEvent.click(screen.getByText('any'));
 
-    expect(onChange).toHaveBeenCalledWith('or');
+    expect(onChange).toHaveBeenCalledWith('OR');
   });
 });
