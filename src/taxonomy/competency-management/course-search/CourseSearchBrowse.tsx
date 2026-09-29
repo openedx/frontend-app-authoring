@@ -61,11 +61,6 @@ const formatDateOnlyParam = (date: Date) => moment(date).format('YYYY-MM-DD');
 const noop = () => {};
 
 interface DateRangeTriggerProps {
-  /** Whether a start (and/or end) date is currently picked - drives the
-   * highlighted visual state below. The trigger's own visible text never
-   * changes to reflect the picked value (see the component docstring).
-   */
-  hasSelection: boolean;
   /** Accessible name and visible text, passed down rather than looked up
    * again here via `useIntl` since the parent already has it.
    */
@@ -89,13 +84,12 @@ interface DateRangeTriggerProps {
  * react-datepicker's `customInput` mechanism always overwrites the injected
  * `value` prop with its own formatted string, which overflows a control sized
  * for a short label once a full range is picked - so this component ignores
- * `props.value` entirely and shows the picked state via `hasSelection`
- * instead. `forwardRef` is required because react-datepicker attaches a ref
- * to the trigger for popup positioning.
+ * `props.value` entirely and always shows just `label`. `forwardRef` is
+ * required because react-datepicker attaches a ref to the trigger for popup
+ * positioning.
  */
 const DateRangeTrigger = forwardRef<HTMLButtonElement, DateRangeTriggerProps>(
   ({
-    hasSelection,
     label,
     onClick,
     className,
@@ -103,8 +97,9 @@ const DateRangeTrigger = forwardRef<HTMLButtonElement, DateRangeTriggerProps>(
     <Button
       ref={ref}
       type="button"
-      variant={hasSelection ? 'primary' : 'outline-primary'}
-      iconAfter={Calendar}
+      variant="tertiary"
+      size="sm"
+      iconBefore={Calendar}
       onClick={onClick}
       className={className}
       aria-label={label}
@@ -233,7 +228,8 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
             currentPage={page}
             onPageSelect={setPage}
             paginationLabel="pagination navigation"
-            className="d-flex justify-content-center w-100"
+            size="small"
+            className="course-search-browse__pagination d-flex justify-content-center w-100"
           />
         )}
       </>
@@ -243,7 +239,7 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
   return (
     <div className="course-search-browse">
       <div className="course-search-browse__toolbar">
-        <Stack direction="horizontal" gap={3}>
+        <Stack direction="horizontal" gap={2}>
           <SearchField
             className="flex-grow-1"
             onSubmit={noop}
@@ -265,7 +261,6 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
               popperPlacement="bottom-end"
               customInput={
                 <DateRangeTrigger
-                  hasSelection={dateRange[0] !== null}
                   label={intl.formatMessage(messages.dateRangeLabel)}
                 />
               }
