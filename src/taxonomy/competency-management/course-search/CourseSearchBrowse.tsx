@@ -10,7 +10,6 @@ import {
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Badge,
   Button,
   IconButton,
   Pagination,
@@ -29,6 +28,7 @@ import { DATE_FORMAT } from '@src/constants';
 import { useStudioHomeCoursesV2 } from '@src/studio-home/data/apiHooks';
 import type { CompetencyTreeNode } from '../CompetencyTree';
 import CourseRow from './CourseRow';
+import CriteriaAssociationsSection from './CriteriaAssociationsSection';
 import messages from './messages';
 // @ts-ignore
 import './CourseSearchBrowse.scss';
@@ -45,19 +45,13 @@ export interface CourseSearchBrowseProps {
 const PAGE_SIZE = 10;
 
 // The backend's `start_date_on_or_after`/`start_date_on_or_before` filters
-// (`get_date_param`) 400 on anything but a plain `YYYY-MM-DD` value, so this
-// formats the calendar day the user actually picked, in their own local
-// time, rather than reusing `convertToStringFromDate` (a UTC-converting
-// datetime string meant for a different kind of API field, and one the
-// backend would reject here).
+// 400 on anything but a plain `YYYY-MM-DD` value, so this uses the picked
+// calendar day in local time rather than a UTC-converting datetime string.
 const formatDateOnlyParam = (date: Date) => moment(date).format('YYYY-MM-DD');
 
-// A stable no-op for `SearchField`'s required `onSubmit` prop. Paragon's
-// `SearchFieldAdvanced` re-invokes its own `onChange` handler whenever that
-// prop's reference changes, not only when the search value itself changes
-// (see `handleSearchChange` below, which is memoized for exactly this
-// reason) - `onSubmit` isn't known to have the same effect today, but a
-// stable reference costs nothing and avoids relying on that not changing.
+// A stable no-op for `SearchField`'s required `onSubmit`: Paragon's
+// `SearchFieldAdvanced` re-invokes its own `onChange` whenever this prop's
+// reference changes, so a stable reference avoids relying on that.
 const noop = () => {};
 
 interface DateRangeTriggerProps {
@@ -83,15 +77,13 @@ interface DateRangeTriggerProps {
 }
 
 /** DateRangeTrigger
- * Trigger button rendered in place of react-datepicker's default `<input>`
- * for the course start-date range filter, via `<DatePicker customInput={...}>`.
+ * Trigger button in place of react-datepicker's default `<input>`.
  *
- * react-datepicker's `customInput` mechanism always overwrites the injected
- * `value` prop with its own formatted string, which overflows a control sized
- * for a short label once a full range is picked - so this component ignores
- * `props.value` entirely and shows the picked state via `hasSelection`
- * instead. `forwardRef` is required because react-datepicker attaches a ref
- * to the trigger for popup positioning.
+ * react-datepicker's `customInput` always overwrites the cloned element's
+ * `value` with its own formatted range string, which overflows a control
+ * sized for a short label. This ignores `props.value` entirely, rendering
+ * the fixed `label` and using `hasSelection` to show something is picked.
+ * `forwardRef` is required for react-datepicker's popup-positioning ref.
  */
 const DateRangeTrigger = forwardRef<HTMLButtonElement, DateRangeTriggerProps>(
   ({
@@ -129,11 +121,9 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  // Any real change to the debounced search value starts the results over
-  // at page 1. Both `search` and `page` are set together, in the same
-  // state-update batch, so a render never sees the old page number paired
-  // with the new search value (which would fire a wasted, possibly
-  // out-of-range request before the page-1 correction caught up).
+  // `search` and `page` are set together in the same batch, so a render
+  // never sees the new search paired with the old (possibly out-of-range)
+  // page.
   const debouncedUpdateSearch = useMemo(
     () =>
       debounce((value: string) => {
@@ -144,12 +134,10 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
   );
   useEffect(() => () => debouncedUpdateSearch.cancel(), [debouncedUpdateSearch]);
 
-  // Memoized (not a plain inline function) because `SearchFieldAdvanced` re-fires
-  // its own onChange-calling effect whenever this reference changes on its own,
-  // even if the search value didn't - see `noop` above. An unmemoized version of
-  // this handler fed a stale value back on every parent re-render, flipping
-  // `inputValue` back and forth forever the moment anything else (e.g. clearing
-  // the search) also changed `inputValue` in the same render pass.
+  // Memoized: `SearchFieldAdvanced` re-fires its onChange-calling effect
+  // whenever this reference changes, even if the value didn't (see `noop`
+  // above) - an unmemoized handler fed a stale value back on every
+  // re-render, flipping `inputValue` back and forth.
   const handleSearchChange = useCallback((value: string) => {
     setInputValue(value);
     debouncedUpdateSearch(value);
@@ -162,12 +150,8 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
     setPage(1);
   }, [debouncedUpdateSearch]);
 
-  // Course start-date range filter. The handler sets the whole range and
-  // resets `page` back to 1 in the same function body - both in the same
-  // state-update batch - for the same reason `debouncedUpdateSearch` above
-  // does: a separate effect keyed on the changing range would let a render
-  // fire with the new range paired with the old (possibly out-of-range) page
-  // before the page-1 correction caught up.
+  // Course start-date range filter; sets range and page together, same
+  // reason as `debouncedUpdateSearch` above.
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
 
   const handleDateRangeChange = (range: [Date | null, Date | null]) => {
@@ -282,43 +266,12 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
           </div>
         </Stack>
       </div>
-      <div className="course-search-browse__panel">
-        <div className="course-search-browse__associations">
-          <div className="course-search-browse__associations-label">
-            {intl.formatMessage(messages.associationsSectionLabel)}
-          </div>
-          <div className="course-search-browse__associations-mastery">
-            {intl.formatMessage(messages.demonstrateMasteryForLabel, {
-              competencyName: <strong>{activeCompetency.value}</strong>,
-            })}
-            {activeCompetency.externalId && (
-              <>
-                <span className="sr-only">
-                  {intl.formatMessage(messages.competencyIdAccessibleLabel, {
-                    externalId: activeCompetency.externalId,
-                  })}
-                </span>
-                <Badge variant="info" className="competency-row__badge ml-2" aria-hidden="true">
-                  {activeCompetency.externalId}
-                </Badge>
-              </>
-            )}
-          </div>
-          <div className="course-search-browse__associations-empty-state">
-            <p>
-              {intl.formatMessage(messages.noAssociationsMessage, {
-                competencyName: <strong>{activeCompetency.value}</strong>,
-              })}
-            </p>
-            <p>{intl.formatMessage(messages.noAssociationsPromptMessage)}</p>
-          </div>
+      <CriteriaAssociationsSection competencyName={activeCompetency.value} />
+      <div className="course-search-browse__container">
+        <div className="course-search-browse__section-label">
+          {intl.formatMessage(messages.coursesAndContentLabel)}
         </div>
-        <div className="course-search-browse__container">
-          <div className="course-search-browse__section-label">
-            {intl.formatMessage(messages.coursesAndContentLabel)}
-          </div>
-          {body}
-        </div>
+        {body}
       </div>
     </div>
   );
