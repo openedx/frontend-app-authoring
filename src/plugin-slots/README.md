@@ -14,6 +14,8 @@
 
 ## Other Slots
 
+- [`org.openedx.frontend.authoring.routes.v1`](./RoutesSlot/)
+
 - [`org.openedx.frontend.authoring.additional_course_content_plugin.v1`](./AdditionalCourseContentPluginSlot/)
 - [`org.openedx.frontend.authoring.additional_course_plugin.v1`](./AdditionalCoursePluginSlot/)
 - [`org.openedx.frontend.authoring.video_transcript_additional_translations_component.v1`](./AdditionalTranslationsComponentSlot/)
