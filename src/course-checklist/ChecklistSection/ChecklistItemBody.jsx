@@ -3,22 +3,19 @@ import { Link } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { ActionRow, Button, Icon } from '@openedx/paragon';
 import { CheckCircle, RadioButtonUnchecked } from '@openedx/paragon/icons';
-import { getConfig } from '@edx/frontend-platform';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import * as permissionHelpers from '@src/authz/permissionHelpers';
 
 import messages from './messages';
 
-const getUpdateLinks = (courseId) => {
-  const baseUrl = getConfig().STUDIO_BASE_URL;
-
-  return {
-    welcomeMessage: `/course/${courseId}/course_info`,
-    gradingPolicy: `/course/${courseId}/settings/grading`,
-    certificate: `/course/${courseId}/certificates`,
-    courseDates: `/course/${courseId}/settings/details/#schedule`,
-    proctoringEmail: `${baseUrl}/pages-and-resources/proctoring/settings`,
-    outline: `/course/${courseId}`,
-  };
-};
+const getUpdateLinks = (courseId) => ({
+  welcomeMessage: `/course/${courseId}/course_info`,
+  gradingPolicy: `/course/${courseId}/settings/grading`,
+  certificate: `/course/${courseId}/certificates`,
+  courseDates: `/course/${courseId}/settings/details/#schedule`,
+  proctoringEmail: `/course/${courseId}/pages-and-resources/proctoring/settings`,
+  outline: `/course/${courseId}`,
+});
 
 const ChecklistItemBody = ({
   courseId,
@@ -27,6 +24,22 @@ const ChecklistItemBody = ({
 }) => {
   const intl = useIntl();
   const updateLinks = getUpdateLinks(courseId);
+  const perms = useCourseUserPermissions(courseId, {
+    ...permissionHelpers.getCourseUpdatesPermissions(courseId),
+    ...permissionHelpers.getGradingPermissions(courseId),
+    ...permissionHelpers.getCertificatesPermissions(courseId),
+    ...permissionHelpers.getScheduleAndDetailsPermissions(courseId),
+    ...permissionHelpers.getPagesAndResourcesPermissions(courseId),
+  });
+  // Each update link is only shown if the user can make changes on the page it points to.
+  const canUpdate = {
+    welcomeMessage: perms.canManageCourseUpdates,
+    gradingPolicy: perms.canEditGradingSettings,
+    certificate: perms.canManageCertificates,
+    courseDates: perms.canEditSchedule,
+    proctoringEmail: perms.canManagePagesAndResources,
+  };
+  const showUpdateLink = !!updateLinks?.[checkId] && !!canUpdate[checkId];
 
   return (
     <ActionRow>
@@ -59,7 +72,7 @@ const ChecklistItemBody = ({
         </div>
       </div>
       <ActionRow.Spacer />
-      {updateLinks?.[checkId] && (
+      {showUpdateLink && (
         <Link
           to={updateLinks[checkId]}
           data-testid="update-link"
