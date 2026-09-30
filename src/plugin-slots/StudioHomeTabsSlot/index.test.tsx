@@ -9,9 +9,10 @@ const widget = (extra = {}) => ({
   op: PLUGIN_OPERATIONS.Insert,
   widget: { id: 'tab', type: DIRECT_PLUGIN, title: 'Converter', path: '/course-converter', ...extra },
 });
-const withPlugins = (plugins: object[]) => (getConfig as jest.Mock).mockReturnValue({
-  pluginSlots: { [STUDIO_HOME_TABS_SLOT_ID]: { plugins } },
-});
+const withPlugins = (plugins: object[]) =>
+  (getConfig as jest.Mock).mockReturnValue({
+    pluginSlots: { [STUDIO_HOME_TABS_SLOT_ID]: { plugins } },
+  });
 
 describe('StudioHomeTabsSlot', () => {
   it('returns no tabs without configuration', () => {
@@ -25,7 +26,11 @@ describe('StudioHomeTabsSlot', () => {
   });
 
   it('ignores other operations and incomplete widgets', () => {
-    withPlugins([{ op: PLUGIN_OPERATIONS.Hide, widgetId: 'x' }, widget({ title: undefined }), widget({ path: undefined })]);
+    withPlugins([
+      { op: PLUGIN_OPERATIONS.Hide, widgetId: 'x' },
+      widget({ title: undefined }),
+      widget({ path: undefined }),
+    ]);
     expect(getPluginHomeTabs()).toEqual([]);
   });
 

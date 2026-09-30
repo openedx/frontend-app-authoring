@@ -37,7 +37,7 @@ const TabsSection = ({
     taxonomies: 'taxonomies',
   } as const;
   // Plugin tabs (see StudioHomeTabsSlot) bring their own keys.
-  type TabKeyType = keyof typeof TABS_LIST | string;
+  type TabKeyType = string;
 
   const initTabKeyState = (pname: string) => {
     if (pname.includes('/libraries') && librariesV2Enabled) {
@@ -106,9 +106,7 @@ const TabsSection = ({
   }, [showNewCourseContainer, isShowProcessing]);
 
   // Not memoized: whether a plugin tab is visible can depend on the user, who may not be ready on first render.
-  const pluginTabs = getPluginHomeTabs().map((tab) => (
-    <Tab key={tab.key} eventKey={tab.key} title={tab.title} />
-  ));
+  const pluginTabs = getPluginHomeTabs().map((tab) => <Tab key={tab.key} eventKey={tab.key} title={tab.title} />);
 
   const handleSelectTab = (tab: TabKeyType) => {
     if (tab === TABS_LIST.courses) {

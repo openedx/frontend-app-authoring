@@ -21,7 +21,7 @@ export const getPluginRoutes = () => {
   const { plugins = [] } = (getConfig() as any).pluginSlots?.[ROUTES_SLOT_ID] ?? {};
   return plugins
     .filter((plugin: any) => plugin.op === PLUGIN_OPERATIONS.Insert && plugin.widget?.path)
-    .map(({ widget }: { widget: RouteWidget }) => (
+    .map(({ widget }: { widget: RouteWidget; }) => (
       <Route key={widget.id} path={widget.path} element={<widget.RenderWidget />} />
     ));
 };
