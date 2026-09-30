@@ -162,15 +162,9 @@ export const getLibraryContainersApiUrl = (libraryId: string) =>
   `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/containers/`;
 /**
  * Get the URL for the container detail api.
- *
- * `courseId` is optional: passing it lets the backend grant access via the course's
- * `view_library_updates` permission when the caller is reviewing this container from a
- * course it doesn't otherwise have library access from. Callers that use this as a base for
- * other endpoints (restore, hierarchy, etc.) should omit it.
  */
-export const getLibraryContainerApiUrl = (containerId: string, courseId?: string) =>
-  `${getApiBaseUrl()}/api/libraries/v2/containers/${containerId}/`
-  + (courseId ? `?course_id=${encodeURIComponent(courseId)}` : '');
+export const getLibraryContainerApiUrl = (containerId: string) =>
+  `${getApiBaseUrl()}/api/libraries/v2/containers/${containerId}/`;
 /**
  * Get the URL for restore a container
  */
@@ -179,9 +173,22 @@ export const getLibraryContainerRestoreApiUrl = (containerId: string) =>
 /**
  * Get the URL for a single container children api.
  */
-export const getLibraryContainerChildrenApiUrl = (containerId: string, published: boolean = false, courseId?: string) =>
-  `${getLibraryContainerApiUrl(containerId)}children/?published=${published}`
-  + (courseId ? `&course_id=${encodeURIComponent(courseId)}` : '');
+export const getLibraryContainerChildrenApiUrl = (containerId: string, published: boolean = false) =>
+  `${getLibraryContainerApiUrl(containerId)}children/?published=${published}`;
+
+/**
+ * Axios request config for the optional downstream-course-review bypass shared by
+ * `getContainerMetadata` and `getLibraryContainerChildren`.
+ *
+ * Passing `downstreamBlockId` lets the backend grant access via the course's
+ * `view_library_updates` permission when the caller is reviewing this container/block from a
+ * course it doesn't otherwise have library access from. It must be the downstream course
+ * block's usage key, not a bare course id: the backend verifies that block is actually linked
+ * to the upstream resource being requested before granting access.
+ */
+const downstreamReviewConfig = (downstreamBlockId?: string) => (
+  downstreamBlockId ? { params: { course_id: downstreamBlockId } } : undefined
+);
 /**
  * Get the URL for a single container hierarchy api.
  */
@@ -789,8 +796,11 @@ export interface Container {
 /**
  * Get the container metadata.
  */
-export async function getContainerMetadata(containerId: string, courseId?: string): Promise<Container> {
-  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerApiUrl(containerId, courseId));
+export async function getContainerMetadata(containerId: string, downstreamBlockId?: string): Promise<Container> {
+  const { data } = await getAuthenticatedHttpClient().get(
+    getLibraryContainerApiUrl(containerId),
+    downstreamReviewConfig(downstreamBlockId),
+  );
   return camelCaseObject(data);
 }
 
@@ -831,10 +841,11 @@ export async function restoreContainer(containerId: string) {
 export async function getLibraryContainerChildren<ChildType = LibraryBlockMetadata | Container>(
   containerId: string,
   published: boolean = false,
-  courseId?: string,
+  downstreamBlockId?: string,
 ): Promise<ChildType[]> {
   const { data } = await getAuthenticatedHttpClient().get(
-    getLibraryContainerChildrenApiUrl(containerId, published, courseId),
+    getLibraryContainerChildrenApiUrl(containerId, published),
+    downstreamReviewConfig(downstreamBlockId),
   );
   return camelCaseObject(data);
 }

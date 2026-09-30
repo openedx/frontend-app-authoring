@@ -18,11 +18,13 @@ interface Props {
   sideBySide?: boolean;
   showTitle?: boolean;
   /**
-   * The downstream (course) block id this comparison is being viewed from, if any. Lets the
-   * backend grant access to the upstream library block via the course's `view_library_updates`
-   * permission when the current user doesn't otherwise have direct library access.
+   * The usage key of the downstream course block this comparison is being viewed from, if any.
+   * Lets the backend grant access to the upstream library block via the course's
+   * `view_library_updates` permission when the current user doesn't otherwise have direct
+   * library access. See LibraryBlock's `downstreamBlockId` prop for why this must be a usage
+   * key, not a bare course id.
    */
-  courseId?: string;
+  downstreamBlockId?: string;
 }
 
 /**
@@ -43,7 +45,7 @@ const CompareChangesWidget = ({
   hasLocalChanges = false,
   sideBySide = false,
   showTitle = false,
-  courseId,
+  downstreamBlockId,
 }: Props) => {
   const intl = useIntl();
 
@@ -78,7 +80,7 @@ const CompareChangesWidget = ({
               minHeight="45vh"
               showTitle={showTitle}
               addHeight={70}
-              courseId={courseId}
+              downstreamBlockId={downstreamBlockId}
             />
           </IframeProvider>
         </div>
@@ -104,7 +106,7 @@ const CompareChangesWidget = ({
             showTitle={showNewTitle || showTitle}
             minHeight="45vh"
             addHeight={70}
-            courseId={courseId}
+            downstreamBlockId={downstreamBlockId}
           />
         </IframeProvider>
       </Card.Body>

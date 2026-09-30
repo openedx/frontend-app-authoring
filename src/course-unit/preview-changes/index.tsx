@@ -160,7 +160,7 @@ export const PreviewLibraryXBlockChanges = ({
       <CompareChangesWidget
         usageKey={blockData.upstreamBlockId}
         oldUsageKey={blockData.downstreamBlockId}
-        courseId={blockData.downstreamBlockId}
+        downstreamBlockId={blockData.downstreamBlockId}
         oldTitle={isTextWithLocalChanges ? blockData.displayName : undefined}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
         newVersion="published"

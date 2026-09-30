@@ -16,7 +16,7 @@ describe('CompareContainersWidget', () => {
   });
 
   test('renders the component with a title', async () => {
-    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId, mockGetCourseContainerChildren.sectionId);
+    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
     axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
     render(
       <CompareContainersWidget
@@ -38,6 +38,21 @@ describe('CompareContainersWidget', () => {
     )).not.toBeInTheDocument();
   });
 
+  test('sends downstreamBlockId as the course_id param when reviewing from a course', async () => {
+    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
+    axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
+    render(
+      <CompareContainersWidget
+        upstreamBlockId={mockGetContainerMetadata.sectionId}
+        downstreamBlockId={mockGetCourseContainerChildren.sectionId}
+      />,
+    );
+    await screen.findAllByText('Test Title');
+
+    const metadataRequest = axiosMock.history.get.find((request) => request.url === url);
+    expect(metadataRequest?.params).toEqual({ course_id: mockGetCourseContainerChildren.sectionId });
+  });
+
   test('renders loading spinner when data is pending', async () => {
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionIdLoading);
     axiosMock.onGet(url).reply(() => new Promise(() => {}));
@@ -57,14 +72,11 @@ describe('CompareContainersWidget', () => {
 
   test('calls onRowClick when a row is clicked and updates diff view', async () => {
     // mocks title
+    axiosMock.onGet(getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId)).reply(200, {
+      publishedDisplayName: 'Test Title',
+    });
     axiosMock.onGet(
-      getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId, mockGetCourseContainerChildren.sectionId),
-    ).reply(200, { publishedDisplayName: 'Test Title' });
-    axiosMock.onGet(
-      getLibraryContainerApiUrl(
-        'lct:org1:Demo_course_generated:subsection:subsection-0',
-        mockGetCourseContainerChildren.subsectionId,
-      ),
+      getLibraryContainerApiUrl('lct:org1:Demo_course_generated:subsection:subsection-0'),
     ).reply(200, { publishedDisplayName: 'subsection block 0' });
 
     const user = userEvent.setup();
@@ -100,14 +112,11 @@ describe('CompareContainersWidget', () => {
 
   test('should show removed container diff state', async () => {
     // mocks title
+    axiosMock.onGet(getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId)).reply(200, {
+      publishedDisplayName: 'Test Title',
+    });
     axiosMock.onGet(
-      getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId, mockGetCourseContainerChildren.sectionId),
-    ).reply(200, { publishedDisplayName: 'Test Title' });
-    axiosMock.onGet(
-      getLibraryContainerApiUrl(
-        'lct:org1:Demo_course_generated:subsection:subsection-0',
-        mockGetCourseContainerChildren.subsectionId,
-      ),
+      getLibraryContainerApiUrl('lct:org1:Demo_course_generated:subsection:subsection-0'),
     ).reply(200, { publishedDisplayName: 'subsection block 0' });
 
     const user = userEvent.setup();
@@ -130,12 +139,9 @@ describe('CompareContainersWidget', () => {
 
   test('should show new added container diff state', async () => {
     // mocks title
-    axiosMock.onGet(
-      getLibraryContainerApiUrl(
-        mockGetContainerMetadata.sectionId,
-        'block-v1:UNIX+UX1+2025_T3+type@section+block@0-new',
-      ),
-    ).reply(200, { publishedDisplayName: 'Test Title' });
+    axiosMock.onGet(getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId)).reply(200, {
+      publishedDisplayName: 'Test Title',
+    });
     axiosMock.onGet(
       getLibraryContainerApiUrl('lct:org1:Demo_course_generated:subsection:subsection-0'),
     ).reply(200, { publishedDisplayName: 'subsection block 0' });
@@ -154,10 +160,7 @@ describe('CompareContainersWidget', () => {
   });
 
   test('should show alert if the only change is a single text component with local overrides', async () => {
-    const url = getLibraryContainerApiUrl(
-      mockGetContainerMetadata.sectionId,
-      mockGetCourseContainerChildren.sectionShowsAlertSingleText,
-    );
+    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
     axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
     render(
       <CompareContainersWidget
@@ -175,10 +178,7 @@ describe('CompareContainersWidget', () => {
   });
 
   test('should show alert if the only changes is multiple text components with local overrides', async () => {
-    const url = getLibraryContainerApiUrl(
-      mockGetContainerMetadata.sectionId,
-      mockGetCourseContainerChildren.sectionShowsAlertMultipleText,
-    );
+    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
     axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
     render(
       <CompareContainersWidget
