@@ -83,7 +83,7 @@ const SectionHeader = ({
         size="sm"
         onClick={onToggle}
       />
-      <div className="ml-2">{displayName}</div>
+      <div className="course-search-browse__section-title ml-2">{displayName}</div>
     </div>
   );
 };
