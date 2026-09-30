@@ -1,0 +1,19 @@
+{
+  "name": "@openedx-plugins/xblock-invideoquiz-editor",
+  "version": "0.1.0",
+  "description": "Studio authoring editor for the In-Video Quiz XBlock",
+  "main": "index.tsx",
+  "peerDependencies": {
+    "@edx/frontend-app-authoring": "*",
+    "@edx/frontend-platform": "*",
+    "@openedx/paragon": "*",
+    "@tanstack/react-query": "*",
+    "react": "*",
+    "react-redux": "*"
+  },
+  "peerDependenciesMeta": {
+    "@edx/frontend-app-authoring": {
+      "optional": true
+    }
+  }
+}

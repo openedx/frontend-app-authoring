@@ -12,6 +12,10 @@
 - [`org.openedx.frontend.authoring.course_unit_header_actions.v1`](./CourseUnitHeaderActionsSlot/)
 - [`org.openedx.frontend.authoring.course_unit_sidebar.v2`](./CourseAuthoringUnitSidebarSlot/)
 
+## Editors
+
+- [`org.openedx.frontend.authoring.xblock_editor.<blockType>.v1`](./XBlockEditorSlot/)
+
 ## Other Slots
 
 - [`org.openedx.frontend.authoring.additional_course_content_plugin.v1`](./AdditionalCourseContentPluginSlot/)

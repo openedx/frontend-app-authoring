@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { initializeMockApp } from '@edx/frontend-platform';
+import { initializeMockApp, mergeConfig } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { Provider } from 'react-redux';
 
@@ -52,6 +52,7 @@ describe('useMessageHandlers', () => {
       handleCloseLegacyEditorXBlockModal: jest.fn(),
       handleSaveEditedXBlockData: jest.fn(),
       handleFinishXBlockDragging: jest.fn(),
+      handleEditXBlock: jest.fn(),
     };
 
     initializeMockApp({
@@ -93,5 +94,90 @@ describe('useMessageHandlers', () => {
     if (expectedArg !== undefined) {
       expect(handlers[handlerKey]).toHaveBeenCalledWith(expectedArg);
     }
+  });
+
+  describe('editXBlock routing to a plugin-supplied editor', () => {
+    const usageId = 'block-v1:Org+Course+Run+type@invideoquiz+block@abc123';
+
+    afterEach(() => {
+      mergeConfig({ pluginSlots: {} });
+    });
+
+    it('opens the legacy modal when no plugin is configured for the block type', () => {
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: usageId });
+      });
+      expect(handlers.handleShowLegacyEditXBlockModal).toHaveBeenCalledWith(usageId);
+      expect(handlers.handleEditXBlock).not.toHaveBeenCalled();
+    });
+
+    it('opens this app\'s editor when a plugin is registered under the canonical slot id', () => {
+      mergeConfig({
+        pluginSlots: {
+          'org.openedx.frontend.authoring.xblock_editor.invideoquiz.v1': {
+            keepDefault: false,
+            plugins: [{ op: 'insert', widget: { id: 'invideoquiz-editor' } }],
+          },
+        },
+      });
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: usageId });
+      });
+      expect(handlers.handleEditXBlock).toHaveBeenCalledWith('invideoquiz', usageId);
+      expect(handlers.handleShowLegacyEditXBlockModal).not.toHaveBeenCalled();
+    });
+
+    it('opens this app\'s editor when a plugin is registered under a documented alias', () => {
+      mergeConfig({
+        pluginSlots: {
+          xblock_editor_invideoquiz_slot: {
+            keepDefault: false,
+            plugins: [{ op: 'insert', widget: { id: 'invideoquiz-editor' } }],
+          },
+        },
+      });
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: usageId });
+      });
+      expect(handlers.handleEditXBlock).toHaveBeenCalledWith('invideoquiz', usageId);
+    });
+
+    it('treats an empty plugins array as unclaimed', () => {
+      mergeConfig({
+        pluginSlots: {
+          'org.openedx.frontend.authoring.xblock_editor.invideoquiz.v1': {
+            keepDefault: true,
+            plugins: [],
+          },
+        },
+      });
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: usageId });
+      });
+      expect(handlers.handleShowLegacyEditXBlockModal).toHaveBeenCalledWith(usageId);
+      expect(handlers.handleEditXBlock).not.toHaveBeenCalled();
+    });
+
+    it('uses only the last configured entry when both the canonical id and an alias are set', () => {
+      // Configured together so ordering is deterministic: the alias (empty
+      // plugins) is defined last and must win, same as PluginSlot's own rule.
+      mergeConfig({
+        pluginSlots: {
+          'org.openedx.frontend.authoring.xblock_editor.invideoquiz.v1': {
+            keepDefault: false,
+            plugins: [{ op: 'insert', widget: { id: 'invideoquiz-editor' } }],
+          },
+          xblock_editor_invideoquiz_slot: {
+            keepDefault: true,
+            plugins: [],
+          },
+        },
+      });
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: usageId });
+      });
+      expect(handlers.handleShowLegacyEditXBlockModal).toHaveBeenCalledWith(usageId);
+      expect(handlers.handleEditXBlock).not.toHaveBeenCalled();
+    });
   });
 });

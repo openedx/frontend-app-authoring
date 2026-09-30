@@ -11,6 +11,7 @@ import {
 
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
+import { hasEditorPlugin } from '@src/plugin-slots/XBlockEditorSlot';
 import { LibraryAndComponentPicker } from '@src/library-authoring/component-picker';
 import { ContentType } from '@src/library-authoring/routes';
 import { useIframe } from '@src/generic/hooks/context/hooks';
@@ -149,6 +150,19 @@ const AddComponent = ({
     closeAddLibraryContentModal();
   }, [usageId]);
 
+  // Shared by the branches below that open the MFE editor right after
+  // creating the new block. A curried function at component scope, not a
+  // local declared inline, since `case COMPONENT_TYPES.advanced:` below has
+  // no braces of its own, and a `const` there would trip no-case-declarations.
+  const openEditorForNewBlock = (editorBlockType: string) => (
+    ({ courseKey, locator }: { courseKey: string; locator: string; }) => {
+      setCourseId(courseKey);
+      setBlockType(editorBlockType);
+      setNewBlockId(locator);
+      showXBlockEditorModal();
+    }
+  );
+
   const handleCreateNewXBlock = (type: string, moduleName?: string | null) => {
     switch (type) {
       case COMPONENT_TYPES.discussion:
@@ -196,18 +210,24 @@ const AddComponent = ({
         if (moduleName === COMPONENT_TYPES.pdf && useNewPdfEditor) {
           handleCreateNewCourseXBlock(
             { type: moduleName, parentLocator: blockId },
-            /* istanbul ignore next */
-            ({ courseKey, locator }) => {
-              setCourseId(courseKey);
-              setBlockType(moduleName);
-              setNewBlockId(locator);
-              showXBlockEditorModal();
-            },
+            /* istanbul ignore next */ openEditorForNewBlock(moduleName),
+          );
+        } else if (moduleName && hasEditorPlugin(moduleName)) {
+          // A plugin registered on XBlockEditorSlot owns this block type's
+          // editor, so open it right after creating the block.
+          handleCreateNewCourseXBlock(
+            { type: moduleName, category: moduleName, parentLocator: blockId },
+            openEditorForNewBlock(moduleName),
           );
         } else {
-          handleCreateNewCourseXBlock({ type: moduleName!, category: moduleName!, parentLocator: blockId });
+          handleCreateNewCourseXBlock({
+            type: moduleName!,
+            category: moduleName!,
+            parentLocator: blockId,
+          });
         }
         break;
+
       case COMPONENT_TYPES.openassessment:
         handleCreateNewCourseXBlock({ boilerplate: moduleName, category: type, parentLocator: blockId });
         break;

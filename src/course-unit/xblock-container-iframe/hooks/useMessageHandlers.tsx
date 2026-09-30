@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { debounce } from 'lodash';
 
 import { useClipboard } from '@src/generic/clipboard';
+import { getBlockType } from '@src/generic/key-utils';
+import { hasEditorPlugin } from '@src/plugin-slots/XBlockEditorSlot';
 import { messageTypes } from '@src/course-unit/constants';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { updateSavingStatus } from '@src/course-unit/data/slice';
@@ -48,7 +50,14 @@ export const useMessageHandlers = ({
     [messageTypes.toggleCourseXBlockDropdown]: ({
       courseXBlockDropdownHeight,
     }) => setIframeOffset(courseXBlockDropdownHeight),
-    [messageTypes.editXBlock]: ({ id }) => handleShowLegacyEditXBlockModal(id),
+    [messageTypes.editXBlock]: ({ id }) => {
+      const blockType = getBlockType(id, 'empty');
+      if (hasEditorPlugin(blockType)) {
+        handleEditXBlock(blockType, id);
+        return;
+      }
+      handleShowLegacyEditXBlockModal(id);
+    },
     [messageTypes.closeXBlockEditorModal]: handleCloseLegacyEditorXBlockModal,
     [messageTypes.saveEditedXBlockData]: handleSaveEditedXBlockData,
     [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),
