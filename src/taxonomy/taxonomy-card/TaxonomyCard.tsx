@@ -9,8 +9,8 @@ import { TaxonomyCardHeaderSubtitle } from './TaxonomyCardHeaderSubtitle';
 import { TaxonomyCardHeaderTitle } from './TaxonomyCardHeaderTitle';
 import messages from './messages';
 import { orgsCountEnabled } from './utils';
-import { isCompetencyTaxonomy } from '../data/utils';
-import { TaxonomyData } from '../data/types';
+import { canApplyCompetencies } from '@src/taxonomy/data/utils';
+import { TaxonomyData } from '@src/taxonomy/data/types';
 
 type TaxonomyCardFields = Pick<
   TaxonomyData,
@@ -43,19 +43,18 @@ export const TaxonomyCard = ({ className = '', original }: TaxonomyCardProps) =>
     readOnly,
     orgsCount,
     taxonomyType,
-    canTagObject,
   } = original;
 
   const intl = useIntl();
   const navigate = useNavigate();
 
-  const showApplyCompetencies = canTagObject && isCompetencyTaxonomy(original);
+  const showApplyCompetencies = canApplyCompetencies(original);
 
   return (
     <Card
       isClickable
       as={NavLink}
-      to={`/taxonomy/${id}/`}
+      to={`/taxonomy/${id}`}
       className={classNames('taxonomy-card', className)}
       data-testid={`taxonomy-card-${id}`}
     >

@@ -4,7 +4,7 @@ import {
   Container,
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import Loading from '@src/generic/Loading';
@@ -15,7 +15,7 @@ import taxonomyMessages from '@src/taxonomy/messages';
 import { useTaxonomyDetails, useTaxonomyList } from '@src/taxonomy/data/apiHooks';
 import { TaxonomyType } from '@src/taxonomy/data/constants';
 import type { TaxonomyData } from '@src/taxonomy/data/types';
-import { isCompetencyTaxonomy } from '@src/taxonomy/data/utils';
+import { canApplyCompetencies, isCompetencyTaxonomy } from '@src/taxonomy/data/utils';
 import { ImportTagsWizardButton } from '@src/taxonomy/import-tags';
 import { CompetencyAssociationsPanel } from './associations';
 import messages from './messages';
@@ -49,6 +49,10 @@ const CompetencyManagementPage = () => {
 
   if (isError || !taxonomy) {
     return <ConnectionErrorAlert />;
+  }
+
+  if (!canApplyCompetencies(taxonomy)) {
+    return <Navigate to={`/taxonomy/${taxonomyId}`} replace />;
   }
 
   return (
