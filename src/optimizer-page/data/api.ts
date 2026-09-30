@@ -1,12 +1,17 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { LinkCheckResult } from '../types';
-import { LinkCheckStatusTypes } from './constants';
+import type { LinkCheckResult } from '../types';
+import type { LinkCheckStatusTypes, RawRerunLinkUpdateStatus, RerunLinkUpdateStatus } from './constants';
 
+/** The partial response returned by the link-check status endpoint. */
 export interface LinkCheckStatusApiResponseBody {
+  linkCheckStatus?: LinkCheckStatusTypes | null;
+  linkCheckOutput?: LinkCheckResult | null;
+  linkCheckCreatedAt?: string | null;
+}
+
+export interface LinkCheckResponseBody {
   linkCheckStatus: LinkCheckStatusTypes;
-  linkCheckOutput: LinkCheckResult;
-  linkCheckCreatedAt: string;
 }
 
 export interface RerunLinkUpdateRequestBody {
@@ -18,29 +23,38 @@ export interface RerunLinkUpdateRequestBody {
   }>;
 }
 
+export interface RerunLinkUpdateResultApiResponse {
+  id: string;
+  success: boolean;
+  newUrl?: string | null;
+  originalUrl?: string | null;
+  type: string;
+}
+
+/** The partial response returned by the rerun status endpoint. */
 export interface RerunLinkUpdateStatusApiResponseBody {
-  updateStatus: string;
-  status: string;
-  results?: Array<{
-    id: string;
-    success: boolean;
-    new_url: string;
-    original_url: string;
-    type: string;
-  }>;
+  status?: RawRerunLinkUpdateStatus | null;
+  /** Optional in the API contract; pending and failed responses may omit results. */
+  results?: RerunLinkUpdateResultApiResponse[];
+}
+
+export interface RerunLinkUpdateResponseBody {
+  status: RerunLinkUpdateStatus;
 }
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-export const postLinkCheckCourseApiUrl = (courseId) =>
+export const postLinkCheckCourseApiUrl = (courseId: string) =>
   new URL(`api/contentstore/v0/link_check/${courseId}`, getApiBaseUrl()).href;
-export const getLinkCheckStatusApiUrl = (courseId) =>
+export const getLinkCheckStatusApiUrl = (courseId: string) =>
   new URL(`api/contentstore/v0/link_check_status/${courseId}`, getApiBaseUrl()).href;
-export const postRerunLinkUpdateApiUrl = (courseId) =>
+export const postRerunLinkUpdateApiUrl = (courseId: string) =>
   new URL(`api/contentstore/v0/rerun_link_update/${courseId}`, getApiBaseUrl()).href;
-export const getRerunLinkUpdateStatusApiUrl = (courseId) =>
+export const getRerunLinkUpdateStatusApiUrl = (courseId: string) =>
   new URL(`api/contentstore/v0/rerun_link_update_status/${courseId}`, getApiBaseUrl()).href;
 
-export async function postLinkCheck(courseId: string): Promise<{ linkCheckStatus: LinkCheckStatusTypes; }> {
+export async function postLinkCheck(
+  courseId: string,
+): Promise<LinkCheckResponseBody> {
   const { data } = await getAuthenticatedHttpClient()
     .post(postLinkCheckCourseApiUrl(courseId));
   return camelCaseObject(data);
@@ -52,7 +66,7 @@ export async function getLinkCheckStatus(courseId: string): Promise<LinkCheckSta
   return camelCaseObject(data);
 }
 
-export async function postRerunLinkUpdateAll(courseId: string): Promise<RerunLinkUpdateStatusApiResponseBody> {
+export async function postRerunLinkUpdateAll(courseId: string): Promise<RerunLinkUpdateResponseBody> {
   const { data } = await getAuthenticatedHttpClient()
     .post(postRerunLinkUpdateApiUrl(courseId), {
       action: 'all',
@@ -65,7 +79,7 @@ export async function postRerunLinkUpdateSingle(
   linkUrl: string,
   blockId: string,
   contentType: string = 'course_updates',
-): Promise<RerunLinkUpdateStatusApiResponseBody> {
+): Promise<RerunLinkUpdateResponseBody> {
   const { data } = await getAuthenticatedHttpClient()
     .post(postRerunLinkUpdateApiUrl(courseId), {
       action: 'single',

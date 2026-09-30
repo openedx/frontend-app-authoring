@@ -1,11 +1,26 @@
 import { ModalPopup, Form } from '@openedx/paragon';
 import { LinkOff } from '@openedx/paragon/icons';
 import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import type { ChangeEvent } from 'react';
 import CustomIcon from './CustomIcon';
 import messages from './messages';
 import LockedIcon from './lockedIcon';
 import ManualIcon from './manualIcon';
+import type { Filters } from '../types';
+
+interface FilterModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onApply: (filters: Filters) => void;
+  positionRef: HTMLButtonElement | null;
+  filterOptions: { name: string; value: string; }[];
+  initialFilters: Filters;
+  activeFilters: string[];
+  filterBy: string[];
+  add: (value: string) => void;
+  remove: (value: string) => void;
+  set: (values: string[]) => void;
+}
 
 const FilterModal = ({
   isOpen,
@@ -19,7 +34,7 @@ const FilterModal = ({
   add,
   remove,
   set,
-}) => {
+}: FilterModalProps) => {
   const [previousFilters, setPreviousFilters] = useState(activeFilters);
   useEffect(() => {
     if (JSON.stringify(activeFilters) !== JSON.stringify(previousFilters)) {
@@ -28,7 +43,7 @@ const FilterModal = ({
     }
   }, [activeFilters]);
 
-  const handleCheckboxChange = (e) => {
+  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
 
     const updatedFilters = { ...initialFilters, [value]: checked };
@@ -85,29 +100,6 @@ const FilterModal = ({
       </div>
     </ModalPopup>
   );
-};
-
-FilterModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onApply: PropTypes.func.isRequired,
-  positionRef: PropTypes.shape({
-    current: PropTypes.instanceOf(Element),
-  }),
-  filterOptions: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-  })).isRequired,
-  initialFilters: PropTypes.shape({
-    brokenLinks: PropTypes.bool.isRequired,
-    lockedLinks: PropTypes.bool.isRequired,
-    externalForbiddenLinks: PropTypes.bool.isRequired,
-  }).isRequired,
-  activeFilters: PropTypes.arrayOf(PropTypes.string).isRequired,
-  filterBy: PropTypes.arrayOf(PropTypes.string).isRequired,
-  add: PropTypes.func.isRequired,
-  remove: PropTypes.func.isRequired,
-  set: PropTypes.func.isRequired,
 };
 
 export default FilterModal;
