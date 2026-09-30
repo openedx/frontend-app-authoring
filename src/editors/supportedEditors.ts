@@ -3,7 +3,7 @@ import TextEditor from './containers/TextEditor';
 import VideoEditor from './containers/VideoEditor';
 import ProblemEditor from './containers/ProblemEditor';
 import VideoUploadEditor from './containers/VideoUploadEditor';
-import GameEditor from './containers/GameEditor';
+import GamesEditor from '@src/editors/containers/GamesEditor';
 
 // ADDED_EDITOR_IMPORTS GO HERE
 
@@ -16,7 +16,7 @@ const supportedEditors = {
   [blockTypes.video_upload]: VideoUploadEditor,
   [blockTypes.pdf]: PdfEditor,
   // ADDED_EDITORS GO BELOW
-  [blockTypes.game]: GameEditor,
+  [blockTypes.games]: GamesEditor,
 } as const;
 
 export default supportedEditors;

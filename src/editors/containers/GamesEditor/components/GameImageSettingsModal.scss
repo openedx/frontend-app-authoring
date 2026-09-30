@@ -1,0 +1,31 @@
+.game-img-settings-container {
+  .game-img-thumbnail-container {
+    width: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .game-img-thumbnail {
+      max-height: 250px;
+      max-width: 250px;
+      object-fit: contain;
+    }
+  }
+
+  hr {
+    width: 1px;
+  }
+
+  .game-img-settings-controls {
+    flex: 1;
+    min-width: 375px;
+
+    .img-settings-control-label {
+      font-size: 1rem;
+    }
+
+    .decorative-control-label label {
+      font-size: .75rem;
+    }
+  }
+}
