@@ -63,9 +63,10 @@ const LibraryItems = ({ isPending, data, onChange }: LibraryItemsProps) => {
 export const LibraryDropdownFilter = () => {
   const intl = useIntl();
   const [search, setSearch] = useState('');
-  const { selectedLibraries, setSelectedLibraries, allLibraries } = useMultiLibraryContext();
+  const { selectedLibraries, setSelectedLibraries } = useMultiLibraryContext();
   const [label, setLabel] = useState(intl.formatMessage(messages.librariesFilterBtnText));
   const { isPending, data } = useContentLibraryV2List({ pagination: false, search });
+  const { data: allLibrariesData } = useContentLibraryV2List({ pagination: false, search: '' });
 
   const handleSearch = useCallback(
     // Perform search after 500ms
@@ -83,19 +84,17 @@ export const LibraryDropdownFilter = () => {
   };
 
   useEffect(() => {
-    if (!search) { allLibraries.current = data || []; }
-
     const baseName = intl.formatMessage(messages.librariesFilterBtnText);
     if (!selectedLibraries.length) {
       setLabel(baseName);
     } else if (selectedLibraries.length === 1) {
-      setLabel(allLibraries.current?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);
-    } else if (selectedLibraries.length === allLibraries.current.length) {
+      setLabel(allLibrariesData?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);
+    } else if (allLibrariesData && selectedLibraries.length === allLibrariesData.length) {
       setLabel(baseName);
     } else if (selectedLibraries.length > 1) {
       setLabel(intl.formatMessage(messages.librariesFilterBtnCount, { count: selectedLibraries.length }));
     }
-  }, [selectedLibraries, data, allLibraries.current.length, search]);
+  }, [selectedLibraries, allLibrariesData]);
 
   return (
     <Dropdown

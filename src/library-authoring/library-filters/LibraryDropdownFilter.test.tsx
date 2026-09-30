@@ -12,12 +12,10 @@ mockContentLibrary.applyMock();
 
 const mockSetValue = jest.fn();
 let mockValue: string[] = [];
-const mockAllLibraries = { current: [] as any[] };
 jest.mock('@src/library-authoring/common/context/MultiLibraryContext', () => ({
   useMultiLibraryContext: () => ({
     selectedLibraries: mockValue,
     setSelectedLibraries: mockSetValue,
-    allLibraries: mockAllLibraries,
   }),
 }));
 
@@ -27,7 +25,6 @@ describe('LibraryDropdownFilter', () => {
   beforeEach(() => {
     initializeMocks();
     mockValue = [];
-    mockAllLibraries.current = [];
   });
 
   it('should render the loading status', async () => {
@@ -137,7 +134,8 @@ describe('LibraryDropdownFilter', () => {
   it('should show count when search is active and result count matches selected count', async () => {
     const user = userEvent.setup();
     const mockApi = mockGetContentLibraryV2List.applyMockNoPagination();
-    // 3 libraries total on initial load (no search)
+    // 3 libraries total on initial load (no search); both hooks share the same query key so
+    // React Query deduplicates them into one API call
     mockApi.mockResolvedValueOnce([
       { id: 'lib:SampleTaxonomyOrg1:TL1', title: 'Test Library 1' },
       { id: 'lib:SampleTaxonomyOrg1:AL1', title: 'Test Library 2' },
