@@ -286,11 +286,10 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       // reset in separate renders instead of the same state-update batch.
       const requestsSinceChange = axiosMock.history.get.slice(requestCountBeforeChange);
       expect(requestsSinceChange).toHaveLength(1);
-      // Plain `YYYY-MM-DD`, not a full datetime - the backend's
-      // `get_date_param` 400s on anything else, and only asserting
-      // truthiness here previously let a full ISO datetime string through
-      // unnoticed.
-      expect(requestsSinceChange[0].params.start_date_on_or_after).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      // The local start of the picked day, with its own UTC offset (see
+      // #834) - not a bare date, and not midnight UTC.
+      expect(requestsSinceChange[0].params.start_date_on_or_after)
+        .toMatch(/^\d{4}-\d{2}-\d{2}T00:00:00\.000[+-]\d{2}:\d{2}$/);
       expect(requestsSinceChange[0].params.start_date_on_or_before).toBeUndefined();
       expect(requestsSinceChange[0].params).toMatchObject({ page: 1 });
     });
@@ -317,8 +316,12 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
       const requestsSinceChange = axiosMock.history.get.slice(requestCountBeforeChange);
       expect(requestsSinceChange).toHaveLength(1);
-      expect(requestsSinceChange[0].params.start_date_on_or_after).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      expect(requestsSinceChange[0].params.start_date_on_or_before).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      // The local start of the "after" day and the local end of the
+      // "before" day, each with its own UTC offset (see #834).
+      expect(requestsSinceChange[0].params.start_date_on_or_after)
+        .toMatch(/^\d{4}-\d{2}-\d{2}T00:00:00\.000[+-]\d{2}:\d{2}$/);
+      expect(requestsSinceChange[0].params.start_date_on_or_before)
+        .toMatch(/^\d{4}-\d{2}-\d{2}T23:59:59\.999[+-]\d{2}:\d{2}$/);
     });
 
     it('omits start_date_on_or_after and start_date_on_or_before from the request when neither date is set', async () => {
