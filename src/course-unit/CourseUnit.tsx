@@ -22,7 +22,10 @@ import {
   QuestionAnswer,
 } from '@openedx/paragon/icons';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
 import DraftIcon from '@src/generic/DraftIcon';
+import { getLibraryId } from '@src/generic/key-utils';
 import { CourseAuthoringUnitSidebarSlot } from '../plugin-slots/CourseAuthoringUnitSidebarSlot';
 
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -217,6 +220,16 @@ const CourseUnit = () => {
 
   const readOnly = !!courseUnit.readOnly;
 
+  const upstreamRef: string | undefined = courseUnit.upstreamInfo?.upstreamRef;
+  const upstreamLibraryId = upstreamRef ? getLibraryId(upstreamRef) : undefined;
+  const { data: libraryPermissions } = useUserPermissions({
+    canViewLibrary: {
+      action: CONTENT_LIBRARY_PERMISSIONS.VIEW_LIBRARY,
+      scope: upstreamLibraryId,
+    },
+  }, !!upstreamLibraryId);
+  const canViewUpstreamLibrary = !!libraryPermissions?.canViewLibrary;
+
   useEffect(() => {
     document.title = getPageHeadTitle('', unitTitle);
   }, [unitTitle]);
@@ -281,11 +294,13 @@ const CourseUnit = () => {
                 description={intl.formatMessage(
                   messages.alertLibraryUnitReadOnlyText,
                   {
-                    link: (
-                      <Alert.Link href={courseUnit.upstreamInfo.upstreamLink}>
-                        <FormattedMessage {...messages.alertLibraryUnitReadOnlyLinkText} />
-                      </Alert.Link>
-                    ),
+                    link: canViewUpstreamLibrary ?
+                      (
+                        <Alert.Link href={courseUnit.upstreamInfo.upstreamLink}>
+                          <FormattedMessage {...messages.alertLibraryUnitReadOnlyLinkText} />
+                        </Alert.Link>
+                      ) :
+                      <FormattedMessage {...messages.alertLibraryUnitReadOnlyLinkText} />,
                     learnMore: (
                       <Alert.Link href={urls['syncLibraryUpdates']}>
                         <FormattedMessage {...messages.alertLibraryUnitReadOnlyLearnMoreText} />
