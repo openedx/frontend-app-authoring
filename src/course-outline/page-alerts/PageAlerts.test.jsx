@@ -139,7 +139,7 @@ describe('<PageAlerts />', () => {
   it('renders proctoring alerts with mfe settings link', async () => {
     renderComponent({
       ...pageAlertsData,
-      mfeProctoredExamSettingsUrl: 'mfe-url',
+      mfeProctoredExamSettingsUrl: '/course/course-id/pages-and-resources/proctoring/settings',
       proctoringErrors: [
         { key: '1', model: { displayName: 'error 1' }, message: 'message 1' },
         { key: '2', model: { displayName: 'error 2' }, message: 'message 2' },
@@ -150,7 +150,10 @@ describe('<PageAlerts />', () => {
     expect(screen.queryByText('error 2')).toBeInTheDocument();
     expect(screen.queryByText('message 1')).toBeInTheDocument();
     expect(screen.queryByText('message 2')).toBeInTheDocument();
-    expect(screen.queryByText(messages.proctoredSettingsLinkText.defaultMessage)).toHaveAttribute('href', 'mfe-url');
+    expect(screen.queryByText(messages.proctoredSettingsLinkText.defaultMessage)).toHaveAttribute(
+      'href',
+      '/course/course-id/pages-and-resources/proctoring/settings',
+    );
   });
 
   it('does not render the mfe settings link when the user cannot manage pages and resources', async () => {

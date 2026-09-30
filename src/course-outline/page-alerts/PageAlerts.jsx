@@ -218,15 +218,16 @@ const PageAlerts = ({
                   {...messages.proctoringErrorText}
                   values={{
                     hyperlink: (
-                      <Hyperlink
-                        destination={mfeProctoredExamSettingsUrl}
+                      // The URL is a path relative to the MFE root, so use a router Link to prepend the basename.
+                      <Link
+                        to={mfeProctoredExamSettingsUrl}
                         target="_blank"
-                        showLaunchIcon={false}
+                        rel="noopener noreferrer"
                       >
                         <FormattedMessage
                           {...messages.proctoredSettingsLinkText}
                         />
-                      </Hyperlink>
+                      </Link>
                     ),
                   }}
                 />
