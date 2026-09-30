@@ -4,7 +4,6 @@ import {
   Dropdown,
   Icon,
   IconButton,
-  IconButtonToggle,
   IconButtonWithTooltip,
   Stack,
 } from '@openedx/paragon';
@@ -144,17 +143,19 @@ export function Sidebar<T extends SidebarPages>({
           variant="primary"
           className="mb-2"
         />
-        <IconButtonToggle
-          activeValue={activeKey}
-          onChange={setCurrentPageKey}
-        >
+        <div className="pgn__icon-button-toggle__container">
           {Object.entries(pages).map(([key, page]) => {
+            const pageKey = key as keyof T;
+            const isActive = pageKey === activeKey;
             const buttonData = {
-              value: key,
               src: page.icon,
               alt: intl.formatMessage(page.title),
               className: 'rounded-iconbutton my-2',
               disabled: page.disabled,
+              isActive,
+              'aria-pressed': isActive,
+              'data-testid': `icon-btn-val-${key}`,
+              onClick: () => setCurrentPageKey(pageKey),
             };
 
             if (page.tooltip) {
@@ -170,7 +171,7 @@ export function Sidebar<T extends SidebarPages>({
 
             return <IconButton key={key} {...buttonData} />;
           })}
-        </IconButtonToggle>
+        </div>
       </div>
     </Stack>
   );
