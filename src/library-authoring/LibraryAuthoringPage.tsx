@@ -375,6 +375,7 @@ const LibraryAuthoringPage = ({
           )}
         <Container className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
+            indexType="library"
             extraFilter={extraFilter}
             overrideTypesFilter={overrideTypesFilter}
           >

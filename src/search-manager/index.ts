@@ -1,6 +1,6 @@
 export { default as BlockTypeLabel } from './BlockTypeLabel';
 export { default as ClearFiltersButton } from './ClearFiltersButton';
-export { HIGHLIGHT_PRE_TAG, HIGHLIGHT_POST_TAG, PublishStatus } from './data/api';
+export { HIGHLIGHT_PRE_TAG, HIGHLIGHT_POST_TAG, PublishStatus, type SearchIndexType } from './data/api';
 export {
   useContentSearchConnection,
   useContentSearchResults,

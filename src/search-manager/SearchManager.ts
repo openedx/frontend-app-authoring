@@ -13,6 +13,7 @@ import {
   SearchSortOption,
   forceArray,
   PublishStatus,
+  type SearchIndexType,
 } from './data/api';
 import { TypesFilterData, useStateOrUrlSearchParam } from './hooks';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
@@ -53,6 +54,7 @@ export interface SearchContextData {
 const SearchContext = React.createContext<SearchContextData | undefined>(undefined);
 
 export const SearchContextProvider: React.FC<{
+  indexType: SearchIndexType;
   extraFilter?: Filter;
   overrideTypesFilter?: TypesFilterData;
   overrideSearchSortOrder?: SearchSortOption;
@@ -173,7 +175,7 @@ export const SearchContextProvider: React.FC<{
   }, []);
 
   // Initialize a connection to Meilisearch:
-  const { client, indexName, hasConnectionError } = useContentSearchConnection();
+  const { client, indexName, hasConnectionError } = useContentSearchConnection(props.indexType);
 
   // Run the search
   const result = useContentSearchResults({

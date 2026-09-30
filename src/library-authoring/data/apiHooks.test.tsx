@@ -5,6 +5,9 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
+import fetchMock from 'fetch-mock-jest';
+import * as searchApi from '@src/search-manager/data/api';
+import { hydrateSearchResult, mockContentSearchConfig } from '@src/search-manager/data/api.mock';
 import {
   getCommitLibraryChangesUrl,
   getCreateLibraryBlockUrl,
@@ -33,6 +36,7 @@ import {
   useUpdateContainerChildren,
   useRemoveContainerChildren,
   usePublishContainer,
+  useContentFromSearchIndex,
 } from './apiHooks';
 
 let axiosMock;
@@ -345,6 +349,37 @@ describe('library api hooks', () => {
       await result.current.mutateAsync();
 
       expect(axiosMock.history.post[0].url).toEqual(url);
+    });
+  });
+
+  describe('useContentFromSearchIndex', () => {
+    afterEach(() => {
+      fetchMock.reset();
+    });
+
+    it.each([
+      ['lct:org:lib:unit:1', undefined, 'studio_library'],
+      ['block-v1:org+course+run+type@vertical+block@1', 'course' as const, 'studio_course'],
+    ])('searches for %s in the %s index', async (contentId, indexType, expectedIndex) => {
+      jest.spyOn(searchApi, 'getContentSearchConfig').mockResolvedValue({
+        url: 'http://mock.meilisearch.local',
+        courseIndexName: 'studio_course',
+        libraryIndexName: 'studio_library',
+        apiKey: 'test-key',
+      });
+      fetchMock.post(mockContentSearchConfig.multisearchEndpointUrl, hydrateSearchResult([]), {
+        overwriteRoutes: true,
+      });
+      const freshQueryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+      const { result } = renderHook(
+        () => (indexType ? useContentFromSearchIndex([contentId], indexType) : useContentFromSearchIndex([contentId])),
+        { wrapper: ({ children }) => <QueryClientProvider client={freshQueryClient}>{children}</QueryClientProvider> },
+      );
+      await waitFor(() => {
+        expect(result.current.status).toEqual('success');
+      });
+      const body = JSON.parse(fetchMock.lastCall()![1]!.body as string);
+      expect(body.queries[0].indexUid).toEqual(expectedIndex);
     });
   });
 });

@@ -70,6 +70,7 @@ export const CollectionDropdownFilter = () => {
       `context_key = "${selectedLibraries[0]}"`,
       'last_published IS NOT NULL',
     ],
+    'library',
     selectedLibraries.length === 1,
     ['block_id', 'display_name'],
     100,

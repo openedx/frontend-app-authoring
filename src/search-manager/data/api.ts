@@ -39,14 +39,26 @@ export enum PublishStatus {
 export const allPublishFilters: PublishStatus[] = Object.values(PublishStatus);
 
 /**
+ * Course blocks and library content (components, containers, collections) live in separate indexes.
+ */
+export type SearchIndexType = 'course' | 'library';
+
+/**
  * Get the content search configuration from the CMS.
  */
-export const getContentSearchConfig = async (): Promise<{ url: string; indexName: string; apiKey: string; }> => {
+export const getContentSearchConfig = async (): Promise<{
+  url: string;
+  courseIndexName: string;
+  libraryIndexName: string;
+  apiKey: string;
+}> => {
   const url = getContentSearchConfigUrl();
   const response = await getAuthenticatedHttpClient().get(url);
   return {
     url: response.data.url,
-    indexName: response.data.index_name,
+    // Older backends only return a single `index_name` that holds both courses and libraries.
+    courseIndexName: response.data.course_index_name ?? response.data.index_name,
+    libraryIndexName: response.data.library_index_name ?? response.data.index_name,
     apiKey: response.data.api_key,
   };
 };

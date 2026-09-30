@@ -360,6 +360,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
 
   return (
     <SearchContextProvider
+      indexType="course"
       extraFilter={[`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`]}
       skipUrlUpdate
       skipBlockTypeFetch

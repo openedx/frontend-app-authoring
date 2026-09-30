@@ -160,6 +160,7 @@ const ImportDetailsContent = () => {
     [
       `usage_key IN [${unsupportedBlockIds.map(k => `"${k}"`).join(',')}]`,
     ],
+    'course',
     (unsupportedBlockIds.length || 0) > 0,
     ['usage_key', 'block_type', 'display_name'],
     unsupportedBlockIds.length,

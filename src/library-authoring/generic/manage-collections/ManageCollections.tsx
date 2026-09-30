@@ -133,6 +133,7 @@ const AddToCollectionsDrawer = ({
 
   return (
     <SearchContextProvider
+      indexType="library"
       extraFilter={extraFilter}
       skipUrlUpdate
       skipBlockTypeFetch
