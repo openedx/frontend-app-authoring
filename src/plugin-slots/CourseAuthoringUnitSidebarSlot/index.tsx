@@ -16,7 +16,7 @@ export const CourseAuthoringUnitSidebarSlot = (
   }: CourseAuthoringUnitSidebarSlotProps,
 ) => (
   <div
-    className={classNames({ 'sidebar': isUnitPageNewDesignEnabled() })}
+    className={classNames('sidebar-layout__aside', { 'sidebar': isUnitPageNewDesignEnabled() })}
   >
     <PluginSlot
       id="org.openedx.frontend.authoring.course_unit_sidebar.v2"

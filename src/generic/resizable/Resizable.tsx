@@ -102,12 +102,15 @@ export const ResizableBox = ({
   const onMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault(); // prevent text selection
     startXRef.current = e.clientX;
-    startWidthRef.current = width;
+    // Start from the displayed width, not the stored preference: when the box is
+    // clamped by a narrow window, starting from `width` would make the first part
+    // of the drag do nothing until it got back below the clamp.
+    startWidthRef.current = effectiveWidth;
 
     // Attach listeners to the whole document so dragging works even outside the box
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-  }, [width]);
+  }, [effectiveWidth, onMouseMove, onMouseUp]);
 
   return (
     <div

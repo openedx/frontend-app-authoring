@@ -148,4 +148,17 @@ describe('<Sidebar>', () => {
     // Check the Page 1 content
     expect(screen.getByText('Component 1')).toBeInTheDocument();
   });
+
+  it('should focus the rail buttons before the panel', async () => {
+    render(<TestSidebar />);
+
+    // The rail is displayed first at narrow widths, so it must also come first in tab order.
+    await userEvent.tab();
+    expect(screen.getByRole('button', { name: 'Toggle' })).toHaveFocus();
+
+    const panelToggle = screen.getByRole('button', { name: 'Page 1 Icon 1' });
+    const railButton = screen.getByRole('button', { name: 'Page 1' });
+    // eslint-disable-next-line no-bitwise
+    expect(railButton.compareDocumentPosition(panelToggle) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
 });

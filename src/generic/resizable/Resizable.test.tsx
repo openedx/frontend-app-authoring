@@ -1,4 +1,5 @@
 import type { ComponentProps } from 'react';
+import { useWindowSize } from '@openedx/paragon';
 
 import {
   fireEvent,
@@ -6,6 +7,12 @@ import {
   render,
 } from '@src/testUtils';
 import { ResizableBox } from './Resizable';
+
+jest.mock('@openedx/paragon', () => ({
+  ...jest.requireActual('@openedx/paragon'),
+  useWindowSize: jest.fn(),
+}));
+const mockUseWindowSize = useWindowSize as jest.Mock;
 
 // Arbitrary drag-start position - only the delta between this and each
 // drag's end position matters to the component's own math.
@@ -35,6 +42,7 @@ const drag = (handle: HTMLElement, startX: number, endX: number) => {
 describe('<ResizableBox />', () => {
   beforeEach(() => {
     initializeMocks();
+    mockUseWindowSize.mockReturnValue({ width: undefined, height: undefined });
   });
 
   describe('handleSide="left" (the default)', () => {
@@ -119,6 +127,56 @@ describe('<ResizableBox />', () => {
 
       drag(handle, START_X, START_X + 1000); // dragging right grows - far past maxWidth
       expect(box.style.width).toBe('600px');
+    });
+  });
+
+  describe('without a maxWidth, clamped to 65% of the window', () => {
+    const renderUnbounded = () => {
+      const { container, rerender } = render(
+        <ResizableBox minWidth={200}>
+          <div>Content</div>
+        </ResizableBox>,
+      );
+      const handle = container.querySelector('.resizable-handle') as HTMLElement;
+      const box = container.querySelector('.resizable') as HTMLElement;
+      const resizeWindow = (width: number) => {
+        mockUseWindowSize.mockReturnValue({ width, height: 800 });
+        rerender(
+          <ResizableBox minWidth={200}>
+            <div>Content</div>
+          </ResizableBox>,
+        );
+      };
+      return { handle, box, resizeWindow };
+    };
+
+    it('shrinks a dragged width when the window narrows and restores it when it widens', () => {
+      const { handle, box, resizeWindow } = renderUnbounded();
+      resizeWindow(1000); // max 650px
+      drag(handle, START_X, START_X - 400); // 200 + 400 = 600px
+      expect(box.style.width).toBe('600px');
+
+      resizeWindow(800); // max 520px
+      expect(box.style.width).toBe('520px');
+
+      resizeWindow(1000);
+      expect(box.style.width).toBe('600px');
+    });
+
+    it('never clamps below minWidth on a very narrow window', () => {
+      const { box, resizeWindow } = renderUnbounded();
+      resizeWindow(200); // 65% = 130px, below minWidth
+      expect(box.style.width).toBe('200px');
+    });
+
+    it('starts a new drag from the clamped width that is displayed', () => {
+      const { handle, box, resizeWindow } = renderUnbounded();
+      resizeWindow(1000);
+      drag(handle, START_X, START_X - 400); // 600px
+      resizeWindow(800); // displayed at 520px, 600px still stored
+
+      drag(handle, START_X, START_X + 20); // dragged right by 20px shrinks from 520px
+      expect(box.style.width).toBe('500px');
     });
   });
 });
