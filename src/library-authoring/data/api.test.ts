@@ -237,4 +237,52 @@ describe('library data API', () => {
       expect(axiosMock.history.get[0].url).toEqual(url);
     });
   });
+
+  describe('getContainerMetadata', () => {
+    const containerKey = 'lct:org:lib:unit:1';
+    const url = api.getLibraryContainerApiUrl(containerKey);
+
+    it('should fetch container metadata without a course_id param by default', async () => {
+      axiosMock.onGet(url).reply(200, {});
+
+      await api.getContainerMetadata(containerKey);
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+      expect(axiosMock.history.get[0].params).toBeUndefined();
+    });
+
+    it('should send the downstream block id as the course_id param when reviewing from a course', async () => {
+      const downstreamBlockId = 'block-v1:org+course+run+type@vertical+block@1';
+      axiosMock.onGet(url).reply(200, {});
+
+      await api.getContainerMetadata(containerKey, downstreamBlockId);
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+      expect(axiosMock.history.get[0].params).toEqual({ course_id: downstreamBlockId });
+    });
+  });
+
+  describe('getLibraryContainerChildren', () => {
+    const containerKey = 'lct:org:lib:unit:1';
+    const url = api.getLibraryContainerChildrenApiUrl(containerKey);
+
+    it('should fetch container children without a course_id param by default', async () => {
+      axiosMock.onGet(url).reply(200, []);
+
+      await api.getLibraryContainerChildren(containerKey);
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+      expect(axiosMock.history.get[0].params).toBeUndefined();
+    });
+
+    it('should send the downstream block id as the course_id param when reviewing from a course', async () => {
+      const downstreamBlockId = 'block-v1:org+course+run+type@vertical+block@1';
+      axiosMock.onGet(url).reply(200, []);
+
+      await api.getLibraryContainerChildren(containerKey, false, downstreamBlockId);
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+      expect(axiosMock.history.get[0].params).toEqual({ course_id: downstreamBlockId });
+    });
+  });
 });
