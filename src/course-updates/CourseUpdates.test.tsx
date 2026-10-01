@@ -84,9 +84,9 @@ jest.mock('../editors/sharedComponents/TinyMceWidget', () => ({
       />
     );
   },
-  prepareEditorRef: jest.fn(() => ({
+  useEditorRef: jest.fn(() => ({
     refReady: true,
-    setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
+    setEditorRef: jest.fn().mockName('useEditorRef.setEditorRef'),
   })),
 }));
 

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import TinyMceWidget, { prepareEditorRef } from '../editors/sharedComponents/TinyMceWidget';
 
+import TinyMceWidget, { useEditorRef } from '../editors/sharedComponents/TinyMceWidget';
 import { DEFAULT_EMPTY_WYSIWYG_VALUE } from '../constants';
 
 export const SUPPORTED_TEXT_EDITORS = {
@@ -16,7 +16,7 @@ export const WysiwygEditor = ({
   minHeight,
   disabled = false,
 }) => {
-  const { editorRef, refReady, setEditorRef } = prepareEditorRef();
+  const { editorRef, refReady, setEditorRef } = useEditorRef();
   const { courseId } = useCourseAuthoringContext();
   const isEquivalentCodeExtraSpaces = (first, second) => {
     // Utils allows to compare code extra spaces
