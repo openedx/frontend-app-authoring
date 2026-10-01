@@ -80,6 +80,15 @@ export const ResizableBox = ({
       maxWidth || defaultMaxWidth,
     );
     setWidth(newWidth);
+    // Re-anchors every move to the cursor's actual position and the width it
+    // just produced, rather than always measuring from the drag's starting
+    // point. Without this, once a move clamps `newWidth` to `minWidth`/
+    // `maxWidth`, the cursor keeps travelling (e.g. to the edge of the
+    // screen) while the box stays put; reversing direction then has to
+    // retrace that whole unclamped overshoot before `rawWidth` re-enters the
+    // valid range and the box visibly responds again.
+    startXRef.current = e.clientX;
+    startWidthRef.current = newWidth;
   }, [handleSide, maxWidth, minWidth, defaultMaxWidth]);
 
   const onMouseUp = useCallback(() => {
