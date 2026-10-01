@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
-import { selectors } from '../../../../../data/redux';
+import { selectors } from '@src/editors/data/redux';
+import TinyMceWidget from '@src/editors/sharedComponents/TinyMceWidget';
+import { useEditorRef, replaceStaticWithAsset } from '@src/editors/sharedComponents/TinyMceWidget/hooks';
+
 import messages from './messages';
-import TinyMceWidget from '../../../../../sharedComponents/TinyMceWidget';
-import { prepareEditorRef, replaceStaticWithAsset } from '../../../../../sharedComponents/TinyMceWidget/hooks';
 
 const ExplanationWidget = ({
   // redux
@@ -18,7 +19,7 @@ const ExplanationWidget = ({
   blockId,
 }) => {
   const intl = useIntl();
-  const { editorRef, refReady, setEditorRef } = prepareEditorRef();
+  const { editorRef, refReady, setEditorRef } = useEditorRef();
   const initialContent = settings?.solutionExplanation || '';
   const newContent = replaceStaticWithAsset({
     initialContent,

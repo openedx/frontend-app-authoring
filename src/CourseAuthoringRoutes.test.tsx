@@ -26,9 +26,9 @@ jest.mock('./editors/sharedComponents/TinyMceWidget', () => ({
   __esModule: true, // Required to mock a default export
   default: () => <div>Widget</div>,
   Footer: () => <div>Footer</div>,
-  prepareEditorRef: jest.fn(() => ({
+  useEditorRef: jest.fn(() => ({
     refReady: true,
-    setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
+    setEditorRef: jest.fn().mockName('useEditorRef.setEditorRef'),
   })),
 }));
 
