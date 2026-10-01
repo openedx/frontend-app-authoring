@@ -65,9 +65,9 @@ jest.mock('@tinymce/tinymce-react', () => {
   };
 });
 
-jest.mock('../editors/sharedComponents/TinyMceWidget', () => ({
-  __esModule: true,
-  default: ({ onChange, textValue }: {
+jest.mock('../editors/sharedComponents/TinyMceWidget', () => {
+  const { useEffect } = require('react');
+  const MockTinyMceWidget = ({ onChange, textValue }: {
     onChange: (value: string, editor: object) => void;
     textValue: string;
   }) => {
@@ -76,6 +76,11 @@ jest.mock('../editors/sharedComponents/TinyMceWidget', () => ({
       getContent: () => textValue,
       setContent: jest.fn(),
     };
+    // Simulate TinyMCE's onEditorChange init event so WysiwygEditor's
+    // isInitializing ref is consumed before actual user interactions.
+    useEffect(() => {
+      onChange(textValue, editor);
+    }, []);
     return (
       <textarea
         data-testid="course-updates-wisiwyg-editor"
@@ -83,12 +88,16 @@ jest.mock('../editors/sharedComponents/TinyMceWidget', () => ({
         onChange={(event) => onChange(event.target.value, editor)}
       />
     );
-  },
-  prepareEditorRef: jest.fn(() => ({
-    refReady: true,
-    setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
-  })),
-}));
+  };
+  return {
+    __esModule: true,
+    default: MockTinyMceWidget,
+    prepareEditorRef: jest.fn(() => ({
+      refReady: true,
+      setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
+    })),
+  };
+});
 
 const RootWrapper = () => (
   <CourseAuthoringProvider courseId={courseId}>
