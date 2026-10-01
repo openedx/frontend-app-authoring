@@ -40,6 +40,9 @@ export const WysiwygEditor = ({
     && (initialValue !== DEFAULT_EMPTY_WYSIWYG_VALUE || value !== '');
 
   const handleUpdate = (value, editor) => {
+    // TinyMCE always fires onEditorChange once during initialization with a normalized
+    // version of the initial HTML. We discard that first event to prevent false positives
+    // (e.g. showing an "unsaved changes" alert when the user has not made any edits).
     if (isInitializing.current) {
       isInitializing.current = false;
       return;
