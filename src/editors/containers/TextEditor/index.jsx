@@ -17,7 +17,7 @@ import RawEditor from '../../sharedComponents/RawEditor';
 import * as hooks from './hooks';
 import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
-import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
+import { useEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
 
 const TextEditor = ({
   onClose,
@@ -34,7 +34,7 @@ const TextEditor = ({
   isLibrary,
 }) => {
   const intl = useIntl();
-  const { editorRef, refReady, setEditorRef } = prepareEditorRef();
+  const { editorRef, refReady, setEditorRef } = useEditorRef();
   const initialContent = blockValue ? blockValue.data.data : '';
   const newContent = replaceStaticWithAsset({
     initialContent,

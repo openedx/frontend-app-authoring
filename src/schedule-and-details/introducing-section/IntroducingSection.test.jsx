@@ -1,6 +1,6 @@
 import { initializeMocks, render } from '@src/testUtils';
-
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+
 import { courseSettingsMock, courseDetailsMock } from '../__mocks__';
 import messages from './messages';
 import IntroducingSection from '.';
@@ -19,9 +19,9 @@ jest.mock('@tinymce/tinymce-react', () => {
 jest.mock('../../editors/sharedComponents/TinyMceWidget', () => ({
   __esModule: true, // Required to mock a default export
   default: () => <div>Widget</div>,
-  prepareEditorRef: jest.fn(() => ({
+  useEditorRef: jest.fn(() => ({
     refReady: true,
-    setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
+    setEditorRef: jest.fn().mockName('useEditorRef.setEditorRef'),
   })),
 }));
 
