@@ -95,6 +95,26 @@ describe('<ResizableBox />', () => {
     });
   });
 
+  describe('defaultMaxWidth (no explicit maxWidth prop)', () => {
+    // Regression test: every other test in this file passes an explicit
+    // `maxWidth`, which always wins over `defaultMaxWidth` (`windowWidth *
+    // 0.65`, from `useWindowSize()`) - so none of them exercise this
+    // fallback path. `useWindowSize()` returns `undefined` on its very first
+    // render (before its own effect runs), which previously made
+    // `onMouseDown` memoize a stale closure over an `onMouseMove` built with
+    // `defaultMaxWidth = Infinity`, and `onMouseDown`'s own dependency array
+    // (missing `onMouseMove`) never let it pick up the corrected value from
+    // a later render - so dragging never actually clamped at `defaultMaxWidth`,
+    // no matter how far past it the box was dragged. jsdom's default
+    // `window.innerWidth` is 1024, so the expected clamp here is 665.6.
+    it('clamps to 65% of the window width when no maxWidth prop is given', () => {
+      const { handle, box } = renderBox({ maxWidth: undefined });
+
+      drag(handle, START_X, START_X - 10000); // dragging left grows - far past any reasonable width
+      expect(box.style.width).toBe('665.6px');
+    });
+  });
+
   describe('handleSide="right"', () => {
     it('grows when dragging right and shrinks when dragging left', () => {
       const { handle, box } = renderBox({ handleSide: 'right' });
