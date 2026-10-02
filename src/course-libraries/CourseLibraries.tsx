@@ -30,6 +30,7 @@ import sumBy from 'lodash/sumBy';
 import { useSearchParams } from 'react-router-dom';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseUserPermissions } from '@src/authz/hooks';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { getLibraryUpdatesPermissions } from '@src/authz/permissionHelpers';
 import { useStudioHome } from '@src/studio-home/hooks';
 import NewsstandIcon from '@src/generic/NewsstandIcon';
@@ -43,6 +44,7 @@ import type { PublishableEntityLinkSummary } from './data/api';
 import ReviewTabContent from './ReviewTabContent';
 import { OutOfSyncAlert } from './OutOfSyncAlert';
 import LegacyLibContentBlockAlert from './LegacyLibContentBlockAlert';
+import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
 
 interface LibraryCardProps {
   linkSummary: PublishableEntityLinkSummary;
@@ -54,8 +56,12 @@ export enum CourseLibraryTabs {
 }
 
 const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
-  const intl = useIntl();
-
+  const { data: libraryPermissions } = useUserPermissions({
+    canViewLibrary: {
+      action: CONTENT_LIBRARY_PERMISSIONS.VIEW_LIBRARY,
+      scope: linkSummary.upstreamContextKey,
+    },
+  }, !!linkSummary.upstreamContextKey);
   return (
     <Card className="my-3 border-light-500 border shadow-none">
       <Card.Header
@@ -65,7 +71,7 @@ const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
             {linkSummary.upstreamContextTitle}
           </Stack>
         }
-        actions={
+        actions={libraryPermissions?.canViewLibrary && (
           <ActionRow>
             <Button
               destination={`${getConfig().PUBLIC_PATH}library/${linkSummary.upstreamContextKey}`}
@@ -80,7 +86,7 @@ const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
               View Library
             </Button>
           </ActionRow>
-        }
+        )}
         size="sm"
       />
       <Card.Section>
@@ -90,13 +96,19 @@ const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
           className="x-small"
         >
           <span>
-            {intl.formatMessage(messages.totalComponentLabel, { totalComponents: linkSummary.totalCount })}
+            <FormattedMessage
+              {...messages.totalComponentLabel}
+              values={{ totalComponents: linkSummary.totalCount }}
+            />
           </span>
           {linkSummary.readyToSyncCount > 0 && (
             <Stack direction="horizontal" gap={1}>
               <Icon src={Loop} size="xs" />
               <span>
-                {intl.formatMessage(messages.outOfSyncCountLabel, { outOfSyncCount: linkSummary.readyToSyncCount })}
+                <FormattedMessage
+                  {...messages.outOfSyncCountLabel}
+                  values={{ outOfSyncCount: linkSummary.readyToSyncCount }}
+                />
               </span>
             </Stack>
           )}
@@ -124,6 +136,7 @@ export const CourseLibraries = () => {
 
   const {
     isLoading: isLoadingUserPermissions,
+    canViewLibraryUpdates,
     canManageLibraryUpdates,
   } = useCourseUserPermissions(courseId, getLibraryUpdatesPermissions(courseId));
 
@@ -191,21 +204,21 @@ export const CourseLibraries = () => {
         </Stack>
       );
     }
-    return <ReviewTabContent courseId={courseId} />;
-  }, [outOfSyncCount, isLoading, tabKey]);
+    return <ReviewTabContent courseId={courseId} readOnly={!canManageLibraryUpdates} />;
+  }, [canManageLibraryUpdates, outOfSyncCount, isLoading, tabKey]);
 
   if (isLoadingUserPermissions) {
     return <Loading />;
   }
 
-  if (!canManageLibraryUpdates) {
+  if (!canViewLibraryUpdates) {
     return <PermissionDeniedAlert />;
   }
 
   if (!isLoadingStudioHome && (!librariesV2Enabled || isFailedLoadingStudioHome)) {
     return (
       <Alert variant="danger">
-        {intl.formatMessage(messages.librariesV2DisabledError)}
+        <FormattedMessage {...messages.librariesV2DisabledError} />
       </Alert>
     );
   }
@@ -223,18 +236,20 @@ export const CourseLibraries = () => {
           onReview={onAlertReview}
           showAlert={showReviewAlert && tabKey === CourseLibraryTabs.all}
           setShowAlert={setShowReviewAlert}
+          readOnly={!canManageLibraryUpdates}
         />
         <SubHeader
-          title={intl.formatMessage(messages.headingTitle)}
+          title={<FormattedMessage {...messages.headingTitle} />}
           subtitle={intl.formatMessage(messages.headingSubtitle)}
-          headerActions={(!showReviewAlert && outOfSyncCount > 0 && tabKey === CourseLibraryTabs.all) ?
+          headerActions={(canManageLibraryUpdates && !showReviewAlert && outOfSyncCount > 0 &&
+              tabKey === CourseLibraryTabs.all) ?
             (
               <Button
                 variant="primary"
                 onClick={onAlertReview}
                 iconBefore={Cached}
               >
-                {intl.formatMessage(messages.reviewUpdatesBtn)}
+                <FormattedMessage {...messages.reviewUpdatesBtn} />
               </Button>
             ) :
             null}
@@ -258,7 +273,7 @@ export const CourseLibraries = () => {
               title={
                 <Stack direction="horizontal" gap={1}>
                   <Icon src={Loop} />
-                  {intl.formatMessage(messages.reviewTabTitle)}
+                  <FormattedMessage {...messages.reviewTabTitle} />
                 </Stack>
               }
               notification={outOfSyncCount}
