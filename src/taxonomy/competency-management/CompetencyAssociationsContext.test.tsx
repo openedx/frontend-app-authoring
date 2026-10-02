@@ -94,6 +94,10 @@ const TestConsumer = () => {
     ['Associate in course B', () => ctx.associateSubsection('new-sub', courseB)],
     ['Associate in another course', () => ctx.associateSubsection('new-sub', courseOther)],
     ['Associate duplicate', () => ctx.associateSubsection('existing-sub', courseA)],
+    ['Add placeholder rule box in group 10', () => ctx.addPlaceholderRuleBox(10)],
+    ['Add placeholder group under course A', () => ctx.addPlaceholderGroup(1)],
+    ['Set placeholder logic operator to AND', () => ctx.setPlaceholderLogicOperator('AND')],
+    ['Set placeholder score', () => ctx.setPlaceholderRulePayload({ op: 'gte', value: 0.85, scale: 'percent' })],
     ['Update group operator', () => ctx.updateGroupOperator(10, 'OR')],
     [
       'Update rule score',
@@ -114,6 +118,8 @@ const TestConsumer = () => {
     <div>
       <p>Focus: {ctx.focus ? `group ${ctx.focus.groupId}, rule ${ctx.focus.ruleKey ?? 'none'}` : 'none'}</p>
       <p>Status: {ctx.status}</p>
+      <p>Has placeholder: {String(ctx.hasPlaceholder)}</p>
+      <p>Placeholder: {JSON.stringify(ctx.placeholder)}</p>
       <p>Error: {ctx.error?.message ?? 'none'}</p>
       <p>Associating: {String(ctx.isAssociating)}</p>
       <p>Course A expansions: {ctx.expansionCountByCourseId[courseA] ?? 0}</p>
@@ -845,6 +851,138 @@ describe('CompetencyAssociationsProvider', () => {
       rerender(providerFor(tagId));
 
       expect(await screen.findByText(focusOnGroup(10))).toBeInTheDocument();
+    });
+  });
+
+  describe('placeholders', () => {
+    const placeholderScore = { op: 'gte', value: 0.85, scale: 'percent' };
+
+    const renderLoaded = async (groups = singleGroupResponse) => {
+      axiosMock.onGet(groupsUrl).reply(200, groups);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      axiosMock.onGet(courseBOutlineUrl).reply(200, outlineFixture);
+      renderProvider();
+      await waitForSuccess();
+    };
+
+    it('adding a rule box focuses the group with no rule key', async () => {
+      await renderLoaded();
+
+      await click('Add placeholder rule box in group 10');
+
+      expect(screen.getByText(focusOn(10, null))).toBeInTheDocument();
+      expect(screen.getByText('Has placeholder: true')).toBeInTheDocument();
+    });
+
+    it('adding a group replaces a placeholder rule box, since focus has one slot', async () => {
+      await renderLoaded();
+      await click('Add placeholder rule box in group 10');
+
+      await click('Add placeholder group under course A');
+
+      expect(screen.getByText('Focus: group null, rule none')).toBeInTheDocument();
+      expect(screen.getByText(/"parentRuleGroupId":1,"logicOperator":"OR"/)).toBeInTheDocument();
+    });
+
+    it('focusing a real group clears the placeholder', async () => {
+      await renderLoaded(courseBGroupsResponse);
+      await click('Add placeholder rule box in group 10');
+      expect(screen.getByText('Has placeholder: true')).toBeInTheDocument();
+
+      await click('Focus group 21');
+
+      expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
+      expect(screen.getByText(focusOn(21, eqKey))).toBeInTheDocument();
+    });
+
+    it('keeps the placeholder rule box focus instead of resolving its null key to the last box', async () => {
+      await renderLoaded();
+      await click('Add placeholder rule box in group 10');
+      await flushEffects();
+
+      expect(screen.getByText(focusOn(10, null))).toBeInTheDocument();
+    });
+
+    it('moves focus off a placeholder onto another course\'s last group when that course expands', async () => {
+      await renderLoaded(twoCoursesResponse);
+      await click('Add placeholder rule box in group 10');
+
+      await click('Expand course B');
+
+      expect(await screen.findByText(focusOnGroup(20))).toBeInTheDocument();
+    });
+
+    it('keeps a placeholder group focused when its own course expands', async () => {
+      await renderLoaded();
+      await click('Add placeholder group under course A');
+
+      await click('Expand course A');
+
+      expect(screen.getByText('Focus: group null, rule none')).toBeInTheDocument();
+    });
+
+    it('sends only group_id for a placeholder rule box whose score is unchanged', async () => {
+      axiosMock.onPost(createUrl).reply(201, createdCriterion(10));
+      await renderLoaded();
+      await click('Add placeholder rule box in group 10');
+
+      await click('Associate in course A');
+
+      await expectSinglePost({ object_id: 'new-sub', group_id: 10 });
+    });
+
+    it('sends group_id and both rule fields for a placeholder rule box with a score', async () => {
+      axiosMock.onPost(createUrl).reply(201, createdCriterion(10, placeholderScore as GradeRulePayload));
+      await renderLoaded();
+      await click('Add placeholder rule box in group 10');
+      await click('Set placeholder score');
+
+      await click('Associate in course A');
+
+      await expectSinglePost({
+        object_id: 'new-sub',
+        group_id: 10,
+        rule_type_override: 'grade',
+        rule_payload_override: placeholderScore,
+      });
+    });
+
+    it('sends logic_operator and no group_id for a placeholder group in the clicked course', async () => {
+      axiosMock.onPost(createUrl).reply(201, createdCriterion(11));
+      await renderLoaded();
+      await click('Add placeholder group under course A');
+
+      await click('Associate in course A');
+
+      await expectSinglePost({ object_id: 'new-sub', logic_operator: 'OR' });
+    });
+
+    it('sends the chosen logic_operator and score together for a placeholder group', async () => {
+      axiosMock.onPost(createUrl).reply(201, createdCriterion(11, placeholderScore as GradeRulePayload));
+      await renderLoaded();
+      await click('Add placeholder group under course A');
+      await click('Set placeholder logic operator to AND');
+      await click('Set placeholder score');
+
+      await click('Associate in course A');
+
+      await expectSinglePost({
+        object_id: 'new-sub',
+        logic_operator: 'AND',
+        rule_type_override: 'grade',
+        rule_payload_override: placeholderScore,
+      });
+    });
+
+    it('sends no optional field for a placeholder group when the subsection is from a course without groups', async () => {
+      axiosMock.onPost(createUrl).reply(201, createdCriterion(20));
+      await renderLoaded();
+      await click('Add placeholder group under course A');
+
+      await click('Associate in another course');
+
+      await expectSinglePost({ object_id: 'new-sub' });
     });
   });
 

@@ -105,6 +105,28 @@ const messages = defineMessages({
     description: 'Visually hidden accessible label for the button that selects a rule box, stretched to cover '
       + 'the whole box - the box has no single short visible phrase of its own to reuse as this label.',
   },
+  addRuleButtonLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.add-rule-button-label',
+    defaultMessage: 'Rule',
+    description: 'Label for the button that adds a new, not-yet-saved rule box to a bottom-tier group.',
+  },
+  addRuleGroupButtonLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.add-rule-group-button-label',
+    defaultMessage: 'Rule Group',
+    description: 'Label for the button that adds a new, not-yet-saved bottom-tier group to a course-level group.',
+  },
+  addControlDisabledTooltip: {
+    id: 'course-authoring.competency-management.criteria-groups.add-control-disabled-tooltip',
+    defaultMessage: 'Fill in the empty box before adding another.',
+    description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while a not-yet-saved placeholder '
+      + 'already exists elsewhere in the tree.',
+  },
+  placeholderRuleBoxHint: {
+    id: 'course-authoring.competency-management.criteria-groups.placeholder-rule-box-hint',
+    defaultMessage: 'Select content below to add it here.',
+    description: 'Hint text shown in place of chips on a not-yet-saved placeholder rule box, which has no '
+      + 'content associated with it yet.',
+  },
 });
 
 export default messages;

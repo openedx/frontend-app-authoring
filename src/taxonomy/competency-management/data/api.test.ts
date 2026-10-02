@@ -133,6 +133,23 @@ describe('competency-management api calls', () => {
     });
   });
 
+  it('passes a new criterion\'s logic_operator through unchanged (creating a new bottom-tier group, #671)', async () => {
+    const { axiosMock } = initializeMocks();
+    const payload = { object_id: 'block-a', logic_operator: 'OR' as const };
+    axiosMock.onPost(apiUrls.createCompetencyCriterion(tagId)).reply(201, {
+      id: 1000,
+      group_id: 11,
+      rule_profile_id: 1,
+      rule_type_override: null,
+      rule_payload_override: null,
+      object_tag_id: tagId,
+    });
+
+    await createCompetencyCriterion(tagId, payload);
+
+    expect(JSON.parse(axiosMock.history.post[0].data)).toEqual(payload);
+  });
+
   it('updates a group\'s operator at its URL, sending a snake_case body and camelCasing the response', async () => {
     const { axiosMock } = initializeMocks();
     axiosMock.onPatch(apiUrls.updateCompetencyCriteriaGroup(tagId, 10)).reply(200, {

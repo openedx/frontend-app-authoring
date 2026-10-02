@@ -26,6 +26,12 @@ export const buildMockCompetencyAssociationsContextValue = (
   const shared: CompetencyAssociationsContextBase = {
     error: null,
     focus: null,
+    placeholder: { parentRuleGroupId: null, logicOperator: 'OR', rulePayload: null },
+    hasPlaceholder: false,
+    addPlaceholderRuleBox: jest.fn(),
+    addPlaceholderGroup: jest.fn(),
+    setPlaceholderLogicOperator: jest.fn(),
+    setPlaceholderRulePayload: jest.fn(),
     focusGroup: jest.fn(),
     focusRuleBox: jest.fn(),
     notifyCourseExpanded: jest.fn(),

@@ -12,6 +12,7 @@ import {
   MockCompetencyAssociationsProvider,
   systemDefaultProfile,
 } from '../__mocks__';
+import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
 import type { CompetencyCriteriaGroupsResponse } from '../data/types';
 import { buildCompetencyCriteriaGroupsIndex, ruleBoxesForGroup } from '../utils';
 import RuleBoxList from './RuleBoxList';
@@ -164,6 +165,85 @@ describe('<RuleBoxList />', () => {
 
       expect(updateRuleScore).not.toHaveBeenCalled();
       expect(screen.queryByText('Another rule box in this group already uses this score.')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('placeholder rule box', () => {
+    // One real box (gte 75%), distinct from the placeholder's default display of gte 70%.
+    const placeholderBoxes = ruleBoxesForGroup(
+      10,
+      buildCompetencyCriteriaGroupsIndex({
+        groups: [group(10, null, null, 0)],
+        criteria: [
+          criterion(201, 'block-x', 10, {
+            ruleProfileId: null,
+            ruleTypeOverride: 'grade',
+            rulePayloadOverride: { op: 'gte', value: 0.75, scale: 'percent' },
+          }),
+        ],
+      }),
+      systemDefaultProfile,
+    );
+
+    const renderWithPlaceholder = (
+      contextOverrides: MockCompetencyAssociationsOverrides = {},
+      canEdit = true,
+    ) =>
+      render(
+        <MockCompetencyAssociationsProvider value={{ focus: { groupId: 10, ruleKey: null }, ...contextOverrides }}>
+          <RuleBoxList
+            groupId={10}
+            boxes={placeholderBoxes}
+            subsectionNamesByUsageKey={{}}
+            canEdit={canEdit}
+          />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+    it('renders last, showing the system default rule while the author has not set a score', () => {
+      const { container } = renderWithPlaceholder({}, false);
+
+      const boxes = container.querySelectorAll('.rule-box');
+      expect(boxes).toHaveLength(2);
+      expect(boxes[1]).toHaveTextContent('With a score of 70% or higher');
+      expect(boxes[1]).toHaveTextContent('Select content below to add it here.');
+    });
+
+    it('is absent when another rule box in the group is focused', () => {
+      const { container } = renderWithPlaceholder({ focus: { groupId: 10, ruleKey: placeholderBoxes[0].key } });
+
+      expect(container.querySelectorAll('.rule-box')).toHaveLength(1);
+    });
+
+    it('writes a score change to setPlaceholderRulePayload, not updateRuleScore', async () => {
+      const user = userEvent.setup();
+      const setPlaceholderRulePayload = jest.fn();
+      const updateRuleScore = jest.fn();
+      renderWithPlaceholder({ setPlaceholderRulePayload, updateRuleScore });
+
+      const inputs = screen.getAllByLabelText('Score threshold percentage');
+      const placeholderInput = inputs[inputs.length - 1];
+      await user.clear(placeholderInput);
+      await user.type(placeholderInput, '80');
+      await user.keyboard('{Enter}');
+
+      expect(setPlaceholderRulePayload).toHaveBeenCalledWith({ op: 'gte', value: 0.8, scale: 'percent' });
+      expect(updateRuleScore).not.toHaveBeenCalled();
+    });
+
+    it('refuses a score that duplicates the real box\'s rule', async () => {
+      const user = userEvent.setup();
+      const setPlaceholderRulePayload = jest.fn();
+      renderWithPlaceholder({ setPlaceholderRulePayload });
+
+      const inputs = screen.getAllByLabelText('Score threshold percentage');
+      const placeholderInput = inputs[inputs.length - 1];
+      await user.clear(placeholderInput);
+      await user.type(placeholderInput, '75');
+      await user.keyboard('{Enter}');
+
+      expect(screen.getByText('Another rule box in this group already uses this score.')).toBeInTheDocument();
+      expect(setPlaceholderRulePayload).not.toHaveBeenCalled();
     });
   });
 });

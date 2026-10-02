@@ -21,7 +21,7 @@ const renderBox = (contextOverrides: MockCompetencyAssociationsOverrides = {}, c
 );
 
 describe('<CriteriaGroupBox /> editing (#794)', () => {
-  mockScrollIntoView();
+  const scrollIntoView = mockScrollIntoView();
   let user: ReturnType<typeof userEvent.setup>;
 
   beforeEach(() => {
@@ -70,5 +70,61 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     screen.getAllByRole('button').forEach((button) => {
       expect(within(button).queryByRole('button')).not.toBeInTheDocument();
     });
+  });
+
+  it('"+ Rule" starts a placeholder rule box in the card\'s own group', async () => {
+    const addPlaceholderRuleBox = jest.fn();
+    renderBox({ addPlaceholderRuleBox });
+
+    await user.click(screen.getByRole('button', { name: 'Rule' }));
+
+    expect(addPlaceholderRuleBox).toHaveBeenCalledWith(10);
+  });
+
+  it('disables "+ Rule" with a tooltip while a placeholder already exists', async () => {
+    renderBox({ hasPlaceholder: true });
+
+    const addRuleButton = screen.getByRole('button', { name: 'Rule' });
+    expect(addRuleButton).toBeDisabled();
+
+    // A disabled button fires no hover events, so the tooltip hangs off its focusable wrapper.
+    await user.hover(addRuleButton.closest('.add-control__button-wrapper')!);
+    expect(await screen.findByText('Fill in the empty box before adding another.')).toBeInTheDocument();
+  });
+
+  it('hides "+ Rule" when canEdit is false', () => {
+    renderBox({}, false);
+
+    expect(screen.queryByRole('button', { name: 'Rule' })).not.toBeInTheDocument();
+  });
+
+  it('edits a placeholder card\'s operator through setPlaceholderLogicOperator, not updateGroupOperator', async () => {
+    const setPlaceholderLogicOperator = jest.fn();
+    const updateGroupOperator = jest.fn();
+    render(
+      <MockCompetencyAssociationsProvider
+        value={{
+          focus: { groupId: null, ruleKey: null },
+          placeholder: { parentRuleGroupId: 1, logicOperator: 'AND', rulePayload: null },
+          setPlaceholderLogicOperator,
+          updateGroupOperator,
+        }}
+      >
+        <CriteriaGroupBox subsectionNamesByUsageKey={{}} canEdit />
+      </MockCompetencyAssociationsProvider>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'all' }));
+    await user.click(screen.getByText('any'));
+
+    expect(setPlaceholderLogicOperator).toHaveBeenCalledWith('OR');
+    expect(updateGroupOperator).not.toHaveBeenCalled();
+  });
+
+  it('does not scroll the group itself when focused with a placeholder rule box, which scrolls instead', () => {
+    renderBox({ focus: { groupId: 10, ruleKey: null } });
+
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(scrollIntoView.mock.contexts[0]).toHaveClass('rule-box');
   });
 });

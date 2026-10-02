@@ -61,7 +61,10 @@ export async function getDefaultCompetencyRuleProfile(): Promise<CompetencyRuleP
 
 /**
  * Create a new criterion associating a piece of course content with a
- * competency.
+ * competency. Also creates the bottom-tier group itself (`#671`) when
+ * `payload.group_id` is omitted and `payload.logic_operator` is given -
+ * `payload` is posted as-is, so no extra handling is needed here for that
+ * case.
  * @param tagId The id of the competency (tag) the new criterion belongs to.
  * @param payload The new criterion's fields, snake_case per the wire format.
  */

@@ -4,12 +4,14 @@ import classNames from 'classnames';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import type { BottomTierCompetencyCriteriaGroup } from '../data/types';
 import { ruleBoxesForGroup } from '../utils';
+import AddControl from './AddControl';
 import LogicOperatorSelect from './LogicOperatorSelect';
 import RuleBoxList from './RuleBoxList';
 import messages from './messages';
 
 export interface CriteriaGroupBoxProps {
-  group: BottomTierCompetencyCriteriaGroup;
+  /** `undefined` for the not-yet-saved placeholder group, which reads its any/all logic from the context. */
+  group?: BottomTierCompetencyCriteriaGroup;
   subsectionNamesByUsageKey: Record<string, string>;
   /** Whether the author can edit this group's any/all logic and its rule boxes' scores. */
   canEdit: boolean;
@@ -27,17 +29,27 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
   const intl = useIntl();
   const {
     focus,
+    placeholder,
     focusGroup,
     status,
     groupsIndex,
     systemDefaultProfile,
     updateGroupOperator,
+    addPlaceholderRuleBox,
+    setPlaceholderLogicOperator,
+    hasPlaceholder,
   } = useCompetencyAssociations();
   const ref = useRef<HTMLDivElement>(null);
 
-  const isFocused = focus?.groupId === group.id;
-  const boxes = status === 'success' ? ruleBoxesForGroup(group.id, groupsIndex, systemDefaultProfile) : [];
-  const hasFocusedBox = isFocused && boxes.some((box) => box.key === focus.ruleKey);
+  // `null` is the placeholder group's id in `CriteriaFocus`.
+  const groupId = group?.id ?? null;
+  const logicOperator = group ? group.logicOperator : placeholder.logicOperator;
+  const isFocused = focus?.groupId === groupId;
+  const boxes = status === 'success' && groupId !== null
+    ? ruleBoxesForGroup(groupId, groupsIndex, systemDefaultProfile)
+    : [];
+  // A placeholder rule box (`ruleKey === null`) scrolls itself.
+  const hasFocusedBox = isFocused && (focus.ruleKey === null || boxes.some((box) => box.key === focus.ruleKey));
 
   useEffect(() => {
     if (isFocused && !hasFocusedBox) {
@@ -46,7 +58,7 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
   }, [isFocused, hasFocusedBox]);
 
   const sentenceLabel = intl.formatMessage(messages.criteriaGroupBoxLabel, {
-    operator: group.logicOperator === 'AND'
+    operator: logicOperator === 'AND'
       ? intl.formatMessage(messages.logicOperatorAllLabel)
       : intl.formatMessage(messages.logicOperatorAnyLabel),
   });
@@ -55,12 +67,16 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
       <LogicOperatorSelect
         key="operator"
         className="criteria-group-box__header-operator"
-        value={group.logicOperator}
+        value={logicOperator}
         labels={{
           and: intl.formatMessage(messages.logicOperatorAllLabel),
           or: intl.formatMessage(messages.logicOperatorAnyLabel),
         }}
-        onChange={canEdit ? (logicOperator) => updateGroupOperator(group.id, logicOperator) : undefined}
+        onChange={canEdit
+          ? (newLogicOperator) => (
+            group ? updateGroupOperator(group.id, newLogicOperator) : setPlaceholderLogicOperator(newLogicOperator)
+          )
+          : undefined}
       />
     ),
   });
@@ -74,14 +90,16 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
         ? (
           // The operator dropdown is a button, so the select control is a sibling laid over the band.
           <div className="criteria-group-box__header">
-            <button
-              type="button"
-              className="criteria-group-box__select-button"
-              aria-current={isFocused}
-              onClick={() => focusGroup(group.id)}
-            >
-              <span className="sr-only">{sentenceLabel}</span>
-            </button>
+            {group && (
+              <button
+                type="button"
+                className="criteria-group-box__select-button"
+                aria-current={isFocused}
+                onClick={() => focusGroup(group.id)}
+              >
+                <span className="sr-only">{sentenceLabel}</span>
+              </button>
+            )}
             {sentence}
           </div>
         )
@@ -90,7 +108,7 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
             type="button"
             className="criteria-group-box__header"
             aria-current={isFocused}
-            onClick={() => focusGroup(group.id)}
+            onClick={() => group && focusGroup(group.id)}
           >
             {sentence}
           </button>
@@ -98,11 +116,18 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
       {status === 'success' && (
         <div className="criteria-group-box__rules">
           <RuleBoxList
-            groupId={group.id}
+            groupId={groupId}
             boxes={boxes}
             subsectionNamesByUsageKey={subsectionNamesByUsageKey}
             canEdit={canEdit}
           />
+          {canEdit && groupId !== null && (
+            <AddControl
+              label={intl.formatMessage(messages.addRuleButtonLabel)}
+              disabled={hasPlaceholder}
+              onClick={() => addPlaceholderRuleBox(groupId)}
+            />
+          )}
         </div>
       )}
     </div>

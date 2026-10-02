@@ -219,4 +219,57 @@ describe('<CourseGroupSection />', () => {
       expect(card).not.toHaveClass('course-group-section--focused');
     }
   });
+
+  it(
+    'renders a placeholder group as a third card with its own connector, when it belongs to this course',
+    async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+      const { container } = renderSection({
+        focus: { groupId: null, ruleKey: null },
+        canEditCourse: () => true,
+        placeholder: { parentRuleGroupId: courseGroup.id, logicOperator: 'OR', rulePayload: null },
+      });
+
+      await screen.findByText('Demo Course');
+      // Two real bottom-tier groups (10, 11) plus the placeholder - three
+      // cards, N-1 (two) connectors, same rule as the all-real case above.
+      expect(container.querySelectorAll('.criteria-group-box')).toHaveLength(3);
+      expect(screen.getAllByText('Or')).toHaveLength(2);
+    },
+  );
+
+  it('does not render a placeholder group that belongs to a different course-level group', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const { container } = renderSection({
+      focus: { groupId: null, ruleKey: null },
+      // Not `courseGroup.id` (1) - simulates a placeholder started under a
+      // sibling course's own card instead.
+      placeholder: { parentRuleGroupId: 999, logicOperator: 'OR', rulePayload: null },
+    });
+
+    await screen.findByText('Demo Course');
+    expect(container.querySelectorAll('.criteria-group-box')).toHaveLength(2);
+    expect(screen.getAllByText('Or')).toHaveLength(1);
+  });
+
+  it('renders exactly one "+ Rule Group" control, which starts a placeholder under this course-level group', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const addPlaceholderGroup = jest.fn();
+    renderSection({ addPlaceholderGroup, canEditCourse: () => true });
+
+    await screen.findByText('Demo Course');
+    const addRuleGroupButtons = screen.getAllByRole('button', { name: 'Rule Group' });
+    expect(addRuleGroupButtons).toHaveLength(1);
+
+    await user.click(addRuleGroupButtons[0]);
+    expect(addPlaceholderGroup).toHaveBeenCalledWith(courseGroup.id);
+  });
+
+  it('hides "+ Rule Group" when the author cannot edit this course', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    renderSection();
+
+    await screen.findByText('Demo Course');
+    expect(screen.queryByRole('button', { name: 'Rule Group' })).not.toBeInTheDocument();
+  });
 });
