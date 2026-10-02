@@ -82,18 +82,22 @@
   // both share `&__panel`'s single envelope. `flex: 1` (a flex child of
   // `&__panel`) is what actually grows to fill the extra height - `&__panel`
   // growing alone would otherwise leave the added space unused above this
-  // box's own bottom edge. `height` is fixed, not a `min-height`/`max-height`
-  // pair, and matches `../CompetencyTree.scss`'s own `&__container` height
-  // exactly: a content-dependent height (even capped) leaves this column and
-  // the tree column at different heights whenever one side's current page/
-  // search/expansion state happens to produce less content than the other -
-  // e.g. a short last page of results next to a tall tree. Pinning both
-  // columns to the same fixed formula is what keeps them level in every
-  // case; `overflow-y` scrolls whichever side's content doesn't fit.
+  // box's own bottom edge. `min-height` is sized for a full page of results
+  // (`PAGE_SIZE` courses in `CourseSearchBrowse.tsx`, collapsed) so the box
+  // doesn't visibly shrink and shift the page below it every time a
+  // narrower search returns fewer courses - approximate, based on
+  // `&__group--course`'s own padding/shadow rather than a design spec, so
+  // treat it as adjustable rather than exact. `max-height`/`overflow-y` mirror
+  // `../CompetencyTree.scss`'s own `&__container` cap, for the same reason:
+  // without it, a full page of results plus pagination, or a course row
+  // expanded to show its own outline (`CourseRow` -> `CourseOutlineSubtree`),
+  // grows this box past the tree column's own capped height instead of
+  // scrolling its own content.
   &__container {
     border-top: 1px solid $line-color;
     flex: 1;
-    height: calc(100vh - 260px);
+    min-height: 640px;
+    max-height: calc(100vh - 260px);
     overflow-y: auto;
     padding: $container-padding-y $container-padding-x;
   }
