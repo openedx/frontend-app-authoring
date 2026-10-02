@@ -124,6 +124,7 @@ export const CourseLibraries = () => {
 
   const {
     isLoading: isLoadingUserPermissions,
+    canViewLibraryUpdates,
     canManageLibraryUpdates,
   } = useCourseUserPermissions(courseId, getLibraryUpdatesPermissions(courseId));
 
@@ -191,14 +192,14 @@ export const CourseLibraries = () => {
         </Stack>
       );
     }
-    return <ReviewTabContent courseId={courseId} />;
-  }, [outOfSyncCount, isLoading, tabKey]);
+    return <ReviewTabContent courseId={courseId} readOnly={!canManageLibraryUpdates} />;
+  }, [canManageLibraryUpdates, outOfSyncCount, isLoading, tabKey]);
 
   if (isLoadingUserPermissions) {
     return <Loading />;
   }
 
-  if (!canManageLibraryUpdates) {
+  if (!canViewLibraryUpdates) {
     return <PermissionDeniedAlert />;
   }
 
@@ -227,7 +228,8 @@ export const CourseLibraries = () => {
         <SubHeader
           title={intl.formatMessage(messages.headingTitle)}
           subtitle={intl.formatMessage(messages.headingSubtitle)}
-          headerActions={(!showReviewAlert && outOfSyncCount > 0 && tabKey === CourseLibraryTabs.all) ?
+          headerActions={(canManageLibraryUpdates && !showReviewAlert && outOfSyncCount > 0 &&
+              tabKey === CourseLibraryTabs.all) ?
             (
               <Button
                 variant="primary"
