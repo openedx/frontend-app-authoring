@@ -57,6 +57,7 @@ const mockPermissions = (overrides = {}) =>
   jest.mocked(useCourseUserPermissions).mockReturnValue({
     isLoading: false,
     isAuthzEnabled: true,
+    canViewLibraryUpdates: true,
     canManageLibraryUpdates: true,
     ...overrides,
   } as ReturnType<typeof useCourseUserPermissions>);
@@ -93,15 +94,15 @@ describe('<CourseLibraries />', () => {
     expect(emptyMsg).toBeInTheDocument();
   });
 
-  it('shows PermissionDeniedAlert when user lacks manage library updates permission', async () => {
-    mockPermissions({ canManageLibraryUpdates: false });
+  it('shows PermissionDeniedAlert when user lacks view library updates permission', async () => {
+    mockPermissions({ canViewLibraryUpdates: false });
     await renderCourseLibrariesPage();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
     expect(screen.queryByText('Libraries')).not.toBeInTheDocument();
   });
 
   it('shows a loading spinner while permissions are loading', async () => {
-    mockPermissions({ isLoading: true, canManageLibraryUpdates: false });
+    mockPermissions({ isLoading: true, canViewLibraryUpdates: false });
     await renderCourseLibrariesPage();
     expect(await screen.findByRole('status')).toBeInTheDocument();
     expect(screen.queryByTestId('permissionDeniedAlert')).not.toBeInTheDocument();
@@ -206,6 +207,24 @@ describe('<CourseLibraries />', () => {
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
+
+  it('shows out of sync alert even when user lacks manage permission', async () => {
+    const user = userEvent.setup();
+    mockPermissions({ canViewLibraryUpdates: true, canManageLibraryUpdates: false });
+    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    const allTab = await screen.findByRole('tab', { name: 'Libraries' });
+    await user.click(allTab);
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+  });
+
+  it('does not show Review Updates button when user lacks manage permission', async () => {
+    const user = userEvent.setup();
+    mockPermissions({ canViewLibraryUpdates: true, canManageLibraryUpdates: false });
+    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    const allTab = await screen.findByRole('tab', { name: 'Libraries' });
+    await user.click(allTab);
+    expect(screen.queryByRole('button', { name: 'Review Updates' })).not.toBeInTheDocument();
+  });
 });
 
 describe('<CourseLibraries ReviewTab />', () => {
@@ -218,6 +237,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     localStorage.clear();
     searchParamsGetMock.mockReturnValue('review');
     queryClient = mocks.queryClient;
+    mockPermissions();
   });
 
   const renderCourseLibrariesReviewPage = async (courseKey?: string) => {
@@ -248,6 +268,39 @@ describe('<CourseLibraries ReviewTab />', () => {
     expect(updateBtns.length).toEqual(7);
     const ignoreBtns = await screen.findAllByRole('button', { name: 'Ignore' });
     expect(ignoreBtns.length).toEqual(7);
+  });
+
+  it('hides update and ignore buttons when user lacks manage permission', async () => {
+    mockPermissions({ canViewLibraryUpdates: true, canManageLibraryUpdates: false });
+    await renderCourseLibrariesReviewPage();
+
+    const updateBtns = screen.queryAllByRole('button', { name: 'Update' });
+    expect(updateBtns.length).toEqual(0);
+    const ignoreBtns = screen.queryAllByRole('button', { name: 'Ignore' });
+    expect(ignoreBtns.length).toEqual(0);
+
+    const reviewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
+    expect(reviewBtns.length).toEqual(7);
+  });
+
+  it('disables accept and ignore changes buttons in preview modal for read-only users', async () => {
+    const user = userEvent.setup();
+    mockPermissions({ canViewLibraryUpdates: true, canManageLibraryUpdates: false });
+    await renderCourseLibrariesReviewPage();
+    const readOnlyMessage =
+      'Your role doesn\'t include permission to do this. Contact your org admin to request access';
+
+    const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
+    expect(previewBtns.length).toEqual(7);
+    await user.click(previewBtns[0]);
+    const dialog = await screen.findByRole('dialog');
+    const acceptBtn = await within(dialog).findByRole('button', { name: 'Accept changes' });
+    expect(acceptBtn).toHaveAttribute('aria-disabled', 'true');
+    const ignoreBtn = await within(dialog).findByRole('button', { name: 'Ignore changes' });
+    expect(ignoreBtn).toBeDisabled();
+
+    await user.hover(acceptBtn.closest('span') ?? acceptBtn);
+    expect(await screen.findByText(readOnlyMessage)).toBeInTheDocument();
   });
 
   test.each([
