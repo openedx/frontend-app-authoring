@@ -19,6 +19,12 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   }),
 }));
 
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
 let mockNotices = {};
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   ...jest.requireActual('@src/course-outline/data/apiHooks'),
@@ -309,5 +315,13 @@ describe('<PageAlerts />', () => {
     mockPermissions({ isLoading: true, canManageLibraryUpdates: false });
     renderComponent();
     expect(screen.queryByText(/library components are out of sync/)).not.toBeInTheDocument();
+  });
+
+  it('navigates to the libraries review tab from the out of sync alert', async () => {
+    mockEntityLinksSummary = [{ readyToSyncCount: 7, lastPublishedAt: '2025-05-01T22:20:44.989042Z' }];
+    renderComponent();
+    const reviewBtn = await screen.findByRole('button', { name: 'Review' });
+    fireEvent.click(reviewBtn);
+    expect(mockNavigate).toHaveBeenCalledWith('/course/course-id/libraries?tab=review');
   });
 });

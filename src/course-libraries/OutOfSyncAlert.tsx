@@ -13,7 +13,7 @@ interface OutOfSyncAlertProps {
   onDismiss?: () => void;
   onReview: () => void;
   /** When true, the user can view library updates but cannot accept or ignore them. */
-  readOnly?: boolean;
+  readOnly: boolean;
 }
 /**
  * Shows an alert when library components used in the current course were updated and the blocks
@@ -32,7 +32,7 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
   courseId,
   onDismiss,
   onReview,
-  readOnly = false,
+  readOnly,
 }) => {
   const { data, isPending } = useEntityLinksSummaryByDownstreamContext(courseId);
   const outOfSyncCount = data?.reduce((count, lib) => count + (lib.readyToSyncCount || 0), 0);
