@@ -25,10 +25,16 @@ import { SidebarActions, useSidebarContext } from '../../common/context/SidebarC
 import genericMessages from '../messages';
 import messages from './messages';
 
+type CollectionAssignmentResult = {
+  count?: number;
+};
+
 interface ManageCollectionsProps {
   opaqueKey: string;
   collections: CollectionMetadata[];
-  useUpdateCollectionsHook: (opaqueKey: string) => UseMutationResult<void, unknown, string[], unknown>;
+  useUpdateCollectionsHook: (
+    opaqueKey: string,
+  ) => UseMutationResult<CollectionAssignmentResult | undefined, unknown, string[], unknown>;
 }
 
 interface CollectionsDrawerProps extends ManageCollectionsProps {
@@ -51,10 +57,17 @@ const CollectionsSelectableBox = ({
     remove,
   }] = useCheckboxSetValues(collectionKeys);
   const [btnState, setBtnState] = useState('default');
+  const selectedCollectionKeys = new Set(selectedCollections);
+  const canSubmitCollectionUpdate = selectedCollections.length !== collectionKeys.length
+    || collectionKeys.some((collectionKey) => !selectedCollectionKeys.has(collectionKey));
 
   const updateCollectionsMutation = useUpdateCollectionsHook(opaqueKey);
 
   const handleConfirmation = () => {
+    if (!canSubmitCollectionUpdate) {
+      return;
+    }
+
     setBtnState('pending');
     updateCollectionsMutation.mutateAsync(selectedCollections).then(() => {
       showToast(intl.formatMessage(genericMessages.manageCollectionsSuccess));
@@ -106,6 +119,7 @@ const CollectionsSelectableBox = ({
         </Button>
         <StatefulButton
           onClick={handleConfirmation}
+          disabled={!canSubmitCollectionUpdate}
           className="flex-grow-1 rounded-0"
           variant="primary"
           state={btnState}

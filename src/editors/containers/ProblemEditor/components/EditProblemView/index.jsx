@@ -28,7 +28,7 @@ import {
 import './index.scss';
 import messages from './messages';
 import ExplanationWidget from './ExplanationWidget';
-import { saveBlock } from '../../../../hooks';
+import { createBlock, saveBlock } from '../../../../hooks';
 
 import { selectors } from '../../../../data/redux';
 import { ProblemEditorContextProvider } from './ProblemEditorContext';
@@ -44,6 +44,8 @@ const EditProblemView = ({ returnFunction }) => {
   const problemType = useSelector(selectors.problem.problemType);
   const problemState = useSelector(selectors.problem.completeState);
   const isDirty = useSelector(selectors.problem.isDirty);
+  const shouldCreateBlock = useSelector(selectors.app.shouldCreateBlock);
+  const persistWarningContent = shouldCreateBlock ? createBlock : saveBlock;
 
   const isMarkdownEditorEnabledSelector = useSelector(selectors.problem.isMarkdownEditorEnabled);
   const { isMarkdownEditorEnabledForContext } = useEditorContext();
@@ -89,7 +91,7 @@ const EditProblemView = ({ returnFunction }) => {
               </Button>
               <Button
                 onClick={() =>
-                  saveBlock({
+                  persistWarningContent({
                     content: parseState({
                       problem: problemState,
                       isAdvanced: isAdvancedProblemType,

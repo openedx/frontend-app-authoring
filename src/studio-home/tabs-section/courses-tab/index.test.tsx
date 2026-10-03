@@ -57,6 +57,14 @@ const renderComponent = (overrideProps = {}, studioHomeState: Partial<StudioHome
 };
 
 describe('<CoursesTab />', () => {
+  it.each([null, undefined])('renders a zero count safely when courses are absent (%s)', (courses) => {
+    renderComponent({}, {
+      studioHomeData: { courses, numPages: 0, coursesCount: 0 } as unknown as StudioHomeState['studioHomeData'],
+    });
+    expect(screen.getByTestId('pagination-info')).toHaveTextContent('0');
+    expect(screen.getByTestId('pagination-info')).not.toHaveTextContent('undefined');
+  });
+
   it('should render correctly', async () => {
     renderComponent();
     const coursesPaginationInfo = screen.getByTestId('pagination-info');

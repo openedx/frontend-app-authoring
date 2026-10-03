@@ -61,6 +61,51 @@ describe('<ManageCollections />', () => {
     });
   });
 
+  it.each([{ collections: [] }, { collections: [{ title: 'My first collection', key: 'my-first-collection' }] }])(
+    'does not send an unchanged collection assignment',
+    async ({ collections }) => {
+      const user = userEvent.setup();
+      render(
+        <ManageCollections
+          opaqueKey={mockLibraryBlockMetadata.usageKeyWithCollections}
+          collections={collections}
+          useUpdateCollectionsHook={useUpdateComponentCollections}
+        />,
+      );
+      await user.click(
+        await screen.findByRole('button', { name: collections.length ? 'Manage Collections' : 'Add to Collection' }),
+      );
+      const confirm = await screen.findByRole('button', { name: 'Confirm' });
+      expect(confirm).toBeDisabled();
+      await user.click(confirm);
+      expect(axiosMock.history.patch).toHaveLength(0);
+      expect(mockShowToast).not.toHaveBeenCalled();
+      expect(screen.getByRole('search')).toBeInTheDocument();
+    },
+  );
+
+  it('allows removing the last existing collection assignment', async () => {
+    const user = userEvent.setup();
+    axiosMock.onPatch(getLibraryBlockCollectionsUrl(mockLibraryBlockMetadata.usageKeyWithCollections)).reply(200, {
+      count: 0,
+    });
+    render(
+      <ManageCollections
+        opaqueKey={mockLibraryBlockMetadata.usageKeyWithCollections}
+        collections={[{ title: 'My first collection', key: 'my-first-collection' }]}
+        useUpdateCollectionsHook={useUpdateComponentCollections}
+      />,
+    );
+    await user.click(await screen.findByRole('button', { name: 'Manage Collections' }));
+    await user.click(await screen.findByRole('button', { name: 'My first collection' }));
+    const confirm = await screen.findByRole('button', { name: 'Confirm' });
+    expect(confirm).toBeEnabled();
+    await user.click(confirm);
+    await waitFor(() => expect(axiosMock.history.patch).toHaveLength(1));
+    expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({ collection_keys: [] });
+    expect(mockShowToast).toHaveBeenCalledWith('Content added to collection.');
+  });
+
   it('should show all collections in library and allow users to select for the current component', async () => {
     const user = userEvent.setup();
     const url = getLibraryBlockCollectionsUrl(mockLibraryBlockMetadata.usageKeyWithCollections);

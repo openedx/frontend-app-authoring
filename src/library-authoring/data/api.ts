@@ -722,9 +722,10 @@ export async function restoreCollection(libraryId: string, collectionId: string)
  * Update component collections.
  */
 export async function updateComponentCollections(usageKey: string, collectionKeys: string[]) {
-  await getAuthenticatedHttpClient().patch(getLibraryBlockCollectionsUrl(usageKey), {
+  const { data } = await getAuthenticatedHttpClient().patch(getLibraryBlockCollectionsUrl(usageKey), {
     collection_keys: collectionKeys,
   });
+  return camelCaseObject(data);
 }
 
 export interface ItemHierarchyData {
@@ -847,9 +848,10 @@ export async function addComponentsToContainer(containerId: string, componentIds
  * Update container collections.
  */
 export async function updateContainerCollections(containerId: string, collectionKeys: string[]) {
-  await getAuthenticatedHttpClient().patch(getLibraryContainerCollectionsUrl(containerId), {
+  const { data } = await getAuthenticatedHttpClient().patch(getLibraryContainerCollectionsUrl(containerId), {
     collection_keys: collectionKeys,
   });
+  return camelCaseObject(data);
 }
 
 /**

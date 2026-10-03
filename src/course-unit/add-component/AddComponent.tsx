@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -103,10 +103,27 @@ const AddComponent = ({
 
   useEventListener('message', receiveMessage);
 
+  const selectedLibraryComponents = useMemo(
+    () => selectedComponents.filter(({ usageKey }) => Boolean(usageKey)),
+    [selectedComponents],
+  );
+  const canSubmitSelectedLibraryComponents = selectedLibraryComponents.length > 0;
+
   const onComponentSelectionSubmit = useCallback(() => {
-    sendMessageToIframe(messageTypes.addSelectedComponentsToBank, { selectedComponents });
+    if (!canSubmitSelectedLibraryComponents) {
+      return;
+    }
+
+    sendMessageToIframe(messageTypes.addSelectedComponentsToBank, {
+      selectedComponents: selectedLibraryComponents,
+    });
     closeSelectLibraryContentModal();
-  }, [selectedComponents]);
+  }, [
+    canSubmitSelectedLibraryComponents,
+    closeSelectLibraryContentModal,
+    selectedLibraryComponents,
+    sendMessageToIframe,
+  ]);
 
   const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
@@ -292,7 +309,10 @@ const AddComponent = ({
           size="xl"
           footerNode={isSelectLibraryContentModalOpen && (
             <ActionRow>
-              <Button onClick={onComponentSelectionSubmit}>
+              <Button
+                onClick={onComponentSelectionSubmit}
+                disabled={!canSubmitSelectedLibraryComponents}
+              >
                 <FormattedMessage {...messages.multipleComponentPickerModalBtn} />
               </Button>
             </ActionRow>

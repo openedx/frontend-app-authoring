@@ -86,6 +86,32 @@ describe('generic api calls', () => {
     expect(contentTagsCountMock[contentId]).toEqual(15);
   });
 
+  it.each([null, undefined, ''])('accepts an empty successful create response (%s)', async (body) => {
+    axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(201, body);
+    await expect(createOrRerunCourse({ displayName: 'New course' })).resolves.toEqual({});
+    expect(axiosMock.history.post).toHaveLength(1);
+  });
+
+  it('uses a same-origin Studio course redirect for an empty response', async () => {
+    axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(201, '', {
+      location: new URL('/course/course-v1:Test+Demo+2026?created=1', getApiBaseUrl()).href,
+    });
+    await expect(createOrRerunCourse({})).resolves.toEqual({ url: '/course/course-v1:Test+Demo+2026?created=1' });
+  });
+
+  it.each(['https://foreign.example/course/id', '/login', '/course/', '/login/next/course/id'])(
+    'does not expose an unrelated redirect %s',
+    async (location) => {
+      axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(201, '', { location });
+      await expect(createOrRerunCourse({})).resolves.toEqual({});
+    },
+  );
+
+  it('preserves backend rejection instead of normalizing it to an empty success', async () => {
+    axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(400, { error: 'Course number already exists' });
+    await expect(createOrRerunCourse({})).rejects.toBeDefined();
+  });
+
   it('should throw an error if no pattern is provided', async () => {
     const pattern = undefined;
     await expect(getTagsCount(pattern)).rejects.toThrow('contentPattern is required');

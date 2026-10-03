@@ -45,7 +45,7 @@ const CardList: React.FC<CardListProps> = ({
   if (hasV2Libraries) {
     return (
       <>
-        {data!.results.map(({
+        {data.results.map(({
           id,
           org,
           slug,
@@ -123,6 +123,18 @@ const LibrariesV2List: React.FC<Props> = ({
     isPending,
     isError,
   } = useContentLibraryV2List({ page: currentPage, ...filterParams });
+  const libraryResults = data?.results ?? [];
+  const libraryCount = data?.count ?? 0;
+  const libraryNumPages = data?.numPages ?? 0;
+  const safeLibraryData: LibrariesV2Response = {
+    next: data?.next ?? null,
+    previous: data?.previous ?? null,
+    count: libraryCount,
+    numPages: libraryNumPages,
+    currentPage: data?.currentPage ?? currentPage,
+    start: data?.start ?? 0,
+    results: libraryResults,
+  };
 
   const handlePostCreateLibrary = useCallback((library: ContentLibrary) => {
     if (handleSelect) {
@@ -134,13 +146,13 @@ const LibrariesV2List: React.FC<Props> = ({
 
   const handleOnChangeRadioSet = useCallback((libraryId: string) => {
     setScrollIntoCard(false);
-    if (handleSelect && data) {
-      const library = data.results.find((item) => item.id === libraryId);
+    if (handleSelect) {
+      const library = libraryResults.find((item) => item.id === libraryId);
       if (library) {
         handleSelect(library);
       }
     }
-  }, [data, handleSelect, setScrollIntoCard]);
+  }, [libraryResults, handleSelect, setScrollIntoCard]);
 
   if (isPending && !isFiltered) {
     return (
@@ -150,7 +162,7 @@ const LibrariesV2List: React.FC<Props> = ({
     );
   }
 
-  const hasV2Libraries = !isPending && !isError && ((data!.results.length || 0) > 0);
+  const hasV2Libraries = !isPending && !isError && libraryResults.length > 0;
 
   return (
     isError ?
@@ -191,8 +203,8 @@ const LibrariesV2List: React.FC<Props> = ({
               && (
                 <p>
                   {intl.formatMessage(messages.coursesPaginationInfo, {
-                    length: data!.results.length,
-                    total: data!.count,
+                    length: libraryResults.length,
+                    total: libraryCount,
                   })}
                 </p>
               )}
@@ -211,7 +223,7 @@ const LibrariesV2List: React.FC<Props> = ({
                   selectedLibraryId={selectedLibraryId}
                   isFiltered={isFiltered}
                   isLoading={isPending}
-                  data={data!}
+                  data={safeLibraryData}
                   handleClearFilters={handleClearFilters}
                   scrollIntoView={scrollIntoCard}
                 />
@@ -222,17 +234,17 @@ const LibrariesV2List: React.FC<Props> = ({
                 hasV2Libraries={hasV2Libraries}
                 isFiltered={isFiltered}
                 isLoading={isPending}
-                data={data!}
+                data={safeLibraryData}
                 handleClearFilters={handleClearFilters}
               />
             )}
 
-          {hasV2Libraries && (data!.numPages || 0) > 1
+          {hasV2Libraries && libraryNumPages > 1
             && (
               <Pagination
                 className="d-flex justify-content-center"
                 paginationLabel="pagination navigation"
-                pageCount={data!.numPages}
+                pageCount={libraryNumPages}
                 currentPage={currentPage}
                 onPageSelect={handlePageSelect}
               />

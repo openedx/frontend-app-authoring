@@ -40,15 +40,45 @@ export async function getCourseRerun(courseId: string): Promise<unknown> {
   return camelCaseObject(data);
 }
 
+function normalizeCourseRedirectUrl(response: any): Record<string, string> {
+  const rawUrl = response?.headers?.location || response?.request?.responseURL;
+  if (typeof rawUrl !== 'string' || !rawUrl) {
+    return {};
+  }
+
+  try {
+    const studioBase = new URL(getApiBaseUrl());
+    const redirectUrl = new URL(rawUrl, studioBase);
+    if (redirectUrl.origin !== studioBase.origin || !/^\/course\/[^/]+\/?$/.test(redirectUrl.pathname)) {
+      return {};
+    }
+    return { url: `${redirectUrl.pathname}${redirectUrl.search}${redirectUrl.hash}` };
+  } catch {
+    return {};
+  }
+}
+
 /**
  * Create or rerun course with data.
  */
 export async function createOrRerunCourse(courseData: Record<string, any>): Promise<unknown> {
-  const { data } = await getAuthenticatedHttpClient().post(
+  const response = await getAuthenticatedHttpClient().post(
     getCreateOrRerunCourseUrl(),
     convertObjectToSnakeCase(courseData, true),
   );
-  return camelCaseObject(data);
+  const { data } = response;
+  if (data && typeof data === 'object') {
+    return camelCaseObject(data);
+  }
+
+  const redirectUrlObj = normalizeCourseRedirectUrl(response);
+  if (!isEmpty(redirectUrlObj)) {
+    return redirectUrlObj;
+  }
+  if (data !== null && data !== undefined && data !== '') {
+    throw new Error('Studio returned an unexpected course creation response.');
+  }
+  return {};
 }
 
 export interface ClipboardStatus {

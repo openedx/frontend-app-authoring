@@ -50,29 +50,45 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   ), [insideSection, insideSubsection, insideUnit]);
 
   const [selectedContent, setSelectedComponents] = useState<SelectedComponent[]>([]);
+  const selectedUsageKeys = useMemo(
+    () => selectedContent.map(({ usageKey }) => usageKey).filter(Boolean),
+    [selectedContent],
+  );
+  const hasSelectedContent = selectedUsageKeys.length > 0;
 
   const onSubmit = useCallback(() => {
-    const usageKeys = selectedContent.map(({ usageKey }) => usageKey);
-    onClose();
+    if (!hasSelectedContent) {
+      return;
+    }
+
     if (insideCollection && collectionId) {
-      updateCollectionItemsMutation.mutateAsync(usageKeys)
+      updateCollectionItemsMutation.mutateAsync(selectedUsageKeys)
         .then(() => {
           showToast(intl.formatMessage(genericMessages.manageCollectionsSuccess));
+          onClose();
         })
         .catch(() => {
           showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
         });
     } else if ((insideSection || insideSubsection || insideUnit) && containerId) {
-      updateContainerChildrenMutation.mutateAsync(usageKeys)
+      updateContainerChildrenMutation.mutateAsync(selectedUsageKeys)
         .then(() => {
           showToast(intl.formatMessage(messages.successAssociateComponentToContainerMessage));
+          onClose();
         })
         .catch(() => {
           showToast(intl.formatMessage(messages.errorAssociateComponentToContainerMessage));
         });
     }
   }, [
-    selectedContent,
+    insideCollection,
+    intl,
+    onClose,
+    showToast,
+    updateCollectionItemsMutation,
+    updateContainerChildrenMutation,
+    hasSelectedContent,
+    selectedUsageKeys,
     insideSection,
     insideSubsection,
     insideUnit,
@@ -120,7 +136,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
             values={{ count: selectedContent.length }}
           />
           <ActionRow.Spacer />
-          <Button variant="primary" onClick={onSubmit}>
+          <Button variant="primary" onClick={onSubmit} disabled={!hasSelectedContent}>
             {intl.formatMessage(contentMessages.addToButton)}
           </Button>
         </ActionRow>
