@@ -232,10 +232,36 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(dismissNotificationQuery(`${getConfig().STUDIO_BASE_URL}${notificationDismissUrl}`));
   };
 
+  // Load secondary checklist data after the outline is ready, without blocking its first paint.
+  const [checklistFetchedFor, setChecklistFetchedFor] = useState(null);
   useEffect(() => {
-    dispatch(fetchCourseBestPracticesQuery({ courseId }));
-    dispatch(fetchCourseLaunchQuery({ courseId }));
-  }, [courseId]);
+    if (outlineIndexLoadingStatus !== RequestStatus.SUCCESSFUL || checklistFetchedFor === courseId) {
+      return undefined;
+    }
+    let isCurrent = true;
+    const fetchChecklistData = () => {
+      if (!isCurrent) {
+        return;
+      }
+      setChecklistFetchedFor(courseId);
+      dispatch(fetchCourseBestPracticesQuery({ courseId }));
+      dispatch(fetchCourseLaunchQuery({ courseId }));
+    };
+    if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+      const idleId = window.requestIdleCallback(fetchChecklistData, { timeout: 1500 });
+      return () => {
+        isCurrent = false;
+        if (typeof window.cancelIdleCallback === 'function') {
+          window.cancelIdleCallback(idleId);
+        }
+      };
+    }
+    const timeoutId = setTimeout(fetchChecklistData, 0);
+    return () => {
+      isCurrent = false;
+      clearTimeout(timeoutId);
+    };
+  }, [courseId, outlineIndexLoadingStatus, checklistFetchedFor, dispatch]);
 
   useEffect(() => {
     if (createdOn && moment(new Date(createdOn)).isAfter(moment().subtract(31, 'days'))) {

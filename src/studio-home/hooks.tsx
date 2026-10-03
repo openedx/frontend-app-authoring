@@ -12,6 +12,7 @@ import {
   getStudioHomeData,
   getStudioHomeCoursesParams,
 } from './data/selectors';
+import { updateSavingStatus } from '../generic/data/slice';
 import { updateSavingStatuses } from './data/slice';
 
 const useStudioHome = () => {
@@ -68,6 +69,20 @@ const useStudioHome = () => {
       dispatch(fetchStudioHomeData(undefined, false, studioHomeCoursesParams));
     }
   }, [courseCreatorSavingStatus]);
+
+  useEffect(() => {
+    if (savingCreateRerunStatus === RequestStatus.SUCCESSFUL) {
+      dispatch(updateSavingStatus({ status: '' }));
+      setShowNewCourseContainer(false);
+      dispatch(fetchStudioHomeData(undefined, false, {
+        ...studioHomeCoursesParams,
+        page: 1,
+        order: 'display_name',
+      }));
+    } else if (savingCreateRerunStatus === RequestStatus.FAILED) {
+      dispatch(updateSavingStatus({ status: '' }));
+    }
+  }, [savingCreateRerunStatus]);
 
   useEffect(() => {
     if (deleteNotificationSavingStatus === RequestStatus.SUCCESSFUL) {

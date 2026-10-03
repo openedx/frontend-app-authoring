@@ -5,7 +5,7 @@ import { ProblemTypeKeys } from '@src/editors/data/constants/problem';
 import { type PartialEditorState } from '@src/editors/data/redux';
 import EditProblemView from './index';
 
-const { saveBlock } = require('../../../../hooks');
+const { saveBlock, createBlock } = require('../../../../hooks');
 const { saveWarningModalToggle } = require('./hooks');
 
 jest.mock('./AnswerWidget', () =>
@@ -34,6 +34,7 @@ jest.mock('./ExplanationWidget', () =>
   });
 jest.mock('../../../../hooks', () => ({
   saveBlock: jest.fn(),
+  createBlock: jest.fn(),
 }));
 jest.mock('./hooks', () => ({
   checkIfEditorsDirty: jest.fn(() => false),
@@ -65,6 +66,7 @@ describe('EditProblemView', () => {
 
   beforeEach(() => {
     initializeMocks();
+    jest.clearAllMocks();
   });
 
   it('renders standard problem widgets', () => {
@@ -118,6 +120,15 @@ describe('EditProblemView', () => {
     const saveBtn = screen.getByRole('button', { name: 'Ok' });
     fireEvent.click(saveBtn);
     expect(saveBlock).toHaveBeenCalled();
+  });
+
+  it('creates a new problem when the no-answer warning is confirmed', () => {
+    editorRender(<EditProblemView returnFunction={returnFunction} />, {
+      initialState: { ...initialState, app: { ...initialState.app, blockId: '', blockType: 'problem' } },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Ok' }));
+    expect(createBlock).toHaveBeenCalledTimes(1);
+    expect(saveBlock).not.toHaveBeenCalled();
   });
 
   it('calls closeSaveWarningModal when cancel button is clicked', () => {

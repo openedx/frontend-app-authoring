@@ -23,16 +23,17 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
 }) => {
   const intl = useIntl();
 
-  const [search, setSearch] = useState<string | undefined>('');
+  const [search, setSearch] = useState('');
   const [order, setOrder] = useState('title');
+  const filterSearch = filterParams.search ?? '';
 
   // Reset search & order when filters cleared
   useEffect(() => {
     if (!isFiltered) {
-      setSearch(filterParams.search);
+      setSearch(filterSearch);
       setOrder('title');
     }
-  }, [isFiltered, setSearch, search, setOrder, filterParams.search]);
+  }, [isFiltered, search, filterSearch]);
 
   const getOrderFromFilterType = (filterType: string) => {
     const orders = {
@@ -57,7 +58,7 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
     setOrder(getOrderFromFilterType(filterType));
 
     const baseFilters = {
-      search,
+      search: search || undefined,
       order,
     };
 
@@ -89,7 +90,7 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
         <SearchField
           onSubmit={() => {}}
           onChange={handleSearchLibrariesV2}
-          value={search}
+          value={search || ''}
           className="mr-4"
           placeholder={intl.formatMessage(messages.librariesV2TabLibrarySearchPlaceholder)}
         />

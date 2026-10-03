@@ -67,9 +67,10 @@ const CardList = ({
     optimizationEnabled,
   } = useSelector(getStudioHomeData);
   const { filteredCourses: courses } = useCourseImportFilter() || { filteredCourses: allCourses };
+  const safeCourses = courses ?? [];
 
   const isNotFilteringCourses = !isFiltered && !isLoading;
-  const hasCourses = courses?.length > 0;
+  const hasCourses = safeCourses.length > 0;
   const MigrationStatusWidget = migrationStatusWidget;
 
   return (
@@ -77,7 +78,7 @@ const CardList = ({
       {hasCourses ?
         (
           <>
-            {courses.map(
+            {safeCourses.map(
               ({
                 courseKey,
                 displayName,
@@ -172,6 +173,7 @@ export const CoursesList: React.FC<Props> = ({
     courseCreatorStatus,
   } = useSelector(getStudioHomeData);
   const { filteredCourses: courses } = useCourseImportFilter() || { filteredCourses: allCourses };
+  const safeCoursesList = courses ?? [];
   const {
     courseLoadingStatus,
   } = useSelector(getLoadingStatuses);
@@ -231,7 +233,7 @@ export const CoursesList: React.FC<Props> = ({
             <CoursesFilters dispatch={dispatch} locationValue={locationValue} isLoading={isLoading} />
             <p data-testid="pagination-info" className="my-0">
               {intl.formatMessage(messages.coursesPaginationInfo, {
-                length: courses?.length,
+                length: safeCoursesList.length,
                 total: coursesCount,
               })}
             </p>

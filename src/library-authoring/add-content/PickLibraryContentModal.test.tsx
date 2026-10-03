@@ -99,6 +99,17 @@ describe('<PickLibraryContentModal />', () => {
       addType: 'subsection',
     },
   ].forEach(({ context, addType }) => {
+    it(`does not submit an empty selection (${context})`, async () => {
+      render(context);
+      await screen.findByText('Test Library');
+      const submit = screen.getByRole('button', { name: new RegExp(`add to ${context}`, 'i') });
+      expect(submit).toBeDisabled();
+      fireEvent.click(submit);
+      expect(mockAddItemsToCollection).not.toHaveBeenCalled();
+      expect(mockAddComponentsToContainer).not.toHaveBeenCalled();
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
     it(`can pick content from the modal (${context})`, async () => {
       render(context);
 
@@ -196,7 +207,7 @@ describe('<PickLibraryContentModal />', () => {
             break;
         }
       });
-      expect(onClose).toHaveBeenCalled();
+      expect(onClose).not.toHaveBeenCalled();
       const text = context === 'collection'
         ? 'Failed to add content to collection.'
         : 'There was an error linking the content to this container.';

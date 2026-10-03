@@ -225,7 +225,8 @@ export const LibrariesList = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
 
-  let filteredData = findInValues(data?.libraries, search || '') || [];
+  const librariesData = data?.libraries ?? [];
+  let filteredData = findInValues(librariesData, search || '') || [];
   if (migrationFilter.length === 1) {
     // filter results by migrated status
     filteredData = filteredData.filter((obj) => obj.isMigrated === (migrationFilter[0] === Filter.migrated));
@@ -313,7 +314,7 @@ export const LibrariesList = ({
               <>
                 {intl.formatMessage(messages.coursesPaginationInfo, {
                   length: currentPageData?.length,
-                  total: data?.libraries.length,
+                  total: librariesData.length,
                 })}
               </>
             )}

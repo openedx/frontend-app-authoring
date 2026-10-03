@@ -43,15 +43,28 @@ export function updateCreateOrRerunCourseQuery(courseData, isRerun = false) {
 
     try {
       const response = await createOrRerunCourse(courseData);
+      const responseObj = response && typeof response === 'object' ? response : {};
+      if (responseObj.errMsg) {
+        dispatch(updatePostErrors(responseObj));
+        dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+        return false;
+      }
       if (isRerun) {
         dispatch(updateRedirectUrlObj({ url: '/home' }));
       } else {
-        dispatch(updateRedirectUrlObj('url' in response ? response : {}));
+        dispatch(updateRedirectUrlObj('url' in responseObj ? responseObj : {}));
       }
-      dispatch(updatePostErrors('errMsg' in response ? response : {}));
+      dispatch(updatePostErrors('errMsg' in responseObj ? responseObj : {}));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
-    } catch {
+    } catch (error) {
+      const responseData = error?.response?.data || {};
+      const errMsg = responseData?.errMsg
+        || responseData?.error
+        || responseData?.detail
+        || error?.message
+        || 'Course creation is taking longer than expected. The course may still finish in the background; refresh Studio before retrying.';
+      dispatch(updatePostErrors({ errMsg }));
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       return false;
     }

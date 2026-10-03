@@ -537,6 +537,20 @@ describe('<AddComponent />', () => {
     expect(screen.queryByRole('button', { name: 'Dummy button' })).not.toBeInTheDocument();
   });
 
+  it('does not send an empty component selection to the Studio iframe', async () => {
+    const user = userEvent.setup();
+    mockSendMessageToIframe.mockClear();
+    renderComponent();
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', { data: { type: messageTypes.showMultipleComponentPicker } }));
+    });
+    const submit = await screen.findByRole('button', { name: 'Add selected components' });
+    expect(submit).toBeDisabled();
+    await user.click(submit);
+    expect(mockSendMessageToIframe).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: 'Dummy button' })).toBeInTheDocument();
+  });
+
   it('shows component picker on window message', async () => {
     const user = userEvent.setup();
     renderComponent();
