@@ -179,4 +179,11 @@ describe('<ResizableBox />', () => {
       expect(box.style.width).toBe('500px');
     });
   });
+
+  it('never drags below minWidth when maxWidth is smaller than it', () => {
+    const { handle, box } = renderBox({ maxWidth: 100 }); // e.g. a caller's limit on a tiny window
+
+    drag(handle, START_X, START_X - 300); // dragging left grows, but maxWidth is below minWidth
+    expect(box.style.width).toBe('200px');
+  });
 });

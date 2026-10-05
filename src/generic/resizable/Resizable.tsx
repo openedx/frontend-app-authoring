@@ -87,9 +87,10 @@ export const ResizableBox = ({
     const rawWidth = handleSide === 'right'
       ? startWidthRef.current + dx
       : startWidthRef.current - dx;
-    const newWidth = Math.min(
-      Math.max(rawWidth, minWidth),
-      maxWidth || defaultMaxWidth,
+    // `minWidth` wins over a `maxWidth` smaller than it, as in `effectiveWidth`.
+    const newWidth = Math.max(
+      Math.min(rawWidth, maxWidth || defaultMaxWidth),
+      minWidth,
     );
     setWidth(newWidth);
   }, [handleSide, maxWidth, minWidth, defaultMaxWidth]);

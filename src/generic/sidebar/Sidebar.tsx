@@ -7,6 +7,7 @@ import {
   IconButtonToggle,
   IconButtonWithTooltip,
   Stack,
+  useWindowSize,
 } from '@openedx/paragon';
 import { ResizableBox } from '@src/generic/resizable/Resizable';
 import type { MessageDescriptor } from 'react-intl';
@@ -24,6 +25,18 @@ export interface SidebarPage {
 }
 
 type SidebarPages = Record<string, SidebarPage>;
+
+/*
+ * Room the panel must leave beside it: the icon rail, the narrowest usable page
+ * content, and the page gutters. These match `$sidebar-rail-width`,
+ * `$sidebar-min-content-width` and `$sidebar-page-gutters` in `index.scss`, so the
+ * widest the panel can be dragged meets its 440px minimum exactly at the width
+ * where the layout stacks.
+ */
+const RESERVED_WIDTH = 74 + 440 + 48; // px
+
+/** Same default as `ResizableBox`, which only applies it when no `maxWidth` is passed. */
+const MAX_WINDOW_FRACTION = 0.65;
 
 /**
  * Sidebar component
@@ -100,6 +113,12 @@ export function Sidebar<T extends SidebarPages>({
   } = pages[effectivePageKey];
   const activeKey = isOpen ? effectivePageKey : undefined;
 
+  // Keep a dragged-wide panel from pushing the rail off-screen as the window narrows.
+  const { width: windowWidth } = useWindowSize();
+  const maxPanelWidth = windowWidth
+    ? Math.min(windowWidth * MAX_WINDOW_FRACTION, windowWidth - RESERVED_WIDTH)
+    : undefined;
+
   /*
    * The rail comes first in the DOM so keyboard focus reaches the collapse and page
    * buttons before the panel. `.sidebar-inner` uses `row-reverse` to keep the panel
@@ -146,7 +165,7 @@ export function Sidebar<T extends SidebarPages>({
       </div>
       {(isOpen && !!currentPageKey) ?
         (
-          <ResizableBox>
+          <ResizableBox maxWidth={maxPanelWidth}>
             <div className="sidebar-content p-3 bg-white border-right">
               <Dropdown data-testid="sidebar-dropdown">
                 <Dropdown.Toggle

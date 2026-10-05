@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  fireEvent,
   initializeMocks,
   render,
   screen,
@@ -7,9 +8,15 @@ import {
 } from '@src/testUtils';
 import { userEvent } from '@testing-library/user-event';
 
-import { useToggle } from '@openedx/paragon';
+import { useToggle, useWindowSize } from '@openedx/paragon';
 
 import { Sidebar } from '.';
+
+jest.mock('@openedx/paragon', () => ({
+  ...jest.requireActual('@openedx/paragon'),
+  useWindowSize: jest.fn(),
+}));
+const mockUseWindowSize = useWindowSize as jest.Mock;
 
 const Component1 = () => <div>Component 1</div>;
 const Component2 = () => <div>Component 2</div>;
@@ -52,6 +59,7 @@ const TestSidebar = () => {
 describe('<Sidebar>', () => {
   beforeEach(() => {
     initializeMocks();
+    mockUseWindowSize.mockReturnValue({ width: undefined, height: undefined });
   });
 
   it('should render the sidebar', () => {
@@ -160,5 +168,20 @@ describe('<Sidebar>', () => {
     const railButton = screen.getByRole('button', { name: 'Page 1' });
     // eslint-disable-next-line no-bitwise
     expect(railButton.compareDocumentPosition(panelToggle) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('should leave room for the rail and the page content when dragged wide', () => {
+    // 1150 - (74 rail + 440 min content + 48 gutters) = 588px. The generic 65% cap
+    // alone (747.5px) pushes the rail off-screen at this width.
+    mockUseWindowSize.mockReturnValue({ width: 1150, height: 800 });
+    const { container } = render(<TestSidebar />);
+    const handle = container.querySelector('.resizable-handle') as HTMLElement;
+    const box = container.querySelector('.resizable') as HTMLElement;
+
+    fireEvent.mouseDown(handle, { clientX: 1000 });
+    fireEvent.mouseMove(document, { clientX: 0 }); // drag far left: grow as wide as allowed
+    fireEvent.mouseUp(document);
+
+    expect(box.style.width).toBe('588px');
   });
 });
