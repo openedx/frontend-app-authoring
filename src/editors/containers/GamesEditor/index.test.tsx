@@ -380,6 +380,14 @@ describe('image settings while a save is in flight', () => {
     mockedApi.saveSettings.mockReturnValue(new Promise(() => {})); // never settles
   });
 
+  // A native button gives keyboard activation and the button role for free;
+  // a div with role="button" has to re-implement both by hand.
+  it('renders the image settings trigger as a native button', async () => {
+    renderEditor();
+    expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Image settings' }).tagName).toBe('BUTTON');
+  });
+
   // The modal sits outside the disabled fieldset. An alt-text change made
   // while the request is out is not in the payload and is lost on close.
   it('cannot be opened once Save has been clicked', async () => {
@@ -1871,10 +1879,12 @@ describe('image controls on a card', () => {
     expect(latestContainerProps().getContent().cards[0].definition_image).toBe('http://studio/media/d.png');
   });
 
-  it.each(['Enter', ' '])('opens image settings from the keyboard with %j', async (key) => {
+  it.each(['{Enter}', ' '])('opens image settings from the keyboard with %j', async (key) => {
+    const user = userEvent.setup();
     renderEditor();
     await screen.findByDisplayValue('t');
-    fireEvent.keyDown(screen.getAllByRole('button', { name: 'Image settings' })[0], { key });
+    screen.getAllByRole('button', { name: 'Image settings' })[0].focus();
+    await user.keyboard(key);
     expect(await screen.findByRole('dialog', { name: 'Image Settings' })).toBeInTheDocument();
   });
 

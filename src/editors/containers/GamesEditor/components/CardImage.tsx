@@ -1,5 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, IconButton, OverlayTrigger, Tooltip } from '@openedx/paragon';
+import { Button, Icon, IconButton, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 
 import messages from '../messages';
@@ -42,23 +42,17 @@ export const CardImage = ({
           </Tooltip>
         }
       >
-        <div
-          role="button"
-          tabIndex={0}
+        <Button
+          variant="link"
+          className="p-0 border-0 rounded-0"
           // Named here, not by the image inside: a decorative image has an
           // empty alt, which would leave this button with no name.
           aria-label={intl.formatMessage(messages.imageSettingsTooltip)}
           // Outside the disabled fieldset, so locked by hand: an alt-text
           // change made while a save is out is not in that save's payload.
+          // `aria-disabled` rather than `disabled` keeps it in the tab order.
           aria-disabled={isSaving}
-          style={{ cursor: isSaving ? 'default' : 'pointer', display: 'inline-block' }}
           onClick={openSettings}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              openSettings();
-            }
-          }}
         >
           {
             /* An empty alt is the author's "decorative" choice (see
@@ -69,7 +63,7 @@ export const CardImage = ({
             src={url}
             alt={altText}
           />
-        </div>
+        </Button>
       </OverlayTrigger>
       <IconButton
         src={DeleteOutline}
