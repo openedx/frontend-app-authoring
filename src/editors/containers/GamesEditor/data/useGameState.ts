@@ -1,4 +1,5 @@
 import React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import type {
   BlockRef,
@@ -13,7 +14,7 @@ import type {
 } from '../types';
 import { useGameSettings, useSaveGameSettings, useUploadGameImage } from './apiHooks';
 
-const generateId = () => `card-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
+const generateId = () => uuidv4();
 
 export const emptyCard = (): Card => ({
   id: generateId(),
@@ -173,9 +174,8 @@ export const useGameState = (block: BlockRef | null) => {
   React.useEffect(() => {
     if (!loadedSettings) { return; }
     const data = loadedSettings;
-    const cards = (data.cards || []).map((card, index) => ({
+    const cards = (data.cards || []).map((card) => ({
       ...emptyCard(),
-      id: `card-${Date.now()}-${index}`,
       card_key: card.card_key,
       term: card.term || '',
       term_image: absolute(card.term_image, studioEndpointUrl) || '',
