@@ -1,7 +1,7 @@
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import type { AxiosResponse } from 'axios';
 
-import * as urls from '@src/editors/data/services/cms/urls';
+import { resolveHandlerUrl } from '@src/editors/data/services/cms/handlerUrl';
 
 import type {
   BlockRef,
@@ -22,28 +22,11 @@ import type {
  */
 const client = () => getAuthenticatedHttpClient();
 
-/**
- * Course blocks have a fixed handler route. Library blocks do not: the server
- * issues their handler URLs, so each one is asked for first, through the same
- * `urls` helpers PdfEditor uses. It is resolved per request rather
- * than cached because the issued URL carries a token that expires.
- */
-const handlerUrl = async (
-  { blockId, studioEndpointUrl, isLibrary }: BlockRef,
-  handlerName: string,
-): Promise<string> => {
-  if (isLibrary) {
-    const { data } = await client().get(urls.boundHandlerUrl({ studioEndpointUrl, blockId, handlerName }));
-    return data.handler_url;
-  }
-  return urls.handlerUrl({ studioEndpointUrl, blockId, handlerName });
-};
-
 const postToHandler = async <T>(
   block: BlockRef,
   handlerName: string,
   body: unknown,
-): Promise<AxiosResponse<T>> => client().post(await handlerUrl(block, handlerName), body);
+): Promise<AxiosResponse<T>> => client().post(await resolveHandlerUrl({ ...block, handlerName }), body);
 
 export const getSettings = (block: BlockRef) => postToHandler<SettingsResponse>(block, 'get_settings', {});
 
