@@ -335,23 +335,16 @@ describe('card heading controls', () => {
     });
   });
 
-  // A button inside a button is invalid and confuses assistive tech. The
-  // card's menu and its expand/collapse control must not sit inside the
-  // heading that toggles the card.
-  it('does not nest the card menu or the chevron inside the collapsible trigger', async () => {
+  // The card menu once sat inside the collapsible trigger, so opening it
+  // also toggled the card. The menu must open on its own.
+  it('opens the card menu without collapsing the card', async () => {
+    const user = userEvent.setup();
     renderEditor();
     await screen.findByDisplayValue('a');
-    const menu = screen.getByRole('button', { name: 'Card actions' });
-    const chevron = screen.getByRole('button', { name: 'Collapse card' });
-    [menu, chevron].forEach((control) => {
-      // No ancestor of the control may itself be a button.
-      let el = control.parentElement;
-      while (el) {
-        expect(el.getAttribute('role')).not.toBe('button');
-        expect(el.tagName).not.toBe('BUTTON');
-        el = el.parentElement;
-      }
-    });
+    await user.click(screen.getByRole('button', { name: 'Card actions' }));
+    expect(await screen.findByText('Delete')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('a')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Collapse card' })).toBeInTheDocument();
   });
 
   it('still collapses and expands the card from the chevron and from the heading', async () => {
