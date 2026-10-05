@@ -26,7 +26,7 @@ const OnOffSetting = ({ name, title, description, value, onChange }: OnOffSettin
       summary={intl.formatMessage(value ? messages.onLabel : messages.offLabel)}
     >
       <>
-        <div className="settings-description">{description}</div>
+        <div className="pb-3 mb-2 text-gray-600">{description}</div>
         <div className="d-flex flex-row gap-0 w-100">
           <Button
             onClick={() => onChange(false)}
@@ -68,7 +68,7 @@ const SettingsSidebar = ({
   const typeOption = (value: GameType, label: string) => (
     <Button
       onClick={() => updateType(value)}
-      className="type-button"
+      className="w-100 d-flex align-items-center justify-content-between py-2 px-0"
     >
       <span className="small text-primary-500">{label}</span>
       <span hidden={type !== value}>
@@ -77,9 +77,11 @@ const SettingsSidebar = ({
     </Button>
   );
   return (
-    <div className="sidebar d-flex flex-column align-items-start flex-shrink-0">
+    <div className="sidebar d-flex flex-column align-items-start flex-shrink-0 py-2">
       <div className="sidebar-header d-flex align-items-center align-self-stretch">
-        <span className="sidebar-title">{intl.formatMessage(messages.settingsTitle)}</span>
+        <span className="sidebar-title text-primary-500 font-weight-bold">
+          {intl.formatMessage(messages.settingsTitle)}
+        </span>
       </div>
       <SettingsCard
         className="sidebar-type d-flex flex-column align-items-start align-self-stretch"

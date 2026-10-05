@@ -50,13 +50,15 @@ const CardField = ({
   const text = fieldMessages[field];
   const id = `${field}|${index}`;
   return (
-    <div className={`card-${field} d-flex flex-column align-items-start align-self-stretch`}>
+    <div
+      className={`card-${field} d-flex flex-column align-items-start align-self-stretch p-4 text-primary-500 font-weight-bold`}
+    >
       <Form.Label htmlFor={id} className="mb-0">
         {intl.formatMessage(text.label)}
       </Form.Label>
       {image}
       <div className={`${field}-input-area d-flex flex-column align-items-start align-self-stretch`}>
-        <div className="card-input-line d-flex align-items-start align-self-stretch">
+        <div className="card-input-line d-flex align-items-start align-self-stretch text-gray-500">
           <Form.Control
             className="d-flex flex-column align-items-start align-self-stretch"
             id={id}

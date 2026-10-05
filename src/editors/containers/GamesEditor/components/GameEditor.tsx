@@ -238,10 +238,10 @@ const GameEditor = ({
   );
 
   const page = (
-    <div className="page-body d-flex align-items-start">
+    <div className="page-body d-flex align-items-start w-100 py-2">
       <div className="terms d-flex flex-column align-items-start align-self-stretch">
-        <div className="description d-flex flex-row align-items-start align-self-stretch">
-          <div className="description-header">
+        <div className="description d-flex flex-row align-items-start align-self-stretch mb-2">
+          <div className="description-header text-primary-500 font-weight-bold">
             {intl.formatMessage(
               type === 'matching' ? messages.descriptionHeaderMatching : messages.descriptionHeaderFlashcard,
             )}
@@ -288,7 +288,7 @@ const GameEditor = ({
           ))}
         </DraggableList>
         <Button
-          className="add-button"
+          className="add-button text-primary-500 py-3 pr-3 pl-0"
           onClick={() => addCard()}
           iconBefore={Plus}
           variant="link"
@@ -324,7 +324,7 @@ const GameEditor = ({
       validateEntry={() => blockFinished && validateAllCards()}
     >
       <div className="xblock-games-editor">
-        <div className="editor-body h-75 overflow-auto">
+        <div className="h-75 overflow-auto">
           {Object.keys(validationErrors).length > 0 && isAlertVisible && (
             <Alert
               variant="danger"

@@ -18,11 +18,11 @@ interface PreviewSideProps {
 const PreviewSide = ({ field, text, imageUrl, imageAlt, withImages }: PreviewSideProps) => {
   const intl = useIntl();
   return (
-    <span className={`preview-${field}`}>
+    <span className={`preview-${field} d-flex align-items-center position-absolute text-truncate px-2`}>
       {withImages
         ? (
           <span
-            className={`d-flex align-items-center mr-2 img-preview-wrapper ${
+            className={`d-flex align-items-center justify-content-center flex-shrink-0 overflow-hidden rounded-sm border border-gray-500 mr-2 img-preview-wrapper ${
               imageUrl !== '' ? 'with-img' : 'with-icon'
             }`}
           >
@@ -37,7 +37,7 @@ const PreviewSide = ({ field, text, imageUrl, imageAlt, withImages }: PreviewSid
                     </Tooltip>
                   }
                 >
-                  <Icon className="img-preview" src={PictureIcon} />
+                  <Icon className="img-preview text-gray-500" src={PictureIcon} />
                 </OverlayTrigger>
               )}
           </span>
@@ -54,7 +54,7 @@ const PreviewSide = ({ field, text, imageUrl, imageAlt, withImages }: PreviewSid
 const CardPreview = ({ card, type }: { card: Card; type: GameType; }) => {
   const withImages = type === 'flashcards';
   return (
-    <div className="preview-block position-relative w-100">
+    <div className="preview-block position-relative w-100 mr-2">
       <span className="align-middle">
         <PreviewSide
           field="term"

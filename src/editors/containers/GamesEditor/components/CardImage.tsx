@@ -33,7 +33,7 @@ export const CardImage = ({
     onOpenSettings();
   };
   return (
-    <div className="card-image-area d-flex align-items-center align-self-stretch">
+    <div className="card-image-area d-flex align-items-center justify-content-center align-self-stretch px-4 pb-2">
       <OverlayTrigger
         placement="bottom"
         overlay={

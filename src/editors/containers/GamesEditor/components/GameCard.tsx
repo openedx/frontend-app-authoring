@@ -119,7 +119,7 @@ const GameCard = ({
       componentStyle={componentStyle}
     >
       <Collapsible.Advanced
-        className="card"
+        className="card d-flex flex-column align-items-start align-self-stretch w-100 position-relative bg-white"
         open={card.editorOpen}
         onToggle={onToggle}
       >
@@ -139,13 +139,15 @@ const GameCard = ({
           onChange={handlePick('definition')}
           accept={acceptedImages}
         />
-        <div className="card-heading-row">
-          <Collapsible.Trigger className="card-heading-wrapper">
-            <div className="card-heading d-flex align-items-center align-self-stretch">
-              <div className="card-number">{index + 1}</div>
+        <div className="card-heading-row d-flex align-items-center w-100 pr-4">
+          <Collapsible.Trigger className="card-heading-wrapper d-flex align-items-center flex-grow-1 py-2.5 pl-4">
+            <div className="card-heading d-flex align-items-center align-self-stretch w-100 ml-4">
+              <div className="card-number d-inline-flex align-items-center justify-content-center mr-2.5 text-primary-500 font-weight-bold">
+                {index + 1}
+              </div>
               {!card.editorOpen
                 ? <CardPreview card={card} type={type} />
-                : <div className="card-spacer d-flex align-self-stretch" />}
+                : <div className="d-flex align-self-stretch flex-grow-1" />}
             </div>
           </Collapsible.Trigger>
           {/* Siblings of the trigger: a button nested in a button is invalid markup. */}
@@ -179,11 +181,11 @@ const GameCard = ({
             onClick={() => onToggle(!card.editorOpen)}
           />
         </div>
-        <div className="card-body p-0">
+        <div className="card-body w-100 position-relative p-0">
           <Collapsible.Body>
-            <div className="card-divider" />
+            <div className="card-divider w-100 bg-light-400" />
             {field('term')}
-            <div className="card-divider" />
+            <div className="card-divider w-100 bg-light-400" />
             {field('definition')}
           </Collapsible.Body>
         </div>
