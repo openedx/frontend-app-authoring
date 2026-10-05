@@ -1114,7 +1114,7 @@ describe('handler failures with no detail message', () => {
 
   // The handlers report failure as `success: false`, sometimes with no `error`
   // text. The editor must not fall back to an untranslated string.
-  it('heads a failed upload with a translated message and shows no English fallback', async () => {
+  it('shows a translated heading for a failed upload, not the English fallback', async () => {
     mockedApi.uploadImage.mockResolvedValue({ data: { success: false } });
     renderEditor();
     await screen.findByDisplayValue('Photosynthesis');
@@ -1124,7 +1124,7 @@ describe('handler failures with no detail message', () => {
     expect(screen.queryByText('Upload failed')).not.toBeInTheDocument();
   });
 
-  it('heads a failed save as a save failure, not an image one, and shows no English fallback', async () => {
+  it('shows the save heading for a failed save, not the image one or the English fallback', async () => {
     mockedApi.saveSettings.mockResolvedValue({ data: { success: false } });
     renderEditor();
     await screen.findByDisplayValue('Photosynthesis');
