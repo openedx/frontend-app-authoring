@@ -29,8 +29,6 @@
   }
 
   .criteria-group-box {
-    cursor: pointer;
-
     &--focused {
       border-color: $focused-accent-color;
       box-shadow: 0 0 0 1px $focused-accent-color;
@@ -43,6 +41,12 @@
       // sitting inside it.
       border-radius: var(--pgn-size-card-border-radius) var(--pgn-size-card-border-radius) 0 0;
       padding: 10px 12px;
+      cursor: pointer;
+
+      &:focus-visible {
+        outline: 2px solid $focused-accent-color;
+        outline-offset: -2px;
+      }
     }
 
     // The any/all word itself - bold, matching the screenshot - passed as
