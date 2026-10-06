@@ -14,13 +14,15 @@ export interface CriteriaGroupBoxProps {
 }
 
 /** One bottom-tier group's "By completing any/all of the following"
- * bracket, plus its rule boxes. Scrolls itself into view when it's the
+ * bracket, plus its rule boxes. The "By completing..." band is the group's
+ * focus control; the rule boxes are siblings of it, not descendants, so no
+ * interactive element contains another. Scrolls itself into view when it's the
  * focused group but no rule box within it is focused - a focused rule box,
  * being the more specific/innermost target, scrolls itself instead (see
  * `RuleBox`), so exactly one of the two ever scrolls for a given focus.
  *
  * `Card` supplies the bordered/rounded box itself; the "By completing..."
- * band is a plain `<div>` with its own scoped styling
+ * band is a `<div>` with its own scoped styling
  * (`criteria-groups.scss`), since neither `Card.Header` (its own distinct
  * title/subtitle typography) nor any Paragon prop covers an inline-sentence
  * band like this one.
@@ -41,33 +43,35 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBox
     }
   }, [isFocused, focusedRuleKey]);
 
-  const handleClick: React.MouseEventHandler = (event) => {
-    event.stopPropagation();
+  const handleClick: React.MouseEventHandler = () => {
     focusGroup(group.id);
   };
 
   const handleKeyDown: React.KeyboardEventHandler = (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      event.stopPropagation();
       focusGroup(group.id);
     }
   };
 
   return (
-    // Interactive/focus/scroll semantics live on this wrapping `<div>`, not
-    // `Card` itself: `Card`'s `ref` forwarding doesn't reliably reach a real
-    // DOM node (see `RuleBox.tsx`).
+    // Focus/scroll state lives on this wrapping `<div>`, not `Card` itself:
+    // `Card`'s `ref` forwarding doesn't reliably reach a real DOM node (see
+    // `RuleBox.tsx`). It is not itself interactive, since the rule boxes it
+    // contains are; the group's own control is the header band.
     <div
       ref={ref}
       className={classNames('criteria-group-box', { 'criteria-group-box--focused': isFocused })}
-      role="button"
-      tabIndex={0}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
     >
       <Card>
-        <div className="criteria-group-box__header">
+        <div
+          className="criteria-group-box__header"
+          role="button"
+          tabIndex={0}
+          aria-pressed={isFocused}
+          onClick={handleClick}
+          onKeyDown={handleKeyDown}
+        >
           {intl.formatMessage(messages.criteriaGroupBoxLabel, {
             operator: (
               <LogicOperatorSelect
