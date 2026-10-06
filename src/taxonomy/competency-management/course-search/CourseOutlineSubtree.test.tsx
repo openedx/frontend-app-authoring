@@ -290,4 +290,27 @@ describe('<CourseOutlineSubtree />', () => {
 
     expect(within(row).queryByText('Competency ID:', { exact: false })).not.toBeInTheDocument();
   });
+
+  it(
+    'renders a graded subsection of a non-writable course with no button role, still showing the '
+      + 'already-associated marking',
+    async () => {
+      const user = userEvent.setup();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtree({
+        canEditCourse: () => false,
+        associatedObjectIds: new Set(['sub-1a']),
+        competencyExternalId: 'EXT-042',
+      });
+
+      await user.click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
+
+      const row = screen.getByText('Subsection 1A (graded)').closest('.course-search-browse__subsection')!;
+      expect(row.tagName).toBe('DIV');
+      expect(row).toHaveAttribute('data-associated', 'true');
+      expect(within(row as HTMLElement).queryByRole('button')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Subsection 1A/ })).not.toBeInTheDocument();
+      expect(within(row as HTMLElement).getByText('Competency ID: EXT-042')).toBeInTheDocument();
+    },
+  );
 });

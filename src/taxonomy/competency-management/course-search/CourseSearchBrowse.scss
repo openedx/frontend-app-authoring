@@ -152,8 +152,10 @@
     font-weight: 700;
   }
 
-  // A graded subsection row (Paragon tertiary `Button`), overriding its
-  // resolved default of 18px/normal with Figma's typography for this layer.
+  // A graded subsection row: a Paragon tertiary `Button` when selectable, a
+  // plain `div` when not. Overrides the button's resolved default 
+  // typography for this layer; the `div` variant
+  // gets the same box through these declarations alone.
   &__subsection {
     // A Paragon `<Button block>` is width: 100%, so without the matching
     // `width: calc(...)`, `margin-left` alone pushes it past its parent's
@@ -163,13 +165,13 @@
     font-size: 14px;
     font-weight: 700;
     background-color: var(--pgn-color-white);
+    border: 1px solid transparent;
     border-left: 6px solid $group-border-color-subsection;
     border-radius: 5px;
     box-shadow: $block-shadow;
     padding: 10px 8px;
     text-align: left;
-    // Overrides Paragon's `.btn` `justify-content: center` to push the
-    // label and the badge/select-icon wrapper to opposite edges.
+    // Overrides Paragon's `.btn` `justify-content: center`
     justify-content: space-between;
   }
 

@@ -34,10 +34,11 @@ interface SubsectionRowProps {
 /**
  * One row for a single graded subsection.
  *
- * Clicking calls `associateSubsection` unless `canEditCourse(courseId)` is
- * false, in which case the row has no click behavior. The already-associated
- * badge and marker icon show regardless of `canEditCourse`, so a
- * view-only course still shows what's associated. Re-clicking an
+ * Renders a button that calls `associateSubsection` when clicked, unless
+ * `canEditCourse(courseId)` is false, in which case it renders the same
+ * content as a non-interactive `div`. The already-associated badge and
+ * marker icon show regardless of `canEditCourse`, so a view-only course
+ * still shows what's associated. Re-clicking an
  * already-associated row hits the duplicate guard inside
  * `associateSubsection` (an informational toast), not a failed request.
  */
@@ -54,15 +55,9 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
   const isAssociated = associatedObjectIds.has(subsection.id);
   const canSelect = canEditCourse(courseId);
 
-  return (
-    <Button
-      variant="tertiary"
-      type="button"
-      block
-      className="course-search-browse__subsection d-flex align-items-center justify-content-between"
-      data-associated={isAssociated}
-      onClick={canSelect ? () => associateSubsection(subsection.id, courseId) : undefined}
-    >
+  const rowClassName = 'course-search-browse__subsection d-flex align-items-center justify-content-between';
+  const rowContent = (
+    <>
       <span>{subsection.displayName}</span>
       <span className="course-search-browse__subsection-actions">
         {isAssociated && (
@@ -100,6 +95,27 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
           />
         )}
       </span>
+    </>
+  );
+
+  if (!canSelect) {
+    return (
+      <div className={rowClassName} data-associated={isAssociated}>
+        {rowContent}
+      </div>
+    );
+  }
+
+  return (
+    <Button
+      variant="tertiary"
+      type="button"
+      block
+      className={rowClassName}
+      data-associated={isAssociated}
+      onClick={() => associateSubsection(subsection.id, courseId)}
+    >
+      {rowContent}
     </Button>
   );
 };

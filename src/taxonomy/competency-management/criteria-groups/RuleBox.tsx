@@ -44,18 +44,13 @@ const RuleBox = ({
     }
   }, [isFocused]);
 
-  const handleClick: React.MouseEventHandler = (event) => {
-    // Stops the click from also bubbling into the containing
-    // `CriteriaGroupBox`'s own click handler, which would otherwise
-    // overwrite this box's more specific focus with the group's broader one.
-    event.stopPropagation();
+  const handleClick: React.MouseEventHandler = () => {
     focusRuleBox(groupId, ruleKey);
   };
 
   const handleKeyDown: React.KeyboardEventHandler = (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      event.stopPropagation();
       focusRuleBox(groupId, ruleKey);
     }
   };
@@ -69,6 +64,7 @@ const RuleBox = ({
       className={classNames('rule-box', { 'rule-box--focused': isFocused })}
       role="button"
       tabIndex={0}
+      aria-pressed={isFocused}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
     >
