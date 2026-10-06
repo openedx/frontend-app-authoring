@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
@@ -23,6 +23,7 @@ const percentOf = (rulePayload: GradeRulePayload): string => String(Math.round(r
  */
 const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage }: ScoreThresholdFieldProps) => {
   const intl = useIntl();
+  const inputId = useId();
 
   // Not resynced from `rulePayload` while mounted: a successful edit changes the rule key, which
   // remounts the box via `RuleBoxList`'s `key`. A rejected edit keeps the key, so it reverts explicitly.
@@ -79,6 +80,7 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
           className="score-threshold-field__input"
           value={inputValue}
           aria-label={intl.formatMessage(messages.scoreThresholdInputAccessibleLabel)}
+          aria-invalid={!!validationMessage}
           isInvalid={!!validationMessage}
           onChange={(event) => setInputValue(event.target.value)}
           onKeyDown={handleKeyDown}
@@ -91,7 +93,7 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
     : intl.formatNumber(rulePayload.value, { style: 'percent', maximumFractionDigits: 0 });
 
   return (
-    <span className="score-threshold-field">
+    <Form.Group as="span" controlId={inputId} className="score-threshold-field">
       {intl.formatMessage(messages.scoreThresholdLabel, {
         op: rulePayload.op,
         value,
@@ -100,11 +102,11 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
         ),
       })}
       {validationMessage && (
-        <div role="alert" aria-live="polite" className="text-danger small">
+        <Form.Control.Feedback type="invalid" hasIcon={false}>
           {validationMessage}
-        </div>
+        </Form.Control.Feedback>
       )}
-    </span>
+    </Form.Group>
   );
 };
 
