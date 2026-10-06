@@ -19,14 +19,14 @@ const mockUseWindowSize = useWindowSize as jest.Mock;
 const START_X = 500;
 
 const renderBox = (props: Partial<ComponentProps<typeof ResizableBox>> = {}) => {
-  const { container } = render(
+  const result = render(
     <ResizableBox minWidth={200} maxWidth={600} {...props}>
       <div>Content</div>
     </ResizableBox>,
   );
-  const handle = container.querySelector('.resizable-handle') as HTMLElement;
-  const box = container.querySelector('.resizable') as HTMLElement;
-  return { handle, box };
+  const handle = result.container.querySelector('.resizable-handle') as HTMLElement;
+  const box = result.container.querySelector('.resizable') as HTMLElement;
+  return { handle, box, ...result };
 };
 
 // `onMouseMove`/`onMouseUp` are attached to `document` (not the handle itself)
@@ -185,5 +185,121 @@ describe('<ResizableBox />', () => {
 
     drag(handle, START_X, START_X - 300); // dragging left grows, but maxWidth is below minWidth
     expect(box.style.width).toBe('200px');
+  });
+});
+
+describe('<ResizableBox /> keyboard and accessibility', () => {
+  beforeEach(() => {
+    initializeMocks();
+  });
+
+  it('exposes the handle as a labelled window splitter', () => {
+    const { handle } = renderBox({ initialWidth: 300 });
+    expect(handle).toHaveAttribute('role', 'separator');
+    expect(handle).toHaveAttribute('aria-orientation', 'vertical');
+    expect(handle).toHaveAccessibleName('Resize panel');
+    expect(handle).toHaveAttribute('aria-valuemin', '200');
+    expect(handle).toHaveAttribute('aria-valuemax', '600');
+    expect(handle).toHaveAttribute('aria-valuenow', '300');
+    expect(handle).toHaveAttribute('aria-valuetext', '300 pixels wide');
+    expect(handle).toHaveAttribute('tabindex', '0');
+  });
+
+  it('uses the handle label given by the caller', () => {
+    const { handle } = renderBox({ handleLabel: 'Resize sidebar' });
+    expect(handle).toHaveAccessibleName('Resize sidebar');
+  });
+
+  it('starts at initialWidth, clamped to the allowed range', () => {
+    expect(renderBox({ initialWidth: 350 }).box.style.width).toBe('350px');
+    expect(renderBox({ initialWidth: 50 }).box.style.width).toBe('200px');
+    expect(renderBox({ initialWidth: 5000 }).box.style.width).toBe('600px');
+  });
+
+  it('resizes with the arrow keys, Shift for bigger steps, Home and End for the limits', () => {
+    const onResizeEnd = jest.fn();
+    const { handle, box } = renderBox({ initialWidth: 300, onResizeEnd });
+
+    fireEvent.keyDown(handle, { key: 'ArrowLeft' }); // left-hand handle: moving left grows
+    expect(box.style.width).toBe('316px');
+    fireEvent.keyDown(handle, { key: 'ArrowRight', shiftKey: true });
+    expect(box.style.width).toBe('252px');
+    fireEvent.keyDown(handle, { key: 'Home' });
+    expect(box.style.width).toBe('200px');
+    fireEvent.keyDown(handle, { key: 'End' });
+    expect(box.style.width).toBe('600px');
+    fireEvent.keyDown(handle, { key: 'a' }); // unrelated keys are left alone
+    expect(box.style.width).toBe('600px');
+
+    expect(handle).toHaveAttribute('aria-valuenow', '600');
+    expect(onResizeEnd.mock.calls.map(([width]) => width)).toEqual([316, 252, 200, 600]);
+  });
+
+  it('swaps the arrow directions for a right-hand handle', () => {
+    const { handle, box } = renderBox({ initialWidth: 300, handleSide: 'right' });
+    fireEvent.keyDown(handle, { key: 'ArrowRight' });
+    expect(box.style.width).toBe('316px');
+    fireEvent.keyDown(handle, { key: 'ArrowLeft' });
+    expect(box.style.width).toBe('300px');
+  });
+});
+
+describe('<ResizableBox /> drag lifecycle', () => {
+  beforeEach(() => {
+    initializeMocks();
+  });
+
+  it('reports the final width once per drag, and not for a click without movement', () => {
+    const onResizeEnd = jest.fn();
+    const { handle } = renderBox({ onResizeEnd });
+
+    drag(handle, START_X, START_X - 100);
+    expect(onResizeEnd).toHaveBeenCalledTimes(1);
+    expect(onResizeEnd).toHaveBeenCalledWith(300);
+
+    drag(handle, START_X, START_X);
+    expect(onResizeEnd).toHaveBeenCalledTimes(1);
+  });
+
+  it('marks the box while dragging and ignores secondary mouse buttons', () => {
+    const { handle, box } = renderBox();
+
+    fireEvent.mouseDown(handle, { clientX: START_X, button: 2 });
+    expect(box).not.toHaveClass('resizable--resizing');
+
+    fireEvent.mouseDown(handle, { clientX: START_X });
+    expect(box).toHaveClass('resizable--resizing');
+    fireEvent.mouseUp(document);
+    expect(box).not.toHaveClass('resizable--resizing');
+  });
+
+  it('removes its document listeners if unmounted mid-drag', () => {
+    const removeSpy = jest.spyOn(document, 'removeEventListener');
+    const { handle, unmount } = renderBox();
+    fireEvent.mouseDown(handle, { clientX: START_X });
+
+    unmount();
+
+    const removed = removeSpy.mock.calls.map(([type]) => type);
+    expect(removed).toEqual(expect.arrayContaining(['mousemove', 'mouseup']));
+    removeSpy.mockRestore();
+  });
+
+  it('reports the clamped maximum to assistive technology when the window narrows', () => {
+    // No maxWidth: the limit is 65% of the window width.
+    mockUseWindowSize.mockReturnValue({ width: 1024, height: 800 });
+    const { handle, box, rerender } = renderBox({ maxWidth: undefined });
+    drag(handle, START_X, START_X - 300);
+    expect(box.style.width).toBe('500px');
+
+    mockUseWindowSize.mockReturnValue({ width: 600, height: 800 }); // 65% of 600 = 390
+    rerender(
+      <ResizableBox minWidth={200}>
+        <div>Content</div>
+      </ResizableBox>,
+    );
+    expect(box.style.width).toBe('390px');
+    expect(handle).toHaveAttribute('aria-valuemax', '390');
+    expect(handle).toHaveAttribute('aria-valuenow', '390');
   });
 });

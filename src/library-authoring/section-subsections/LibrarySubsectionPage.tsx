@@ -104,14 +104,7 @@ export const LibrarySubsectionPage = () => {
           </Container>
         </Container>
       </div>
-      {!!sidebarItemInfo?.type && (
-        <div
-          className="library-authoring-sidebar box-shadow-left-1 bg-white"
-          data-testid="library-sidebar"
-        >
-          <LibrarySidebar />
-        </div>
-      )}
+      {!!sidebarItemInfo?.type && <LibrarySidebar />}
     </div>
   );
 };
