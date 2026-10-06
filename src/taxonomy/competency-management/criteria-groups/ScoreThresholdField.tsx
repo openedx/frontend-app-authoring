@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
@@ -44,6 +44,7 @@ const percentOf = (rulePayload: GradeRulePayload): string => String(Math.round(r
  */
 const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage }: ScoreThresholdFieldProps) => {
   const intl = useIntl();
+  const inputId = useId();
   const percent = Math.round(rulePayload.value * 100);
   const suffixMessage = SUFFIX_MESSAGE_BY_OP[rulePayload.op];
 
@@ -114,7 +115,7 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
   };
 
   return (
-    <span className="score-threshold-field score-threshold-field--editable">
+    <Form.Group as="span" controlId={inputId} className="score-threshold-field score-threshold-field--editable">
       {intl.formatMessage(messages.scoreThresholdLabel, {
         percent: (
           <Form.Control
@@ -125,6 +126,7 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
             className="score-threshold-field__input"
             value={inputValue}
             aria-label={intl.formatMessage(messages.scoreThresholdInputAccessibleLabel)}
+            aria-invalid={!!validationMessage}
             isInvalid={!!validationMessage}
             onChange={(event) => setInputValue(event.target.value)}
             onKeyDown={handleKeyDown}
@@ -135,11 +137,11 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
       })}
       {suffixMessage && ` ${intl.formatMessage(suffixMessage)}`}
       {validationMessage && (
-        <div role="alert" aria-live="polite" className="text-danger small">
+        <Form.Control.Feedback type="invalid" hasIcon={false}>
           {validationMessage}
-        </div>
+        </Form.Control.Feedback>
       )}
-    </span>
+    </Form.Group>
   );
 };
 
