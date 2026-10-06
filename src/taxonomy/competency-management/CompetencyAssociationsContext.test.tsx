@@ -94,6 +94,7 @@ const TestConsumer = () => {
     ['Associate in course B', () => ctx.associateSubsection('new-sub', courseB)],
     ['Associate in another course', () => ctx.associateSubsection('new-sub', courseOther)],
     ['Associate duplicate', () => ctx.associateSubsection('existing-sub', courseA)],
+    ['Discard placeholder', () => ctx.discardPlaceholder()],
     ['Add placeholder rule box in group 10', () => ctx.addPlaceholderRuleBox(10)],
     ['Add placeholder group under course A', () => ctx.addPlaceholderGroup(1)],
     ['Set placeholder logic operator to AND', () => ctx.setPlaceholderLogicOperator('AND')],
@@ -913,13 +914,26 @@ describe('CompetencyAssociationsProvider', () => {
       expect(await screen.findByText(focusOnGroup(20))).toBeInTheDocument();
     });
 
-    it('keeps a placeholder group focused when its own course expands', async () => {
+    it.each([
+      ['rule box in a real group', 'Add placeholder rule box in group 10', focusOn(10, null)],
+      ['group', 'Add placeholder group under course A', 'Focus: group null, rule none'],
+    ])('keeps a placeholder %s focused when its own course expands', async (_label, addAction, expectedFocus) => {
       await renderLoaded();
-      await click('Add placeholder group under course A');
+      await click(addAction);
 
       await click('Expand course A');
 
-      expect(screen.getByText('Focus: group null, rule none')).toBeInTheDocument();
+      expect(screen.getByText(expectedFocus)).toBeInTheDocument();
+    });
+
+    it('discarding the placeholder clears focus', async () => {
+      await renderLoaded();
+      await click('Add placeholder group under course A');
+
+      await click('Discard placeholder');
+
+      expect(noFocus()).toBeInTheDocument();
+      expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
     });
 
     it('sends only group_id for a placeholder rule box whose score is unchanged', async () => {

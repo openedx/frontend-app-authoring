@@ -31,6 +31,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     status,
     placeholder,
     addPlaceholderGroup,
+    discardPlaceholder,
     hasPlaceholder,
   } = useCompetencyAssociations();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -53,6 +54,18 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
       ? showPlaceholderGroup
       : groupsIndex.groupsById.get(focus.groupId)?.parentId === courseGroup.id
   );
+
+  const holdsPlaceholderRuleBox = focus?.ruleKey === null
+    && focus.groupId !== null
+    && groupsIndex?.groupsById.get(focus.groupId)?.parentId === courseGroup.id;
+
+  const handleToggleCollapsed = () => {
+    // A collapsed section hides its placeholder, so it is dropped instead of lingering unseen.
+    if (!isCollapsed && (showPlaceholderGroup || holdsPlaceholderRuleBox)) {
+      discardPlaceholder();
+    }
+    setIsCollapsed((prev) => !prev);
+  };
 
   const expansionCount = expansionCountByCourseId[courseGroup.courseKey] ?? 0;
 
@@ -87,7 +100,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
               aria-label={toggleLabel}
               aria-expanded={!isCollapsed}
               size="inline"
-              onClick={() => setIsCollapsed((prev) => !prev)}
+              onClick={handleToggleCollapsed}
             />
             <h3 className="course-group-section__heading">
               {intl.formatMessage(messages.fromWithinCourseLabel, {

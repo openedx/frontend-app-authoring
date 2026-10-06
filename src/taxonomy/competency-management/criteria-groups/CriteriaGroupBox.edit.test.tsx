@@ -72,19 +72,19 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     });
   });
 
-  it('"+ Rule" starts a placeholder rule box in the card\'s own group', async () => {
+  it('"Add Rule" starts a placeholder rule box in the card\'s own group', async () => {
     const addPlaceholderRuleBox = jest.fn();
     renderBox({ addPlaceholderRuleBox });
 
-    await user.click(screen.getByRole('button', { name: 'Rule' }));
+    await user.click(screen.getByRole('button', { name: 'Add Rule' }));
 
     expect(addPlaceholderRuleBox).toHaveBeenCalledWith(10);
   });
 
-  it('disables "+ Rule" with a tooltip while a placeholder already exists', async () => {
+  it('disables "Add Rule" with a tooltip while a placeholder already exists', async () => {
     renderBox({ hasPlaceholder: true });
 
-    const addRuleButton = screen.getByRole('button', { name: 'Rule' });
+    const addRuleButton = screen.getByRole('button', { name: 'Add Rule' });
     expect(addRuleButton).toBeDisabled();
 
     // A disabled button fires no hover events, so the tooltip hangs off its focusable wrapper.
@@ -92,10 +92,10 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     expect(await screen.findByText('Fill in the empty box before adding another.')).toBeInTheDocument();
   });
 
-  it('hides "+ Rule" when canEdit is false', () => {
+  it('hides "Add Rule" when canEdit is false', () => {
     renderBox({}, false);
 
-    expect(screen.queryByRole('button', { name: 'Rule' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Add Rule' })).not.toBeInTheDocument();
   });
 
   it('edits a placeholder card\'s operator through setPlaceholderLogicOperator, not updateGroupOperator', async () => {

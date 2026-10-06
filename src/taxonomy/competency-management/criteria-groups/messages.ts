@@ -115,6 +115,12 @@ const messages = defineMessages({
     defaultMessage: 'Rule Group',
     description: 'Label for the button that adds a new, not-yet-saved bottom-tier group to a course-level group.',
   },
+  addControlAccessiblePrefix: {
+    id: 'course-authoring.competency-management.criteria-groups.add-control-accessible-prefix',
+    defaultMessage: 'Add',
+    description: 'Visually hidden word placed before the "Rule" or "Rule Group" button label, so the '
+      + 'accessible name reads "Add Rule" while the visible label stays "Rule".',
+  },
   addControlDisabledTooltip: {
     id: 'course-authoring.competency-management.criteria-groups.add-control-disabled-tooltip',
     defaultMessage: 'Fill in the empty box before adding another.',

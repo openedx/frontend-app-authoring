@@ -5,25 +5,16 @@ import { Add } from '@openedx/paragon/icons';
 import messages from './messages';
 
 export interface AddControlProps {
-  /** "+ Rule" or "+ Rule Group" - see `messages.addRuleButtonLabel`/`addRuleGroupButtonLabel`. */
+  /** The visible label, such as "Rule" or "Rule Group". */
   label: string;
   onClick: React.MouseEventHandler;
-  /** True while a placeholder (a rule box or a whole group) already exists
-   * anywhere in the tree - only one can exist at a time. Shows a tooltip
-   * explaining why, since a disabled `Button` itself fires no mouse events
-   * (so it can't show a title/tooltip of its own).
-   */
+  /** True while a placeholder exists, which explains itself in a tooltip. */
   disabled: boolean;
 }
 
-/** The "+ Rule"/"+ Rule Group" control shared by `CriteriaGroupBox` (a
- * bottom-tier group's own rule boxes) and `CourseGroupSection` (a
- * course-level group's own bottom-tier groups), centered between two
- * connector-style lines matching `GroupConnector`'s own look. Disabled with
- * an explanatory tooltip while a placeholder already exists elsewhere -
- * wrapped in a keyboard-focusable `<span>` so the tooltip is reachable
- * without a mouse, since a disabled `Button` can't receive focus or fire
- * hover/focus events itself.
+/** The "+ Rule" and "+ Rule Group" control, centered between two connector lines.
+ * A disabled button fires no hover or focus events, so the tooltip hangs off a
+ * focusable wrapper span instead.
  */
 const AddControl = ({ label, onClick, disabled }: AddControlProps) => {
   const intl = useIntl();
@@ -37,6 +28,7 @@ const AddControl = ({ label, onClick, disabled }: AddControlProps) => {
       disabled={disabled}
       onClick={onClick}
     >
+      <span className="sr-only">{intl.formatMessage(messages.addControlAccessiblePrefix)}{' '}</span>
       {label}
     </Button>
   );

@@ -84,6 +84,8 @@ export interface CompetencyAssociationsContextBase {
   addPlaceholderGroup: (parentRuleGroupId: number) => void;
   setPlaceholderLogicOperator: (logicOperator: CompetencyGroupLogicOperator) => void;
   setPlaceholderRulePayload: (rulePayload: GradeRulePayload) => void;
+  /** Drops the placeholder by clearing `focus`. */
+  discardPlaceholder: () => void;
   /** Focuses a group and its last rule box. A no-op when `groupId` is already
    * focused, so re-clicking the group heading keeps the rule box the author
    * selected inside it.
@@ -263,6 +265,7 @@ type ProviderAction =
   | { type: 'addPlaceholderGroup'; parentRuleGroupId: number; }
   | { type: 'setPlaceholderLogicOperator'; logicOperator: CompetencyGroupLogicOperator; }
   | { type: 'setPlaceholderRulePayload'; rulePayload: GradeRulePayload; }
+  | { type: 'discardPlaceholder'; }
   | { type: 'ruleKeyResolved'; groupId: number; staleRuleKey: string | null; resolvedRuleKey: string | null; }
   | { type: 'createSucceeded'; generation: number; focus: CriteriaFocus; }
   | { type: 'courseExpandedBeforeLoad'; courseId: string; }
@@ -307,6 +310,8 @@ function providerReducer(state: ProviderState, action: ProviderAction): Provider
       };
     case 'setPlaceholderLogicOperator':
       return { ...state, placeholder: { ...state.placeholder, logicOperator: action.logicOperator } };
+    case 'discardPlaceholder':
+      return { ...state, focus: null };
     case 'setPlaceholderRulePayload':
       return { ...state, placeholder: { ...state.placeholder, rulePayload: action.rulePayload } };
     case 'ruleKeyResolved':
@@ -494,6 +499,10 @@ export const CompetencyAssociationsProvider = ({
 
   const setPlaceholderRulePayload = useCallback((rulePayload: GradeRulePayload) => {
     dispatch({ type: 'setPlaceholderRulePayload', rulePayload });
+  }, []);
+
+  const discardPlaceholder = useCallback(() => {
+    dispatch({ type: 'discardPlaceholder' });
   }, []);
 
   const hasPlaceholder = focus !== null && focus.ruleKey === null;
@@ -686,6 +695,7 @@ export const CompetencyAssociationsProvider = ({
       addPlaceholderGroup,
       setPlaceholderLogicOperator,
       setPlaceholderRulePayload,
+      discardPlaceholder,
       focusGroup,
       focusRuleBox,
       notifyCourseExpanded,
@@ -714,6 +724,7 @@ export const CompetencyAssociationsProvider = ({
     addPlaceholderGroup,
     setPlaceholderLogicOperator,
     setPlaceholderRulePayload,
+    discardPlaceholder,
     focusGroup,
     focusRuleBox,
     notifyCourseExpanded,
