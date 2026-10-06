@@ -142,10 +142,14 @@ export const useCourseTaggingPermissions = (courseIds: string[]): UseCourseTaggi
   const permissionsByCourseId = useMemo(() => {
     const result: Record<string, boolean> = {};
     courseIds.forEach((courseId) => {
-      result[courseId] = isAuthzEnabled ? (resolvedAnswers[courseId] ?? false) : true;
+      if (isWaffleFlagsLoading) {
+        result[courseId] = false;
+      } else {
+        result[courseId] = isAuthzEnabled ? (resolvedAnswers[courseId] ?? false) : true;
+      }
     });
     return result;
-  }, [courseIds, isAuthzEnabled, resolvedAnswers]);
+  }, [courseIds, isWaffleFlagsLoading, isAuthzEnabled, resolvedAnswers]);
 
   return { isLoading, isAuthzEnabled, permissionsByCourseId };
 };
