@@ -3,6 +3,7 @@ import {
   initializeMocks,
   render,
   screen,
+  within,
 } from '@src/testUtils';
 import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../testHelpers';
 import type {
@@ -78,14 +79,14 @@ describe('<CriteriaGroupBox />', () => {
     expect(container.querySelector('.criteria-group-box__header')).toHaveTextContent(
       'By completing all of the following',
     );
-    // Two `role="button"` elements exist (the group's own container and the
+    // Two `role="button"` elements exist (the group's own header band and the
     // one rendered rule box) - neither is a `SelectMenu` trigger, since no
     // `onChange` was given to the any/all control.
     expect(screen.getAllByRole('button')).toHaveLength(2);
     expect(screen.getByText('Subsection A')).toBeInTheDocument();
   });
 
-  it('calls focusGroup with its own id when the group container itself is clicked', () => {
+  it('calls focusGroup with its own id when the header band is clicked', () => {
     const focusGroup = jest.fn();
     const { container } = renderBox({ focusGroup });
 
@@ -93,12 +94,41 @@ describe('<CriteriaGroupBox />', () => {
     expect(focusGroup).toHaveBeenCalledWith(10);
   });
 
+  it('calls focusGroup when the header band is activated with Enter or Space', () => {
+    const focusGroup = jest.fn();
+    renderBox({ focusGroup });
+    const [header] = screen.getAllByRole('button');
+
+    fireEvent.keyDown(header, { key: 'Enter' });
+    fireEvent.keyDown(header, { key: ' ' });
+
+    expect(focusGroup).toHaveBeenCalledTimes(2);
+    expect(focusGroup).toHaveBeenCalledWith(10);
+  });
+
+  it('exposes focus state via aria-pressed on the header band and the rule box', () => {
+    const { unmount } = renderBox();
+    expect(screen.getAllByRole('button').map((el) => el.getAttribute('aria-pressed'))).toEqual(['false', 'false']);
+    unmount();
+
+    renderBox({ focus: { groupId: 10, ruleKey: null } });
+    expect(screen.getAllByRole('button').map((el) => el.getAttribute('aria-pressed'))).toEqual(['true', 'false']);
+  });
+
+  it('never nests an element with role button inside another', () => {
+    renderBox();
+
+    screen.getAllByRole('button').forEach((button) => {
+      expect(within(button).queryByRole('button')).not.toBeInTheDocument();
+    });
+  });
+
   it('clicking a rule box inside focuses only the rule box, not also the group', () => {
     const focusGroup = jest.fn();
     const focusRuleBox = jest.fn();
     renderBox({ focusGroup, focusRuleBox });
 
-    // The rule box is the second `role="button"` (the group container is first).
+    // The rule box is the second `role="button"` (the header band is first).
     fireEvent.click(screen.getAllByRole('button')[1]);
 
     expect(focusRuleBox).toHaveBeenCalledTimes(1);

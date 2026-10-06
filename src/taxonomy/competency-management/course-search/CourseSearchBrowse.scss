@@ -232,7 +232,7 @@
   // One level deeper than `&__group`, further indented, with the lightest
   // border color continuing the darkest-to-lightest progression. Font-size/
   // weight read off Figma, overriding the tertiary `Button`'s own 18px/
-  // normal default.
+  // normal default. A non-selectable row is a plain `div` with the same box.
   &__subsection {
     // This is a Paragon `<Button block>` (width: 100%); without the
     // matching `width: calc(...)`, `margin-left` would push it past its
@@ -242,6 +242,7 @@
     font-size: 14px;
     font-weight: 700;
     background-color: var(--pgn-color-white);
+    border: 1px solid transparent;
     border-left: 6px solid $group-border-color-subsection;
     border-radius: 5px;
     box-shadow: $block-shadow;
