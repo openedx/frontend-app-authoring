@@ -6,6 +6,8 @@ import {
   waitFor,
 } from '@src/testUtils';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { waffleFlagDefaults } from '@src/data/api';
+import * as apiHooks from '@src/data/apiHooks';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { apiUrls } from './api';
 import {
@@ -188,6 +190,24 @@ describe('useCourseTaggingPermissions', () => {
 
     expect(result.current.isAuthzEnabled).toBe(false);
     expect(result.current.permissionsByCourseId).toEqual({ 'course-a': true, 'course-b': true });
+    expect(useUserPermissions).toHaveBeenCalledWith(expect.anything(), false);
+  });
+
+  it('resolves every course to false, with no permissions request, while the waffle flags are loading', () => {
+    jest.spyOn(apiHooks, 'useWaffleFlags').mockImplementation(() => ({
+      id: undefined,
+      isLoading: true,
+      isError: false,
+      ...waffleFlagDefaults,
+    }));
+
+    const { result } = renderHook(
+      () => useCourseTaggingPermissions(['course-a', 'course-b']),
+      { wrapper: makeWrapper() },
+    );
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.permissionsByCourseId).toEqual({ 'course-a': false, 'course-b': false });
     expect(useUserPermissions).toHaveBeenCalledWith(expect.anything(), false);
   });
 
