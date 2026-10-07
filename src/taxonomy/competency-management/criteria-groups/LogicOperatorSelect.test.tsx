@@ -40,11 +40,11 @@ describe('<LogicOperatorSelect />', () => {
       + 'the click that was made',
     () => {
       const onChange = jest.fn();
-      const { container, rerender } = render(<LogicOperatorSelect value="and" labels={labels} onChange={onChange} />);
+      const { container, rerender } = render(<LogicOperatorSelect value="AND" labels={labels} onChange={onChange} />);
 
       fireEvent.click(screen.getByRole('button', { name: 'all' }));
       fireEvent.click(screen.getByText('any'));
-      expect(onChange).toHaveBeenCalledWith('or');
+      expect(onChange).toHaveBeenCalledWith('OR');
 
       // A rejected save never updates `group.logicOperator` - simulated
       // here by re-rendering with `value` unchanged, exactly what the real
@@ -53,7 +53,7 @@ describe('<LogicOperatorSelect />', () => {
       // The trigger itself (`.dropdown-toggle`, not the still-mounted-but-
       // hidden menu items) is checked directly, since Paragon's `Dropdown`
       // keeps its closed menu's items in the DOM rather than removing them.
-      rerender(<LogicOperatorSelect value="and" labels={labels} onChange={onChange} />);
+      rerender(<LogicOperatorSelect value="AND" labels={labels} onChange={onChange} />);
 
       expect(container.querySelector('.dropdown-toggle')).toHaveTextContent('all');
     },
