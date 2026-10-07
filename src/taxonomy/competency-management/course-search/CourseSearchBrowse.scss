@@ -3,6 +3,13 @@
 // Color/shadow/radius literals below match `CompetencyTree.scss`'s own
 // toolbar/container/row look, redeclared rather than shared through a
 // partial - not enough call sites yet to justify one.
+//
+// Imported directly from `CourseSearchBrowse.tsx`, not through `src/
+// index.scss`, so `postcss-custom-media` needs its own `@use` to resolve the
+// breakpoint name used below (see `../CompetencyTree.scss`'s own `@use` for
+// the same reason).
+@use "@openedx/paragon/styles/css/core/custom-media-breakpoints.css";
+
 .course-search-browse {
   $line-color: rgb(0 0 0 / .08);
   $shadow-color: rgb(0 0 0 / .12);
@@ -87,6 +94,30 @@
     border-top: 1px solid $line-color;
     flex: 1;
     padding: $container-padding-y $container-padding-x;
+
+    // `min-height` is sized for a full page of results (`PAGE_SIZE` courses
+    // in `CourseSearchBrowse.tsx`, collapsed) so the box doesn't visibly
+    // shrink and shift the page below it every time a narrower search
+    // returns fewer courses - approximate, based on `&__group--course`'s own
+    // padding/shadow rather than a design spec, so treat it as adjustable
+    // rather than exact. `max-height`/`overflow-y` mirror `../CompetencyTree
+    // .scss`'s own `&__container` cap, for the same reason: without it, a
+    // full page of results plus pagination, or a course row expanded to show
+    // its own outline (`CourseRow` -> `CourseOutlineSubtree`), grows this box
+    // past the tree column's own capped height instead of scrolling its own
+    // content. `min-height` is wrapped in `min(...)` against the same
+    // `max-height` formula, not a bare `640px`: on a short viewport (e.g. a
+    // 768px-tall desktop window, where `max-height` evaluates to 508px), an
+    // unconditional `640px` floor would win over the cap per the CSS min/max
+    // conflict rule, pushing the box taller than the cap and defeating the
+    // internal scroll this rule exists to provide. Scoped to the desktop
+    // (`min-width-lg`) breakpoint, matching `../CompetencyTree.scss`'s own
+    // `&__container` for the same reason - see its comment.
+    @media (--pgn-size-breakpoint-min-width-lg) {
+      min-height: min(640px, calc(100vh - 260px));
+      max-height: calc(100vh - 260px);
+      overflow-y: auto;
+    }
   }
 
   // Wider than the nested-level gaps below (10px) so each card's own shadow
@@ -181,9 +212,32 @@
     margin-top: 10px;
   }
 
+  // `min-width: 0` overrides the flex item's default content-based floor, and
+  // `overflow-wrap: anywhere` lets a long, unbroken title actually wrap
+  // instead of forcing its sibling disclosure icon in `&__course-row` (and,
+  // through it, the whole column) to a wider intrinsic width than the
+  // resizable divider between the tree and this column can then shrink past.
   &__course-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
     font-size: 16px;
     font-weight: 700;
+  }
+
+  // Same reasoning as `&__course-title` above, for `CourseOutlineSubtree`'s
+  // per-section title.
+  &__section-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  // Without this, a long title in `&__course-title`/`&__section-title`
+  // squeezes its sibling disclosure `IconButton` along the row's main axis
+  // only (never its height), flattening the icon's circular hit area into an
+  // oval instead of leaving it at its fixed size and letting the title wrap.
+  &__course-row .btn-icon-sm,
+  &__section-header .btn-icon-sm {
+    flex-shrink: 0;
   }
 
   // One level deeper than `&__group`, further indented, with the lightest
