@@ -25,18 +25,23 @@ const systemDefaultProfile: CompetencyRuleProfile = {
 const courseGroup: CourseCompetencyCriteriaGroup = {
   id: 1,
   parentId: null,
-  depth: 1,
-  ordering: 0,
-  logicOperator: 'and',
+  tagId: 42,
   courseKey: 'course-v1:OrgX+CS101+2024',
+  name: 'course',
+  ordering: 0,
+  logicOperator: 'AND',
+  archived: false,
 };
 
 const group: BottomTierCompetencyCriteriaGroup = {
   id: 10,
   parentId: 1,
-  depth: 2,
+  tagId: 42,
+  courseKey: null,
+  name: 'leaf',
   ordering: 0,
-  logicOperator: 'and',
+  logicOperator: 'AND',
+  archived: false,
 };
 
 const response: CompetencyCriteriaGroupsResponse = {
@@ -45,7 +50,7 @@ const response: CompetencyCriteriaGroupsResponse = {
     {
       id: 101,
       objectId: 'block-a',
-      competencyCriteriaGroupId: 10,
+      groupId: 10,
       ruleProfileId: 1,
       ruleTypeOverride: null,
       rulePayloadOverride: null,
@@ -95,7 +100,7 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     await user.click(screen.getByRole('button', { name: 'all' }));
     await user.click(screen.getByText('any'));
 
-    expect(updateGroupOperator).toHaveBeenCalledWith(10, 'or');
+    expect(updateGroupOperator).toHaveBeenCalledWith(10, 'OR');
   });
 
   it(
@@ -108,7 +113,7 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
 
       await user.click(screen.getByRole('button', { name: 'all' }));
       await user.click(screen.getByText('any'));
-      expect(updateGroupOperator).toHaveBeenCalledWith(10, 'or');
+      expect(updateGroupOperator).toHaveBeenCalledWith(10, 'OR');
 
       // A rejected save never updates `group.logicOperator` - simulated by
       // re-rendering with the same, unchanged `group` (the real caller's

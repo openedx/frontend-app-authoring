@@ -127,16 +127,31 @@ describe('<CriteriaGroupBox />', () => {
   });
 
   it('exposes focus state via aria-pressed on the header band and the rule box', () => {
-    const { unmount } = renderBox();
-    expect(screen.getAllByRole('button').map((el) => el.getAttribute('aria-pressed'))).toEqual(['false', 'false']);
+    // Queried by their own selectors, not `getAllByRole('button')` position:
+    // with the default `canEdit: true`, the any/all `Dropdown` trigger is a
+    // third button nested inside the header band (see the exception noted
+    // on the test below), which would otherwise shift a positional index.
+    const { container, unmount } = renderBox();
+    const header = container.querySelector('.criteria-group-box__header')!;
+    const ruleBox = container.querySelector('.rule-box')!;
+    expect([header, ruleBox].map((el) => el.getAttribute('aria-pressed'))).toEqual(['false', 'false']);
     unmount();
 
-    renderBox({ focus: { groupId: 10, ruleKey: null } });
-    expect(screen.getAllByRole('button').map((el) => el.getAttribute('aria-pressed'))).toEqual(['true', 'false']);
+    const { container: focusedContainer } = renderBox({ focus: { groupId: 10, ruleKey: null } });
+    const focusedHeader = focusedContainer.querySelector('.criteria-group-box__header')!;
+    const focusedRuleBox = focusedContainer.querySelector('.rule-box')!;
+    expect([focusedHeader, focusedRuleBox].map((el) => el.getAttribute('aria-pressed'))).toEqual(['true', 'false']);
   });
 
-  it('never nests an element with role button inside another', () => {
-    renderBox();
+  it('never nests an element with role button inside another, when canEdit is false', () => {
+    // Read-only exception: when `canEdit` is true, the any/all `Dropdown`
+    // trigger is deliberately nested inside the header band's own
+    // `role="button"` - the same "interactive control nested inside an
+    // interactive row" shape `RuleBox`/`ScoreThresholdField` already use,
+    // guarded against a swallowed Enter/Space by this component's own
+    // `event.target === event.currentTarget` check in `handleKeyDown`, not
+    // by avoiding the nesting itself.
+    renderBox({}, {}, false);
 
     screen.getAllByRole('button').forEach((button) => {
       expect(within(button).queryByRole('button')).not.toBeInTheDocument();

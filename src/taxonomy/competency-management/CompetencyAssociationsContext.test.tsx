@@ -190,7 +190,7 @@ const TestConsumer = () => {
       >
         associate-duplicate
       </button>
-      <button type="button" onClick={() => ctx.updateGroupOperator(10, 'or')}>update-group-operator</button>
+      <button type="button" onClick={() => ctx.updateGroupOperator(10, 'OR')}>update-group-operator</button>
       <button
         type="button"
         onClick={() => {
@@ -518,7 +518,7 @@ describe('CompetencyAssociationsProvider', () => {
   });
 
   describe('updateGroupOperator', () => {
-    it('sends the uppercased operator, with no toast, on success', async () => {
+    it('sends the new operator, with no toast, on success', async () => {
       axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
       axiosMock.onGet(profileUrl).reply(200, profileResponse);
       axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
