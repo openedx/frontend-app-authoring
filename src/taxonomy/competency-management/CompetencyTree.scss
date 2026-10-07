@@ -147,7 +147,6 @@
   }
 
   @media (hover: hover) {
-
     .competency-node--selectable:not(.competency-node--selected):hover:not(:has(li:hover)) {
       background-color: $hover-bg-color;
       border-color: $hover-border-color;
