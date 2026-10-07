@@ -168,6 +168,35 @@ describe('<RuleBoxList />', () => {
     });
   });
 
+  describe('placeholder whose default score another box already uses', () => {
+    const renderTakenPlaceholder = (setPlaceholderRulePayload = jest.fn()) =>
+      render(
+        <MockCompetencyAssociationsProvider
+          value={{ focus: { groupId: 10, ruleKey: null }, setPlaceholderRulePayload }}
+        >
+          <RuleBoxList groupId={10} boxes={boxes} subsectionNamesByUsageKey={{}} canEdit />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+    it('explains the clash and offers the nearest unused score', async () => {
+      const user = userEvent.setup();
+      const setPlaceholderRulePayload = jest.fn();
+      renderTakenPlaceholder(setPlaceholderRulePayload);
+
+      expect(screen.getByText(/Another rule in this group already uses 70% or higher/)).toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: 'Use 75% or higher' }));
+
+      expect(setPlaceholderRulePayload).toHaveBeenCalledWith({ op: 'gte', value: 0.75, scale: 'percent' });
+    });
+
+    it('focuses the placeholder\'s score input when it appears', () => {
+      renderTakenPlaceholder();
+
+      const inputs = screen.getAllByLabelText('Score threshold percentage');
+      expect(inputs[inputs.length - 1]).toHaveFocus();
+    });
+  });
+
   describe('placeholder rule box', () => {
     // One real box (gte 75%), distinct from the placeholder's default display of gte 70%.
     const placeholderBoxes = ruleBoxesForGroup(

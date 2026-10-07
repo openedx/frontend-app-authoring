@@ -6,6 +6,7 @@ import type {
   CompetencyRuleProfile,
   CourseCompetencyCriteriaGroup,
   EffectiveRule,
+  GradeRulePayload,
   RuleBox,
 } from './data/types';
 
@@ -104,6 +105,42 @@ export function ruleBoxesForGroup(
       const bMinId = Math.min(...b.criteria.map((c) => c.id));
       return (aMinId - bMinId) || a.key.localeCompare(b.key);
     });
+}
+
+const percentOf = (rulePayload: GradeRulePayload): number => Math.round(rulePayload.value * 100);
+
+/** Whether a rule box with the same rule type, operator, and rounded percent
+ * already exists. Compares percents rather than `ruleKeyOf`'s raw-fraction
+ * key, which could differ by formatting alone. `excludeKey` skips the box
+ * being edited.
+ */
+export function isRuleTakenInGroup(rule: EffectiveRule, boxes: RuleBox[], excludeKey?: string): boolean {
+  return boxes.some((box) => (
+    box.key !== excludeKey
+    && box.rule.ruleType === rule.ruleType
+    && box.rule.rulePayload.op === rule.rulePayload.op
+    && percentOf(box.rule.rulePayload) === percentOf(rule.rulePayload)
+  ));
+}
+
+const SUGGESTED_SCORE_STEP = 5;
+
+/** The nearest unused score in steps of 5, moving stricter: `gte` up, `lte`
+ * down, within 0-100. `null` for `eq` or when nothing is free.
+ */
+export function nextUnusedScore(rule: EffectiveRule, boxes: RuleBox[]): GradeRulePayload | null {
+  const { op } = rule.rulePayload;
+  if (op === 'eq') {
+    return null;
+  }
+  const direction = op === 'gte' ? SUGGESTED_SCORE_STEP : -SUGGESTED_SCORE_STEP;
+  for (let percent = percentOf(rule.rulePayload) + direction; percent >= 0 && percent <= 100; percent += direction) {
+    const candidate: EffectiveRule = { ...rule, rulePayload: { ...rule.rulePayload, value: percent / 100 } };
+    if (!isRuleTakenInGroup(candidate, boxes)) {
+      return candidate.rulePayload;
+    }
+  }
+  return null;
 }
 
 /** The key of a bottom-tier group's last rule box, or `null` if the group has no criteria. */

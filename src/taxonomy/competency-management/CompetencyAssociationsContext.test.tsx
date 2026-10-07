@@ -120,6 +120,7 @@ const TestConsumer = () => {
       <p>Focus: {ctx.focus ? `group ${ctx.focus.groupId}, rule ${ctx.focus.ruleKey ?? 'none'}` : 'none'}</p>
       <p>Status: {ctx.status}</p>
       <p>Has placeholder: {String(ctx.hasPlaceholder)}</p>
+      <p>Duplicate rejected: {String(ctx.placeholderDuplicateRejected)}</p>
       <p>Placeholder: {JSON.stringify(ctx.placeholder)}</p>
       <p>Error: {ctx.error?.message ?? 'none'}</p>
       <p>Associating: {String(ctx.isAssociating)}</p>
@@ -936,14 +937,37 @@ describe('CompetencyAssociationsProvider', () => {
       expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
     });
 
-    it('sends only group_id for a placeholder rule box whose score is unchanged', async () => {
+    it('sends only group_id for a placeholder rule box whose default score no other box uses', async () => {
       axiosMock.onPost(createUrl).reply(201, createdCriterion(10));
-      await renderLoaded();
+      await renderLoaded(twoGroupsResponse);
       await click('Add placeholder rule box in group 10');
 
       await click('Associate in course A');
 
       await expectSinglePost({ object_id: 'new-sub', group_id: 10 });
+    });
+
+    it('sends nothing and flags a rejection when the placeholder\'s default score duplicates a box', async () => {
+      axiosMock.onPost(createUrl).reply(201, createdCriterion(10));
+      await renderLoaded();
+      await click('Add placeholder rule box in group 10');
+
+      await click('Associate in course A');
+      await flushEffects();
+
+      expect(axiosMock.history.post).toHaveLength(0);
+      expect(screen.getByText('Duplicate rejected: true')).toBeInTheDocument();
+    });
+
+    it('clears the rejection once the author changes the placeholder\'s score', async () => {
+      await renderLoaded();
+      await click('Add placeholder rule box in group 10');
+      await click('Associate in course A');
+      expect(screen.getByText('Duplicate rejected: true')).toBeInTheDocument();
+
+      await click('Set placeholder score');
+
+      expect(screen.getByText('Duplicate rejected: false')).toBeInTheDocument();
     });
 
     it('sends group_id and both rule fields for a placeholder rule box with a score', async () => {

@@ -1,7 +1,13 @@
-import { useId, useRef, useState } from 'react';
-import type { KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
+import type { IntlShape } from 'react-intl';
 import type { GradeRulePayload } from '../data/types';
 import messages from './messages';
 
@@ -13,7 +19,29 @@ export interface ScoreThresholdFieldProps {
   onChange?: (rulePayload: GradeRulePayload) => Promise<void>;
   /** Called when saving. A non-empty result blocks the save and is shown inline. */
   getInlineValidationMessage?: (value: string) => string;
+  /** Focuses and selects the input on mount. */
+  autoFocusSelect?: boolean;
+  /** Guidance under the field. */
+  hint?: ReactNode;
+  /** Renders `hint` as an error and marks the input invalid. */
+  hintIsError?: boolean;
 }
+
+/** A score as text, such as "75% or higher", for messages that name a score. Read from the same message as the
+ * field's own label, so the wording stays in one place.
+ */
+export const formatScoreSummary = (intl: IntlShape, rulePayload: GradeRulePayload): string => {
+  let summary = '';
+  intl.formatMessage(messages.scoreThresholdLabel, {
+    op: rulePayload.op,
+    value: intl.formatNumber(rulePayload.value, { style: 'percent', maximumFractionDigits: 0 }),
+    threshold: (chunks: ReactNode[]) => {
+      summary = chunks.filter((chunk): chunk is string => typeof chunk === 'string').join('');
+      return summary;
+    },
+  });
+  return summary;
+};
 
 /** `rulePayload.value` is a 0.0-1.0 fraction (openedx-core ADR 0002), not a 0-100 percentage. */
 const percentOf = (rulePayload: GradeRulePayload): string => String(Math.round(rulePayload.value * 100));
@@ -21,7 +49,14 @@ const percentOf = (rulePayload: GradeRulePayload): string => String(Math.round(r
 /** Label stating a rule box's score threshold, for example "With a score of 70% or higher".
  * The percentage is editable when `onChange` is given.
  */
-const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage }: ScoreThresholdFieldProps) => {
+const ScoreThresholdField = ({
+  rulePayload,
+  onChange,
+  getInlineValidationMessage,
+  autoFocusSelect = false,
+  hint,
+  hintIsError = false,
+}: ScoreThresholdFieldProps) => {
   const intl = useIntl();
   const inputId = useId();
 
@@ -33,6 +68,14 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
   // from racing the first, whose response could otherwise land out of order.
   const saveInFlight = useRef(false);
   const [isSaving, setIsSaving] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (autoFocusSelect) {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }
+  }, [autoFocusSelect]);
 
   const revertToLastPersisted = () => {
     setInputValue(percentOf(rulePayload));
@@ -84,18 +127,22 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
     }
   };
 
+  // The save-time message wins over the hint when both would show.
+  const showAsInvalid = !!validationMessage || (!!hint && hintIsError);
+
   const value = onChange
     ? (
       <>
         <Form.Control
+          ref={inputRef}
           type="text"
           inputMode="numeric"
           size="sm"
           className="score-threshold-field__input"
           value={inputValue}
           aria-label={intl.formatMessage(messages.scoreThresholdInputAccessibleLabel)}
-          aria-invalid={!!validationMessage}
-          isInvalid={!!validationMessage}
+          aria-invalid={showAsInvalid}
+          isInvalid={showAsInvalid}
           disabled={isSaving}
           onChange={(event) => setInputValue(event.target.value)}
           onKeyDown={handleKeyDown}
@@ -120,6 +167,11 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
       {validationMessage && (
         <Form.Control.Feedback type="invalid" hasIcon={false}>
           {validationMessage}
+        </Form.Control.Feedback>
+      )}
+      {!validationMessage && hint && (
+        <Form.Control.Feedback type={hintIsError ? 'invalid' : 'default'} hasIcon={false}>
+          {hint}
         </Form.Control.Feedback>
       )}
     </Form.Group>

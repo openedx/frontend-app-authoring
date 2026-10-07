@@ -2,14 +2,17 @@ import type {
   CompetencyCriteriaGroupsResponse,
   CompetencyCriterion,
   GradeRulePayload,
+  RuleBox,
 } from './data/types';
 import {
   associatedObjectIds,
   bottomTierGroupsForCourse,
   buildCompetencyCriteriaGroupsIndex,
   effectiveRuleOf,
+  isRuleTakenInGroup,
   lastBottomTierGroupForCourse,
   lastRuleKeyIn,
+  nextUnusedScore,
   ruleBoxesForGroup,
   ruleKeyOf,
   visibleCourseGroups,
@@ -329,5 +332,56 @@ describe('visibleCourseGroups', () => {
 describe('associatedObjectIds', () => {
   it('returns every criterion\'s objectId across the whole tree', () => {
     expect(associatedObjectIds(fixtureResponse)).toEqual(new Set(['block-a', 'block-b', 'block-d', 'block-c']));
+  });
+});
+
+describe('isRuleTakenInGroup / nextUnusedScore', () => {
+  const ruleOf = (op: GradeRulePayload['op'], percent: number, ruleType = 'grade') => ({
+    ruleType,
+    rulePayload: { op, value: percent / 100, scale: 'percent' as const },
+  });
+  const boxOf = (op: GradeRulePayload['op'], percent: number, ruleType = 'grade'): RuleBox => ({
+    key: `${ruleType}:${op}:${percent}`,
+    rule: ruleOf(op, percent, ruleType),
+    criteria: [],
+  });
+
+  it('is taken when a box has the same rule type, operator, and rounded percent', () => {
+    expect(isRuleTakenInGroup(ruleOf('gte', 75), [boxOf('gte', 75)])).toBe(true);
+  });
+
+  it('is not taken when only the operator differs', () => {
+    expect(isRuleTakenInGroup(ruleOf('gte', 75), [boxOf('lte', 75)])).toBe(false);
+  });
+
+  it('is not taken when only the rule type differs', () => {
+    expect(isRuleTakenInGroup(ruleOf('gte', 75), [boxOf('gte', 75, 'other')])).toBe(false);
+  });
+
+  it('ignores the box being edited, by key', () => {
+    const box = boxOf('gte', 75);
+    expect(isRuleTakenInGroup(ruleOf('gte', 75), [box], box.key)).toBe(false);
+  });
+
+  it('suggests the next score up for gte', () => {
+    expect(nextUnusedScore(ruleOf('gte', 75), [boxOf('gte', 75)])?.value).toBe(0.8);
+  });
+
+  it('suggests the next score down for lte', () => {
+    expect(nextUnusedScore(ruleOf('lte', 40), [boxOf('lte', 40)])?.value).toBe(0.35);
+  });
+
+  it('skips scores that are also taken', () => {
+    const boxes = [boxOf('gte', 75), boxOf('gte', 80)];
+    expect(nextUnusedScore(ruleOf('gte', 75), boxes)?.value).toBe(0.85);
+  });
+
+  it('returns null when nothing is free in that direction', () => {
+    const boxes = [boxOf('gte', 90), boxOf('gte', 95), boxOf('gte', 100)];
+    expect(nextUnusedScore(ruleOf('gte', 90), boxes)).toBeNull();
+  });
+
+  it('returns null for an eq rule', () => {
+    expect(nextUnusedScore(ruleOf('eq', 50), [boxOf('eq', 50)])).toBeNull();
   });
 });

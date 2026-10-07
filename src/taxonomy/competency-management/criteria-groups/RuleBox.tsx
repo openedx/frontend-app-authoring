@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Stack } from '@openedx/paragon';
 import classNames from 'classnames';
@@ -20,6 +21,10 @@ export interface RuleBoxProps {
   canEdit?: boolean;
   /** Duplicate-score check for this box, used only when `canEdit`. */
   getInlineValidationMessage?: (value: string) => string;
+  /** Placeholder only: guidance under the score, such as "this score is taken". */
+  hint?: ReactNode;
+  /** Placeholder only: focus the score input on mount. */
+  autoFocusSelect?: boolean;
 }
 
 /** One rule box: its score threshold, which focuses the box, and its criterion chips, or a hint when it is the placeholder. */
@@ -31,6 +36,8 @@ const RuleBox = ({
   subsectionNamesByUsageKey,
   canEdit = false,
   getInlineValidationMessage,
+  hint,
+  autoFocusSelect = false,
 }: RuleBoxProps) => {
   const intl = useIntl();
   const {
@@ -38,6 +45,7 @@ const RuleBox = ({
     focusRuleBox,
     updateRuleScore,
     setPlaceholderRulePayload,
+    placeholderDuplicateRejected,
   } = useCompetencyAssociations();
   const isFocused = focus?.groupId === groupId && focus?.ruleKey === ruleKey;
   const isPlaceholder = ruleKey === null;
@@ -48,6 +56,15 @@ const RuleBox = ({
       ref.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
   }, [isFocused]);
+
+  const isRejected = isPlaceholder && !!hint && placeholderDuplicateRejected;
+
+  useEffect(() => {
+    if (isRejected) {
+      const root = ref.current;
+      (root?.querySelector<HTMLElement>('.rule-box__use-suggestion') ?? root?.querySelector('input'))?.focus();
+    }
+  }, [isRejected]);
 
   const handleScoreChange = (rulePayload: GradeRulePayload): Promise<void> => {
     // With no criteria yet, the score stays in the context until content is picked.
@@ -88,6 +105,9 @@ const RuleBox = ({
               rulePayload={rule.rulePayload}
               onChange={handleScoreChange}
               getInlineValidationMessage={getInlineValidationMessage}
+              autoFocusSelect={autoFocusSelect}
+              hint={hint}
+              hintIsError={isRejected}
             />
           </>
         )

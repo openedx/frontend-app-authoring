@@ -1,8 +1,11 @@
+import { useEffect, useRef } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Stack } from '@openedx/paragon';
+import { Button, Stack } from '@openedx/paragon';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import type { EffectiveRule, RuleBox as RuleBoxData } from '../data/types';
+import { isRuleTakenInGroup, nextUnusedScore } from '../utils';
 import RuleBox from './RuleBox';
+import { formatScoreSummary } from './ScoreThresholdField';
 import messages from './messages';
 
 export interface RuleBoxListProps {
@@ -22,18 +25,26 @@ const RuleBoxList = ({
   canEdit = false,
 }: RuleBoxListProps) => {
   const intl = useIntl();
-  const { focus, placeholder, systemDefaultProfile } = useCompetencyAssociations();
+  const {
+    focus,
+    placeholder,
+    systemDefaultProfile,
+    setPlaceholderRulePayload,
+  } = useCompetencyAssociations();
+  // The score field remounts on every score change; only "Add Rule" and the suggestion link may move focus.
+  const refocusAfterSuggestion = useRef(false);
+  useEffect(() => {
+    refocusAfterSuggestion.current = false;
+  });
 
-  // Compares the rounded percent, not `ruleKeyOf`'s raw-fraction key, whose formatting could silently never match.
   const getInlineValidationMessage = (candidateBox: RuleBoxData) => (value: string): string => {
-    const candidatePercent = Math.round(Number(value));
-    const isDuplicate = boxes.some((other) => (
-      other.key !== candidateBox.key
-      && other.rule.ruleType === candidateBox.rule.ruleType
-      && other.rule.rulePayload.op === candidateBox.rule.rulePayload.op
-      && Math.round(other.rule.rulePayload.value * 100) === candidatePercent
-    ));
-    return isDuplicate ? intl.formatMessage(messages.duplicateScoreValidationMessage) : '';
+    const candidate: EffectiveRule = {
+      ruleType: candidateBox.rule.ruleType,
+      rulePayload: { ...candidateBox.rule.rulePayload, value: Math.round(Number(value)) / 100 },
+    };
+    return isRuleTakenInGroup(candidate, boxes, candidateBox.key)
+      ? intl.formatMessage(messages.duplicateScoreValidationMessage)
+      : '';
   };
 
   // The placeholder box shows last in the focused group when its focus has no rule key. In the placeholder group
@@ -43,6 +54,33 @@ const RuleBoxList = ({
     rulePayload: placeholder.rulePayload ?? systemDefaultProfile.rulePayload,
   };
   const showPlaceholder = !!placeholderRule && focus?.groupId === groupId && focus.ruleKey === null;
+
+  // An untouched default that another box already uses would merge into that box on save.
+  const isPlaceholderScoreTaken = canEdit && !!placeholderRule && isRuleTakenInGroup(placeholderRule, boxes);
+  const suggestedScore = isPlaceholderScoreTaken ? nextUnusedScore(placeholderRule, boxes) : null;
+  const placeholderHint = isPlaceholderScoreTaken && (
+    <>
+      {intl.formatMessage(messages.defaultScoreTakenHint, {
+        score: formatScoreSummary(intl, placeholderRule.rulePayload),
+      })}
+      {suggestedScore && (
+        <>
+          {' '}
+          <Button
+            variant="link"
+            size="inline"
+            className="rule-box__use-suggestion"
+            onClick={() => {
+              refocusAfterSuggestion.current = true;
+              setPlaceholderRulePayload(suggestedScore);
+            }}
+          >
+            {intl.formatMessage(messages.useSuggestedScoreLink, { score: formatScoreSummary(intl, suggestedScore) })}
+          </Button>
+        </>
+      )}
+    </>
+  );
 
   return (
     <Stack gap={2} className="rule-box-list">
@@ -60,7 +98,8 @@ const RuleBoxList = ({
       ))}
       {showPlaceholder && (
         <RuleBox
-          key="placeholder"
+          // Remounts when the displayed score changes, since the field never resyncs from props.
+          key={`placeholder-${Math.round(placeholderRule.rulePayload.value * 100)}`}
           groupId={groupId}
           ruleKey={null}
           rule={placeholderRule}
@@ -72,6 +111,8 @@ const RuleBoxList = ({
             rule: placeholderRule,
             criteria: [],
           })}
+          hint={placeholderHint || undefined}
+          autoFocusSelect={groupId !== null && (placeholder.rulePayload === null || refocusAfterSuggestion.current)}
         />
       )}
     </Stack>
