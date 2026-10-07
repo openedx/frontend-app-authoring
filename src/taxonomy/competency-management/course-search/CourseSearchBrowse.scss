@@ -3,6 +3,13 @@
 // Color/shadow/radius literals below match `CompetencyTree.scss`'s own
 // toolbar/container/row look, redeclared rather than shared through a
 // partial - not enough call sites yet to justify one.
+//
+// Imported directly from `CourseSearchBrowse.tsx`, not through `src/
+// index.scss`, so `postcss-custom-media` needs its own `@use` to resolve the
+// breakpoint name used below (see `../CompetencyTree.scss`'s own `@use` for
+// the same reason).
+@use "@openedx/paragon/styles/css/core/custom-media-breakpoints.css";
+
 .course-search-browse {
   $line-color: rgb(0 0 0 / .08);
   $shadow-color: rgb(0 0 0 / .12);
@@ -82,24 +89,35 @@
   // both share `&__panel`'s single envelope. `flex: 1` (a flex child of
   // `&__panel`) is what actually grows to fill the extra height - `&__panel`
   // growing alone would otherwise leave the added space unused above this
-  // box's own bottom edge. `min-height` is sized for a full page of results
-  // (`PAGE_SIZE` courses in `CourseSearchBrowse.tsx`, collapsed) so the box
-  // doesn't visibly shrink and shift the page below it every time a
-  // narrower search returns fewer courses - approximate, based on
-  // `&__group--course`'s own padding/shadow rather than a design spec, so
-  // treat it as adjustable rather than exact. `max-height`/`overflow-y` mirror
-  // `../CompetencyTree.scss`'s own `&__container` cap, for the same reason:
-  // without it, a full page of results plus pagination, or a course row
-  // expanded to show its own outline (`CourseRow` -> `CourseOutlineSubtree`),
-  // grows this box past the tree column's own capped height instead of
-  // scrolling its own content.
+  // box's own bottom edge.
   &__container {
     border-top: 1px solid $line-color;
     flex: 1;
-    min-height: 640px;
-    max-height: calc(100vh - 260px);
-    overflow-y: auto;
     padding: $container-padding-y $container-padding-x;
+
+    // `min-height` is sized for a full page of results (`PAGE_SIZE` courses
+    // in `CourseSearchBrowse.tsx`, collapsed) so the box doesn't visibly
+    // shrink and shift the page below it every time a narrower search
+    // returns fewer courses - approximate, based on `&__group--course`'s own
+    // padding/shadow rather than a design spec, so treat it as adjustable
+    // rather than exact. `max-height`/`overflow-y` mirror `../CompetencyTree
+    // .scss`'s own `&__container` cap, for the same reason: without it, a
+    // full page of results plus pagination, or a course row expanded to show
+    // its own outline (`CourseRow` -> `CourseOutlineSubtree`), grows this box
+    // past the tree column's own capped height instead of scrolling its own
+    // content. `min-height` is wrapped in `min(...)` against the same
+    // `max-height` formula, not a bare `640px`: on a short viewport (e.g. a
+    // 768px-tall desktop window, where `max-height` evaluates to 508px), an
+    // unconditional `640px` floor would win over the cap per the CSS min/max
+    // conflict rule, pushing the box taller than the cap and defeating the
+    // internal scroll this rule exists to provide. Scoped to the desktop
+    // (`min-width-lg`) breakpoint, matching `../CompetencyTree.scss`'s own
+    // `&__container` for the same reason - see its comment.
+    @media (--pgn-size-breakpoint-min-width-lg) {
+      min-height: min(640px, calc(100vh - 260px));
+      max-height: calc(100vh - 260px);
+      overflow-y: auto;
+    }
   }
 
   // Wider than the nested-level gaps below (10px) so each card's own shadow
