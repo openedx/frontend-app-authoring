@@ -23,6 +23,7 @@
   $group-border-color: #DDDDDD;
   $hover-bg-color: var(--pgn-color-info-100);
   $hover-border-color: var(--pgn-color-info-200);
+  $group-padding: 5px;
 
   .competency-row__badge {
     overflow-wrap: anywhere;
@@ -78,15 +79,16 @@
   li {
     --competency-fill: var(--competency-parent-fill-alt);
     --competency-fill-alt: var(--competency-parent-fill);
-  }
 
-  .competency-row {
     position: relative;
-    display: flex;
-    align-items: center;
     background-color: var(--competency-fill);
     border: 1px solid $line-color;
     border-radius: $border-radius;
+  }
+
+  .competency-row {
+    display: flex;
+    align-items: center;
     padding-left: 5px;
 
     .btn-icon-sm {
@@ -109,15 +111,14 @@
     }
   }
 
-  .competency-row--selected {
+  .competency-node--selected {
     background-color: $hover-bg-color;
   }
 
-  // A separate filled overlay, not a thicker `border-left`: this row's
+  // A separate filled overlay, not a thicker `border-left`: this node's
   // border is a uniform 1px on every side, and a thicker `border-left`
   // creates a visibly notched corner where it meets the shared
-  // `border-radius` arc - confirmed live.
-  .competency-row--selected::before {
+  .competency-node--selected::before {
     content: '';
     position: absolute;
     top: -1px;
@@ -126,20 +127,6 @@
     width: 6px;
     background-color: var(--pgn-color-teal);
     border-radius: $border-radius 0 0 $border-radius;
-  }
-
-  // A selected group header doesn't get this row-level bar: it sits 5px
-  // inset from the group's own outer border (`.competency-group`'s own
-  // `padding` below), so a bar sized to the row alone reads as a small
-  // square tab floating inside the grey envelope instead of sitting flush
-  // against it like a leaf row's bar does. `.competency-group:has(...)`
-  // further down draws the flush version instead.
-  .competency-group > .competency-row--selected::before {
-    display: none;
-  }
-
-  .competency-row--root {
-    border: none;
   }
 
   .competency-row--root + ul {
@@ -147,68 +134,28 @@
   }
 
   .competency-group {
-    position: relative;
-    background-color: var(--competency-fill);
-    border: 1px solid $group-border-color;
-    border-radius: $border-radius;
-    padding: 5px;
+    border-color: $group-border-color;
+    padding: $group-padding;
   }
 
-  // A group's own header row sits flat on its envelope (same inherited fill)
-  // instead of the bordered leaf look - only true leaves keep that from the
-  // base `.competency-row` rule above.
-  .competency-group > .competency-row {
-    border: none;
-    border-radius: 0;
-  }
-
-  // A selected group tints its whole envelope, not just the header row:
-  // `.competency-row--selected` above only paints the row itself, so the
-  // group needs this separate rule to also tint the padding around it.
-  // `:has()` matches the group from its selected child.
-  .competency-group:has(> .competency-row--selected) {
-    background-color: $hover-bg-color;
-  }
-
-  // Flush with the group's own outer edge (rounded, matching a leaf row's
-  // own bar) instead of the header row's inset edge - see the row-level
-  // `::before`'s own `display: none` above for why this replaces it rather
-  // than the two coexisting.
-  .competency-group:has(> .competency-row--selected)::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    bottom: -1px;
-    left: -1px;
-    width: 6px;
-    background-color: var(--pgn-color-teal);
-    border-radius: $border-radius 0 0 $border-radius;
-  }
-
-  // Pulls leaf rows' inset back by their 1px border (groups/root have none)
-  // so every row's label lands at the same 25px inset regardless of variant.
   li:not(.competency-group) > .competency-row {
     padding-left: 4px;
   }
 
-  .competency-row--selectable {
+  .competency-node--selectable {
     cursor: pointer;
   }
 
   @media (hover: hover) {
-    .competency-row--selectable:not(.competency-row--selected):hover {
-      background-color: $hover-bg-color;
-      border-color: $hover-border-color;
-    }
 
-    .competency-group:has(> .competency-row--selectable:not(.competency-row--selected):hover) {
+    .competency-node--selectable:not(.competency-node--selected):hover:not(:has(li:hover)) {
       background-color: $hover-bg-color;
       border-color: $hover-border-color;
     }
   }
 
   .competency-group > ul {
-    margin-top: 5px;
+    margin-top: $group-padding;
   }
 
   ul > li + li {

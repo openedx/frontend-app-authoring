@@ -252,14 +252,13 @@ describe('<CompetencyTree />', () => {
     const { rerender } = renderTree({ onSelectCompetency });
     await screen.findByText(taxonomyName);
     fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
-    const leafRow = (await screen.findByText('Leaf A1a')).closest('.competency-row') as HTMLElement;
+    const leafItem = (await screen.findByText('Leaf A1a')).closest('li') as HTMLElement;
 
-    // `role="treeitem"` (see `CompetencyTreeItem.tsx`) allows `aria-selected`
-    // directly, unlike the `role="button"` this row used briefly before.
-    expect(leafRow).toHaveAttribute('role', 'treeitem');
-    expect(leafRow).toHaveAttribute('aria-selected', 'false');
+    expect(leafItem).toHaveAttribute('role', 'treeitem');
+    expect(leafItem).toHaveAttribute('aria-selected', 'false');
+    expect(leafItem.querySelector('.competency-row')).not.toHaveAttribute('role');
 
-    fireEvent.click(leafRow);
+    fireEvent.click(leafItem);
 
     // Checked against the fields this feature cares about (id/value/externalId),
     // not the full raw TagData shape (which also carries API-internal fields
@@ -281,7 +280,7 @@ describe('<CompetencyTree />', () => {
         onSelectCompetency={onSelectCompetency}
       />,
     );
-    expect(leafRow).toHaveAttribute('aria-selected', 'true');
+    expect(leafItem).toHaveAttribute('aria-selected', 'true');
   });
 
   it('selects a group row on click, and its own disclosure icon only toggles expand/collapse without also selecting it', async () => {
@@ -290,26 +289,31 @@ describe('<CompetencyTree />', () => {
     renderTree({ onSelectCompetency });
     await screen.findByText(taxonomyName);
     fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
-    const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
+    const groupItem = (await screen.findByText('Group A1')).closest('li') as HTMLElement;
+    const groupRow = groupItem.querySelector('.competency-row') as HTMLElement;
 
-    // A group row now gets the same selection semantics a leaf row already
-    // has - `tabIndex="0"` marks it focusable/selectable, and `role="treeitem"`
+    // A group now gets the same selection semantics a leaf already has -
+    // `tabIndex="0"` marks it focusable/selectable, and `role="treeitem"`
     // (not `role="button"`, which combined with the nested disclosure
     // `<button>` below used to trip axe's `nested-interactive` rule - see
     // `CompetencyTreeItem.tsx`).
-    expect(groupRow).toHaveAttribute('tabIndex', '0');
-    expect(groupRow).toHaveAttribute('role', 'treeitem');
+    expect(groupItem).toHaveAttribute('tabIndex', '0');
+    expect(groupItem).toHaveAttribute('role', 'treeitem');
 
-    fireEvent.click(groupRow);
+    // The group's own nested children live inside that same treeitem, so its
+    // whole envelope - not just the header strip - is the hover/click target.
+    expect(within(groupItem).getByText('Leaf A1a')).toBeInTheDocument();
+
+    fireEvent.click(groupItem);
     expect(onSelectCompetency).toHaveBeenCalledTimes(1);
     expect(onSelectCompetency).toHaveBeenCalledWith(
       expect.objectContaining({ id: 2, value: 'Group A1', externalId: null }),
     );
     onSelectCompetency.mockClear();
 
-    // The row's own disclosure icon (distinct from the row body clicked above)
+    // The node's own disclosure icon (distinct from the body clicked above)
     // still only toggles expand/collapse - its click must not also bubble up
-    // and fire the row's own selection handler.
+    // and fire the node's own selection handler.
     const collapseIcon = within(groupRow).getByRole('button', { name: 'Collapse' });
     fireEvent.click(collapseIcon);
     expect(onSelectCompetency).not.toHaveBeenCalled();
@@ -347,12 +351,12 @@ describe('<CompetencyTree />', () => {
     renderTree({ onSelectCompetency });
     await screen.findByText(taxonomyName);
     fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
-    const leafRow = (await screen.findByText('Leaf A1a')).closest('.competency-row') as HTMLElement;
+    const leafItem = (await screen.findByText('Leaf A1a')).closest('li') as HTMLElement;
 
-    fireEvent.keyDown(leafRow, { key: 'Enter' });
+    fireEvent.keyDown(leafItem, { key: 'Enter' });
     expect(onSelectCompetency).toHaveBeenCalledTimes(1);
 
-    fireEvent.keyDown(leafRow, { key: ' ' });
+    fireEvent.keyDown(leafItem, { key: ' ' });
     expect(onSelectCompetency).toHaveBeenCalledTimes(2);
   });
 
@@ -362,8 +366,31 @@ describe('<CompetencyTree />', () => {
     renderTree({ selectedCompetencyId: '2', onSelectCompetency: jest.fn() });
     await screen.findByText(taxonomyName);
     fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
-    const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
+    const groupItem = (await screen.findByText('Group A1')).closest('li') as HTMLElement;
 
-    expect(groupRow).toHaveAttribute('aria-selected', 'true');
+    expect(groupItem).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('selects only the innermost node clicked, never the ancestor groups whose envelope wraps it', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    const onSelectCompetency = jest.fn();
+    renderTree({ onSelectCompetency });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+
+    const leafItem = (await screen.findByText('Leaf A1a')).closest('li') as HTMLElement;
+    fireEvent.click(leafItem);
+
+    expect(onSelectCompetency).toHaveBeenCalledTimes(1);
+    expect(onSelectCompetency).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 3, value: 'Leaf A1a' }),
+    );
+    onSelectCompetency.mockClear();
+
+    fireEvent.keyDown(leafItem, { key: 'Enter' });
+    expect(onSelectCompetency).toHaveBeenCalledTimes(1);
+    expect(onSelectCompetency).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 3, value: 'Leaf A1a' }),
+    );
   });
 });
