@@ -133,26 +133,32 @@ describe('competency-management api calls', () => {
     });
   });
 
-  it('updates a group\'s operator, uppercasing the request and lowercasing the response', async () => {
+  it('updates a group\'s operator, sending and returning it unchanged (already uppercase on the wire)', async () => {
     const { axiosMock } = initializeMocks();
     axiosMock.onPatch(apiUrls.updateCompetencyCriteriaGroup(tagId, 10)).reply(200, {
       id: 10,
       parent_id: 1,
-      depth: 2,
+      tag_id: tagId,
+      course_key: null,
+      name: 'leaf',
       ordering: 0,
       logic_operator: 'OR',
+      archived: false,
     });
 
-    const result = await updateCompetencyCriteriaGroupOperator(tagId, 10, 'or');
+    const result = await updateCompetencyCriteriaGroupOperator(tagId, 10, 'OR');
 
     expect(axiosMock.history.patch[0].url).toEqual(apiUrls.updateCompetencyCriteriaGroup(tagId, 10));
     expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({ logic_operator: 'OR' });
     expect(result).toEqual({
       id: 10,
       parentId: 1,
-      depth: 2,
+      tagId,
+      courseKey: null,
+      name: 'leaf',
       ordering: 0,
-      logicOperator: 'or',
+      logicOperator: 'OR',
+      archived: false,
     });
   });
 
@@ -163,7 +169,7 @@ describe('competency-management api calls', () => {
       {
         id: 101,
         object_id: 'block-a',
-        competency_criteria_group_id: groupId,
+        group_id: groupId,
         rule_profile_id: null,
         rule_type_override: 'grade',
         rule_payload_override: { op: 'gte', value: 0.8, scale: 'percent' },
@@ -187,7 +193,7 @@ describe('competency-management api calls', () => {
       {
         id: 101,
         objectId: 'block-a',
-        competencyCriteriaGroupId: groupId,
+        groupId,
         ruleProfileId: null,
         ruleTypeOverride: 'grade',
         rulePayloadOverride: { op: 'gte', value: 0.8, scale: 'percent' },
