@@ -156,9 +156,12 @@ describe('useUpdateCompetencyCriteriaGroupOperator', () => {
     axiosMock.onPatch(apiUrls.updateCompetencyCriteriaGroup(tagId, 10)).reply(200, {
       id: 10,
       parent_id: 1,
-      depth: 2,
+      tag_id: tagId,
+      course_key: null,
+      name: 'leaf',
       ordering: 0,
       logic_operator: 'OR',
+      archived: false,
     });
     queryClient.setQueryData(competencyQueryKeys.competencyCriteriaGroups(tagId), { groups: [], criteria: [] });
 
@@ -178,9 +181,12 @@ describe('useUpdateCompetencyCriteriaGroupOperator', () => {
     axiosMock.onPatch(apiUrls.updateCompetencyCriteriaGroup(tagId, 10)).reply(200, {
       id: 10,
       parent_id: 1,
-      depth: 2,
+      tag_id: tagId,
+      course_key: null,
+      name: 'leaf',
       ordering: 0,
       logic_operator: 'OR',
+      archived: false,
     });
     queryClient.setQueryData(competencyQueryKeys.competencyCriteriaGroups(otherTagId), { groups: [], criteria: [] });
 
@@ -203,7 +209,7 @@ describe('useUpdateCompetencyCriteriaRule', () => {
       {
         id: 101,
         object_id: 'block-a',
-        competency_criteria_group_id: groupId,
+        group_id: groupId,
         rule_profile_id: null,
         rule_type_override: 'grade',
         rule_payload_override: { op: 'gte', value: 0.8, scale: 'percent' },
