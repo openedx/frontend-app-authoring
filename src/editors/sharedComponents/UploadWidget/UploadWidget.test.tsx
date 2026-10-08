@@ -77,7 +77,7 @@ describe('UploadWidget', () => {
       .withDelayInMs(1000).reply(
         201,
         {
-          path: '/static/my-saved-pdf.pdf',
+          path: 'static/my-saved-pdf.pdf',
         },
       );
     const screen = renderWidget({ props: defaultProps({ isLibrary: true }), formikProps: defaultFormikProps() });
