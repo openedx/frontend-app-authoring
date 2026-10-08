@@ -28,14 +28,14 @@ export const SidebarFilters = ({ onlyOneType }: FiltersProps) => {
     <Stack gap={3} className="my-3">
       <Stack className="flex-wrap" direction="horizontal" gap={2}>
         <LibraryDropdownFilter />
-        <Stack direction="horizontal" gap={1}>
-          <SearchKeywordsField />
+        <Stack direction="horizontal" gap={2} className=" w-100 mx-1">
+          <SearchKeywordsField className="flex-fill" />
           <IconButton
             onClick={toggle}
             alt={intl.formatMessage(messages.additionalFilterBtnAltText)}
             size="md"
             src={FilterList}
-            className="rounded-sm border ml-2"
+            className="rounded-sm border"
           />
         </Stack>
       </Stack>
