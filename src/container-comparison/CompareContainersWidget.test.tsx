@@ -38,6 +38,21 @@ describe('CompareContainersWidget', () => {
     )).not.toBeInTheDocument();
   });
 
+  test('sends downstreamBlockId as the course_id param when reviewing from a course', async () => {
+    const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
+    axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
+    render(
+      <CompareContainersWidget
+        upstreamBlockId={mockGetContainerMetadata.sectionId}
+        downstreamBlockId={mockGetCourseContainerChildren.sectionId}
+      />,
+    );
+    await screen.findAllByText('Test Title');
+
+    const metadataRequest = axiosMock.history.get.find((request) => request.url === url);
+    expect(metadataRequest?.params).toEqual({ course_id: mockGetCourseContainerChildren.sectionId });
+  });
+
   test('renders loading spinner when data is pending', async () => {
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionIdLoading);
     axiosMock.onGet(url).reply(() => new Promise(() => {}));

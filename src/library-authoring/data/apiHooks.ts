@@ -716,13 +716,19 @@ export const useCreateLibraryContainer = (libraryId: string) => {
 };
 
 /**
- * Get the metadata for a container in a library
+ * Get the metadata for a container in a library.
+ *
+ * `downstreamBlockId` is optional and only needed when the caller is reviewing this container
+ * from within a course it doesn't otherwise have library access from (e.g. previewing pending
+ * library updates); it lets the backend grant access via the course's `view_library_updates`
+ * permission instead of requiring direct library permissions. It must be the downstream course
+ * block's usage key, not a bare course id.
  */
-export const useContainer = (containerId?: string) => (
+export const useContainer = (containerId?: string, downstreamBlockId?: string) => (
   useQuery({
     enabled: !!containerId,
     queryKey: libraryAuthoringQueryKeys.container(containerId!),
-    queryFn: () => api.getContainerMetadata(containerId!),
+    queryFn: () => api.getContainerMetadata(containerId!, downstreamBlockId),
   })
 );
 
@@ -816,7 +822,9 @@ export const useRestoreContainer = (containerId: string) => {
 };
 
 /**
- * Get the metadata and children for a container in a library
+ * Get the metadata and children for a container in a library.
+ *
+ * See `useContainer`'s `downstreamBlockId` for what it's for and why it must be a usage key.
  */
 export const useContainerChildren = <
   ChildType extends {
@@ -826,11 +834,12 @@ export const useContainerChildren = <
 >(
   containerId?: string,
   published: boolean = false,
+  downstreamBlockId?: string,
 ) => (
   useQuery({
     enabled: !!containerId,
     queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
-    queryFn: () => api.getLibraryContainerChildren<ChildType>(containerId!, published),
+    queryFn: () => api.getLibraryContainerChildren<ChildType>(containerId!, published, downstreamBlockId),
     structuralSharing: (oldData: ChildType[], newData: ChildType[]) => {
       // This just sets `isNew` flag to new children components
       if (oldData) {

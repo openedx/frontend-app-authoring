@@ -24,6 +24,16 @@ interface LibraryBlockProps {
   scrollIntoView?: boolean;
   showTitle?: boolean;
   addHeight?: number;
+  /**
+   * The usage key of the downstream course block this library block is being reviewed from,
+   * if any. Sent to the backend as the `course_id` query param, which lets it grant access via
+   * the course's `view_library_updates` permission when the current user doesn't otherwise have
+   * direct access to the library, e.g. when previewing pending library updates from a course.
+   * Despite the backend's query param name, this must be the downstream block's full usage key,
+   * not a bare course id: the backend verifies that block is actually linked to the upstream
+   * resource being requested before granting access.
+   */
+  downstreamBlockId?: string;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -45,6 +55,7 @@ export const LibraryBlock = ({
   scrollIntoView = false,
   showTitle = false,
   addHeight = 0,
+  downstreamBlockId,
 }: LibraryBlockProps) => {
   const { iframeRef, setIframeRef } = useIframe();
   const xblockView = view ?? 'student_view';
@@ -61,6 +72,9 @@ export const LibraryBlock = ({
   }
   if (showTitle) {
     params.set('show_title', 'true');
+  }
+  if (downstreamBlockId) {
+    params.set('course_id', downstreamBlockId);
   }
 
   // For now, always show the draft version of the Xblock v1
