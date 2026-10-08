@@ -5,6 +5,7 @@ import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import './GamesEditor.scss';
 import analyticsEvt from '@src/editors/data/constants/analyticsEvt';
 import { type EditorState, selectors } from '@src/editors/data/redux';
+import { useEditorContext } from '@src/editors/EditorContext';
 import * as editorHooks from '@src/editors/hooks';
 import { isLibraryKey } from '@src/generic/key-utils';
 import GameEditor from './components/GameEditor';
@@ -30,26 +31,20 @@ const triggerCourseRefresh = () => {
   }
 };
 
-/**
- * Whether the block's handler URLs are issued by the server (v2 libraries)
- * rather than fixed. This is the same test the editors' `isLibrary` selector applies before it builds
- * a v2 library URL: an `lb:` block, or a `lib:` learning context. Legacy (v1)
- * libraries are deliberately not included: their blocks have legacy usage
- * keys, which the v2 resolver rejects, and they use the fixed route.
- */
-const isLibraryBlock = (blockId: string, learningContextId: string | null) =>
-  blockId.startsWith('lb:') || isLibraryKey(learningContextId);
-
 export const GamesEditorForBlock = ({
   blockId,
-  learningContextId,
   studioEndpointUrl,
   onClose,
   returnFunction = null,
 }: BlockEditorProps) => {
-  // Everything the API layer needs to reach this block.
+  const { learningContextId } = useEditorContext();
+  // Everything the API layer needs to reach this block. `isLibrary` says
+  // whether the block's handler URLs are issued by the server (v2 libraries)
+  // rather than fixed, which is decided by the learning context. Legacy (v1)
+  // libraries are deliberately not included: their blocks have legacy usage
+  // keys, which the v2 resolver rejects, and they use the fixed route.
   const block = React.useMemo(() => (blockId
-    ? { blockId, studioEndpointUrl, isLibrary: isLibraryBlock(blockId, learningContextId) }
+    ? { blockId, studioEndpointUrl, isLibrary: isLibraryKey(learningContextId) }
     : null), [blockId, studioEndpointUrl, learningContextId]);
   const { state, actions } = useGameState(block);
   // False once this editor has gone away (Cancel -> Discard changes, or the

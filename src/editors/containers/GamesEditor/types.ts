@@ -99,8 +99,6 @@ export type ImageData = { url: string; altText?: string; };
 /** What the built-in entry (index.tsx) hands the block-scoped editor. */
 export interface BlockEditorProps {
   blockId: string | null;
-  /** Course or library the block belongs to. Decides how handler URLs resolve. */
-  learningContextId: string | null;
   /** The Studio this editor talks to. */
   studioEndpointUrl: string;
   onClose: (() => void) | null;

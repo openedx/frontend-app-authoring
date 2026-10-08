@@ -15,7 +15,6 @@ import { GamesEditorForBlock } from './GamesEditor';
  */
 const GamesEditor: React.FC<EditorComponent> = ({ onClose = null, returnFunction = null }) => {
   const blockId = useSelector(selectors.app.blockId);
-  const learningContextId = useSelector(selectors.app.learningContextId);
   // The standalone editor route initialises the store without an endpoint.
   const studioEndpointUrl = useSelector(selectors.app.studioEndpointUrl) ?? getConfig().STUDIO_BASE_URL;
 
@@ -28,7 +27,6 @@ const GamesEditor: React.FC<EditorComponent> = ({ onClose = null, returnFunction
     <GamesEditorForBlock
       key={`${blockId}|${studioEndpointUrl}`}
       blockId={blockId}
-      learningContextId={learningContextId}
       studioEndpointUrl={studioEndpointUrl}
       onClose={onClose}
       returnFunction={returnFunction}

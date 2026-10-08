@@ -61,7 +61,12 @@ const renderEditor = (
 ) =>
   editorRender(
     <GamesEditor onClose={() => {}} {...props} />,
-    { initialState: { app: appState(app) } },
+    {
+      initialState: { app: appState(app) },
+      // The editor reads the learning context from EditorContext, as the host
+      // page provides it, so the two are kept in step here.
+      learningContextId: app.learningContextId ?? undefined,
+    },
   );
 
 /** Re-initialises the editors' store, as Editor.tsx does when the page moves to another block. */
@@ -217,6 +222,20 @@ describe('saving', () => {
     renderEditor({}, { learningContextId: 'library-v1:Org+lib1' });
     await waitFor(() => expect(mockedApi.getSettings).toHaveBeenCalled());
     expect(mockedApi.getSettings).toHaveBeenCalledWith(expect.objectContaining({ isLibrary: false }));
+  });
+
+  // The learning context comes from EditorContext, which the host page
+  // provides, not from the editors' store.
+  it('takes the learning context from the editor context', async () => {
+    editorRender(
+      <GamesEditor onClose={() => {}} />,
+      {
+        initialState: { app: appState({ learningContextId: 'course-v1:org+course+run' }) },
+        learningContextId: 'lib:Org:lib1',
+      },
+    );
+    await waitFor(() => expect(mockedApi.getSettings).toHaveBeenCalled());
+    expect(mockedApi.getSettings).toHaveBeenCalledWith(expect.objectContaining({ isLibrary: true }));
   });
 
   it('passes returnFunction through to EditorContainer', () => {
