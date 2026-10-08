@@ -19,7 +19,6 @@ const actionStyle: React.CSSProperties = {
 };
 
 const componentStyle: React.CSSProperties = {
-  background: 'white',
   borderRadius: '6px',
   boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.15)',
   position: 'relative',
@@ -119,7 +118,8 @@ const GameCard = ({
       componentStyle={componentStyle}
     >
       <Collapsible.Advanced
-        className="card d-flex flex-column align-items-start align-self-stretch w-100 position-relative bg-white"
+        // Paragon's .card supplies the themed background.
+        className="card d-flex flex-column align-items-start align-self-stretch w-100 position-relative"
         open={card.editorOpen}
         onToggle={onToggle}
       >
