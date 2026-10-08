@@ -1,4 +1,12 @@
-export const mockApiResponse = {
+import type { LinkCheckResult } from '../types';
+
+interface LinkCheckApiResponse {
+  LinkCheckStatus: string;
+  LinkCheckCreatedAt: string;
+  LinkCheckOutput: LinkCheckResult;
+}
+
+export const mockApiResponse: LinkCheckApiResponse = {
   LinkCheckStatus: 'Succeeded',
   LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
   LinkCheckOutput: {
@@ -153,7 +161,7 @@ export const mockApiResponse = {
   },
 };
 
-export const mockApiResponseForNoResultFound = {
+export const mockApiResponseForNoResultFound: LinkCheckApiResponse = {
   LinkCheckStatus: 'Succeeded',
   LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
   LinkCheckOutput: {
@@ -188,7 +196,7 @@ export const mockApiResponseForNoResultFound = {
   },
 };
 
-export const mockApiResponseWithPreviousRunLinks = {
+export const mockApiResponseWithPreviousRunLinks: LinkCheckApiResponse = {
   LinkCheckStatus: 'Succeeded',
   LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
   LinkCheckOutput: {
@@ -260,7 +268,7 @@ export const mockApiResponseWithPreviousRunLinks = {
   },
 };
 
-export const mockApiResponseEmpty = {
+export const mockApiResponseEmpty: LinkCheckApiResponse = {
   LinkCheckStatus: 'Succeeded',
   LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
   LinkCheckOutput: {

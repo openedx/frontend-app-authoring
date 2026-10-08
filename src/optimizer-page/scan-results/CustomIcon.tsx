@@ -1,4 +1,6 @@
-import PropTypes from 'prop-types';
+import type { ComponentType } from 'react';
+import type { MessageDescriptor } from 'react-intl';
+import type { Placement } from '@popperjs/core';
 import {
   Icon,
   OverlayTrigger,
@@ -6,12 +8,19 @@ import {
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
+interface CustomIconProps {
+  icon: ComponentType;
+  message1: MessageDescriptor;
+  message2: MessageDescriptor;
+  placement?: Placement;
+}
+
 const CustomIcon = ({
   icon,
   message1,
   message2,
   placement = 'top',
-}) => {
+}: CustomIconProps) => {
   const intl = useIntl();
 
   return (
@@ -19,7 +28,7 @@ const CustomIcon = ({
       key="top"
       placement={placement}
       overlay={
-        <Tooltip variant="dark" id="tooltip-top" className={placement !== 'top' ? 'ml-3' : ''}>
+        <Tooltip id="tooltip-top" className={placement !== 'top' ? 'ml-3' : ''}>
           {intl.formatMessage(message1)}
           {message1 && <br />}
           {intl.formatMessage(message2)}
@@ -29,18 +38,6 @@ const CustomIcon = ({
       <Icon src={icon} style={{ color: '#000000' }} />
     </OverlayTrigger>
   );
-};
-
-const messagePropsType = {
-  id: PropTypes.string.isRequired,
-  defaultMessage: PropTypes.string.isRequired,
-};
-
-CustomIcon.propTypes = {
-  icon: PropTypes.elementType.isRequired,
-  message1: PropTypes.shape(messagePropsType).isRequired,
-  message2: PropTypes.shape(messagePropsType).isRequired,
-  placement: PropTypes.string,
 };
 
 export default CustomIcon;
