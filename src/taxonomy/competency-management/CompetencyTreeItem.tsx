@@ -1,4 +1,5 @@
 import type { KeyboardEvent, MouseEvent } from 'react';
+import { useId } from 'react';
 
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -29,6 +30,12 @@ export interface CompetencyTreeItemProps {
  * driven by this same `hasChildren` check, via the `competency-group` class
  * below - not a depth number or a CSS structural-position selector, so it
  * holds recursively at any depth.
+ *
+ * Because a group's nested `<ul>` lives inside the group's own `<li>`, the
+ * `<li role="treeitem">` is given an explicit `aria-labelledby` pointing at
+ * its own row. Without it, the treeitem's accessible name would be computed
+ * from its entire subtree's text content, so focusing a top-level group would
+ * announce every descendant's name and Competency ID along with it.
  */
 const CompetencyTreeItem = ({
   node,
@@ -38,6 +45,8 @@ const CompetencyTreeItem = ({
   onSelectCompetency,
 }: CompetencyTreeItemProps) => {
   const intl = useIntl();
+  const labelId = useId();
+  const externalIdLabelId = useId();
   const nodeId = String(node.id);
   const hasChildren = !!node.subRows?.length;
   const isExpanded = expandedIds.has(nodeId);
@@ -54,6 +63,8 @@ const CompetencyTreeItem = ({
   // also reaching this node's own `onClick`/`onKeyDown` below).
   const isSelectable = !!onSelectCompetency;
   const isSelected = isSelectable && selectedCompetencyId != null && nodeId === selectedCompetencyId;
+
+  const labelledBy = externalId ? `${labelId} ${externalIdLabelId}` : labelId;
 
   const handleSelect = (event: MouseEvent<HTMLLIElement> | KeyboardEvent<HTMLLIElement>) => {
     if (isSelectable && onSelectCompetency) {
@@ -79,6 +90,7 @@ const CompetencyTreeItem = ({
       role={isSelectable ? 'treeitem' : undefined}
       tabIndex={isSelectable ? 0 : undefined}
       aria-selected={isSelectable ? isSelected : undefined}
+      aria-labelledby={isSelectable ? labelledBy : undefined}
       aria-expanded={isSelectable && hasChildren ? isExpanded : undefined}
       onClick={isSelectable ? handleSelect : undefined}
       onKeyDown={isSelectable ? handleKeyDown : undefined}
@@ -91,11 +103,11 @@ const CompetencyTreeItem = ({
           expandLabel={intl.formatMessage(messages.expandRowButtonLabel)}
           collapseLabel={intl.formatMessage(messages.collapseRowButtonLabel)}
         />
-        <span className="competency-row__label">{node.value}</span>
+        <span className="competency-row__label" id={labelId}>{node.value}</span>
         {externalId ?
           (
             <>
-              <span className="sr-only">
+              <span className="sr-only" id={externalIdLabelId}>
                 {intl.formatMessage(messages.competencyIdAccessibleLabel, { externalId })}
               </span>
               <Badge

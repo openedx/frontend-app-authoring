@@ -371,6 +371,31 @@ describe('<CompetencyTree />', () => {
     expect(groupItem).toHaveAttribute('aria-selected', 'true');
   });
 
+  it('names each treeitem after its own row rather than its whole subtree', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    renderTree({ onSelectCompetency: jest.fn() });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    await screen.findByText('Leaf A1a');
+
+    // A group's nested `<ul role="group">` lives inside the group's own
+    // `<li role="treeitem">`, so with no explicit name the treeitem's
+    // accessible name would be computed from every descendant's text:
+    // "Root A Competency ID: EXT-001 Group A1 Leaf A1a Competency ID: EXT-003".
+    // `aria-labelledby` points it at its own row instead - label first, then
+    // the visually-hidden Competency ID so that still gets announced. These
+    // name queries are exact, so a leaked descendant would fail them.
+    expect(screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' }))
+      .toBe(screen.getByText('Root A').closest('li'));
+    expect(screen.getByRole('treeitem', { name: 'Leaf A1a Competency ID: EXT-003' }))
+      .toBe(screen.getByText('Leaf A1a').closest('li'));
+
+    // Group A1 has no Competency ID (`externalId: null`), so its name is just
+    // its label - no dangling reference to an id that was never rendered.
+    expect(screen.getByRole('treeitem', { name: 'Group A1' }))
+      .toBe(screen.getByText('Group A1').closest('li'));
+  });
+
   it('selects only the innermost node clicked, never the ancestor groups whose envelope wraps it', async () => {
     axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
     const onSelectCompetency = jest.fn();
