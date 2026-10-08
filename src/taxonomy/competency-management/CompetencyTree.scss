@@ -118,6 +118,7 @@
   // A separate filled overlay, not a thicker `border-left`: this node's
   // border is a uniform 1px on every side, and a thicker `border-left`
   // creates a visibly notched corner where it meets the shared
+  // `border-radius` arc.
   .competency-node--selected::before {
     content: '';
     position: absolute;

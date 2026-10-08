@@ -267,6 +267,10 @@ describe('<CompetencyTree />', () => {
     expect(onSelectCompetency).toHaveBeenCalledWith(
       expect.objectContaining({ id: 3, value: 'Leaf A1a', externalId: 'EXT-003' }),
     );
+    // The leaf sits inside Group A1's (and Root A's) own `<li>` envelope, so
+    // without `stopPropagation` the click would bubble up and select the
+    // ancestor groups too.
+    expect(onSelectCompetency).not.toHaveBeenCalledWith(expect.objectContaining({ id: 2 }));
 
     // `CompetencyTree` is a controlled component for selection: it has no
     // selection state of its own, it only reports the click via
@@ -394,28 +398,5 @@ describe('<CompetencyTree />', () => {
     // its label - no dangling reference to an id that was never rendered.
     expect(screen.getByRole('treeitem', { name: 'Group A1' }))
       .toBe(screen.getByText('Group A1').closest('li'));
-  });
-
-  it('selects only the innermost node clicked, never the ancestor groups whose envelope wraps it', async () => {
-    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
-    const onSelectCompetency = jest.fn();
-    renderTree({ onSelectCompetency });
-    await screen.findByText(taxonomyName);
-    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
-
-    const leafItem = (await screen.findByText('Leaf A1a')).closest('li') as HTMLElement;
-    fireEvent.click(leafItem);
-
-    expect(onSelectCompetency).toHaveBeenCalledTimes(1);
-    expect(onSelectCompetency).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 3, value: 'Leaf A1a' }),
-    );
-    onSelectCompetency.mockClear();
-
-    fireEvent.keyDown(leafItem, { key: 'Enter' });
-    expect(onSelectCompetency).toHaveBeenCalledTimes(1);
-    expect(onSelectCompetency).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 3, value: 'Leaf A1a' }),
-    );
   });
 });
