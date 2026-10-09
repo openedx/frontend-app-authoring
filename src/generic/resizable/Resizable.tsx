@@ -80,15 +80,6 @@ export const ResizableBox = ({
       maxWidth || defaultMaxWidth,
     );
     setWidth(newWidth);
-    // Re-anchors every move to the cursor's actual position and the width it
-    // just produced, rather than always measuring from the drag's starting
-    // point. Without this, once a move clamps `newWidth` to `minWidth`/
-    // `maxWidth`, the cursor keeps travelling (e.g. to the edge of the
-    // screen) while the box stays put; reversing direction then has to
-    // retrace that whole unclamped overshoot before `rawWidth` re-enters the
-    // valid range and the box visibly responds again.
-    startXRef.current = e.clientX;
-    startWidthRef.current = newWidth;
   }, [handleSide, maxWidth, minWidth, defaultMaxWidth]);
 
   const onMouseUp = useCallback(() => {
@@ -104,15 +95,6 @@ export const ResizableBox = ({
     // Attach listeners to the whole document so dragging works even outside the box
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-    // `onMouseMove`/`onMouseUp` must be in this callback's own dependency
-    // array, not just referenced in its body: `useWindowSize()` returns
-    // `undefined` on the very first render (before its effect runs), which
-    // makes `defaultMaxWidth` resolve to `Infinity` on that render. Without
-    // `onMouseMove` listed here, this `useCallback` never re-runs once
-    // `width` first changes, so the *mousedown* handler attached to the DOM
-    // keeps the stale first-render closure forever - clamping to `maxWidth`
-    // never actually engages, and the box grows unbounded for as long as the
-    // mouse keeps moving.
   }, [width, onMouseMove, onMouseUp]);
 
   return (
