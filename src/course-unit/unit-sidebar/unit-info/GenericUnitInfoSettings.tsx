@@ -55,7 +55,8 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
     // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
     mutateFn.mutate({
       unitId: id,
-      type: PUBLISH_TYPES.republish,
+      // Auto-publish when hiding from learners; save as draft otherwise.
+      type: isVisible ? PUBLISH_TYPES.republish : undefined,
       isVisibleToStaffOnly: isVisible,
       groupAccess,
       discussionEnabled: !!isDiscussionEnabled,

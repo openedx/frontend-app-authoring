@@ -260,7 +260,7 @@ export const useConfigureUnit = (courseId?: string) => {
     mutationKey: courseOutlineQueryKeys.mutations.savingOperation(courseId, 'configureUnit'),
     mutationFn: (variables: ConfigureUnitData & ParentIds) => configureCourseUnit(variables),
     onMutate: (variables) => {
-      const msg = getNotificationMessage(variables.type, variables.isVisibleToStaffOnly, true);
+      const msg = getNotificationMessage(variables.type ?? '', variables.isVisibleToStaffOnly, true);
       showToast(msg, undefined, 15000);
     },
     onSettled: (_data, _err, variables) => {
