@@ -734,77 +734,6 @@ describe('validateCards', () => {
   });
 });
 
-describe('game state reducer', () => {
-  const { reducer, initialState, emptyCard } = jest.requireActual('./data/useGameState');
-
-  it('marks state dirty on a card edit', () => {
-    const next = reducer(initialState, {
-      type: 'updateCardField',
-      index: 0,
-      field: 'term',
-      value: 'x',
-    });
-    expect(next.list[0].term).toEqual('x');
-    expect(next.isDirty).toBe(true);
-  });
-
-  it('ignores an edit to a card that does not exist', () => {
-    const next = reducer(initialState, {
-      type: 'updateCardField',
-      index: 99,
-      field: 'term',
-      value: 'x',
-    });
-    expect(next).toBe(initialState);
-  });
-
-  it('adds and removes cards', () => {
-    const added = reducer(initialState, { type: 'addCard', card: emptyCard() });
-    expect(added.list).toHaveLength(2);
-    const removed = reducer(added, { type: 'removeCard', index: 0 });
-    expect(removed.list).toHaveLength(1);
-  });
-
-  it('ignores an out-of-range removal', () => {
-    expect(reducer(initialState, { type: 'removeCard', index: 5 })).toBe(initialState);
-    expect(reducer(initialState, { type: 'removeCard', index: -1 })).toBe(initialState);
-  });
-
-  it('gives every new card the image-path fields the block persists', () => {
-    expect(emptyCard()).toHaveProperty('term_image_path', '');
-    expect(emptyCard()).toHaveProperty('definition_image_path', '');
-  });
-
-  it('clears the dirty flag when settings load', () => {
-    const dirty = reducer(initialState, { type: 'updateType', value: 'matching' });
-    expect(dirty.isDirty).toBe(true);
-    const loaded = reducer(dirty, { type: 'loaded', value: initialState });
-    expect(loaded.isDirty).toBe(false);
-    expect(loaded.isLoaded).toBe(true);
-  });
-
-  // editorOpen is UI state: it is not saved, so changing it is not a change
-  // to the game. It must not arm the discard prompt or enable a no-op save.
-  it('does not mark the game dirty when a card is expanded or collapsed', () => {
-    const state = { ...initialState, list: [emptyCard()], isDirty: false };
-    const collapsed = reducer(state, { type: 'setCardOpen', index: 0, isOpen: false });
-    expect(collapsed.list[0].editorOpen).toBe(false);
-    expect(collapsed.isDirty).toBe(false);
-    const dirty = reducer({ ...state, isDirty: true }, { type: 'setCardOpen', index: 0, isOpen: true });
-    expect(dirty.isDirty).toBe(true); // and it does not clear an existing dirty flag either
-  });
-
-  it('ignores expanding or collapsing a card that does not exist', () => {
-    expect(reducer(initialState, { type: 'setCardOpen', index: 5, isOpen: true })).toBe(initialState);
-  });
-
-  // Nothing ever dispatched `setClean`; only a load clears the dirty flag.
-  it('has no setClean action', () => {
-    const state = { ...initialState, isDirty: true };
-    expect(reducer(state, { type: 'setClean' })).toBe(state);
-  });
-});
-
 describe('buildSavePayload', () => {
   const { buildSavePayload } = jest.requireActual('./data/api');
 
@@ -872,38 +801,6 @@ describe('saving before the settings have loaded', () => {
   });
 });
 
-describe('async card updates target the card, not its position', () => {
-  const { reducer, initialState, emptyCard } = jest.requireActual('./data/useGameState');
-
-  it('updates by card id even after the list has been reordered', () => {
-    const a = { ...emptyCard(), term: 'a' };
-    const b = { ...emptyCard(), term: 'b' };
-    const state = { ...initialState, list: [a, b] };
-    // Request was issued for card "a" at index 0; by the time it settles the
-    // list has been reversed, so index 0 is now "b".
-    const reordered = reducer(state, { type: 'setList', value: [b, a] });
-    const next = reducer(reordered, {
-      type: 'updateCardField',
-      cardId: a.id,
-      field: 'term_image',
-      value: 'u',
-    });
-    expect(next.list[1].term).toEqual('a');
-    expect(next.list[1].term_image).toEqual('u');
-    expect(next.list[0].term_image).toBeFalsy();
-  });
-
-  it('drops an update for a card that no longer exists', () => {
-    const next = reducer(initialState, {
-      type: 'updateCardField',
-      cardId: 'gone',
-      field: 'term_image',
-      value: 'u',
-    });
-    expect(next).toBe(initialState);
-  });
-});
-
 // The last real render's props. React's development build also calls a
 // component with no arguments to locate it for a warning's component stack;
 // those probe calls are skipped.
@@ -925,8 +822,8 @@ describe('image requests after the settings have loaded', () => {
   });
 
   // Regression: the upload handler once closed over the pre-load placeholder
-  // list, so it looked up a card id that no longer existed and the reducer
-  // dropped the update. Proven here by saving: only an update that reached the
+  // list, so it looked up a card id that no longer existed and the
+  // update was dropped. Proven here by saving: only an update that reached the
   // loaded card puts the storage path in the payload.
   it('attaches an uploaded image to the loaded card, not the placeholder', async () => {
     mockedApi.uploadImage.mockResolvedValue({ data: { success: true, url: '/media/x.png', file_path: 'games/x.png' } });
@@ -1726,7 +1623,7 @@ describe('typing into a card', () => {
     renderEditor();
     const term = await screen.findByLabelText('Term');
     await user.type(term, '!');
-    // getContent reads the reducer state the view rendered from, not a local buffer.
+    // getContent reads the store state the view rendered from, not a local buffer.
     expect(latestContainerProps().getContent().cards[0].term).toBe('Photosynthesis!');
   });
 

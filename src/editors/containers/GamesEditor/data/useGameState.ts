@@ -1,11 +1,8 @@
 import React from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
 import type {
   BlockRef,
   Card,
-  GameSettings,
-  GameState,
   GameType,
   ImageType,
   RequestError,
@@ -13,123 +10,13 @@ import type {
   SaveArgs,
 } from '@src/editors/containers/GamesEditor/types';
 import { useGameSettings, useSaveGameSettings, useUploadGameImage } from './apiHooks';
+import { createStore } from './gameStore';
+import * as t from './gameTransitions';
 
-const generateId = () => uuidv4();
+export { emptyCard, initialState } from './gameTransitions';
 
-export const emptyCard = (): Card => ({
-  id: generateId(),
-  term: '',
-  term_image: '',
-  term_image_path: '',
-  term_image_alt: '',
-  definition: '',
-  definition_image: '',
-  definition_image_path: '',
-  definition_image_alt: '',
-  editorOpen: true,
-});
-
-export const initialState: GameState = {
-  settings: { shuffle: true, timer: true },
-  type: 'flashcards',
-  list: [emptyCard()],
-  isDirty: false,
-  isLoaded: false,
-  // Any failed request (load, save, image upload). Rendered by the editor.
-  error: null,
-  // True when the settings fetch itself failed, so the editor can offer a
-  // retry instead of a spinner that never ends.
-  loadFailed: false,
-};
-
-/**
- * All editor state for one block: the settings, the card list, in-flight image
- * requests and the last error. Local reducer + React Query, no Redux (this app
- * is moving off it).
- */
 /** What a tracked image request resolves to: nothing, or the error it hit. */
 type Settled = { error: Error; } | void;
-
-type CardField = Exclude<keyof Card, 'id'>;
-
-type Action =
-  | { type: 'updateSetting'; key: keyof GameSettings; value: boolean; }
-  | { type: 'updateType'; value: GameType; }
-  | { type: 'updateCardField'; field: CardField; value: string | boolean; index?: number; cardId?: string; }
-  | { type: 'setCardOpen'; index: number; isOpen: boolean; }
-  | { type: 'setList'; value: Card[]; }
-  | { type: 'addCard'; card: Card; }
-  | { type: 'removeCard'; index: number; }
-  | { type: 'loaded'; value: GameState; }
-  | { type: 'setError' | 'setLoadError'; value: Error; }
-  | { type: 'clearError' | 'setDirty'; };
-
-export const reducer = (state: GameState, action: Action): GameState => {
-  switch (action.type) {
-    case 'updateSetting':
-      return {
-        ...state,
-        settings: { ...state.settings, [action.key]: action.value },
-        isDirty: true,
-      };
-    case 'updateType':
-      return { ...state, type: action.value, isDirty: true };
-    case 'updateCardField': {
-      // Async work (image upload) targets a card by id, because the
-      // card's position may have changed by the time the request settles.
-      const index = action.cardId != null
-        ? state.list.findIndex((card) => card.id === action.cardId)
-        : action.index ?? -1;
-      if (index < 0 || !state.list[index]) { return state; }
-      return {
-        ...state,
-        list: state.list.map((card, idx) => (
-          idx === index ? { ...card, [action.field]: action.value } : card
-        )),
-        isDirty: true,
-      };
-    }
-    // UI only: whether a card is expanded. Not saved, so not a change to the game.
-    case 'setCardOpen': {
-      if (!state.list[action.index]) { return state; }
-      return {
-        ...state,
-        list: state.list.map((card, idx) => (idx === action.index ? { ...card, editorOpen: action.isOpen } : card)),
-      };
-    }
-    case 'setList':
-      return { ...state, list: action.value, isDirty: true };
-    // The card arrives in the action: the reducer runs twice per action (see
-    // `dispatch` below), so an id generated here would differ between the two.
-    case 'addCard':
-      return { ...state, list: [...state.list, action.card], isDirty: true };
-    case 'removeCard': {
-      if (action.index < 0 || action.index >= state.list.length) { return state; }
-      return {
-        ...state,
-        list: state.list.filter((_, idx) => idx !== action.index),
-        isDirty: true,
-      };
-    }
-    case 'loaded':
-      return {
-        ...action.value,
-        isDirty: false,
-        isLoaded: true,
-        error: null,
-      };
-    case 'setError':
-      return { ...state, error: action.value };
-    case 'setLoadError':
-      return { ...state, error: action.value, loadFailed: true };
-    case 'clearError':
-      return { ...state, error: null, loadFailed: false };
-    case 'setDirty':
-      return { ...state, isDirty: true };
-    default:
-      return state;
-  }
-};
 
 /**
  * An error a handler reported with `success: false`. Carries the server's
@@ -139,17 +26,17 @@ export const reducer = (state: GameState, action: Action): GameState => {
 const requestError = (code: RequestErrorCode, detail?: string): RequestError =>
   Object.assign(new Error(detail || ''), { code });
 
+/**
+ * All editor state for one block: the settings, the card list, in-flight image
+ * requests and the last error. The state lives in a small store outside
+ * React (see gameStore) so that code resuming after an `await`, such as the
+ * save waiting on an upload, reads it current; React subscribes to it through
+ * `useSyncExternalStore`. Changes are the pure functions in gameTransitions.
+ * React Query owns the requests. No Redux: this app is moving off it.
+ */
 export const useGameState = (block: BlockRef | null) => {
-  const [state, rawDispatch] = React.useReducer(reducer, initialState);
-  // Mirror of the reducer state, advanced synchronously on every dispatch.
-  // React applies the same actions later and lands on the same value (the
-  // reducer is pure), but code that runs right after an async step, before
-  // the re-render, needs the up-to-date value now. `getLatestState` reads it.
-  const stateRef = React.useRef<GameState>(initialState);
-  const dispatch = React.useCallback((action: Action) => {
-    stateRef.current = reducer(stateRef.current, action);
-    rawDispatch(action);
-  }, []);
+  const [store] = React.useState(() => createStore(t.initialState));
+  const state = React.useSyncExternalStore(store.subscribe, store.get);
   // Image requests still in flight. Save waits for these to settle.
   const pendingRef = React.useRef(new Set<Promise<Settled>>());
   // Latest image change per card side, keyed `${cardId}:${imageType}`. A
@@ -166,7 +53,7 @@ export const useGameState = (block: BlockRef | null) => {
     if (!loadedSettings) { return; }
     const data = loadedSettings;
     const cards = (data.cards || []).map((card) => ({
-      ...emptyCard(),
+      ...t.emptyCard(),
       card_key: card.card_key,
       term: card.term || '',
       // Image URLs are kept as the block returns them (relative to its
@@ -179,25 +66,22 @@ export const useGameState = (block: BlockRef | null) => {
       definition_image_path: card.definition_image_path || '',
       definition_image_alt: card.definition_image_alt || '',
     }));
-    dispatch({
-      type: 'loaded',
-      value: {
-        ...initialState,
-        type: data.game_type || 'flashcards',
-        settings: {
-          shuffle: data.is_shuffled !== undefined ? data.is_shuffled : true,
-          timer: data.has_timer !== undefined ? data.has_timer : true,
-        },
-        list: cards.length ? cards : [emptyCard()],
+    store.set(t.loaded({
+      ...t.initialState,
+      type: data.game_type || 'flashcards',
+      settings: {
+        shuffle: data.is_shuffled !== undefined ? data.is_shuffled : true,
+        timer: data.has_timer !== undefined ? data.has_timer : true,
       },
-    });
+      list: cards.length ? cards : [t.emptyCard()],
+    }));
   }, [dataUpdatedAt]);
 
   // A failed fetch, first or retried. Keyed on `errorUpdatedAt` so a second
   // failure with an equal message is still reported.
   const { error: loadError, errorUpdatedAt, refetch: refetchSettings } = settingsQuery;
   React.useEffect(() => {
-    if (loadError) { dispatch({ type: 'setLoadError', value: loadError }); }
+    if (loadError) { store.update((s) => t.setLoadError(s, loadError)); }
   }, [errorUpdatedAt]);
 
   const actions = React.useMemo(() => {
@@ -219,7 +103,7 @@ export const useGameState = (block: BlockRef | null) => {
     // resolves (callers fire and forget, so a rejection would go unhandled),
     // but with the error, so `waitForPendingRequests` can see it.
     const fail = (error: Error) => {
-      dispatch({ type: 'setError', value: error });
+      store.update((s) => t.setError(s, error));
       return { error };
     };
     // Resolves once every in-flight image request has settled, looping in
@@ -233,52 +117,38 @@ export const useGameState = (block: BlockRef | null) => {
         return waitForPendingRequests();
       });
     };
+    // Clears one side's image fields: the picture, its storage key and its alt.
+    const clearImage = (cardId: string, imageType: ImageType) => {
+      store.update((s) => t.updateCardField(s, { cardId }, `${imageType}_image`, ''));
+      store.update((s) => t.updateCardField(s, { cardId }, `${imageType}_image_path`, ''));
+      store.update((s) => t.updateCardField(s, { cardId }, `${imageType}_image_alt`, ''));
+    };
     return {
-      getLatestState: () => stateRef.current,
+      getLatestState: store.get,
       waitForPendingRequests,
-      setShuffleStatus: (value: boolean) => dispatch({ type: 'updateSetting', key: 'shuffle', value }),
-      setTimerStatus: (value: boolean) => dispatch({ type: 'updateSetting', key: 'timer', value }),
-      updateType: (value: GameType) => dispatch({ type: 'updateType', value }),
+      setShuffleStatus: (value: boolean) => store.update((s) => t.updateSetting(s, 'shuffle', value)),
+      setTimerStatus: (value: boolean) => store.update((s) => t.updateSetting(s, 'timer', value)),
+      updateType: (value: GameType) => store.update((s) => t.updateType(s, value)),
       updateTerm: ({ index, term }: { index: number; term: string; }) =>
-        dispatch({
-          type: 'updateCardField',
-          index,
-          field: 'term',
-          value: term,
-        }),
+        store.update((s) => t.updateCardField(s, { index }, 'term', term)),
       updateDefinition: ({ index, definition }: { index: number; definition: string; }) =>
-        dispatch({
-          type: 'updateCardField',
-          index,
-          field: 'definition',
-          value: definition,
-        }),
+        store.update((s) => t.updateCardField(s, { index }, 'definition', definition)),
       updateTermImageAlt: ({ index, termImageAlt }: { index: number; termImageAlt: string; }) =>
-        dispatch({
-          type: 'updateCardField',
-          index,
-          field: 'term_image_alt',
-          value: termImageAlt,
-        }),
+        store.update((s) => t.updateCardField(s, { index }, 'term_image_alt', termImageAlt)),
       updateDefinitionImageAlt: ({ index, definitionImageAlt }: { index: number; definitionImageAlt: string; }) =>
-        dispatch({
-          type: 'updateCardField',
-          index,
-          field: 'definition_image_alt',
-          value: definitionImageAlt,
-        }),
+        store.update((s) => t.updateCardField(s, { index }, 'definition_image_alt', definitionImageAlt)),
       toggleOpen: ({ index, isOpen }: { index: number; isOpen: boolean; }) =>
-        dispatch({ type: 'setCardOpen', index, isOpen: !!isOpen }),
-      setList: (value: Card[]) => dispatch({ type: 'setList', value }),
-      addCard: () => dispatch({ type: 'addCard', card: emptyCard() }),
-      removeCard: ({ index }: { index: number; }) => dispatch({ type: 'removeCard', index }),
+        store.update((s) => t.setCardOpen(s, index, !!isOpen)),
+      setList: (value: Card[]) => store.update((s) => t.setList(s, value)),
+      addCard: () => store.update((s) => t.addCard(s)),
+      removeCard: ({ index }: { index: number; }) => store.update((s) => t.removeCard(s, index)),
 
       uploadGameImage: (
         { cardId, imageFile, imageType }: { cardId: string; imageFile: File; imageType: ImageType; },
       ) => {
         // An upload is a change the moment it starts, not once it lands:
         // closing the editor meanwhile must ask, or the image is lost.
-        dispatch({ type: 'setDirty' });
+        store.update(t.setDirty);
         const isLatest = claimImageChange(cardId, imageType);
         return track(
           uploadImage(imageFile)
@@ -287,25 +157,10 @@ export const useGameState = (block: BlockRef | null) => {
               if (!data || data.success === false) {
                 throw requestError('uploadFailed', data?.error);
               }
-              dispatch({
-                type: 'updateCardField',
-                cardId,
-                field: `${imageType}_image`,
-                value: data.url,
-              });
-              dispatch({
-                type: 'updateCardField',
-                cardId,
-                field: `${imageType}_image_path`,
-                value: data.file_path || '',
-              });
+              store.update((s) => t.updateCardField(s, { cardId }, `${imageType}_image`, data.url));
+              store.update((s) => t.updateCardField(s, { cardId }, `${imageType}_image_path`, data.file_path || ''));
               // The old alt text described the old picture.
-              dispatch({
-                type: 'updateCardField',
-                cardId,
-                field: `${imageType}_image_alt`,
-                value: '',
-              });
+              store.update((s) => t.updateCardField(s, { cardId }, `${imageType}_image_alt`, ''));
             })
             // A superseded upload's failure no longer concerns the author.
             .catch((error) => (isLatest() ? fail(error) : undefined)),
@@ -321,49 +176,29 @@ export const useGameState = (block: BlockRef | null) => {
         saveSettings(content).then((response) => {
           if (response.data?.success === false) {
             const error = requestError('saveFailed', response.data.error);
-            dispatch({ type: 'setError', value: error });
+            store.update((s) => t.setError(s, error));
             throw error;
           }
           return response;
         }),
 
       reload: () => {
-        dispatch({ type: 'clearError' });
+        store.update(t.clearError);
         void refetchSettings();
       },
-      clearError: () => dispatch({ type: 'clearError' }),
+      clearError: () => store.update(t.clearError),
 
       deleteGameImage: ({ cardId, imageType }: { cardId: string; imageType: ImageType; }) => {
-        const clear = () => {
-          dispatch({
-            type: 'updateCardField',
-            cardId,
-            field: `${imageType}_image`,
-            value: '',
-          });
-          dispatch({
-            type: 'updateCardField',
-            cardId,
-            field: `${imageType}_image_path`,
-            value: '',
-          });
-          dispatch({
-            type: 'updateCardField',
-            cardId,
-            field: `${imageType}_image_alt`,
-            value: '',
-          });
-        };
         // Only the card changes; the stored file is never deleted from here.
         // It is shared by every version of the block, so the draft dropping it
         // says nothing about the published version learners see (nor about a
         // "Discard changes" that keeps the saved card). Whether a file is
         // unreferenced is something only the backend can know.
         claimImageChange(cardId, imageType);
-        clear();
+        clearImage(cardId, imageType);
       },
     };
-  }, [block, saveSettings, uploadImage, refetchSettings]);
+  }, [store, block, saveSettings, uploadImage, refetchSettings]);
 
   return { state, actions };
 };

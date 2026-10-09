@@ -11,7 +11,7 @@ import { GamesEditorForBlock } from './GamesEditor';
  *
  * As PdfEditor does, it takes the block's identity from the editors' Redux
  * store, which Editor.tsx initialises, and keeps everything else (settings,
- * cards, uploads, errors) in its own React Query and reducer state.
+ * cards, uploads, errors) in its own React Query and store state.
  */
 const GamesEditor: React.FC<EditorComponent> = ({ onClose = null, returnFunction = null }) => {
   const blockId = useSelector(selectors.app.blockId);
