@@ -1,10 +1,29 @@
 import React from 'react';
+import userEvent from '@testing-library/user-event';
 import { render, screen, initializeMocks } from '@src/testUtils';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 import { TextEditorInternal as TextEditor, mapStateToProps, mapDispatchToProps } from '.';
 
-jest.mock('../../sharedComponents/TinyMceWidget', () => 'TinyMceWidget');
+let mockEditorMounts = 0;
+let mockEditorContent = 'eDiTablE Text';
+jest.mock('../../sharedComponents/TinyMceWidget', () => {
+  // eslint-disable-next-line global-require
+  const MockReact = require('react');
+  return (props: any) => {
+    // Side effects, so they live in effects rather than the render body: React
+    // may render without committing. The counter tracks commits, which is what a
+    // rebuild actually looks like, and the fake ref hands back whatever
+    // `mockEditorContent` holds, standing in for the author's unsaved edits.
+    MockReact.useEffect(() => {
+      mockEditorMounts += 1;
+    }, []);
+    MockReact.useEffect(() => {
+      props.setEditorRef?.({ getContent: () => mockEditorContent });
+    });
+    return MockReact.createElement('tinymcewidget', props);
+  };
+});
 
 jest.mock('../EditorContainer', () => 'EditorContainer');
 
@@ -41,10 +60,26 @@ jest.mock('../../data/redux', () => ({
 }));
 
 describe('TextEditor', () => {
+  // Mirrors what the block fetch puts in the store: an AxiosResponse whose
+  // `data` holds the HTML body and the settings-scoped `metadata`.
+  const blockValue = (includeTheme?: boolean) => ({
+    data: {
+      id: 'block-id-123',
+      display_name: 'Text',
+      category: 'html',
+      data: 'eDiTablE Text',
+      metadata: {
+        display_name: 'Text',
+        ...(includeTheme ? { include_theme: includeTheme } : {}),
+      },
+    },
+  });
+
   const props = {
     onClose: jest.fn().mockName('props.onClose'),
     // redux
-    blockValue: { data: { data: 'eDiTablE Text' } },
+    blockValue: blockValue(),
+    blockId: 'block-id-123',
     blockFailed: false,
     initializeEditor: jest.fn().mockName('args.intializeEditor'),
     showRawEditor: false,
@@ -55,6 +90,12 @@ describe('TextEditor', () => {
   };
 
   afterAll(() => jest.restoreAllMocks());
+
+  beforeEach(() => {
+    mockEditorMounts = 0;
+    mockEditorContent = 'eDiTablE Text';
+  });
+
   describe('renders', () => {
     beforeEach(() => {
       initializeMocks();
@@ -70,7 +111,9 @@ describe('TextEditor', () => {
     test('renders static images with relative paths', () => {
       const updatedProps = {
         ...props,
-        blockValue: { data: { data: 'eDiTablE Text with <img src="/static/img.jpg" />' } },
+        blockValue: {
+          data: { ...blockValue().data, data: 'eDiTablE Text with <img src="/static/img.jpg" />' },
+        },
       };
       const { container } = render(<TextEditor {...updatedProps} />);
       const element = container.querySelector('tinymcewidget');
@@ -91,6 +134,79 @@ describe('TextEditor', () => {
       render(<TextEditor {...props} blockFailed isLibrary />);
       expect(screen.getByRole('alert')).toBeInTheDocument();
       expect(screen.getByText('Error: Could Not Load Text Content')).toBeInTheDocument();
+    });
+  });
+
+  describe('include_theme toggle', () => {
+    beforeEach(() => {
+      initializeMocks();
+    });
+
+    test('is unchecked for an existing block with no stored value', () => {
+      render(<TextEditor {...props} />);
+      expect(screen.getByRole('switch', { name: /use mfe theme/i })).not.toBeChecked();
+    });
+
+    test('reflects the value stored in block metadata', () => {
+      render(<TextEditor {...props} blockValue={blockValue(true)} />);
+      expect(screen.getByRole('switch', { name: /use mfe theme/i })).toBeChecked();
+    });
+
+    test('defaults to unchecked when there is no block value yet', () => {
+      // The create workflow renders with `blockFinished` already true and no
+      // blockValue -- there is no fetch to wait for.
+      render(<TextEditor {...props} blockValue={null} />);
+      expect(screen.getByRole('switch', { name: /use mfe theme/i })).not.toBeChecked();
+    });
+
+    test('can be toggled by the author', async () => {
+      const user = userEvent.setup();
+      render(<TextEditor {...props} />);
+      const checkbox = screen.getByRole('switch', { name: /use mfe theme/i });
+      await user.click(checkbox);
+      expect(checkbox).toBeChecked();
+    });
+  });
+
+  describe('editor rebuild on toggle', () => {
+    beforeEach(() => {
+      initializeMocks();
+    });
+
+    // `content_style` is only read when the editor initializes, so without a
+    // rebuild the preview keeps whatever the block was opened with.
+    test('rebuilds the editor when the toggle is clicked', async () => {
+      const user = userEvent.setup();
+      const { container } = render(<TextEditor {...props} />);
+      expect(mockEditorMounts).toEqual(1);
+
+      await user.click(screen.getByRole('switch', { name: /use mfe theme/i }));
+
+      expect(mockEditorMounts).toEqual(2);
+      expect(container.querySelector('tinymcewidget')).toBeInTheDocument();
+    });
+
+    test('hands the rebuilt editor the unsaved content', async () => {
+      mockEditorContent = 'unsaved edits';
+      const user = userEvent.setup();
+      const { container } = render(<TextEditor {...props} />);
+
+      await user.click(screen.getByRole('switch', { name: /use mfe theme/i }));
+
+      expect(container.querySelector('tinymcewidget')?.getAttribute('editorcontenthtml'))
+        .toEqual('unsaved edits');
+    });
+
+    test('does not snapshot in raw editor mode', async () => {
+      // In raw mode the content lives in the RawEditor, not in a TinyMCE
+      // instance, and the rebuild does not touch it.
+      mockEditorContent = 'unsaved edits';
+      const user = userEvent.setup();
+      const { container } = render(<TextEditor {...props} showRawEditor />);
+
+      await user.click(screen.getByRole('switch', { name: /use mfe theme/i }));
+
+      expect(container.querySelector('tinymcewidget')).toBeNull();
     });
   });
 
