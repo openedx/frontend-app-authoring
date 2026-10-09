@@ -1,4 +1,5 @@
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent, MouseEvent } from 'react';
+import { useId } from 'react';
 
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -29,6 +30,12 @@ export interface CompetencyTreeItemProps {
  * driven by this same `hasChildren` check, via the `competency-group` class
  * below - not a depth number or a CSS structural-position selector, so it
  * holds recursively at any depth.
+ *
+ * Because a group's nested `<ul>` lives inside the group's own `<li>`, the
+ * `<li role="treeitem">` is given an explicit `aria-labelledby` pointing at
+ * its own row. Without it, the treeitem's accessible name would be computed
+ * from its entire subtree's text content, so focusing a top-level group would
+ * announce every descendant's name and Competency ID along with it.
  */
 const CompetencyTreeItem = ({
   node,
@@ -38,6 +45,8 @@ const CompetencyTreeItem = ({
   onSelectCompetency,
 }: CompetencyTreeItemProps) => {
   const intl = useIntl();
+  const labelId = useId();
+  const externalIdLabelId = useId();
   const nodeId = String(node.id);
   const hasChildren = !!node.subRows?.length;
   const isExpanded = expandedIds.has(nodeId);
@@ -48,54 +57,45 @@ const CompetencyTreeItem = ({
   // `externalId: ''`), so use a truthiness check rather than `!== null`.
   const { externalId } = node;
 
-  // Every row is selectable, group or leaf, as long as a selection handler was
-  // passed down - a group row keeps its own separate expand/collapse control
+  // Every node is selectable, group or leaf, as long as a selection handler was
+  // passed down - a group keeps its own separate expand/collapse control
   // (see `ExpandCollapseIconButton`, which stops its click and keydown from
-  // also reaching this row's own `onClick`/`onKeyDown` below).
+  // also reaching this node's own `onClick`/`onKeyDown` below).
   const isSelectable = !!onSelectCompetency;
   const isSelected = isSelectable && selectedCompetencyId != null && nodeId === selectedCompetencyId;
 
-  const handleSelect = () => {
+  const labelledBy = externalId ? `${labelId} ${externalIdLabelId}` : labelId;
+
+  const handleSelect = (event: MouseEvent<HTMLLIElement> | KeyboardEvent<HTMLLIElement>) => {
     if (isSelectable && onSelectCompetency) {
+      event.stopPropagation();
       onSelectCompetency(node);
     }
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (isSelectable && onSelectCompetency && (event.key === 'Enter' || event.key === ' ')) {
+  const handleKeyDown = (event: KeyboardEvent<HTMLLIElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      onSelectCompetency(node);
+      handleSelect(event);
     }
   };
 
   return (
-    // `role="none"` removes this `<li>` from the accessibility tree when it
-    // wraps a `treeitem` below: axe's `aria-required-parent`/`listitem`
-    // rules require a `treeitem` to be a direct accessibility-tree child of
-    // its `tree`/`group` container, which a plain (implicit `listitem`)
-    // `<li>` in between breaks - confirmed live via `axe-core`. Without
-    // selection there's no `treeitem` here to parent, so this stays a
-    // plain, validly-semantic list item instead.
-    <li className={hasChildren ? 'competency-group' : undefined} role={isSelectable ? 'none' : undefined}>
-      <div
-        // `role="treeitem"` (part of the `role="tree"`/`"group"` structure -
-        // see `CompetencyTree.tsx` and the nested `<ul>` below) allows
-        // `aria-selected` directly, unlike `role="button"`, and axe's
-        // `nested-interactive` rule (which flagged the disclosure `<button>`
-        // below when this row was `role="button"`) doesn't apply to
-        // `treeitem`. `aria-selected` itself is announced by assistive tech
-        // as part of the treeitem's own state, so there's no need for the
-        // separate accessible-label text this row used before.
-        className={classNames('competency-row', {
-          'competency-row--selectable': isSelectable,
-          'competency-row--selected': isSelected,
-        })}
-        role={isSelectable ? 'treeitem' : undefined}
-        tabIndex={isSelectable ? 0 : undefined}
-        aria-selected={isSelectable ? isSelected : undefined}
-        onClick={isSelectable ? handleSelect : undefined}
-        onKeyDown={isSelectable ? handleKeyDown : undefined}
-      >
+    <li
+      className={classNames({
+        'competency-group': hasChildren,
+        'competency-node--selectable': isSelectable,
+        'competency-node--selected': isSelected,
+      }) || undefined}
+      role={isSelectable ? 'treeitem' : undefined}
+      tabIndex={isSelectable ? 0 : undefined}
+      aria-selected={isSelectable ? isSelected : undefined}
+      aria-labelledby={isSelectable ? labelledBy : undefined}
+      aria-expanded={isSelectable && hasChildren ? isExpanded : undefined}
+      onClick={isSelectable ? handleSelect : undefined}
+      onKeyDown={isSelectable ? handleKeyDown : undefined}
+    >
+      <div className="competency-row">
         <ExpandCollapseIconButton
           canExpand={hasChildren}
           isExpanded={isExpanded}
@@ -103,11 +103,11 @@ const CompetencyTreeItem = ({
           expandLabel={intl.formatMessage(messages.expandRowButtonLabel)}
           collapseLabel={intl.formatMessage(messages.collapseRowButtonLabel)}
         />
-        <span className="competency-row__label">{node.value}</span>
+        <span className="competency-row__label" id={labelId}>{node.value}</span>
         {externalId ?
           (
             <>
-              <span className="sr-only">
+              <span className="sr-only" id={externalIdLabelId}>
                 {intl.formatMessage(messages.competencyIdAccessibleLabel, { externalId })}
               </span>
               <Badge
