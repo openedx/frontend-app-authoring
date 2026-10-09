@@ -3,8 +3,8 @@ import { Icon } from '@openedx/paragon';
 import { Check } from '@openedx/paragon/icons';
 
 import Button from '@src/editors/sharedComponents/Button';
-import messages from '../messages';
-import type { GameSettings, GameType } from '../types';
+import messages from '@src/editors/containers/GamesEditor/messages';
+import type { GameSettings, GameType } from '@src/editors/containers/GamesEditor/types';
 import SettingsCard from './SettingsCard';
 
 interface OnOffSettingProps {

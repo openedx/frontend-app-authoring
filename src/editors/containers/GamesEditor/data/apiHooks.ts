@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import type { BlockRef, SaveArgs } from '../types';
+import type { BlockRef, SaveArgs } from '@src/editors/containers/GamesEditor/types';
 import * as api from './api';
 
 /**

@@ -11,7 +11,7 @@ import type {
   SaveResponse,
   SettingsResponse,
   UploadResponse,
-} from '../types';
+} from '@src/editors/containers/GamesEditor/types';
 
 /**
  * The Games block's own XBlock handlers.

@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
 
-import type { FieldError, TextField } from '../gameContent';
-import messages from '../messages';
+import type { FieldError, TextField } from '@src/editors/containers/GamesEditor/gameContent';
+import messages from '@src/editors/containers/GamesEditor/messages';
 
 /** The block's limit on either text field of a card. */
 export const MAX_FIELD_LENGTH = 120;
