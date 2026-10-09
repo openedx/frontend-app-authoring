@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
@@ -29,14 +29,18 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
   // remounts the box via `RuleBoxList`'s `key`. A rejected edit keeps the key, so it reverts explicitly.
   const [inputValue, setInputValue] = useState(() => percentOf(rulePayload));
   const [validationMessage, setValidationMessage] = useState('');
+  // A ref, so a blur fired by the same Enter keypress sees it before React re-renders. Keeps a second commit
+  // from racing the first, whose response could otherwise land out of order.
+  const saveInFlight = useRef(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const revertToLastPersisted = () => {
     setInputValue(percentOf(rulePayload));
     setValidationMessage('');
   };
 
-  const commit = () => {
-    if (!onChange) {
+  const commit = async () => {
+    if (!onChange || saveInFlight.current) {
       return;
     }
     const trimmedInput = inputValue.trim();
@@ -56,12 +60,21 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
       return;
     }
     setValidationMessage('');
-    onChange({ ...rulePayload, value: numericPercent / 100 }).catch(revertToLastPersisted);
+    saveInFlight.current = true;
+    setIsSaving(true);
+    try {
+      await onChange({ ...rulePayload, value: numericPercent / 100 });
+    } catch {
+      revertToLastPersisted();
+    } finally {
+      saveInFlight.current = false;
+      setIsSaving(false);
+    }
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      commit();
+      void commit();
     } else if (event.key === 'Escape') {
       revertToLastPersisted();
     }
@@ -82,9 +95,12 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
           aria-label={intl.formatMessage(messages.scoreThresholdInputAccessibleLabel)}
           aria-invalid={!!validationMessage}
           isInvalid={!!validationMessage}
+          disabled={isSaving}
           onChange={(event) => setInputValue(event.target.value)}
           onKeyDown={handleKeyDown}
-          onBlur={commit}
+          onBlur={() => {
+            void commit();
+          }}
           onClick={(event: React.MouseEvent) => event.stopPropagation()}
         />
         %
