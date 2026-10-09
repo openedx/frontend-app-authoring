@@ -143,9 +143,4 @@
   .card-dropdown {
     z-index: 10;
   }
-
-  .timer-toggle-button:focus::before,
-  .shuffle-toggle-button:focus::before {
-    display: none;
-  }
 }
