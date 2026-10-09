@@ -63,9 +63,9 @@ export const buildSavePayload = ({
     if (card.card_key) {
       baseCard.card_key = card.card_key;
     }
-    if (gameType !== 'flashcards') {
-      return baseCard;
-    }
+    // The image fields go with every game type. Matching does not show them,
+    // but the block accepts them, and dropping them would wipe the images of
+    // an author who tries Matching and switches back to Flashcards.
     return {
       ...baseCard,
       term_image: card.term_image || '',

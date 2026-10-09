@@ -71,6 +71,24 @@ describe('buildSavePayload', () => {
     expect(cards[1]).not.toHaveProperty('card_key');
   });
 
+  // save_settings accepts the image fields for every game type. Dropping them
+  // for a matching game would wipe the images of an author who tries Matching
+  // and switches back to Flashcards.
+  it('keeps the image fields for a matching game', () => {
+    const { cards } = api.buildSavePayload({
+      ...base,
+      gameType: 'matching',
+      cards: [{
+        term: 'a',
+        definition: 'b',
+        term_image: '/media/a.png',
+        term_image_path: 'games/a.png',
+        term_image_alt: 'A',
+      }],
+    });
+    expect(cards[0]).toMatchObject({ term_image: '/media/a.png', term_image_path: 'games/a.png', term_image_alt: 'A' });
+  });
+
   // The block's save handler defaults a missing has_timer to true, so a
   // flashcards save that omits it would switch a disabled timer back on.
   it('sends has_timer for every game type', () => {

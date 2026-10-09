@@ -825,15 +825,17 @@ describe('buildSavePayload', () => {
     expect(payload.cards[0]).toHaveProperty('definition_image_path');
   });
 
-  it('omits image fields and sends has_timer for matching games', () => {
+  // Matching hides the images but must not lose them: switching to Matching
+  // and back would otherwise wipe every image.
+  it('keeps image fields and sends has_timer for matching games', () => {
     const payload = buildSavePayload({
       gameType: 'matching',
       isShuffled: false,
       hasTimer: true,
       title: 'Games',
-      cards: [{ term: 't', definition: 'd', term_image: 'http://x/i.png' }],
+      cards: [{ term: 't', definition: 'd', term_image: '/media/i.png' }],
     });
-    expect(payload.cards[0]).not.toHaveProperty('term_image');
+    expect(payload.cards[0].term_image).toEqual('/media/i.png');
     expect(payload.has_timer).toBe(true);
   });
 
