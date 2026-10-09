@@ -99,10 +99,10 @@ describe('<CriteriaGroupBox />', () => {
     expect(container.querySelector('.criteria-group-box__header')).toHaveTextContent(
       'By completing all of the following',
     );
-    // Two `role="button"` elements exist (the group's own header band and
-    // the one rendered rule box) - neither is a `Dropdown` trigger, since
-    // `canEdit` is false here.
-    expect(screen.getAllByRole('button')).toHaveLength(2);
+    // No `role="button"` elements at all: neither the header band nor the
+    // rule box carry that role (see `CriteriaGroupBox.tsx`'s own comment on
+    // why), and there's no `Dropdown` trigger since `canEdit` is false here.
+    expect(screen.queryAllByRole('button')).toHaveLength(0);
     expect(screen.getByText('Subsection A')).toBeInTheDocument();
   });
 
@@ -116,8 +116,8 @@ describe('<CriteriaGroupBox />', () => {
 
   it('calls focusGroup when the header band is activated with Enter or Space', () => {
     const focusGroup = jest.fn();
-    renderBox({ focusGroup });
-    const [header] = screen.getAllByRole('button');
+    const { container } = renderBox({ focusGroup });
+    const header = container.querySelector('.criteria-group-box__header')!;
 
     fireEvent.keyDown(header, { key: 'Enter' });
     fireEvent.keyDown(header, { key: ' ' });
@@ -126,34 +126,31 @@ describe('<CriteriaGroupBox />', () => {
     expect(focusGroup).toHaveBeenCalledWith(10);
   });
 
-  it('exposes focus state via aria-pressed on the header band and the rule box', () => {
-    // Queried by their own selectors, not `getAllByRole('button')` position:
-    // with the default `canEdit: true`, the any/all `Dropdown` trigger is a
-    // third button nested inside the header band (see the exception noted
-    // on the test below), which would otherwise shift a positional index.
+  it('exposes focus state via aria-current on the header band and the rule box', () => {
     const { container, unmount } = renderBox();
     const header = container.querySelector('.criteria-group-box__header')!;
     const ruleBox = container.querySelector('.rule-box')!;
-    expect([header, ruleBox].map((el) => el.getAttribute('aria-pressed'))).toEqual(['false', 'false']);
+    expect([header, ruleBox].map((el) => el.getAttribute('aria-current'))).toEqual(['false', 'false']);
     unmount();
 
     const { container: focusedContainer } = renderBox({ focus: { groupId: 10, ruleKey: null } });
     const focusedHeader = focusedContainer.querySelector('.criteria-group-box__header')!;
     const focusedRuleBox = focusedContainer.querySelector('.rule-box')!;
-    expect([focusedHeader, focusedRuleBox].map((el) => el.getAttribute('aria-pressed'))).toEqual(['true', 'false']);
+    expect([focusedHeader, focusedRuleBox].map((el) => el.getAttribute('aria-current'))).toEqual(['true', 'false']);
   });
 
-  it('never nests an element with role button inside another, when canEdit is false', () => {
-    // Read-only exception: when `canEdit` is true, the any/all `Dropdown`
-    // trigger is deliberately nested inside the header band's own
-    // `role="button"` - the same "interactive control nested inside an
-    // interactive row" shape `RuleBox`/`ScoreThresholdField` already use,
-    // guarded against a swallowed Enter/Space by this component's own
-    // `event.target === event.currentTarget` check in `handleKeyDown`, not
-    // by avoiding the nesting itself.
-    renderBox({}, {}, false);
+  it('never nests an element with role button inside another', () => {
+    // Neither the header band nor the rule box carry `role="button"`
+    // themselves (see `CriteriaGroupBox.tsx`'s own comment on why), so the
+    // any/all `Dropdown` trigger - the only `role="button"` element that
+    // exists once `canEdit` is true - is never nested inside another one.
+    // With `canEdit` false there is no `role="button"` element at all, so
+    // this invariant is only meaningfully exercised here.
+    renderBox();
 
-    screen.getAllByRole('button').forEach((button) => {
+    const buttons = screen.getAllByRole('button');
+    expect(buttons.length).toBeGreaterThan(0);
+    buttons.forEach((button) => {
       expect(within(button).queryByRole('button')).not.toBeInTheDocument();
     });
   });
@@ -161,13 +158,9 @@ describe('<CriteriaGroupBox />', () => {
   it('clicking a rule box inside focuses only the rule box, not also the group', () => {
     const focusGroup = jest.fn();
     const focusRuleBox = jest.fn();
-    renderBox({ focusGroup, focusRuleBox });
+    const { container } = renderBox({ focusGroup, focusRuleBox });
 
-    // With the default `canEdit: true`, three `role="button"` elements
-    // exist: the header band, the any/all `Dropdown` trigger, and the rule
-    // box itself - the rule box is the third, not the second.
-    expect(screen.getAllByRole('button')).toHaveLength(3);
-    fireEvent.click(screen.getAllByRole('button')[2]);
+    fireEvent.click(container.querySelector('.rule-box')!);
 
     expect(focusRuleBox).toHaveBeenCalledTimes(1);
     expect(focusGroup).not.toHaveBeenCalled();

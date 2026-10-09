@@ -76,11 +76,19 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
       className={classNames('criteria-group-box', { 'criteria-group-box--focused': isFocused })}
     >
       <Card>
+        {
+          /* No `role="button"`: once `canEdit` is true, `LogicOperatorSelect`
+          * renders a real `<button>` (the `Dropdown` trigger) inside this
+          * element, and ARIA disallows interactive content inside a
+          * `button`-role element. `tabIndex`/`onClick`/`onKeyDown` stay, so
+          * clicking or Tab+Enter/Space still selects this group;
+          * `aria-current` (not `aria-pressed`, which ARIA restricts to the
+          * `button` role) marks whether this group is currently selected. */
+        }
         <div
           className="criteria-group-box__header"
-          role="button"
           tabIndex={0}
-          aria-pressed={isFocused}
+          aria-current={isFocused}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
         >

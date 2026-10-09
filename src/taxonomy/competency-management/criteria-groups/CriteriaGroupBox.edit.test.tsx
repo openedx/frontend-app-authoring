@@ -86,9 +86,10 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     const { container } = renderBox({}, false);
 
     expect(screen.getByText('all')).toBeInTheDocument();
-    // Two `role="button"` elements exist (the group's own container and its
-    // rule box) - neither is a `Dropdown` trigger, since `canEdit` is false.
-    expect(screen.getAllByRole('button')).toHaveLength(2);
+    // No `role="button"` elements at all: neither the header band nor the
+    // rule box carry that role themselves, and there's no `Dropdown`
+    // trigger since `canEdit` is false here.
+    expect(screen.queryAllByRole('button')).toHaveLength(0);
     expect(container.querySelector('.dropdown-toggle')).not.toBeInTheDocument();
   });
 

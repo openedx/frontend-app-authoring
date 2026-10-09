@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
@@ -55,6 +55,18 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
   // key, so it needs its own explicit revert (see `commit` below).
   const [inputValue, setInputValue] = useState(() => percentOf(rulePayload));
   const [validationMessage, setValidationMessage] = useState('');
+  // Serializes commits: Enter fires `commit`, and the same Enter keypress
+  // typically also blurs the field (or a user tabs away right after),
+  // firing `commit` again before the first mutation has resolved - two
+  // concurrent requests whose responses can land out of order, leaving an
+  // earlier edit's value persisted over a later one. `saveInFlight` (a ref,
+  // not state, so it's already set before React re-renders - synchronously
+  // blocking a second call from the same event-handling pass) and
+  // `isSaving` (state, so the input can visibly disable) together make a
+  // second commit attempt, from either Enter or blur, a no-op until the
+  // in-flight one settles.
+  const saveInFlight = useRef(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   if (!onChange) {
     return (
@@ -70,7 +82,10 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
     setValidationMessage('');
   };
 
-  const commit = () => {
+  const commit = async () => {
+    if (saveInFlight.current) {
+      return;
+    }
     const trimmedInput = inputValue.trim();
     const numericPercent = Number(trimmedInput);
     if (trimmedInput === '' || !Number.isFinite(numericPercent)) {
@@ -95,17 +110,24 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
     }
     setValidationMessage('');
     const newRulePayload: GradeRulePayload = { ...rulePayload, value: numericPercent / 100 };
-    onChange(newRulePayload).catch(() => {
+    saveInFlight.current = true;
+    setIsSaving(true);
+    try {
+      await onChange(newRulePayload);
+    } catch {
       // Unlike `LogicOperatorSelect`'s `Dropdown` (which always renders
       // from its `value` prop), this input's local state doesn't
       // self-correct on rejection - revert it explicitly.
       revertToLastPersisted();
-    });
+    } finally {
+      saveInFlight.current = false;
+      setIsSaving(false);
+    }
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      commit();
+      void commit();
     } else if (event.key === 'Escape') {
       revertToLastPersisted();
     }
@@ -128,9 +150,12 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
             aria-label={intl.formatMessage(messages.scoreThresholdInputAccessibleLabel)}
             aria-invalid={!!validationMessage}
             isInvalid={!!validationMessage}
+            disabled={isSaving}
             onChange={(event) => setInputValue(event.target.value)}
             onKeyDown={handleKeyDown}
-            onBlur={commit}
+            onBlur={() => {
+              void commit();
+            }}
             onClick={(event: React.MouseEvent) => event.stopPropagation()}
           />
         ),

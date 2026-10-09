@@ -98,6 +98,36 @@ describe('<ScoreThresholdField />', () => {
       await waitFor(() => expect(input).toHaveValue('70'));
     });
 
+    it('ignores a second commit attempt (e.g. blur right after Enter) while the first is still in flight', async () => {
+      const user = userEvent.setup();
+      let resolveOnChange: () => void;
+      const onChange = jest.fn().mockImplementation(() =>
+        new Promise<void>((resolve) => {
+          resolveOnChange = resolve;
+        })
+      );
+      render(
+        <>
+          <ScoreThresholdField rulePayload={rulePayload} onChange={onChange} />
+          <button type="button">elsewhere</button>
+        </>,
+      );
+
+      const input = screen.getByRole('textbox');
+      await user.clear(input);
+      await user.type(input, '85');
+      await user.keyboard('{Enter}');
+      // Enter's own commit is now in flight (its mutation promise hasn't
+      // resolved yet) - a second attempt, from blurring right after, must
+      // not issue a second, possibly-out-of-order, request.
+      expect(input).toBeDisabled();
+      await user.click(screen.getByRole('button', { name: 'elsewhere' }));
+
+      expect(onChange).toHaveBeenCalledTimes(1);
+      resolveOnChange!();
+      await waitFor(() => expect(input).not.toBeDisabled());
+    });
+
     it('blocks the commit and shows the inline message when getInlineValidationMessage returns one', async () => {
       const user = userEvent.setup();
       const onChange = jest.fn().mockResolvedValue(undefined);
