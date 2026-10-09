@@ -10,6 +10,7 @@ import {
 } from '@openedx/paragon';
 
 import { useWaffleFlags } from '@src/data/apiHooks';
+import { hasBuiltInEditor } from '@src/editors/hasBuiltInEditor';
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { LibraryAndComponentPicker } from '@src/library-authoring/component-picker';
 import { ContentType } from '@src/library-authoring/routes';
@@ -103,7 +104,8 @@ const AddComponent = ({
   const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
   const [usageId, setUsageId] = useState(null);
   const { sendMessageToIframe } = useIframe();
-  const { useVideoGalleryFlow, useNewPdfEditor } = useWaffleFlags(courseId ?? undefined);
+  const waffleFlags = useWaffleFlags(courseId ?? undefined);
+  const { useVideoGalleryFlow } = waffleFlags;
 
   const courseUnit = useSelector(getCourseUnitData);
   const sequenceId = courseUnit?.ancestorInfo?.ancestors?.[0]?.id;
@@ -188,12 +190,12 @@ const AddComponent = ({
         // TODO: The 'advanced components' concept warrants examination.
         // 'Advanced' is a bucket where we chuck all the blocks that are
         // uncommon, or third-party installs. Until now, none of these have
-        // had special editors in this MFE. This is the first.
+        // had special editors in this MFE. PDF and Games are the first two.
         // The fact that advanced modules are handled as a special category
         // *in code* and not just in UI seems like a mistake in retrospect.
         //
         // There will be more of these, and soon.
-        if (moduleName === COMPONENT_TYPES.pdf && useNewPdfEditor) {
+        if (moduleName && hasBuiltInEditor(moduleName, waffleFlags)) {
           handleCreateNewCourseXBlock(
             { type: moduleName, parentLocator: blockId },
             /* istanbul ignore next */

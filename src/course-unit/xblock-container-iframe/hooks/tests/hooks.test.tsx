@@ -2,6 +2,7 @@ import React from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { initializeMockApp } from '@edx/frontend-platform';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { Provider } from 'react-redux';
 
@@ -49,6 +50,7 @@ describe('useMessageHandlers', () => {
       handleScrollToXBlock: jest.fn(),
       handleManageXBlockAccess: jest.fn(),
       handleShowLegacyEditXBlockModal: jest.fn(),
+      handleEditXBlock: jest.fn(),
       handleCloseLegacyEditorXBlockModal: jest.fn(),
       handleSaveEditedXBlockData: jest.fn(),
       handleFinishXBlockDragging: jest.fn(),
@@ -63,6 +65,7 @@ describe('useMessageHandlers', () => {
       },
     });
 
+    mockWaffleFlags();
     store = initializeStore();
 
     ({ result } = renderHook(() => useMessageHandlers(handlers), { wrapper }));
@@ -93,5 +96,38 @@ describe('useMessageHandlers', () => {
     if (expectedArg !== undefined) {
       expect(handlers[handlerKey]).toHaveBeenCalledWith(expectedArg);
     }
+  });
+
+  // Studio only sends `newXBlockEditor` for the block types it knows this app
+  // edits; every other Edit click arrives as a legacy-modal request. This app
+  // knows its own editors, so it opens one of those itself.
+  describe('editXBlock routing', () => {
+    const usageId = (type: string) => `block-v1:Test+101+2025+type@${type}+block@abc`;
+
+    it('opens the built-in editor for a block type this app can edit', () => {
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: usageId('games') });
+      });
+      expect(handlers.handleEditXBlock).toHaveBeenCalledWith('games', usageId('games'));
+      expect(handlers.handleShowLegacyEditXBlockModal).not.toHaveBeenCalled();
+    });
+
+    it('opens the legacy modal for a block type this app cannot edit', () => {
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: usageId('drag-and-drop-v2') });
+      });
+      expect(handlers.handleShowLegacyEditXBlockModal).toHaveBeenCalledWith(usageId('drag-and-drop-v2'));
+      expect(handlers.handleEditXBlock).not.toHaveBeenCalled();
+    });
+
+    it('opens the legacy modal when the operator has opted out of a built-in editor', () => {
+      mockWaffleFlags({ useNewPdfEditor: false });
+      ({ result } = renderHook(() => useMessageHandlers(handlers), { wrapper }));
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: usageId('pdf') });
+      });
+      expect(handlers.handleShowLegacyEditXBlockModal).toHaveBeenCalledWith(usageId('pdf'));
+      expect(handlers.handleEditXBlock).not.toHaveBeenCalled();
+    });
   });
 });

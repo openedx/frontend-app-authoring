@@ -1,14 +1,15 @@
-import { useCallback } from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
 import {
   DndContext,
+  type DragEndEvent,
+  type DragStartEvent,
+  DragOverlay,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-  DragOverlay,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -19,15 +20,27 @@ import {
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { verticalSortableListCollisionDetection } from './verticalSortableList';
 
-const DraggableList = ({
+export interface DraggableListProps<T extends { id: string; }> {
+  itemList: T[];
+  /** Local mirror of the list; receives the reordered array as an updater. */
+  setState: React.Dispatch<React.SetStateAction<T[]>>;
+  /** Persists the new order. Called with the same array `setState` produced. */
+  updateOrder: () => (list: T[]) => void;
+  children: React.ReactNode;
+  renderOverlay?: (activeId: string | null) => React.ReactNode;
+  activeId?: string | null;
+  setActiveId?: (id: string | null) => void;
+}
+
+const DraggableList = <T extends { id: string; }>({
   itemList,
   setState,
   updateOrder,
   children,
   renderOverlay,
-  activeId,
+  activeId = null,
   setActiveId,
-}) => {
+}: DraggableListProps<T>) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -35,25 +48,22 @@ const DraggableList = ({
     }),
   );
 
-  const handleDragEnd = useCallback((event) => {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
-    if (active.id !== over.id) {
-      let updatedArray;
-      setState(() => {
-        const [activeElement] = itemList.filter(item => item.id === active.id);
-        const [overElement] = itemList.filter(item => item.id === over.id);
-        const oldIndex = itemList.indexOf(activeElement);
-        const newIndex = itemList.indexOf(overElement);
-        updatedArray = arrayMove(itemList, oldIndex, newIndex);
-        return updatedArray;
-      });
+    if (over && active.id !== over.id) {
+      // Computed here, not inside a setState updater: React may run an
+      // updater later, during render, and the order must be known now.
+      const oldIndex = itemList.findIndex((item) => item.id === active.id);
+      const newIndex = itemList.findIndex((item) => item.id === over.id);
+      const updatedArray = arrayMove(itemList, oldIndex, newIndex);
+      setState(updatedArray);
       updateOrder()(updatedArray);
     }
     setActiveId?.(null);
-  }, [updateOrder, setActiveId]);
+  }, [itemList, setState, updateOrder, setActiveId]);
 
-  const handleDragStart = useCallback((event) => {
-    setActiveId?.(event.active.id);
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    setActiveId?.(String(event.active.id));
   }, [setActiveId]);
 
   const handleDragCancel = useCallback(() => {
@@ -85,24 +95,6 @@ const DraggableList = ({
       )}
     </DndContext>
   );
-};
-
-DraggableList.defaultProps = {
-  renderOverlay: undefined,
-  activeId: null,
-  setActiveId: () => {},
-};
-
-DraggableList.propTypes = {
-  itemList: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-  })).isRequired,
-  setState: PropTypes.func.isRequired,
-  updateOrder: PropTypes.func.isRequired,
-  children: PropTypes.node.isRequired,
-  renderOverlay: PropTypes.func,
-  activeId: PropTypes.string,
-  setActiveId: PropTypes.func,
 };
 
 export default DraggableList;

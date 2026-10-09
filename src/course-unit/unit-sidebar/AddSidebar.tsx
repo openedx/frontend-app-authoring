@@ -23,6 +23,7 @@ import { SidebarFilters } from '@src/library-authoring/library-filters/SidebarFi
 import { COMPONENT_TYPES } from '@src/generic/block-type-utils/constants';
 import { BlockCardButton, BlockTemplate } from '@src/generic/sidebar/BlockCardButton';
 import { useWaffleFlags } from '@src/data/apiHooks';
+import { hasBuiltInEditor } from '@src/editors/hasBuiltInEditor';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import EditorPage from '@src/editors/EditorPage';
 import VideoSelectorPage from '@src/editors/VideoSelectorPage';
@@ -51,7 +52,8 @@ const AddNewContent = () => {
   const [blockType, setBlockType] = useState<string | null>(null);
   const [newBlockId, setNewBlockId] = useState<string | null>(null);
   const [editorExtraProps, setEditorExtraProps] = useState<Record<string, any> | null>(null);
-  const { useVideoGalleryFlow } = useWaffleFlags(courseId ?? undefined);
+  const waffleFlags = useWaffleFlags(courseId ?? undefined);
+  const { useVideoGalleryFlow } = waffleFlags;
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
   const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
   const [isAdvancedPageOpen, showAdvancedPage, closeAdvancedPage] = useToggle();
@@ -163,13 +165,23 @@ const AddNewContent = () => {
         });
         break;
       case COMPONENT_TYPES.advanced:
-        void handleCreateXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
+        if (moduleName && hasBuiltInEditor(moduleName, waffleFlags)) {
+          // An advanced block this app can edit: create it, then open that editor,
+          // as the Text and Problem cases do.
+          void handleCreateXBlock({ type: moduleName, parentLocator: blockId }, ({ locator }) => {
+            setBlockType(moduleName);
+            setNewBlockId(locator);
+            showXBlockEditorModal();
+          });
+        } else {
+          void handleCreateXBlock({ type: moduleName, category: moduleName, parentLocator: blockId });
+        }
         break;
       /* istanbul ignore next */
       default:
         break;
     }
-  }, [blockId]);
+  }, [blockId, waffleFlags]);
 
   const blockTypes = [
     {
@@ -198,58 +210,58 @@ const AddNewContent = () => {
     },
   ];
 
-  // Render add advanced blocks page
-  if (isAdvancedPageOpen) {
-    return (
-      <Stack>
-        <Stack className="mb-2 text-primary-500" direction="horizontal" gap={1}>
-          <Button
-            className="text-primary-500"
-            variant="tertiary"
-            iconBefore={ChevronLeft}
-            onClick={closeAdvancedPage}
-          >
-            <FormattedMessage {...messages.sidebarAddBackButton} />
-          </Button>
-          <Icon src={ChevronRight} />
-          <FormattedMessage {...messages.sidebarAddAdvancedBlocksTitle} />
-        </Stack>
-        <Stack gap={2}>
-          {templatesByType.advanced?.templates.map((advancedTypeObj) => (
-            <BlockCardButton
-              key={advancedTypeObj.category}
-              blockType={advancedTypeObj.category}
-              name={advancedTypeObj.displayName}
-              onClick={() => handleSelection('advanced', advancedTypeObj.category)}
-            />
-          ))}
-        </Stack>
+  // The advanced-blocks page and the default page share the modals below, so
+  // an editor opened from either page renders.
+  const advancedPage = (
+    <Stack>
+      <Stack className="mb-2 text-primary-500" direction="horizontal" gap={1}>
+        <Button
+          className="text-primary-500"
+          variant="tertiary"
+          iconBefore={ChevronLeft}
+          onClick={closeAdvancedPage}
+        >
+          <FormattedMessage {...messages.sidebarAddBackButton} />
+        </Button>
+        <Icon src={ChevronRight} />
+        <FormattedMessage {...messages.sidebarAddAdvancedBlocksTitle} />
       </Stack>
-    );
-  }
-
-  // Render add default blocks page
-  return (
-    <>
       <Stack gap={2}>
-        {blockTypes.map((blockTypeObj) => (
+        {templatesByType.advanced?.templates.map((advancedTypeObj) => (
           <BlockCardButton
-            {...blockTypeObj}
-            key={blockTypeObj.blockType}
-            templates={templatesByType[blockTypeObj.blockType].templates}
-            onClick={() => handleSelection(blockTypeObj.blockType)}
-            onClickTemplate={(boilerplateName: string) => handleSelection(blockTypeObj.blockType, boilerplateName)}
+            key={advancedTypeObj.category}
+            blockType={advancedTypeObj.category}
+            name={advancedTypeObj.displayName}
+            onClick={() => handleSelection('advanced', advancedTypeObj.category)}
           />
         ))}
-        {templatesByType.advanced?.templates?.length > 0 && (
-          <BlockCardButton
-            blockType="advanced"
-            name={intl.formatMessage(messages.sidebarAddAdvancedButton)}
-            onClick={showAdvancedPage}
-            actionIcon={<Icon src={ChevronRight} />}
-          />
-        )}
       </Stack>
+    </Stack>
+  );
+
+  return (
+    <>
+      {isAdvancedPageOpen ? advancedPage : (
+        <Stack gap={2}>
+          {blockTypes.map((blockTypeObj) => (
+            <BlockCardButton
+              {...blockTypeObj}
+              key={blockTypeObj.blockType}
+              templates={templatesByType[blockTypeObj.blockType].templates}
+              onClick={() => handleSelection(blockTypeObj.blockType)}
+              onClickTemplate={(boilerplateName: string) => handleSelection(blockTypeObj.blockType, boilerplateName)}
+            />
+          ))}
+          {templatesByType.advanced?.templates?.length > 0 && (
+            <BlockCardButton
+              blockType="advanced"
+              name={intl.formatMessage(messages.sidebarAddAdvancedButton)}
+              onClick={showAdvancedPage}
+              actionIcon={<Icon src={ChevronRight} />}
+            />
+          )}
+        </Stack>
+      )}
       <StandardModal
         title={intl.formatMessage(messages.videoPickerModalTitle)}
         isOpen={isVideoSelectorModalOpen}

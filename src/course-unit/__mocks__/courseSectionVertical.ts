@@ -98,6 +98,14 @@ export default {
           tab: 'common',
           support_level: true,
         },
+        {
+          display_name: 'Games',
+          category: 'games',
+          boilerplate_name: null,
+          hinted: false,
+          tab: 'common',
+          support_level: true,
+        },
       ],
       display_name: 'Advanced',
       support_legend: {
