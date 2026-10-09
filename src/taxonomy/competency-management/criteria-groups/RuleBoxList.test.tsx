@@ -1,4 +1,4 @@
-import { initializeMocks, render, screen } from '@src/testUtils';
+import { initializeMocks, render } from '@src/testUtils';
 import { MockCompetencyAssociationsProvider } from '../testHelpers';
 import type { CompetencyCriteriaGroupsResponse, CompetencyRuleProfile } from '../data/types';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
@@ -67,7 +67,7 @@ describe('<RuleBoxList />', () => {
 
   it('renders two criteria sharing a rule as one box, and a different rule as a second box', () => {
     const index = buildCompetencyCriteriaGroupsIndex(response);
-    render(
+    const { container } = render(
       <MockCompetencyAssociationsProvider>
         <RuleBoxList
           groupId={10}
@@ -82,7 +82,9 @@ describe('<RuleBoxList />', () => {
       </MockCompetencyAssociationsProvider>,
     );
 
-    const boxes = screen.getAllByRole('button');
+    // Queried by class, not `getAllByRole('button')`: a rule box has no
+    // `role="button"` (see `RuleBox.tsx`'s own comment on why).
+    const boxes = container.querySelectorAll('.rule-box');
     expect(boxes).toHaveLength(2);
     // Box 1 (min criterion id 101) holds both Subsection A and B.
     expect(boxes[0]).toHaveTextContent('Subsection A');
@@ -95,7 +97,7 @@ describe('<RuleBoxList />', () => {
 
   it('marks only the box matching the context focus as focused', () => {
     const index = buildCompetencyCriteriaGroupsIndex(response);
-    render(
+    const { container } = render(
       <MockCompetencyAssociationsProvider value={{ focus: { groupId: 10, ruleKey: 'grade:lte:0.9:percent' } }}>
         <RuleBoxList
           groupId={10}
@@ -106,15 +108,16 @@ describe('<RuleBoxList />', () => {
       </MockCompetencyAssociationsProvider>,
     );
 
-    const boxes = screen.getAllByRole('button');
+    const boxes = container.querySelectorAll('.rule-box');
     expect(boxes[0].className).not.toContain('rule-box--focused');
     expect(boxes[1].className).toContain('rule-box--focused');
   });
 
   it('renders no box as focused, without throwing, when the focused key matches none rendered', () => {
     const index = buildCompetencyCriteriaGroupsIndex(response);
-    expect(() =>
-      render(
+    let container!: HTMLElement;
+    expect(() => {
+      ({ container } = render(
         <MockCompetencyAssociationsProvider
           value={{ focus: { groupId: 10, ruleKey: 'stale-key-that-matches-nothing' } }}
         >
@@ -125,10 +128,10 @@ describe('<RuleBoxList />', () => {
             subsectionNamesByUsageKey={{}}
           />
         </MockCompetencyAssociationsProvider>,
-      )
-    ).not.toThrow();
+      ));
+    }).not.toThrow();
 
-    screen.getAllByRole('button').forEach((box) => {
+    container.querySelectorAll('.rule-box').forEach((box) => {
       expect(box.className).not.toContain('rule-box--focused');
     });
   });
