@@ -78,12 +78,17 @@ const RuleBox = ({
   );
 
   return (
+    // No `role="button"` here: once `canEdit` is true, `ScoreThresholdField`
+    // renders a real `<input>` inside this element, and ARIA disallows
+    // interactive content inside a `button`-role element. `tabIndex`/
+    // `onClick`/`onKeyDown` stay, so clicking or Tab+Enter/Space still
+    // selects this box; `aria-current` (not `aria-pressed`, which ARIA
+    // restricts to the `button` role) marks which box is currently selected.
     <div
       ref={ref}
       className={classNames('rule-box', { 'rule-box--focused': isFocused })}
-      role="button"
       tabIndex={0}
-      aria-pressed={isFocused}
+      aria-current={isFocused}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
     >

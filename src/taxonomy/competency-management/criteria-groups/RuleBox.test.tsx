@@ -54,9 +54,12 @@ describe('<RuleBox />', () => {
 
   it('calls focusRuleBox with its own groupId/ruleKey when clicked', () => {
     const focusRuleBox = jest.fn();
-    renderRuleBox({ focusRuleBox });
+    const { container } = renderRuleBox({ focusRuleBox });
 
-    fireEvent.click(screen.getByRole('button'));
+    // Queried by class, not `getByRole('button')`: the wrapper has no
+    // `role="button"` (see `RuleBox.tsx`'s own comment on why), since a real
+    // `<button>`/`<input>` can render inside it once `canEdit` is true.
+    fireEvent.click(container.querySelector('.rule-box')!);
     expect(focusRuleBox).toHaveBeenCalledWith(10, 'grade:gte:0.7:percent');
   });
 
