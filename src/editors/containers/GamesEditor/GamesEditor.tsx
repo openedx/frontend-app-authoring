@@ -149,6 +149,7 @@ export const GamesEditorForBlock = ({
       // The load is owned by useGameState, so the editor is "finished" as soon
       // as that first fetch resolves.
       blockFinished={state.isLoaded}
+      studioEndpointUrl={studioEndpointUrl}
       settings={state.settings}
       type={state.type}
       list={state.list}

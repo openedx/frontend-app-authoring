@@ -11,7 +11,7 @@ import type {
   RequestError,
   RequestErrorCode,
   SaveArgs,
-} from '../types';
+} from '@src/editors/containers/GamesEditor/types';
 import { useGameSettings, useSaveGameSettings, useUploadGameImage } from './apiHooks';
 
 const generateId = () => uuidv4();
@@ -139,12 +139,6 @@ export const reducer = (state: GameState, action: Action): GameState => {
 const requestError = (code: RequestErrorCode, detail?: string): RequestError =>
   Object.assign(new Error(detail || ''), { code });
 
-/** Absolute-ise a handler-relative media URL against the block's Studio. */
-const absolute = <T extends string | undefined>(url: T, studioEndpointUrl: string): T | string => {
-  if (!url || url.startsWith('http')) { return url; }
-  return `${studioEndpointUrl}${url}`;
-};
-
 export const useGameState = (block: BlockRef | null) => {
   const [state, rawDispatch] = React.useReducer(reducer, initialState);
   // Mirror of the reducer state, advanced synchronously on every dispatch.
@@ -165,9 +159,6 @@ export const useGameState = (block: BlockRef | null) => {
   const settingsQuery = useGameSettings(block);
   const { mutateAsync: saveSettings } = useSaveGameSettings(block);
   const { mutateAsync: uploadImage } = useUploadGameImage(block);
-  // The query only runs with a block, so the seed effect below always has one.
-  const studioEndpointUrl = block?.studioEndpointUrl ?? '';
-
   // Seed the form from each successful fetch: the first load, and a Retry.
   // Keyed on `dataUpdatedAt` so it runs once per fetch, not once per render.
   const { data: loadedSettings, dataUpdatedAt } = settingsQuery;
@@ -178,11 +169,13 @@ export const useGameState = (block: BlockRef | null) => {
       ...emptyCard(),
       card_key: card.card_key,
       term: card.term || '',
-      term_image: absolute(card.term_image, studioEndpointUrl) || '',
+      // Image URLs are kept as the block returns them (relative to its
+      // Studio); the view resolves them for display. See imageDisplayUrl.
+      term_image: card.term_image || '',
       term_image_path: card.term_image_path || '',
       term_image_alt: card.term_image_alt || '',
       definition: card.definition || '',
-      definition_image: absolute(card.definition_image, studioEndpointUrl) || '',
+      definition_image: card.definition_image || '',
       definition_image_path: card.definition_image_path || '',
       definition_image_alt: card.definition_image_alt || '',
     }));
@@ -298,13 +291,20 @@ export const useGameState = (block: BlockRef | null) => {
                 type: 'updateCardField',
                 cardId,
                 field: `${imageType}_image`,
-                value: absolute(data.url, studioEndpointUrl),
+                value: data.url,
               });
               dispatch({
                 type: 'updateCardField',
                 cardId,
                 field: `${imageType}_image_path`,
                 value: data.file_path || '',
+              });
+              // The old alt text described the old picture.
+              dispatch({
+                type: 'updateCardField',
+                cardId,
+                field: `${imageType}_image_alt`,
+                value: '',
               });
             })
             // A superseded upload's failure no longer concerns the author.
@@ -363,7 +363,7 @@ export const useGameState = (block: BlockRef | null) => {
         clear();
       },
     };
-  }, [block, studioEndpointUrl, saveSettings, uploadImage, refetchSettings]);
+  }, [block, saveSettings, uploadImage, refetchSettings]);
 
   return { state, actions };
 };

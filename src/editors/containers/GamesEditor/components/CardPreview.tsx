@@ -1,9 +1,9 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, OverlayTrigger, Tooltip } from '@openedx/paragon';
 
-import type { TextField } from '../gameContent';
-import messages from '../messages';
-import type { Card, GameType } from '../types';
+import { imageAlt, imageDisplayUrl, type TextField } from '@src/editors/containers/GamesEditor/gameContent';
+import messages from '@src/editors/containers/GamesEditor/messages';
+import type { Card, GameType } from '@src/editors/containers/GamesEditor/types';
 import PictureIcon from './PictureIcon';
 
 interface PreviewSideProps {
@@ -51,7 +51,7 @@ const PreviewSide = ({ field, text, imageUrl, imageAlt, withImages }: PreviewSid
 };
 
 /** The one-line summary a collapsed card shows in its heading. */
-const CardPreview = ({ card, type }: { card: Card; type: GameType; }) => {
+const CardPreview = ({ card, type, studioEndpointUrl }: { card: Card; type: GameType; studioEndpointUrl: string; }) => {
   const withImages = type === 'flashcards';
   return (
     <div className="preview-block position-relative w-100 mr-2">
@@ -59,15 +59,15 @@ const CardPreview = ({ card, type }: { card: Card; type: GameType; }) => {
         <PreviewSide
           field="term"
           text={card.term}
-          imageUrl={card.term_image}
-          imageAlt={card.term_image_alt}
+          imageUrl={imageDisplayUrl(card.term_image, studioEndpointUrl)}
+          imageAlt={imageAlt(card.term_image_alt, card.term)}
           withImages={withImages}
         />
         <PreviewSide
           field="definition"
           text={card.definition}
-          imageUrl={card.definition_image}
-          imageAlt={card.definition_image_alt}
+          imageUrl={imageDisplayUrl(card.definition_image, studioEndpointUrl)}
+          imageAlt={imageAlt(card.definition_image_alt, card.definition)}
           withImages={withImages}
         />
       </span>

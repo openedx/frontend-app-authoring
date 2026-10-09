@@ -481,37 +481,40 @@ describe('changing the Studio endpoint for the same block', () => {
   });
 });
 
-describe('decorative images', () => {
+describe('images without alt text', () => {
   beforeEach(() => {
     initializeMocks();
     mockedApi.getSettings.mockResolvedValue({
       data: {
         game_type: 'flashcards',
-        cards: [{ term: 't', definition: 'd', term_image: 'http://x/i.png', term_image_alt: '' }],
+        cards: [{ term: 't', definition: 'd', term_image: '/media/i.png', term_image_alt: '' }],
       },
     });
   });
 
-  // An empty alt is how the modal records "decorative". It must reach the
-  // page as alt="", which screen readers skip, not be replaced by a name.
-  // (querySelectorAll, not getByRole: an alt="" image is deliberately absent
-  // from the accessibility tree, which is the point.)
-  it('renders an image saved as decorative with an empty alt', async () => {
+  // The block shows learners the card's text as the alt of an image that has
+  // none; the editor's preview does the same, so what the author sees matches.
+  it('falls back to the card text as the alt of an image with none, as the block does', async () => {
     renderEditor();
     expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
-    const images = document.querySelectorAll('img.card-image, img.img-preview');
-    expect(images.length).toBeGreaterThan(0);
-    images.forEach((img) => expect(img).toHaveAttribute('alt', ''));
-    expect(screen.queryByAltText('Term image')).not.toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 't' })).toBeInTheDocument();
+    expect(screen.queryByText('Term image')).not.toBeInTheDocument();
   });
 
-  // The image-settings trigger wraps the image, and used to take its name
-  // from the image's alt. A decorative image has none, so the trigger needs
-  // a name of its own.
-  it('still names the image-settings trigger when the image is decorative', async () => {
+  // The trigger is named by its own label, not by the image inside it.
+  it('names the image-settings trigger independently of the image', async () => {
     renderEditor();
     expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Image settings' })).toBeInTheDocument();
+  });
+
+  // A relative URL from the block is shown from the block's Studio, but is
+  // stored and saved as it came, so learner content never names the host.
+  it('shows a relative image URL from the Studio host but keeps it relative in the content', async () => {
+    renderEditor();
+    expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 't' })).toHaveAttribute('src', 'http://studio/media/i.png');
+    expect(latestContainerProps().getContent().cards[0].term_image).toBe('/media/i.png');
   });
 });
 
@@ -1888,7 +1891,34 @@ describe('image controls on a card', () => {
     await waitFor(() =>
       expect(latestContainerProps().getContent().cards[0].definition_image_path).toBe('games/abc/new.png')
     );
-    expect(latestContainerProps().getContent().cards[0].definition_image).toBe('http://studio/media/d.png');
+    // The URL is kept as the handler returned it: learner content must not
+    // point at the Studio host. It is made absolute only for display.
+    expect(latestContainerProps().getContent().cards[0].definition_image).toBe('/media/d.png');
+    expect(screen.getByRole('button', { name: 'Image settings' }).querySelector('img'))
+      .toHaveAttribute('src', 'http://studio/media/d.png');
+  });
+
+  // The alt text described the previous picture. A new one must not inherit it.
+  it('clears the alt text when a new image replaces the old one', async () => {
+    mockedApi.getSettings.mockResolvedValue({
+      data: {
+        game_type: 'flashcards',
+        cards: [{
+          term: 'Photosynthesis',
+          definition: 'd',
+          definition_image: '/media/old.png',
+          definition_image_alt: 'old alt',
+        }],
+      },
+    });
+    mockedApi.uploadImage.mockResolvedValue({
+      data: { success: true, url: '/media/new.png', file_path: 'games/abc/new.png' },
+    });
+    renderEditor();
+    await screen.findByDisplayValue('Photosynthesis');
+    pickFile('definition_image_upload|0');
+    await waitFor(() => expect(latestContainerProps().getContent().cards[0].definition_image).toBe('/media/new.png'));
+    expect(latestContainerProps().getContent().cards[0].definition_image_alt).toBe('');
   });
 
   it.each(['{Enter}', ' '])('opens image settings from the keyboard with %j', async (key) => {

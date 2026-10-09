@@ -9,7 +9,7 @@ describe('GameImageSettingsModal', () => {
 
   // The parent mounts it only while an image is being edited, and keys it per
   // image, so it is open whenever it exists and starts from that image.
-  it('is open when mounted and starts as decorative for an image with no alt text', () => {
+  it('is open when mounted and starts empty for an image with no alt text', () => {
     render(
       <GameImageSettingsModal
         imageData={{ url: 'http://x/i.png', altText: '' }}
@@ -18,7 +18,20 @@ describe('GameImageSettingsModal', () => {
       />,
     );
     expect(screen.getByRole('dialog', { name: 'Image Settings' })).toBeInTheDocument();
-    expect(screen.getByLabelText('This image is decorative')).toBeChecked();
+    expect(screen.getByRole('textbox')).toHaveValue('');
+  });
+
+  // The block shows learners the card's text for an image with no alt, so
+  // "decorative" is not a choice the author can make here.
+  it('offers no way to mark an image as decorative', () => {
+    render(
+      <GameImageSettingsModal
+        imageData={{ url: 'http://x/i.png', altText: '' }}
+        close={jest.fn()}
+        onSave={jest.fn()}
+      />,
+    );
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
   });
 
   it('starts with the saved alt text for an image that has one', () => {
@@ -29,7 +42,6 @@ describe('GameImageSettingsModal', () => {
         onSave={jest.fn()}
       />,
     );
-    expect(screen.getByLabelText('This image is decorative')).not.toBeChecked();
     expect(screen.getByDisplayValue('A leaf')).toBeInTheDocument();
   });
 
@@ -42,45 +54,43 @@ describe('GameImageSettingsModal', () => {
       <GameImageSettingsModal imageData={{ url: 'http://x/i.png', altText: 'A leaf' }} close={close} onSave={onSave} />,
     );
     await user.click(screen.getByRole('button', { name: 'Save' }));
-    expect(onSave).toHaveBeenCalledWith({ altText: 'A leaf', isDecorative: false });
+    expect(onSave).toHaveBeenCalledWith({ altText: 'A leaf' });
     expect(close).not.toHaveBeenCalled();
   });
 
-  it('saves typed alt text once the image is no longer marked decorative', async () => {
+  it('saves alt text typed for an image that had none', async () => {
     const user = userEvent.setup();
     const onSave = jest.fn();
     render(
       <GameImageSettingsModal imageData={{ url: 'http://x/i.png', altText: '' }} close={jest.fn()} onSave={onSave} />,
     );
-    await user.click(screen.getByLabelText('This image is decorative'));
     await user.type(screen.getByRole('textbox'), 'A leaf');
     await user.click(screen.getByRole('button', { name: 'Save' }));
-    expect(onSave).toHaveBeenCalledWith({ altText: 'A leaf', isDecorative: false });
+    expect(onSave).toHaveBeenCalledWith({ altText: 'A leaf' });
   });
 
-  it('refuses to save an image with no alt text that is not decorative', async () => {
+  it('refuses to save an image with no alt text', async () => {
     const user = userEvent.setup();
     const onSave = jest.fn();
     render(
       <GameImageSettingsModal
-        imageData={{ url: 'http://x/i.png', altText: 'A leaf' }}
+        imageData={{ url: 'http://x/i.png', altText: '' }}
         close={jest.fn()}
         onSave={onSave}
       />,
     );
-    await user.clear(screen.getByDisplayValue('A leaf'));
     await user.click(screen.getByRole('button', { name: 'Save' }));
     expect(onSave).not.toHaveBeenCalled();
-    expect(screen.getByText('Alt text is required for non-decorative images.')).toBeInTheDocument();
+    expect(screen.getByText('Alt text is required.')).toBeInTheDocument();
 
-    // Typing clears the error, and so does marking the image decorative.
+    // Typing clears the error; blank text brings it back.
     await user.type(screen.getByRole('textbox'), 'x');
-    expect(screen.queryByText('Alt text is required for non-decorative images.')).not.toBeInTheDocument();
+    expect(screen.queryByText('Alt text is required.')).not.toBeInTheDocument();
     await user.clear(screen.getByRole('textbox'));
+    await user.type(screen.getByRole('textbox'), '   ');
     await user.click(screen.getByRole('button', { name: 'Save' }));
-    expect(screen.getByText('Alt text is required for non-decorative images.')).toBeInTheDocument();
-    await user.click(screen.getByLabelText('This image is decorative'));
-    expect(screen.queryByText('Alt text is required for non-decorative images.')).not.toBeInTheDocument();
+    expect(onSave).not.toHaveBeenCalled();
+    expect(screen.getByText('Alt text is required.')).toBeInTheDocument();
   });
 
   it('lets the author dismiss the missing-alt-text error', async () => {
@@ -95,6 +105,6 @@ describe('GameImageSettingsModal', () => {
     await user.clear(screen.getByDisplayValue('A leaf'));
     await user.click(screen.getByRole('button', { name: 'Save' }));
     await user.click(screen.getByRole('button', { name: 'Dismiss' }));
-    expect(screen.queryByText('Alt text is required for non-decorative images.')).not.toBeInTheDocument();
+    expect(screen.queryByText('Alt text is required.')).not.toBeInTheDocument();
   });
 });

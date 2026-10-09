@@ -17,6 +17,23 @@ export type TextField = 'term' | 'definition';
  */
 export const fieldKey = (cardId: string, field: TextField) => `${cardId}_${field}`;
 
+/**
+ * Where to show an image from. The block's upload handler returns a URL
+ * relative to its own Studio (`/media/...`), which is what the card stores and
+ * saves, so learner content never names the Studio host. The editor runs on
+ * a different origin, so it adds the host when it renders.
+ */
+export const imageDisplayUrl = (url: string, studioEndpointUrl: string): string => {
+  if (!url || url.startsWith('http')) { return url; }
+  return `${studioEndpointUrl}${url}`;
+};
+
+/**
+ * The alt the block gives learners: the saved alt text, or the card's own
+ * text when there is none. The editor's preview shows the same.
+ */
+export const imageAlt = (altText: string, cardText: string): string => altText || cardText;
+
 /** The card id a fieldKey was built from. */
 export const cardIdOf = (key: string) => key.slice(0, key.lastIndexOf('_'));
 

@@ -4,9 +4,14 @@ import { Collapsible, Dropdown, Icon, IconButton } from '@openedx/paragon';
 import { ExpandLess, ExpandMore, MoreHoriz } from '@openedx/paragon/icons';
 
 import { SortableItem } from '@src/generic/DraggableList';
-import type { FieldError, TextField } from '../gameContent';
-import messages from '../messages';
-import type { Card, GameType, ImageType } from '../types';
+import {
+  type FieldError,
+  imageAlt,
+  imageDisplayUrl,
+  type TextField,
+} from '@src/editors/containers/GamesEditor/gameContent';
+import messages from '@src/editors/containers/GamesEditor/messages';
+import type { Card, GameType, ImageType } from '@src/editors/containers/GamesEditor/types';
 import CardField from './CardField';
 import { CardImage, CardImageUploadButton } from './CardImage';
 import CardPreview from './CardPreview';
@@ -32,6 +37,8 @@ interface GameCardProps {
   card: Card;
   index: number;
   type: GameType;
+  /** The block's Studio, which its relative image URLs are shown from. */
+  studioEndpointUrl: string;
   errors: Partial<Record<TextField, FieldError>>;
   /** Locks the image settings trigger, which sits outside the disabled fieldset's reach. */
   isSaving: boolean;
@@ -50,6 +57,7 @@ const GameCard = ({
   card,
   index,
   type,
+  studioEndpointUrl,
   errors,
   isSaving,
   onToggle,
@@ -96,8 +104,8 @@ const GameCard = ({
         withImages={withImages}
         image={withImages && imageUrl !== '' && (
           <CardImage
-            url={imageUrl}
-            altText={card[`${name}_image_alt`]}
+            url={imageDisplayUrl(imageUrl, studioEndpointUrl)}
+            altText={imageAlt(card[`${name}_image_alt`], card[name])}
             index={index}
             imageType={name}
             isSaving={isSaving}
@@ -146,7 +154,7 @@ const GameCard = ({
                 {index + 1}
               </div>
               {!card.editorOpen
-                ? <CardPreview card={card} type={type} />
+                ? <CardPreview card={card} type={type} studioEndpointUrl={studioEndpointUrl} />
                 : <div className="d-flex align-self-stretch flex-grow-1" />}
             </div>
           </Collapsible.Trigger>

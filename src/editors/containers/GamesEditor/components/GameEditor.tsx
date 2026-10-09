@@ -18,16 +18,17 @@ import { Info, InfoOutline, Plus } from '@openedx/paragon/icons';
 import EditorContainer from '@src/editors/containers/EditorContainer';
 import Button from '@src/editors/sharedComponents/Button';
 import DraggableList from '@src/generic/DraggableList';
-import type { GameActions } from '../data/useGameState';
+import type { GameActions } from '@src/editors/containers/GamesEditor/data/useGameState';
 import {
   cardIdOf,
   fieldKey,
   getContent,
+  imageDisplayUrl,
   type TextField,
   validateCards,
   type ValidationErrors,
-} from '../gameContent';
-import messages from '../messages';
+} from '@src/editors/containers/GamesEditor/gameContent';
+import messages from '@src/editors/containers/GamesEditor/messages';
 import type {
   BlockEditorProps,
   Card,
@@ -36,7 +37,7 @@ import type {
   ImageData,
   ImageType,
   RequestError,
-} from '../types';
+} from '@src/editors/containers/GamesEditor/types';
 import GameCard from './GameCard';
 import GameImageSettingsModal from './GameImageSettingsModal';
 import SettingsSidebar from './SettingsSidebar';
@@ -57,6 +58,8 @@ export interface GameEditorProps extends ViewActions {
   onSave: () => Promise<unknown>;
   returnFunction?: BlockEditorProps['returnFunction'];
   blockFinished: boolean;
+  /** The block's Studio, which its relative image URLs are shown from. */
+  studioEndpointUrl: string;
   settings: GameSettings;
   type: GameType;
   list: Card[];
@@ -78,6 +81,7 @@ const GameEditor = ({
   onSave,
   returnFunction = null,
   blockFinished,
+  studioEndpointUrl,
 
   settings,
   setShuffleStatus,
@@ -191,11 +195,14 @@ const GameEditor = ({
 
   const openImageSettings = useCallback((card: Card, index: number, imageType: ImageType) => {
     setImageSettings({
-      imageData: { url: card[`${imageType}_image`], altText: card[`${imageType}_image_alt`] || '' },
+      imageData: {
+        url: imageDisplayUrl(card[`${imageType}_image`], studioEndpointUrl),
+        altText: card[`${imageType}_image_alt`] || '',
+      },
       cardIndex: index,
       imageType,
     });
-  }, []);
+  }, [studioEndpointUrl]);
 
   const handleImageSettingsSave = useCallback(({ altText }: { altText: string; }) => {
     // A modal that was already open when Save was clicked must not write
@@ -268,6 +275,7 @@ const GameEditor = ({
               card={card}
               index={index}
               type={type}
+              studioEndpointUrl={studioEndpointUrl}
               errors={{
                 term: validationErrors[fieldKey(card.id, 'term')],
                 definition: validationErrors[fieldKey(card.id, 'definition')],

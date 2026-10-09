@@ -2,8 +2,8 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Icon, IconButton, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 
-import messages from '../messages';
-import type { ImageType } from '../types';
+import messages from '@src/editors/containers/GamesEditor/messages';
+import type { ImageType } from '@src/editors/containers/GamesEditor/types';
 import PictureIcon from './PictureIcon';
 
 interface CardImageProps {
@@ -54,10 +54,6 @@ export const CardImage = ({
           aria-disabled={isSaving}
           onClick={openSettings}
         >
-          {
-            /* An empty alt is the author's "decorative" choice (see
-            GameImageSettingsModal) and must stay empty. */
-          }
           <img
             className="card-image"
             src={url}

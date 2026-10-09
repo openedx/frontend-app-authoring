@@ -176,15 +176,10 @@ const messages = defineMessages({
     defaultMessage: 'Alt text',
     description: 'Label for the image alt-text field.',
   },
-  decorativeAltTextLabel: {
-    id: 'GameEditor.decorativeAltTextLabel',
-    defaultMessage: 'This image is decorative',
-    description: 'Label for the checkbox marking an image as decorative, which needs no alt text.',
-  },
   altTextError: {
     id: 'GameEditor.altTextError',
-    defaultMessage: 'Alt text is required for non-decorative images.',
-    description: 'Error message when alt text is missing.',
+    defaultMessage: 'Alt text is required.',
+    description: 'Error shown in the image settings dialog when the author tries to save an image with no alt text.',
   },
   loadErrorHeading: {
     id: 'GameEditor.loadErrorHeading',

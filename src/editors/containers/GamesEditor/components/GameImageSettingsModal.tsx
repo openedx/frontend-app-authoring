@@ -3,30 +3,27 @@ import { Button, Form, Image } from '@openedx/paragon';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import BaseModal from '@src/editors/sharedComponents/BaseModal';
 import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
-import messages from '../messages';
-import type { ImageData } from '../types';
+import messages from '@src/editors/containers/GamesEditor/messages';
+import type { ImageData } from '@src/editors/containers/GamesEditor/types';
 import './GameImageSettingsModal.scss';
 
 /**
  * Alt-text state for one image. Mounted fresh per image (the parent keys this
  * component), so it starts from that image and needs no re-sync on open. The
  * image editors' shared alt-text hook reads Formik context, which this editor
- * does not use. An empty saved alt text is the "decorative" choice.
+ * does not use.
+ *
+ * There is no "decorative" option: the block shows learners the card's text
+ * as the alt of an image that has none, so an empty alt never reaches them.
  */
 const useAltText = (savedText: string) => {
   const [value, setValue] = React.useState(savedText);
-  const [isDecorative, setIsDecorative] = React.useState(savedText === '');
   const [showError, setShowError] = React.useState(false);
 
   return {
     value,
     setValue: (next: string) => {
       setValue(next);
-      if (next) { setShowError(false); }
-    },
-    isDecorative,
-    setIsDecorative: (next: boolean) => {
-      setIsDecorative(next);
       if (next) { setShowError(false); }
     },
     error: {
@@ -43,7 +40,7 @@ interface Props {
   /** Close without saving (Cancel, the close icon). */
   close: () => void;
   /** Save callback, given the updated alt text. The parent closes the modal. */
-  onSave: (result: { altText: string; isDecorative: boolean; }) => void;
+  onSave: (result: { altText: string; }) => void;
   /** Blocks Save while the editor itself is saving, so a change cannot be lost. */
   isSaveDisabled?: boolean;
 }
@@ -62,15 +59,12 @@ const GameImageSettingsModal = ({
   const altText = useAltText(imageData.altText || '');
 
   const handleSave = () => {
-    if (!altText.isDecorative && !altText.value?.trim()) {
+    if (!altText.value?.trim()) {
       altText.error.set();
       return;
     }
 
-    onSave({
-      altText: altText.isDecorative ? '' : altText.value,
-      isDecorative: altText.isDecorative,
-    });
+    onSave({ altText: altText.value });
   };
 
   return (
@@ -105,20 +99,8 @@ const GameImageSettingsModal = ({
         </div>
         <hr className="h-100 bg-primary-200 m-0 mx-3" />
         <div className="game-img-settings-controls">
-          <Form.Group className="mb-1">
-            <Form.Checkbox
-              checked={altText.isDecorative}
-              className="mt-2.5 decorative-control-label"
-              onChange={(e) => altText.setIsDecorative(e.target.checked)}
-            >
-              <Form.Label>
-                <FormattedMessage {...messages.decorativeAltTextLabel} />
-              </Form.Label>
-            </Form.Checkbox>
-          </Form.Group>
           <Form.Group>
             <Form.Control
-              disabled={altText.isDecorative}
               floatingLabel={intl.formatMessage(messages.altTextLabel)}
               isInvalid={altText.error.show}
               onChange={(e) => altText.setValue(e.target.value)}
