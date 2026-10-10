@@ -4,6 +4,7 @@ import {
   screen,
   initializeMocks,
   fireEvent,
+  within,
   waitFor,
 } from '../../../testUtils';
 import editorCmsApi from '../../data/services/cms/api';
@@ -170,12 +171,14 @@ describe('EditorContainer', () => {
   test('should display an alert when is an error creating a new block', async () => {
     jest.spyOn(hooks, 'createFailed').mockImplementation(() => ({ createFailed: true, createFailedError: 'error' }));
     render(<EditorPage {...{ ...defaultPropsHtml, blockId: '' }} />);
-    expect(await screen.findByText(/There was an error creating the content/i)).toBeInTheDocument();
+    const dialog = await screen.findByRole('dialog');
+    expect(await within(dialog).findByRole('alert')).toHaveTextContent(/There was an error creating the content/i);
   });
   test('should display an alert when is an error saving the changes', async () => {
     jest.spyOn(hooks, 'saveFailed').mockImplementation(() => true);
     render(<EditorPage {...defaultPropsHtml} />);
-    expect(await screen.findByText(/Error: Content save failed. Please check recent changes and try again later./i))
-      .toBeInTheDocument();
+    const dialog = await screen.findByRole('dialog');
+    expect(await within(dialog).findByRole('alert'))
+      .toHaveTextContent(/Error: Content save failed. Please check recent changes and try again later./i);
   });
 });

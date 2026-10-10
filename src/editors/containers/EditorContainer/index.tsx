@@ -3,13 +3,13 @@ import { useDispatch } from 'react-redux';
 
 import {
   ActionRow,
+  Alert,
   Button,
   Icon,
   IconButton,
   ModalDialog,
   Spinner,
   Stack,
-  Toast,
   useToggle,
 } from '@openedx/paragon';
 import { Close, CloseFullscreen, OpenInFull } from '@openedx/paragon/icons';
@@ -122,21 +122,6 @@ const EditorContainer: React.FC<Props> = ({
 
   return (
     <EditorModalWrapper onClose={confirmCancelIfDirty} fullscreen={isFullscreen}>
-      {createFailed && (
-        <Toast show onClose={clearCreateFailed}>
-          {parseErrorMsg(
-            intl,
-            createFailedError,
-            libraryMessages.errorCreateMessageWithDetail,
-            libraryMessages.errorCreateMessage,
-          )}
-        </Toast>
-      )}
-      {saveFailed && (
-        <Toast show onClose={clearSaveFailed}>
-          {intl.formatMessage(messages.contentSaveFailed)}
-        </Toast>
-      )}
       <CancelConfirmModal
         isOpen={isCancelConfirmOpen}
         closeCancelConfirmModal={closeCancelConfirmModal}
@@ -174,6 +159,21 @@ const EditorContainer: React.FC<Props> = ({
         </div>
       </ModalDialog.Header>
       <EditorModalBody>
+        {createFailed && (
+          <Alert variant="danger" dismissible onClose={clearCreateFailed}>
+            {parseErrorMsg(
+              intl,
+              createFailedError,
+              libraryMessages.errorCreateMessageWithDetail,
+              libraryMessages.errorCreateMessage,
+            )}
+          </Alert>
+        )}
+        {saveFailed && (
+          <Alert variant="danger" dismissible onClose={clearSaveFailed}>
+            {intl.formatMessage(messages.contentSaveFailed)}
+          </Alert>
+        )}
         {isInitialized && children}
       </EditorModalBody>
       <FooterWrapper>
