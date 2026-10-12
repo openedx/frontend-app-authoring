@@ -31,7 +31,7 @@ import { XBlockActions } from '@src/data/types';
 import { useUpdateCourseBlockName } from '@src/course-outline/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseUserPermissions } from '@src/authz/hooks';
-import { getTagsPermissions } from '@src/authz/permissionHelpers';
+import { getTagsPermissions, getPagesAndResourcesPermissions } from '@src/authz/permissionHelpers';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
@@ -118,7 +118,11 @@ const CardHeader = ({
     onClickManageTags?.();
   }, [setCurrentPageKey, cardId]);
   const { courseId, canEditCourseContent, canPublishCourseContent } = useCourseAuthoringContext();
-  const { canManageTags } = useCourseUserPermissions(courseId, getTagsPermissions(courseId));
+  const { canManageTags, canManagePagesAndResources } = useCourseUserPermissions(courseId, {
+    ...getTagsPermissions(courseId),
+    ...getPagesAndResourcesPermissions(courseId),
+  });
+
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   // Set true by any Escape keydown handler; checked in handleEditSubmit
   // to prevent blur-after-Escape from saving the dirty titleValue.
@@ -337,7 +341,7 @@ const CardHeader = ({
                 iconAs={Icon}
               />
               <Dropdown.Menu>
-                {isSequential && proctoringExamConfigurationLink && (
+                {isSequential && proctoringExamConfigurationLink && canManagePagesAndResources && (
                   <Dropdown.Item
                     as={Hyperlink}
                     target="_blank"

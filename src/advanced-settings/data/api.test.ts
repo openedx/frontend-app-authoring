@@ -165,73 +165,25 @@ describe('courseSettings API', () => {
   });
 
   describe('getProctoringExamErrors', () => {
-    it('should fetch proctoring errors and return unformat object', async () => {
+    it('should fetch proctoring errors and keep the settings url as a string', async () => {
       const fakeData = {
-        key_snake_case: {
-          display_name: 'To come camelCase',
-          testCamelCase: 'This key must not be formatted',
-          PascalCase: 'To come camelCase',
-          'kebab-case': 'To come camelCase',
-          UPPER_CASE: 'To come camelCase',
-          lowercase: 'This key must not be formatted',
-          UPPERCASE: 'To come lowercase',
-          'Title Case': 'To come camelCase',
-          'dot.case': 'To come camelCase',
-          SCREAMING_SNAKE_CASE: 'To come camelCase',
-          MixedCase: 'To come camelCase',
-          'Train-Case': 'To come camelCase',
-          nestedOption: {
-            anotherOption: 'To come camelCase',
-          },
-          // value is an object with various cases
-          // this contain must not be formatted to camelCase
-          value: {
-            snake_case: 'snake_case',
-            camelCase: 'camelCase',
-            PascalCase: 'PascalCase',
-            'kebab-case': 'kebab-case',
-            UPPER_CASE: 'UPPER_CASE',
-            lowercase: 'lowercase',
-            UPPERCASE: 'UPPERCASE',
-            'Title Case': 'Title Case',
-            'dot.case': 'dot.case',
-            SCREAMING_SNAKE_CASE: 'SCREAMING_SNAKE_CASE',
-            MixedCase: 'MixedCase',
-            'Train-Case': 'Train-Case',
-            nestedOption: {
-              anotherOption: 'nestedContent',
-            },
-          },
-        },
+        mfe_proctored_exam_settings_url: '/course/course-v1:Test+T101+2024/pages-and-resources/proctoring/settings',
+        proctoring_errors: [
+          { key: 'proctoring_provider', message: 'error message', model: { display_name: 'Proctoring Provider' } },
+        ],
       };
-      const expected = {
-        keySnakeCase: {
-          displayName: 'To come camelCase',
-          testCamelCase: 'This key must not be formatted',
-          pascalCase: 'To come camelCase',
-          kebabCase: 'To come camelCase',
-          upperCase: 'To come camelCase',
-          lowercase: 'This key must not be formatted',
-          uppercase: 'To come lowercase',
-          titleCase: 'To come camelCase',
-          dotCase: 'To come camelCase',
-          screamingSnakeCase: 'To come camelCase',
-          mixedCase: 'To come camelCase',
-          trainCase: 'To come camelCase',
-          nestedOption: {
-            anotherOption: 'To come camelCase',
-          },
-          value: fakeData.key_snake_case.value,
-        },
-      };
-
       mockHttpClient.get.mockResolvedValue({ data: fakeData });
 
       const result = await getProctoringExamErrors('course-v1:Test+T101+2024');
       expect(mockHttpClient.get).toHaveBeenCalledWith(
         `${process.env.STUDIO_BASE_URL}/api/contentstore/v1/proctoring_errors/course-v1:Test+T101+2024`,
       );
-      expect(result).toEqual(expected);
+      expect(result).toEqual({
+        mfeProctoredExamSettingsUrl: fakeData.mfe_proctored_exam_settings_url,
+        proctoringErrors: [
+          { key: 'proctoring_provider', message: 'error message', model: { displayName: 'Proctoring Provider' } },
+        ],
+      });
     });
   });
 });

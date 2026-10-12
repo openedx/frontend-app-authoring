@@ -31,6 +31,11 @@ const messages = defineMessages({
     defaultMessage: 'Competency ID: {externalId}',
     description: 'Accessible name for the Competency ID badge, read by screen readers since there is no column header to associate it with.',
   },
+  importCompetencyFrameworkButton: {
+    id: 'course-authoring.competency-management.button.import-framework.label',
+    defaultMessage: 'Import Competency Framework',
+    description: 'Label of the button that opens the competency framework import wizard.',
+  },
 });
 
 export default messages;

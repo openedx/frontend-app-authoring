@@ -9,8 +9,9 @@ import {
   screen,
 } from '@src/testUtils';
 import { advancedSettingsMock } from './__mocks__';
-import { getCourseAdvancedSettingsApiUrl } from './data/api';
+import { getCourseAdvancedSettingsApiUrl, getProctoringErrorsApiUrl } from './data/api';
 import AdvancedSettings from './AdvancedSettings';
+import helpSidebarMessages from '@src/generic/help-sidebar/messages';
 import messages from './messages';
 
 let axiosMock;
@@ -230,5 +231,29 @@ describe('<AdvancedSettings />', () => {
     expect(textarea).toBeDisabled();
     expect(screen.queryByText(messages.buttonSaveText.defaultMessage)).not.toBeInTheDocument();
     expect(screen.queryByText(messages.buttonCancelText.defaultMessage)).not.toBeInTheDocument();
+  });
+
+  it('should render proctoring errors and link to the proctored exam settings page', async () => {
+    const proctoredExamSettingsUrl = `/course/${courseId}/pages-and-resources/proctoring/settings`;
+    axiosMock
+      .onGet(`${getProctoringErrorsApiUrl()}${courseId}`)
+      .reply(200, {
+        mfe_proctored_exam_settings_url: proctoredExamSettingsUrl,
+        proctoring_errors: [
+          { key: 'proctoring_provider', message: 'Invalid provider', model: { display_name: 'Proctoring Provider' } },
+        ],
+      });
+    jest.mocked(useCourseUserPermissions).mockReturnValue({
+      isLoading: false,
+      isAuthzEnabled: false,
+      canViewAdvancedSettings: true,
+      canManageAdvancedSettings: true,
+      canManagePagesAndResources: true,
+    } as ReturnType<typeof useCourseUserPermissions>);
+    render();
+
+    expect(await screen.findByText('Invalid provider')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: helpSidebarMessages.sidebarLinkToProctoredExamSettings.defaultMessage }))
+      .toHaveAttribute('href', proctoredExamSettingsUrl);
   });
 });
