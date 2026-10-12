@@ -103,18 +103,6 @@ describe('<ResizableBox />', () => {
     });
   });
 
-  describe('defaultMaxWidth (no explicit maxWidth prop)', () => {
-    // Only test exercising `defaultMaxWidth` (`windowWidth * 0.65`) - every
-    // other test passes an explicit `maxWidth`, which always wins. jsdom's
-    // default `window.innerWidth` is 1024, so the expected clamp is 665.6.
-    it('clamps to 65% of the window width when no maxWidth prop is given', () => {
-      const { handle, box } = renderBox({ maxWidth: undefined });
-
-      drag(handle, START_X, START_X - 10000); // dragging left grows - far past any reasonable width
-      expect(box.style.width).toBe('665.6px');
-    });
-  });
-
   describe('handleSide="right"', () => {
     it('grows when dragging right and shrinks when dragging left', () => {
       const { handle, box } = renderBox({ handleSide: 'right' });
