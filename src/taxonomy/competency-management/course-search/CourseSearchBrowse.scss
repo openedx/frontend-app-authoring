@@ -112,6 +112,7 @@
 
   &__pagination {
     border-top: 1px solid var(--pgn-color-gray-100);
+    padding-top: var(--pgn-spacing-spacer-1);
   }
 
   // Persistent "Courses & Content" header strip, always the container's
