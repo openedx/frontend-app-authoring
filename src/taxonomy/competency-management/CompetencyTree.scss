@@ -25,6 +25,17 @@
   $hover-border-color: var(--pgn-color-info-200);
   $group-padding: 5px;
 
+  // A fixed height (not just a cap) so `&__container` below can `flex: 1`
+  // into it and the course-search column next to it (which stretches to
+  // match this one - see `../course-search/CourseSearchBrowse.scss`) ends up
+  // the same height in every state. Desktop-only, matching `useIsDesktop()`
+  // in `../associations/CompetencyAssociationsPanel.tsx`.
+  @media (--pgn-size-breakpoint-min-width-lg) {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 260px);
+  }
+
   .competency-row__badge {
     overflow-wrap: anywhere;
     // Figma calls for a small, squared radius, not Paragon's full `pill`
@@ -61,6 +72,15 @@
     border-radius: $border-radius;
     box-shadow: 0 1px 4px $shadow-color;
     padding: 12px 16px;
+
+    // Fills the fixed height set on `.competency-tree` above, scrolling
+    // internally past that instead of growing the page (e.g. on
+    // "Expand All").
+    @media (--pgn-size-breakpoint-min-width-lg) {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+    }
   }
 
   ul {
