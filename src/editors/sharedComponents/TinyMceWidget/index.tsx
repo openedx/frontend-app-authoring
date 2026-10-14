@@ -27,7 +27,7 @@ import * as hooks from './hooks';
 import './customTinyMcePlugins/embedIframePlugin';
 import { isLibraryV1Key } from '../../../generic/key-utils';
 
-export { prepareEditorRef } from './hooks';
+export { useEditorRef } from './hooks';
 
 const editorConfigDefaultProps = {
   setEditorRef: undefined,
