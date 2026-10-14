@@ -39,6 +39,7 @@
   height: 100%;
 
   .competency-row__badge {
+    white-space: normal;
     overflow-wrap: anywhere;
     border-radius: var(--pgn-size-badge-border-radius-base);
 
@@ -152,6 +153,7 @@
   // competency name (its own `<strong>` in the JSX) is bold.
   &__associations-mastery {
     margin-top: 8px;
+    overflow-wrap: anywhere;
     font-size: 15.8px;
     line-height: 24.5px;
     letter-spacing: normal;
