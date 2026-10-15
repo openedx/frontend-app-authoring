@@ -38,7 +38,7 @@ describe('CompareContainersWidget', () => {
     )).not.toBeInTheDocument();
   });
 
-  test('sends downstreamBlockId as the course_id param when reviewing from a course', async () => {
+  test('sends downstreamBlockId as the downstream_block_id param when reviewing from a course', async () => {
     const url = getLibraryContainerApiUrl(mockGetContainerMetadata.sectionId);
     axiosMock.onGet(url).reply(200, { publishedDisplayName: 'Test Title' });
     render(
@@ -50,7 +50,7 @@ describe('CompareContainersWidget', () => {
     await screen.findAllByText('Test Title');
 
     const metadataRequest = axiosMock.history.get.find((request) => request.url === url);
-    expect(metadataRequest?.params).toEqual({ course_id: mockGetCourseContainerChildren.sectionId });
+    expect(metadataRequest?.params).toEqual({ downstream_block_id: mockGetCourseContainerChildren.sectionId });
   });
 
   test('renders loading spinner when data is pending', async () => {

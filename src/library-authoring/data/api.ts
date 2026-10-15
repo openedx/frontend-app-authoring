@@ -187,7 +187,7 @@ export const getLibraryContainerChildrenApiUrl = (containerId: string, published
  * to the upstream resource being requested before granting access.
  */
 const downstreamReviewConfig = (downstreamBlockId?: string) => (
-  downstreamBlockId ? { params: { course_id: downstreamBlockId } } : undefined
+  downstreamBlockId ? { params: { downstream_block_id: downstreamBlockId } } : undefined
 );
 /**
  * Get the URL for a single container hierarchy api.
