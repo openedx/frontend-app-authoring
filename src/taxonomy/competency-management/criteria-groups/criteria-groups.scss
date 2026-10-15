@@ -42,6 +42,13 @@
       border-radius: var(--pgn-size-card-border-radius) var(--pgn-size-card-border-radius) 0 0;
       padding: 10px 12px;
       cursor: pointer;
+      // Anchors `&__select-button`'s `.stretched-link` overlay to this band.
+      position: relative;
+    }
+
+    &__select-button {
+      all: unset;
+      cursor: pointer;
 
       &:focus-visible {
         outline: 2px solid $focused-accent-color;
@@ -65,6 +72,9 @@
       // for a `Dropdown.Toggle` specifically.
       .dropdown-toggle {
         vertical-align: baseline;
+        // Layers above `&__select-button`'s stretched overlay so clicks land here.
+        position: relative;
+        z-index: 1;
       }
     }
 
@@ -80,6 +90,7 @@
 
   .rule-box {
     cursor: pointer;
+    position: relative;
 
     &--focused {
       border-color: $focused-accent-color;
@@ -88,6 +99,16 @@
 
     &__body > * + * {
       margin-top: 8px;
+    }
+
+    &__select-button {
+      all: unset;
+      cursor: pointer;
+
+      &:focus-visible {
+        outline: 2px solid $focused-accent-color;
+        outline-offset: -2px;
+      }
     }
   }
 
@@ -99,6 +120,9 @@
     display: inline-block;
     width: 3.5em;
     text-align: center;
+    // Layers above `.rule-box__select-button`'s stretched overlay so clicks land here.
+    position: relative;
+    z-index: 1;
   }
 
   // Each chip's own truncation - a long subsection name shows an ellipsis

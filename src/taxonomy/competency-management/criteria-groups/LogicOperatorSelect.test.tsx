@@ -46,12 +46,6 @@ describe('<LogicOperatorSelect />', () => {
       fireEvent.click(screen.getByText('any'));
       expect(onChange).toHaveBeenCalledWith('OR');
 
-      // A rejected save never updates `group.logicOperator` - simulated
-      // here by re-rendering with `value` unchanged, exactly what the real
-      // caller does when the mutation's `onError` fires and no local
-      // rollback of its own is needed (see this component's own docstring).
-      // The trigger itself (`.dropdown-toggle`, not the still-mounted-but-
-      // hidden menu items) is checked directly, since Paragon's `Dropdown`
       // keeps its closed menu's items in the DOM rather than removing them.
       rerender(<LogicOperatorSelect value="AND" labels={labels} onChange={onChange} />);
 

@@ -11,11 +11,6 @@ import messages from './messages';
 export interface CriteriaGroupBoxProps {
   group: BottomTierCompetencyCriteriaGroup;
   subsectionNamesByUsageKey: Record<string, string>;
-  /** Whether the signed-in author can edit this group's own any/all logic
-   * and its rule boxes' scores - resolved once by `CourseGroupSection` via
-   * `canEditCourse(courseGroup.courseKey)` and threaded down as a plain
-   * prop, rather than re-derived here from `index`.
-   */
   canEdit: boolean;
 }
 
@@ -49,22 +44,9 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
     }
   }, [isFocused, focusedRuleKey]);
 
-  const handleClick: React.MouseEventHandler = () => {
-    focusGroup(group.id);
-  };
-
-  const handleKeyDown: React.KeyboardEventHandler = (event) => {
-    // Only this wrapper's own key events, not ones bubbled up from the
-    // any/all dropdown once `canEdit` is true - otherwise this handler's
-    // `preventDefault` would swallow the dropdown's own Enter/Space.
-    if (event.target !== event.currentTarget) {
-      return;
-    }
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      focusGroup(group.id);
-    }
-  };
+  const operatorLabel = group.logicOperator === 'AND'
+    ? intl.formatMessage(messages.logicOperatorAllLabel)
+    : intl.formatMessage(messages.logicOperatorAnyLabel);
 
   return (
     // Focus/scroll state lives on this wrapping `<div>`, not `Card` itself:
@@ -76,22 +58,23 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
       className={classNames('criteria-group-box', { 'criteria-group-box--focused': isFocused })}
     >
       <Card>
-        {
-          /* No `role="button"`: once `canEdit` is true, `LogicOperatorSelect`
-          * renders a real `<button>` (the `Dropdown` trigger) inside this
-          * element, and ARIA disallows interactive content inside a
-          * `button`-role element. `tabIndex`/`onClick`/`onKeyDown` stay, so
-          * clicking or Tab+Enter/Space still selects this group;
-          * `aria-current` (not `aria-pressed`, which ARIA restricts to the
-          * `button` role) marks whether this group is currently selected. */
-        }
-        <div
-          className="criteria-group-box__header"
-          tabIndex={0}
-          aria-current={isFocused}
-          onClick={handleClick}
-          onKeyDown={handleKeyDown}
-        >
+        <div className="criteria-group-box__header">
+          {
+            /* `.stretched-link` (Bootstrap/Paragon utility) makes the whole
+          * header band clickable via this button's own `::after`, without
+          * nesting the dropdown toggle below inside a `button`-role
+          * ancestor - ARIA disallows interactive content inside one. */
+          }
+          <button
+            type="button"
+            className="stretched-link criteria-group-box__select-button"
+            aria-current={isFocused}
+            onClick={() => focusGroup(group.id)}
+          >
+            <span className="sr-only">
+              {intl.formatMessage(messages.criteriaGroupBoxLabel, { operator: operatorLabel })}
+            </span>
+          </button>
           {intl.formatMessage(messages.criteriaGroupBoxLabel, {
             operator: (
               <LogicOperatorSelect
