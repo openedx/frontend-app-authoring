@@ -60,9 +60,6 @@ export interface CriteriaFocus {
 }
 
 export interface CompetencyAssociationsContextValue {
-  /** Both start unset (`null`); see `CriteriaFocus` above for why the pair
-   * is always written together.
-   */
   focus: CriteriaFocus | null;
   /** Focuses a group and its last real rule box (`lastRealRuleKeyIn`). A
    * no-op when `groupId` is already focused, so re-clicking the group
@@ -82,19 +79,12 @@ export interface CompetencyAssociationsContextValue {
    * active competency.
    */
   associateSubsection: (objectId: string, courseId: string) => void;
-  /** Updates a bottom-tier group's any/all combining logic (`#760`). A
-   * rejected save is a no-op besides a failure toast: `group.logicOperator`
-   * is only ever written by the next successful `groupsQuery` refetch.
+  /** Updates a bottom-tier group's any/all combining logic (`#760`); a
+   * rejected save is a no-op besides a failure toast.
    */
   updateGroupOperator: (groupId: number, logicOperator: CompetencyGroupLogicOperator) => void;
-  /** Updates a rule box's score threshold, across every criterion listed in
-   * `criterionIds` (`#759`). The rule type is pinned to the box's current
-   * effective rule, resolved here rather than accepted from the caller,
-   * since only the numeric value is user-editable. On success, repairs
-   * focus using the mutation's own response rather than the request, since
-   * a "reset to default" edit can be echoed back differently than it was
-   * sent. Returns a `Promise` (not `void`) so `ScoreThresholdField` can
-   * revert its own local input on rejection, without owning the mutation.
+  /** Updates a rule box's score threshold across every criterion listed in
+   * `criterionIds` (`#759`), deriving the new focus key from the response.
    */
   updateRuleScore: (groupId: number, criterionIds: number[], rulePayload: GradeRulePayload) => Promise<void>;
   /**
@@ -405,16 +395,18 @@ export const CompetencyAssociationsProvider = ({
     rulePayload: GradeRulePayload,
   ): Promise<void> => {
     if (!index || !systemDefaultProfile) {
-      // Shouldn't happen: a rule box is only ever rendered - let alone made
-      // editable - once both queries have resolved.
-      return Promise.resolve();
+      // Defensive TypeScript-narrowing guard, not an expected runtime path: a rule box is only
+      // ever rendered - let alone made editable - once both queries have resolved.
+      throw new Error('updateRuleScore called before the groups index and system default profile were loaded.');
     }
     // Rule type is pinned to the box's current effective rule, resolved
     // from any one criterion already in it (they all share it, by definition).
     const groupCriteria = index.criteriaByGroupId.get(groupId) ?? [];
     const anchorCriterion = groupCriteria.find((criterion) => criterionIds.includes(criterion.id));
     if (!anchorCriterion) {
-      return Promise.resolve();
+      // Defensive guard, not an expected runtime path: `criterionIds` always comes from this
+      // same group's own rendered rule box.
+      throw new Error(`updateRuleScore: no criterion in group ${groupId} matched the given criterionIds.`);
     }
     const { ruleType } = effectiveRuleOf(anchorCriterion, systemDefaultProfile);
 

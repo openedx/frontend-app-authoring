@@ -47,12 +47,12 @@ describe('<ScoreThresholdField />', () => {
   });
 
   describe('editable (onChange given)', () => {
-    const rulePayload = { op: 'gte' as const, value: 0.7, scale: 'percent' as const };
+    const rulePayload70Percent = { op: 'gte' as const, value: 0.7, scale: 'percent' as const };
 
     it('commits the typed percent, as a fraction, on Enter - op/scale pinned unchanged', async () => {
       const user = userEvent.setup();
       const onChange = jest.fn().mockResolvedValue(undefined);
-      render(<ScoreThresholdField rulePayload={rulePayload} onChange={onChange} />);
+      render(<ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />);
 
       const input = screen.getByRole('textbox');
       await user.clear(input);
@@ -67,7 +67,7 @@ describe('<ScoreThresholdField />', () => {
       const onChange = jest.fn().mockResolvedValue(undefined);
       render(
         <>
-          <ScoreThresholdField rulePayload={rulePayload} onChange={onChange} />
+          <ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />
           <button type="button">elsewhere</button>
         </>,
       );
@@ -83,7 +83,7 @@ describe('<ScoreThresholdField />', () => {
     it('Escape reverts the input to the last-persisted value without committing', async () => {
       const user = userEvent.setup();
       const onChange = jest.fn().mockResolvedValue(undefined);
-      render(<ScoreThresholdField rulePayload={rulePayload} onChange={onChange} />);
+      render(<ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />);
 
       const input = screen.getByRole('textbox');
       await user.clear(input);
@@ -97,7 +97,7 @@ describe('<ScoreThresholdField />', () => {
     it('reverts the input to the prop value when the commit is rejected', async () => {
       const user = userEvent.setup();
       const onChange = jest.fn().mockRejectedValue(new Error('save failed'));
-      render(<ScoreThresholdField rulePayload={rulePayload} onChange={onChange} />);
+      render(<ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />);
 
       const input = screen.getByRole('textbox');
       await user.clear(input);
@@ -118,7 +118,7 @@ describe('<ScoreThresholdField />', () => {
       );
       render(
         <>
-          <ScoreThresholdField rulePayload={rulePayload} onChange={onChange} />
+          <ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />
           <button type="button">elsewhere</button>
         </>,
       );
@@ -144,7 +144,7 @@ describe('<ScoreThresholdField />', () => {
       const getInlineValidationMessage = jest.fn().mockReturnValue('Duplicate score.');
       render(
         <ScoreThresholdField
-          rulePayload={rulePayload}
+          rulePayload={rulePayload70Percent}
           onChange={onChange}
           getInlineValidationMessage={getInlineValidationMessage}
         />,
@@ -165,7 +165,7 @@ describe('<ScoreThresholdField />', () => {
       const onChange = jest.fn().mockResolvedValue(undefined);
       render(
         <>
-          <ScoreThresholdField rulePayload={rulePayload} onChange={onChange} />
+          <ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />
           <button type="button">elsewhere</button>
         </>,
       );
@@ -180,7 +180,7 @@ describe('<ScoreThresholdField />', () => {
     it('does not call onChange when the typed value round-trips to the same displayed percent', async () => {
       const user = userEvent.setup();
       const onChange = jest.fn().mockResolvedValue(undefined);
-      render(<ScoreThresholdField rulePayload={rulePayload} onChange={onChange} />);
+      render(<ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />);
 
       const input = screen.getByRole('textbox');
       await user.clear(input);
@@ -193,7 +193,7 @@ describe('<ScoreThresholdField />', () => {
     it('reverts, rather than committing 0%, when the input is cleared entirely', async () => {
       const user = userEvent.setup();
       const onChange = jest.fn().mockResolvedValue(undefined);
-      render(<ScoreThresholdField rulePayload={rulePayload} onChange={onChange} />);
+      render(<ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />);
 
       const input = screen.getByRole('textbox');
       await user.clear(input);
@@ -201,6 +201,48 @@ describe('<ScoreThresholdField />', () => {
 
       expect(onChange).not.toHaveBeenCalled();
       expect(input).toHaveValue('70');
+    });
+
+    it('blocks the commit and shows the range message for a value above 100', async () => {
+      const user = userEvent.setup();
+      const onChange = jest.fn().mockResolvedValue(undefined);
+      render(<ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />);
+
+      const input = screen.getByRole('textbox');
+      await user.clear(input);
+      await user.type(input, '150');
+      await user.keyboard('{Enter}');
+
+      expect(onChange).not.toHaveBeenCalled();
+      expect(screen.getByText('Enter a whole number from 0 to 100.')).toBeInTheDocument();
+    });
+
+    it('blocks the commit and shows the range message for a negative value', async () => {
+      const user = userEvent.setup();
+      const onChange = jest.fn().mockResolvedValue(undefined);
+      render(<ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />);
+
+      const input = screen.getByRole('textbox');
+      await user.clear(input);
+      await user.type(input, '-5');
+      await user.keyboard('{Enter}');
+
+      expect(onChange).not.toHaveBeenCalled();
+      expect(screen.getByText('Enter a whole number from 0 to 100.')).toBeInTheDocument();
+    });
+
+    it('blocks the commit and shows the range message for a decimal value', async () => {
+      const user = userEvent.setup();
+      const onChange = jest.fn().mockResolvedValue(undefined);
+      render(<ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />);
+
+      const input = screen.getByRole('textbox');
+      await user.clear(input);
+      await user.type(input, '85.5');
+      await user.keyboard('{Enter}');
+
+      expect(onChange).not.toHaveBeenCalled();
+      expect(screen.getByText('Enter a whole number from 0 to 100.')).toBeInTheDocument();
     });
   });
 });

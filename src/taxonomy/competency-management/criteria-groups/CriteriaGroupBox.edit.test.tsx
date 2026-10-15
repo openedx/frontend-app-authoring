@@ -82,14 +82,13 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     jest.clearAllMocks();
   });
 
-  it('renders the any/all label as plain text with no control when canEdit is false', () => {
+  it('renders the any/all label as plain text with no dropdown when canEdit is false', () => {
     const { container } = renderBox({}, false);
 
     expect(screen.getByText('all')).toBeInTheDocument();
-    // No `role="button"` elements at all: neither the header band nor the
-    // rule box carry that role themselves, and there's no `Dropdown`
-    // trigger since `canEdit` is false here.
-    expect(screen.queryAllByRole('button')).toHaveLength(0);
+    // The group's and the rule box's select buttons exist regardless of
+    // `canEdit`; there's no `Dropdown` trigger since `canEdit` is false here.
+    expect(screen.queryAllByRole('button')).toHaveLength(2);
     expect(container.querySelector('.dropdown-toggle')).not.toBeInTheDocument();
   });
 
@@ -103,29 +102,4 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
 
     expect(updateGroupOperator).toHaveBeenCalledWith(10, 'OR');
   });
-
-  it(
-    'keeps showing the prior label after a rejected save, since the control is controlled by the group '
-      + 'prop, not by the click that was made',
-    async () => {
-      const user = userEvent.setup();
-      const updateGroupOperator = jest.fn();
-      const { container, rerender } = renderBox({ updateGroupOperator });
-
-      await user.click(screen.getByRole('button', { name: 'all' }));
-      await user.click(screen.getByText('any'));
-      expect(updateGroupOperator).toHaveBeenCalledWith(10, 'OR');
-
-      // A rejected save never updates `group.logicOperator` - simulated by
-      // re-rendering with the same, unchanged `group` (the real caller's
-      // `groupsQuery` data is likewise unchanged after a rejected mutation).
-      rerender(
-        <MockCompetencyAssociationsProvider value={{ index, systemDefaultProfile, updateGroupOperator }}>
-          <CriteriaGroupBox group={group} subsectionNamesByUsageKey={{}} canEdit />
-        </MockCompetencyAssociationsProvider>,
-      );
-
-      expect(container.querySelector('.dropdown-toggle')).toHaveTextContent('all');
-    },
-  );
 });

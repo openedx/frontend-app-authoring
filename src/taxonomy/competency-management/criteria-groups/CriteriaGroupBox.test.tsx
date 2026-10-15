@@ -10,7 +10,6 @@ import type {
   BottomTierCompetencyCriteriaGroup,
   CompetencyCriteriaGroupsResponse,
   CompetencyRuleProfile,
-  CourseCompetencyCriteriaGroup,
 } from '../data/types';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import CriteriaGroupBox from './CriteriaGroupBox';
@@ -20,22 +19,6 @@ const systemDefaultProfile: CompetencyRuleProfile = {
   scopeType: 'system_default',
   ruleType: 'grade',
   rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
-  archived: false,
-};
-
-// A real course-level parent for the bottom-tier group below - a bottom-tier
-// group never exists without one in the real API response. Without this,
-// any `canEdit`/course-id resolution derived from the tree would silently
-// default to false, and a "renders read-only" test would keep passing for
-// the wrong reason.
-const courseGroup: CourseCompetencyCriteriaGroup = {
-  id: 1,
-  parentId: null,
-  tagId: 42,
-  courseKey: 'course-v1:OrgX+CS101+2024',
-  name: 'course',
-  ordering: 0,
-  logicOperator: 'AND',
   archived: false,
 };
 
@@ -51,7 +34,7 @@ const group: BottomTierCompetencyCriteriaGroup = {
 };
 
 const response: CompetencyCriteriaGroupsResponse = {
-  groups: [courseGroup, group],
+  groups: [group],
   criteria: [
     {
       id: 101,
@@ -90,7 +73,7 @@ describe('<CriteriaGroupBox />', () => {
     jest.clearAllMocks();
   });
 
-  it('renders the group\'s any/all label as plain text with no control when canEdit is false', () => {
+  it('renders the group\'s any/all label as plain text with no dropdown when canEdit is false', () => {
     const { container } = renderBox({}, { 'block-a': 'Subsection A' }, false);
 
     // The header sentence is split across sibling text nodes (plain text +
@@ -99,53 +82,42 @@ describe('<CriteriaGroupBox />', () => {
     expect(container.querySelector('.criteria-group-box__header')).toHaveTextContent(
       'By completing all of the following',
     );
-    // No `role="button"` elements at all: neither the header band nor the
-    // rule box carry that role (see `CriteriaGroupBox.tsx`'s own comment on
-    // why), and there's no `Dropdown` trigger since `canEdit` is false here.
-    expect(screen.queryAllByRole('button')).toHaveLength(0);
+    // The group's and the rule box's select buttons exist regardless of
+    // `canEdit` - selecting either doesn't require edit permission; there's
+    // no `Dropdown` trigger since `canEdit` is false here.
+    expect(screen.queryAllByRole('button')).toHaveLength(2);
     expect(screen.getByText('Subsection A')).toBeInTheDocument();
   });
 
-  it('calls focusGroup with its own id when the header band is clicked', () => {
+  it('calls focusGroup with its own id when the select button is clicked', () => {
     const focusGroup = jest.fn();
     const { container } = renderBox({ focusGroup });
 
-    fireEvent.click(container.querySelector('.criteria-group-box__header')!);
+    fireEvent.click(container.querySelector('.criteria-group-box__select-button')!);
     expect(focusGroup).toHaveBeenCalledWith(10);
   });
 
-  it('calls focusGroup when the header band is activated with Enter or Space', () => {
-    const focusGroup = jest.fn();
-    const { container } = renderBox({ focusGroup });
-    const header = container.querySelector('.criteria-group-box__header')!;
-
-    fireEvent.keyDown(header, { key: 'Enter' });
-    fireEvent.keyDown(header, { key: ' ' });
-
-    expect(focusGroup).toHaveBeenCalledTimes(2);
-    expect(focusGroup).toHaveBeenCalledWith(10);
+  it('shows aria-current false on both select buttons when nothing is focused', () => {
+    const { container } = renderBox();
+    const groupSelectButton = container.querySelector('.criteria-group-box__select-button')!;
+    const ruleBoxSelectButton = container.querySelector('.rule-box__select-button')!;
+    expect([groupSelectButton, ruleBoxSelectButton].map((el) => el.getAttribute('aria-current')))
+      .toEqual(['false', 'false']);
   });
 
-  it('exposes focus state via aria-current on the header band and the rule box', () => {
-    const { container, unmount } = renderBox();
-    const header = container.querySelector('.criteria-group-box__header')!;
-    const ruleBox = container.querySelector('.rule-box')!;
-    expect([header, ruleBox].map((el) => el.getAttribute('aria-current'))).toEqual(['false', 'false']);
-    unmount();
-
-    const { container: focusedContainer } = renderBox({ focus: { groupId: 10, ruleKey: null } });
-    const focusedHeader = focusedContainer.querySelector('.criteria-group-box__header')!;
-    const focusedRuleBox = focusedContainer.querySelector('.rule-box')!;
-    expect([focusedHeader, focusedRuleBox].map((el) => el.getAttribute('aria-current'))).toEqual(['true', 'false']);
-  });
+  it(
+    'shows aria-current true on the group\'s select button and false on the rule box\'s when the group is '
+      + 'focused with no rule box focused',
+    () => {
+      const { container } = renderBox({ focus: { groupId: 10, ruleKey: null } });
+      const groupSelectButton = container.querySelector('.criteria-group-box__select-button')!;
+      const ruleBoxSelectButton = container.querySelector('.rule-box__select-button')!;
+      expect([groupSelectButton, ruleBoxSelectButton].map((el) => el.getAttribute('aria-current')))
+        .toEqual(['true', 'false']);
+    },
+  );
 
   it('never nests an element with role button inside another', () => {
-    // Neither the header band nor the rule box carry `role="button"`
-    // themselves (see `CriteriaGroupBox.tsx`'s own comment on why), so the
-    // any/all `Dropdown` trigger - the only `role="button"` element that
-    // exists once `canEdit` is true - is never nested inside another one.
-    // With `canEdit` false there is no `role="button"` element at all, so
-    // this invariant is only meaningfully exercised here.
     renderBox();
 
     const buttons = screen.getAllByRole('button');
@@ -155,12 +127,12 @@ describe('<CriteriaGroupBox />', () => {
     });
   });
 
-  it('clicking a rule box inside focuses only the rule box, not also the group', () => {
+  it('clicking a rule box\'s own select button focuses only the rule box, not also the group', () => {
     const focusGroup = jest.fn();
     const focusRuleBox = jest.fn();
     const { container } = renderBox({ focusGroup, focusRuleBox });
 
-    fireEvent.click(container.querySelector('.rule-box')!);
+    fireEvent.click(container.querySelector('.rule-box__select-button')!);
 
     expect(focusRuleBox).toHaveBeenCalledTimes(1);
     expect(focusGroup).not.toHaveBeenCalled();

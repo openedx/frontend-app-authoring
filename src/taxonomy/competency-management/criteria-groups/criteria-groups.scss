@@ -91,6 +91,13 @@
       line-height: 1.75rem;
       color: var(--pgn-color-gray-700);
       cursor: pointer;
+      // Anchors `&__select-button`'s `.stretched-link` overlay to this band.
+      position: relative;
+    }
+
+    &__select-button {
+      all: unset;
+      cursor: pointer;
 
       &:focus-visible {
         outline: 2px solid var(--pgn-color-info-600);
@@ -115,6 +122,9 @@
       // for a `Dropdown.Toggle` specifically.
       .dropdown-toggle {
         vertical-align: baseline;
+        // Layers above `&__select-button`'s stretched overlay so clicks land here.
+        position: relative;
+        z-index: 1;
       }
     }
 
@@ -137,12 +147,23 @@
     border-radius: var(--pgn-size-border-radius-base);
     background-color: var(--pgn-color-white);
     cursor: pointer;
+    position: relative;
 
     &--focused {
       padding-left: var(--pgn-spacing-spacer-1-5);
       border-left: 6px solid var(--pgn-color-info-400);
       background-color: var(--pgn-color-info-100);
       box-shadow: var(--pgn-elevation-box-shadow-centered-2);
+    }
+
+    &__select-button {
+      all: unset;
+      cursor: pointer;
+
+      &:focus-visible {
+        outline: 2px solid var(--pgn-color-info-400);
+        outline-offset: -2px;
+      }
     }
   }
 
@@ -174,6 +195,9 @@
     display: inline-block;
     width: 3.5em;
     text-align: center;
+    // Layers above `.rule-box__select-button`'s stretched overlay so clicks land here.
+    position: relative;
+    z-index: 1;
   }
 
   // Each chip's own truncation - a long subsection name shows an ellipsis

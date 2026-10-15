@@ -10,11 +10,6 @@ export interface RuleBoxListProps {
   index: CompetencyCriteriaGroupsIndex;
   systemDefaultProfile: CompetencyRuleProfile;
   subsectionNamesByUsageKey: Record<string, string>;
-  /** Threaded down from `CriteriaGroupBox` (originally resolved by
-   * `CourseGroupSection` via `canEditCourse`) - see `CriteriaGroupBoxProps.canEdit`.
-   * Optional, defaulting to `false`, so every caller that predates this prop
-   * keeps working unchanged.
-   */
   canEdit?: boolean;
 }
 
@@ -23,11 +18,6 @@ export interface RuleBoxListProps {
  * from `CompetencyAssociationsContext` directly (given `groupId` and its
  * own box key to compare against), so no focus state is threaded through
  * here.
- *
- * Also builds each box's own `getInlineValidationMessage` (the
- * duplicate-score check) here, using `boxes`/`index`/`systemDefaultProfile`,
- * which this component already has - `RuleBox` takes no new data dependency
- * for it.
  */
 const RuleBoxList = ({
   groupId,
@@ -39,9 +29,8 @@ const RuleBoxList = ({
   const intl = useIntl();
   const boxes = ruleBoxesForGroup(groupId, index, systemDefaultProfile);
 
-  // Compares rounded percent + rule type + op, not `ruleKeyOf`'s raw string
-  // key (built from a raw fraction, which risks a formatting mismatch that
-  // silently never fires). Excludes the box being edited by its own `key`.
+  // Compares rounded percent + rule type + op (not `ruleKeyOf`'s raw key, which risks a
+  // formatting-mismatch false negative); excludes the box being edited by its own `key`.
   const getInlineValidationMessage = (candidateBox: RuleBoxData) => (value: string): string => {
     const candidatePercent = Math.round(Number(value));
     const isDuplicate = boxes.some((other) => (

@@ -98,6 +98,18 @@ const messages = defineMessages({
       + 'value would exactly duplicate another rule box\'s own score, rule type, and comparison in the same '
       + 'group.',
   },
+  scoreThresholdRangeValidationMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.score-threshold-range-validation-message',
+    defaultMessage: 'Enter a whole number from 0 to 100.',
+    description: 'Inline validation message shown while editing a rule box\'s score threshold, when the typed '
+      + 'value is not a whole number from 0 to 100.',
+  },
+  selectRuleBoxButtonLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.select-rule-box-button-label',
+    defaultMessage: 'Select this rule',
+    description: 'Visually hidden accessible label for the button that selects a rule box, stretched to cover '
+      + 'the whole box - the box has no single short visible phrase of its own to reuse as this label.',
+  },
 });
 
 export default messages;

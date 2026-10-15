@@ -15,9 +15,6 @@ export interface LogicOperatorSelectProps {
    * control serves both contexts with different wording.
    */
   labels: LogicOperatorSelectLabels;
-  /** Omitted where only the value is read: renders plain, non-interactive
-   * text in that case. Passing it renders the interactive control instead.
-   */
   onChange?: (value: CompetencyGroupLogicOperator) => void;
   className?: string;
 }
