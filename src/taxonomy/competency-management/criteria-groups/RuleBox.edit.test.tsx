@@ -95,12 +95,14 @@ describe('<RuleBox /> editing (#794)', () => {
     await waitFor(() => expect(input).toHaveValue('70'));
   });
 
-  it('focuses the rule box when the score input is focused', async () => {
+  it('focuses the rule box when its select button is clicked, not when the score input is', async () => {
     const focusRuleBox = jest.fn();
     renderRuleBox({ focusRuleBox }, { canEdit: true });
 
     await user.click(screen.getByRole('textbox'));
+    expect(focusRuleBox).not.toHaveBeenCalled();
 
+    await user.click(screen.getByRole('button', { name: 'Select this rule' }));
     expect(focusRuleBox).toHaveBeenCalledWith(10, 'grade:gte:0.7:percent');
   });
 });

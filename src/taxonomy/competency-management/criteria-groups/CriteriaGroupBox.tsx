@@ -45,6 +45,11 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
     }
   }, [isFocused, hasFocusedBox]);
 
+  const sentenceLabel = intl.formatMessage(messages.criteriaGroupBoxLabel, {
+    operator: group.logicOperator === 'AND'
+      ? intl.formatMessage(messages.logicOperatorAllLabel)
+      : intl.formatMessage(messages.logicOperatorAnyLabel),
+  });
   const sentence = intl.formatMessage(messages.criteriaGroupBoxLabel, {
     operator: (
       <LogicOperatorSelect
@@ -67,14 +72,16 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
     >
       {canEdit
         ? (
-          // Not a `<button>`: it would nest the operator dropdown's own button.
-          // Focus anywhere inside the header, including the dropdown toggle, focuses the group.
-          <div
-            className="criteria-group-box__header"
-            aria-current={isFocused}
-            onClick={() => focusGroup(group.id)}
-            onFocus={() => focusGroup(group.id)}
-          >
+          // The operator dropdown is a button, so the select control is a sibling laid over the band.
+          <div className="criteria-group-box__header">
+            <button
+              type="button"
+              className="criteria-group-box__select-button"
+              aria-current={isFocused}
+              onClick={() => focusGroup(group.id)}
+            >
+              <span className="sr-only">{sentenceLabel}</span>
+            </button>
             {sentence}
           </div>
         )

@@ -95,17 +95,18 @@ export const useUpdateCompetencyCriteriaGroupOperator = () => {
         logicOperator: CompetencyGroupLogicOperator;
       },
     ) => api.updateCompetencyCriteriaGroupOperator(tagId, groupId, logicOperator),
-    onSuccess: (_data, { tagId }) => {
-      queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
-    },
+    onSuccess: (_data, { tagId }) =>
+      queryClient.invalidateQueries({
+        queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId),
+      }),
   });
 };
 
 /**
  * Build the mutation to batch-update a rule box's score threshold (`#759`).
- * Invalidates that competency's criteria-groups query on success. `tagId`
- * is only used for that invalidation - the endpoint's own URL isn't nested
- * under a competency.
+ * Invalidates that competency's criteria-groups query on success so the new score shows up
+ * without a manual refetch. `tagId` is only used for that invalidation - the endpoint's own
+ * URL isn't nested under a competency.
  */
 export const useUpdateCompetencyCriteriaRule = () => {
   const queryClient = useQueryClient();
@@ -123,9 +124,10 @@ export const useUpdateCompetencyCriteriaRule = () => {
         rulePayload: GradeRulePayload;
       },
     ) => api.updateCompetencyCriteriaRule(groupId, criterionIds, ruleType, rulePayload),
-    onSuccess: (_data, { tagId }) => {
-      queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
-    },
+    onSuccess: (_data, { tagId }) =>
+      queryClient.invalidateQueries({
+        queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId),
+      }),
   });
 };
 

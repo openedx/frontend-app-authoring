@@ -67,11 +67,13 @@ const renderPanel = (rows: Course[] = [courseBRow]) =>
     </CompetencyAssociationsProvider>,
   );
 
-// The author can edit these courses, so a header and a rule box are divs around the editable controls, not buttons.
-const groupHeaders = () => Array.from(document.querySelectorAll<HTMLElement>('.criteria-group-box__header'));
-const ruleBoxControls = () => Array.from(document.querySelectorAll<HTMLElement>('.rule-box__control'));
+// The author can edit these courses, so each header and rule box has an empty select button beside its editable control.
+const groupHeaders = () => Array.from(document.querySelectorAll<HTMLElement>('.criteria-group-box__select-button'));
+const ruleBoxControls = () => Array.from(document.querySelectorAll<HTMLElement>('.rule-box__select-button'));
 const ruleBoxWithScore = (percent: string) => {
-  const control = ruleBoxControls().find((candidate) => within(candidate).queryByDisplayValue(percent));
+  const control = ruleBoxControls().find((candidate) => (
+    within(candidate.closest<HTMLElement>('.rule-box')!).queryByDisplayValue(percent)
+  ));
   if (!control) {
     throw new Error(`No rule box with a score of ${percent}`);
   }
