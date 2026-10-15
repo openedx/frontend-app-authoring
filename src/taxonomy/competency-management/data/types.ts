@@ -166,13 +166,8 @@ export interface CreateCompetencyCriterionPayload {
  */
 export type CreateCompetencyCriterionResponse = Omit<CompetencyCriterion, 'objectId'> & { objectTagId: number; };
 
-/** Request body for updating a bottom-tier group's any/all combining logic
- * (`#760`). `logic_operator` is the only field, so this is just
- * `CompetencyGroupLogicOperator` under its own wire key - named separately
- * from `CompetencyGroupLogicOperator` itself for symmetry with
- * `CreateCompetencyCriterionPayload`/`UpdateCompetencyCriteriaRulePayload`,
- * the other request-body types in this file.
- */
+/** Request body for updating a bottom-tier group's any/all combining logic (`#760`): just
+ * `logic_operator`, under its own wire key. */
 export interface UpdateCompetencyCriteriaGroupPayload {
   logic_operator: CompetencyGroupLogicOperator;
 }

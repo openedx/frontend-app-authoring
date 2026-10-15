@@ -1,4 +1,9 @@
-import { initializeMocks, render } from '@src/testUtils';
+import {
+  initializeMocks,
+  render,
+  screen,
+  userEvent,
+} from '@src/testUtils';
 import { MockCompetencyAssociationsProvider } from '../testHelpers';
 import type { CompetencyCriteriaGroupsResponse, CompetencyRuleProfile } from '../data/types';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
@@ -82,8 +87,6 @@ describe('<RuleBoxList />', () => {
       </MockCompetencyAssociationsProvider>,
     );
 
-    // Queried by class, not `getAllByRole('button')`: a rule box has no
-    // `role="button"` (see `RuleBox.tsx`'s own comment on why).
     const boxes = container.querySelectorAll('.rule-box');
     expect(boxes).toHaveLength(2);
     // Box 1 (min criterion id 101) holds both Subsection A and B.
@@ -133,6 +136,84 @@ describe('<RuleBoxList />', () => {
 
     container.querySelectorAll('.rule-box').forEach((box) => {
       expect(box.className).not.toContain('rule-box--focused');
+    });
+  });
+
+  describe('duplicate-score validation (real getInlineValidationMessage, not mocked)', () => {
+    const duplicateCheckResponse: CompetencyCriteriaGroupsResponse = {
+      groups: [
+        {
+          id: 10,
+          parentId: null,
+          tagId: 42,
+          courseKey: null,
+          name: 'leaf',
+          ordering: 0,
+          logicOperator: 'AND',
+          archived: false,
+        },
+      ],
+      criteria: [
+        {
+          id: 201,
+          objectId: 'block-x',
+          groupId: 10,
+          ruleProfileId: null,
+          ruleTypeOverride: 'grade',
+          rulePayloadOverride: { op: 'gte', value: 0.6, scale: 'percent' },
+        },
+        {
+          id: 202,
+          objectId: 'block-y',
+          groupId: 10,
+          ruleProfileId: null,
+          ruleTypeOverride: 'grade',
+          rulePayloadOverride: { op: 'gte', value: 0.8, scale: 'percent' },
+        },
+      ],
+    };
+
+    const renderEditableBoxes = (updateRuleScore: jest.Mock) => {
+      const index = buildCompetencyCriteriaGroupsIndex(duplicateCheckResponse);
+      return render(
+        <MockCompetencyAssociationsProvider value={{ updateRuleScore }}>
+          <RuleBoxList
+            groupId={10}
+            index={index}
+            systemDefaultProfile={systemDefaultProfile}
+            subsectionNamesByUsageKey={{}}
+            canEdit
+          />
+        </MockCompetencyAssociationsProvider>,
+      );
+    };
+
+    it('refuses to save a score that would duplicate another box\'s own rule in the same group', async () => {
+      const user = userEvent.setup();
+      const updateRuleScore = jest.fn().mockResolvedValue(undefined);
+      renderEditableBoxes(updateRuleScore);
+
+      const [firstBoxInput] = screen.getAllByRole('textbox');
+      await user.clear(firstBoxInput);
+      await user.type(firstBoxInput, '80');
+      await user.keyboard('{Enter}');
+
+      expect(updateRuleScore).not.toHaveBeenCalled();
+      expect(screen.getByText('Another rule box in this group already uses this score.')).toBeInTheDocument();
+    });
+
+    it('does not treat retyping a box\'s own current score as a duplicate of itself', async () => {
+      const user = userEvent.setup();
+      const updateRuleScore = jest.fn().mockResolvedValue(undefined);
+      renderEditableBoxes(updateRuleScore);
+
+      const [firstBoxInput] = screen.getAllByRole('textbox');
+      await user.clear(firstBoxInput);
+      await user.type(firstBoxInput, '60');
+      await user.keyboard('{Enter}');
+
+      expect(updateRuleScore).not.toHaveBeenCalled();
+      expect(screen.queryByText('Another rule box in this group already uses this score.')).not.toBeInTheDocument();
     });
   });
 });

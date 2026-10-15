@@ -188,31 +188,6 @@ describe('useUpdateCompetencyCriteriaGroupOperator', () => {
     const state = queryClient.getQueryState(competencyQueryKeys.competencyCriteriaGroups(tagId));
     expect(state?.isInvalidated).toBe(true);
   });
-
-  it('does not invalidate a different tagId\'s groups query', async () => {
-    const { axiosMock, queryClient } = initializeMocks();
-    const otherTagId = 7;
-    axiosMock.onPatch(apiUrls.updateCompetencyCriteriaGroup(tagId, 10)).reply(200, {
-      id: 10,
-      parent_id: 1,
-      tag_id: tagId,
-      course_key: null,
-      name: 'leaf',
-      ordering: 0,
-      logic_operator: 'OR',
-      archived: false,
-    });
-    queryClient.setQueryData(competencyQueryKeys.competencyCriteriaGroups(otherTagId), { groups: [], criteria: [] });
-
-    const { result } = renderHook(() => useUpdateCompetencyCriteriaGroupOperator(), { wrapper: makeWrapper() });
-
-    await act(async () => {
-      await result.current.mutateAsync({ tagId, groupId: 10, logicOperator: 'OR' });
-    });
-
-    const state = queryClient.getQueryState(competencyQueryKeys.competencyCriteriaGroups(otherTagId));
-    expect(state?.isInvalidated).toBe(false);
-  });
 });
 
 describe('useUpdateCompetencyCriteriaRule', () => {

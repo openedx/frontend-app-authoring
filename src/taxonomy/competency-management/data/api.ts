@@ -48,9 +48,7 @@ export const apiUrls = {
   createCompetencyCriterion: (tagId: number) => makeUrl(`${tagId}/criteria/`),
   /** PATCH: update a bottom-tier group's any/all combining logic. Backs `#760`. */
   updateCompetencyCriteriaGroup: (tagId: number, groupId: number) => makeUrl(`${tagId}/criteria-groups/${groupId}/`),
-  /** PATCH: batch-update a rule box's score across every criterion sharing it. Backs `#759` -
-   * not nested under `competencies/<tagId>/`, so built with `makeCbeV1Url` instead of `makeUrl`.
-   */
+  /** PATCH: batch-update a rule box's score across every criterion sharing it. Backs `#759`. */
   updateCompetencyCriteriaRule: (groupId: number) => makeCbeV1Url(`criteria-groups/${groupId}/criteria/bulk-update/`),
 } satisfies Record<string, (...args: any[]) => string>;
 
@@ -130,9 +128,7 @@ export async function updateCompetencyCriteriaGroupOperator(
  * @param ruleType The rule box's own rule type, pinned unchanged - only the
  * numeric value is user-editable (`#794`'s own scope).
  * @param rulePayload The new score threshold, applied to every listed criterion.
- * @returns The updated criteria as actually persisted - the caller derives
- * the box's new focus key from this, not from the request, since a "reset
- * to default" edit may echo back a profile reference instead.
+ * @returns The updated criteria as actually persisted.
  */
 export async function updateCompetencyCriteriaRule(
   groupId: number,
