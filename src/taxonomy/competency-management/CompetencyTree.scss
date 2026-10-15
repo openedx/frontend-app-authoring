@@ -36,7 +36,15 @@
     height: calc(100vh - 260px);
   }
 
+  .competency-row__label {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
   .competency-row__badge {
+    // Paragon's `.badge` sets `nowrap`, which otherwise cancels
+    // `overflow-wrap` for a long Competency ID.
+    white-space: normal;
     overflow-wrap: anywhere;
     // Figma calls for a small, squared radius, not Paragon's full `pill`
     // shape.
@@ -112,6 +120,8 @@
     padding-left: 5px;
 
     .btn-icon-sm {
+      // Keeps a wrapping label from squeezing the chevron's hit area.
+      flex-shrink: 0;
       // `content-box` makes `width`/`height` define the glyph only, so the
       // padding below grows the hit box without shrinking the glyph.
       box-sizing: content-box;
