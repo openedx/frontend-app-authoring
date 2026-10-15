@@ -133,7 +133,7 @@ describe('competency-management api calls', () => {
     });
   });
 
-  it('updates a group\'s operator, sending and returning it unchanged (already uppercase on the wire)', async () => {
+  it('updates a group\'s operator at its URL, sending a snake_case body and camelCasing the response', async () => {
     const { axiosMock } = initializeMocks();
     axiosMock.onPatch(apiUrls.updateCompetencyCriteriaGroup(tagId, 10)).reply(200, {
       id: 10,
@@ -162,7 +162,7 @@ describe('competency-management api calls', () => {
     });
   });
 
-  it('batch-updates a rule box\'s score, sending a snake_case payload and camelCasing the response', async () => {
+  it('batch-updates a rule box\'s score at its URL, sending a snake_case payload and camelCasing the response', async () => {
     const { axiosMock } = initializeMocks();
     const groupId = 10;
     axiosMock.onPatch(apiUrls.updateCompetencyCriteriaRule(groupId)).reply(200, [

@@ -106,6 +106,21 @@
       line-height: 1.75rem;
       text-align: start;
       cursor: pointer;
+      // Anchors `&__select-button` to this band.
+      position: relative;
+
+      &:focus-visible {
+        outline: 2px solid var(--pgn-color-info-600);
+        outline-offset: 2px;
+      }
+    }
+
+    // The editable variant: an empty control covering the band, under the operator dropdown.
+    &__select-button {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
 
       &:focus-visible {
         outline: 2px solid var(--pgn-color-info-600);
@@ -122,6 +137,9 @@
 
       .dropdown-toggle {
         vertical-align: baseline;
+        // Layers above `&__select-button` so clicks land here.
+        position: relative;
+        z-index: 1;
       }
     }
 
@@ -159,6 +177,20 @@
       }
     }
 
+    // The editable variant: an empty control covering the box, under the score input.
+    &__select-button {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      border-radius: var(--pgn-size-border-radius-base);
+      cursor: pointer;
+
+      &:focus-visible {
+        outline: 2px solid var(--pgn-color-info-600);
+        outline-offset: 2px;
+      }
+    }
+
     &--focused {
       padding-left: var(--pgn-spacing-spacer-1-5);
       border-left: 6px solid var(--pgn-color-info-400);
@@ -188,6 +220,9 @@
     display: inline-block;
     width: 3.5em;
     text-align: center;
+    // Layers above `.rule-box__select-button` so clicks land here.
+    position: relative;
+    z-index: 1;
   }
 
   // `max-width` makes Paragon's own label truncation apply.

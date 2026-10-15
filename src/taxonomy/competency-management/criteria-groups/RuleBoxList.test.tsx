@@ -1,4 +1,10 @@
-import { initializeMocks, render, screen, within } from '@src/testUtils';
+import {
+  initializeMocks,
+  render,
+  screen,
+  userEvent,
+  within,
+} from '@src/testUtils';
 import {
   criterion,
   group,
@@ -99,6 +105,65 @@ describe('<RuleBoxList />', () => {
 
     screen.getAllByRole('button').forEach((control) => {
       expect(control).toHaveAttribute('aria-current', 'false');
+    });
+  });
+
+  describe('duplicate-score validation', () => {
+    // Boxes: gte 60 (criteria 201) and gte 80 (criteria 202).
+    const duplicateCheckResponse: CompetencyCriteriaGroupsResponse = {
+      groups: [group(10, null, null, 0)],
+      criteria: [
+        criterion(201, 'block-x', 10, {
+          ruleProfileId: null,
+          ruleTypeOverride: 'grade',
+          rulePayloadOverride: { op: 'gte', value: 0.6, scale: 'percent' },
+        }),
+        criterion(202, 'block-y', 10, {
+          ruleProfileId: null,
+          ruleTypeOverride: 'grade',
+          rulePayloadOverride: { op: 'gte', value: 0.8, scale: 'percent' },
+        }),
+      ],
+    };
+    const editableBoxes = ruleBoxesForGroup(
+      10,
+      buildCompetencyCriteriaGroupsIndex(duplicateCheckResponse),
+      systemDefaultProfile,
+    );
+
+    const renderEditableList = (updateRuleScore: jest.Mock) =>
+      render(
+        <MockCompetencyAssociationsProvider value={{ updateRuleScore }}>
+          <RuleBoxList groupId={10} boxes={editableBoxes} subsectionNamesByUsageKey={{}} canEdit />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+    const typeInFirstBox = async (score: string) => {
+      const user = userEvent.setup();
+      const [firstBoxInput] = screen.getAllByRole('textbox');
+      await user.clear(firstBoxInput);
+      await user.type(firstBoxInput, score);
+      await user.keyboard('{Enter}');
+    };
+
+    it('refuses to save a score that duplicates another box\'s rule in the same group', async () => {
+      const updateRuleScore = jest.fn().mockResolvedValue(undefined);
+      renderEditableList(updateRuleScore);
+
+      await typeInFirstBox('80');
+
+      expect(updateRuleScore).not.toHaveBeenCalled();
+      expect(screen.getByText('Another rule box in this group already uses this score.')).toBeInTheDocument();
+    });
+
+    it('does not treat retyping a box\'s own score as a duplicate of itself', async () => {
+      const updateRuleScore = jest.fn().mockResolvedValue(undefined);
+      renderEditableList(updateRuleScore);
+
+      await typeInFirstBox('60');
+
+      expect(updateRuleScore).not.toHaveBeenCalled();
+      expect(screen.queryByText('Another rule box in this group already uses this score.')).not.toBeInTheDocument();
     });
   });
 });

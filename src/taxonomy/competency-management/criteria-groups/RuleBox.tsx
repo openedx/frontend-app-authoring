@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Stack } from '@openedx/paragon';
 import classNames from 'classnames';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import type { CompetencyCriterion, EffectiveRule, GradeRulePayload } from '../data/types';
 import CriterionChipList from './CriterionChipList';
 import ScoreThresholdField from './ScoreThresholdField';
+import messages from './messages';
 
 export interface RuleBoxProps {
   groupId: number;
@@ -28,6 +30,7 @@ const RuleBox = ({
   canEdit = false,
   getInlineValidationMessage,
 }: RuleBoxProps) => {
+  const intl = useIntl();
   const { focus, focusRuleBox, updateRuleScore } = useCompetencyAssociations();
   const isFocused = focus?.groupId === groupId && focus?.ruleKey === ruleKey;
   const ref = useRef<HTMLDivElement>(null);
@@ -50,19 +53,22 @@ const RuleBox = ({
     >
       {canEdit
         ? (
-          // Not a `<button>`: it would nest the score input. Focus anywhere inside the box focuses it.
-          <div
-            className="rule-box__control"
-            aria-current={isFocused}
-            onClick={() => focusRuleBox(groupId, ruleKey)}
-            onFocus={() => focusRuleBox(groupId, ruleKey)}
-          >
+          <>
+            {/* The score input is a control, so the select button is a sibling laid under it. */}
+            <button
+              type="button"
+              className="rule-box__select-button"
+              aria-current={isFocused}
+              onClick={() => focusRuleBox(groupId, ruleKey)}
+            >
+              <span className="sr-only">{intl.formatMessage(messages.selectRuleBoxButtonLabel)}</span>
+            </button>
             <ScoreThresholdField
               rulePayload={rule.rulePayload}
               onChange={handleScoreChange}
               getInlineValidationMessage={getInlineValidationMessage}
             />
-          </div>
+          </>
         )
         : (
           <button

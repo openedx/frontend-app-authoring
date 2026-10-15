@@ -46,17 +46,22 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     expect(updateGroupOperator).toHaveBeenCalledWith(10, 'AND');
   });
 
-  it('focuses the group when the header is clicked or focused', async () => {
+  it('focuses the group when its select button is clicked', async () => {
     const focusGroup = jest.fn();
     renderBox({ focusGroup });
 
-    await user.click(screen.getByText(/By completing/));
-    expect(focusGroup).toHaveBeenCalledWith(10);
+    await user.click(screen.getByRole('button', { name: 'By completing any of the following' }));
 
-    focusGroup.mockClear();
-    await user.tab();
-    expect(screen.getByRole('button', { name: 'any' })).toHaveFocus();
     expect(focusGroup).toHaveBeenCalledWith(10);
+  });
+
+  it('does not focus the group when the operator dropdown is used', async () => {
+    const focusGroup = jest.fn();
+    renderBox({ focusGroup });
+
+    await user.click(screen.getByRole('button', { name: 'any' }));
+
+    expect(focusGroup).not.toHaveBeenCalled();
   });
 
   it('never nests a button inside another', () => {

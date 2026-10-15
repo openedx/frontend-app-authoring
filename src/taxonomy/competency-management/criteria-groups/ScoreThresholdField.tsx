@@ -11,7 +11,7 @@ export interface ScoreThresholdFieldProps {
    * reverts the input; the mutation itself lives in `CompetencyAssociationsContext`.
    */
   onChange?: (rulePayload: GradeRulePayload) => Promise<void>;
-  /** Per-keystroke, display-only message. A non-empty result also blocks the commit. */
+  /** Called when saving. A non-empty result blocks the save and is shown inline. */
   getInlineValidationMessage?: (value: string) => string;
 }
 
@@ -29,7 +29,7 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
   // remounts the box via `RuleBoxList`'s `key`. A rejected edit keeps the key, so it reverts explicitly.
   const [inputValue, setInputValue] = useState(() => percentOf(rulePayload));
   const [validationMessage, setValidationMessage] = useState('');
-  // A ref, so a blur fired by the same Enter keypress sees it before React re-renders. Keeps a second commit
+  // A ref, so a blur fired by the same Enter keypress sees it before React re-renders. Keeps a second save
   // from racing the first, whose response could otherwise land out of order.
   const saveInFlight = useRef(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -39,7 +39,7 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
     setValidationMessage('');
   };
 
-  const commit = async () => {
+  const saveScoreIfChanged = async () => {
     if (!onChange || saveInFlight.current) {
       return;
     }
@@ -47,6 +47,10 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
     const numericPercent = Number(trimmedInput);
     if (trimmedInput === '' || !Number.isFinite(numericPercent)) {
       revertToLastPersisted();
+      return;
+    }
+    if (!Number.isInteger(numericPercent) || numericPercent < 0 || numericPercent > 100) {
+      setValidationMessage(intl.formatMessage(messages.scoreThresholdRangeValidationMessage));
       return;
     }
     if (numericPercent === Math.round(rulePayload.value * 100)) {
@@ -74,12 +78,10 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      void commit();
+      void saveScoreIfChanged();
     } else if (event.key === 'Escape') {
       revertToLastPersisted();
     }
-    // Keeps the wrapping `RuleBox`'s Enter/Space handler from firing while typing.
-    event.stopPropagation();
   };
 
   // `rulePayload.value` is a 0.0-1.0 fraction (openedx-core ADR 0002), not a 0-100 percentage.
@@ -99,9 +101,8 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
           onChange={(event) => setInputValue(event.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={() => {
-            void commit();
+            void saveScoreIfChanged();
           }}
-          onClick={(event: React.MouseEvent) => event.stopPropagation()}
         />
         %
       </>

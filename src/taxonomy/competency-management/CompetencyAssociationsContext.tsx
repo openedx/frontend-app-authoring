@@ -536,13 +536,16 @@ export const CompetencyAssociationsProvider = ({
     rulePayload: GradeRulePayload,
   ): Promise<void> => {
     if (!groupsIndex || !systemDefaultProfile) {
-      return Promise.resolve();
+      // A rule box is only editable once both queries have resolved, so this is a narrowing guard.
+      throw new Error('updateRuleScore called before the groups index and system default profile were loaded.');
     }
     // Every criterion in a rule box shares its effective rule, so any one of them gives the rule type.
     const anchorCriterion = (groupsIndex.criteriaByGroupId.get(groupId) ?? [])
       .find((criterion) => criterionIds.includes(criterion.id));
     if (!anchorCriterion) {
-      return Promise.resolve();
+      // Defensive guard, not an expected runtime path: `criterionIds` always comes from this
+      // same group's own rendered rule box.
+      throw new Error(`updateRuleScore: no criterion in group ${groupId} matched the given criterionIds.`);
     }
     const { ruleType } = effectiveRuleOf(anchorCriterion, systemDefaultProfile);
 
