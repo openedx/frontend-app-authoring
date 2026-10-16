@@ -130,6 +130,7 @@ describe('<CardHeader />', () => {
     expect(await screen.findByText(cardHeaderProps.title)).toBeInTheDocument();
     expect(await screen.findByTestId('subsection-card-header__expanded-btn')).toBeInTheDocument();
     expect(await screen.findByTestId('subsection-card-header__menu')).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: `Actions for ${cardHeaderProps.title}` })).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.queryByTestId('edit field')).not.toBeInTheDocument();
     });
@@ -572,7 +573,7 @@ describe('<CardHeader />', () => {
     renderComponent();
 
     // Wait until the permissions have resolved and the menu is available.
-    const menuButton = await screen.findByRole('button', { name: 'subsection-card-header__menu' });
+    const menuButton = await screen.findByRole('button', { name: `Actions for ${cardHeaderProps.title}` });
 
     // Tag count is not rendered
     expect(screen.queryByText('17')).not.toBeInTheDocument();
