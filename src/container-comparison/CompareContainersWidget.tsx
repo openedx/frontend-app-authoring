@@ -71,12 +71,16 @@ const CompareContainersWidgetInner = ({
     data: libData,
     isError: isLibError,
     error: libError,
-  } = useContainerChildren<Container | LibraryBlockMetadata>(state === 'removed' ? undefined : upstreamBlockId, true);
+  } = useContainerChildren<Container | LibraryBlockMetadata>(
+    state === 'removed' ? undefined : upstreamBlockId,
+    true,
+    downstreamBlockId,
+  );
   const {
     data: containerData,
     isError: isContainerTitleError,
     error: containerTitleError,
-  } = useContainer(upstreamBlockId);
+  } = useContainer(upstreamBlockId, downstreamBlockId);
 
   const result = useMemo(() => {
     if ((!data || !libData) && !['added', 'removed'].includes(state || '')) {
