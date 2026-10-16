@@ -14,7 +14,8 @@ import { mockContentSearchConfig } from '@src/search-manager/data/api.mock';
 import { type ToastActionData } from '@src/generic/toast-context';
 import { libraryBlockChangesUrl } from '@src/course-unit/data/api';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { useCourseUserPermissions } from '@src/authz/hooks';
+import { validateUserPermissions } from '@src/authz/data/api';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { CourseLibraries } from './CourseLibraries';
 import {
   mockGetEntityLinks,
@@ -32,6 +33,7 @@ const searchParamsGetMock = jest.fn();
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string, action?: ToastActionData) => void;
 let queryClient: QueryClient;
+let validateUserPermissionsMock: jest.SpiedFunction<typeof validateUserPermissions>;
 
 jest.mock('../studio-home/hooks', () => ({
   useStudioHome: () => ({
@@ -49,25 +51,23 @@ jest.mock('react-router-dom', () => ({
   }],
 }));
 
-jest.mock('@src/authz/hooks', () => ({
-  useCourseUserPermissions: jest.fn(),
-}));
-
 const mockPermissions = (overrides = {}) =>
-  jest.mocked(useCourseUserPermissions).mockReturnValue({
-    isLoading: false,
-    isAuthzEnabled: true,
+  validateUserPermissionsMock.mockResolvedValue({
+    canViewLibraryUpdates: true,
     canManageLibraryUpdates: true,
+    canViewLibrary: true,
     ...overrides,
-  } as ReturnType<typeof useCourseUserPermissions>);
+  });
 
 describe('<CourseLibraries />', () => {
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
     fetchMock.mockReset();
     mockFetchIndexDocuments.applyMock();
     localStorage.clear();
     searchParamsGetMock.mockReturnValue('all');
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
     mockPermissions();
   });
 
@@ -93,15 +93,16 @@ describe('<CourseLibraries />', () => {
     expect(emptyMsg).toBeInTheDocument();
   });
 
-  it('shows PermissionDeniedAlert when user lacks manage library updates permission', async () => {
-    mockPermissions({ canManageLibraryUpdates: false });
+  it('shows PermissionDeniedAlert when user lacks view library updates permission', async () => {
+    mockPermissions({ canViewLibraryUpdates: false });
     await renderCourseLibrariesPage();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
     expect(screen.queryByText('Libraries')).not.toBeInTheDocument();
   });
 
   it('shows a loading spinner while permissions are loading', async () => {
-    mockPermissions({ isLoading: true, canManageLibraryUpdates: false });
+    // The permissions request never resolves, so they stay loading.
+    validateUserPermissionsMock.mockReturnValue(new Promise(() => {}));
     await renderCourseLibrariesPage();
     expect(await screen.findByRole('status')).toBeInTheDocument();
     expect(screen.queryByTestId('permissionDeniedAlert')).not.toBeInTheDocument();
@@ -206,6 +207,55 @@ describe('<CourseLibraries />', () => {
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
+
+  it('shows the read only out of sync alert when user lacks manage permission', async () => {
+    const user = userEvent.setup();
+    mockPermissions({ canViewLibraryUpdates: true, canManageLibraryUpdates: false });
+    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    const allTab = await screen.findByRole('tab', { name: 'Libraries' });
+    await user.click(allTab);
+    const alert = await screen.findByRole('alert');
+    expect(
+      await within(alert).findByText(
+        '7 library components are out of sync. Review updates to see what changed',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(alert).queryByText(
+        '7 library components are out of sync. Review updates to accept or ignore changes',
+      ),
+    ).not.toBeInTheDocument();
+  });
+
+  it('does not show Review Updates button when user lacks manage permission', async () => {
+    const user = userEvent.setup();
+    mockPermissions({ canViewLibraryUpdates: true, canManageLibraryUpdates: false });
+    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    const allTab = await screen.findByRole('tab', { name: 'Libraries' });
+    await user.click(allTab);
+    expect(screen.queryByRole('button', { name: 'Review Updates' })).not.toBeInTheDocument();
+  });
+
+  it('shows a View Library link on each card when the user can view the library', async () => {
+    const user = userEvent.setup();
+    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    await user.click(await screen.findByRole('tab', { name: 'Libraries' }));
+
+    const links = await screen.findAllByRole('link', { name: 'View Library' });
+    expect(links.length).toEqual(3);
+    expect(links[0]).toHaveAttribute('href', expect.stringContaining('library/lib:OpenedX:CSPROB3'));
+  });
+
+  it('does not show the View Library link when user lacks view library permission', async () => {
+    const user = userEvent.setup();
+    mockPermissions({ canViewLibrary: false });
+    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    await user.click(await screen.findByRole('tab', { name: 'Libraries' }));
+
+    // The libraries are still listed, they just don't link to the library.
+    expect(await screen.findByText('CS problems 3')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'View Library' })).not.toBeInTheDocument();
+  });
 });
 
 describe('<CourseLibraries ReviewTab />', () => {
@@ -218,6 +268,9 @@ describe('<CourseLibraries ReviewTab />', () => {
     localStorage.clear();
     searchParamsGetMock.mockReturnValue('review');
     queryClient = mocks.queryClient;
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    mockPermissions();
   });
 
   const renderCourseLibrariesReviewPage = async (courseKey?: string) => {
@@ -248,6 +301,39 @@ describe('<CourseLibraries ReviewTab />', () => {
     expect(updateBtns.length).toEqual(7);
     const ignoreBtns = await screen.findAllByRole('button', { name: 'Ignore' });
     expect(ignoreBtns.length).toEqual(7);
+  });
+
+  it('hides update and ignore buttons when user lacks manage permission', async () => {
+    mockPermissions({ canViewLibraryUpdates: true, canManageLibraryUpdates: false });
+    await renderCourseLibrariesReviewPage();
+
+    const updateBtns = screen.queryAllByRole('button', { name: 'Update' });
+    expect(updateBtns.length).toEqual(0);
+    const ignoreBtns = screen.queryAllByRole('button', { name: 'Ignore' });
+    expect(ignoreBtns.length).toEqual(0);
+
+    const reviewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
+    expect(reviewBtns.length).toEqual(7);
+  });
+
+  it('disables accept and ignore changes buttons in preview modal for read-only users', async () => {
+    const user = userEvent.setup();
+    mockPermissions({ canViewLibraryUpdates: true, canManageLibraryUpdates: false });
+    await renderCourseLibrariesReviewPage();
+    const readOnlyMessage =
+      'Your role doesn\'t include permission to do this. Contact your org admin to request access';
+
+    const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
+    expect(previewBtns.length).toEqual(7);
+    await user.click(previewBtns[0]);
+    const dialog = await screen.findByRole('dialog');
+    const acceptBtn = await within(dialog).findByRole('button', { name: 'Accept changes' });
+    expect(acceptBtn).toHaveAttribute('aria-disabled', 'true');
+    const ignoreBtn = await within(dialog).findByRole('button', { name: 'Ignore changes' });
+    expect(ignoreBtn).toBeDisabled();
+
+    await user.hover(acceptBtn.closest('span') ?? acceptBtn);
+    expect(await screen.findByText(readOnlyMessage)).toBeInTheDocument();
   });
 
   test.each([

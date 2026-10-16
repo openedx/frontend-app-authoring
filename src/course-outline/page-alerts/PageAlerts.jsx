@@ -24,7 +24,11 @@ import advancedSettingsMessages from '@src/advanced-settings/messages';
 import { OutOfSyncAlert } from '@src/course-libraries/OutOfSyncAlert';
 import { RequestStatus } from '@src/data/constants';
 import { useCourseUserPermissions } from '@src/authz/hooks';
-import { getAdvancedSettingsPermissions, getPagesAndResourcesPermissions } from '@src/authz/permissionHelpers';
+import {
+  getAdvancedSettingsPermissions,
+  getPagesAndResourcesPermissions,
+  getLibraryUpdatesPermissions,
+} from '@src/authz/permissionHelpers';
 import { API_ERROR_TYPES } from '../constants';
 
 import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
@@ -56,9 +60,15 @@ const PageAlerts = ({
   const { data: pasteFileNotices, setData: setPasteFileNotices } = usePasteFileNotices(courseId);
   const [showOutOfSyncAlert, setShowOutOfSyncAlert] = useState(false);
   const navigate = useNavigate();
-  const { canManagePagesAndResources, canManageAdvancedSettings } = useCourseUserPermissions(courseId, {
+  const {
+    isLoading: isLoadingUserPermissions,
+    canManagePagesAndResources,
+    canManageAdvancedSettings,
+    canManageLibraryUpdates,
+  } = useCourseUserPermissions(courseId, {
     ...getPagesAndResourcesPermissions(courseId),
     ...getAdvancedSettingsPermissions(courseId),
+    ...getLibraryUpdatesPermissions(courseId),
   });
 
   const getAssetsUrl = () => {
@@ -441,14 +451,21 @@ const PageAlerts = ({
     );
   };
 
-  const renderOutOfSyncAlert = () => (
-    <OutOfSyncAlert
-      courseId={courseId}
-      onReview={() => navigate(`/course/${courseId}/libraries?tab=review`)}
-      showAlert={showOutOfSyncAlert}
-      setShowAlert={setShowOutOfSyncAlert}
-    />
-  );
+  const renderOutOfSyncAlert = () => {
+    // Wait for the permissions so the alert doesn't flash the read-only message first.
+    if (isLoadingUserPermissions) {
+      return null;
+    }
+    return (
+      <OutOfSyncAlert
+        courseId={courseId}
+        onReview={() => navigate(`/course/${courseId}/libraries?tab=review`)}
+        showAlert={showOutOfSyncAlert}
+        setShowAlert={setShowOutOfSyncAlert}
+        readOnly={!canManageLibraryUpdates}
+      />
+    );
+  };
 
   return (
     <>

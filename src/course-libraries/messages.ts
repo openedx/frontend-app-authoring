@@ -61,6 +61,11 @@ const messages = defineMessages({
     defaultMessage: '{outOfSyncCount, plural, one {# library component is} other {# library components are}} out of sync. Review updates to accept or ignore changes',
     description: 'Alert message shown when library components are out of sync',
   },
+  outOfSyncCountAlertTitleReadOnly: {
+    id: 'course-authoring.course-libraries.libcard.out-of-sync.alert.title.read-only',
+    defaultMessage: '{outOfSyncCount, plural, one {# library component is} other {# library components are}} out of sync. Review updates to see what changed',
+    description: 'Alert message shown when library components are out of sync and the user can only view, not manage, library updates',
+  },
   reviewUpdatesBtn: {
     id: 'course-authoring.course-libraries.libcard.review-updates.btn.text',
     defaultMessage: 'Review Updates',
