@@ -411,10 +411,10 @@ export const useLibraryPasteClipboard = () => {
   });
 };
 
-export const useLibraryBlockMetadata = (usageId: string | undefined) => (
+export const useLibraryBlockMetadata = (usageId: string | undefined, downstreamBlockId?: string) => (
   useQuery({
     queryKey: xblockQueryKeys.componentMetadata(usageId!),
-    queryFn: () => api.getLibraryBlockMetadata(usageId!),
+    queryFn: () => api.getLibraryBlockMetadata(usageId!, downstreamBlockId),
     enabled: !!usageId,
   })
 );

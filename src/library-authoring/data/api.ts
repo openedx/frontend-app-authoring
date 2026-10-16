@@ -603,8 +603,14 @@ export async function libraryPasteClipboard({
 /**
  * Fetch library block metadata.
  */
-export async function getLibraryBlockMetadata(usageKey: string): Promise<LibraryBlockMetadata> {
-  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockMetadataUrl(usageKey));
+export async function getLibraryBlockMetadata(
+  usageKey: string,
+  downstreamBlockId?: string,
+): Promise<LibraryBlockMetadata> {
+  const { data } = await getAuthenticatedHttpClient().get(
+    getLibraryBlockMetadataUrl(usageKey),
+    downstreamReviewConfig(downstreamBlockId),
+  );
   return camelCaseObject(data);
 }
 
