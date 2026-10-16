@@ -61,5 +61,17 @@ describe('TitleHeader', () => {
       expect(editable).toBeInTheDocument();
       expect(editable).toHaveDisplayValue('TeST LocALtitLE');
     });
+
+    test('disables the edit button while editing is locked', () => {
+      render(<TitleHeader {...props} isEditDisabled />);
+      expect(screen.getByRole('button', { name: 'Edit Title' })).toBeDisabled();
+    });
+
+    test('shows the plain title, not the input, when locked mid-edit', () => {
+      jest.spyOn(hooks, 'localTitleHooks').mockReturnValue({ ...localTitleHooksProps, isEditing: true });
+      render(<TitleHeader {...props} isEditDisabled />);
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+      expect(screen.getByText('Title mock')).toBeInTheDocument();
+    });
   });
 });

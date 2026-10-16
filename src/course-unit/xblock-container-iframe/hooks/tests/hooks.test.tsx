@@ -52,6 +52,7 @@ describe('useMessageHandlers', () => {
       handleCloseLegacyEditorXBlockModal: jest.fn(),
       handleSaveEditedXBlockData: jest.fn(),
       handleFinishXBlockDragging: jest.fn(),
+      handleEditXBlock: jest.fn(),
     };
 
     initializeMockApp({
@@ -93,5 +94,38 @@ describe('useMessageHandlers', () => {
     if (expectedArg !== undefined) {
       expect(handlers[handlerKey]).toHaveBeenCalledWith(expectedArg);
     }
+  });
+
+  describe('editXBlock routing for invideoquiz', () => {
+    it('opens the legacy modal for a block type that is not invideoquiz', () => {
+      const usageId = 'block-v1:Org+Course+Run+type@discussion+block@abc123';
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: usageId });
+      });
+      expect(handlers.handleShowLegacyEditXBlockModal).toHaveBeenCalledWith(usageId);
+      expect(handlers.handleEditXBlock).not.toHaveBeenCalled();
+    });
+
+    it('opens the legacy modal for pdf, even though pdf has a built-in editor', () => {
+      // pdf's own (flag-gated) routing lives in openedx-platform's container.js,
+      // which decides whether to send newXBlockEditor or editXBlock in the
+      // first place. This handler must not second-guess that by sweeping pdf
+      // up into the invideoquiz-only branch below.
+      const usageId = 'block-v1:Org+Course+Run+type@pdf+block@abc123';
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: usageId });
+      });
+      expect(handlers.handleShowLegacyEditXBlockModal).toHaveBeenCalledWith(usageId);
+      expect(handlers.handleEditXBlock).not.toHaveBeenCalled();
+    });
+
+    it('opens this app\'s editor for invideoquiz', () => {
+      const usageId = 'block-v1:Org+Course+Run+type@invideoquiz+block@abc123';
+      act(() => {
+        result.current[messageTypes.editXBlock]({ id: usageId });
+      });
+      expect(handlers.handleEditXBlock).toHaveBeenCalledWith('invideoquiz', usageId);
+      expect(handlers.handleShowLegacyEditXBlockModal).not.toHaveBeenCalled();
+    });
   });
 });
