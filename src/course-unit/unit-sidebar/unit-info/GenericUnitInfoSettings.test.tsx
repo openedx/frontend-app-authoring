@@ -72,6 +72,50 @@ describe('GenericUnitInfoSettings', () => {
     expect(updateCallback).toHaveBeenCalled();
   });
 
+  it('auto-publishes (type: republish) when hiding from learners (live → staff_only)', async () => {
+    const user = userEvent.setup();
+    // visibilityState: 'live' means not currently staff-only → hiding is false → true
+    renderWithWrapper(<GenericUnitInfoSettings {...baseProps} visibilityState="live" />);
+
+    await user.click(screen.getByRole('button', { name: 'Staff Only' }));
+
+    await waitFor(() =>
+      expect(mutate).toHaveBeenCalledWith(
+        expect.objectContaining({ isVisibleToStaffOnly: true, type: 'republish' }),
+        expect.anything(),
+      )
+    );
+  });
+
+  it('saves as draft (type: undefined) when un-hiding from learners (staff_only → live)', async () => {
+    const user = userEvent.setup();
+    renderWithWrapper(<GenericUnitInfoSettings {...baseProps} visibilityState="staff_only" />);
+
+    await user.click(screen.getByRole('button', { name: 'Student Visible' }));
+    await user.click(screen.getByRole('button', { name: 'Make visible to students' }));
+
+    await waitFor(() =>
+      expect(mutate).toHaveBeenCalledWith(
+        expect.objectContaining({ isVisibleToStaffOnly: false, type: undefined }),
+        expect.anything(),
+      )
+    );
+  });
+
+  it('saves as draft (type: undefined) when toggling discussion (no visibility change)', async () => {
+    const user = userEvent.setup();
+    renderWithWrapper(<GenericUnitInfoSettings {...baseProps} visibilityState="live" />);
+
+    await user.click(screen.getByRole('checkbox', { name: 'discussion' }));
+
+    await waitFor(() =>
+      expect(mutate).toHaveBeenCalledWith(
+        expect.objectContaining({ discussionEnabled: true, type: undefined }),
+        expect.anything(),
+      )
+    );
+  });
+
   it('opens the confirmation modal and commits student-visible on confirm', async () => {
     const user = userEvent.setup();
     renderWithWrapper(<GenericUnitInfoSettings {...baseProps} visibilityState="staff_only" />);

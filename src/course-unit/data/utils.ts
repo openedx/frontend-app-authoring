@@ -34,7 +34,14 @@ export function normalizeCourseSectionVerticalData(metadata) {
  * @param isModalView - The modal view status.
  * @returns The corresponding notification message.
  */
-export const getNotificationMessage = (type: string, isVisible: boolean, isModalView: boolean): string => {
+export const getNotificationMessage = (
+  type: typeof PUBLISH_TYPES[keyof typeof PUBLISH_TYPES] | undefined,
+  isVisible: boolean,
+  isModalView: boolean,
+): string => {
+  if (type === undefined) {
+    return NOTIFICATION_MESSAGES.saving;
+  }
   if (type === PUBLISH_TYPES.discardChanges) {
     return NOTIFICATION_MESSAGES.discardChanges;
   }
