@@ -466,21 +466,23 @@ const activeVariant = (themeUrls: ThemeUrls): string | undefined => {
 };
 
 /**
- * Pick the stylesheet URL out of a `core` or `variants` entry.
+ * Return the stylesheet URLs for a `core` or `variants` entry, in the order the
+ * platform applies them.
  *
- * Entries appear either nested (`{urls: {default, brandOverride}}`, as
- * tutor-indigo publishes) or flat (`{url}`). Prefer `brandOverride` so the
- * deployment's theme layers on top of the CDN build. Mirrors `pickUrl` in the
- * XBlock's `html_block.js`.
+ * Entries appear either nested (`{urls: {default, brandOverride}}`) or flat
+ * (`{url}`). The nested form is layered: `default` is the Paragon stylesheet and
+ * `brandOverride` is the brand package, built to sit on top of it rather than
+ * replace it. Mirrors `layerUrls` in the XBlock's `html_block.js`.
  */
-const pickUrl = (entry?: ThemeUrlEntry): string | undefined => {
+const layerUrls = (entry?: ThemeUrlEntry): string[] => {
   if (!entry) {
-    return undefined;
+    return [];
   }
   if (entry.urls) {
-    return entry.urls.brandOverride || entry.urls.default || entry.url;
+    return [entry.urls.default, entry.urls.brandOverride]
+      .filter((url): url is string => Boolean(url));
   }
-  return entry.url;
+  return entry.url ? [entry.url] : [];
 };
 
 /**
@@ -497,7 +499,9 @@ const pickUrl = (entry?: ThemeUrlEntry): string | undefined => {
  *
  * The layers are read from `PARAGON_THEME_URLS` -- the same MFE config key the
  * block fetches, and the only place that knows the theme URLs -- and applied in
- * the same order the block applies them: core, theme, then the deployment's own variant.
+ * the same order the block applies them: Paragon core, brand core, then the
+ * active variant's Paragon stylesheet and brand override. Repeated URLs are
+ * dropped, since deployments may point `default` and `brandOverride` at one file.
  *
  * The `@import`s are prepended because CSS requires `@import` to precede every
  * other rule, and `tinyMCEStyles` opens with one of its own.
@@ -515,8 +519,8 @@ export const contentStyle = ({ editorType, useMfeTheming }: {
   }
   const variantName = activeVariant(themeUrls);
   const variant = variantName ? themeUrls.variants?.[variantName] : undefined;
-  const urls = [pickUrl(themeUrls.core), pickUrl(variant)]
-    .filter((url): url is string => Boolean(url));
+  const urls = [...layerUrls(themeUrls.core), ...layerUrls(variant)]
+    .filter((url, index, all) => all.indexOf(url) === index);
   if (!urls.length) {
     return tinyMCEStyles;
   }
