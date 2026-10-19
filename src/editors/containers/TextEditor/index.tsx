@@ -179,6 +179,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
                   onChange={handleUseMfeThemingChange}
                   floatLabelLeft
                   className="mb-0"
+                  helperText={<span>{intl.formatMessage(messages.useMfeThemingHelp)}</span>}
                 >
                   {intl.formatMessage(messages.useMfeThemingLabel)}
                 </Form.Switch>
