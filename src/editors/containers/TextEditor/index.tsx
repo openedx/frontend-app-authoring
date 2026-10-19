@@ -28,7 +28,7 @@ interface BlockValue {
     data: string | Record<string, any>;
     metadata?: {
       display_name?: string;
-      include_theme?: boolean;
+      use_mfe_theming?: boolean;
     };
   };
 }
@@ -43,6 +43,7 @@ interface TextEditorProps {
   blockFailed: boolean;
   initializeEditor: () => void;
   blockFinished: boolean;
+  isCreateWorkflow: boolean;
   learningContextId: string;
   images: Record<string, any>;
   isLibrary: boolean;
@@ -58,6 +59,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
   blockFailed,
   initializeEditor,
   blockFinished,
+  isCreateWorkflow,
   learningContextId,
   images,
   isLibrary,
@@ -66,12 +68,16 @@ const TextEditor: React.FC<TextEditorProps> = ({
   const { editorRef, refReady, setEditorRef } = useEditorRef();
 
   // The value the block was loaded with, before the user touched the toggle.
-  // Kept separately from `includeTheme` so isDirty can tell a toggle-only
-  // change from an untouched editor.
-  const initialIncludeTheme = Boolean(blockValue?.data?.metadata?.include_theme);
+  // Kept separately from `useMfeTheming` so isDirty can tell a toggle-only
+  // change from an untouched editor. A new block starts opted in; an existing
+  // block without the setting keeps the field's default, which is off.
+  const storedUseMfeTheming = blockValue?.data?.metadata?.use_mfe_theming;
+  const initialUseMfeTheming = typeof storedUseMfeTheming === 'boolean'
+    ? storedUseMfeTheming
+    : isCreateWorkflow;
 
-  const [includeThemeOverride, setIncludeThemeOverride] = useState<boolean | null>(null);
-  const includeTheme = includeThemeOverride ?? initialIncludeTheme;
+  const [useMfeThemingOverride, setUseMfeThemingOverride] = useState<boolean | null>(null);
+  const useMfeTheming = useMfeThemingOverride ?? initialUseMfeTheming;
 
   // `content_style` is only read when the editor initializes, so toggling the
   // theme has to rebuild the editor for the preview to follow.
@@ -94,13 +100,13 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
   if (!refReady) { return null; }
 
-  const handleIncludeThemeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUseMfeThemingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Only the mounted TinyMCE instance holds unsaved edits; in raw mode the
     // content lives in the RawEditor, which the rebuild does not touch.
     if (editorRef.current && !showRawEditor) {
       setContentSnapshot({ blockId, content: editorRef.current.getContent() });
     }
-    setIncludeThemeOverride(e.target.checked);
+    setUseMfeThemingOverride(e.target.checked);
   };
 
   const selectEditor = () => {
@@ -117,7 +123,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
       <TinyMceWidget
         // Rebuilds the editor when the theme toggle flips, so the themed
         // content_style takes effect without reopening the block.
-        key={String(includeTheme)}
+        key={String(useMfeTheming)}
         editorType="text"
         editorRef={editorRef}
         editorContentHtml={contentSnapshot?.blockId === blockId ? contentSnapshot.content : editorContent}
@@ -125,7 +131,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
         minHeight={500}
         maxHeight={500}
         initializeEditor={initializeEditor}
-        includeTheme={includeTheme}
+        useMfeTheming={useMfeTheming}
         {...{
           images,
           isLibrary,
@@ -138,12 +144,12 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
   return (
     <EditorContainer
-      getContent={hooks.getContent({ editorRef, showRawEditor, includeTheme })}
+      getContent={hooks.getContent({ editorRef, showRawEditor, useMfeTheming })}
       isDirty={hooks.isDirty({
         editorRef,
         showRawEditor,
-        includeTheme,
-        initialIncludeTheme,
+        useMfeTheming,
+        initialUseMfeTheming,
       })}
       onClose={onClose}
       returnFunction={returnFunction}
@@ -167,13 +173,13 @@ const TextEditor: React.FC<TextEditorProps> = ({
             <>
               <div className="py-3 px-1">
                 <Form.Switch
-                  name="include_theme"
-                  checked={includeTheme}
-                  onChange={handleIncludeThemeChange}
+                  name="use_mfe_theming"
+                  checked={useMfeTheming}
+                  onChange={handleUseMfeThemingChange}
                   floatLabelLeft
                   className="mb-0"
                 >
-                  {intl.formatMessage(messages.includeThemeLabel)}
+                  {intl.formatMessage(messages.useMfeThemingLabel)}
                 </Form.Switch>
               </div>
               {selectEditor()}
@@ -191,6 +197,7 @@ export const mapStateToProps = (state: any) => ({
   showRawEditor: selectors.app.showRawEditor(state),
   blockFinished: selectors.app.shouldCreateBlock(state)
     || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
+  isCreateWorkflow: selectors.app.shouldCreateBlock(state),
   learningContextId: selectors.app.learningContextId(state),
   images: selectors.app.images(state),
   isLibrary: selectors.app.isLibrary(state),

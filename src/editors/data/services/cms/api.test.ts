@@ -172,7 +172,7 @@ describe('cms api', () => {
         const content = {
           data:
             'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.',
-          include_theme: false,
+          use_mfe_theming: false,
         };
         expect(apiMethods.normalizeContent({
           blockId,
@@ -186,16 +186,16 @@ describe('cms api', () => {
           data: content.data,
           has_changes: true,
           id: blockId,
-          metadata: { display_name: title, include_theme: false },
+          metadata: { display_name: title, use_mfe_theming: false },
         });
       });
       test('sends html settings as metadata, keeping data a string', () => {
         // The block API rejects a non-string `data`, so settings-scoped fields
-        // such as include_theme have to travel in `metadata` instead.
+        // such as use_mfe_theming have to travel in `metadata` instead.
         expect(apiMethods.normalizeContent({
           blockId,
           blockType: 'html',
-          content: { data: '<p>Some text</p>', include_theme: true },
+          content: { data: '<p>Some text</p>', use_mfe_theming: true },
           learningContextId,
           title,
         })).toEqual({
@@ -204,7 +204,7 @@ describe('cms api', () => {
           data: '<p>Some text</p>',
           has_changes: true,
           id: blockId,
-          metadata: { display_name: title, include_theme: true },
+          metadata: { display_name: title, use_mfe_theming: true },
         });
       });
       test('return value for blockType: video', () => {
@@ -281,7 +281,7 @@ describe('cms api', () => {
       const content = {
         data:
           'Im baby palo santo ugh celiac fashion axe. La croix lo-fi venmo whatever. Beard man braid migas single-origin coffee forage ramps.',
-        include_theme: false,
+        use_mfe_theming: false,
       };
       it('should call post with urls.block and normalizeContent', async () => {
         await apiMethods.saveBlock({
