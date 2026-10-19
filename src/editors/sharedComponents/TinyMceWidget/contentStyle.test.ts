@@ -39,7 +39,7 @@ describe('contentStyle', () => {
   });
 
   it('layers the same stylesheets the learner view applies', () => {
-    const result = contentStyle({ editorType: 'text', includeTheme: true });
+    const result = contentStyle({ editorType: 'text', useMfeTheming: true });
 
     // Order matters: each layer overrides the one before it, and this is the
     // order html_block.js attaches them in. Only the leading imports are
@@ -52,7 +52,7 @@ describe('contentStyle', () => {
   });
 
   it('prefers the brand override over the variant default', () => {
-    const result = contentStyle({ editorType: 'text', includeTheme: true });
+    const result = contentStyle({ editorType: 'text', useMfeTheming: true });
 
     expect(imports(result, BRAND_URL)).toBe(true);
     expect(imports(result, VARIANT_URL)).toBe(false);
@@ -61,30 +61,30 @@ describe('contentStyle', () => {
   it('falls back to the variant default when no brand override is published', () => {
     setConfig({ ...themeUrls(), variants: { light: { urls: { default: VARIANT_URL } } } });
 
-    expect(imports(contentStyle({ editorType: 'text', includeTheme: true }), VARIANT_URL)).toBe(true);
+    expect(imports(contentStyle({ editorType: 'text', useMfeTheming: true }), VARIANT_URL)).toBe(true);
   });
 
   it('puts every @import first, since CSS requires it to precede all rules', () => {
-    const result = contentStyle({ editorType: 'text', includeTheme: true });
+    const result = contentStyle({ editorType: 'text', useMfeTheming: true });
 
     expect(result.trimStart().startsWith(`@import url("${CORE_URL}");`)).toBe(true);
   });
 
   it('keeps the base editor styles after the theme', () => {
-    const themed = contentStyle({ editorType: 'text', includeTheme: true });
-    const plain = contentStyle({ editorType: 'text', includeTheme: false });
+    const themed = contentStyle({ editorType: 'text', useMfeTheming: true });
+    const plain = contentStyle({ editorType: 'text', useMfeTheming: false });
 
     expect(themed.endsWith(plain)).toBe(true);
   });
 
-  it('omits the theme when include_theme is off', () => {
-    const result = contentStyle({ editorType: 'text', includeTheme: false });
+  it('omits the theme when use_mfe_theming is off', () => {
+    const result = contentStyle({ editorType: 'text', useMfeTheming: false });
 
     expect(imports(result, BRAND_URL)).toBe(false);
   });
 
   it('omits the theme for editors whose learner view is not themed', () => {
-    expect(imports(contentStyle({ editorType: 'video', includeTheme: true }), BRAND_URL)).toBe(false);
+    expect(imports(contentStyle({ editorType: 'video', useMfeTheming: true }), BRAND_URL)).toBe(false);
   });
 
   // Two shapes are published in practice and html_block.js has to resolve both:
@@ -101,19 +101,19 @@ describe('contentStyle', () => {
       defaults: { light: 'day' },
     });
 
-    expect(imports(contentStyle({ editorType: 'text', includeTheme: true }), BRAND_URL)).toBe(true);
+    expect(imports(contentStyle({ editorType: 'text', useMfeTheming: true }), BRAND_URL)).toBe(true);
   });
 
   it('falls back to the first variant present when no defaults map is published', () => {
     setConfig({ variants: { night: { urls: { brandOverride: NIGHT_URL } } } });
 
-    expect(imports(contentStyle({ editorType: 'text', includeTheme: true }), NIGHT_URL)).toBe(true);
+    expect(imports(contentStyle({ editorType: 'text', useMfeTheming: true }), NIGHT_URL)).toBe(true);
   });
 
   it('falls back to the base styles when no theme is published in the config', () => {
     setConfig(undefined);
 
-    expect(imports(contentStyle({ editorType: 'text', includeTheme: true }), BRAND_URL)).toBe(false);
+    expect(imports(contentStyle({ editorType: 'text', useMfeTheming: true }), BRAND_URL)).toBe(false);
   });
 
   it('falls back to the base styles when the config carries no usable URLs', () => {
@@ -121,13 +121,13 @@ describe('contentStyle', () => {
     // different path from the key being absent entirely.
     setConfig({});
 
-    expect(contentStyle({ editorType: 'text', includeTheme: true }))
-      .toEqual(contentStyle({ editorType: 'text', includeTheme: false }));
+    expect(contentStyle({ editorType: 'text', useMfeTheming: true }))
+      .toEqual(contentStyle({ editorType: 'text', useMfeTheming: false }));
   });
 
   it('does not read the config at all unless the theme would be used', () => {
-    contentStyle({ editorType: 'text', includeTheme: false });
-    contentStyle({ editorType: 'video', includeTheme: true });
+    contentStyle({ editorType: 'text', useMfeTheming: false });
+    contentStyle({ editorType: 'video', useMfeTheming: true });
 
     expect(mockedGetConfig).not.toHaveBeenCalled();
   });

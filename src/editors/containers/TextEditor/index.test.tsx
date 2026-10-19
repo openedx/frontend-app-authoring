@@ -62,7 +62,7 @@ jest.mock('../../data/redux', () => ({
 describe('TextEditor', () => {
   // Mirrors what the block fetch puts in the store: an AxiosResponse whose
   // `data` holds the HTML body and the settings-scoped `metadata`.
-  const blockValue = (includeTheme?: boolean) => ({
+  const blockValue = (useMfeTheming?: boolean) => ({
     data: {
       id: 'block-id-123',
       display_name: 'Text',
@@ -70,7 +70,7 @@ describe('TextEditor', () => {
       data: 'eDiTablE Text',
       metadata: {
         display_name: 'Text',
-        ...(includeTheme ? { include_theme: includeTheme } : {}),
+        ...(typeof useMfeTheming === 'boolean' ? { use_mfe_theming: useMfeTheming } : {}),
       },
     },
   });
@@ -84,6 +84,7 @@ describe('TextEditor', () => {
     initializeEditor: jest.fn().mockName('args.intializeEditor'),
     showRawEditor: false,
     blockFinished: true,
+    isCreateWorkflow: false,
     learningContextId: 'course+org+run',
     images: {},
     isLibrary: false,
@@ -137,7 +138,7 @@ describe('TextEditor', () => {
     });
   });
 
-  describe('include_theme toggle', () => {
+  describe('use_mfe_theming toggle', () => {
     beforeEach(() => {
       initializeMocks();
     });
@@ -152,11 +153,16 @@ describe('TextEditor', () => {
       expect(screen.getByRole('switch', { name: /use mfe theme/i })).toBeChecked();
     });
 
-    test('defaults to unchecked when there is no block value yet', () => {
+    test('stays unchecked when the stored value is false', () => {
+      render(<TextEditor {...props} blockValue={blockValue(false)} isCreateWorkflow />);
+      expect(screen.getByRole('switch', { name: /use mfe theme/i })).not.toBeChecked();
+    });
+
+    test('defaults to checked while creating a new block', () => {
       // The create workflow renders with `blockFinished` already true and no
       // blockValue -- there is no fetch to wait for.
-      render(<TextEditor {...props} blockValue={null} />);
-      expect(screen.getByRole('switch', { name: /use mfe theme/i })).not.toBeChecked();
+      render(<TextEditor {...props} blockValue={null} isCreateWorkflow />);
+      expect(screen.getByRole('switch', { name: /use mfe theme/i })).toBeChecked();
     });
 
     test('can be toggled by the author', async () => {

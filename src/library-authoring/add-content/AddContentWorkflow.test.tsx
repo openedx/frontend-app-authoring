@@ -36,7 +36,7 @@ jest.spyOn(editorCmsApi as any, 'fetchBlockById').mockImplementation(
 );
 jest.spyOn(textEditorHooks, 'getContent').mockImplementation(() => () => ({
   data: '<p>Edited HTML content</p>',
-  include_theme: false,
+  use_mfe_theming: false,
 }));
 const saveSpy = jest.spyOn(editorCmsApi as any, 'saveBlock');
 

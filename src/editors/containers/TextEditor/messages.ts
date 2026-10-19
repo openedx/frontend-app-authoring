@@ -11,8 +11,8 @@ const messages = defineMessages({
     defaultMessage: 'loading',
     description: 'Loading message for spinner screenreader text.',
   },
-  includeThemeLabel: {
-    id: 'authoring.texteditor.includeTheme.label',
+  useMfeThemingLabel: {
+    id: 'authoring.texteditor.useMfeTheming.label',
     defaultMessage: 'Use MFE Theme',
     description: 'Label for the toggle that opts this text block into the MFE theme',
   },

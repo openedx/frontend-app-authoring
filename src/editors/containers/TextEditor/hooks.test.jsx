@@ -51,22 +51,22 @@ describe('TextEditor hooks', () => {
         const getContent = module.getContent({
           editorRef,
           showRawEditor: false,
-          includeTheme: true,
+          useMfeTheming: true,
         })();
         expect(spies.visualHtml.mock.calls.length).toEqual(1);
         expect(spies.visualHtml).toHaveBeenCalledWith({ editorValue: visualContent });
-        expect(getContent).toEqual({ data: visualContent, include_theme: true });
+        expect(getContent).toEqual({ data: visualContent, use_mfe_theming: true });
       });
       test('returns correct content based on showRawEditor equals true', () => {
         jest.clearAllMocks();
         const getContent = module.getContent({
           editorRef,
           showRawEditor: true,
-          includeTheme: false,
+          useMfeTheming: false,
         })();
         expect(spies.rawHtml.mock.calls.length).toEqual(1);
         expect(spies.rawHtml).toHaveBeenCalledWith({ editorValue: rawContent });
-        expect(getContent).toEqual({ data: rawContent, include_theme: false });
+        expect(getContent).toEqual({ data: rawContent, use_mfe_theming: false });
       });
     });
 
@@ -98,8 +98,8 @@ describe('TextEditor hooks', () => {
         const isDirty = module.isDirty({
           editorRef,
           showRawEditor: false,
-          includeTheme: false,
-          initialIncludeTheme: false,
+          useMfeTheming: false,
+          initialUseMfeTheming: false,
         })();
         expect(isDirty).toEqual(false);
       });
@@ -112,8 +112,8 @@ describe('TextEditor hooks', () => {
         const isDirty = module.isDirty({
           editorRef,
           showRawEditor: false,
-          includeTheme: true,
-          initialIncludeTheme: false,
+          useMfeTheming: true,
+          initialUseMfeTheming: false,
         })();
         expect(isDirty).toEqual(true);
       });
