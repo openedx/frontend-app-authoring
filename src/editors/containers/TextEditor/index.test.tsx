@@ -145,30 +145,30 @@ describe('TextEditor', () => {
 
     test('is unchecked for an existing block with no stored value', () => {
       render(<TextEditor {...props} />);
-      expect(screen.getByRole('switch', { name: /use mfe theme/i })).not.toBeChecked();
+      expect(screen.getByRole('switch', { name: /use mfe theming/i })).not.toBeChecked();
     });
 
     test('reflects the value stored in block metadata', () => {
       render(<TextEditor {...props} blockValue={blockValue(true)} />);
-      expect(screen.getByRole('switch', { name: /use mfe theme/i })).toBeChecked();
+      expect(screen.getByRole('switch', { name: /use mfe theming/i })).toBeChecked();
     });
 
     test('stays unchecked when the stored value is false', () => {
       render(<TextEditor {...props} blockValue={blockValue(false)} isCreateWorkflow />);
-      expect(screen.getByRole('switch', { name: /use mfe theme/i })).not.toBeChecked();
+      expect(screen.getByRole('switch', { name: /use mfe theming/i })).not.toBeChecked();
     });
 
     test('defaults to checked while creating a new block', () => {
       // The create workflow renders with `blockFinished` already true and no
       // blockValue -- there is no fetch to wait for.
       render(<TextEditor {...props} blockValue={null} isCreateWorkflow />);
-      expect(screen.getByRole('switch', { name: /use mfe theme/i })).toBeChecked();
+      expect(screen.getByRole('switch', { name: /use mfe theming/i })).toBeChecked();
     });
 
     test('can be toggled by the author', async () => {
       const user = userEvent.setup();
       render(<TextEditor {...props} />);
-      const checkbox = screen.getByRole('switch', { name: /use mfe theme/i });
+      const checkbox = screen.getByRole('switch', { name: /use mfe theming/i });
       await user.click(checkbox);
       expect(checkbox).toBeChecked();
     });
@@ -186,7 +186,7 @@ describe('TextEditor', () => {
       const { container } = render(<TextEditor {...props} />);
       expect(mockEditorMounts).toEqual(1);
 
-      await user.click(screen.getByRole('switch', { name: /use mfe theme/i }));
+      await user.click(screen.getByRole('switch', { name: /use mfe theming/i }));
 
       expect(mockEditorMounts).toEqual(2);
       expect(container.querySelector('tinymcewidget')).toBeInTheDocument();
@@ -197,7 +197,7 @@ describe('TextEditor', () => {
       const user = userEvent.setup();
       const { container } = render(<TextEditor {...props} />);
 
-      await user.click(screen.getByRole('switch', { name: /use mfe theme/i }));
+      await user.click(screen.getByRole('switch', { name: /use mfe theming/i }));
 
       expect(container.querySelector('tinymcewidget')?.getAttribute('editorcontenthtml'))
         .toEqual('unsaved edits');
@@ -210,7 +210,7 @@ describe('TextEditor', () => {
       const user = userEvent.setup();
       const { container } = render(<TextEditor {...props} showRawEditor />);
 
-      await user.click(screen.getByRole('switch', { name: /use mfe theme/i }));
+      await user.click(screen.getByRole('switch', { name: /use mfe theming/i }));
 
       expect(container.querySelector('tinymcewidget')).toBeNull();
     });

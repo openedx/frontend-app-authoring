@@ -13,7 +13,7 @@ const messages = defineMessages({
   },
   useMfeThemingLabel: {
     id: 'authoring.texteditor.useMfeTheming.label',
-    defaultMessage: 'Use MFE Theme',
+    defaultMessage: 'Use MFE theming',
     description: 'Label for the toggle that opts this text block into the MFE theme',
   },
 });
