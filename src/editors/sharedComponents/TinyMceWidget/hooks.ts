@@ -490,7 +490,7 @@ const pickUrl = (entry?: ThemeUrlEntry): string | undefined => {
  * `content_css` is explicitly disabled and the skin is off, so anything not in
  * this string is unstyled in the editor.
  *
- * When the block has `include_theme` set, the learner view renders the same
+ * When the block has `use_mfe_theming` set, the learner view renders the same
  * content inside a shadow root with the deployment's Paragon theme attached, so
  * the editor previews those stylesheets to keep what the author sees and what
  * ships in agreement.
@@ -502,11 +502,11 @@ const pickUrl = (entry?: ThemeUrlEntry): string | undefined => {
  * The `@import`s are prepended because CSS requires `@import` to precede every
  * other rule, and `tinyMCEStyles` opens with one of its own.
  */
-export const contentStyle = ({ editorType, includeTheme }: {
+export const contentStyle = ({ editorType, useMfeTheming }: {
   editorType?: string;
-  includeTheme?: boolean;
+  useMfeTheming?: boolean;
 }): string => {
-  if (editorType !== 'text' || !includeTheme) {
+  if (editorType !== 'text' || !useMfeTheming) {
     return tinyMCEStyles;
   }
   const themeUrls = (getConfig() as Record<string, any>).PARAGON_THEME_URLS as ThemeUrls | undefined;
@@ -525,7 +525,7 @@ export const contentStyle = ({ editorType, includeTheme }: {
 
 export const editorConfig = ({
   editorType,
-  includeTheme,
+  useMfeTheming,
   setEditorRef,
   editorContentHtml,
   images,
@@ -566,7 +566,7 @@ export const editorConfig = ({
       ...config,
       skin: false,
       content_css: false,
-      content_style: contentStyle({ editorType, includeTheme }),
+      content_style: contentStyle({ editorType, useMfeTheming }),
       min_height: minHeight,
       max_height: maxHeight,
       contextmenu: 'link table',

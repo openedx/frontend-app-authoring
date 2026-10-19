@@ -7,10 +7,10 @@ export const { nullMethod, navigateCallback, navigateTo } = appHooks;
  * Returns the content of the editor, as a function of the editor's state.
  * @param {Object} editorRef - the editor's ref
  * @param {boolean} showRawEditor - whether to show the raw editor
- * @param {boolean} includeTheme - whether to include the theme
+ * @param {boolean} useMfeTheming - whether to include the theme
  * @returns {function} the content of the editor
  */
-export const getContent = ({ editorRef, showRawEditor, includeTheme }) => () => {
+export const getContent = ({ editorRef, showRawEditor, useMfeTheming }) => () => {
   const content = showRawEditor && editorRef && editorRef.current
     ? editorRef.current.state.doc.toString()
     : editorRef.current?.getContent();
@@ -19,13 +19,13 @@ export const getContent = ({ editorRef, showRawEditor, includeTheme }) => () => 
     // accepts as a string. Everything else is settings-scoped and travels in
     // `metadata` (see apiMethods.normalizeContent).
     data: setAssetToStaticUrl({ editorValue: content }),
-    include_theme: includeTheme,
+    use_mfe_theming: useMfeTheming,
   };
 };
 
-export const isDirty = ({ editorRef, showRawEditor, includeTheme, initialIncludeTheme }) => () => {
+export const isDirty = ({ editorRef, showRawEditor, useMfeTheming, initialUseMfeTheming }) => () => {
   // Compare against the value the block was loaded with
-  if (includeTheme !== initialIncludeTheme) {
+  if (useMfeTheming !== initialUseMfeTheming) {
     return true;
   }
   /* istanbul ignore next */
