@@ -66,6 +66,7 @@ export const LibraryDropdownFilter = () => {
   const { selectedLibraries, setSelectedLibraries } = useMultiLibraryContext();
   const [label, setLabel] = useState(intl.formatMessage(messages.librariesFilterBtnText));
   const { isPending, data } = useContentLibraryV2List({ pagination: false, search });
+  const { data: allLibrariesData } = useContentLibraryV2List({ pagination: false, search: '' });
 
   const handleSearch = useCallback(
     // Perform search after 500ms
@@ -87,13 +88,13 @@ export const LibraryDropdownFilter = () => {
     if (!selectedLibraries.length) {
       setLabel(baseName);
     } else if (selectedLibraries.length === 1) {
-      setLabel(data?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);
-    } else if (selectedLibraries.length === data?.length) {
+      setLabel(allLibrariesData?.find((lib) => lib.id === selectedLibraries[0])?.title || baseName);
+    } else if (allLibrariesData && selectedLibraries.length === allLibrariesData.length) {
       setLabel(baseName);
     } else if (selectedLibraries.length > 1) {
       setLabel(intl.formatMessage(messages.librariesFilterBtnCount, { count: selectedLibraries.length }));
     }
-  }, [intl, selectedLibraries, data]);
+  }, [selectedLibraries, allLibrariesData]);
 
   return (
     <Dropdown
@@ -113,12 +114,12 @@ export const LibraryDropdownFilter = () => {
         <Dropdown.Toggle
           id="library-filter-dropdown-toggle"
           iconBefore={Newsstand}
-          className="text-overflow text-primary-500 p-2 px-4 mr-2"
+          className="text-overflow text-primary-500 p-2 px-4"
         >
           {truncate(label, { length: 30 })}
         </Dropdown.Toggle>
       </OverlayTrigger>
-      <Dropdown.Menu className="my-1">
+      <Dropdown.Menu className="w-100">
         <SearchField
           onSubmit={handleSearch}
           onChange={handleSearch}

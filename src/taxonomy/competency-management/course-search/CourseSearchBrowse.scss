@@ -3,12 +3,18 @@
 // Color/shadow/radius literals below match `CompetencyTree.scss`'s own
 // toolbar/container/row look, redeclared rather than shared through a
 // partial - not enough call sites yet to justify one.
+//
+// Imported directly, not through `src/index.scss`, so this needs its own
+// `@use` to resolve the breakpoint name used below (see `../CompetencyTree
+// .scss`).
+@use "@openedx/paragon/styles/css/core/custom-media-breakpoints.css";
+
 .course-search-browse {
   $line-color: rgb(0 0 0 / .08);
   $shadow-color: rgb(0 0 0 / .12);
   $border-radius: 8px;
   $container-padding-y: 12px;
-  $container-padding-x: 16px;
+  $container-padding-x: var(--pgn-spacing-spacer-3);
   // One consistent indent step between nesting levels (course -> section ->
   // subsection), mirroring `../CompetencyTree.scss`'s own `$indent`.
   $indent-step: 20px;
@@ -18,9 +24,9 @@
   $group-border-color-course: var(--pgn-color-gray-600); // #5C5C5C
   $group-border-color-section: var(--pgn-color-gray-400); // #8F8F8F
   $group-border-color-subsection: var(--pgn-color-gray-200); // #CCCCCC
-  // Two-layer "soft elevation" shadow read off Figma, shared by every
-  // bordered box in the outline.
-  $block-shadow: 0 0 4px rgb(0 0 0 / .15), 0 0 2px rgb(0 0 0 / .15);
+  // Figma's "Elevation Level 1 (Centered)" style, shared by every bordered
+  // box in the outline.
+  $block-shadow: var(--pgn-elevation-box-shadow-centered-1);
 
   // `height: 100%` resolves against `CompetencyAssociationsPanel.tsx`'s
   // `.flex-grow-1` wrapper, which is itself stretched to the competency
@@ -49,17 +55,17 @@
   // starts at the same vertical offset as the tree's "Expand All" button.
   &__toolbar {
     background-color: var(--pgn-color-light-400);
-    padding: 24px 0;
+    padding: var(--pgn-spacing-spacer-4) 0;
   }
 
-  // Figma calls for `Radius: 6px` on this field; `overflow: hidden` is also
-  // needed since the child `.pgn__searchfield-form` has its own opaque,
-  // square-cornered background that otherwise paints over the rounding.
+  // `overflow: hidden` is needed since the child `.pgn__searchfield-form`
+  // has its own opaque, square-cornered background that otherwise paints
+  // over the rounding.
   &__toolbar .pgn__searchfield {
-    border-radius: 6px;
+    border-radius: var(--pgn-size-border-radius-base);
     overflow: hidden;
 
-    --pgn-size-search-field-border-radius: 6px;
+    --pgn-size-search-field-border-radius: var(--pgn-size-border-radius-base);
   }
 
   // Shared white envelope for `&__associations` and `&__container` below,
@@ -87,6 +93,15 @@
     border-top: 1px solid $line-color;
     flex: 1;
     padding: $container-padding-y $container-padding-x;
+
+    // Fills whatever height `.course-search-browse`'s own stretch (matching
+    // `.competency-tree`'s fixed height - see `../CompetencyTree.scss`)
+    // leaves after `&__associations` above it, scrolling internally instead
+    // of growing the page.
+    @media (--pgn-size-breakpoint-min-width-lg) {
+      min-height: 0;
+      overflow-y: auto;
+    }
   }
 
   // Wider than the nested-level gaps below (10px) so each card's own shadow
@@ -95,10 +110,15 @@
     margin-top: 16px;
   }
 
+  &__pagination {
+    border-top: 1px solid var(--pgn-color-gray-100);
+    padding-top: var(--pgn-spacing-spacer-1);
+  }
+
   // Persistent "Courses & Content" header strip, always the container's
   // first child regardless of loading/error/empty/populated state.
   &__section-label {
-    padding: 4px 8px;
+    padding: var(--pgn-spacing-spacer-1) var(--pgn-spacing-spacer-2);
     background-color: var(--pgn-color-info-100);
     text-transform: uppercase;
     font-family: var(--pgn-typography-font-family-monospace);
@@ -112,7 +132,7 @@
   // Styled identically to `&__section-label` for visual consistency between
   // the two header strips in this column.
   &__associations-label {
-    padding: 4px 8px;
+    padding: var(--pgn-spacing-spacer-1) var(--pgn-spacing-spacer-2);
     background-color: var(--pgn-color-info-100);
     text-transform: uppercase;
     font-family: var(--pgn-typography-font-family-monospace);
@@ -181,9 +201,32 @@
     margin-top: 10px;
   }
 
+  // `min-width: 0` overrides the flex item's default content-based floor, and
+  // `overflow-wrap: anywhere` lets a long, unbroken title actually wrap
+  // instead of forcing its sibling disclosure icon in `&__course-row` (and,
+  // through it, the whole column) to a wider intrinsic width than the
+  // resizable divider between the tree and this column can then shrink past.
   &__course-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
     font-size: 16px;
     font-weight: 700;
+  }
+
+  // Same reasoning as `&__course-title` above, for `CourseOutlineSubtree`'s
+  // per-section title.
+  &__section-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  // Without this, a long title in `&__course-title`/`&__section-title`
+  // squeezes its sibling disclosure `IconButton` along the row's main axis
+  // only (never its height), flattening the icon's circular hit area into an
+  // oval instead of leaving it at its fixed size and letting the title wrap.
+  &__course-row .btn-icon-sm,
+  &__section-header .btn-icon-sm {
+    flex-shrink: 0;
   }
 
   // One level deeper than `&__group`, further indented, with the lightest

@@ -16,7 +16,7 @@ import RawEditor from '../../sharedComponents/RawEditor';
 import * as hooks from './hooks';
 import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
-import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
+import { useEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
 
 interface BlockValue {
   // This is the AxiosResponse from the block fetch, so the API payload (which
@@ -63,7 +63,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
   isLibrary,
 }) => {
   const intl = useIntl();
-  const { editorRef, refReady, setEditorRef } = prepareEditorRef();
+  const { editorRef, refReady, setEditorRef } = useEditorRef();
 
   // The value the block was loaded with, before the user touched the toggle.
   // Kept separately from `includeTheme` so isDirty can tell a toggle-only

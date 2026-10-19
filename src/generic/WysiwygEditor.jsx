@@ -1,7 +1,8 @@
+import { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import TinyMceWidget, { prepareEditorRef } from '../editors/sharedComponents/TinyMceWidget';
 
+import TinyMceWidget, { useEditorRef } from '../editors/sharedComponents/TinyMceWidget';
 import { DEFAULT_EMPTY_WYSIWYG_VALUE } from '../constants';
 
 export const SUPPORTED_TEXT_EDITORS = {
@@ -16,8 +17,9 @@ export const WysiwygEditor = ({
   minHeight,
   disabled = false,
 }) => {
-  const { editorRef, refReady, setEditorRef } = prepareEditorRef();
+  const { editorRef, refReady, setEditorRef } = useEditorRef();
   const { courseId } = useCourseAuthoringContext();
+  const isInitializing = useRef(true);
   const isEquivalentCodeExtraSpaces = (first, second) => {
     // Utils allows to compare code extra spaces
     const removeWhitespace = (str) => str.replace(/\s/g, '');
@@ -34,9 +36,17 @@ export const WysiwygEditor = ({
   const needToChange = (value) =>
     !isEquivalentCodeQuotes(initialValue, value)
     && !isEquivalentCodeExtraSpaces(initialValue, value)
+    && !(initialValue === '' && value === DEFAULT_EMPTY_WYSIWYG_VALUE)
     && (initialValue !== DEFAULT_EMPTY_WYSIWYG_VALUE || value !== '');
 
   const handleUpdate = (value, editor) => {
+    // TinyMCE always fires onEditorChange once during initialization with a normalized
+    // version of the initial HTML. We discard that first event to prevent false positives
+    // (e.g. showing an "unsaved changes" alert when the user has not made any edits).
+    if (isInitializing.current) {
+      isInitializing.current = false;
+      return;
+    }
     // With bookmarks keep the current cursor position at the end of the line
     // and it inserts new content only at the end of the line.
     const bm = editor.selection.getBookmark();

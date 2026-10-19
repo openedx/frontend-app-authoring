@@ -608,15 +608,12 @@ export const editorConfig = ({
   };
 };
 
-export const prepareEditorRef = () => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+export const useEditorRef = () => {
   const editorRef = useRef<Editor | null>(null);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const setEditorRef = useCallback((ref: Editor | null) => {
     editorRef.current = ref;
   }, []);
   const [refReady, setRefReady] = state.refReady(false);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => setRefReady(true), []);
   return { editorRef, refReady, setEditorRef };
 };

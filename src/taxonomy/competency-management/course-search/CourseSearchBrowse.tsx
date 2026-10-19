@@ -44,13 +44,22 @@ export interface CourseSearchBrowseProps {
 
 const PAGE_SIZE = 10;
 
-// The backend's `start_date_on_or_after`/`start_date_on_or_before` filters
-// (`get_date_param`) 400 on anything but a plain `YYYY-MM-DD` value, so this
-// formats the calendar day the user actually picked, in their own local
-// time, rather than reusing `convertToStringFromDate` (a UTC-converting
-// datetime string meant for a different kind of API field, and one the
-// backend would reject here).
-const formatDateOnlyParam = (date: Date) => moment(date).format('YYYY-MM-DD');
+// Sends the local calendar day's own start/end instant (in the browser's own
+// UTC offset), not a bare date: a bare `YYYY-MM-DD` is inherently ambiguous
+// across time zones, since the backend has no way to know which time zone's
+// midnight-to-midnight it should mean (see #834 for the day-boundary bug
+// this caused). The backend requires an explicit UTC offset (or `Z`) and
+// compares this value directly against a course's own start instant, so the
+// selected day here always matches the day Studio itself shows for that
+// course, regardless of the user's time zone. `SSS` keeps the "end" boundary
+// at the day's last millisecond rather than its last whole second - `moment`
+// can't go finer than that (it wraps the browser's own `Date`, which is
+// itself only millisecond-precise), but that's still within a millisecond
+// of the backend's own microsecond-precision end-of-day example.
+const formatLocalDayBoundary = (date: Date, boundary: 'start' | 'end') =>
+  (
+    boundary === 'start' ? moment(date).startOf('day') : moment(date).endOf('day')
+  ).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
 
 // A stable no-op for `SearchField`'s required `onSubmit` prop. Paragon's
 // `SearchFieldAdvanced` re-invokes its own `onChange` handler whenever that
@@ -61,11 +70,6 @@ const formatDateOnlyParam = (date: Date) => moment(date).format('YYYY-MM-DD');
 const noop = () => {};
 
 interface DateRangeTriggerProps {
-  /** Whether a start (and/or end) date is currently picked - drives the
-   * highlighted visual state below. The trigger's own visible text never
-   * changes to reflect the picked value (see the component docstring).
-   */
-  hasSelection: boolean;
   /** Accessible name and visible text, passed down rather than looked up
    * again here via `useIntl` since the parent already has it.
    */
@@ -89,13 +93,12 @@ interface DateRangeTriggerProps {
  * react-datepicker's `customInput` mechanism always overwrites the injected
  * `value` prop with its own formatted string, which overflows a control sized
  * for a short label once a full range is picked - so this component ignores
- * `props.value` entirely and shows the picked state via `hasSelection`
- * instead. `forwardRef` is required because react-datepicker attaches a ref
- * to the trigger for popup positioning.
+ * `props.value` entirely and always shows just `label`. `forwardRef` is
+ * required because react-datepicker attaches a ref to the trigger for popup
+ * positioning.
  */
 const DateRangeTrigger = forwardRef<HTMLButtonElement, DateRangeTriggerProps>(
   ({
-    hasSelection,
     label,
     onClick,
     className,
@@ -103,8 +106,9 @@ const DateRangeTrigger = forwardRef<HTMLButtonElement, DateRangeTriggerProps>(
     <Button
       ref={ref}
       type="button"
-      variant={hasSelection ? 'primary' : 'outline-primary'}
-      iconAfter={Calendar}
+      variant="tertiary"
+      size="sm"
+      iconBefore={Calendar}
       onClick={onClick}
       className={className}
       aria-label={label}
@@ -182,8 +186,8 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
     pageSize: PAGE_SIZE,
     search,
     order: 'display_name',
-    startDateOnOrAfter: dateRange[0] ? formatDateOnlyParam(dateRange[0]) : undefined,
-    startDateOnOrBefore: dateRange[1] ? formatDateOnlyParam(dateRange[1]) : undefined,
+    startDateOnOrAfter: dateRange[0] ? formatLocalDayBoundary(dateRange[0], 'start') : undefined,
+    startDateOnOrBefore: dateRange[1] ? formatLocalDayBoundary(dateRange[1], 'end') : undefined,
   });
 
   const courses = data?.results.courses ?? [];
@@ -233,7 +237,8 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
             currentPage={page}
             onPageSelect={setPage}
             paginationLabel="pagination navigation"
-            className="d-flex justify-content-center w-100"
+            size="small"
+            className="course-search-browse__pagination d-flex justify-content-center w-100"
           />
         )}
       </>
@@ -243,7 +248,7 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
   return (
     <div className="course-search-browse">
       <div className="course-search-browse__toolbar">
-        <Stack direction="horizontal" gap={3}>
+        <Stack direction="horizontal" gap={2}>
           <SearchField
             className="flex-grow-1"
             onSubmit={noop}
@@ -265,7 +270,6 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
               popperPlacement="bottom-end"
               customInput={
                 <DateRangeTrigger
-                  hasSelection={dateRange[0] !== null}
                   label={intl.formatMessage(messages.dateRangeLabel)}
                 />
               }

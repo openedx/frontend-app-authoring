@@ -69,15 +69,28 @@ export const ResizableBox = ({
     return Math.abs(windowWidth * 0.65);
   }, [windowWidth]);
 
+  /*
+   * `width` is the width the user dragged to, which may no longer fit once the
+   * window is narrowed. Clamp it on every render so the box shrinks with the
+   * viewport instead of overflowing its flex row and painting over the page
+   * content. The preferred width stays in state, so it is restored when the
+   * window is widened again.
+   */
+  const effectiveWidth = useMemo(
+    () => Math.min(width, Math.max(minWidth, maxWidth || defaultMaxWidth)),
+    [width, minWidth, maxWidth, defaultMaxWidth],
+  );
+
   const onMouseMove = useCallback((e: MouseEvent) => {
     const dx = e.clientX - startXRef.current; // positive = mouse moved right
     // Left handle: dragging right shrinks. Right handle: dragging right grows.
     const rawWidth = handleSide === 'right'
       ? startWidthRef.current + dx
       : startWidthRef.current - dx;
-    const newWidth = Math.min(
-      Math.max(rawWidth, minWidth),
-      maxWidth || defaultMaxWidth,
+    // `minWidth` wins over a `maxWidth` smaller than it, as in `effectiveWidth`.
+    const newWidth = Math.max(
+      Math.min(rawWidth, maxWidth || defaultMaxWidth),
+      minWidth,
     );
     setWidth(newWidth);
   }, [handleSide, maxWidth, minWidth, defaultMaxWidth]);
@@ -90,18 +103,21 @@ export const ResizableBox = ({
   const onMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault(); // prevent text selection
     startXRef.current = e.clientX;
-    startWidthRef.current = width;
+    // Start from the displayed width, not the stored preference: when the box is
+    // clamped by a narrow window, starting from `width` would make the first part
+    // of the drag do nothing until it got back below the clamp.
+    startWidthRef.current = effectiveWidth;
 
     // Attach listeners to the whole document so dragging works even outside the box
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-  }, [width]);
+  }, [effectiveWidth, onMouseMove, onMouseUp]);
 
   return (
     <div
       className="resizable align-self-stretch d-flex"
       ref={boxRef}
-      style={{ width: fullWidth ? '100%' : `${width}px` }}
+      style={{ width: fullWidth ? '100%' : `${effectiveWidth}px` }}
     >
       {!fullWidth && (
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-static-element-interactions
