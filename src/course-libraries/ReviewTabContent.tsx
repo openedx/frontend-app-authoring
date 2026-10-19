@@ -228,9 +228,10 @@ const ItemReviewList = ({
 
   const updateBlock = useCallback(async (info: ContentHit) => {
     try {
+      const { downstreamContextKey, downstreamIsModified } = outOfSyncItemsByKey[info.usageKey];
       await acceptChangesMutation.mutateAsync({
         blockId: info.usageKey,
-        overrideCustomizations: info.blockType === 'html' && outOfSyncItemsByKey[info.usageKey].downstreamIsModified,
+        overrideCustomizations: info.blockType === 'html' && downstreamIsModified,
       });
       showToast(intl.formatMessage(
         messages.updateSingleBlockSuccess,
@@ -241,7 +242,7 @@ const ItemReviewList = ({
       // out of the list. Resolving right after the sync left the old card on
       // screen with an active "Update" button, and a second click sent a
       // duplicate sync request.
-      await invalidateLinksQuery(queryClient, outOfSyncItemsByKey[info.usageKey].downstreamContextKey);
+      await invalidateLinksQuery(queryClient, downstreamContextKey);
     } catch {
       showToast(intl.formatMessage(previewChangesMessages.acceptChangesFailure));
     }
