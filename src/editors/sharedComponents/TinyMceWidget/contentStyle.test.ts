@@ -44,18 +44,45 @@ describe('contentStyle', () => {
     // Order matters: each layer overrides the one before it, and this is the
     // order html_block.js attaches them in. Only the leading imports are
     // compared -- tinyMCEStyles opens with a Google Fonts import of its own.
-    // The variant resolves to its brand override here, so it is one layer.
-    expect(importOrder(result).slice(0, 2)).toEqual([
+    expect(importOrder(result).slice(0, 3)).toEqual([
       `@import url("${CORE_URL}");`,
+      `@import url("${VARIANT_URL}");`,
       `@import url("${BRAND_URL}");`,
     ]);
   });
 
-  it('prefers the brand override over the variant default', () => {
+  it('keeps the brand override on top of the variant default', () => {
     const result = contentStyle({ editorType: 'text', useMfeTheming: true });
 
+    expect(imports(result, VARIANT_URL)).toBe(true);
     expect(imports(result, BRAND_URL)).toBe(true);
-    expect(imports(result, VARIANT_URL)).toBe(false);
+    expect(result.indexOf(VARIANT_URL)).toBeLessThan(result.indexOf(BRAND_URL));
+  });
+
+  it('layers a nested core entry as default then brand override', () => {
+    setConfig({
+      core: { urls: { default: CORE_URL, brandOverride: 'https://example.invalid/brand-core.css' } },
+      variants: { light: { url: VARIANT_URL } },
+    });
+
+    expect(importOrder(contentStyle({ editorType: 'text', useMfeTheming: true })).slice(0, 3)).toEqual([
+      `@import url("${CORE_URL}");`,
+      '@import url("https://example.invalid/brand-core.css");',
+      `@import url("${VARIANT_URL}");`,
+    ]);
+  });
+
+  it('does not repeat a URL published as both default and brand override', () => {
+    // tutor-indigo points both at the same stylesheet.
+    setConfig({
+      core: { url: CORE_URL },
+      variants: { light: { urls: { default: BRAND_URL, brandOverride: BRAND_URL } } },
+    });
+
+    const result = contentStyle({ editorType: 'text', useMfeTheming: true });
+    const occurrences = importOrder(result).filter((entry) => entry === `@import url("${BRAND_URL}");`);
+
+    expect(occurrences).toHaveLength(1);
   });
 
   it('falls back to the variant default when no brand override is published', () => {
