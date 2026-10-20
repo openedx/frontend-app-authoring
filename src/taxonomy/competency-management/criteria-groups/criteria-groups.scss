@@ -50,9 +50,7 @@
       all: unset;
       cursor: pointer;
 
-      // `all: unset` leaves this button's own box near zero size (its only
-      // content is an `sr-only` span) - the focus ring belongs on the
-      // `.stretched-link` `::after` overlay that actually covers the band.
+      // Outline the stretched `::after` overlay; the button's own box is near zero size.
       &:focus-visible::after {
         outline: 2px solid $focused-accent-color;
         outline-offset: -2px;
@@ -103,7 +101,6 @@
       all: unset;
       cursor: pointer;
 
-      // See the matching comment on `.criteria-group-box__select-button`.
       &:focus-visible::after {
         outline: 2px solid $focused-accent-color;
         outline-offset: -2px;
@@ -111,7 +108,7 @@
     }
   }
 
-  // Paragon's `Form.Control` renders block-level and full-width by default, which would otherwise blow out this inline sentence.
+  // `Form.Control` is block-level and full-width by default; keep it inline in "With a score of X% or higher".
   .score-threshold-field__input {
     display: inline-block;
     width: 3.5em;
