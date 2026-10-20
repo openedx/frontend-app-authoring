@@ -46,7 +46,6 @@ describe('<LogicOperatorSelect />', () => {
       fireEvent.click(screen.getByText('any'));
       expect(onChange).toHaveBeenCalledWith('OR');
 
-      // keeps its closed menu's items in the DOM rather than removing them.
       rerender(<LogicOperatorSelect value="AND" labels={labels} onChange={onChange} />);
 
       expect(container.querySelector('.dropdown-toggle')).toHaveTextContent('all');

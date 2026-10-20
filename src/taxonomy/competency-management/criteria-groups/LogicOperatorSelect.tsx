@@ -20,15 +20,7 @@ export interface LogicOperatorSelectProps {
 }
 
 /** Shared any/all (bottom-tier group) or Or/And (connector) control for how
- * a group's children combine. Read-only (plain text) unless `onChange` is
- * given, in which case a controlled Paragon `Dropdown` renders instead,
- * with its trigger label always computed from `value`.
- *
- * Deliberately not Paragon's `SelectMenu`: it's uncontrolled (holds its own
- * "selected" state once a `MenuItem` is clicked), so its trigger would keep
- * showing whatever the author last clicked even after a rejected save left
- * `value` unchanged. `Dropdown` has no equivalent internal state, so a
- * rejected save's rollback is just a matter of never having changed `value`.
+ * a group's children combine. Read-only unless `onChange` is given.
  */
 const LogicOperatorSelect = ({
   value,

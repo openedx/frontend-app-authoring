@@ -52,8 +52,6 @@ const index = buildCompetencyCriteriaGroupsIndex(response);
 const renderBox = (
   contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {},
   subsectionNamesByUsageKey: Record<string, string> = {},
-  // Defaults to `true`, matching `testHelpers.tsx`'s own `canEditCourse: () => true`
-  // convention (tests default to "editable," and opt out explicitly).
   canEdit: boolean = true,
 ) => (
   render(

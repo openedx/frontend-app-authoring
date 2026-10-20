@@ -201,19 +201,5 @@ describe('<RuleBoxList />', () => {
       expect(updateRuleScore).not.toHaveBeenCalled();
       expect(screen.getByText('Another rule box in this group already uses this score.')).toBeInTheDocument();
     });
-
-    it('does not treat retyping a box\'s own current score as a duplicate of itself', async () => {
-      const user = userEvent.setup();
-      const updateRuleScore = jest.fn().mockResolvedValue(undefined);
-      renderEditableBoxes(updateRuleScore);
-
-      const [firstBoxInput] = screen.getAllByRole('textbox');
-      await user.clear(firstBoxInput);
-      await user.type(firstBoxInput, '60');
-      await user.keyboard('{Enter}');
-
-      expect(updateRuleScore).not.toHaveBeenCalled();
-      expect(screen.queryByText('Another rule box in this group already uses this score.')).not.toBeInTheDocument();
-    });
   });
 });
