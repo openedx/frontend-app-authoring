@@ -145,15 +145,17 @@
 
   // Wraps `&__associations-label` and the "Demonstrate Mastery For"/empty-
   // state text under it.
+  // Both the heading and the empty state repeat the competency name, so a
+  // long one has to wrap in each of them.
   &__associations {
     padding: $container-padding-y $container-padding-x;
+    overflow-wrap: anywhere;
   }
 
   // Figma gives regular weight for this text layer - only the interpolated
   // competency name (its own `<strong>` in the JSX) is bold.
   &__associations-mastery {
     margin-top: 8px;
-    overflow-wrap: anywhere;
     font-size: 15.8px;
     line-height: 24.5px;
     letter-spacing: normal;

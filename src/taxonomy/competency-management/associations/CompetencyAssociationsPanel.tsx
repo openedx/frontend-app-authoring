@@ -50,7 +50,9 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
           {tree}
         </ResizableBox>
         {selectedCompetency && (
-          <div className="flex-grow-1">
+          // A zero basis keeps a long competency name's unwrapped width from
+          // making flex shrink the tree column below its resizable width.
+          <div className="flex-grow-1" style={{ flexBasis: 0, minWidth: 0 }}>
             <CourseSearchBrowse activeCompetency={selectedCompetency} />
           </div>
         )}

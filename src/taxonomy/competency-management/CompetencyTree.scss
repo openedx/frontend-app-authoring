@@ -46,6 +46,10 @@
     // `overflow-wrap` for a long Competency ID.
     white-space: normal;
     overflow-wrap: anywhere;
+    // A shrinkable badge would be squeezed by a long label (and vice versa),
+    // so it keeps its own width up to half the row and the label gets the rest.
+    flex-shrink: 0;
+    max-width: 50%;
     // Figma calls for a small, squared radius, not Paragon's full `pill`
     // shape.
     border-radius: var(--pgn-size-badge-border-radius-base);
