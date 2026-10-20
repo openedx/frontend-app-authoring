@@ -50,7 +50,10 @@
       all: unset;
       cursor: pointer;
 
-      &:focus-visible {
+      // `all: unset` leaves this button's own box near zero size (its only
+      // content is an `sr-only` span) - the focus ring belongs on the
+      // `.stretched-link` `::after` overlay that actually covers the band.
+      &:focus-visible::after {
         outline: 2px solid $focused-accent-color;
         outline-offset: -2px;
       }
@@ -61,15 +64,10 @@
     &__header-operator {
       font-weight: 700;
 
-      // Once `canEdit` is true, this class lands on a Paragon `Dropdown`
-      // (a `<div>`), which has no `display` rule of its own and would
-      // otherwise break "By completing [x] of the following" onto separate
-      // lines.
+      // Paragon's `Dropdown` has no `display` rule of its own, and would otherwise wrap onto its own line.
       display: inline-block;
 
-      // Nudges the toggle's baseline to line up with the surrounding
-      // sentence text - the one thing `.btn-inline` doesn't already handle
-      // for a `Dropdown.Toggle` specifically.
+      // Aligns the toggle's text baseline with the surrounding sentence text.
       .dropdown-toggle {
         vertical-align: baseline;
         // Layers above `&__select-button`'s stretched overlay so clicks land here.
@@ -105,17 +103,15 @@
       all: unset;
       cursor: pointer;
 
-      &:focus-visible {
+      // See the matching comment on `.criteria-group-box__select-button`.
+      &:focus-visible::after {
         outline: 2px solid $focused-accent-color;
         outline-offset: -2px;
       }
     }
   }
 
-  // "With a score of [input]% or higher" - the editable percent input
-  // itself. Paragon's `Form.Control` renders block-level and full-width by
-  // default, which would otherwise blow out this inline sentence to the
-  // width of the whole rule box.
+  // Paragon's `Form.Control` renders block-level and full-width by default, which would otherwise blow out this inline sentence.
   .score-threshold-field__input {
     display: inline-block;
     width: 3.5em;
