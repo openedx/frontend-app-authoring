@@ -183,7 +183,7 @@
     color: var(--pgn-color-info-600);
   }
 
-  // Paragon's `Form.Control` renders block-level and full-width by default, which would otherwise blow out this inline sentence.
+  // `Form.Control` is block-level and full-width by default; keep it inline in "With a score of X% or higher".
   .score-threshold-field__input {
     display: inline-block;
     width: 3.5em;
