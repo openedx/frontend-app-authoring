@@ -26,9 +26,10 @@ export const VisibilitySection = ({ itemId, isSubsection, onChange }: Props) => 
   const { canEditCourseContent } = useCourseAuthoringContext();
 
   const serverState = useMemo<State>(() => ({
-    isVisibleToStaffOnly: itemData?.visibilityState === VisibilityTypes.STAFF_ONLY,
+    // A staff-locked subsection with a prerequisite reports visibilityState "gated", not "staff_only".
+    isVisibleToStaffOnly: itemData?.visibilityState === VisibilityTypes.STAFF_ONLY || !!itemData?.hasExplicitStaffLock,
     hideAfterDue: itemData?.hideAfterDue,
-  }), [itemData?.visibilityState, itemData?.hideAfterDue]);
+  }), [itemData?.visibilityState, itemData?.hasExplicitStaffLock, itemData?.hideAfterDue]);
 
   const [localState, setLocalState] = useFieldDraft<State>(serverState, (val) => {
     const payload = { ...val };
