@@ -6,6 +6,7 @@ import { ResizableBox } from '@src/generic/resizable/Resizable';
 import { useIsDesktop } from '@src/utils';
 import CompetencyTree, { type CompetencyTreeNode } from '../CompetencyTree';
 import { CourseSearchBrowse } from '../course-search';
+import './CompetencyAssociationsPanel.scss';
 
 export interface CompetencyAssociationsPanelProps {
   taxonomyId: number;
@@ -50,9 +51,7 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
           {tree}
         </ResizableBox>
         {selectedCompetency && (
-          // A zero basis keeps a long competency name's unwrapped width from
-          // making flex shrink the tree column below its resizable width.
-          <div className="flex-grow-1" style={{ flexBasis: 0, minWidth: 0 }}>
+          <div className="flex-grow-1 competency-associations__course-column">
             <CourseSearchBrowse activeCompetency={selectedCompetency} />
           </div>
         )}

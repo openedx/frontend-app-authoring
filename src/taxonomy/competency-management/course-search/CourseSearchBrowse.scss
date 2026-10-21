@@ -39,8 +39,10 @@
   height: 100%;
 
   .competency-row__badge {
-    white-space: normal;
-    overflow-wrap: anywhere;
+    // Keeps its own width up to half the heading; past that, `text-truncate`
+    // ellipsizes it.
+    flex-shrink: 0;
+    max-width: 50%;
     border-radius: var(--pgn-size-badge-border-radius-base);
 
     --pgn-spacing-badge-padding-y: 1.5px;
@@ -145,8 +147,8 @@
 
   // Wraps `&__associations-label` and the "Demonstrate Mastery For"/empty-
   // state text under it.
-  // Both the heading and the empty state repeat the competency name, so a
-  // long one has to wrap in each of them.
+  // The empty state repeats the competency name, so a long one has to wrap
+  // there.
   &__associations {
     padding: $container-padding-y $container-padding-x;
     overflow-wrap: anywhere;

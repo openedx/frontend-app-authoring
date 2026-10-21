@@ -113,6 +113,94 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       expect(screen.getByText('Competency ID: EXT-042')).toBeInTheDocument();
     });
 
+    describe('"Demonstrate Mastery For" heading truncation', () => {
+      const competencyWithExternalId: CompetencyTreeNode = { ...activeCompetency, externalId: 'EXT-042' };
+
+      // jsdom has no layout, so every element reports the same widths.
+      const stubWidths = (scrollWidth: number, clientWidth: number) => {
+        jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockReturnValue(scrollWidth);
+        jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(clientWidth);
+      };
+
+      afterEach(() => {
+        jest.restoreAllMocks();
+      });
+
+      const renderAndGetHeading = async () => {
+        axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
+        render(<CourseSearchBrowse activeCompetency={competencyWithExternalId} />);
+        await screen.findByText('Intro to Testing');
+        return screen.getAllByText('Test Competency')[0]
+          .closest('.course-search-browse__associations-mastery') as HTMLElement;
+      };
+
+      it('is focusable and shows the full name and Competency ID in a tooltip on focus and hover when truncated', async () => {
+        stubWidths(200, 100);
+        const heading = await renderAndGetHeading();
+
+        expect(heading).toHaveAttribute('tabindex', '0');
+
+        fireEvent.focus(heading);
+        let tooltip = await screen.findByRole('tooltip');
+        expect(tooltip).toHaveTextContent('Test Competency');
+        expect(tooltip).toHaveTextContent('Competency ID: EXT-042');
+
+        fireEvent.blur(heading);
+        await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+
+        fireEvent.mouseEnter(heading);
+        tooltip = await screen.findByRole('tooltip');
+        expect(tooltip).toHaveTextContent('Test Competency');
+      });
+
+      it('closes the tooltip on Escape without moving focus', async () => {
+        stubWidths(200, 100);
+        const heading = await renderAndGetHeading();
+
+        heading.focus();
+        await screen.findByRole('tooltip');
+        fireEvent.keyDown(heading, { key: 'Escape' });
+
+        await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+        expect(heading).toHaveFocus();
+
+        fireEvent.mouseEnter(heading);
+        await screen.findByRole('tooltip');
+        fireEvent.keyDown(document.body, { key: 'Escape' });
+        await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+      });
+
+      it('keeps the tooltip open while the pointer moves from the heading onto it, and closes it on leaving', async () => {
+        stubWidths(200, 100);
+        const heading = await renderAndGetHeading();
+
+        fireEvent.mouseEnter(heading);
+        const tooltip = await screen.findByRole('tooltip');
+
+        fireEvent.mouseLeave(heading);
+        fireEvent.mouseEnter(tooltip);
+        // Longer than the hide delay, so a missed cancel would have closed it.
+        act(() => {
+          jest.advanceTimersByTime(250);
+        });
+        expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+        fireEvent.mouseLeave(tooltip);
+        await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+      });
+
+      it('has no tabindex and shows no tooltip when not truncated', async () => {
+        stubWidths(100, 100);
+        const heading = await renderAndGetHeading();
+
+        fireEvent.mouseEnter(heading);
+        fireEvent.focus(heading);
+
+        expect(heading).not.toHaveAttribute('tabindex');
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      });
+    });
+
     it('renders no Competency ID badge when externalId is falsy', async () => {
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
       render(<CourseSearchBrowse activeCompetency={activeCompetency} />);

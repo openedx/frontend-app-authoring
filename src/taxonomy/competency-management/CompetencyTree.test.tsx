@@ -1,8 +1,10 @@
 import {
+  act,
   fireEvent,
   initializeMocks,
   render,
   screen,
+  waitFor,
   within,
 } from '@src/testUtils';
 import { apiUrls } from '@src/taxonomy/data/api';
@@ -398,5 +400,133 @@ describe('<CompetencyTree />', () => {
     // its label - no dangling reference to an id that was never rendered.
     expect(screen.getByRole('treeitem', { name: 'Group A1' }))
       .toBe(screen.getByText('Group A1').closest('li'));
+  });
+
+  describe('truncation tooltip', () => {
+    // jsdom has no layout, so every element reports the same widths.
+    const stubWidths = (scrollWidth: number, clientWidth: number) => {
+      jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockReturnValue(scrollWidth);
+      jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(clientWidth);
+    };
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    const renderExpandedTree = async () => {
+      axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+      renderTree({ onSelectCompetency: jest.fn() });
+      await screen.findByText(taxonomyName);
+      fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+      await screen.findByText('Leaf A1a');
+    };
+
+    const rowOf = (name: string) => screen.getByText(name).closest('.competency-row') as HTMLElement;
+
+    it('shows the full name and Competency ID in a tooltip on hover of a truncated row', async () => {
+      await renderExpandedTree();
+      stubWidths(200, 100);
+
+      fireEvent.mouseEnter(rowOf('Root A'));
+
+      const tooltip = await screen.findByRole('tooltip');
+      expect(tooltip).toHaveTextContent('Root A');
+      expect(tooltip).toHaveTextContent('Competency ID: EXT-001');
+    });
+
+    it('shows the tooltip on keyboard focus of a truncated treeitem', async () => {
+      await renderExpandedTree();
+      stubWidths(200, 100);
+
+      fireEvent.focus(screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' }));
+
+      const tooltip = await screen.findByRole('tooltip');
+      expect(tooltip).toHaveTextContent('Root A');
+      expect(tooltip).toHaveTextContent('Competency ID: EXT-001');
+    });
+
+    it('does not show an ancestor group\'s tooltip when a nested treeitem gets focus', async () => {
+      await renderExpandedTree();
+      stubWidths(200, 100);
+
+      fireEvent.focus(screen.getByRole('treeitem', { name: 'Leaf A1a Competency ID: EXT-003' }));
+
+      const tooltips = await screen.findAllByRole('tooltip');
+      expect(tooltips).toHaveLength(1);
+      expect(tooltips[0]).toHaveTextContent('Leaf A1a');
+    });
+
+    it('shows no tooltip for a row that is not truncated', async () => {
+      await renderExpandedTree();
+      stubWidths(100, 100);
+
+      fireEvent.mouseEnter(rowOf('Root A'));
+      fireEvent.focus(screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' }));
+
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('hides the tooltip on mouse leave and on blur', async () => {
+      await renderExpandedTree();
+      stubWidths(200, 100);
+
+      const row = rowOf('Root A');
+      fireEvent.mouseEnter(row);
+      await screen.findByRole('tooltip');
+      fireEvent.mouseLeave(row);
+      await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+
+      const rootItem = screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' });
+      fireEvent.focus(rootItem);
+      await screen.findByRole('tooltip');
+      fireEvent.blur(rootItem);
+      await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+    });
+
+    it('closes a hover-opened tooltip on Escape', async () => {
+      await renderExpandedTree();
+      stubWidths(200, 100);
+
+      fireEvent.mouseEnter(rowOf('Root A'));
+      await screen.findByRole('tooltip');
+      fireEvent.keyDown(document.body, { key: 'Escape' });
+
+      await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+    });
+
+    it('closes a focus-opened tooltip on Escape while keeping focus on the treeitem', async () => {
+      await renderExpandedTree();
+      stubWidths(200, 100);
+
+      const rootItem = screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' });
+      rootItem.focus();
+      await screen.findByRole('tooltip');
+      fireEvent.keyDown(rootItem, { key: 'Escape' });
+
+      await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+      expect(rootItem).toHaveFocus();
+    });
+
+    it('keeps the tooltip open while the pointer moves from the row onto it, and closes it on leaving', async () => {
+      await renderExpandedTree();
+      stubWidths(200, 100);
+
+      const row = rowOf('Root A');
+      fireEvent.mouseEnter(row);
+      const tooltip = await screen.findByRole('tooltip');
+
+      fireEvent.mouseLeave(row);
+      fireEvent.mouseEnter(tooltip);
+      // Longer than the hide delay, so a missed cancel would have closed it.
+      await act(async () => {
+        await new Promise((resolve) => {
+          setTimeout(resolve, 250);
+        });
+      });
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+      fireEvent.mouseLeave(tooltip);
+      await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+    });
   });
 });

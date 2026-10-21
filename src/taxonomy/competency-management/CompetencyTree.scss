@@ -6,6 +6,13 @@
 // name used below.
 @use "@openedx/paragon/styles/css/core/custom-media-breakpoints.css";
 
+.competency-tooltip {
+  // Top-level, not under `.competency-tree`: the tooltip renders in a portal
+  // under `<body>`. Paragon's 200px default makes a long name tall enough to
+  // run off the top of the viewport.
+  --pgn-size-tooltip-max-width: 400px;
+}
+
 .competency-tree {
   $line-color: rgb(0 0 0 / .08);
   $shadow-color: rgb(0 0 0 / .12);
@@ -36,18 +43,9 @@
     height: calc(100vh - 260px);
   }
 
-  .competency-row__label {
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-
   .competency-row__badge {
-    // Paragon's `.badge` sets `nowrap`, which otherwise cancels
-    // `overflow-wrap` for a long Competency ID.
-    white-space: normal;
-    overflow-wrap: anywhere;
-    // A shrinkable badge would be squeezed by a long label (and vice versa),
-    // so it keeps its own width up to half the row and the label gets the rest.
+    // Keeps its own width up to half the row so a long label can't squeeze
+    // the ID to nothing; past that, `text-truncate` ellipsizes it.
     flex-shrink: 0;
     max-width: 50%;
     // Figma calls for a small, squared radius, not Paragon's full `pill`
