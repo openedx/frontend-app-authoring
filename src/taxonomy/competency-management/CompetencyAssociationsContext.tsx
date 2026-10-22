@@ -38,6 +38,7 @@ import {
   associatedObjectIds,
   bottomTierGroupsForCourse,
   buildCompetencyCriteriaGroupsIndex,
+  lastBottomTierGroupForCourse,
   lastRealRuleKeyIn,
   ruleBoxesForGroup,
   ruleKeyOf,
@@ -64,8 +65,9 @@ export interface CompetencyAssociationsContextValue {
   focusRuleBox: (groupId: number, ruleKey: string) => void;
   /** Notify the provider that a course was expanded in the content panel.
    * Call only from that panel's own per-course chevron on expand, never on
-   * collapse or from a page-level "Expand All": this feeds `canEditCourse`
-   * for a group-less course, and has no effect on initial focus.
+   * collapse or from a page-level "Expand All". Feeds `canEditCourse` for a
+   * group-less course, and moves focus to the course's last bottom-tier group
+   * and its last rule box when focus is unset or on another course's group.
    */
   notifyCourseExpanded: (courseId: string) => void;
   /** Associates a piece of course content (a gradable subsection) with the
@@ -90,6 +92,11 @@ export interface CompetencyAssociationsContextValue {
    * per-course outline-fetch results.
    */
   accessibleCourseGroups: CourseCompetencyCriteriaGroup[];
+  /** Whether any course-level group's outline fetch is still pending.
+   * `accessibleCourseGroups` is incomplete until this is `false`. A failed
+   * fetch counts as resolved.
+   */
+  areCourseOutlinesLoading: boolean;
   /** The active competency's short external id (e.g. "CCRS-1.3"), shown on
    * an already-associated subsection's badge. `null` when the competency
    * has none.
@@ -168,7 +175,19 @@ export const CompetencyAssociationsProvider = ({
 
   const notifyCourseExpanded = useCallback((courseId: string) => {
     setExpandedCourseIds((prev) => (prev.has(courseId) ? prev : new Set(prev).add(courseId)));
-  }, []);
+    if (!index || !systemDefaultProfile) {
+      return;
+    }
+    const focusedGroup = focus ? index.groupsById.get(focus.groupId) : undefined;
+    const focusedCourseGroup = focusedGroup?.parentId != null ? index.groupsById.get(focusedGroup.parentId) : undefined;
+    if (focus !== null && focusedCourseGroup?.courseKey === courseId) {
+      return;
+    }
+    const target = lastBottomTierGroupForCourse(index, courseId);
+    if (target) {
+      setFocus({ groupId: target.id, ruleKey: lastRealRuleKeyIn(target.id, index, systemDefaultProfile) });
+    }
+  }, [focus, index, systemDefaultProfile]);
 
   // Every course-level group's course key, unfiltered - each must be
   // fetched to determine accessibility (see `accessibleCourseIds` below).
@@ -280,8 +299,7 @@ export const CompetencyAssociationsProvider = ({
       return;
     }
     if (!index || !systemDefaultProfile) {
-      // Shouldn't happen: the content panel only offers this action once
-      // both queries have resolved.
+      // The content panel only offers this action once both are loaded.
       return;
     }
 
@@ -352,6 +370,7 @@ export const CompetencyAssociationsProvider = ({
     systemDefaultProfile,
     associatedObjectIds: associatedIds,
     accessibleCourseGroups,
+    areCourseOutlinesLoading: !allVisibleCourseOutlinesResolved,
     competencyExternalId,
   }), [
     focus,
@@ -366,6 +385,7 @@ export const CompetencyAssociationsProvider = ({
     systemDefaultProfile,
     associatedIds,
     accessibleCourseGroups,
+    allVisibleCourseOutlinesResolved,
     competencyExternalId,
   ]);
 
