@@ -4,6 +4,19 @@
   display: flex;
 }
 
+/* Applied to the box while a drag is in progress. Keeps the resize cursor, prevents text
+   selection, and disables pointer events on embedded iframes (such as content previews):
+   an iframe under the pointer would otherwise receive the mouse events and the drag would
+   stop. */
+.resizable--resizing {
+  cursor: ew-resize;
+  user-select: none;
+
+  iframe {
+    pointer-events: none;
+  }
+}
+
 /* Custom left‑hand handle */
 .resizable-handle {
   position: absolute;
@@ -13,6 +26,19 @@
   height: 100%;
   cursor: ew-resize;
   background: var(--pgn-color-dark-200);
+
+  /* Extend the clickable area 4px on each side of the 2px bar without changing its appearance. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0 -4px;
+  }
+
+  /* The handle is keyboard focusable (see `Resizable.tsx`) and needs a visible focus indicator. */
+  &:focus-visible {
+    outline: 2px solid var(--pgn-color-primary-base);
+    outline-offset: 2px;
+  }
 }
 
 .resizable-handle:hover {
@@ -37,4 +63,3 @@
 .resizable-handle--right + .w-100 {
   padding-right: 20px;
 }
-
