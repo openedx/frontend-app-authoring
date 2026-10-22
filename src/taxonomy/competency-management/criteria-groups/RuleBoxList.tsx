@@ -12,6 +12,8 @@ export interface RuleBoxListProps {
   groupId: number | null;
   boxes: RuleBoxData[];
   subsectionNamesByUsageKey: Record<string, string>;
+  /** Name of the course these criteria belong to, read aloud for an unavailable chip. */
+  courseName?: string;
   /** Whether the author can edit the boxes' score thresholds. */
   canEdit?: boolean;
 }
@@ -21,6 +23,7 @@ const RuleBoxList = ({
   groupId,
   boxes,
   subsectionNamesByUsageKey,
+  courseName,
   canEdit = false,
 }: RuleBoxListProps) => {
   const intl = useIntl();
@@ -71,6 +74,7 @@ const RuleBoxList = ({
           rule={box.rule}
           criteria={box.criteria}
           subsectionNamesByUsageKey={subsectionNamesByUsageKey}
+          courseName={courseName}
           canEdit={canEdit}
           getInlineValidationMessage={getInlineValidationMessage(box)}
         />
@@ -83,6 +87,7 @@ const RuleBoxList = ({
           rule={placeholderRule}
           criteria={[]}
           subsectionNamesByUsageKey={subsectionNamesByUsageKey}
+          courseName={courseName}
           canEdit={canEdit}
           getInlineValidationMessage={getInlineValidationMessage({
             key: '__placeholder__',

@@ -21,7 +21,7 @@ export interface CriteriaGroupBoxProps {
    * placeholder.
    */
   position: number;
-  /** The course the group belongs to, which names its menu. */
+  /** The course the group belongs to, which names its menu and is read aloud for an unavailable chip. */
   courseName: string;
 }
 
@@ -195,6 +195,7 @@ const CriteriaGroupBox = (
             groupId={groupId}
             boxes={boxes}
             subsectionNamesByUsageKey={subsectionNamesByUsageKey}
+            courseName={courseName}
             canEdit={canEdit}
           />
           {canEdit && groupId !== null && (
