@@ -261,7 +261,7 @@ const ItemReviewList = ({
     }
   }, [blockData]);
 
-  const renderActions = useCallback((info: ContentHit) => (
+  const renderActions = (info: ContentHit) => (
     <ActionRow>
       <Button
         size="sm"
@@ -292,7 +292,7 @@ const ItemReviewList = ({
         </>
       )}
     </ActionRow>
-  ), [readOnly, onIgnoreClick, updateBlock]);
+  );
 
   if (isIndexDataPending) {
     return <Loading />;

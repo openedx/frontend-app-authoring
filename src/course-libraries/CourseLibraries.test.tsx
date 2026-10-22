@@ -55,7 +55,9 @@ const mockPermissions = (overrides = {}) =>
   validateUserPermissionsMock.mockResolvedValue({
     canViewLibraryUpdates: true,
     canManageLibraryUpdates: true,
-    canViewLibrary: true,
+    'lib:OpenedX:CSPROB': true,
+    'lib:OpenedX:CSPROB2': true,
+    'lib:OpenedX:CSPROB3': true,
     ...overrides,
   });
 
@@ -248,7 +250,11 @@ describe('<CourseLibraries />', () => {
 
   it('does not show the View Library link when user lacks view library permission', async () => {
     const user = userEvent.setup();
-    mockPermissions({ canViewLibrary: false });
+    mockPermissions({
+      'lib:OpenedX:CSPROB': false,
+      'lib:OpenedX:CSPROB2': false,
+      'lib:OpenedX:CSPROB3': false,
+    });
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
     await user.click(await screen.findByRole('tab', { name: 'Libraries' }));
 

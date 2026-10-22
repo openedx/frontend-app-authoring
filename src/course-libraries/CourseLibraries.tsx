@@ -29,8 +29,7 @@ import {
 import sumBy from 'lodash/sumBy';
 import { useSearchParams } from 'react-router-dom';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
-import { useCourseUserPermissions } from '@src/authz/hooks';
-import { useUserPermissions } from '@src/authz/data/apiHooks';
+import { useCourseUserPermissions, useLibraryViewPermissions } from '@src/authz/hooks';
 import { getLibraryUpdatesPermissions } from '@src/authz/permissionHelpers';
 import { useStudioHome } from '@src/studio-home/hooks';
 import NewsstandIcon from '@src/generic/NewsstandIcon';
@@ -44,10 +43,10 @@ import type { PublishableEntityLinkSummary } from './data/api';
 import ReviewTabContent from './ReviewTabContent';
 import { OutOfSyncAlert } from './OutOfSyncAlert';
 import LegacyLibContentBlockAlert from './LegacyLibContentBlockAlert';
-import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
 
 interface LibraryCardProps {
   linkSummary: PublishableEntityLinkSummary;
+  canViewLibrary: boolean;
 }
 
 export enum CourseLibraryTabs {
@@ -55,68 +54,60 @@ export enum CourseLibraryTabs {
   review = 'review',
 }
 
-const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
-  const { data: libraryPermissions } = useUserPermissions({
-    canViewLibrary: {
-      action: CONTENT_LIBRARY_PERMISSIONS.VIEW_LIBRARY,
-      scope: linkSummary.upstreamContextKey,
-    },
-  }, !!linkSummary.upstreamContextKey);
-  return (
-    <Card className="my-3 border-light-500 border shadow-none">
-      <Card.Header
-        title={
-          <Stack direction="horizontal" gap={2}>
-            <Icon src={NewsstandIcon} />
-            {linkSummary.upstreamContextTitle}
-          </Stack>
-        }
-        actions={libraryPermissions?.canViewLibrary && (
-          <ActionRow>
-            <Button
-              destination={`${getConfig().PUBLIC_PATH}library/${linkSummary.upstreamContextKey}`}
-              target="_blank"
-              className="border border-light-300"
-              variant="tertiary"
-              as={Hyperlink}
-              size="sm"
-              showLaunchIcon={false}
-              iconAfter={Launch}
-            >
-              View Library
-            </Button>
-          </ActionRow>
-        )}
-        size="sm"
-      />
-      <Card.Section>
-        <Stack
-          direction="horizontal"
-          gap={4}
-          className="x-small"
-        >
-          <span>
-            <FormattedMessage
-              {...messages.totalComponentLabel}
-              values={{ totalComponents: linkSummary.totalCount }}
-            />
-          </span>
-          {linkSummary.readyToSyncCount > 0 && (
-            <Stack direction="horizontal" gap={1}>
-              <Icon src={Loop} size="xs" />
-              <span>
-                <FormattedMessage
-                  {...messages.outOfSyncCountLabel}
-                  values={{ outOfSyncCount: linkSummary.readyToSyncCount }}
-                />
-              </span>
-            </Stack>
-          )}
+const LibraryCard = ({ linkSummary, canViewLibrary }: LibraryCardProps) => (
+  <Card className="my-3 border-light-500 border shadow-none">
+    <Card.Header
+      title={
+        <Stack direction="horizontal" gap={2}>
+          <Icon src={NewsstandIcon} />
+          {linkSummary.upstreamContextTitle}
         </Stack>
-      </Card.Section>
-    </Card>
-  );
-};
+      }
+      actions={canViewLibrary && (
+        <ActionRow>
+          <Button
+            destination={`${getConfig().PUBLIC_PATH}library/${linkSummary.upstreamContextKey}`}
+            target="_blank"
+            className="border border-light-300"
+            variant="tertiary"
+            as={Hyperlink}
+            size="sm"
+            showLaunchIcon={false}
+            iconAfter={Launch}
+          >
+            View Library
+          </Button>
+        </ActionRow>
+      )}
+      size="sm"
+    />
+    <Card.Section>
+      <Stack
+        direction="horizontal"
+        gap={4}
+        className="x-small"
+      >
+        <span>
+          <FormattedMessage
+            {...messages.totalComponentLabel}
+            values={{ totalComponents: linkSummary.totalCount }}
+          />
+        </span>
+        {linkSummary.readyToSyncCount > 0 && (
+          <Stack direction="horizontal" gap={1}>
+            <Icon src={Loop} size="xs" />
+            <span>
+              <FormattedMessage
+                {...messages.outOfSyncCountLabel}
+                values={{ outOfSyncCount: linkSummary.readyToSyncCount }}
+              />
+            </span>
+          </Stack>
+        )}
+      </Stack>
+    </Card.Section>
+  </Card>
+);
 
 export const CourseLibraries = () => {
   const intl = useIntl();
@@ -128,6 +119,8 @@ export const CourseLibraries = () => {
   const [showReviewAlert, setShowReviewAlert] = useState(false);
   const { data: libraries, isLoading } = useEntityLinksSummaryByDownstreamContext(courseId);
   const outOfSyncCount = useMemo(() => sumBy(libraries, (lib) => lib.readyToSyncCount), [libraries]);
+  const libraryKeys = useMemo(() => (libraries || []).map((lib) => lib.upstreamContextKey), [libraries]);
+  const { data: libraryViewPermissions } = useLibraryViewPermissions(libraryKeys);
   const {
     isLoadingPage: isLoadingStudioHome,
     isFailedLoadingPage: isFailedLoadingStudioHome,
@@ -181,11 +174,12 @@ export const CourseLibraries = () => {
           <LibraryCard
             linkSummary={library}
             key={library.upstreamContextKey}
+            canViewLibrary={!!libraryViewPermissions?.[library.upstreamContextKey]}
           />
         ))}
       </>
     );
-  }, [libraries, isLoading]);
+  }, [libraries, isLoading, libraryViewPermissions]);
 
   const renderReviewTabContent = useCallback(() => {
     if (isLoading) {
