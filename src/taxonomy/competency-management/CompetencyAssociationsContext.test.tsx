@@ -158,6 +158,29 @@ const twoCoursesResponse: CompetencyCriteriaGroupsResponse = {
   criteria: [],
 };
 
+/** courseA (id 1, leaf 10) and courseB (id 2) with two leaves listed out of
+ * order: 21 (ordering 1, two rule boxes) and 20 (ordering 0). The last group
+ * by `ordering` is 21, and its last rule box is the `eq` override.
+ */
+const courseBGroupsResponse: CompetencyCriteriaGroupsResponse = {
+  groups: [
+    ...twoCoursesResponse.groups.filter((group) => group.id !== 20),
+    { id: 21, parentId: 2, tagId, courseKey: null, name: 'leaf', ordering: 1, logicOperator: 'AND', archived: false },
+    { id: 20, parentId: 2, tagId, courseKey: null, name: 'leaf', ordering: 0, logicOperator: 'AND', archived: false },
+  ],
+  criteria: [
+    { id: 910, objectId: 'b-sub-1', groupId: 21, ruleProfileId: 1, ruleTypeOverride: null, rulePayloadOverride: null },
+    {
+      id: 911,
+      objectId: 'b-sub-2',
+      groupId: 21,
+      ruleProfileId: null,
+      ruleTypeOverride: 'grade',
+      rulePayloadOverride: { op: 'eq', value: 1, scale: 'percent' },
+    },
+  ],
+};
+
 const outlineFixture = buildOutlineIndex();
 
 /** Exposes every context value/action as plain, clickable test hooks. */
@@ -173,9 +196,11 @@ const TestConsumer = () => {
       </div>
       <button type="button" onClick={() => ctx.focusGroup(999)}>focus-999</button>
       <button type="button" onClick={() => ctx.focusGroup(10)}>focus-group-10</button>
+      <button type="button" onClick={() => ctx.focusGroup(20)}>focus-group-20</button>
       <button type="button" onClick={() => ctx.focusRuleBox(10, 'grade:gte:0.7:percent')}>focus-rulebox-10</button>
       <button type="button" onClick={() => ctx.notifyCourseExpanded(courseB)}>expand-course-b</button>
       <button type="button" onClick={() => ctx.associateSubsection('new-sub', courseA)}>associate-course-a</button>
+      <button type="button" onClick={() => ctx.associateSubsection('new-sub', courseB)}>associate-course-b</button>
       <button
         type="button"
         onClick={() => ctx.associateSubsection('new-sub', courseOther)}
@@ -353,6 +378,88 @@ describe('CompetencyAssociationsProvider', () => {
       });
     },
   );
+
+  describe('notifyCourseExpanded focus', () => {
+    const renderWithCourseB = async () => {
+      axiosMock.onGet(groupsUrl).reply(200, courseBGroupsResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseB)).reply(200, outlineFixture);
+      renderProvider();
+      await waitFor(() => expect(screen.getByTestId('profile-status')).toHaveTextContent('profile-success'));
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+    };
+
+    it('moves focus from another course\'s group to the expanded course\'s last group and last rule box', async () => {
+      await renderWithCourseB();
+      fireEvent.click(screen.getByText('focus-group-10'));
+
+      fireEvent.click(screen.getByText('expand-course-b'));
+      const expected = JSON.stringify({ groupId: 21, ruleKey: 'grade:eq:1:percent' });
+      expect(screen.getByTestId('focus')).toHaveTextContent(expected);
+
+      fireEvent.click(screen.getByText('focus-group-10'));
+      fireEvent.click(screen.getByText('expand-course-b'));
+      expect(screen.getByTestId('focus')).toHaveTextContent(expected);
+    });
+
+    it('moves focus when nothing is focused', async () => {
+      await renderWithCourseB();
+
+      fireEvent.click(screen.getByText('expand-course-b'));
+
+      expect(screen.getByTestId('focus')).toHaveTextContent('"groupId":21');
+    });
+
+    it('leaves focus unchanged when the expanded course has no groups', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
+      renderProvider();
+      await waitFor(() => expect(screen.getByTestId('profile-status')).toHaveTextContent('profile-success'));
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+      fireEvent.click(screen.getByText('focus-group-10'));
+
+      fireEvent.click(screen.getByText('expand-course-b'));
+
+      expect(screen.getByTestId('focus')).toHaveTextContent('"groupId":10');
+    });
+
+    it('leaves focus unchanged when it is already on a group of the expanded course', async () => {
+      await renderWithCourseB();
+      fireEvent.click(screen.getByText('focus-group-20'));
+      const before = screen.getByTestId('focus').textContent;
+
+      fireEvent.click(screen.getByText('expand-course-b'));
+
+      expect(before).toContain('"groupId":20');
+      expect(screen.getByTestId('focus')).toHaveTextContent(before as string);
+    });
+
+    it('associates a subsection of the expanded course into the group that expansion focused', async () => {
+      await renderWithCourseB();
+      axiosMock.onPost(createUrl).reply(201, {
+        id: 920,
+        group_id: 21,
+        rule_profile_id: null,
+        rule_type_override: 'grade',
+        rule_payload_override: { op: 'eq', value: 1, scale: 'percent' },
+        object_tag_id: tagId,
+      });
+      fireEvent.click(screen.getByText('focus-group-10'));
+      fireEvent.click(screen.getByText('expand-course-b'));
+
+      fireEvent.click(screen.getByText('associate-course-b'));
+
+      await waitFor(() => expect(axiosMock.history.post).toHaveLength(1));
+      expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+        object_id: 'new-sub',
+        group_id: 21,
+        rule_type_override: 'grade',
+        rule_payload_override: { op: 'eq', value: 1, scale: 'percent' },
+      });
+    });
+  });
 
   describe('associateSubsection', () => {
     it('sends the focused group\'s id and rule when the focus is a group belonging to the clicked subsection\'s course', async () => {

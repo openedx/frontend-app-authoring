@@ -36,6 +36,7 @@ export const buildMockCompetencyAssociationsContextValue = (
   systemDefaultProfile: undefined,
   associatedObjectIds: new Set(),
   accessibleCourseGroups: [],
+  areCourseOutlinesLoading: false,
   competencyExternalId: null,
   ...overrides,
 });
