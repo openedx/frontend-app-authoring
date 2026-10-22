@@ -7,7 +7,9 @@ import {
   userEvent,
   within,
 } from '@src/testUtils';
+import type { CompetencyRuleProfile } from '../data/types';
 import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../testHelpers';
+import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import CourseOutlineSubtree from './CourseOutlineSubtree';
 
 let axiosMock;
@@ -79,12 +81,23 @@ const allUngradedOutline = buildOutlineIndex({
 
 const noSubsectionsOutline = buildOutlineIndex([]);
 
+const loadedIndex = buildCompetencyCriteriaGroupsIndex({ groups: [], criteria: [] });
+const loadedProfile: CompetencyRuleProfile = {
+  id: 1,
+  scopeType: 'system_default',
+  ruleType: 'grade',
+  rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
+  archived: false,
+};
+
 // Most tests below care about outline rendering, not the association data
 // layer, so a lightly-mocked provider is enough; a few near the end
 // override `associatedObjectIds`/`associateSubsection` directly.
 const renderSubtree = (contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {}) =>
   render(
-    <MockCompetencyAssociationsProvider value={contextOverrides}>
+    <MockCompetencyAssociationsProvider
+      value={{ index: loadedIndex, systemDefaultProfile: loadedProfile, ...contextOverrides }}
+    >
       <CourseOutlineSubtree courseId={courseId} />
     </MockCompetencyAssociationsProvider>,
   );
@@ -313,4 +326,18 @@ describe('<CourseOutlineSubtree />', () => {
       expect(within(row as HTMLElement).getByText('Competency ID: EXT-042')).toBeInTheDocument();
     },
   );
+
+  it.each([
+    ['systemDefaultProfile', { systemDefaultProfile: undefined }],
+    ['index', { index: undefined }],
+  ])('renders a graded subsection without a button while %s is not loaded', async (_name, overrides) => {
+    const user = userEvent.setup();
+    axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+    renderSubtree({ canEditCourse: () => true, ...overrides });
+
+    await user.click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
+
+    expect(screen.getByText('Subsection 1A (graded)')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Subsection 1A (graded)' })).not.toBeInTheDocument();
+  });
 });
