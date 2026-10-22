@@ -114,7 +114,7 @@ export interface ConfigureSubsectionData {
 export interface ConfigureUnitData {
   unitId: string;
   isVisibleToStaffOnly: boolean;
-  type: typeof PUBLISH_TYPES[keyof typeof PUBLISH_TYPES];
+  type?: typeof PUBLISH_TYPES[keyof typeof PUBLISH_TYPES];
   groupAccess: Record<string, any> | null;
   discussionEnabled?: boolean;
 }
@@ -143,7 +143,7 @@ export type UnitConfigurePayload = {
   unitId: string;
   sectionId: string;
   isVisibleToStaffOnly: boolean;
-  type: typeof PUBLISH_TYPES[keyof typeof PUBLISH_TYPES];
+  type?: typeof PUBLISH_TYPES[keyof typeof PUBLISH_TYPES];
   groupAccess: Record<string, any> | null;
   discussionEnabled?: boolean;
 };

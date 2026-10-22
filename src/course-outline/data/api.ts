@@ -316,7 +316,7 @@ export async function configureCourseSubsection(
 export async function configureCourseUnit(variables: ConfigureUnitData): Promise<object> {
   const body = {
     publish: variables.type,
-    ...(variables.type === PUBLISH_TYPES.republish ?
+    ...(variables.type === PUBLISH_TYPES.republish || variables.type === undefined ?
       {
         metadata: {
           visible_to_staff_only: variables.isVisibleToStaffOnly ? true : null,
