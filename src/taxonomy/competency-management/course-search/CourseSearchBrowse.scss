@@ -28,15 +28,16 @@
   // box in the outline.
   $block-shadow: var(--pgn-elevation-box-shadow-centered-1);
 
-  // `height: 100%` resolves against `CompetencyAssociationsPanel.tsx`'s
-  // `.flex-grow-1` wrapper, which is itself stretched to the competency
-  // tree's height by the `align-items-stretch` `Stack` around both columns -
-  // without this, the wrapper stretches but this element inside it stays
-  // sized to its own content, leaving the extra height as blank space below
-  // it instead of reaching `&__panel` below.
+  // Must equal `$panel-height` in `../CompetencyTree.scss` so both columns
+  // line up; sized to fit one page of collapsed courses without scrolling.
+  $panel-height: 73rem;
+
   display: flex;
   flex-direction: column;
-  height: 100%;
+
+  @media (--pgn-size-breakpoint-min-width-lg) {
+    height: $panel-height;
+  }
 
   .competency-row__badge {
     overflow-wrap: anywhere;
@@ -80,25 +81,30 @@
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-height: 0;
   }
 
-  // Plain layout wrapper for the "Courses & Content" label and course rows -
-  // each row is its own separately-carded box (see `&__group--course`).
-  // `border-top` is the divider from `&__associations` above it now that
-  // both share `&__panel`'s single envelope. `flex: 1` (a flex child of
-  // `&__panel`) is what actually grows to fill the extra height - `&__panel`
-  // growing alone would otherwise leave the added space unused above this
-  // box's own bottom edge.
+  // Holds the "Courses & Content" label, `&__list` and the pagination;
+  // `border-top` is the divider from `&__associations` above it. Fills
+  // whatever height `&__panel` leaves after `&__associations`.
   &__container {
     border-top: 1px solid $line-color;
+    display: flex;
+    flex-direction: column;
     flex: 1;
+    min-height: 0;
     padding: $container-padding-y $container-padding-x;
+  }
 
-    // Fills whatever height `.course-search-browse`'s own stretch (matching
-    // `.competency-tree`'s fixed height - see `../CompetencyTree.scss`)
-    // leaves after `&__associations` above it, scrolling internally instead
-    // of growing the page.
+  // Only the course rows scroll, so the label above and the pagination
+  // below stay visible. The padding/negative margin keeps the cards'
+  // shadows from being clipped by `overflow-y`.
+  &__list {
+    padding: 4px;
+    margin: -4px;
+
     @media (--pgn-size-breakpoint-min-width-lg) {
+      flex: 1;
       min-height: 0;
       overflow-y: auto;
     }
@@ -106,7 +112,8 @@
 
   // Wider than the nested-level gaps below (10px) so each card's own shadow
   // reads as clearly separated from its neighbors.
-  &__container > * + * {
+  &__container > * + *,
+  &__list > * + * {
     margin-top: 16px;
   }
 
