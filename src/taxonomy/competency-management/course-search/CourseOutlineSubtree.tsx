@@ -35,7 +35,8 @@ interface SubsectionRowProps {
  * One row for a single graded subsection.
  *
  * Renders a button that calls `associateSubsection` when clicked, unless
- * `canEditCourse(courseId)` is false, in which case it renders the same
+ * `canEditCourse(courseId)` is false or the association data (`index`,
+ * `systemDefaultProfile`) isn't loaded yet, in which case it renders the same
  * content as a non-interactive `div`. The already-associated badge and
  * marker icon show regardless of `canEditCourse`, so a view-only course
  * still shows what's associated. Re-clicking an
@@ -49,11 +50,13 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
     associateSubsection,
     canEditCourse,
     competencyExternalId,
+    index,
+    systemDefaultProfile,
   } = useCompetencyAssociations();
   // The real `course_index` response populates `.id`, never `.usageKey`
   // (declared on the shared `XBlockBase` type but always `undefined` here).
   const isAssociated = associatedObjectIds.has(subsection.id);
-  const canSelect = canEditCourse(courseId);
+  const canSelect = canEditCourse(courseId) && !!index && !!systemDefaultProfile;
 
   const rowClassName = 'course-search-browse__subsection d-flex align-items-center justify-content-between';
   const rowContent = (

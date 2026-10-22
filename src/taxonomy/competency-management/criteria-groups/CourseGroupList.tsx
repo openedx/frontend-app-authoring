@@ -13,17 +13,21 @@ import './criteria-groups.scss';
  * competency: loading, failed, empty, or the list of accessible course-level
  * groups. Reads everything from `CompetencyAssociationsContext`.
  *
- * "Loading" covers both the groups query and the default-rule-profile query,
- * since `effectiveRuleOf` needs the profile to resolve an unoverridden
- * criterion. The empty state is decided on `accessibleCourseGroups` (already
- * filtered), never the raw payload's own counts, so a course the author
- * can't see renders identically to no associations at all.
+ * "Loading" covers the groups, default-rule-profile, and per-course outline
+ * queries. The empty state is decided on `accessibleCourseGroups`, never the
+ * raw payload, so a course the author can't see renders as no associations.
  */
 const CourseGroupList = () => {
   const intl = useIntl();
-  const { groupsQuery, profileQuery, index, accessibleCourseGroups } = useCompetencyAssociations();
+  const {
+    groupsQuery,
+    profileQuery,
+    index,
+    accessibleCourseGroups,
+    areCourseOutlinesLoading,
+  } = useCompetencyAssociations();
 
-  if (groupsQuery.isLoading || profileQuery.isLoading) {
+  if (groupsQuery.isLoading || profileQuery.isLoading || areCourseOutlinesLoading) {
     return (
       <div className="d-flex justify-content-center py-3">
         <LoadingSpinner size="sm" />

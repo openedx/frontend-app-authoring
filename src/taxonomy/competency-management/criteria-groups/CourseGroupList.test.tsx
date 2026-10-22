@@ -82,6 +82,19 @@ describe('<CourseGroupList />', () => {
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
+  it('renders a loading state, not the empty state, while course outlines are still loading', () => {
+    renderList({
+      groupsQuery: loadedPopulatedGroupsQuery,
+      profileQuery: loadedProfileQuery,
+      index: buildCompetencyCriteriaGroupsIndex(populatedGroupsResponse),
+      systemDefaultProfile,
+      accessibleCourseGroups: [],
+      areCourseOutlinesLoading: true,
+    });
+    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.queryByText('No content associated.')).not.toBeInTheDocument();
+  });
+
   it('renders a failed state when the groups query errors', () => {
     renderList({ groupsQuery: erroredGroupsQuery, profileQuery: loadedProfileQuery });
     expect(screen.getByText('There was a problem loading this competency\'s associations. Please try again.'))
