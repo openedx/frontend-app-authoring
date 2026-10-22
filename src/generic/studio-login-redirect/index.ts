@@ -1,19 +1,6 @@
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthService, getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
 
-/** sessionStorage key holding the time of the last redirect to the Studio login. */
-export const LAST_REDIRECT_KEY = 'studioLoginRedirectAt';
-
-/** A login that did not restore the session must not be retried in a loop. */
-export const REDIRECT_COOLDOWN_MS = 60_000;
-
-/**
- * How long Studio requests and their errors are held back after starting the login. If the page is
- * still here after that, the navigation was cancelled (e.g. by an unsaved changes prompt): the held
- * requests are sent and the held errors reach the page.
- */
-export const HOLD_REQUESTS_MS = 15_000;
-
 /** How long the session check and the background sign-in may take before they count as failed. */
 export const STUDIO_CHECK_TIMEOUT_MS = 10_000;
 
@@ -50,12 +37,23 @@ interface HeldRequest {
   fail: () => void;
 }
 
+/**
+ * What the sign-in dialog shows. It opens when the background sign-in finds that the user is signed out
+ * of the LMS too, and Studio requests are held for as long as it is open.
+ *
+ * - `signedOut`: the user has to sign in again.
+ * - `signingIn`: the user opened the login in another tab.
+ * - `checking`: checking whether the user signed in.
+ * - `stillSignedOut`: the user came back without signing in.
+ */
+export type SignInPromptStatus = 'closed' | 'signedOut' | 'signingIn' | 'checking' | 'stillSignedOut';
+
 let isSigningIn = false;
-let isRedirecting = false;
 let signInCount = 0;
 let inFlight = 0;
 let onSentRequestsDone: (() => void) | undefined;
-let holdRequestsTimer: ReturnType<typeof setTimeout> | undefined;
+let promptStatus: SignInPromptStatus = 'closed';
+const promptListeners = new Set<() => void>();
 let sessionCheck: Promise<boolean | undefined> | null = null;
 let held: HeldRequest[] = [];
 
@@ -182,44 +180,31 @@ const signInSilently = async (): Promise<boolean | undefined> => {
   return hasStudioSession();
 };
 
-const redirectedRecently = (): boolean => {
-  try {
-    const lastRedirect = Number(window.sessionStorage.getItem(LAST_REDIRECT_KEY));
-    return lastRedirect > 0 && Date.now() - lastRedirect < REDIRECT_COOLDOWN_MS;
-  } catch {
-    return false;
-  }
+const setPromptStatus = (status: SignInPromptStatus) => {
+  promptStatus = status;
+  promptListeners.forEach((listener) => listener());
 };
 
+const isPrompting = () => promptStatus !== 'closed';
+
+/** Subscribe to changes of the sign-in dialog (for `useSyncExternalStore`). */
+export const subscribeToSignInPrompt = (listener: () => void) => {
+  promptListeners.add(listener);
+  return () => {
+    promptListeners.delete(listener);
+  };
+};
+
+export const getSignInPromptStatus = () => promptStatus;
+
 /**
- * Send the browser to the Studio login, returning to the current page afterwards.
- *
- * Many of the endpoints this app calls are authenticated by the Studio session
- * and not by the JWT cookies, so the Studio session can lapse while the user is
- * still signed in to the LMS. One page then fails many requests at once, and
- * all of them must share a single navigation.
- *
- * @returns whether a navigation was started.
+ * The Studio login, which comes back to this page afterwards. Studio only follows a `next` on another host
+ * when that host is in its SOCIAL_AUTH_EDX_OAUTH2_ALLOWED_REDIRECT_HOSTS; otherwise it goes to Studio home.
  */
-export const redirectToStudioLogin = (): boolean => {
-  if (!getConfig().STUDIO_BASE_URL || isRedirecting || redirectedRecently()) {
-    return false;
-  }
-  isRedirecting = true;
-  clearTimeout(holdRequestsTimer);
-  holdRequestsTimer = setTimeout(() => {
-    isRedirecting = false;
-    stopHolding();
-  }, HOLD_REQUESTS_MS);
-  try {
-    window.sessionStorage.setItem(LAST_REDIRECT_KEY, String(Date.now()));
-  } catch {
-    // Without sessionStorage there is no loop guard across page loads; still redirect once.
-  }
+export const getStudioLoginUrl = () => {
   const loginUrl = new URL('/login/', getConfig().STUDIO_BASE_URL);
   loginUrl.searchParams.set('next', window.location.href);
-  window.location.assign(loginUrl.href);
-  return true;
+  return loginUrl.href;
 };
 
 /**
@@ -241,30 +226,116 @@ const sentRequestsDone = () =>
   });
 
 /**
+ * Sign in in the background once the requests already sent are answered, so that none of them reaches
+ * Studio's login during the sign-in and replaces its OAuth state.
+ */
+const signInAfterSentRequests = async () => {
+  await sentRequestsDone();
+  return signInSilently();
+};
+
+/**
+ * Signing in gives Studio a new CSRF token: forget the old one, or every save from then on is refused with
+ * a 403, which nothing here recovers from.
+ */
+const forgetCsrfToken = () => getAuthService()?.getCsrfTokenService?.()?.clearCsrfTokenCache();
+
+/** There is a Studio session again: send the held requests. */
+const onSignedIn = () => {
+  signInCount += 1;
+  forgetCsrfToken();
+  releaseHeld((request) => request.send());
+};
+
+/**
  * Get a Studio session back for the held requests.
  *
  * While the user is signed in to the LMS, this signs in to Studio without leaving the page and sends
  * the requests again, so the page never sees them fail. It first waits for the requests already sent,
  * so that none of them reaches Studio's login during the sign-in. Otherwise the user has to sign in
- * again: the page goes to the login and comes back. If the last login did not restore the session, or
- * Studio does not answer in time, the requests fail as before.
+ * again, and the sign-in dialog asks them to, keeping the requests held so that a save in progress is
+ * not lost. If Studio does not answer in time, the requests fail as before.
  */
 const restoreStudioSession = async () => {
   isSigningIn = true;
-  await sentRequestsDone();
-  const signedIn = await signInSilently();
+  const signedIn = await signInAfterSentRequests();
   isSigningIn = false;
   if (signedIn) {
-    signInCount += 1;
-    // Signing in gave Studio a new CSRF token: forget the old one, or every save from now on is refused.
-    getAuthService()?.getCsrfTokenService?.()?.clearCsrfTokenCache();
-    releaseHeld((request) => request.send());
+    onSignedIn();
   } else if (signedIn === undefined) {
     stopHolding();
-  } else if (!redirectToStudioLogin()) {
-    // Going to the login again right after one that did not restore the session would loop.
-    releaseHeld((request) => request.fail());
+  } else {
+    openSignInPrompt();
   }
+};
+
+/**
+ * Check whether the user signed in from the other tab, and if so close the dialog and send the held
+ * requests.
+ *
+ * Signing in there gives this browser a Studio session too. If the user only got as far as the LMS
+ * (e.g. they closed the tab before it came back to Studio), the background sign-in finishes the job.
+ * The dialog cannot be cancelled during the check, so the check cannot outlive it.
+ */
+export const continueAfterSignIn = async () => {
+  if (promptStatus === 'closed' || promptStatus === 'checking') {
+    return;
+  }
+  setPromptStatus('checking');
+  const signedIn = (await hasStudioSession()) || (await signInAfterSentRequests());
+  if (signedIn) {
+    stopWatchingForReturn();
+    setPromptStatus('closed');
+    onSignedIn();
+  } else {
+    setPromptStatus('stillSignedOut');
+  }
+};
+
+/**
+ * The user may have signed in from another tab or window. Opening one hides this tab or takes the focus
+ * from this window, so either event coming back means the user is back here.
+ */
+const onReturn = () => {
+  if (document.visibilityState === 'visible') {
+    void continueAfterSignIn();
+  }
+};
+
+const stopWatchingForReturn = () => {
+  window.removeEventListener('focus', onReturn);
+  document.removeEventListener('visibilitychange', onReturn);
+};
+
+/**
+ * Ask the user to sign in again. The page watches for the user coming back from the moment the dialog
+ * opens, so a login opened without the Sign in button's click (e.g. with a middle click) counts too.
+ */
+const openSignInPrompt = () => {
+  setPromptStatus('signedOut');
+  window.addEventListener('focus', onReturn);
+  document.addEventListener('visibilitychange', onReturn);
+};
+
+/** The user opened the Studio login in another tab. */
+export const startSignIn = () => {
+  if (promptStatus !== 'checking') {
+    setPromptStatus('signingIn');
+  }
+};
+
+/**
+ * The user chose to stay on the page without signing in: the held requests fail without being sent.
+ * The user may have signed in from the other tab anyway, so the CSRF token is forgotten too.
+ */
+export const cancelSignIn = () => {
+  if (promptStatus === 'checking') {
+    return;
+  }
+  stopWatchingForReturn();
+  setPromptStatus('closed');
+  forgetCsrfToken();
+  releaseHeld((request) => request.fail());
 };
 
 /**
@@ -274,8 +345,9 @@ const restoreStudioSession = async () => {
  * views redirect them to its login, and the browser blocks that redirect for a cross-origin request, so
  * the request fails with no response. hasStudioSession() tells both apart from other failures.
  *
- * Such requests, and the Studio requests made while the session is being restored, are held back
- * until restoreStudioSession() is done: the page does not see failures that are about to be fixed.
+ * Such requests, and the Studio requests made while the session is being restored or the sign-in dialog
+ * is open, are held back until there is a session again or the user cancels the dialog: the page does not
+ * see failures that are about to be fixed.
  * Studio requests made meanwhile would also start logins of their own and break the one in progress.
  * A request counts as in flight until it is answered, not until the page gets its result, so the
  * held requests do not keep the sign-in waiting.
@@ -308,7 +380,7 @@ export const addStudioLoginRedirectInterceptor = (httpClient = getAuthenticatedH
     if (!isStudioUrl(config.url, config.baseURL)) {
       return config;
     }
-    if (isSigningIn || isRedirecting) {
+    if (isSigningIn || isPrompting()) {
       return new Promise<typeof config>((resolve, reject) => {
         held.push({
           queued: true,
@@ -343,7 +415,7 @@ export const addStudioLoginRedirectInterceptor = (httpClient = getAuthenticatedH
         ? httpClient.request({ ...config, [RESENT]: true })
         : Promise.reject(error);
     }
-    if (!isSigningIn && (await hasStudioSession()) !== false) {
+    if (!isSigningIn && !isPrompting() && (await hasStudioSession()) !== false) {
       return Promise.reject(error);
     }
     // eslint-disable-next-line no-param-reassign
@@ -357,7 +429,7 @@ export const addStudioLoginRedirectInterceptor = (httpClient = getAuthenticatedH
         fail: () => reject(error),
       });
     });
-    if (!isSigningIn && !isRedirecting) {
+    if (!isSigningIn && !isPrompting()) {
       void restoreStudioSession();
     }
     return result;
@@ -382,11 +454,11 @@ export const shouldRetryQuery = (failureCount: number, error: unknown): boolean 
   !isStudioSessionError(error) && failureCount < DEFAULT_QUERY_RETRIES
 );
 
-/** Only for tests: forget any sign-in, redirect or held request. */
+/** Only for tests: forget any sign-in, dialog or held request. */
 export const resetStudioLoginRedirect = () => {
-  clearTimeout(holdRequestsTimer);
+  stopWatchingForReturn();
+  promptStatus = 'closed';
   isSigningIn = false;
-  isRedirecting = false;
   signInCount = 0;
   inFlight = 0;
   onSentRequestsDone = undefined;
