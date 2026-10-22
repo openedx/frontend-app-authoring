@@ -57,7 +57,7 @@ describe('header utils', () => {
         isLoading: false,
         isAuthzEnabled: false,
         canViewCourse: true,
-        canManageLibraryUpdates: true,
+        canViewLibraryUpdates: true,
         canViewPagesAndResources: true,
         canManagePagesAndResources: true,
         canViewCourseUpdates: true,
@@ -155,7 +155,7 @@ describe('header utils', () => {
       jest.mocked(useCourseUserPermissions).mockReturnValue({
         isLoading: false,
         canViewCourse: true,
-        canManageLibraryUpdates: true,
+        canViewLibraryUpdates: true,
         canViewCourseUpdates: false,
       } as any);
       jest.mocked(useSelector).mockReturnValue({
@@ -250,7 +250,7 @@ describe('header utils', () => {
         isLoading: false,
         isAuthzEnabled: true,
         canViewCourse: false,
-        canManageLibraryUpdates: false,
+        canViewLibraryUpdates: false,
         canViewCourseUpdates: false,
         canViewPagesAndResources: false,
         canViewFiles: false,
