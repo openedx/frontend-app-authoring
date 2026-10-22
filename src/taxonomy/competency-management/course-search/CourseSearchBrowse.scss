@@ -39,7 +39,10 @@
   height: 100%;
 
   .competency-row__badge {
-    overflow-wrap: anywhere;
+    // Keeps its own width up to half the heading; past that, `text-truncate`
+    // ellipsizes it.
+    flex-shrink: 0;
+    max-width: 50%;
     border-radius: var(--pgn-size-badge-border-radius-base);
 
     --pgn-spacing-badge-padding-y: 1.5px;
@@ -145,8 +148,11 @@
 
   // Wraps `&__associations-label` and the "Demonstrate Mastery For"/empty-
   // state text under it.
+  // The empty state repeats the competency name, so a long one has to wrap
+  // there.
   &__associations {
     padding: $container-padding-y $container-padding-x;
+    overflow-wrap: anywhere;
   }
 
   // Figma gives regular weight for this text layer - only the interpolated

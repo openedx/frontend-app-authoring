@@ -6,6 +6,7 @@ import { ResizableBox } from '@src/generic/resizable/Resizable';
 import { useIsDesktop } from '@src/utils';
 import CompetencyTree, { type CompetencyTreeNode } from '../CompetencyTree';
 import { CourseSearchBrowse } from '../course-search';
+import './CompetencyAssociationsPanel.scss';
 
 export interface CompetencyAssociationsPanelProps {
   taxonomyId: number;
@@ -50,7 +51,7 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
           {tree}
         </ResizableBox>
         {selectedCompetency && (
-          <div className="flex-grow-1">
+          <div className="flex-grow-1 competency-associations__course-column">
             <CourseSearchBrowse activeCompetency={selectedCompetency} />
           </div>
         )}

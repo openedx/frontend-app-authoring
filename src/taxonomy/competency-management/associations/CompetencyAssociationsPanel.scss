@@ -1,0 +1,6 @@
+.competency-associations__course-column {
+  // A zero basis keeps a long competency name's unwrapped width from
+  // making flex shrink the tree column below its resizable width.
+  flex-basis: 0;
+  min-width: 0;
+}
