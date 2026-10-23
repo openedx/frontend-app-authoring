@@ -41,6 +41,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-optimizer.scanning-step.title',
     defaultMessage: 'Scanning',
   },
+  linkCheckFailed: {
+    id: 'course-authoring.course-optimizer.link-check.failed',
+    defaultMessage: 'Link Check Failed',
+    description: 'Error shown when the course link check fails.',
+  },
   scanningStepDescription: {
     id: 'course-authoring.course-optimizer.scanning-step.description',
     defaultMessage: 'Scanning for broken links in your course (You can now leave this page safely, but avoid making drastic changes to content until the scan is complete)',
