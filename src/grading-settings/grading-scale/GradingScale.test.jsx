@@ -1,7 +1,8 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
-import { render, waitFor, fireEvent } from '@testing-library/react';
+import { render, waitFor, fireEvent, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import GradingScale from './GradingScale';
 import GradingScaleHandle from './components/GradingScaleHandle';
@@ -189,6 +190,77 @@ describe('<GradingScale />', () => {
       // Calculation is based on 100/6 i.e A, B, C, D, E, F which comes to 16.666666666666657
       expect(segments[0].textContent).toEqual('83.33333333333333 - 100');
       expect(segments[6].textContent).toEqual('0 - 15.666666666666657');
+    });
+  });
+
+  describe('accessibility', () => {
+    const renderPassFail = () =>
+      render(
+        <IntlProvider locale="en" messages={{}}>
+          <GradingScale
+            gradeCutoffs={{ Pass: 0.5 }}
+            gradeLetters={['Pass']}
+            sortedGrades={[
+              { current: 100, previous: 50 },
+              { current: 50, previous: 0 },
+            ]}
+            resetDataRef={{ current: false }}
+            showSavePrompt={jest.fn()}
+            setShowSuccessAlert={jest.fn()}
+            setGradingData={jest.fn()}
+            setOverrideInternetConnectionAlert={jest.fn()}
+            setEligibleGrade={jest.fn()}
+          />
+        </IntlProvider>,
+      );
+
+    it('names each grade range handle after the boundary it moves', async () => {
+      render(<RootWrapper />);
+      expect(await screen.findByRole('slider', { name: 'Boundary between A and B' })).toHaveAttribute(
+        'aria-valuenow',
+        '49',
+      );
+      expect(screen.getByRole('slider', { name: 'Boundary between B and C' })).toHaveAttribute('aria-valuenow', '32');
+      expect(screen.getByRole('slider', { name: 'Boundary between C and F' })).toHaveAttribute('aria-valuenow', '20');
+    });
+
+    it('names the handle on the default Pass/Fail scale', async () => {
+      renderPassFail();
+      expect(await screen.findByRole('slider', { name: 'Boundary between Pass and Fail' })).toHaveAttribute(
+        'aria-valuenow',
+        '50',
+      );
+    });
+
+    it('labels every grade name field', async () => {
+      render(<RootWrapper />);
+      const inputs = await screen.findAllByTestId('grading-scale-segment-input');
+      expect(screen.getAllByLabelText('Grade name')).toHaveLength(inputs.length);
+      inputs.forEach((input) => expect(input).toHaveAccessibleName('Grade name'));
+    });
+
+    it('labels every grade name field on the default Pass/Fail scale', async () => {
+      renderPassFail();
+      const inputs = await screen.findAllByTestId('grading-scale-segment-input');
+      expect(inputs).toHaveLength(3);
+      expect(screen.getAllByLabelText('Grade name')).toHaveLength(3);
+      inputs.forEach((input) => expect(input).toHaveAccessibleName('Grade name'));
+    });
+
+    it('updates the handle names when a grade is renamed', async () => {
+      const user = userEvent.setup();
+      render(<RootWrapper />);
+      const gradeB = await screen.findByDisplayValue('B');
+      await user.type(gradeB, 'Merit', { initialSelectionStart: 0, initialSelectionEnd: 1 });
+      expect(gradeB).toHaveValue('Merit');
+      expect(screen.getByRole('slider', { name: 'Boundary between A and Merit' })).toHaveAttribute(
+        'aria-valuenow',
+        '49',
+      );
+      expect(screen.getByRole('slider', { name: 'Boundary between Merit and C' })).toHaveAttribute(
+        'aria-valuenow',
+        '32',
+      );
     });
   });
 });

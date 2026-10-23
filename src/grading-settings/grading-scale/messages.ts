@@ -17,6 +17,16 @@ const messages = defineMessages({
     id: 'course-authoring.grading-settings.default.pass.text',
     defaultMessage: 'Pass',
   },
+  segmentBoundaryAriaLabel: {
+    id: 'course-authoring.grading-settings.segment-boundary.aria-label',
+    defaultMessage: 'Boundary between {higherGrade} and {lowerGrade}',
+    description: 'Accessible (screen reader) name for a draggable handle on the grading scale. The handle moves the cutoff between two neighboring grades, e.g. "Boundary between A and B".',
+  },
+  segmentNameInputAriaLabel: {
+    id: 'course-authoring.grading-settings.segment-name.input.aria-label',
+    defaultMessage: 'Grade name',
+    description: 'Accessible (screen reader) label for the editable text field that holds the name of a grade on the grading scale, e.g. "A" or "Pass".',
+  },
 });
 
 export default messages;
