@@ -52,7 +52,12 @@ RawEditor.propTypes = {
   content: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({
-      data: PropTypes.shape({ data: PropTypes.string }),
+      data: PropTypes.shape({
+        data: PropTypes.oneOfType([
+          PropTypes.string,
+          PropTypes.Object,
+        ]),
+      }),
     }),
   ]),
   lang: PropTypes.string,
