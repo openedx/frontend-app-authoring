@@ -11,6 +11,13 @@ export const STUDIO_CHECK_TIMEOUT_MS = 10_000;
 export const WAIT_FOR_SENT_REQUESTS_MS = 5_000;
 
 /**
+ * How long after Cancel a Studio read that fails for lack of a session fails without opening the dialog
+ * again. Pages that poll Studio (e.g. the export page, every 3s) would otherwise open it right away. A save
+ * still opens it, as the user asked for it.
+ */
+export const SIGN_IN_PROMPT_PAUSE_MS = 30_000;
+
+/**
  * A Studio URL that needs the Studio session and is cheap to call. With a session, a GET to it
  * answers 400 ("Only instance creation is supported without a usage key") without reading anything.
  */
@@ -53,6 +60,7 @@ let signInCount = 0;
 let inFlight = 0;
 let onSentRequestsDone: (() => void) | undefined;
 let promptStatus: SignInPromptStatus = 'closed';
+let promptPausedUntil = 0;
 const promptListeners = new Set<() => void>();
 let sessionCheck: Promise<boolean | undefined> | null = null;
 let held: HeldRequest[] = [];
@@ -322,7 +330,8 @@ export const startSignIn = () => {
 
 /**
  * The user chose to stay on the page without signing in: the held requests fail without being sent.
- * The user may have signed in from the other tab anyway, so the CSRF token is forgotten too.
+ * The user may have signed in from the other tab anyway, so the CSRF token is forgotten too. For
+ * SIGN_IN_PROMPT_PAUSE_MS, only a save opens the dialog again.
  */
 export const cancelSignIn = () => {
   if (promptStatus === 'checking') {
@@ -330,6 +339,7 @@ export const cancelSignIn = () => {
   }
   stopWatchingForReturn();
   setPromptStatus('closed');
+  promptPausedUntil = Date.now() + SIGN_IN_PROMPT_PAUSE_MS;
   forgetCsrfToken();
   releaseHeld((request) => request.fail());
 };
@@ -416,6 +426,9 @@ export const addStudioLoginRedirectInterceptor = (httpClient = getAuthenticatedH
     }
     // eslint-disable-next-line no-param-reassign
     error[STUDIO_SESSION_ERROR] = true;
+    if (!isSigningIn && !isPrompting() && !isSave(config) && Date.now() < promptPausedUntil) {
+      return Promise.reject(error);
+    }
     const result = new Promise((resolve, reject) => {
       held.push({
         queued: false,
@@ -454,6 +467,7 @@ export const shouldRetryQuery = (failureCount: number, error: unknown): boolean 
 export const resetStudioLoginRedirect = () => {
   stopWatchingForReturn();
   promptStatus = 'closed';
+  promptPausedUntil = 0;
   isSigningIn = false;
   signInCount = 0;
   inFlight = 0;

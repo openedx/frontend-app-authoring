@@ -4,6 +4,7 @@ import type MockAdapter from 'axios-mock-adapter';
 
 import { initializeMocks, waitFor } from '@src/testUtils';
 import {
+  SIGN_IN_PROMPT_PAUSE_MS,
   STUDIO_CHECK_TIMEOUT_MS,
   WAIT_FOR_SENT_REQUESTS_MS,
   addStudioLoginRedirectInterceptor,
@@ -566,6 +567,41 @@ describe('studio login redirect', () => {
 
       await expect(request).resolves.toMatchObject({ status: 200 });
       expect(getSignInPromptStatus()).toEqual('closed');
+    });
+
+    it('does not ask again for a read soon after the user cancels, but does for a save', async () => {
+      axiosMock.onGet(studioUrl('/xblock/block-1')).reply(401);
+      axiosMock.onPost(studioUrl('/xblock/')).reply(401);
+      track(get('/xblock/block-1'));
+      await waitFor(() => expect(getSignInPromptStatus()).toEqual('signedOut'));
+      cancelSignIn();
+      const signInsBefore = signInRequests().length;
+
+      const poll = await get('/xblock/block-1').catch((error) => error);
+
+      expect(getSignInPromptStatus()).toEqual('closed');
+      expect(poll).toMatchObject({ response: { status: 401 } });
+      expect(shouldRetryQuery(0, poll)).toBe(false);
+      expect(signInRequests()).toHaveLength(signInsBefore);
+
+      track(post('/xblock/'));
+      await waitFor(() => expect(getSignInPromptStatus()).toEqual('signedOut'));
+    });
+
+    it('asks again for a read once the pause after the user cancels is over', async () => {
+      axiosMock.onGet(studioUrl('/xblock/block-1')).reply(401);
+      track(get('/xblock/block-1'));
+      await waitFor(() => expect(getSignInPromptStatus()).toEqual('signedOut'));
+      const now = Date.now();
+      cancelSignIn();
+      const dateNow = jest.spyOn(Date, 'now').mockReturnValue(now + SIGN_IN_PROMPT_PAUSE_MS);
+
+      try {
+        track(get('/xblock/block-1'));
+        await waitFor(() => expect(getSignInPromptStatus()).toEqual('signedOut'));
+      } finally {
+        dateNow.mockRestore();
+      }
     });
 
     it('forgets the CSRF token when the user cancels, as they may have signed in anyway', async () => {
