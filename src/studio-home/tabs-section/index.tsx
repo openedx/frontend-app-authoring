@@ -12,6 +12,7 @@ import messages from './messages';
 import LibrariesV2List from './libraries-v2-tab/index';
 import { CoursesList } from './courses-tab';
 import { WelcomeLibrariesV2Alert } from './libraries-v2-tab/WelcomeLibrariesV2Alert';
+import { getPluginHomeTabs } from '../../plugin-slots/StudioHomeTabsSlot';
 
 interface Props {
   showNewCourseContainer: boolean;
@@ -35,7 +36,8 @@ const TabsSection = ({
     archived: 'archived',
     taxonomies: 'taxonomies',
   } as const;
-  type TabKeyType = keyof typeof TABS_LIST;
+  // Plugin tabs (see StudioHomeTabsSlot) bring their own keys.
+  type TabKeyType = string;
 
   const initTabKeyState = (pname: string) => {
     if (pname.includes('/libraries') && librariesV2Enabled) {
@@ -103,6 +105,9 @@ const TabsSection = ({
     return tabs;
   }, [showNewCourseContainer, isShowProcessing]);
 
+  // Not memoized: whether a plugin tab is visible can depend on the user, who may not be ready on first render.
+  const pluginTabs = getPluginHomeTabs().map((tab) => <Tab key={tab.key} eventKey={tab.key} title={tab.title} />);
+
   const handleSelectTab = (tab: TabKeyType) => {
     if (tab === TABS_LIST.courses) {
       navigate('/home');
@@ -110,6 +115,9 @@ const TabsSection = ({
       navigate('/libraries');
     } else if (tab === TABS_LIST.taxonomies) {
       navigate('/taxonomies');
+    } else {
+      const pluginTab = getPluginHomeTabs().find(({ key }) => key === tab);
+      if (pluginTab) { navigate(pluginTab.path); }
     }
     setTabKey(tab);
   };
@@ -121,7 +129,7 @@ const TabsSection = ({
       activeKey={tabKey}
       onSelect={handleSelectTab}
     >
-      {visibleTabs}
+      {[...visibleTabs, ...pluginTabs]}
     </Tabs>
   );
 };

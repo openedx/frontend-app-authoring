@@ -41,6 +41,7 @@ import { ContentTagsDrawer } from './content-tags-drawer';
 import AccessibilityPage from './accessibility-page';
 import { ToastProvider } from './generic/toast-context';
 import { ContentType } from './library-authoring/routes';
+import { getPluginRoutes } from './plugin-slots/RoutesSlot';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -118,6 +119,7 @@ const App = () => {
             />
           </>
         )}
+        {getPluginRoutes()}
       </Route>,
     ),
     {
