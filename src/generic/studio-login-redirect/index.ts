@@ -163,6 +163,12 @@ export const hasStudioSession = (): Promise<boolean | undefined> => {
 };
 
 /**
+ * The Studio login, which goes to Studio home afterwards. Coming back to this page would leave the user with
+ * two copies of it, and the save held here could later overwrite an edit made in the other one.
+ */
+export const getStudioLoginUrl = () => new URL('/login/', getConfig().STUDIO_BASE_URL).href;
+
+/**
  * Sign in to Studio without leaving the page. This works while the user is signed in to the LMS.
  * Resolves to undefined if Studio did not answer in time.
  *
@@ -170,7 +176,7 @@ export const hasStudioSession = (): Promise<boolean | undefined> => {
  * CORS stops them at the LMS, but a `no-cors` request can, and the session cookie it ends with is kept.
  */
 const signInSilently = async (): Promise<boolean | undefined> => {
-  const loginUrl = new URL('/login/', getConfig().STUDIO_BASE_URL);
+  const loginUrl = new URL(getStudioLoginUrl());
   loginUrl.searchParams.set('next', SESSION_CHECK_PATH);
   try {
     await getFromStudio(loginUrl.href, { mode: 'no-cors' });
@@ -196,16 +202,6 @@ export const subscribeToSignInPrompt = (listener: () => void) => {
 };
 
 export const getSignInPromptStatus = () => promptStatus;
-
-/**
- * The Studio login, which comes back to this page afterwards. Studio only follows a `next` on another host
- * when that host is in its SOCIAL_AUTH_EDX_OAUTH2_ALLOWED_REDIRECT_HOSTS; otherwise it goes to Studio home.
- */
-export const getStudioLoginUrl = () => {
-  const loginUrl = new URL('/login/', getConfig().STUDIO_BASE_URL);
-  loginUrl.searchParams.set('next', window.location.href);
-  return loginUrl.href;
-};
 
 /**
  * Resolves once no request that could reach Studio's login is in flight any more, or after

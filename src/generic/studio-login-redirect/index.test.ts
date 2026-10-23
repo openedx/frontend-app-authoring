@@ -692,12 +692,12 @@ describe('studio login redirect', () => {
   });
 
   describe('getStudioLoginUrl', () => {
-    it('comes back to this page after the login', () => {
+    it('goes to Studio home after the login, not to a second copy of this page', () => {
       const loginUrl = new URL(getStudioLoginUrl());
 
       expect(loginUrl.origin).toEqual(new URL(getConfig().STUDIO_BASE_URL).origin);
       expect(loginUrl.pathname).toEqual('/login/');
-      expect(loginUrl.searchParams.get('next')).toEqual(pageUrl);
+      expect(loginUrl.searchParams.has('next')).toBe(false);
     });
   });
 });

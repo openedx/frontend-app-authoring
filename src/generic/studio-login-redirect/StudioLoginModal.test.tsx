@@ -18,7 +18,7 @@ jest.mock('.', () => ({
     return () => mockPrompt.listeners.delete(listener);
   },
   getSignInPromptStatus: () => mockPrompt.status,
-  getStudioLoginUrl: () => 'http://studio.example.com/login/?next=http%3A%2F%2Flocalhost%2Fcourse',
+  getStudioLoginUrl: () => 'http://studio.example.com/login/',
   startSignIn: () => mockStartSignIn(),
   cancelSignIn: () => mockCancelSignIn(),
   continueAfterSignIn: () => mockContinueAfterSignIn(),
@@ -52,7 +52,7 @@ describe('<StudioLoginModal />', () => {
     expect(screen.getByRole('dialog', { name: messages.title.defaultMessage })).toBeInTheDocument();
     expect(screen.getByText(messages.signedOutDescription.defaultMessage)).toBeInTheDocument();
     const signIn = screen.getByRole('link', { name: messages.signInButton.defaultMessage });
-    expect(signIn).toHaveAttribute('href', 'http://studio.example.com/login/?next=http%3A%2F%2Flocalhost%2Fcourse');
+    expect(signIn).toHaveAttribute('href', 'http://studio.example.com/login/');
     expect(signIn).toHaveAttribute('target', '_blank');
 
     await userEvent.click(signIn);
