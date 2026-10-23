@@ -52,6 +52,7 @@ const GradingScaleSegment = ({
           <input
             className="grading-scale-segment-content-title m-0"
             data-testid="grading-scale-segment-input"
+            aria-label={intl.formatMessage(messages.segmentNameInputAriaLabel)}
             value={getLettersOnShortScale(idx, letters, intl)}
             onChange={e => handleLetterChange(e, idx)}
             disabled={!isEditable || idx === gradingSegments.length}
@@ -61,6 +62,7 @@ const GradingScaleSegment = ({
           <input
             className="grading-scale-segment-content-title m-0"
             data-testid="grading-scale-segment-input"
+            aria-label={intl.formatMessage(messages.segmentNameInputAriaLabel)}
             value={getLettersOnLongScale(idx, letters, gradingSegments)}
             onChange={e => handleLetterChange(e, idx)}
             disabled={!isEditable || idx === gradingSegments.length}
