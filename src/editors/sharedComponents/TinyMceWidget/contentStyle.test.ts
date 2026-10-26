@@ -106,6 +106,8 @@ describe('contentStyle', () => {
     expect(themed).toContain('mce-resizehandle');
     expect(themed).toContain('[data-mce-selected]');
     expect(themed).toContain('[data-mce-placeholder]');
+    // Wide images must not overflow the editor in either mode.
+    expect(themed).toContain('max-width: 100%');
   });
 
   it('drops the fallback content typography when themed', () => {

@@ -106,6 +106,9 @@ const editorStyles = `
   .mce-content-body img::selection {
     background: none;
   }
+  .mce-content-body img {
+    max-width: 100%;
+  }
   .mce-content-body[data-mce-placeholder] {
     position: relative;
   }
@@ -227,9 +230,6 @@ const contentStyles = `
   .mce-content-body a, .mce-content-body a:link, .mce-content-body a:visited, .mce-content-body a:hover, .mce-content-body a:active {
       color: #0075b4;
       text-decoration: none;
-  }
-  .mce-content-body img {
-      max-width: 100%;
   }
   .mce-content-body pre {
     margin: 1em 0;
