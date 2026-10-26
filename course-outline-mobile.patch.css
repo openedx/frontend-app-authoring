@@ -206,3 +206,21 @@
     margin-right: -0.75rem;
   }
 }
+
+/* ─── 10. Paragon Layout Column Override (The Core Mobile Width Fix) ─────── */
+@media (max-width: 767.98px) {
+  .course-outline-container > .row,
+  .course-outline-container > .pgn__layout {
+    flex-wrap: wrap !important;
+  }
+  .course-outline-container > .row > [class*="col-"],
+  .course-outline-container > .pgn__layout > [class*="col-"],
+  .course-outline-container > .pgn__layout > .pgn__layout__element {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+}
+
+.course-outline-container {
+}
