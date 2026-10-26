@@ -1,5 +1,7 @@
 .subsection-card {
   flex-grow: 1;
+  min-width: 0;
+  box-sizing: border-box;
 
   .subsection-card__units {
     margin-top: $spacer;
@@ -11,9 +13,29 @@
     font-weight: $headings-font-weight;
     line-height: $headings-line-height;
     color: $headings-color;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .subsection-card__content {
     margin-left: 1.7rem;
+  }
+
+  // ── Mobile: reduce indentation ────────────────────────────────────────────
+  @media (max-width: 767.98px) {
+    .subsection-card__content {
+      margin-left: 0.75rem;
+    }
+
+    .subsection-card__units {
+      margin-top: 0.75rem;
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .subsection-card__content {
+      margin-left: 0;
+    }
   }
 }

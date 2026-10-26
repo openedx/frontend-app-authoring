@@ -11,4 +11,36 @@
       margin-bottom: 0;
     }
   }
+
+  // ── Mobile: switch from horizontal row to a grid ─────────────────────────
+  // The Paragon <Stack direction="horizontal"> becomes display:flex, no-wrap.
+  // We override it to a 2-column grid on ≤767px.
+  @media (max-width: 767.98px) {
+    // Override Paragon Stack horizontal layout
+    &.d-flex {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem 1rem;
+      align-items: start;
+    }
+
+    .outline-status-bar__item,
+    // The StatusBarItem renders a plain <div> with Bootstrap flex classes
+    > div {
+      min-height: auto;
+      word-break: normal;
+      overflow-wrap: break-word;
+
+      h5 {
+        font-size: 0.8125rem; // slightly smaller label on mobile
+        white-space: normal;
+      }
+    }
+  }
+
+  @media (max-width: 399.98px) {
+    &.d-flex {
+      grid-template-columns: 1fr; // single column below 400px
+    }
+  }
 }

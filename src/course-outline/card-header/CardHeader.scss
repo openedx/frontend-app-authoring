@@ -1,6 +1,8 @@
 .item-card-header {
   display: flex;
   align-items: center;
+  // Allow the flex children to shrink below their natural size (prevents overflow)
+  min-width: 0;
 
   .item-card-header__title-btn {
     justify-content: flex-start;
@@ -10,11 +12,21 @@
     margin-right: .25rem;
     background: transparent;
     color: $black;
+    // Allow title to shrink on narrow screens
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .item-card-edit-icon {
     opacity: 0;
     transition: opacity .3s linear;
+    // Minimum touch target
+    min-width: 44px;
+    min-height: 44px;
+    flex-shrink: 0;
 
     &:focus {
       opacity: 1;
@@ -24,6 +36,26 @@
   &:hover {
     .item-card-edit-icon {
       opacity: 1;
+    }
+  }
+
+  // ── Mobile: title can wrap; keep action icons always visible ──────────────
+  @media (max-width: 767.98px) {
+    flex-wrap: nowrap; // keep row to preserve drag handle alignment
+    gap: 0;
+
+    .item-card-header__title-btn {
+      height: auto;           // allow height to grow when title wraps
+      white-space: normal;    // let text wrap on mobile
+      overflow: visible;
+      text-overflow: clip;
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .item-card-edit-icon {
+      opacity: 1;             // always show edit icon on mobile (no hover state)
+      flex-shrink: 0;
     }
   }
 }

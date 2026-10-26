@@ -8,3 +8,66 @@
 @import "./highlights-modal/HighlightsModal";
 @import "./publish-modal/PublishModal";
 @import "./xblock-status/XBlockStatus";
+
+// ── Course Outline Container: mobile overflow control ────────────────────────
+// Scoped to .course-outline-container only — does NOT affect other pages.
+.course-outline-container {
+  // Prevent horizontal scrollbar from appearing due to card overflow
+  overflow-x: hidden;
+  // Ensure the container itself doesn't overflow its parent
+  max-width: 100%;
+  box-sizing: border-box;
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // FIX: Force Paragon <Layout> columns to full width on mobile.
+  //
+  // Paragon's <Layout md={[{span:9},{span:3}]}> renders Bootstrap
+  // .col-md-9 / .col-md-3 on the two Layout.Element children.
+  // At >=768px this gives a 75%/25% split — correct for desktop.
+  // At <768px the .col-12 class should override, but in the compiled
+  // production bundle the .col-md-9 rule can win due to CSS source-order
+  // specificity.  This scoped override guarantees full width below 768px.
+  // ═══════════════════════════════════════════════════════════════════════════
+  @media (max-width: 767.98px) {
+    // Target the Paragon Layout row and its column children
+    > .row,
+    > .pgn__layout {
+      flex-wrap: wrap !important;
+
+      > [class*="col-"],
+      > .pgn__layout__element {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+    }
+  }
+
+  // ── Reduce SortableItem card padding on mobile ─────────────────────────────
+  @media (max-width: 767.98px) {
+    .row.mx-0 {
+      padding: 1rem !important;
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .row.mx-0 {
+      padding: 0.75rem !important;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // STEP 2: Uncomment the line below, rebuild, and reload to verify CSS
+  // reaches the browser. REMOVE after confirming.
+  // outline: 4px solid red !important;
+  // ═══════════════════════════════════════════════════════════════════════════
+}
+
+// ── Unit card title: allow wrapping on mobile ─────────────────────────────────
+.unit-card {
+  .unit-card-title {
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+}

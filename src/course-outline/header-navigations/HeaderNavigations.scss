@@ -1,4 +1,28 @@
 .header-navigations {
   display: flex;
   gap: .75rem;
+
+  // ── Mobile: allow buttons to wrap ────────────────────────────────────────
+  @media (max-width: 991.98px) {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-left: 0; // override ml-auto; parent already stacked by SubHeader
+    width: 100%;
+
+    // Each button should be flexible but not stretch too wide
+    > * {
+      flex: 0 1 auto;
+    }
+
+    // On very small screens (< 400px) force two columns
+    @media (max-width: 399.98px) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+
+      > * {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
 }

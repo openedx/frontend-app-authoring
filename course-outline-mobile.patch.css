@@ -1,0 +1,208 @@
+/*
+ * Course Outline Mobile Responsiveness Patch
+ * Applies mobile-first responsive fixes for the Open edX Studio Course Outline page.
+ * Covers: sub-header wrapping, header nav buttons, status bar grid, card padding,
+ *         content indentation, title wrapping, and drag-handle touch targets.
+ *
+ * IMPORTANT: This file is auto-generated from the SCSS edits made to:
+ *   src/generic/sub-header/SubHeader.scss
+ *   src/course-outline/header-navigations/HeaderNavigations.scss
+ *   src/course-outline/status-bar/StatusBar.scss
+ *   src/course-outline/section-card/SectionCard.scss
+ *   src/course-outline/subsection-card/SubsectionCard.scss
+ *   src/course-outline/unit-card/UnitCard.scss
+ *   src/course-outline/card-header/CardHeader.scss
+ *   src/course-outline/CourseOutline.scss
+ *   src/generic/drag-helper/SortableItem.scss
+ */
+
+/* ─── 1. SubHeader: stack title above buttons on < 992px ─────────────────── */
+@media (max-width: 991.98px) {
+  .sub-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .sub-header .sub-header-title {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  .sub-header .sub-header-actions {
+    flex: 1 1 100%;
+    width: 100%;
+    margin-bottom: 0.75rem;
+    align-self: flex-start;
+  }
+  .sub-header .sub-header-actions.pgn__action-row,
+  .sub-header .sub-header-actions > .pgn__action-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+/* ─── 2. Header Navigation buttons: wrap on < 992px ─────────────────────── */
+@media (max-width: 991.98px) {
+  .header-navigations {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-left: 0;
+    width: 100%;
+  }
+  .header-navigations > * {
+    flex: 0 1 auto;
+  }
+}
+@media (max-width: 399.98px) {
+  .header-navigations {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .header-navigations > * {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ─── 3. Status bar: 2-column grid on < 768px ────────────────────────────── */
+@media (max-width: 767.98px) {
+  .outline-status-bar.d-flex {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1rem;
+    align-items: start;
+  }
+  .outline-status-bar .outline-status-bar__item,
+  .outline-status-bar > div {
+    min-height: auto;
+    word-break: normal;
+    overflow-wrap: break-word;
+  }
+  .outline-status-bar .outline-status-bar__item h5,
+  .outline-status-bar > div h5 {
+    font-size: 0.8125rem;
+    white-space: normal;
+  }
+}
+@media (max-width: 399.98px) {
+  .outline-status-bar.d-flex {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── 4. Section card: min-width, title wrap, content indentation ─────────── */
+.section-card {
+  min-width: 0;
+  box-sizing: border-box;
+}
+.section-card .section-card-title {
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+@media (max-width: 767.98px) {
+  .section-card .section-card__content {
+    margin-left: 0.75rem;
+  }
+  .section-card .section-card__subsections {
+    margin-top: 0.75rem;
+  }
+}
+@media (max-width: 575.98px) {
+  .section-card .section-card__content {
+    margin-left: 0;
+  }
+}
+
+/* ─── 5. Subsection card: min-width, title wrap, content indentation ─────── */
+.subsection-card {
+  min-width: 0;
+  box-sizing: border-box;
+}
+.subsection-card .subsection-card-title {
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+@media (max-width: 767.98px) {
+  .subsection-card .subsection-card__content {
+    margin-left: 0.75rem;
+  }
+  .subsection-card .subsection-card__units {
+    margin-top: 0.75rem;
+  }
+}
+@media (max-width: 575.98px) {
+  .subsection-card .subsection-card__content {
+    margin-left: 0;
+  }
+}
+
+/* ─── 6. Unit card: min-width, title wrap ────────────────────────────────── */
+.unit-card {
+  min-width: 0;
+  box-sizing: border-box;
+}
+.unit-card .unit-card-title {
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ─── 7. Card header: min-width, edit icon touch target ─────────────────── */
+.item-card-header {
+  min-width: 0;
+}
+.item-card-header .item-card-header__title-btn {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.item-card-header .item-card-edit-icon {
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+}
+@media (max-width: 767.98px) {
+  .item-card-header .item-card-header__title-btn {
+    height: auto;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .item-card-header .item-card-edit-icon {
+    opacity: 1;
+    flex-shrink: 0;
+  }
+}
+
+/* ─── 8. Course outline container: overflow guard ───────────────────────── */
+.course-outline-container {
+  overflow-x: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+@media (max-width: 767.98px) {
+  .course-outline-container .row.mx-0 {
+    padding: 1rem !important;
+  }
+}
+@media (max-width: 575.98px) {
+  .course-outline-container .row.mx-0 {
+    padding: 0.75rem !important;
+  }
+}
+
+/* ─── 9. SortableItem drag-handle negative margin ───────────────────────── */
+@media (max-width: 767.98px) {
+  .extend-margin .item-children {
+    margin-right: -1.5rem;
+  }
+}
+@media (max-width: 575.98px) {
+  .extend-margin .item-children {
+    margin-right: -0.75rem;
+  }
+}

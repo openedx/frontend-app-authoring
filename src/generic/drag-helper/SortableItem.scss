@@ -2,4 +2,17 @@
   .item-children {
     margin-right: -2.75rem;
   }
+
+  // ── Mobile: reduce the negative margin so content stays in viewport ───────
+  @media (max-width: 767.98px) {
+    .item-children {
+      margin-right: -1.5rem; // smaller pull to match reduced drag-handle area
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .item-children {
+      margin-right: -0.75rem;
+    }
+  }
 }

@@ -6,6 +6,31 @@
     margin-bottom: 1.75rem;
     align-self: flex-end;
   }
+
+  // ── Mobile: stack title above buttons ────────────────────────────────────
+  @media (max-width: 991.98px) {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    .sub-header-title {
+      flex: 1 1 100%;
+      width: 100%;
+    }
+
+    .sub-header-actions {
+      flex: 1 1 100%;
+      width: 100%;
+      margin-bottom: 0.75rem;
+      align-self: flex-start;
+
+      // Allow the inner ActionRow/nav to wrap its buttons
+      &.pgn__action-row,
+      > .pgn__action-row {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+    }
+  }
 }
 
 .sub-header-title {
