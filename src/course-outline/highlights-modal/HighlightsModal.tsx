@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { useCourseItemData } from '@src/course-outline/data/apiHooks';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { ExpandableCard } from '@src/generic/expandable-card/ExpandableCard';
-import { useBlocker } from 'react-router';
+import { useBlocker } from 'react-router-dom';
 import PromptIfDirty from '@src/generic/prompt-if-dirty/PromptIfDirty';
 import { useHelpUrls } from '@src/help-urls/hooks';
 import FormikControl from '@src/generic/FormikControl';
