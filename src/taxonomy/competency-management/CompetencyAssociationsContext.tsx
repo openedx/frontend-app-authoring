@@ -34,6 +34,7 @@ import type {
   CreateCompetencyCriterionPayload,
   GradeRulePayload,
 } from './data/types';
+import { courseKeyOfFocus, resolveCreateTarget } from './criterionTarget';
 import messages from './messages';
 import type { CompetencyCriteriaGroupsIndex } from './utils';
 import {
@@ -41,7 +42,6 @@ import {
   bottomTierGroupsForCourse,
   buildCompetencyCriteriaGroupsIndex,
   effectiveRuleOf,
-  isRuleTakenInGroup,
   lastBottomTierGroupForCourse,
   lastRuleKeyIn,
   ruleBoxesForGroup,
@@ -62,13 +62,13 @@ export interface CriteriaFocus {
 /** The author's choices on the placeholder group or rule box. The rule payload is shared by both shapes, since only
  * one placeholder exists at a time.
  */
-export interface PlaceholderState {
+export interface CriteriaPlaceholder {
   parentRuleGroupId: number | null;
   logicOperator: CompetencyGroupLogicOperator;
   rulePayload: GradeRulePayload | null;
 }
 
-const initialPlaceholder: PlaceholderState = { parentRuleGroupId: null, logicOperator: 'OR', rulePayload: null };
+const initialPlaceholder: CriteriaPlaceholder = { parentRuleGroupId: null, logicOperator: 'OR', rulePayload: null };
 
 export interface CompetencyAssociationsContextBase {
   /** The groups or profile failure, or the first course-outline failure other
@@ -76,7 +76,7 @@ export interface CompetencyAssociationsContextBase {
    */
   error: Error | null;
   focus: CriteriaFocus | null;
-  placeholder: PlaceholderState;
+  placeholder: CriteriaPlaceholder;
   /** Whether a placeholder rule box or group exists, which disables both add controls. */
   hasPlaceholder: boolean;
   /** Starts a placeholder rule box in a bottom-tier group, replacing any other placeholder. */
@@ -190,36 +190,17 @@ function isInaccessibleCourseError(error: unknown): boolean {
   return isAxiosError(error) && (error.response?.status === 403 || error.response?.status === 404);
 }
 
-function isFocusInCourse(
-  courseId: string,
-  focus: CriteriaFocus | null,
-  placeholderParentGroupId: number | null,
-  index: CompetencyCriteriaGroupsIndex,
-): focus is CriteriaFocus {
-  if (!focus) {
-    return false;
-  }
-  // A placeholder group has no id of its own, so its course is its parent course-level group's.
-  if (focus.groupId === null) {
-    const parentGroup = placeholderParentGroupId !== null ? index.groupsById.get(placeholderParentGroupId) : undefined;
-    return parentGroup?.courseKey === courseId;
-  }
-  const focusedGroup = index.groupsById.get(focus.groupId);
-  const focusedCourseGroup = focusedGroup?.parentId != null ? index.groupsById.get(focusedGroup.parentId) : undefined;
-  return focusedCourseGroup?.courseKey === courseId;
-}
-
 /** The focus to move to when `courseId` is expanded, or `null` when focus
  * already sits on one of that course's groups or the course has no group.
  */
 function courseExpansionFocus(
   courseId: string,
   focus: CriteriaFocus | null,
-  placeholderParentGroupId: number | null,
+  placeholder: CriteriaPlaceholder,
   index: CompetencyCriteriaGroupsIndex,
   systemDefaultProfile: CompetencyRuleProfile,
 ): CriteriaFocus | null {
-  if (isFocusInCourse(courseId, focus, placeholderParentGroupId, index)) {
+  if (courseKeyOfFocus(focus, placeholder, index) === courseId) {
     return null;
   }
   const target = lastBottomTierGroupForCourse(index, courseId);
@@ -253,7 +234,7 @@ interface ProviderState {
    */
   generation: number;
   focus: CriteriaFocus | null;
-  placeholder: PlaceholderState;
+  placeholder: CriteriaPlaceholder;
   placeholderDuplicateRejected: boolean;
   /** A course expanded before the groups and default profile loaded. */
   pendingCourseId: string | null;
@@ -432,13 +413,7 @@ export const CompetencyAssociationsProvider = ({
   if (!competencyChanged && pendingCourseId !== null && groupsIndex && systemDefaultProfile) {
     dispatch({
       type: 'pendingCourseResolved',
-      focus: courseExpansionFocus(
-        pendingCourseId,
-        focus,
-        placeholder.parentRuleGroupId,
-        groupsIndex,
-        systemDefaultProfile,
-      ),
+      focus: courseExpansionFocus(pendingCourseId, focus, placeholder, groupsIndex, systemDefaultProfile),
     });
   }
 
@@ -449,17 +424,11 @@ export const CompetencyAssociationsProvider = ({
       dispatch({ type: 'courseExpandedBeforeLoad', courseId });
       return;
     }
-    const next = courseExpansionFocus(
-      courseId,
-      focus,
-      placeholder.parentRuleGroupId,
-      groupsIndex,
-      systemDefaultProfile,
-    );
+    const next = courseExpansionFocus(courseId, focus, placeholder, groupsIndex, systemDefaultProfile);
     if (next) {
       dispatch({ type: 'setFocus', focus: next });
     }
-  }, [focus, placeholder.parentRuleGroupId, groupsIndex, systemDefaultProfile]);
+  }, [focus, placeholder, groupsIndex, systemDefaultProfile]);
 
   const courseIdsWithGroups = useMemo(
     () => (groupsIndex ? groupsIndex.courseGroups.map((courseGroup) => courseGroup.courseKey) : []),
@@ -584,63 +553,22 @@ export const CompetencyAssociationsProvider = ({
       return;
     }
 
-    let groupId: number | undefined;
-    let ruleTypeOverride: string | undefined;
-    let rulePayloadOverride: GradeRulePayload | undefined;
-
-    let logicOperator: CompetencyGroupLogicOperator | undefined;
-
-    const isFocusTarget = isFocusInCourse(courseId, focus, placeholder.parentRuleGroupId, groupsIndex);
-    const target = isFocusTarget
+    // Focus on another course falls back to that course's last group, whose rule box has no placeholder score.
+    const isFocusInCourse = courseKeyOfFocus(focus, placeholder, groupsIndex) === courseId;
+    const target = isFocusInCourse
       ? focus
-      : courseExpansionFocus(courseId, focus, placeholder.parentRuleGroupId, groupsIndex, systemDefaultProfile);
-    if (target) {
-      // The placeholder's score applies only to the placeholder in focus, not to a fallback group.
-      const placeholderRule = isFocusTarget && placeholder.rulePayload !== null
-        ? { ruleType: systemDefaultProfile.ruleType, rulePayload: placeholder.rulePayload }
-        : undefined;
-      if (target.groupId === null) {
-        // No `group_id`: the request creates the group, and always needs its any/all logic.
-        logicOperator = placeholder.logicOperator;
-        ruleTypeOverride = placeholderRule?.ruleType;
-        rulePayloadOverride = placeholderRule?.rulePayload;
-      } else if (target.ruleKey === null) {
-        // Sending an untouched duplicate would silently merge into the existing box.
-        if (
-          isFocusTarget && isRuleTakenInGroup(
-            placeholderRule ??
-              { ruleType: systemDefaultProfile.ruleType, rulePayload: systemDefaultProfile.rulePayload },
-            ruleBoxesForGroup(target.groupId, groupsIndex, systemDefaultProfile),
-          )
-        ) {
-          dispatch({ type: 'placeholderDuplicateRejected' });
-          return;
-        }
-        // ADR 0002: an override is complete or absent, so the pair is sent only once the author sets a score.
-        groupId = target.groupId;
-        ruleTypeOverride = placeholderRule?.ruleType;
-        rulePayloadOverride = placeholderRule?.rulePayload;
-      } else {
-        groupId = target.groupId;
-        const box = ruleBoxesForGroup(target.groupId, groupsIndex, systemDefaultProfile)
-          .find((candidate) => candidate.key === target.ruleKey);
-        if (box) {
-          ruleTypeOverride = box.rule.ruleType;
-          rulePayloadOverride = box.rule.rulePayload;
-        }
-      }
-      if (target !== focus) {
-        dispatch({ type: 'setFocus', focus: target });
-      }
+      : courseExpansionFocus(courseId, focus, placeholder, groupsIndex, systemDefaultProfile);
+    const targetPlaceholder = isFocusInCourse ? placeholder : { ...placeholder, rulePayload: null };
+    const resolved = resolveCreateTarget(courseId, target, targetPlaceholder, groupsIndex, systemDefaultProfile);
+    if (resolved.kind === 'duplicate') {
+      dispatch({ type: 'placeholderDuplicateRejected' });
+      return;
+    }
+    if (target && target !== focus) {
+      dispatch({ type: 'setFocus', focus: target });
     }
 
-    const payload: CreateCompetencyCriterionPayload = {
-      object_id: objectId,
-      ...(groupId !== undefined ? { group_id: groupId } : {}),
-      ...(ruleTypeOverride !== undefined ? { rule_type_override: ruleTypeOverride } : {}),
-      ...(rulePayloadOverride !== undefined ? { rule_payload_override: rulePayloadOverride } : {}),
-      ...(logicOperator !== undefined ? { logic_operator: logicOperator } : {}),
-    };
+    const payload: CreateCompetencyCriterionPayload = { object_id: objectId, ...resolved.fields };
 
     createCriterion({ tagId, payload }).then(
       (criterion) => {
