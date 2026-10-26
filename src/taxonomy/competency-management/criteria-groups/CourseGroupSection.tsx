@@ -6,6 +6,7 @@ import classNames from 'classnames';
 
 import { useCourseOutlineIndex } from '@src/course-outline/data';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
+import { courseKeyOfFocus } from '../criterionTarget';
 import type { CourseCompetencyCriteriaGroup } from '../data/types';
 import { bottomTierGroupsForCourse } from '../utils';
 import AddControl from './AddControl';
@@ -49,12 +50,8 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
 
   // A placeholder group (`focus.groupId === null`) is shown as one more card after the real ones.
   const showPlaceholderGroup = focus?.groupId === null && placeholder.parentRuleGroupId === courseGroup.id;
-  const containsFocus = status === 'success' && !!focus && (
-    focus.groupId === null
-      ? showPlaceholderGroup
-      : groupsIndex.groupsById.get(focus.groupId)?.parentId === courseGroup.id
-  );
-
+  const containsFocus = status === 'success' &&
+    courseKeyOfFocus(focus, placeholder, groupsIndex) === courseGroup.courseKey;
   const holdsPlaceholderRuleBox = focus?.ruleKey === null
     && focus.groupId !== null
     && groupsIndex?.groupsById.get(focus.groupId)?.parentId === courseGroup.id;

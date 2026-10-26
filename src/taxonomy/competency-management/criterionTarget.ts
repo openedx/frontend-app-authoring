@@ -20,12 +20,10 @@ export function courseKeyOfFocus(
     return undefined;
   }
   // A placeholder group has no real id, so its course comes from its parent group.
-  if (focus.groupId === null) {
-    const { parentRuleGroupId } = placeholder;
-    return (parentRuleGroupId !== null ? index.groupsById.get(parentRuleGroupId)?.courseKey : undefined) ?? undefined;
-  }
-  const { parentId } = index.groupsById.get(focus.groupId) ?? {};
-  return (parentId != null ? index.groupsById.get(parentId)?.courseKey : undefined) ?? undefined;
+  const courseGroupId = focus.groupId === null
+    ? placeholder.parentRuleGroupId
+    : index.groupsById.get(focus.groupId)?.parentId;
+  return courseGroupId != null ? index.groupsById.get(courseGroupId)?.courseKey ?? undefined : undefined;
 }
 
 // ADR 0002: an override is complete or absent, so the pair is only sent once the author has set a score.

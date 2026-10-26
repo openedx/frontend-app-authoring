@@ -313,4 +313,23 @@ describe('<CourseGroupSection />', () => {
 
     expect(discardPlaceholder).toHaveBeenCalledTimes(1);
   });
+
+  it('marks itself focused when the focused placeholder group belongs to it', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const { container, unmount } = renderSection({
+      focus: { groupId: null, ruleKey: null },
+      placeholder: { parentRuleGroupId: courseGroup.id, logicOperator: 'OR', rulePayload: null },
+    });
+
+    await screen.findByText('Demo Course');
+    expect(container.querySelector('.course-group-section')).toHaveClass('course-group-section--focused');
+
+    unmount();
+    const { container: other } = renderSection({
+      focus: { groupId: null, ruleKey: null },
+      placeholder: { parentRuleGroupId: 999, logicOperator: 'OR', rulePayload: null },
+    });
+    await screen.findByText('Demo Course');
+    expect(other.querySelector('.course-group-section')).not.toHaveClass('course-group-section--focused');
+  });
 });

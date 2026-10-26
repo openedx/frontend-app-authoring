@@ -109,6 +109,24 @@ describe('resolveCreateTarget', () => {
       .toEqual({ kind: 'duplicate' });
   });
 
+  it('ignores a placeholder rule box focused in another course', () => {
+    expect(resolveCreateTarget('course-v1:Other+X+1', { groupId: 10, ruleKey: null }, untouched, index, profile))
+      .toEqual({ kind: 'create', fields: {} });
+  });
+
+  it('rejects a placeholder rule box whose chosen rule is taken', () => {
+    expect(
+      resolveCreateTarget(
+        C,
+        { groupId: 10, ruleKey: null },
+        { ...untouched, rulePayload: defaultBoxPayload },
+        index,
+        profile,
+      ),
+    )
+      .toEqual({ kind: 'duplicate' });
+  });
+
   it('sends the override pair for a changed placeholder rule box', () => {
     expect(
       resolveCreateTarget(C, { groupId: 10, ruleKey: null }, { ...untouched, rulePayload: changed }, index, profile),
