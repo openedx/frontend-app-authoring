@@ -1,8 +1,8 @@
 import {
-  fireEvent,
   initializeMocks,
   render as baseRender,
   screen,
+  userEvent,
 } from '@src/testUtils';
 
 import { ComponentPickerProvider } from '../common/context/ComponentPickerContext';
@@ -67,9 +67,11 @@ describe('<LibrarySidebar />', () => {
   });
 
   it('remembers a keyboard resize', async () => {
+    const user = userEvent.setup();
     render();
     const handle = await screen.findByRole('separator', { name: 'Resize sidebar' });
-    fireEvent.keyDown(handle, { key: 'ArrowLeft', shiftKey: true });
+    handle.focus();
+    await user.keyboard('{Shift>}{ArrowLeft}{/Shift}');
 
     expect(sidebarWidth()).toBe(`${SIDEBAR_DEFAULT_WIDTH + 64}px`);
     expect(localStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY)).toBe(String(SIDEBAR_DEFAULT_WIDTH + 64));

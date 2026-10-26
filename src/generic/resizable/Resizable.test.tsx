@@ -5,6 +5,7 @@ import {
   fireEvent,
   initializeMocks,
   render,
+  userEvent,
 } from '@src/testUtils';
 import { RESIZING_BODY_CLASS, ResizableBox } from './Resizable';
 
@@ -216,30 +217,35 @@ describe('<ResizableBox /> keyboard and accessibility', () => {
     expect(renderBox({ initialWidth: 5000 }).box.style.width).toBe('600px');
   });
 
-  it('resizes with the arrow keys, Shift for bigger steps, Home and End for the limits', () => {
+  it('resizes with the arrow keys, Shift for bigger steps, Home and End for the limits', async () => {
+    const user = userEvent.setup();
     const onResizeEnd = jest.fn();
     const { handle, box } = renderBox({ initialWidth: 300, onResizeEnd });
 
-    fireEvent.keyDown(handle, { key: 'ArrowLeft' }); // left-hand handle: moving left grows
+    await user.tab(); // the handle is the only focusable element
+    expect(handle).toHaveFocus();
+    await user.keyboard('{ArrowLeft}'); // left-hand handle: moving left grows
     expect(box.style.width).toBe('316px');
-    fireEvent.keyDown(handle, { key: 'ArrowRight', shiftKey: true });
+    await user.keyboard('{Shift>}{ArrowRight}{/Shift}');
     expect(box.style.width).toBe('252px');
-    fireEvent.keyDown(handle, { key: 'Home' });
+    await user.keyboard('{Home}');
     expect(box.style.width).toBe('200px');
-    fireEvent.keyDown(handle, { key: 'End' });
+    await user.keyboard('{End}');
     expect(box.style.width).toBe('600px');
-    fireEvent.keyDown(handle, { key: 'a' }); // unrelated keys are left alone
+    await user.keyboard('a'); // unrelated keys are left alone
     expect(box.style.width).toBe('600px');
 
     expect(handle).toHaveAttribute('aria-valuenow', '600');
     expect(onResizeEnd.mock.calls.map(([width]) => width)).toEqual([316, 252, 200, 600]);
   });
 
-  it('swaps the arrow directions for a right-hand handle', () => {
+  it('swaps the arrow directions for a right-hand handle', async () => {
+    const user = userEvent.setup();
     const { handle, box } = renderBox({ initialWidth: 300, handleSide: 'right' });
-    fireEvent.keyDown(handle, { key: 'ArrowRight' });
+    handle.focus();
+    await user.keyboard('{ArrowRight}');
     expect(box.style.width).toBe('316px');
-    fireEvent.keyDown(handle, { key: 'ArrowLeft' });
+    await user.keyboard('{ArrowLeft}');
     expect(box.style.width).toBe('300px');
   });
 });
