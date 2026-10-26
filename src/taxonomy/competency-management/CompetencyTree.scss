@@ -25,16 +25,16 @@
   $hover-border-color: var(--pgn-color-info-200);
   $group-padding: 5px;
 
-  // A fixed height, independent of the viewport, so `&__container` below
-  // scrolls internally instead of growing the page. Must equal
-  // `$panel-height` in `../course-search/CourseSearchBrowse.scss` so both
-  // columns line up. Desktop-only, matching `useIsDesktop()`
-  $panel-height: 73rem;
-
+  // `&__container` below scrolls within this height instead of growing the page.
   @media (--pgn-size-breakpoint-min-width-lg) {
     display: flex;
     flex-direction: column;
-    height: $panel-height;
+    max-height: var(--competency-panel-height);
+
+    // Matches the course column's height once that column is shown.
+    .competency-associations-panel--with-courses & {
+      height: var(--competency-panel-height);
+    }
   }
 
   .competency-row__badge {

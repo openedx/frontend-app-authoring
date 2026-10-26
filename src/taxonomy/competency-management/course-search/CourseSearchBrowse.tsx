@@ -197,7 +197,7 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
   let hasPagination = false;
   if (isLoading) {
     body = (
-      <Row className="m-0 mt-4 justify-content-center">
+      <Row className="m-0 mt-2 justify-content-center">
         <LoadingSpinner />
       </Row>
     );
@@ -210,7 +210,7 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
     );
   } else if (courses.length === 0) {
     body = (
-      <div className="mt-4">
+      <div className="mt-2">
         <p>
           {intl.formatMessage(
             search || dateRange[0] ? messages.noMatchingCourses : messages.noAccessibleCourses,
