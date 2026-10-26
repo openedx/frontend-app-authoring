@@ -1,0 +1,6 @@
+.competency-tooltip {
+  // Top-level, not under `.competency-tree`: the tooltip renders in a portal
+  // under `<body>`. Paragon's 200px default makes a long name tall enough to
+  // run off the top of the viewport.
+  --pgn-size-tooltip-max-width: 400px;
+}

@@ -4,7 +4,6 @@ import {
   type ReactNode,
   useCallback,
   useEffect,
-  useId,
   useMemo,
   useRef,
   useState,
@@ -15,12 +14,10 @@ import {
   Badge,
   Button,
   IconButton,
-  Overlay,
   Pagination,
   Row,
   SearchField,
   Stack,
-  Tooltip,
 } from '@openedx/paragon';
 import { Calendar, Close } from '@openedx/paragon/icons';
 import { debounce } from 'lodash';
@@ -32,13 +29,12 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import { DATE_FORMAT } from '@src/constants';
 import { useStudioHomeCoursesV2 } from '@src/studio-home/data/apiHooks';
 import type { CompetencyTreeNode } from '../CompetencyTree';
+import CompetencyTooltip from '../CompetencyTooltip';
+import { useCompetencyTooltip } from '../useCompetencyTooltip';
 import CourseRow from './CourseRow';
 import messages from './messages';
 // @ts-ignore
 import './CourseSearchBrowse.scss';
-
-// Lets the pointer travel from the heading onto its tooltip (WCAG 1.4.13, hoverable).
-const TOOLTIP_HIDE_DELAY_MS = 100;
 
 export interface CourseSearchBrowseProps {
   /** The competency currently selected in the competency tree. The parent
@@ -252,21 +248,17 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
     );
   }
 
-  const tooltipId = useId();
   const headingRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLSpanElement>(null);
   const badgeRef = useRef<HTMLElement>(null);
   const [isHeadingTruncated, setIsHeadingTruncated] = useState(false);
-  const hideTimer = useRef<ReturnType<typeof setTimeout>>();
-  const [showTooltip, setShowTooltip] = useState(false);
 
   const measureHeading = useCallback(
     () => [nameRef.current, badgeRef.current].some((el) => !!el && el.scrollWidth > el.clientWidth),
     [],
   );
 
-  // Observing the heading catches width changes from dragging the
-  // tree/course divider as well as window resizes.
+  // Catches width changes from dragging the tree/course divider as well as window resizes.
   useEffect(() => {
     const heading = headingRef.current;
     if (!heading) { return undefined; }
@@ -276,35 +268,11 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
     return () => resizeObserver.disconnect();
   }, [measureHeading, activeCompetency]);
 
-  const cancelHide = () => clearTimeout(hideTimer.current);
-  const closeTooltip = () => {
-    cancelHide();
-    setShowTooltip(false);
-  };
-  const closeTooltipSoon = () => {
-    cancelHide();
-    hideTimer.current = setTimeout(closeTooltip, TOOLTIP_HIDE_DELAY_MS);
-  };
-
-  const openTooltipIfTruncated = () => {
-    cancelHide();
+  const tooltip = useCompetencyTooltip(() => {
     const isTruncated = measureHeading();
     setIsHeadingTruncated(isTruncated);
-    setShowTooltip(isTruncated);
-  };
-
-  useEffect(() => () => clearTimeout(hideTimer.current), []);
-
-  // Document-level so Escape dismisses a hover-opened tooltip too, without
-  // moving focus (WCAG 1.4.13, dismissible).
-  useEffect(() => {
-    if (!showTooltip) { return undefined; }
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') { setShowTooltip(false); }
-    };
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [showTooltip]);
+    return isTruncated;
+  });
 
   return (
     <div className="course-search-browse">
@@ -356,10 +324,10 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
             className="course-search-browse__associations-mastery d-flex align-items-center"
             ref={headingRef}
             tabIndex={isHeadingTruncated ? 0 : undefined}
-            onMouseEnter={openTooltipIfTruncated}
-            onMouseLeave={closeTooltipSoon}
-            onFocus={openTooltipIfTruncated}
-            onBlur={closeTooltip}
+            onMouseEnter={tooltip.openOnHover}
+            onMouseLeave={tooltip.closeSoon}
+            onFocus={tooltip.openOnFocus}
+            onBlur={tooltip.close}
           >
             <span className="text-truncate" ref={nameRef}>
               {intl.formatMessage(messages.demonstrateMasteryForLabel, {
@@ -383,24 +351,12 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
                 </Badge>
               </>
             )}
-            <Overlay target={headingRef} show={showTooltip} placement="top" flip>
-              <Tooltip
-                id={tooltipId}
-                className="competency-tooltip"
-                variant="light"
-                onMouseEnter={cancelHide}
-                onMouseLeave={closeTooltipSoon}
-              >
-                <div>{activeCompetency.value}</div>
-                {activeCompetency.externalId && (
-                  <div>
-                    {intl.formatMessage(messages.competencyIdAccessibleLabel, {
-                      externalId: activeCompetency.externalId,
-                    })}
-                  </div>
-                )}
-              </Tooltip>
-            </Overlay>
+            <CompetencyTooltip
+              anchorRef={headingRef}
+              name={activeCompetency.value}
+              externalId={activeCompetency.externalId}
+              {...tooltip.tooltipProps}
+            />
           </div>
           <div className="course-search-browse__associations-empty-state">
             <p>

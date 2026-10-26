@@ -1,21 +1,15 @@
 import type { FocusEvent, KeyboardEvent, MouseEvent } from 'react';
-import {
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from 'react';
+import { useId, useRef } from 'react';
 
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Badge, Overlay, Tooltip } from '@openedx/paragon';
+import { Badge } from '@openedx/paragon';
 
 import ExpandCollapseIconButton from '@src/generic/ExpandCollapseIconButton';
 import type { CompetencyTreeNode } from './CompetencyTree';
+import CompetencyTooltip from './CompetencyTooltip';
+import { useCompetencyTooltip } from './useCompetencyTooltip';
 import messages from './messages';
-
-// Lets the pointer travel from the row onto its tooltip (WCAG 1.4.13, hoverable).
-const TOOLTIP_HIDE_DELAY_MS = 100;
 
 export interface CompetencyTreeItemProps {
   node: CompetencyTreeNode;
@@ -55,12 +49,9 @@ const CompetencyTreeItem = ({
   const intl = useIntl();
   const labelId = useId();
   const externalIdLabelId = useId();
-  const tooltipId = useId();
   const rowRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLSpanElement>(null);
   const badgeRef = useRef<HTMLElement>(null);
-  const hideTimer = useRef<ReturnType<typeof setTimeout>>();
-  const [showTooltip, setShowTooltip] = useState(false);
   const nodeId = String(node.id);
   const hasChildren = !!node.subRows?.length;
   const isExpanded = expandedIds.has(nodeId);
@@ -94,46 +85,18 @@ const CompetencyTreeItem = ({
     }
   };
 
-  const cancelHide = () => clearTimeout(hideTimer.current);
-  const closeTooltip = () => {
-    cancelHide();
-    setShowTooltip(false);
-  };
-  const closeTooltipSoon = () => {
-    cancelHide();
-    hideTimer.current = setTimeout(closeTooltip, TOOLTIP_HIDE_DELAY_MS);
-  };
+  // Measured each time the tooltip is about to open, so a width changed since
+  // the last render (e.g. by dragging the divider) is accounted for.
+  const tooltip = useCompetencyTooltip(
+    () => [labelRef.current, badgeRef.current].some((el) => !!el && el.scrollWidth > el.clientWidth),
+  );
 
-  // Measured when hover or focus starts, so a width changed since the last
-  // render (e.g. by dragging the divider) is accounted for.
-  const openTooltipIfTruncated = () => {
-    cancelHide();
-    const isTruncated = [labelRef.current, badgeRef.current].some(
-      (el) => !!el && el.scrollWidth > el.clientWidth,
-    );
-    setShowTooltip(isTruncated);
-  };
-
-  useEffect(() => () => clearTimeout(hideTimer.current), []);
-
-  // Document-level so Escape dismisses a hover-opened tooltip too, without
-  // moving focus (WCAG 1.4.13, dismissible).
-  useEffect(() => {
-    if (!showTooltip) { return undefined; }
-    const handleEscape = (event: globalThis.KeyboardEvent) => {
-      if (event.key === 'Escape') { setShowTooltip(false); }
-    };
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [showTooltip]);
-
-  // React focus events bubble, so a nested row's focus would also reach this
-  // handler; only this row's own `<li>` may open its tooltip.
+  // React focus events bubble; only this row's own `<li>` may open its tooltip.
   const handleFocus = (event: FocusEvent<HTMLLIElement>) => {
-    if (event.target === event.currentTarget) { openTooltipIfTruncated(); }
+    if (event.target === event.currentTarget) { tooltip.openOnFocus(); }
   };
   const handleBlur = (event: FocusEvent<HTMLLIElement>) => {
-    if (event.target === event.currentTarget) { closeTooltip(); }
+    if (event.target === event.currentTarget) { tooltip.close(); }
   };
 
   return (
@@ -156,8 +119,8 @@ const CompetencyTreeItem = ({
       <div
         className="competency-row"
         ref={rowRef}
-        onMouseEnter={openTooltipIfTruncated}
-        onMouseLeave={closeTooltipSoon}
+        onMouseEnter={tooltip.openOnHover}
+        onMouseLeave={tooltip.closeSoon}
       >
         <ExpandCollapseIconButton
           canExpand={hasChildren}
@@ -184,18 +147,12 @@ const CompetencyTreeItem = ({
             </>
           ) :
           null}
-        <Overlay target={rowRef} show={showTooltip} placement="top" flip>
-          <Tooltip
-            id={tooltipId}
-            className="competency-tooltip"
-            variant="light"
-            onMouseEnter={cancelHide}
-            onMouseLeave={closeTooltipSoon}
-          >
-            <div>{node.value}</div>
-            {externalId && <div>{intl.formatMessage(messages.competencyIdAccessibleLabel, { externalId })}</div>}
-          </Tooltip>
-        </Overlay>
+        <CompetencyTooltip
+          anchorRef={rowRef}
+          name={node.value}
+          externalId={externalId}
+          {...tooltip.tooltipProps}
+        />
       </div>
       {isExpanded && hasChildren && (
         <ul role={isSelectable ? 'group' : undefined}>

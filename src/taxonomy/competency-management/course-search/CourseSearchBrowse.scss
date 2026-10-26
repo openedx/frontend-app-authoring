@@ -39,10 +39,9 @@
   height: 100%;
 
   .competency-row__badge {
-    // Keeps its own width up to half the heading; past that, `text-truncate`
-    // ellipsizes it.
+    // Keeps its width up to 6rem so a long name can't squeeze the ID; past that, `text-truncate` ellipsizes it.
     flex-shrink: 0;
-    max-width: 50%;
+    max-width: 6rem;
     border-radius: var(--pgn-size-badge-border-radius-base);
 
     --pgn-spacing-badge-padding-y: 1.5px;

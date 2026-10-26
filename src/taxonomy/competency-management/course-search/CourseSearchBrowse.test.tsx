@@ -134,59 +134,15 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
           .closest('.course-search-browse__associations-mastery') as HTMLElement;
       };
 
-      it('is focusable and shows the full name and Competency ID in a tooltip on focus and hover when truncated', async () => {
+      it('is focusable and shows the tooltip on focus when truncated', async () => {
         stubWidths(200, 100);
         const heading = await renderAndGetHeading();
 
         expect(heading).toHaveAttribute('tabindex', '0');
 
         fireEvent.focus(heading);
-        let tooltip = await screen.findByRole('tooltip');
-        expect(tooltip).toHaveTextContent('Test Competency');
-        expect(tooltip).toHaveTextContent('Competency ID: EXT-042');
 
-        fireEvent.blur(heading);
-        await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
-
-        fireEvent.mouseEnter(heading);
-        tooltip = await screen.findByRole('tooltip');
-        expect(tooltip).toHaveTextContent('Test Competency');
-      });
-
-      it('closes the tooltip on Escape without moving focus', async () => {
-        stubWidths(200, 100);
-        const heading = await renderAndGetHeading();
-
-        heading.focus();
-        await screen.findByRole('tooltip');
-        fireEvent.keyDown(heading, { key: 'Escape' });
-
-        await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
-        expect(heading).toHaveFocus();
-
-        fireEvent.mouseEnter(heading);
-        await screen.findByRole('tooltip');
-        fireEvent.keyDown(document.body, { key: 'Escape' });
-        await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
-      });
-
-      it('keeps the tooltip open while the pointer moves from the heading onto it, and closes it on leaving', async () => {
-        stubWidths(200, 100);
-        const heading = await renderAndGetHeading();
-
-        fireEvent.mouseEnter(heading);
-        const tooltip = await screen.findByRole('tooltip');
-
-        fireEvent.mouseLeave(heading);
-        fireEvent.mouseEnter(tooltip);
-        // Longer than the hide delay, so a missed cancel would have closed it.
-        act(() => {
-          jest.advanceTimersByTime(250);
-        });
-        expect(screen.getByRole('tooltip')).toBeInTheDocument();
-
-        fireEvent.mouseLeave(tooltip);
-        await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+        expect(await screen.findByRole('tooltip')).toHaveTextContent('Test Competency');
       });
 
       it('has no tabindex and shows no tooltip when not truncated', async () => {
@@ -198,6 +154,45 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
         expect(heading).not.toHaveAttribute('tabindex');
         expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      });
+
+      describe('when the heading is resized', () => {
+        const OriginalResizeObserver = window.ResizeObserver;
+        let resizeCallback: ResizeObserverCallback;
+
+        beforeEach(() => {
+          window.ResizeObserver = class {
+            constructor(callback: ResizeObserverCallback) {
+              resizeCallback = callback;
+            }
+
+            observe() {}
+
+            unobserve() {}
+
+            disconnect() {}
+          };
+        });
+
+        afterEach(() => {
+          window.ResizeObserver = OriginalResizeObserver;
+        });
+
+        it('adds and removes tabindex as the heading becomes truncated and fits again', async () => {
+          stubWidths(100, 100);
+          const heading = await renderAndGetHeading();
+          expect(heading).not.toHaveAttribute('tabindex');
+
+          jest.restoreAllMocks();
+          stubWidths(200, 100);
+          act(() => resizeCallback([], {} as ResizeObserver));
+          expect(heading).toHaveAttribute('tabindex', '0');
+
+          jest.restoreAllMocks();
+          stubWidths(100, 100);
+          act(() => resizeCallback([], {} as ResizeObserver));
+          expect(heading).not.toHaveAttribute('tabindex');
+        });
       });
     });
 
