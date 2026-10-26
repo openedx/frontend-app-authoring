@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { initializeMocks, render, screen } from '@src/testUtils';
+import { InfoOutline } from '@openedx/paragon/icons';
 import ProcessingNotification from '.';
 
 const mockUndo = jest.fn();
@@ -34,5 +35,18 @@ describe('<ProcessingNotification />', () => {
     await screen.findByText(props.title);
     const alert = await screen.findByRole('alert', { hidden: true });
     expect(alert.classList.contains('processing-notification-hide-close-button')).toBeTruthy();
+  });
+
+  it('renders the spinning gear icon by default', async () => {
+    const { container } = render(<ProcessingNotification {...props} />);
+    await screen.findByText(props.title);
+    expect(container.ownerDocument.querySelector('.processing-notification-icon')).toBeInTheDocument();
+  });
+
+  it('renders a custom icon without the spinning class', async () => {
+    render(<ProcessingNotification {...props} icon={InfoOutline} />);
+    await screen.findByText(props.title);
+    expect(document.querySelector('.processing-notification-icon')).not.toBeInTheDocument();
+    expect(document.querySelector('.pgn__icon.mb-0.mr-2')).toBeInTheDocument();
   });
 });

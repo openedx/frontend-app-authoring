@@ -1,3 +1,4 @@
+import { Error as ErrorIcon, InfoOutline } from '@openedx/paragon/icons';
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import {
@@ -544,7 +545,12 @@ describe('CompetencyAssociationsProvider', () => {
       fireEvent.click(screen.getByText('associate-duplicate'));
 
       expect(axiosMock.history.post).toHaveLength(0);
-      expect(mockShowToast).toHaveBeenCalledWith('This content is already associated with this competency.');
+      expect(mockShowToast).toHaveBeenCalledWith(
+        'This content is already associated with this competency.',
+        undefined,
+        undefined,
+        InfoOutline,
+      );
     });
 
     it('focuses the response\'s group and rule after a successful create, not a stale local read', async () => {
@@ -589,6 +595,9 @@ describe('CompetencyAssociationsProvider', () => {
         expect(mockShowToast).toHaveBeenCalledWith(
           'This competency can\'t be associated with this content because a parent or child '
             + 'competency already has criteria in this course.',
+          undefined,
+          undefined,
+          ErrorIcon,
         );
       });
     });
@@ -604,7 +613,12 @@ describe('CompetencyAssociationsProvider', () => {
       fireEvent.click(screen.getByText('associate-course-a'));
 
       await waitFor(() => {
-        expect(mockShowToast).toHaveBeenCalledWith('There was a problem creating this association. Please try again.');
+        expect(mockShowToast).toHaveBeenCalledWith(
+          'There was a problem creating this association. Please try again.',
+          undefined,
+          undefined,
+          ErrorIcon,
+        );
       });
     });
   });
