@@ -1,4 +1,4 @@
-import { act, fireEvent, renderHook } from '@testing-library/react';
+import { act, fireEvent, renderHook } from '@src/testUtils';
 import { useLocation } from 'react-router-dom';
 import { history } from '@edx/frontend-platform';
 
