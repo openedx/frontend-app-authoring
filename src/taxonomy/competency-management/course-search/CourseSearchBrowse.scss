@@ -27,16 +27,16 @@
   // Figma's "Elevation Level 1 (Centered)" style, shared by every bordered
   // box in the outline.
   $block-shadow: var(--pgn-elevation-box-shadow-centered-1);
+  // Equals the widest blur in `$block-shadow`.
+  $shadow-clearance: .25rem;
 
-  // `height: 100%` resolves against `CompetencyAssociationsPanel.tsx`'s
-  // `.flex-grow-1` wrapper, which is itself stretched to the competency
-  // tree's height by the `align-items-stretch` `Stack` around both columns -
-  // without this, the wrapper stretches but this element inside it stays
-  // sized to its own content, leaving the extra height as blank space below
-  // it instead of reaching `&__panel` below.
   display: flex;
   flex-direction: column;
-  height: 100%;
+
+  // See `../associations/CompetencyAssociationsPanel.scss`.
+  @media (--pgn-size-breakpoint-min-width-lg) {
+    height: var(--competency-panel-height);
+  }
 
   .competency-row__badge {
     overflow-wrap: anywhere;
@@ -68,11 +68,8 @@
     --pgn-size-search-field-border-radius: var(--pgn-size-border-radius-base);
   }
 
-  // Shared white envelope for `&__associations` and `&__container` below,
-  // so the two read as one continuous column instead of two separate boxes.
-  // `flex: 1` (this element is a flex child of the root `.course-search-
-  // browse`, see above) lets it absorb any extra height the root picks up
-  // from matching the competency tree's own height.
+  // Shared white envelope for `&__associations` and `&__container`;
+  // `flex: 1` fills the root's fixed height.
   &__panel {
     background-color: var(--pgn-color-white);
     border-radius: $border-radius;
@@ -80,25 +77,30 @@
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-height: 0;
   }
 
-  // Plain layout wrapper for the "Courses & Content" label and course rows -
-  // each row is its own separately-carded box (see `&__group--course`).
-  // `border-top` is the divider from `&__associations` above it now that
-  // both share `&__panel`'s single envelope. `flex: 1` (a flex child of
-  // `&__panel`) is what actually grows to fill the extra height - `&__panel`
-  // growing alone would otherwise leave the added space unused above this
-  // box's own bottom edge.
+  // Holds the "Courses & Content" label, `&__list` and the pagination;
+  // `border-top` is the divider from `&__associations` above it. Fills
+  // whatever height `&__panel` leaves after `&__associations`.
   &__container {
     border-top: 1px solid $line-color;
+    display: flex;
+    flex-direction: column;
     flex: 1;
+    min-height: 0;
+    gap: 16px;
     padding: $container-padding-y $container-padding-x;
+  }
 
-    // Fills whatever height `.course-search-browse`'s own stretch (matching
-    // `.competency-tree`'s fixed height - see `../CompetencyTree.scss`)
-    // leaves after `&__associations` above it, scrolling internally instead
-    // of growing the page.
+  // Only the course rows scroll, so the label and the pagination stay visible.
+  // The padding keeps `overflow-y` from clipping the cards' shadows.
+  &__list {
+    padding: $shadow-clearance;
+    margin: -$shadow-clearance;
+
     @media (--pgn-size-breakpoint-min-width-lg) {
+      flex: 1;
       min-height: 0;
       overflow-y: auto;
     }
@@ -106,7 +108,7 @@
 
   // Wider than the nested-level gaps below (10px) so each card's own shadow
   // reads as clearly separated from its neighbors.
-  &__container > * + * {
+  &__list > * + * {
     margin-top: 16px;
   }
 

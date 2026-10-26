@@ -25,15 +25,16 @@
   $hover-border-color: var(--pgn-color-info-200);
   $group-padding: 5px;
 
-  // A fixed height (not just a cap) so `&__container` below can `flex: 1`
-  // into it and the course-search column next to it (which stretches to
-  // match this one - see `../course-search/CourseSearchBrowse.scss`) ends up
-  // the same height in every state. Desktop-only, matching `useIsDesktop()`
-  // in `../associations/CompetencyAssociationsPanel.tsx`.
+  // `&__container` below scrolls within this height instead of growing the page.
   @media (--pgn-size-breakpoint-min-width-lg) {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 260px);
+    max-height: var(--competency-panel-height);
+
+    // Matches the course column's height once that column is shown.
+    .competency-associations-panel--with-courses & {
+      height: var(--competency-panel-height);
+    }
   }
 
   .competency-row__badge {
