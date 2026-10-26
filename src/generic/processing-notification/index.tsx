@@ -14,6 +14,7 @@ export interface ProcessingNotificationProps {
   };
   close?: () => void;
   delay?: number;
+  icon?: React.ComponentProps<typeof Icon>['src'];
 }
 
 const ProcessingNotification = ({
@@ -22,6 +23,7 @@ const ProcessingNotification = ({
   action,
   close,
   delay = 5000,
+  icon,
 }: ProcessingNotificationProps) => (
   // @ts-ignore - Toast has a poor definition of children
   <Toast
@@ -34,7 +36,10 @@ const ProcessingNotification = ({
   >
     {/* @ts-ignore - Toast has a poor definition of children */}
     <span className="d-flex align-items-center">
-      <Icon className="processing-notification-icon mb-0 mr-2" src={IconSettings} />
+      <Icon
+        className={classNames('mb-0 mr-2', { 'processing-notification-icon': !icon })}
+        src={icon ?? IconSettings}
+      />
       <span className="font-weight-bold h4 mb-0 text-white">{title}</span>
     </span>
   </Toast>

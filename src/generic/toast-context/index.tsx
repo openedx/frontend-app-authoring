@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import ProcessingNotification from '../processing-notification';
+import ProcessingNotification, { type ProcessingNotificationProps } from '../processing-notification';
 
 export interface ToastActionData {
   label: string;
@@ -11,10 +11,12 @@ export interface ToastContextData {
   toastMessage: string | null;
   toastAction?: ToastActionData;
   toastDelay?: number;
+  toastIcon?: ProcessingNotificationProps['icon'];
   showToast: (
     message: string,
     action?: ToastActionData,
     delay?: number,
+    icon?: ProcessingNotificationProps['icon'],
   ) => void;
   closeToast: () => void;
 }
@@ -51,6 +53,7 @@ export const ToastProvider = (props: ToastProviderProps) => {
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
   const [toastAction, setToastAction] = React.useState<ToastActionData>();
   const [toastDelay, setToastDelay] = React.useState<number>();
+  const [toastIcon, setToastIcon] = React.useState<ProcessingNotificationProps['icon']>();
 
   const resetState = React.useCallback(() => {
     setToastMessage(null);
@@ -58,6 +61,7 @@ export const ToastProvider = (props: ToastProviderProps) => {
     // Set Toast delay by default, currently,
     // it is not possible to disable the timer in Paragon's toast menu.
     setToastDelay(undefined);
+    setToastIcon(undefined);
   }, []);
 
   React.useEffect(() => () => {
@@ -69,10 +73,12 @@ export const ToastProvider = (props: ToastProviderProps) => {
     message,
     action?: ToastActionData,
     delay?: number,
+    icon?: ProcessingNotificationProps['icon'],
   ) => {
     setToastMessage(message);
     setToastAction(action);
     setToastDelay(delay);
+    setToastIcon(() => icon);
   }, [setToastMessage, setToastAction]);
   const closeToast = React.useCallback(() => resetState(), [setToastMessage, setToastAction]);
 
@@ -86,12 +92,14 @@ export const ToastProvider = (props: ToastProviderProps) => {
     toastMessage,
     toastAction,
     toastDelay,
+    toastIcon,
     showToast,
     closeToast,
   }), [
     toastMessage,
     toastAction,
     toastDelay,
+    toastIcon,
     showToast,
     closeToast,
   ]);
@@ -105,6 +113,7 @@ export const ToastProvider = (props: ToastProviderProps) => {
           title={toastMessage}
           action={toastAction}
           delay={toastDelay}
+          icon={toastIcon}
           close={closeToast}
         />
       )}

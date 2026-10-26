@@ -8,6 +8,7 @@ import {
   useState,
 } from 'react';
 import type { ReactNode } from 'react';
+import { Error as ErrorIcon, InfoOutline } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useQueries } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -295,7 +296,7 @@ export const CompetencyAssociationsProvider = ({
       // Not a real failure - the backend is still the real backstop for a
       // race, this only spares the author a failed-request error for
       // something that isn't actually one.
-      showToast(intl.formatMessage(messages.alreadyAssociatedToastMessage));
+      showToast(intl.formatMessage(messages.alreadyAssociatedToastMessage), undefined, undefined, InfoOutline);
       return;
     }
     if (!index || !systemDefaultProfile) {
@@ -348,11 +349,16 @@ export const CompetencyAssociationsProvider = ({
         const { response } = error;
         const isHierarchyConflict = response?.status === 400
           && typeof response.data === 'object' && response.data !== null && 'tag_id' in response.data;
-        showToast(intl.formatMessage(
-          isHierarchyConflict
-            ? messages.createCriterionHierarchyConflictToastMessage
-            : messages.createCriterionFailedToastMessage,
-        ));
+        showToast(
+          intl.formatMessage(
+            isHierarchyConflict
+              ? messages.createCriterionHierarchyConflictToastMessage
+              : messages.createCriterionFailedToastMessage,
+          ),
+          undefined,
+          undefined,
+          ErrorIcon,
+        );
       },
     });
   }, [associatedIds, index, systemDefaultProfile, focus, tagId, createCriterion, showToast, intl]);
