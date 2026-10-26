@@ -97,11 +97,32 @@ describe('contentStyle', () => {
     expect(result.trimStart().startsWith(`@import url("${CORE_URL}");`)).toBe(true);
   });
 
-  it('keeps the base editor styles after the theme', () => {
+  it('keeps the editor mechanics and a11y styles when themed', () => {
     const themed = contentStyle({ editorType: 'text', useMfeTheming: true });
+
+    // Rules TinyMCE needs to function, and the focus/selection cues a11y relies on.
+    expect(themed).toContain('.mce-edit-focus');
+    expect(themed).toContain('outline: 3px solid #b4d7ff');
+    expect(themed).toContain('mce-resizehandle');
+    expect(themed).toContain('[data-mce-selected]');
+    expect(themed).toContain('[data-mce-placeholder]');
+  });
+
+  it('drops the fallback content typography when themed', () => {
+    const themed = contentStyle({ editorType: 'text', useMfeTheming: true });
+
+    // These would out-specify the theme (`.mce-content-body h1` beats `h1`).
+    expect(themed).not.toContain('.mce-content-body h1');
+    expect(themed).not.toContain('font-family: \'Open Sans\'');
+    expect(themed).not.toContain('fonts.googleapis.com');
+  });
+
+  it('keeps the fallback content typography when not themed', () => {
     const plain = contentStyle({ editorType: 'text', useMfeTheming: false });
 
-    expect(themed.endsWith(plain)).toBe(true);
+    expect(plain).toContain('.mce-content-body h1');
+    expect(plain).toContain('fonts.googleapis.com');
+    expect(plain).toContain('.mce-edit-focus');
   });
 
   it('omits the theme when use_mfe_theming is off', () => {

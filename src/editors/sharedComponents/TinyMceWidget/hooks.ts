@@ -8,7 +8,7 @@ import { getConfig } from '@edx/frontend-platform';
 import { getLocale, isRtl } from '@edx/frontend-platform/i18n';
 import { isEmpty } from 'lodash';
 import type { Editor } from 'tinymce';
-import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
+import tinyMCEStyles, { getEditorStyles } from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
 import pluginConfig from './pluginConfig';
 
@@ -504,7 +504,10 @@ const layerUrls = (entry?: ThemeUrlEntry): string[] => {
  * dropped, since deployments may point `default` and `brandOverride` at one file.
  *
  * The `@import`s are prepended because CSS requires `@import` to precede every
- * other rule, and `tinyMCEStyles` opens with one of its own.
+ * other rule. When a theme is present only `getEditorStyles()` follows: the
+ * theme owns the content typography, and injecting the fallback content styles
+ * after it would out-specify it and win. Without a theme the full
+ * `tinyMCEStyles` is used, fallback typography included.
  */
 export const contentStyle = ({ editorType, useMfeTheming }: {
   editorType?: string;
@@ -524,7 +527,7 @@ export const contentStyle = ({ editorType, useMfeTheming }: {
   if (!urls.length) {
     return tinyMCEStyles;
   }
-  return `${urls.map((url) => `@import url("${url}");`).join('\n')}\n${tinyMCEStyles}`;
+  return `${urls.map((url) => `@import url("${url}");`).join('\n')}\n${getEditorStyles()}`;
 };
 
 export const editorConfig = ({
