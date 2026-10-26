@@ -6,7 +6,7 @@ import {
   initializeMocks,
   render,
 } from '@src/testUtils';
-import { ResizableBox } from './Resizable';
+import { RESIZING_BODY_CLASS, ResizableBox } from './Resizable';
 
 jest.mock('@openedx/paragon', () => ({
   ...jest.requireActual('@openedx/paragon'),
@@ -261,27 +261,30 @@ describe('<ResizableBox /> drag lifecycle', () => {
     expect(onResizeEnd).toHaveBeenCalledTimes(1);
   });
 
-  it('marks the box while dragging and ignores secondary mouse buttons', () => {
-    const { handle, box } = renderBox();
+  it('marks the page while dragging and ignores secondary mouse buttons', () => {
+    const { handle } = renderBox();
 
     fireEvent.mouseDown(handle, { clientX: START_X, button: 2 });
-    expect(box).not.toHaveClass('resizable--resizing');
+    expect(document.body).not.toHaveClass(RESIZING_BODY_CLASS);
 
+    // The class goes on <body>, not the box, so iframes outside the box are covered too.
     fireEvent.mouseDown(handle, { clientX: START_X });
-    expect(box).toHaveClass('resizable--resizing');
+    expect(document.body).toHaveClass(RESIZING_BODY_CLASS);
     fireEvent.mouseUp(document);
-    expect(box).not.toHaveClass('resizable--resizing');
+    expect(document.body).not.toHaveClass(RESIZING_BODY_CLASS);
   });
 
-  it('removes its document listeners if unmounted mid-drag', () => {
+  it('removes its document listeners and the page marker if unmounted mid-drag', () => {
     const removeSpy = jest.spyOn(document, 'removeEventListener');
     const { handle, unmount } = renderBox();
     fireEvent.mouseDown(handle, { clientX: START_X });
+    expect(document.body).toHaveClass(RESIZING_BODY_CLASS);
 
     unmount();
 
     const removed = removeSpy.mock.calls.map(([type]) => type);
     expect(removed).toEqual(expect.arrayContaining(['mousemove', 'mouseup']));
+    expect(document.body).not.toHaveClass(RESIZING_BODY_CLASS);
     removeSpy.mockRestore();
   });
 

@@ -4,16 +4,19 @@
   display: flex;
 }
 
-/* Applied to the box while a drag is in progress. Keeps the resize cursor, prevents text
-   selection, and disables pointer events on embedded iframes (such as content previews):
-   an iframe under the pointer would otherwise receive the mouse events and the drag would
-   stop. */
-.resizable--resizing {
+/* Set on <body> by `Resizable.tsx` while a drag is in progress. Keeps the resize cursor and
+   prevents text selection anywhere on the page, and disables pointer events on every iframe
+   (such as content previews): an iframe under the pointer would otherwise receive the mouse
+   events and the drag would stop. It is page-wide because the pointer can cross iframes
+   outside the box, for example the previews next to the sidebar on the library unit page.
+   `!important` is needed because `LibraryBlock.tsx` sets `pointer-events: auto` inline on
+   its iframe. */
+body.resizable-resizing {
   cursor: ew-resize;
   user-select: none;
 
   iframe {
-    pointer-events: none;
+    pointer-events: none !important;
   }
 }
 

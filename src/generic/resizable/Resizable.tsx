@@ -14,6 +14,8 @@ import messages from './messages';
 const MIN_WIDTH = 440; // px
 /** Pixels moved per arrow key press on the handle. Holding Shift multiplies this by four. */
 const KEYBOARD_STEP = 16;
+/** Set on `<body>` while a box is being dragged. Styled in `index.scss`. */
+export const RESIZING_BODY_CLASS = 'resizable-resizing';
 
 interface ResizableBoxProps {
   children: React.ReactNode;
@@ -168,6 +170,18 @@ export const ResizableBox = ({
     stopDragRef.current?.();
   }, []);
 
+  // Mark the whole page while dragging, not only this box. An iframe anywhere under the
+  // pointer (a content preview inside the sidebar, or one next to it on the unit page) would
+  // otherwise receive the mouse events and the drag would stop. The cleanup also runs if the
+  // box unmounts in the middle of a drag.
+  useEffect(() => {
+    if (!isResizing) {
+      return undefined;
+    }
+    document.body.classList.add(RESIZING_BODY_CLASS);
+    return () => document.body.classList.remove(RESIZING_BODY_CLASS);
+  }, [isResizing]);
+
   const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     const step = KEYBOARD_STEP * (e.shiftKey ? 4 : 1);
     // A left-hand handle grows the box with ArrowLeft, a right-hand handle with ArrowRight.
@@ -191,7 +205,7 @@ export const ResizableBox = ({
 
   return (
     <div
-      className={classNames('resizable align-self-stretch d-flex', { 'resizable--resizing': isResizing })}
+      className="resizable align-self-stretch d-flex"
       ref={boxRef}
       style={{ width: fullWidth ? '100%' : `${renderedWidth}px` }}
     >
