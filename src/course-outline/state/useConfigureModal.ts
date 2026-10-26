@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import type { OutlineActionSelection, XBlock } from '@src/data/types';
+import { PUBLISH_TYPES } from '@src/course-unit/constants';
 import {
   useCourseItemData,
   useConfigureSection,
@@ -85,8 +86,17 @@ export function useConfigureDialog(courseId: string): UseConfigureDialogOutput {
         sectionId: data!.sectionId,
         ...vars,
       }) as SequentialConfigurePayload,
-    vertical: (data, vars) =>
-      ({ category: 'vertical', unitId: data!.currentId, sectionId: data!.sectionId, ...vars }) as UnitConfigurePayload,
+    vertical: (data, vars) => {
+      // Auto-publish when hiding from learners; save as draft otherwise.
+      const type = (vars.isVisibleToStaffOnly as boolean) ? PUBLISH_TYPES.republish : undefined;
+      return {
+        category: 'vertical',
+        unitId: data!.currentId,
+        sectionId: data!.sectionId,
+        ...vars,
+        type,
+      } as UnitConfigurePayload;
+    },
   };
 
   const handleConfigureItemSubmitWrapper = useCallback(async (variables: Record<string, unknown>) => {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Col, Row, Stack } from '@openedx/paragon';
+import classNames from 'classnames';
 
 import { ResizableBox } from '@src/generic/resizable/Resizable';
 import { useIsDesktop } from '@src/utils';
@@ -46,7 +47,13 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
       // `align-items-stretch` overrides `.pgn__hstack`'s default `center`, so
       // the two columns start flush at the top instead of the shorter one
       // being vertically centered against the taller.
-      <Stack direction="horizontal" gap={selectedCompetency ? 3.5 : 0} className="align-items-stretch">
+      <Stack
+        direction="horizontal"
+        gap={selectedCompetency ? 3.5 : 0}
+        className={classNames('competency-associations-panel align-items-stretch', {
+          'competency-associations-panel--with-courses': selectedCompetency,
+        })}
+      >
         <ResizableBox handleSide="right" fullWidth={!selectedCompetency} stretchContent>
           {tree}
         </ResizableBox>

@@ -227,6 +227,28 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       });
     });
 
+    // The list scrolls on desktop, so the pagination must stay outside it to remain visible.
+    it('renders course rows inside the list and the pagination right after it, outside the list', async () => {
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()], 2));
+      render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+
+      const list = (await screen.findByText('Intro to Testing')).closest('.course-search-browse__list');
+      expect(list).not.toBeNull();
+      const pagination = screen.getByRole('navigation');
+      expect(list).not.toContainElement(pagination);
+      expect(list?.nextElementSibling).toHaveClass('course-search-browse__pagination');
+      expect(list?.nextElementSibling).toContainElement(pagination);
+      expect(list?.parentElement).toHaveClass('course-search-browse__container');
+    });
+
+    it('renders no pagination when there is only one page', async () => {
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()], 1));
+      render(<CourseSearchBrowse activeCompetency={activeCompetency} />);
+
+      expect(await screen.findByText('Intro to Testing')).toBeInTheDocument();
+      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+    });
+
     it('renders an inline error, not the empty state, when the request fails', async () => {
       axiosMock.onGet(coursesApiUrl).reply(500);
       render(<CourseSearchBrowse activeCompetency={activeCompetency} />);

@@ -3538,6 +3538,27 @@ describe('<CourseUnit />', () => {
       });
     });
 
+    // Games has a built-in editor, so after the block is created that editor
+    // opens on it, as it does for Text and Problem. Other advanced blocks are
+    // only created (see the cases below).
+    it('creates a Games block and opens the built-in editor on it', async () => {
+      const settingsUrl =
+        `${getConfig().STUDIO_BASE_URL}/xblock/${courseCreateXblockMock.locator}/handler/get_settings`;
+      axiosMock.onPost(settingsUrl).reply(200, {});
+
+      await user.click(await screen.findByRole('button', { name: 'Advanced' }));
+      await user.click(await screen.findByRole('button', { name: 'Games' }));
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.map((request) => request.url)).toContain(postXBlockBaseApiUrl());
+      });
+      expect(JSON.parse(axiosMock.history.post[0].data)).toMatchObject({ type: 'games', parent_locator: blockId });
+      // The editor loads the new block's settings: it opened, on that block.
+      await waitFor(() => {
+        expect(axiosMock.history.post.map((request) => request.url)).toContain(settingsUrl);
+      });
+    });
+
     [
       {
         name: 'Text',

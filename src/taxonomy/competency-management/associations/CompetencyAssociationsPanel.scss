@@ -1,3 +1,10 @@
+// 73rem is measured at a 16px root font size against the toolbar, the associations block with a
+// one-line name, the "Courses & Content" label, ten collapsed one-line course rows with nine 16px
+// gaps, and the pagination. Re-measure when any of these change.
+.competency-associations-panel {
+  --competency-panel-height: 73rem;
+}
+
 .competency-associations__course-column {
   // A zero basis keeps a long competency name's unwrapped width from
   // making flex shrink the tree column below its resizable width.

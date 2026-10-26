@@ -1,18 +1,24 @@
 import React from 'react';
-import { string, node, arrayOf } from 'prop-types';
 import { Button as ParagonButton } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 
 import { getButtonProps } from './hooks';
 import './index.scss';
 
+interface Props extends Omit<React.ComponentProps<typeof ParagonButton>, 'variant' | 'className'> {
+  /** `add` is this component's own variant (tertiary + Add icon); anything else goes to Paragon as-is. */
+  variant?: string;
+  className?: string | null;
+  text?: string | null;
+}
+
 const Button = ({
-  variant,
-  className,
-  text,
-  children,
+  variant = 'default',
+  className = null,
+  text = null,
+  children = null,
   ...props
-}) => (
+}: Props) => (
   <ParagonButton
     {...getButtonProps({ variant, className, Add })}
     {...props}
@@ -20,17 +26,5 @@ const Button = ({
     {children || text}
   </ParagonButton>
 );
-Button.propTypes = {
-  variant: string,
-  className: string,
-  text: string,
-  children: node || arrayOf(node),
-};
-Button.defaultProps = {
-  variant: 'default',
-  className: null,
-  text: null,
-  children: null,
-};
 
 export default Button;
