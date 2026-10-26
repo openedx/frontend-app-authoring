@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { useWindowSize } from '@openedx/paragon';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { isRtl, useIntl } from '@edx/frontend-platform/i18n';
 import React, {
   useCallback,
   useEffect,
@@ -37,12 +37,15 @@ interface ResizableBoxProps {
    */
   handleLabel?: string;
   /**
-   * Which edge of the box the drag handle sits on, and which direction grows it.
+   * Which edge of the box the drag handle sits on, and which direction grows it, in a
+   * left-to-right layout.
    * `'left'` (default): handle on the box's left edge, dragging right shrinks it. This
    * matches a box that sits on the right-hand side of a layout.
    * `'right'`: handle on the box's right edge, dragging right grows it. Use this for a
    * box that sits on the left-hand side of a layout, where the right edge is the
    * meaningful boundary to drag.
+   * In a right-to-left locale the build's RTL stylesheet mirrors the layout, so the handle
+   * sits on the opposite edge and the drag and arrow-key directions are mirrored to match.
    */
   handleSide?: 'left' | 'right';
   /**
@@ -91,6 +94,10 @@ export const ResizableBox = ({
 }: ResizableBoxProps) => {
   const intl = useIntl();
   const boxRef = useRef<HTMLDivElement>(null);
+  // Whether moving the pointer (or pressing ArrowRight) towards the right grows the box. A
+  // right-hand handle grows to the right in a left-to-right layout; a right-to-left locale
+  // mirrors the layout, and with it the direction, so a left-hand handle grows to the right.
+  const growsToTheRight = (handleSide === 'right') !== isRtl(intl.locale);
   const { width: windowWidth } = useWindowSize();
 
   const defaultMaxWidth = useMemo(() => {
@@ -137,8 +144,7 @@ export const ResizableBox = ({
 
     const onMouseMove = (event: MouseEvent) => {
       const dx = event.clientX - startXRef.current; // positive = mouse moved right
-      // Left handle: dragging right shrinks. Right handle: dragging right grows.
-      const rawWidth = handleSide === 'right'
+      const rawWidth = growsToTheRight
         ? startWidthRef.current + dx
         : startWidthRef.current - dx;
       liveWidth = clampWidth(rawWidth);
@@ -162,7 +168,7 @@ export const ResizableBox = ({
     document.addEventListener('mouseup', onMouseUp);
     stopDragRef.current = stopDrag;
     setIsResizing(true);
-  }, [renderedWidth, handleSide, clampWidth, onResizeEnd]);
+  }, [renderedWidth, growsToTheRight, clampWidth, onResizeEnd]);
 
   // Remove the document listeners if the box unmounts during a drag (for example when the
   // panel it belongs to is closed).
@@ -184,9 +190,9 @@ export const ResizableBox = ({
 
   const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     const step = KEYBOARD_STEP * (e.shiftKey ? 4 : 1);
-    // A left-hand handle grows the box with ArrowLeft, a right-hand handle with ArrowRight.
-    const growKey = handleSide === 'right' ? 'ArrowRight' : 'ArrowLeft';
-    const shrinkKey = handleSide === 'right' ? 'ArrowLeft' : 'ArrowRight';
+    // The arrow pointing away from the box's content grows it, in either text direction.
+    const growKey = growsToTheRight ? 'ArrowRight' : 'ArrowLeft';
+    const shrinkKey = growsToTheRight ? 'ArrowLeft' : 'ArrowRight';
     let next: number;
     if (e.key === growKey) {
       next = renderedWidth + step;
@@ -201,7 +207,7 @@ export const ResizableBox = ({
     }
     e.preventDefault();
     commitWidth(next);
-  }, [handleSide, renderedWidth, minWidth, effectiveMaxWidth, commitWidth]);
+  }, [growsToTheRight, renderedWidth, minWidth, effectiveMaxWidth, commitWidth]);
 
   return (
     <div

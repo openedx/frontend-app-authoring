@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react';
 import { useWindowSize } from '@openedx/paragon';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import {
   fireEvent,
@@ -247,6 +248,57 @@ describe('<ResizableBox /> keyboard and accessibility', () => {
     expect(box.style.width).toBe('316px');
     await user.keyboard('{ArrowLeft}');
     expect(box.style.width).toBe('300px');
+  });
+});
+
+describe('<ResizableBox /> in a right-to-left locale', () => {
+  beforeEach(() => {
+    initializeMocks();
+    mockUseWindowSize.mockReturnValue({ width: undefined, height: undefined });
+  });
+
+  // The RTL stylesheet mirrors the layout, so a left-hand handle sits on the box's right edge
+  // and the drag and arrow-key directions have to be mirrored with it.
+  const renderRtlBox = (props: Partial<ComponentProps<typeof ResizableBox>> = {}) => {
+    const result = render(
+      <IntlProvider locale="ar" messages={{}}>
+        <ResizableBox minWidth={200} maxWidth={600} initialWidth={300} {...props}>
+          <div>Content</div>
+        </ResizableBox>
+      </IntlProvider>,
+    );
+    const handle = result.container.querySelector('.resizable-handle') as HTMLElement;
+    const box = result.container.querySelector('.resizable') as HTMLElement;
+    return { handle, box };
+  };
+
+  it('grows a left-hand handle when dragging right', () => {
+    const { handle, box } = renderRtlBox();
+    drag(handle, START_X, START_X + 100);
+    expect(box.style.width).toBe('400px');
+    drag(handle, START_X, START_X - 50);
+    expect(box.style.width).toBe('350px');
+  });
+
+  it('grows a right-hand handle when dragging left', () => {
+    const { handle, box } = renderRtlBox({ handleSide: 'right' });
+    drag(handle, START_X, START_X - 100);
+    expect(box.style.width).toBe('400px');
+  });
+
+  it('mirrors the arrow keys', async () => {
+    const user = userEvent.setup();
+    const { handle, box } = renderRtlBox();
+    handle.focus();
+    await user.keyboard('{ArrowRight}');
+    expect(box.style.width).toBe('316px');
+    await user.keyboard('{ArrowLeft}');
+    expect(box.style.width).toBe('300px');
+
+    const rightHandle = renderRtlBox({ handleSide: 'right' });
+    rightHandle.handle.focus();
+    await user.keyboard('{ArrowLeft}');
+    expect(rightHandle.box.style.width).toBe('316px');
   });
 });
 
