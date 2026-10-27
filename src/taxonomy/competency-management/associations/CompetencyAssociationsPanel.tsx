@@ -58,7 +58,7 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
           {tree}
         </ResizableBox>
         {selectedCompetency && (
-          <div className="flex-grow-1">
+          <div className="flex-grow-1 competency-associations__course-column">
             <CourseSearchBrowse activeCompetency={selectedCompetency} />
           </div>
         )}

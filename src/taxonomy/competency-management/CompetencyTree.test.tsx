@@ -1,4 +1,5 @@
 import {
+  act,
   fireEvent,
   initializeMocks,
   render,
@@ -80,6 +81,21 @@ const buildDuplicateValueResponse = () => ({
   ],
 });
 
+const longName =
+  'Demonstrate the ability to analyze and communicate complex quantitative findings to non-technical stakeholders';
+const longExternalId = 'COMPETENCY-FRAMEWORK-2024-QUANTITATIVE-REASONING-0042';
+
+const buildLongTextResponse = () => ({
+  ...nestedTagsResponse,
+  count: 1,
+  results: [{
+    ...tagDefaults,
+    id: 20,
+    value: longName,
+    external_id: longExternalId,
+  }],
+});
+
 const taxonomyName = 'Test Taxonomy';
 
 const renderTree = (extraProps: {
@@ -89,6 +105,14 @@ const renderTree = (extraProps: {
   render(
     <CompetencyTree taxonomyId={taxonomyId} taxonomyName={taxonomyName} {...extraProps} />,
   );
+
+// jsdom treats :focus-visible as :focus, so simulate pointer-initiated focus explicitly.
+const mockPointerFocus = () => {
+  const originalMatches = Element.prototype.matches;
+  jest.spyOn(Element.prototype, 'matches').mockImplementation(function matches(this: Element, selector: string) {
+    return selector === ':focus-visible' ? false : originalMatches.call(this, selector);
+  });
+};
 
 describe('<CompetencyTree />', () => {
   beforeEach(() => {
@@ -398,5 +422,104 @@ describe('<CompetencyTree />', () => {
     // its label - no dangling reference to an id that was never rendered.
     expect(screen.getByRole('treeitem', { name: 'Group A1' }))
       .toBe(screen.getByText('Group A1').closest('li'));
+  });
+
+  describe('truncation tooltip', () => {
+    // jsdom has no layout, so every element reports the same widths.
+    const stubWidths = (scrollWidth: number, clientWidth: number) => {
+      jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockReturnValue(scrollWidth);
+      jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(clientWidth);
+    };
+
+    // Only the Competency ID badge overflows; the label fits.
+    const stubOnlyBadgeTruncated = () => {
+      jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockImplementation(function scrollWidth(this: Element) {
+        return this.classList.contains('competency-row__badge') ? 200 : 100;
+      });
+      jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(100);
+    };
+
+    const advance = (ms: number) =>
+      act(() => {
+        jest.advanceTimersByTime(ms);
+      });
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+      jest.useRealTimers();
+    });
+
+    const renderExpandedTree = async () => {
+      axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+      renderTree({ onSelectCompetency: jest.fn() });
+      await screen.findByText(taxonomyName);
+      fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+      await screen.findByText('Leaf A1a');
+    };
+
+    const rowOf = (name: string) => screen.getByText(name).closest('.competency-row') as HTMLElement;
+
+    it('shows the complete name and Competency ID in a tooltip on hover of a truncated row', async () => {
+      axiosMock.onGet(tagListUrl).reply(200, buildLongTextResponse());
+      renderTree({ onSelectCompetency: jest.fn() });
+      await screen.findByText(longName);
+      stubWidths(200, 100);
+
+      fireEvent.mouseEnter(rowOf(longName));
+      advance(300);
+
+      const tooltip = await screen.findByRole('tooltip');
+      expect(within(tooltip).getByText(longName, { exact: true })).toBeInTheDocument();
+      expect(within(tooltip).getByText(`Competency ID: ${longExternalId}`, { exact: true })).toBeInTheDocument();
+    });
+
+    it('shows the tooltip when only the Competency ID badge is truncated', async () => {
+      axiosMock.onGet(tagListUrl).reply(200, buildLongTextResponse());
+      renderTree({ onSelectCompetency: jest.fn() });
+      await screen.findByText(longName);
+      stubOnlyBadgeTruncated();
+
+      act(() => screen.getByRole('treeitem', { name: `${longName} Competency ID: ${longExternalId}` }).focus());
+
+      expect(await screen.findByRole('tooltip')).toHaveTextContent(longName);
+    });
+
+    it('does not show an ancestor group\'s tooltip when a nested treeitem gets focus', async () => {
+      await renderExpandedTree();
+      stubWidths(200, 100);
+
+      act(() => screen.getByRole('treeitem', { name: 'Leaf A1a Competency ID: EXT-003' }).focus());
+
+      const tooltips = await screen.findAllByRole('tooltip');
+      expect(tooltips).toHaveLength(1);
+      expect(tooltips[0]).toHaveTextContent('Leaf A1a');
+    });
+
+    it('does not show the tooltip when a truncated row gets focus that is not focus-visible', async () => {
+      await renderExpandedTree();
+      stubWidths(200, 100);
+      mockPointerFocus();
+
+      act(() => screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' }).focus());
+      advance(400);
+
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('shows no tooltip for a row that is not truncated', async () => {
+      await renderExpandedTree();
+      stubWidths(100, 100);
+
+      fireEvent.mouseEnter(rowOf('Root A'));
+      act(() => screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' }).focus());
+      // Past the hover show delay, so a tooltip that was going to open has.
+      advance(400);
+
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
   });
 });

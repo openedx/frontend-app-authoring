@@ -40,6 +40,14 @@ const buildResponse = (courses: Course[], numPages: number = 1) => ({
 
 const lastRequestParams = () => axiosMock.history.get[axiosMock.history.get.length - 1].params;
 
+// jsdom treats :focus-visible as :focus, so simulate pointer-initiated focus explicitly.
+const mockPointerFocus = () => {
+  const originalMatches = Element.prototype.matches;
+  jest.spyOn(Element.prototype, 'matches').mockImplementation(function matches(this: Element, selector: string) {
+    return selector === ':focus-visible' ? false : originalMatches.call(this, selector);
+  });
+};
+
 describe('<CourseSearchBrowse /> and <CourseRow />', () => {
   beforeAll(() => {
     jest.useFakeTimers();
@@ -111,6 +119,114 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       expect(screen.getByText('EXT-042')).toBeInTheDocument();
       expect(screen.getByText('EXT-042')).toHaveAttribute('aria-hidden', 'true');
       expect(screen.getByText('Competency ID: EXT-042')).toBeInTheDocument();
+    });
+
+    describe('"Demonstrate Mastery For" heading truncation', () => {
+      const competencyWithExternalId: CompetencyTreeNode = { ...activeCompetency, externalId: 'EXT-042' };
+
+      // jsdom has no layout, so every element reports the same widths.
+      const stubWidths = (scrollWidth: number, clientWidth: number) => {
+        const scrollWidthSpy = jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockReturnValue(scrollWidth);
+        const clientWidthSpy = jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(clientWidth);
+        return { scrollWidthSpy, clientWidthSpy };
+      };
+
+      afterEach(() => {
+        jest.restoreAllMocks();
+      });
+
+      const renderAndGetHeading = async () => {
+        axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
+        render(<CourseSearchBrowse activeCompetency={competencyWithExternalId} />);
+        await screen.findByText('Intro to Testing');
+        return screen.getAllByText('Test Competency')[0]
+          .closest('.course-search-browse__associations-mastery') as HTMLElement;
+      };
+
+      it('is focusable and shows the tooltip on focus when truncated', async () => {
+        stubWidths(200, 100);
+        const heading = await renderAndGetHeading();
+
+        expect(heading).toHaveAttribute('tabindex', '0');
+
+        act(() => heading.focus());
+
+        expect(await screen.findByRole('tooltip')).toHaveTextContent('Test Competency');
+      });
+
+      it('shows no tooltip when the truncated heading gets focus that is not focus-visible', async () => {
+        stubWidths(200, 100);
+        mockPointerFocus();
+        const heading = await renderAndGetHeading();
+
+        act(() => heading.focus());
+        act(() => {
+          jest.advanceTimersByTime(400);
+        });
+
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      });
+
+      it('has no tabindex and shows no tooltip when not truncated', async () => {
+        stubWidths(100, 100);
+        const heading = await renderAndGetHeading();
+
+        act(() => heading.focus());
+
+        expect(heading).not.toHaveAttribute('tabindex');
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      });
+
+      it('is focusable and shows the tooltip on focus when only the Competency ID badge is truncated', async () => {
+        jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockImplementation(function scrollWidth(this: Element) {
+          return this.classList.contains('competency-row__badge') ? 200 : 100;
+        });
+        jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(100);
+        const heading = await renderAndGetHeading();
+
+        expect(heading).toHaveAttribute('tabindex', '0');
+
+        act(() => heading.focus());
+
+        expect(await screen.findByRole('tooltip')).toHaveTextContent('Test Competency');
+      });
+
+      describe('when the heading is resized', () => {
+        const OriginalResizeObserver = window.ResizeObserver;
+        let resizeCallback: ResizeObserverCallback;
+
+        beforeEach(() => {
+          window.ResizeObserver = class {
+            constructor(callback: ResizeObserverCallback) {
+              resizeCallback = callback;
+            }
+
+            observe() {}
+
+            unobserve() {}
+
+            disconnect() {}
+          };
+        });
+
+        afterEach(() => {
+          window.ResizeObserver = OriginalResizeObserver;
+        });
+
+        it('adds and removes tabindex as the heading becomes truncated and fits again', async () => {
+          const { scrollWidthSpy } = stubWidths(100, 100);
+          const heading = await renderAndGetHeading();
+          expect(heading).not.toHaveAttribute('tabindex');
+
+          scrollWidthSpy.mockReturnValue(200);
+          act(() => resizeCallback([], {} as ResizeObserver));
+          expect(heading).toHaveAttribute('tabindex', '0');
+
+          scrollWidthSpy.mockReturnValue(100);
+          act(() => resizeCallback([], {} as ResizeObserver));
+          expect(heading).not.toHaveAttribute('tabindex');
+        });
+      });
     });
 
     it('renders no Competency ID badge when externalId is falsy', async () => {

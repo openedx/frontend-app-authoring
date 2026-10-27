@@ -39,7 +39,9 @@
   }
 
   .competency-row__badge {
-    overflow-wrap: anywhere;
+    // Keeps its width up to 6rem so a long name can't squeeze the ID; past that, `text-truncate` ellipsizes it.
+    flex-shrink: 0;
+    max-width: 6rem;
     border-radius: var(--pgn-size-badge-border-radius-base);
 
     --pgn-spacing-badge-padding-y: 1.5px;
@@ -145,8 +147,7 @@
     color: var(--pgn-color-info-900);
   }
 
-  // Wraps `&__associations-label` and the "Demonstrate Mastery For"/empty-
-  // state text under it.
+  // Wraps `&__associations-label` and the "Demonstrate Mastery For"/empty-state text under it.
   &__associations {
     padding: $container-padding-y $container-padding-x;
   }
@@ -163,6 +164,8 @@
   // Always shown: there's no backend endpoint yet to list a competency's
   // actual associations (see `CourseSearchBrowse.tsx`).
   &__associations-empty-state {
+    // The empty state repeats the competency name, so a long one has to wrap here.
+    overflow-wrap: anywhere;
     margin-top: 8px;
     font-size: 15.8px;
     line-height: 24.5px;

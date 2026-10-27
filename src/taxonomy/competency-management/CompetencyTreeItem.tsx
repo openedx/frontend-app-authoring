@@ -1,5 +1,5 @@
-import type { KeyboardEvent, MouseEvent } from 'react';
-import { useId } from 'react';
+import type { FocusEvent, KeyboardEvent, MouseEvent } from 'react';
+import { useId, useRef } from 'react';
 
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -7,6 +7,7 @@ import { Badge } from '@openedx/paragon';
 
 import ExpandCollapseIconButton from '@src/generic/ExpandCollapseIconButton';
 import type { CompetencyTreeNode } from './CompetencyTree';
+import { CompetencyTooltip, useCompetencyTooltip } from './competency-tooltip';
 import messages from './messages';
 
 export interface CompetencyTreeItemProps {
@@ -47,6 +48,9 @@ const CompetencyTreeItem = ({
   const intl = useIntl();
   const labelId = useId();
   const externalIdLabelId = useId();
+  const rowRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const badgeRef = useRef<HTMLElement>(null);
   const nodeId = String(node.id);
   const hasChildren = !!node.subRows?.length;
   const isExpanded = expandedIds.has(nodeId);
@@ -80,6 +84,18 @@ const CompetencyTreeItem = ({
     }
   };
 
+  const tooltip = useCompetencyTooltip(
+    () => [labelRef.current, badgeRef.current].some((el) => !!el && el.scrollWidth > el.clientWidth),
+  );
+
+  // React focus events bubble; only this row's own `<li>` may open its tooltip.
+  const handleFocus = (event: FocusEvent<HTMLLIElement>) => {
+    if (event.target === event.currentTarget) { tooltip.openOnFocus(event); }
+  };
+  const handleBlur = (event: FocusEvent<HTMLLIElement>) => {
+    if (event.target === event.currentTarget) { tooltip.close(); }
+  };
+
   return (
     <li
       className={classNames({
@@ -94,8 +110,15 @@ const CompetencyTreeItem = ({
       aria-expanded={isSelectable && hasChildren ? isExpanded : undefined}
       onClick={isSelectable ? handleSelect : undefined}
       onKeyDown={isSelectable ? handleKeyDown : undefined}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
     >
-      <div className="competency-row">
+      <div
+        className="competency-row"
+        ref={rowRef}
+        onMouseEnter={tooltip.openOnHover}
+        onMouseLeave={tooltip.close}
+      >
         <ExpandCollapseIconButton
           canExpand={hasChildren}
           isExpanded={isExpanded}
@@ -103,7 +126,7 @@ const CompetencyTreeItem = ({
           expandLabel={intl.formatMessage(messages.expandRowButtonLabel)}
           collapseLabel={intl.formatMessage(messages.collapseRowButtonLabel)}
         />
-        <span className="competency-row__label" id={labelId}>{node.value}</span>
+        <span className="competency-row__label text-truncate" id={labelId} ref={labelRef}>{node.value}</span>
         {externalId ?
           (
             <>
@@ -112,7 +135,8 @@ const CompetencyTreeItem = ({
               </span>
               <Badge
                 variant="info"
-                className="competency-row__badge ml-auto"
+                className="competency-row__badge text-truncate ml-auto"
+                ref={badgeRef}
                 aria-hidden="true"
               >
                 {externalId}
@@ -120,6 +144,12 @@ const CompetencyTreeItem = ({
             </>
           ) :
           null}
+        <CompetencyTooltip
+          anchorRef={rowRef}
+          name={node.value}
+          externalId={externalId}
+          {...tooltip.tooltipProps}
+        />
       </div>
       {isExpanded && hasChildren && (
         <ul role={isSelectable ? 'group' : undefined}>
