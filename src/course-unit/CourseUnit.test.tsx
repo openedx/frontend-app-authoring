@@ -219,7 +219,7 @@ describe('<CourseUnit />', () => {
     render(<RootWrapper />);
 
     const iframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-    expect(iframe).toHaveAttribute('src', `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}?mfe_embed=1`);
+    expect(iframe).toHaveAttribute('src', `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}`);
     expect(iframe).toHaveAttribute('allow', IFRAME_FEATURE_POLICY);
     expect(iframe).toHaveAttribute('style', 'height: 0px;');
     expect(iframe).toHaveAttribute('scrolling', 'no');
