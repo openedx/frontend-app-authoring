@@ -25,7 +25,8 @@ export const formatAccessManagedXBlockData = (
  *
  * @returns {string} - The generated iframe URL.
  */
-export const getIframeUrl = (blockId: string): string => `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}`;
+export const getIframeUrl = (blockId: string): string =>
+  `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}?mfe_embed=1`;
 
 /**
  * Generates the legacy edit modal URL for the given block ID.
