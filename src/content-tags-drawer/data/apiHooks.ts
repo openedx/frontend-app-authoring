@@ -7,7 +7,7 @@ import {
   useQueryClient,
   skipToken,
 } from '@tanstack/react-query';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { TagData, TagListData } from '@src/taxonomy/data/types';
 import {
   getTaxonomyTagsData,

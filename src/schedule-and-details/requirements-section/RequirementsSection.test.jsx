@@ -14,8 +14,8 @@ import RequirementsSection from '.';
 const onChangeMock = jest.fn();
 const courseIdMock = 'course-id-bar';
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({
     courseId: courseIdMock,
   }),

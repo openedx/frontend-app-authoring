@@ -39,8 +39,8 @@ jest.mock('@src/course-outline/data/apiHooks', () => ({
   } as unknown as UseQueryResult<XBlockBase, Error>)),
 }));
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useBlocker: jest.fn(() => ({
     state: 'unblocked',
     proceed: jest.fn(),
