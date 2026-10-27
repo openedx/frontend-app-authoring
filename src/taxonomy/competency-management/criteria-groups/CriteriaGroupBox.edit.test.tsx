@@ -233,6 +233,20 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
       expect(deleteGroup).not.toHaveBeenCalled();
     });
 
+    it('gives the placeholder group\'s own rule box no menu, since the group\'s menu removes both', () => {
+      render(
+        <MockCompetencyAssociationsProvider value={{ selection: { groupId: null, ruleKey: null } }}>
+          <CriteriaGroupBox subsectionNamesByUsageKey={{}} canEdit position={3} courseName="Demo Course" />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+      expect(screen.getByText('Select content below to add it here.')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'More actions for the new rule group in Demo Course' }))
+        .toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /^More actions for the (rule with|new rule$)/ })).not
+        .toBeInTheDocument();
+    });
+
     it.each([
       ['editable', true],
       ['read-only', false],
@@ -259,6 +273,33 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
         expect(focus).toHaveBeenCalledWith({ preventScroll: selectionMoved });
       },
     );
+
+    it('leaves focus in a text field, and still consumes the request', async () => {
+      const consumeKeyboardFocusRequest = jest.fn();
+      const { rerender } = renderBox();
+      await user.click(screen.getAllByRole('button', { name: /With a score of/ })[0]);
+      await user.click(screen.getByRole('textbox'));
+
+      rerender(
+        <MockCompetencyAssociationsProvider
+          value={{
+            keyboardFocusRequest: { kind: 'group', groupId: 10, selectionMoved: true },
+            consumeKeyboardFocusRequest,
+          }}
+        >
+          <CriteriaGroupBox
+            group={group}
+            subsectionNamesByUsageKey={{}}
+            canEdit
+            position={2}
+            courseName="Demo Course"
+          />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+      expect(screen.getByRole('textbox')).toHaveFocus();
+      expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
+    });
 
     it('takes keyboard focus on its menu button when a menu request names it, then consumes the request', () => {
       const consumeKeyboardFocusRequest = jest.fn();

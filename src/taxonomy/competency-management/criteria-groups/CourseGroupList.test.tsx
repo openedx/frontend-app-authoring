@@ -11,6 +11,7 @@ import {
   byTextContent,
   courseA,
   courseB,
+  criterion,
   MockCompetencyAssociationsProvider,
   twoCoursesResponse,
 } from '../__mocks__';
@@ -197,6 +198,33 @@ describe('<CourseGroupList />', () => {
         .toBeInTheDocument();
       expect(screen.queryByText(noAssociationsPromptMessage)).not.toBeInTheDocument();
     });
+  });
+
+  it('shows rule box menus only in the courses the author can edit', async () => {
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(
+      200,
+      buildOutlineIndex({ overrides: { courseStructure: { displayName: 'Course A' } } }),
+    );
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseB)).reply(
+      200,
+      buildOutlineIndex({ overrides: { courseStructure: { displayName: 'Course B' } } }),
+    );
+    const groupsIndex = buildCompetencyCriteriaGroupsIndex({
+      ...twoCoursesResponse,
+      criteria: [criterion(901, 'sub-a', 10), criterion(902, 'sub-b', 20)],
+    });
+    renderList({
+      groupsIndex,
+      accessibleCourseGroups: groupsIndex.courseGroups,
+      canEditCourse: (courseId) => courseId === courseB,
+    });
+
+    expect(await screen.findByRole('heading', { name: 'From within Course B ...' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'From within Course A ...' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: /More actions for the rule with a score of/ })).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: /^More actions for rule group/ })).toHaveLength(1);
+    expect(screen.getByRole('button', { name: 'More actions for Course B' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'More actions for Course A' })).not.toBeInTheDocument();
   });
 
   it('takes keyboard focus on the empty state when a request asks for it, then consumes the request', () => {

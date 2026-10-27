@@ -95,6 +95,24 @@ describe('<RuleBoxList />', () => {
     ).toEqual(['Subsection A', 'Subsection B']);
   });
 
+  it('gives each saved box a menu button named after its own score, so two boxes in a group differ', () => {
+    render(
+      <MockCompetencyAssociationsProvider>
+        <RuleBoxList
+          groupId={10}
+          boxes={boxes}
+          subsectionNamesByUsageKey={{}}
+          canEdit
+        />
+      </MockCompetencyAssociationsProvider>,
+    );
+
+    expect(screen.getByRole('button', { name: 'More actions for the rule with a score of 70% or higher' }))
+      .toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'More actions for the rule with a score of 90% or lower' }))
+      .toBeInTheDocument();
+  });
+
   it('marks only the box matching the context selection as current', () => {
     renderList({ groupId: 10, ruleKey: 'grade:lte:0.9:percent' });
 

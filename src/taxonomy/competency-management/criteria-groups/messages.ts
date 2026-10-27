@@ -19,6 +19,22 @@ const messages = defineMessages({
     defaultMessage: 'Remove group',
     description: 'Menu item that removes a rule group, or discards the unsaved one, with its rule boxes.',
   },
+  ruleBoxMoreActionsLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.rule-box-more-actions-label',
+    defaultMessage: 'More actions for the rule with a score of {score}',
+    description: 'Accessible label for the ⋮ button that opens a saved rule box\'s actions menu. {score} is the '
+      + 'box\'s score with its comparison, such as "75% or higher".',
+  },
+  placeholderRuleBoxMoreActionsLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.placeholder-rule-box-more-actions-label',
+    defaultMessage: 'More actions for the new rule',
+    description: 'Accessible label for the ⋮ button on a new, not-yet-saved rule box.',
+  },
+  removeRuleBoxMenuItem: {
+    id: 'course-authoring.competency-management.criteria-groups.remove-rule-box-menu-item',
+    defaultMessage: 'Remove rule',
+    description: 'Menu item that removes a rule box and all of its content, or discards the unsaved one.',
+  },
   courseGroupMoreActionsLabel: {
     id: 'course-authoring.competency-management.criteria-groups.course-group-more-actions-label',
     defaultMessage: 'More actions for {courseName}',

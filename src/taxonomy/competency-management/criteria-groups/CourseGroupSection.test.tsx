@@ -267,7 +267,9 @@ describe('<CourseGroupSection />', () => {
     expect(names).toEqual([
       'More actions for Demo Course',
       'More actions for rule group 1 in Demo Course',
+      'More actions for the rule with a score of 70% or higher',
       'More actions for rule group 2 in Demo Course',
+      'More actions for the rule with a score of 70% or higher',
       'More actions for the new rule group in Demo Course',
     ]);
   });
