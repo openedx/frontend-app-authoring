@@ -40,6 +40,14 @@ const buildResponse = (courses: Course[], numPages: number = 1) => ({
 
 const lastRequestParams = () => axiosMock.history.get[axiosMock.history.get.length - 1].params;
 
+// jsdom treats :focus-visible as :focus, so simulate pointer-initiated focus explicitly.
+const mockPointerFocus = () => {
+  const originalMatches = Element.prototype.matches;
+  jest.spyOn(Element.prototype, 'matches').mockImplementation(function matches(this: Element, selector: string) {
+    return selector === ':focus-visible' ? false : originalMatches.call(this, selector);
+  });
+};
+
 describe('<CourseSearchBrowse /> and <CourseRow />', () => {
   beforeAll(() => {
     jest.useFakeTimers();
@@ -118,8 +126,9 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
       // jsdom has no layout, so every element reports the same widths.
       const stubWidths = (scrollWidth: number, clientWidth: number) => {
-        jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockReturnValue(scrollWidth);
-        jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(clientWidth);
+        const scrollWidthSpy = jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockReturnValue(scrollWidth);
+        const clientWidthSpy = jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(clientWidth);
+        return { scrollWidthSpy, clientWidthSpy };
       };
 
       afterEach(() => {
@@ -140,20 +149,46 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
         expect(heading).toHaveAttribute('tabindex', '0');
 
-        fireEvent.focus(heading);
+        act(() => heading.focus());
 
         expect(await screen.findByRole('tooltip')).toHaveTextContent('Test Competency');
+      });
+
+      it('shows no tooltip when the truncated heading gets focus that is not focus-visible', async () => {
+        stubWidths(200, 100);
+        mockPointerFocus();
+        const heading = await renderAndGetHeading();
+
+        act(() => heading.focus());
+        act(() => {
+          jest.advanceTimersByTime(400);
+        });
+
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
       });
 
       it('has no tabindex and shows no tooltip when not truncated', async () => {
         stubWidths(100, 100);
         const heading = await renderAndGetHeading();
 
-        fireEvent.mouseEnter(heading);
-        fireEvent.focus(heading);
+        act(() => heading.focus());
 
         expect(heading).not.toHaveAttribute('tabindex');
         expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      });
+
+      it('is focusable and shows the tooltip on focus when only the Competency ID badge is truncated', async () => {
+        jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockImplementation(function scrollWidth(this: Element) {
+          return this.classList.contains('competency-row__badge') ? 200 : 100;
+        });
+        jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(100);
+        const heading = await renderAndGetHeading();
+
+        expect(heading).toHaveAttribute('tabindex', '0');
+
+        act(() => heading.focus());
+
+        expect(await screen.findByRole('tooltip')).toHaveTextContent('Test Competency');
       });
 
       describe('when the heading is resized', () => {
@@ -179,17 +214,15 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
         });
 
         it('adds and removes tabindex as the heading becomes truncated and fits again', async () => {
-          stubWidths(100, 100);
+          const { scrollWidthSpy } = stubWidths(100, 100);
           const heading = await renderAndGetHeading();
           expect(heading).not.toHaveAttribute('tabindex');
 
-          jest.restoreAllMocks();
-          stubWidths(200, 100);
+          scrollWidthSpy.mockReturnValue(200);
           act(() => resizeCallback([], {} as ResizeObserver));
           expect(heading).toHaveAttribute('tabindex', '0');
 
-          jest.restoreAllMocks();
-          stubWidths(100, 100);
+          scrollWidthSpy.mockReturnValue(100);
           act(() => resizeCallback([], {} as ResizeObserver));
           expect(heading).not.toHaveAttribute('tabindex');
         });

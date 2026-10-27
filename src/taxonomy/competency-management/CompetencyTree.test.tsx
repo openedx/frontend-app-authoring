@@ -106,6 +106,14 @@ const renderTree = (extraProps: {
     <CompetencyTree taxonomyId={taxonomyId} taxonomyName={taxonomyName} {...extraProps} />,
   );
 
+// jsdom treats :focus-visible as :focus, so simulate pointer-initiated focus explicitly.
+const mockPointerFocus = () => {
+  const originalMatches = Element.prototype.matches;
+  jest.spyOn(Element.prototype, 'matches').mockImplementation(function matches(this: Element, selector: string) {
+    return selector === ':focus-visible' ? false : originalMatches.call(this, selector);
+  });
+};
+
 describe('<CompetencyTree />', () => {
   beforeEach(() => {
     ({ axiosMock } = initializeMocks());
@@ -423,8 +431,26 @@ describe('<CompetencyTree />', () => {
       jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(clientWidth);
     };
 
+    // Only the Competency ID badge overflows; the label fits.
+    const stubOnlyBadgeTruncated = () => {
+      jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockImplementation(function scrollWidth(this: Element) {
+        return this.classList.contains('competency-row__badge') ? 200 : 100;
+      });
+      jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(100);
+    };
+
+    const advance = (ms: number) =>
+      act(() => {
+        jest.advanceTimersByTime(ms);
+      });
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
     afterEach(() => {
       jest.restoreAllMocks();
+      jest.useRealTimers();
     });
 
     const renderExpandedTree = async () => {
@@ -444,21 +470,44 @@ describe('<CompetencyTree />', () => {
       stubWidths(200, 100);
 
       fireEvent.mouseEnter(rowOf(longName));
+      advance(300);
 
       const tooltip = await screen.findByRole('tooltip');
       expect(within(tooltip).getByText(longName, { exact: true })).toBeInTheDocument();
       expect(within(tooltip).getByText(`Competency ID: ${longExternalId}`, { exact: true })).toBeInTheDocument();
     });
 
+    it('shows the tooltip when only the Competency ID badge is truncated', async () => {
+      axiosMock.onGet(tagListUrl).reply(200, buildLongTextResponse());
+      renderTree({ onSelectCompetency: jest.fn() });
+      await screen.findByText(longName);
+      stubOnlyBadgeTruncated();
+
+      act(() => screen.getByRole('treeitem', { name: `${longName} Competency ID: ${longExternalId}` }).focus());
+
+      expect(await screen.findByRole('tooltip')).toHaveTextContent(longName);
+    });
+
     it('does not show an ancestor group\'s tooltip when a nested treeitem gets focus', async () => {
       await renderExpandedTree();
       stubWidths(200, 100);
 
-      fireEvent.focus(screen.getByRole('treeitem', { name: 'Leaf A1a Competency ID: EXT-003' }));
+      act(() => screen.getByRole('treeitem', { name: 'Leaf A1a Competency ID: EXT-003' }).focus());
 
       const tooltips = await screen.findAllByRole('tooltip');
       expect(tooltips).toHaveLength(1);
       expect(tooltips[0]).toHaveTextContent('Leaf A1a');
+    });
+
+    it('does not show the tooltip when a truncated row gets focus that is not focus-visible', async () => {
+      await renderExpandedTree();
+      stubWidths(200, 100);
+      mockPointerFocus();
+
+      act(() => screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' }).focus());
+      advance(400);
+
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
     });
 
     it('shows no tooltip for a row that is not truncated', async () => {
@@ -466,13 +515,9 @@ describe('<CompetencyTree />', () => {
       stubWidths(100, 100);
 
       fireEvent.mouseEnter(rowOf('Root A'));
-      fireEvent.focus(screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' }));
+      act(() => screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' }).focus());
       // Past the hover show delay, so a tooltip that was going to open has.
-      await act(async () => {
-        await new Promise((resolve) => {
-          setTimeout(resolve, 400);
-        });
-      });
+      advance(400);
 
       expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
     });

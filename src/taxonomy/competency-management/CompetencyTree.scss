@@ -115,8 +115,6 @@
     padding-left: 5px;
 
     .btn-icon-sm {
-      // Keeps a long label from shrinking the chevron along with it.
-      flex-shrink: 0;
       // `content-box` makes `width`/`height` define the glyph only, so the
       // padding below grows the hit box without shrinking the glyph.
       box-sizing: content-box;

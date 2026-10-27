@@ -3,7 +3,7 @@ import { useId, type RefObject } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Overlay, Tooltip } from '@openedx/paragon';
 
-import messages from './messages';
+import messages from '@src/taxonomy/competency-management/messages';
 import './CompetencyTooltip.scss';
 
 export interface CompetencyTooltipProps {
@@ -27,6 +27,8 @@ const CompetencyTooltip = ({
   onHide,
 }: CompetencyTooltipProps) => {
   const intl = useIntl();
+  // Paragon requires an `id`; nothing references it on purpose, because the trigger's own accessible name
+  // already carries the full name and ID, and `aria-describedby` would read them twice.
   const id = useId();
 
   // `rootClose` dismisses on Escape (keyup) and on an outside click, without moving focus (WCAG 1.4.13).

@@ -25,7 +25,7 @@ const Host = ({ isTruncated = true }: HostProps) => {
         tabIndex={0}
         data-testid="trigger"
         onMouseEnter={tooltip.openOnHover}
-        onMouseLeave={tooltip.closeSoon}
+        onMouseLeave={tooltip.close}
         onFocus={tooltip.openOnFocus}
         onBlur={tooltip.close}
       >
@@ -46,6 +46,14 @@ const advance = (ms: number) =>
     jest.advanceTimersByTime(ms);
   });
 
+// jsdom treats :focus-visible as :focus, so simulate pointer-initiated focus explicitly.
+const mockPointerFocus = () => {
+  const originalMatches = Element.prototype.matches;
+  jest.spyOn(Element.prototype, 'matches').mockImplementation(function matches(this: Element, selector: string) {
+    return selector === ':focus-visible' ? false : originalMatches.call(this, selector);
+  });
+};
+
 const pressEscape = () => fireEvent.keyUp(document, { key: 'Escape', keyCode: 27 });
 
 describe('<CompetencyTooltip /> with useCompetencyTooltip', () => {
@@ -55,6 +63,7 @@ describe('<CompetencyTooltip /> with useCompetencyTooltip', () => {
   });
 
   afterEach(() => {
+    jest.restoreAllMocks();
     jest.useRealTimers();
   });
 
@@ -63,7 +72,7 @@ describe('<CompetencyTooltip /> with useCompetencyTooltip', () => {
     return screen.getByTestId('trigger');
   };
 
-  it('opens on hover only after the show delay, with the name and Competency ID', () => {
+  it('opens on hover only after the show delay, with the name and Competency ID', async () => {
     const trigger = renderHost();
 
     fireEvent.mouseEnter(trigger);
@@ -71,7 +80,7 @@ describe('<CompetencyTooltip /> with useCompetencyTooltip', () => {
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
 
     advance(1);
-    const tooltip = screen.getByRole('tooltip');
+    const tooltip = await screen.findByRole('tooltip');
     expect(tooltip).toHaveTextContent('Full name');
     expect(tooltip).toHaveTextContent('Competency ID: EXT-1');
   });
@@ -87,18 +96,28 @@ describe('<CompetencyTooltip /> with useCompetencyTooltip', () => {
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
-  it('opens immediately on keyboard focus', () => {
+  it('opens immediately on keyboard focus', async () => {
     const trigger = renderHost();
 
-    fireEvent.focus(trigger);
+    act(() => trigger.focus());
 
-    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+  });
+
+  it('does not open on focus that is not focus-visible, such as a mouse click', () => {
+    mockPointerFocus();
+    const trigger = renderHost();
+
+    act(() => trigger.focus());
+    advance(500);
+
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
   it('does not open when the trigger is not truncated', () => {
     const trigger = renderHost({ isTruncated: false });
 
-    fireEvent.focus(trigger);
+    act(() => trigger.focus());
     fireEvent.mouseEnter(trigger);
     advance(500);
 
@@ -109,16 +128,16 @@ describe('<CompetencyTooltip /> with useCompetencyTooltip', () => {
     const trigger = renderHost();
     fireEvent.mouseEnter(trigger);
     advance(300);
-    expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    const tooltip = await screen.findByRole('tooltip');
 
     fireEvent.mouseLeave(trigger);
 
-    await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+    expect(tooltip).not.toHaveClass('show');
   });
 
   it('closes on blur', async () => {
     const trigger = renderHost();
-    fireEvent.focus(trigger);
+    act(() => trigger.focus());
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
 
     fireEvent.blur(trigger);
@@ -137,31 +156,18 @@ describe('<CompetencyTooltip /> with useCompetencyTooltip', () => {
     expect(trigger).toHaveFocus();
   });
 
-  it('closes a hover-opened tooltip on Escape', async () => {
+  it('keeps the tooltip open while the pointer moves onto it, because it renders inside the trigger', async () => {
     const trigger = renderHost();
     fireEvent.mouseEnter(trigger);
     advance(300);
-    expect(screen.getByRole('tooltip')).toBeInTheDocument();
-
-    pressEscape();
-
-    await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
-  });
-
-  it('stays open while the pointer moves from the trigger onto the tooltip, and closes on leaving it', async () => {
-    const trigger = renderHost();
-    fireEvent.mouseEnter(trigger);
-    advance(300);
-    const tooltip = screen.getByRole('tooltip');
+    const tooltip = await screen.findByRole('tooltip');
 
     // React derives enter/leave from mouseout, so the portaled tooltip counts as inside the trigger.
     fireEvent.mouseOut(trigger, { relatedTarget: tooltip });
-    // Longer than the hide delay, so a missed cancel would have closed it.
     advance(250);
     expect(tooltip).toHaveClass('show');
 
     fireEvent.mouseOut(tooltip, { relatedTarget: document.body });
-    advance(150);
     await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
   });
 });

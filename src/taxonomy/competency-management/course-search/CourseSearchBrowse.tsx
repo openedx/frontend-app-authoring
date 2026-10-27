@@ -29,8 +29,7 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import { DATE_FORMAT } from '@src/constants';
 import { useStudioHomeCoursesV2 } from '@src/studio-home/data/apiHooks';
 import type { CompetencyTreeNode } from '../CompetencyTree';
-import CompetencyTooltip from '../CompetencyTooltip';
-import { useCompetencyTooltip } from '../useCompetencyTooltip';
+import { CompetencyTooltip, useCompetencyTooltip } from '@src/taxonomy/competency-management/competency-tooltip';
 import CourseRow from './CourseRow';
 import messages from './messages';
 // @ts-ignore
@@ -184,6 +183,28 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
 
   const handleClearDateRange = () => handleDateRangeChange([null, null]);
 
+  const headingRef = useRef<HTMLDivElement>(null);
+  const nameRef = useRef<HTMLSpanElement>(null);
+  const badgeRef = useRef<HTMLElement>(null);
+  const [isHeadingTruncated, setIsHeadingTruncated] = useState(false);
+
+  const measureHeading = useCallback(
+    () => [nameRef.current, badgeRef.current].some((el) => !!el && el.scrollWidth > el.clientWidth),
+    [],
+  );
+
+  // Catches width changes from dragging the tree/course divider as well as window resizes.
+  useEffect(() => {
+    const heading = headingRef.current;
+    if (!heading) { return undefined; }
+    setIsHeadingTruncated(measureHeading());
+    const resizeObserver = new ResizeObserver(() => setIsHeadingTruncated(measureHeading()));
+    resizeObserver.observe(heading);
+    return () => resizeObserver.disconnect();
+  }, [measureHeading, activeCompetency]);
+
+  const tooltip = useCompetencyTooltip(measureHeading);
+
   const { data, isLoading, isError } = useStudioHomeCoursesV2({
     page,
     pageSize: PAGE_SIZE,
@@ -236,32 +257,6 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
     hasPagination = numPages > 1;
   }
 
-  const headingRef = useRef<HTMLDivElement>(null);
-  const nameRef = useRef<HTMLSpanElement>(null);
-  const badgeRef = useRef<HTMLElement>(null);
-  const [isHeadingTruncated, setIsHeadingTruncated] = useState(false);
-
-  const measureHeading = useCallback(
-    () => [nameRef.current, badgeRef.current].some((el) => !!el && el.scrollWidth > el.clientWidth),
-    [],
-  );
-
-  // Catches width changes from dragging the tree/course divider as well as window resizes.
-  useEffect(() => {
-    const heading = headingRef.current;
-    if (!heading) { return undefined; }
-    setIsHeadingTruncated(measureHeading());
-    const resizeObserver = new ResizeObserver(() => setIsHeadingTruncated(measureHeading()));
-    resizeObserver.observe(heading);
-    return () => resizeObserver.disconnect();
-  }, [measureHeading, activeCompetency]);
-
-  const tooltip = useCompetencyTooltip(() => {
-    const isTruncated = measureHeading();
-    setIsHeadingTruncated(isTruncated);
-    return isTruncated;
-  });
-
   return (
     <div className="course-search-browse">
       <div className="course-search-browse__toolbar">
@@ -313,7 +308,7 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
             ref={headingRef}
             tabIndex={isHeadingTruncated ? 0 : undefined}
             onMouseEnter={tooltip.openOnHover}
-            onMouseLeave={tooltip.closeSoon}
+            onMouseLeave={tooltip.close}
             onFocus={tooltip.openOnFocus}
             onBlur={tooltip.close}
           >

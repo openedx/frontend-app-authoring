@@ -7,8 +7,7 @@ import { Badge } from '@openedx/paragon';
 
 import ExpandCollapseIconButton from '@src/generic/ExpandCollapseIconButton';
 import type { CompetencyTreeNode } from './CompetencyTree';
-import CompetencyTooltip from './CompetencyTooltip';
-import { useCompetencyTooltip } from './useCompetencyTooltip';
+import { CompetencyTooltip, useCompetencyTooltip } from './competency-tooltip';
 import messages from './messages';
 
 export interface CompetencyTreeItemProps {
@@ -85,15 +84,13 @@ const CompetencyTreeItem = ({
     }
   };
 
-  // Measured each time the tooltip is about to open, so a width changed since
-  // the last render (e.g. by dragging the divider) is accounted for.
   const tooltip = useCompetencyTooltip(
     () => [labelRef.current, badgeRef.current].some((el) => !!el && el.scrollWidth > el.clientWidth),
   );
 
   // React focus events bubble; only this row's own `<li>` may open its tooltip.
   const handleFocus = (event: FocusEvent<HTMLLIElement>) => {
-    if (event.target === event.currentTarget) { tooltip.openOnFocus(); }
+    if (event.target === event.currentTarget) { tooltip.openOnFocus(event); }
   };
   const handleBlur = (event: FocusEvent<HTMLLIElement>) => {
     if (event.target === event.currentTarget) { tooltip.close(); }
@@ -120,7 +117,7 @@ const CompetencyTreeItem = ({
         className="competency-row"
         ref={rowRef}
         onMouseEnter={tooltip.openOnHover}
-        onMouseLeave={tooltip.closeSoon}
+        onMouseLeave={tooltip.close}
       >
         <ExpandCollapseIconButton
           canExpand={hasChildren}

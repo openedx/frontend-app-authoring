@@ -147,13 +147,9 @@
     color: var(--pgn-color-info-900);
   }
 
-  // Wraps `&__associations-label` and the "Demonstrate Mastery For"/empty-
-  // state text under it.
-  // The empty state repeats the competency name, so a long one has to wrap
-  // there.
+  // Wraps `&__associations-label` and the "Demonstrate Mastery For"/empty-state text under it.
   &__associations {
     padding: $container-padding-y $container-padding-x;
-    overflow-wrap: anywhere;
   }
 
   // Figma gives regular weight for this text layer - only the interpolated
@@ -168,6 +164,8 @@
   // Always shown: there's no backend endpoint yet to list a competency's
   // actual associations (see `CourseSearchBrowse.tsx`).
   &__associations-empty-state {
+    // The empty state repeats the competency name, so a long one has to wrap here.
+    overflow-wrap: anywhere;
     margin-top: 8px;
     font-size: 15.8px;
     line-height: 24.5px;
