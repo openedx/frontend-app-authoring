@@ -1,10 +1,12 @@
 import { StrictMode } from 'react';
+import type { QueryClient } from '@tanstack/react-query';
 import { act, initializeMocks, render, screen, userEvent, waitFor } from '@src/testUtils';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import ScanResults from './ScanResults';
 import messages from './messages';
 import type { LinkCheckResult } from '../types';
 import {
+  courseOptimizerQueryKeys,
   useRerunLinkUpdateStatus,
   useUpdateAllPreviousRunLinks,
   useUpdateSinglePreviousRunLink,
@@ -226,9 +228,10 @@ describe('ScanResults', () => {
   let updateAllMutateAsync: jest.Mock;
   let updateSingleMutateAsync: jest.Mock;
   let refetch: jest.Mock;
+  let queryClient: QueryClient;
 
   beforeEach(() => {
-    initializeMocks();
+    ({ queryClient } = initializeMocks());
     mockWaffleFlags({ enableCourseOptimizerCheckPrevRunLinks: false });
     window.scrollTo = jest.fn();
     refetch = jest.fn().mockResolvedValue({ data: undefined });
@@ -963,6 +966,68 @@ describe('ScanResults', () => {
 
       await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
       expect(await screen.findByText('https://updated.run/link1')).toBeInTheDocument();
+    });
+
+    it('applies successful links and keeps failed links actionable after a partial bulk failure', async () => {
+      const user = userEvent.setup();
+      let status: any = { data: undefined, isFetching: false, isSuccess: false, refetch };
+      mockedUseRerunLinkUpdateStatus.mockImplementation(() => status);
+      const view = renderScanResults(twoPreviousRunLinksData);
+
+      await user.click(screen.getByTestId('update-all-course'));
+      status = {
+        data: {
+          status: 'Failed',
+          results: [
+            successfulResult('https://updated.run/link1'),
+            {
+              id: blockId,
+              success: false,
+              originalUrl: 'https://previous.run/link2',
+              newUrl: null,
+              type: 'course_updates',
+            },
+          ],
+        },
+        isFetching: false,
+        isSuccess: true,
+        refetch,
+      };
+      view.rerender(
+        <ScanResults data={twoPreviousRunLinksData} courseId={courseId} />,
+      );
+
+      await user.click(screen.getByText(messages.courseUpdatesHeader.defaultMessage));
+
+      expect(await screen.findByText('https://updated.run/link1')).toBeInTheDocument();
+      expect(await screen.findByText(messages.updateLinksError.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByTestId(`update-link-${blockId}:https://previous.run/link2`)).toBeEnabled();
+    });
+
+    it('invalidates link-check state only for terminal rerun statuses', () => {
+      const invalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
+      const linkCheckKey = courseOptimizerQueryKeys.linkCheckStatus(courseId);
+      mockedUseRerunLinkUpdateStatus.mockReturnValue({
+        data: { status: 'Uninitiated', results: [] },
+        isFetching: false,
+        isSuccess: true,
+        refetch,
+      });
+      const view = renderScanResults(previousRunOnlyData);
+
+      expect(invalidateQueries).not.toHaveBeenCalledWith(expect.objectContaining({ queryKey: linkCheckKey }));
+
+      mockedUseRerunLinkUpdateStatus.mockReturnValue({
+        data: { status: 'Succeeded', results: [] },
+        isFetching: false,
+        isSuccess: true,
+        refetch,
+      });
+      view.rerender(
+        <ScanResults data={previousRunOnlyData} courseId={courseId} />,
+      );
+
+      expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: linkCheckKey });
     });
 
     it('uses locally updated links when the API still reports them as unchanged', async () => {

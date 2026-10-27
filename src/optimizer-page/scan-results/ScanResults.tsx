@@ -206,12 +206,8 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   }, [allSections]);
 
   // Match API results to UI blocks, including synthetic sections, and record successful updates.
-  const processUpdateResults = useCallback((response: RerunLinkUpdateStatusData, isBulkUpdate = false) => {
-    // Bulk calls use the full mapping below. The result-count check is a legacy fallback for older status responses.
-    if (
-      response.status === RERUN_LINK_UPDATE_STATUSES.SUCCEEDED
-      && (isBulkUpdate || response.results.length > 4)
-    ) {
+  const processUpdateResults = useCallback((response: RerunLinkUpdateStatusData) => {
+    if (response.status === RERUN_LINK_UPDATE_STATUSES.SUCCEEDED) {
       // Collect successful link IDs and their replacement URLs before updating state.
       const successfulLinkIds: string[] = [];
       const newMap: Record<string, string> = {};
@@ -322,7 +318,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       return;
     }
 
-    // Handle a single-link response by matching each successful result directly to the UI block.
+    // A Failed or Canceled bulk run can still report successful results; match those directly to the UI block.
     if (response.results && Array.isArray(response.results)) {
       const successfulResults = response.results.filter(r => r.success);
       if (successfulResults.length === 0) {
@@ -374,11 +370,13 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   }, [allSections]);
 
   // Without a backend operation ID/version, refresh authoritative link-check state on terminal rerun observations.
+  // Uninitiated means no rerun has ever run, so it is not a terminal observation.
   useEffect(() => {
     if (
       isFetching
       || !rerunLinkUpdateResult
       || rerunLinkUpdateResult.status == null
+      || rerunLinkUpdateResult.status === RERUN_LINK_UPDATE_STATUSES.UNINITIATED
       || RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES.includes(rerunLinkUpdateResult.status)
     ) {
       return;
@@ -405,7 +403,7 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       return;
     }
 
-    processUpdateResults(rerunLinkUpdateResult, true);
+    processUpdateResults(rerunLinkUpdateResult);
     setIsUpdateAllInProgress(false);
 
     if (

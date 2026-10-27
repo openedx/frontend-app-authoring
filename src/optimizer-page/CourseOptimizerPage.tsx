@@ -14,11 +14,11 @@ import { Helmet } from 'react-helmet';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getCourseOutlinePermissions } from '@src/authz/permissionHelpers';
-import CourseStepper from '../generic/course-stepper';
-import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
+import CourseStepper from '@src/generic/course-stepper';
+import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import Loading from '@src/generic/Loading';
 import PermissionDeniedAlert from '@src/generic/PermissionDeniedAlert';
-import { STATEFUL_BUTTON_STATES } from '../constants';
+import { STATEFUL_BUTTON_STATES } from '@src/constants';
 import messages from './messages';
 import {
   LINK_CHECK_FAILURE_STATUSES,
@@ -45,11 +45,10 @@ const CourseOptimizerPage = () => {
   const linkCheckStatus = linkCheckStatusQuery.data?.linkCheckStatus;
   const linkCheckInProgress = startLinkCheckMutation.isPending
     || (linkCheckStatus != null && LINK_CHECK_IN_PROGRESS_STATUSES.includes(linkCheckStatus));
+  // No status yet means the course was never scanned, which is the uninitiated stage (-1).
   const currentStage = startLinkCheckMutation.isPending
     ? SCAN_STAGES[LINK_CHECK_STATUSES.PENDING]
-    : linkCheckStatus == null
-    ? undefined
-    : SCAN_STAGES[linkCheckStatus];
+    : SCAN_STAGES[linkCheckStatus ?? LINK_CHECK_STATUSES.UNINITIATED];
   const linkCheckResult = linkCheckStatus === LINK_CHECK_STATUSES.SUCCEEDED
     ? linkCheckStatusQuery.data?.linkCheckOutput ?? { sections: [] }
     : null;
@@ -61,7 +60,7 @@ const CourseOptimizerPage = () => {
       && (linkCheckStatus == null || LINK_CHECK_FAILURE_STATUSES.includes(linkCheckStatus))
     ? intl.formatMessage(messages.linkCheckFailed)
     : null;
-  const linkCheckPresent = currentStage != null ? currentStage >= 0 : !!currentStage;
+  const linkCheckPresent = currentStage >= 0;
   const [showStepper, setShowStepper] = useState(false);
   const hasConnectionError = linkCheckStatusQuery.isError || startLinkCheckMutation.isError;
   const getScanButtonState = () => {
@@ -163,9 +162,7 @@ const CourseOptimizerPage = () => {
                   {showStepper && (
                     <Card.Section className="px-3 py-1">
                       <CourseStepper
-                        // @ts-ignore
                         steps={courseStepperSteps}
-                        // @ts-ignore
                         activeKey={currentStage}
                         hasError={currentStage === 1 && !!errorMessage}
                         errorMessage={errorMessage}

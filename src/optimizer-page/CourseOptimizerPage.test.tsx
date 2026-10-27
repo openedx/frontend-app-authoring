@@ -203,6 +203,27 @@ describe('CourseOptimizerPage', () => {
       expect(screen.getByRole('button', { name: messages.buttonTitle.defaultMessage })).toBeDisabled();
     });
 
+    it('shows no scan stage and keeps the scan button usable when the course was never scanned', async () => {
+      let respondToStatus!: (response: [number, object]) => void;
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(() =>
+        new Promise(resolve => {
+          respondToStatus = resolve;
+        })
+      );
+      render(<OptimizerPage />);
+      expect(await screen.findByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
+
+      // Answer the status request and flush its macrotask so the assertions below run after React has the response.
+      await act(async () => {
+        respondToStatus([200, {}]);
+        await new Promise(resolve => setTimeout(resolve, 0));
+      });
+
+      expect(screen.queryByText(messages.preparingStepTitle.defaultMessage)).not.toBeInTheDocument();
+      expect(screen.queryByText(messages.scanningStepTitle.defaultMessage)).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: messages.buttonTitle.defaultMessage })).toBeEnabled();
+    });
+
     it('resets a scan failure when starting a new scan', async () => {
       let statusRequestCount = 0;
       axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(() => {

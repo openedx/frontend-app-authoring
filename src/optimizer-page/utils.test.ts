@@ -1,4 +1,5 @@
 import { mockApiResponse, mockApiResponseWithPreviousRunLinks } from './mocks/mockApiResponse';
+import type { LinkCheckResult } from './types';
 import {
   areAllPreviousRunLinksUpdated,
   buildBlockContainerUrl,
@@ -23,16 +24,27 @@ describe('countBrokenLinks', () => {
   });
 
   it('should return 0 if there are no broken links', () => {
-    const data = {
+    const data: LinkCheckResult = {
       sections: [
         {
+          id: 'section-1',
+          displayName: 'Section',
           subsections: [
             {
+              id: 'subsection-1',
+              displayName: 'Subsection',
               units: [
                 {
+                  id: 'unit-1',
+                  displayName: 'Unit',
                   blocks: [
                     {
+                      id: 'block-1',
+                      url: 'https://example.com/block-1',
                       brokenLinks: [],
+                      lockedLinks: [],
+                      externalForbiddenLinks: [],
+                      previousRunLinks: [],
                     },
                   ],
                 },
@@ -52,7 +64,7 @@ describe('countBrokenLinks', () => {
   });
 
   it('should return [] if there is no data', () => {
-    const data = {};
+    const data = {} as LinkCheckResult;
     expect(countBrokenLinks(data)).toStrictEqual(
       {
         brokenLinksCounts: [],
@@ -63,7 +75,7 @@ describe('countBrokenLinks', () => {
   });
 
   it('should return [] if there are no sections', () => {
-    const data = {
+    const data: LinkCheckResult = {
       sections: [],
     };
     expect(countBrokenLinks(data)).toStrictEqual(
@@ -82,13 +94,16 @@ describe('isDataEmpty', () => {
   });
 
   it('should return false when courseUpdates contains previousRunLinks', () => {
-    const data = {
+    const data: LinkCheckResult = {
       courseUpdates: [
         {
+          id: 'update-1',
+          displayName: 'Course update',
+          url: 'https://example.com/update-1',
           brokenLinks: [],
           lockedLinks: [],
           externalForbiddenLinks: [],
-          previousRunLinks: [{ originalLink: 'https://prev.link' }],
+          previousRunLinks: [{ originalLink: 'https://prev.link', isUpdated: false }],
         },
       ],
       sections: [],
@@ -98,13 +113,16 @@ describe('isDataEmpty', () => {
   });
 
   it('should return false when customPages contains previousRunLinks', () => {
-    const data = {
+    const data: LinkCheckResult = {
       customPages: [
         {
+          id: 'custom-page-1',
+          displayName: 'Custom page',
+          url: 'https://example.com/custom-page-1',
           brokenLinks: [],
           lockedLinks: [],
           externalForbiddenLinks: [],
-          previousRunLinks: [{ originalLink: 'https://prev.link' }],
+          previousRunLinks: [{ originalLink: 'https://prev.link', isUpdated: false }],
         },
       ],
       sections: [],

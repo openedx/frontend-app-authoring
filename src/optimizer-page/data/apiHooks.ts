@@ -28,8 +28,9 @@ const POLLING_INTERVAL = 2000;
 
 export const courseOptimizerQueryKeys = {
   all: ['courseOptimizer'] as const satisfies QueryKey,
-  linkCheckStatus: (courseId: string) => ['courseOptimizer', 'linkCheckStatus', courseId] as const,
-  rerunLinkUpdateStatus: (courseId: string) => ['courseOptimizer', 'rerunLinkUpdateStatus', courseId] as const,
+  linkCheckStatus: (courseId: string) => [...courseOptimizerQueryKeys.all, 'linkCheckStatus', courseId] as const,
+  rerunLinkUpdateStatus: (courseId: string) =>
+    [...courseOptimizerQueryKeys.all, 'rerunLinkUpdateStatus', courseId] as const,
 };
 
 export interface LinkCheckStatusData {
