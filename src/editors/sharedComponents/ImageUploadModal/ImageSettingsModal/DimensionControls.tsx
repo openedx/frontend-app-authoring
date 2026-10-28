@@ -80,7 +80,6 @@ const DimensionControls = ({ originalDimensions }: { originalDimensions: OrigIma
           />
         </Form.Group>
         <IconButton
-          name="isLocked"
           className="d-inline-block"
           alt={
           formik.values.isLocked

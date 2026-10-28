@@ -58,15 +58,15 @@ describe('ImageUploadModal', () => {
         height: settings.dimensions.height,
         class: '',
       };
-      const testImgTag = ({ expected, settings }) => {
+      const testImgTag = ({ expected: exp, settings: s }) => {
         const output = hooks.imgTag({
-          settings,
+          settings: s,
           selection,
           lmsEndpointUrl: 'sOmE',
           editorType: 'tinyMCE',
           isLibrary: true,
         });
-        expect(output).toEqual(`<img ${propsString(expected)} />`);
+        expect(output).toEqual(`<img ${propsString(exp)} />`);
       };
       test.each([
         [settings, expected],
@@ -76,8 +76,8 @@ describe('ImageUploadModal', () => {
         [{ ...settings, classList: undefined }, { ...expected }],
         [{ ...settings, classList: ['class1', 'class2'] }, { ...expected, class: 'class1 class2' }],
         [{ ...settings, title: 'some title' }, { ...expected, title: 'some title' }],
-      ])('It returns a html string which matches an image tag', (settings, expected) => {
-        testImgTag({ settings, expected });
+      ])('It returns a html string which matches an image tag', (s, e) => {
+        testImgTag({ settings: s, expected: e });
       });
     });
     describe('createSaveCallback', () => {

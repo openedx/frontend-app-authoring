@@ -5,6 +5,9 @@ import './index.scss';
 import { Button, Image } from '@openedx/paragon';
 import { ArrowBackIos } from '@openedx/paragon/icons';
 import { ImageAdditionalSettingsSlot } from '@src/plugin-slots/ImageAdditionalSettingsSlot';
+// NOTE: the following is added because this doesn't trigger in master and
+// I don't want this commit to differ too much from it.
+// eslint-disable-next-line import/no-cycle
 import ImageSettingsModalSlot from '@src/plugin-slots/ImageSettingsModalSlot';
 import { Formik, FormikBag, useFormikContext } from 'formik';
 import React from 'react';

@@ -1,4 +1,5 @@
 import { PluginSlot } from '@openedx/frontend-plugin-framework';
+// eslint-disable-next-line import/no-cycle
 import {
   ImageSettingsModalForm,
   type ImageSettingsModalFormProps,

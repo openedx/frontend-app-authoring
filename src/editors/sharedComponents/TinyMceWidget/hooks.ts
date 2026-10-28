@@ -8,13 +8,13 @@ import { getConfig } from '@edx/frontend-platform';
 import { getLocale, isRtl } from '@edx/frontend-platform/i18n';
 import { a11ycheckerCss } from 'frontend-components-tinymce-advanced-plugins';
 import { isEmpty } from 'lodash';
+import { isLibraryKey } from '@src/generic/key-utils';
 import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
 import pluginConfig from './pluginConfig';
 
 import * as tinyMCE from '../../data/constants/tinyMCE';
 import { getRelativeUrl, getStaticUrl, parseAssetName } from './utils';
-import { isLibraryKey } from '@src/generic/key-utils';
 
 export const state = StrictDict({
   // eslint-disable-next-line react-hooks/rules-of-hooks
