@@ -48,19 +48,27 @@ export const RERUN_LINK_UPDATE_STATUSES = {
   RETRYING: 'Retrying',
   SCANNING: 'Scanning',
   UPDATING: 'Updating',
-};
+} as const;
 
-export const RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES = [
+export type RerunLinkUpdateStatus = typeof RERUN_LINK_UPDATE_STATUSES[keyof typeof RERUN_LINK_UPDATE_STATUSES];
+export type RawRerunLinkUpdateStatus =
+  | RerunLinkUpdateStatus
+  | 'uninitiated'
+  | 'pending'
+  | 'in_progress'
+  | 'completed'
+  | 'failed'
+  | 'canceled'
+  | 'retrying'
+  | 'scanning'
+  | 'updating';
+
+export const RERUN_LINK_UPDATE_IN_PROGRESS_STATUSES: RerunLinkUpdateStatus[] = [
   RERUN_LINK_UPDATE_STATUSES.PENDING,
   RERUN_LINK_UPDATE_STATUSES.IN_PROGRESS,
   RERUN_LINK_UPDATE_STATUSES.RETRYING,
   RERUN_LINK_UPDATE_STATUSES.SCANNING,
   RERUN_LINK_UPDATE_STATUSES.UPDATING,
-];
-
-export const RERUN_LINK_UPDATE_FAILURE_STATUSES = [
-  RERUN_LINK_UPDATE_STATUSES.FAILED,
-  RERUN_LINK_UPDATE_STATUSES.CANCELED,
 ];
 
 export const SUCCESS_DATE_FORMAT = 'MM/DD/yyyy';
