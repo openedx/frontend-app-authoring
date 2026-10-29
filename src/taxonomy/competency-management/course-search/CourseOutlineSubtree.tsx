@@ -1,22 +1,17 @@
 import { type ReactNode, useState } from 'react';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { Button, Icon, IconButton } from '@openedx/paragon';
 import {
-  Badge,
-  Button,
-  Icon,
-  IconButton,
-} from '@openedx/paragon';
-import {
-  AddCircleOutline,
-  AdsClick,
-  CheckCircle,
+  AddCircle,
+  Cancel,
   ExpandLess,
   ExpandMore,
 } from '@openedx/paragon/icons';
 
 import { useCourseOutlineIndex } from '@src/course-outline/data';
 import type { XBlock } from '@src/data/types';
+import CompetencyIcon from '@src/generic/CompetencyIcon';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import rootMessages from '../messages';
@@ -37,11 +32,12 @@ interface SubsectionRowProps {
  * Renders a button that calls `associateSubsection` when clicked, unless
  * `canEditCourse(courseId)` is false or the association data (`index`,
  * `systemDefaultProfile`) isn't loaded yet, in which case it renders the same
- * content as a non-interactive `div`. The already-associated badge and
- * marker icon show regardless of `canEditCourse`, so a view-only course
- * still shows what's associated. Re-clicking an
- * already-associated row hits the duplicate guard inside
- * `associateSubsection` (an informational toast), not a failed request.
+ * content as a non-interactive `div`. The already-associated pill
+ * shows regardless of `canEditCourse`, so a view-only course still shows
+ * what's associated; its cancel icon is
+ * decorative (removal is out of scope). Re-clicking an already-associated
+ * row hits the duplicate guard inside `associateSubsection` (an
+ * informational toast), not a failed request.
  */
 const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
   const intl = useIntl();
@@ -62,42 +58,32 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
   const rowContent = (
     <>
       <span>{subsection.displayName}</span>
-      <span className="course-search-browse__subsection-actions">
-        {isAssociated && (
-          <>
-            {competencyExternalId && (
-              <>
-                <span className="sr-only">
-                  {intl.formatMessage(rootMessages.competencyIdAccessibleLabel, { externalId: competencyExternalId })}
-                </span>
-                <Badge
-                  variant="info"
-                  pill
-                  className="course-search-browse__subsection-badge"
-                  aria-hidden="true"
-                >
-                  <Icon src={AdsClick} size="xs" />
-                  {competencyExternalId}
-                </Badge>
-              </>
-            )}
-            <Icon
-              src={CheckCircle}
-              size="xs"
-              className="course-search-browse__subsection-associated-icon"
-              aria-hidden="true"
-            />
-          </>
-        )}
-        {canSelect && (
+      {(isAssociated || canSelect) && (
+        <span
+          className={`course-search-browse__subsection-pill course-search-browse__subsection-pill--${
+            isAssociated ? 'applied' : 'available'
+          }`}
+        >
+          {isAssociated && competencyExternalId && (
+            <span className="sr-only">
+              {intl.formatMessage(rootMessages.competencyIdAccessibleLabel, { externalId: competencyExternalId })}
+            </span>
+          )}
+          <CompetencyIcon aria-hidden="true" />
+          {competencyExternalId && (
+            <span className="course-search-browse__subsection-pill-id" aria-hidden="true">
+              {competencyExternalId}
+            </span>
+          )}
+          <span className="course-search-browse__subsection-pill-divider" aria-hidden="true" />
           <Icon
-            src={AddCircleOutline}
+            src={isAssociated ? Cancel : AddCircle}
             size="xs"
-            className="course-search-browse__subsection-select-icon"
+            className="course-search-browse__subsection-pill-action"
             aria-hidden="true"
           />
-        )}
-      </span>
+        </span>
+      )}
     </>
   );
 

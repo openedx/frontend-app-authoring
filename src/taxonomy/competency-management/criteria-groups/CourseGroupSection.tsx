@@ -2,6 +2,7 @@ import { Fragment, useMemo, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Card, IconButton } from '@openedx/paragon';
 import { ExpandLess, ExpandMore } from '@openedx/paragon/icons';
+import classNames from 'classnames';
 
 import { useCourseOutlineIndex } from '@src/course-outline/data';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
@@ -28,7 +29,7 @@ export interface CourseGroupSectionProps {
  */
 const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   const intl = useIntl();
-  const { index } = useCompetencyAssociations();
+  const { focus, index } = useCompetencyAssociations();
   const [isCollapsed, setIsCollapsed] = useState(false);
   // `refetchOnMount: false`: mirrors `CourseOutlineSubtree` - avoids a
   // wasted refetch of already-cached data on every mount.
@@ -54,26 +55,32 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   // states, before this component ever mounts.
   const bottomTierGroups = index ? bottomTierGroupsForCourse(index, courseGroup.courseKey) : [];
 
+  const containsFocus = !!focus && index?.groupsById.get(focus.groupId)?.parentId === courseGroup.id;
+
   const toggleLabel = isCollapsed
     ? intl.formatMessage(messages.expandCourseGroupButtonLabel)
     : intl.formatMessage(messages.collapseCourseGroupButtonLabel);
 
   return (
-    <Card className="course-group-section">
+    <Card className={classNames('course-group-section', { 'course-group-section--focused': containsFocus })}>
       <Card.Header
         size="sm"
-        title={intl.formatMessage(messages.fromWithinCourseLabel, {
-          courseName: <strong key="course-name">{courseDisplayName}</strong>,
-        })}
-        actions={
-          <IconButton
-            src={isCollapsed ? ExpandMore : ExpandLess}
-            alt={toggleLabel}
-            aria-label={toggleLabel}
-            aria-expanded={!isCollapsed}
-            size="sm"
-            onClick={() => setIsCollapsed((prev) => !prev)}
-          />
+        title={
+          <div className="course-group-section__title">
+            <IconButton
+              src={isCollapsed ? ExpandMore : ExpandLess}
+              alt={toggleLabel}
+              aria-label={toggleLabel}
+              aria-expanded={!isCollapsed}
+              size="inline"
+              onClick={() => setIsCollapsed((prev) => !prev)}
+            />
+            <span>
+              {intl.formatMessage(messages.fromWithinCourseLabel, {
+                courseName: <strong key="course-name">{courseDisplayName}</strong>,
+              })}
+            </span>
+          </div>
         }
       />
       {!isCollapsed && (

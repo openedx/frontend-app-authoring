@@ -187,4 +187,26 @@ describe('<CourseGroupSection />', () => {
     expect(screen.queryByText('Subsection 1A')).not.toBeInTheDocument();
     expect(screen.queryByText(/By completing/)).not.toBeInTheDocument();
   });
+
+  it('marks itself focused only when it contains the focused group', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const { container, unmount } = renderSection({ focus: { groupId: 10, ruleKey: null } });
+
+    await screen.findByText('Demo Course');
+    expect(container.querySelector('.course-group-section')).toHaveClass('course-group-section--focused');
+
+    unmount();
+    const { container: other } = renderSection({ focus: { groupId: 999, ruleKey: null } });
+    await screen.findByText('Demo Course');
+    expect(other.querySelector('.course-group-section')).not.toHaveClass('course-group-section--focused');
+  });
+
+  it('places the toggle before the course title', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    renderSection();
+
+    const title = await screen.findByText('Demo Course');
+    const toggle = screen.getByRole('button', { name: 'Collapse' });
+    expect(toggle.compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
 });
