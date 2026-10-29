@@ -1,4 +1,6 @@
 import { Error as ErrorIcon, InfoOutline } from '@openedx/paragon/icons';
+import * as authzApi from '@src/authz/data/api';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import {
@@ -189,6 +191,7 @@ const TestConsumer = () => {
   const ctx = useCompetencyAssociations();
   return (
     <div>
+      <div data-testid="can-edit-course-b">{String(ctx.canEditCourse(courseB))}</div>
       <div data-testid="focus">{JSON.stringify(ctx.focus)}</div>
       <div data-testid="groups-status">{ctx.groupsQuery.isSuccess ? 'groups-success' : 'groups-pending'}</div>
       <div data-testid="profile-status">{ctx.profileQuery.isSuccess ? 'profile-success' : 'profile-pending'}</div>
@@ -379,6 +382,31 @@ describe('CompetencyAssociationsProvider', () => {
       });
     },
   );
+
+  it('keeps an expanded group-less course editable after the competency changes', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    // `initializeMocks` stubs `validateUserPermissions` (the permissions POST) to `{}`.
+    jest.spyOn(authzApi, 'validateUserPermissions').mockResolvedValue({ [courseB]: true });
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, noGroupsResponse);
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(43)).reply(200, noGroupsResponse);
+    axiosMock.onGet(profileUrl).reply(200, profileResponse);
+    const ui = (id: number) => (
+      <CompetencyAssociationsProvider tagId={id} competencyExternalId="CCRS-1.3">
+        <TestConsumer />
+      </CompetencyAssociationsProvider>
+    );
+    const { rerender } = render(ui(tagId));
+
+    fireEvent.click(screen.getByText('expand-course-b'));
+    await waitFor(() => expect(screen.getByTestId('can-edit-course-b')).toHaveTextContent('true'));
+
+    rerender(ui(43));
+    await waitFor(() => {
+      expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success');
+    });
+
+    expect(screen.getByTestId('can-edit-course-b')).toHaveTextContent('true');
+  });
 
   describe('notifyCourseExpanded focus', () => {
     const renderWithCourseB = async () => {

@@ -138,8 +138,9 @@ export interface CompetencyAssociationsProviderProps {
  *
  * Never remounted (no `key={tagId}`), so it doesn't reset
  * `CourseSearchBrowse`'s own state on competency change; instead it resets
- * its own state by comparing the incoming `tagId` against the previous
- * render's value, React's documented alternative to a remounting `key`.
+ * its focus by comparing the incoming `tagId` against the previous render's
+ * value, React's documented alternative to a remounting `key`. The expanded
+ * courses persist, mirroring the content panel's own expansion state.
  */
 export const CompetencyAssociationsProvider = ({
   tagId,
@@ -156,7 +157,6 @@ export const CompetencyAssociationsProvider = ({
   if (tagId !== prevTagId) {
     setPrevTagId(tagId);
     setFocus(null);
-    setExpandedCourseIds(new Set());
     hasRunInitialFocusRef.current = false;
   }
 
