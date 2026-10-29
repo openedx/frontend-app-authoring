@@ -33,9 +33,15 @@ const messages = defineMessages({
   },
   scoreThresholdLabel: {
     id: 'course-authoring.competency-management.criteria-groups.score-threshold-label',
-    defaultMessage: 'With a score of {percent}%',
-    description: 'Closed-state label for a rule box\'s score threshold, before the or-higher/or-lower suffix. '
-      + '"{percent}" is a whole-number percentage (0-100), converted from the rule\'s 0.0-1.0 fraction.',
+    defaultMessage: 'With a score of {threshold}',
+    description: 'Closed-state label for a rule box\'s score threshold. "{threshold}" is the highlighted '
+      + 'value box, e.g. "75% or higher".',
+  },
+  scoreThresholdValue: {
+    id: 'course-authoring.competency-management.criteria-groups.score-threshold-value',
+    defaultMessage: '{percent}%',
+    description: 'The percentage inside a rule box\'s score threshold value box, before the or-higher/or-lower '
+      + 'suffix. "{percent}" is a whole-number percentage (0-100), converted from the rule\'s 0.0-1.0 fraction.',
   },
   scoreThresholdOrHigherSuffix: {
     id: 'course-authoring.competency-management.criteria-groups.score-threshold-or-higher-suffix',

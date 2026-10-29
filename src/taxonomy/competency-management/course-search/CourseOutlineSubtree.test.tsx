@@ -304,6 +304,60 @@ describe('<CourseOutlineSubtree />', () => {
     expect(within(row).queryByText('Competency ID:', { exact: false })).not.toBeInTheDocument();
   });
 
+  describe('association pill', () => {
+    const openFirstSection = async () => {
+      await userEvent.setup().click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
+      return (await screen.findByText('Subsection 1A (graded)')).closest('.course-search-browse__subsection')!;
+    };
+
+    it('renders the applied pill with an inert hidden cancel icon on an associated row', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtree({ associatedObjectIds: new Set(['sub-1a']), competencyExternalId: 'EXT-042' });
+      const row = await openFirstSection();
+
+      const pill = row.querySelector('.course-search-browse__subsection-pill--applied')!;
+      expect(pill).toBeInTheDocument();
+      expect(row.querySelector('.course-search-browse__subsection-pill--available')).not.toBeInTheDocument();
+      expect(within(pill as HTMLElement).getByText('EXT-042')).toBeInTheDocument();
+      const action = pill.querySelector('.course-search-browse__subsection-pill-action')!;
+      expect(action).toHaveAttribute('aria-hidden', 'true');
+      expect(within(action as HTMLElement).queryByRole('button')).not.toBeInTheDocument();
+    });
+
+    it('renders the available pill on a selectable, unassociated row', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtree({ competencyExternalId: 'EXT-042' });
+      const row = await openFirstSection();
+
+      expect(row.querySelector('.course-search-browse__subsection-pill--available')).toBeInTheDocument();
+      expect(row.querySelector('.course-search-browse__subsection-pill--applied')).not.toBeInTheDocument();
+    });
+
+    it('renders no pill on an unassociated row that cannot be selected', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtree({ canEditCourse: () => false });
+      const row = await openFirstSection();
+
+      expect(row.querySelector('.course-search-browse__subsection-pill')).not.toBeInTheDocument();
+    });
+
+    it('does nothing when the cancel icon of a non-selectable applied row is clicked', async () => {
+      const associateSubsection = jest.fn();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtree({
+        canEditCourse: () => false,
+        associateSubsection,
+        associatedObjectIds: new Set(['sub-1a']),
+        competencyExternalId: 'EXT-042',
+      });
+      const row = await openFirstSection();
+
+      await userEvent.setup().click(row.querySelector('.course-search-browse__subsection-pill-action')!);
+
+      expect(associateSubsection).not.toHaveBeenCalled();
+    });
+  });
+
   it(
     'renders a graded subsection of a non-writable course with no button role, still showing the '
       + 'already-associated marking',

@@ -253,25 +253,44 @@
     justify-content: space-between;
   }
 
-  &__subsection-actions {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
-  &__subsection-badge {
+  // Target icon | competency ID | divider | action icon. The action icon is
+  // decorative in both states (add is the row's own click, remove is out of
+  // scope), so the pill carries no interaction of its own.
+  &__subsection-pill {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    margin-right: 6px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    height: 1.8125rem;
+    gap: 5px;
+    padding: 2px var(--pgn-spacing-spacer-2) 3px var(--pgn-spacing-spacer-1);
+    border: 1px solid var(--pgn-color-info-600);
+    border-radius: 4rem;
+    font-size: .75rem;
+    font-weight: 400;
+    line-height: 1.3125rem;
+
+    &--applied {
+      background-color: var(--pgn-color-info-600);
+      color: var(--pgn-color-white);
+    }
+
+    &--available {
+      background-color: var(--pgn-color-white);
+      border-style: dashed;
+      color: var(--pgn-color-info-600);
+    }
   }
 
-  &__subsection-associated-icon,
-  &__subsection-select-icon {
-    color: var(--pgn-color-info-500);
+  &__subsection-pill-id {
+    font-weight: 400;
   }
 
-  &__subsection-associated-icon {
-    margin-right: 6px;
+  // Stretches over the pill's padding so the divider spans its full height.
+  &__subsection-pill-divider {
+    align-self: stretch;
+    width: 1px;
+    margin: -2px 0 -3px;
+    background-color: currentcolor;
   }
 }

@@ -2,80 +2,155 @@
 // `CourseGroupList.tsx`), mirroring `../CompetencyTree.scss` and
 // `../course-search/CourseSearchBrowse.scss`'s own single-root-class scoping.
 //
-// `Card`/`Card.Body` (Paragon) supply every box's own border/radius/fill.
-// What's added here is what Paragon has no prop for: the inline-sentence
-// layout of "By completing any of the following" and "With a score of X%
-// or higher", the connector line between sibling bottom-tier groups, and
-// chip truncation.
+// What's added here is what Paragon has no prop for: the nested group boxes
+// with a focus accent bar, the inline-sentence layout of "By completing any
+// of the following" and "With a score of X% or higher", the connector line
+// between sibling bottom-tier groups, and chip truncation.
 .course-group-list {
-  // Band fill and connector line/card-border color, read off the design
-  // screenshot; not an existing Paragon or app-wide token.
-  $sentence-band-bg: #F6F6F5;
+  // Connector line color, read off the design screenshot; not an existing
+  // Paragon or app-wide token.
   $connector-line-color: #DDDDDD;
-  // Reuses this feature's own established accent blue (`../CompetencyTree.scss`'s
-  // `.badge-info` retint and `../course-search/CourseSearchBrowse.scss`'s
-  // section-label text) rather than introducing a third, similar blue.
-  $focused-accent-color: #006DAA;
 
   // Vertical gap between adjacent course-level group cards.
   > * + * {
     margin-top: 16px;
   }
 
+  // The accent bar is always a left border so a focus change recolors it
+  // instead of shifting the content.
   .course-group-section {
-    &__body > * + * {
-      margin-top: 12px;
+    padding: var(--pgn-spacing-spacer-3) var(--pgn-spacing-spacer-2);
+    border: 0;
+    border-left: 8px solid transparent;
+    border-radius: .5rem;
+    background-color: var(--pgn-color-white);
+    box-shadow: var(--pgn-elevation-box-shadow-centered-1);
+
+    &--focused {
+      border-left-color: var(--pgn-color-info-600);
+    }
+
+    .pgn__card-header,
+    .pgn__card-body {
+      padding: 0;
+    }
+
+    .pgn__card-header .pgn__card-header-title-sm {
+      font-size: 1.25rem;
+      font-weight: 400;
+      line-height: 1.5625rem;
+      color: var(--pgn-color-primary-700);
+    }
+
+    // Paragon gives the title its own top margin, which would push the
+    // header below the card's padding.
+    .pgn__card-header .pgn__card-header-content {
+      margin-top: 0;
+    }
+
+    &__title {
+      display: flex;
+      align-items: center;
+      gap: var(--pgn-spacing-spacer-1);
+
+      .btn-icon {
+        flex-shrink: 0;
+        color: var(--pgn-color-primary-900);
+      }
+
+      .btn-icon .pgn__icon {
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+
+    &__body {
+      margin-top: var(--pgn-spacing-spacer-2);
+
+      > * + * {
+        margin-top: var(--pgn-spacing-spacer-2);
+      }
     }
   }
 
   .criteria-group-box {
+    margin: 0 var(--pgn-spacing-spacer-2);
+    padding: var(--pgn-spacing-spacer-1-5);
+    border-left: 8px solid transparent;
+    border-radius: .5rem;
+    background-color: var(--pgn-color-white);
+    box-shadow: var(--pgn-elevation-box-shadow-centered-1);
+
     &--focused {
-      border-color: $focused-accent-color;
-      box-shadow: 0 0 0 1px $focused-accent-color;
+      border-left-color: var(--pgn-color-info-400);
+      background-color: var(--pgn-color-light-200);
     }
 
     &__header {
-      background-color: $sentence-band-bg;
-      // Matches `Card`'s own top corners, so the band's top edge reads as
-      // part of the same rounded box rather than a squared-off strip
-      // sitting inside it.
-      border-radius: var(--pgn-size-card-border-radius) var(--pgn-size-card-border-radius) 0 0;
-      padding: 10px 12px;
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+      color: var(--pgn-color-gray-700);
       cursor: pointer;
 
       &:focus-visible {
-        outline: 2px solid $focused-accent-color;
-        outline-offset: -2px;
+        outline: 2px solid var(--pgn-color-info-600);
+        outline-offset: 2px;
       }
     }
 
-    // The any/all word itself - bold, matching the screenshot - passed as
-    // `LogicOperatorSelect`'s own `className` from `CriteriaGroupBox.tsx`.
+    // The any/all word itself, passed as `LogicOperatorSelect`'s own
+    // `className` from `CriteriaGroupBox.tsx`.
     &__header-operator {
       font-weight: 700;
+      line-height: 1.5rem;
     }
 
     &__rules {
-      // `Card.Body`'s own default padding already insets these from the
-      // card's edges; only the gap between adjacent rule boxes is added
-      // here.
+      margin-top: var(--pgn-spacing-spacer-2);
+
       .rule-box-list > * + * {
-        margin-top: 10px;
+        margin-top: var(--pgn-spacing-spacer-2);
       }
     }
   }
 
   .rule-box {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pgn-spacing-spacer-1-5);
+    padding: var(--pgn-spacing-spacer-1-5) var(--pgn-spacing-spacer-1-5) var(--pgn-spacing-spacer-1-5)
+      var(--pgn-spacing-spacer-2-5);
+    border: 1px solid var(--pgn-color-gray-300);
+    border-radius: var(--pgn-size-border-radius-base);
+    background-color: var(--pgn-color-white);
     cursor: pointer;
 
     &--focused {
-      border-color: $focused-accent-color;
-      box-shadow: 0 0 0 1px $focused-accent-color;
+      padding-left: var(--pgn-spacing-spacer-1-5);
+      border-left: 6px solid var(--pgn-color-info-400);
+      background-color: var(--pgn-color-info-100);
+      box-shadow: var(--pgn-elevation-box-shadow-centered-2);
     }
+  }
 
-    &__body > * + * {
-      margin-top: 8px;
-    }
+  .score-threshold-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    align-self: flex-start;
+    height: 1.9375rem;
+    padding: 3px 5px;
+    border: 1px solid var(--pgn-color-gray-200);
+    border-radius: 3px;
+    background-color: var(--pgn-color-white);
+    color: var(--pgn-color-gray-700);
+  }
+
+  .score-threshold-field__value {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--pgn-color-info-600);
   }
 
   // Each chip's own truncation - a long subsection name shows an ellipsis
@@ -84,9 +159,16 @@
   // Paragon-internal class - confirmed via `Chip`'s own source), so the
   // truncation properties land there, not on the chip's own root element.
   .criterion-chip {
+    --pgn-color-chip-bg-dark: var(--pgn-color-primary-500);
+    --pgn-color-chip-border-base: var(--pgn-color-primary-500);
+    --pgn-spacing-chip-padding-y: 2px;
+
+    box-sizing: border-box;
     max-width: 160px;
+    height: 1.75rem;
 
     .pgn__chip__label {
+      font-weight: 400;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
