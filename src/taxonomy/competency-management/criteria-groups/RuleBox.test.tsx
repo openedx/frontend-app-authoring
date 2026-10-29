@@ -48,7 +48,7 @@ describe('<RuleBox />', () => {
   it('renders the given rule\'s score threshold and its chips', () => {
     renderRuleBox();
 
-    expect(screen.getByText('With a score of 70% or higher')).toBeInTheDocument();
+    expect(screen.getByText('70% or higher')).toBeInTheDocument();
     expect(screen.getByText('Subsection A')).toBeInTheDocument();
   });
 

@@ -1,4 +1,6 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { Icon } from '@openedx/paragon';
+import { ExpandMore } from '@openedx/paragon/icons';
 import type { MessageDescriptor } from 'react-intl';
 import type { GradeRulePayload } from '../data/types';
 import messages from './messages';
@@ -26,8 +28,8 @@ const SUFFIX_MESSAGE_BY_OP: Record<GradeRulePayload['op'], MessageDescriptor | n
 };
 
 /** Closed-state label for a rule's score threshold: "With a score of X%
- * or higher"/"or lower"/(no suffix, for an exact match). Read-only - see
- * `onChange`/`getInlineValidationMessage` above for why the props still
+ * or higher"/"or lower"/(no suffix, for an exact match). Read-only - the trailing
+ * chevron is decorative. See `onChange`/`getInlineValidationMessage` above for why the props still
  * exist.
  */
 const ScoreThresholdField = ({ rulePayload }: ScoreThresholdFieldProps) => {
@@ -40,8 +42,15 @@ const ScoreThresholdField = ({ rulePayload }: ScoreThresholdFieldProps) => {
 
   return (
     <span className="score-threshold-field">
-      {intl.formatMessage(messages.scoreThresholdLabel, { percent })}
-      {suffixMessage && ` ${intl.formatMessage(suffixMessage)}`}
+      {intl.formatMessage(messages.scoreThresholdLabel, {
+        threshold: (
+          <span key="threshold" className="score-threshold-field__value">
+            {intl.formatMessage(messages.scoreThresholdValue, { percent })}
+            {suffixMessage && ` ${intl.formatMessage(suffixMessage)}`}
+            <Icon src={ExpandMore} size="xs" className="score-threshold-field__chevron" />
+          </span>
+        ),
+      })}
     </span>
   );
 };

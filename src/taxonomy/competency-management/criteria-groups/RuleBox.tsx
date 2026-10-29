@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { Card } from '@openedx/paragon';
 import classNames from 'classnames';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import type { CompetencyCriterion, EffectiveRule } from '../data/types';
@@ -56,9 +55,6 @@ const RuleBox = ({
   };
 
   return (
-    // Interactive/focus/scroll semantics live on this wrapping `<div>`, not
-    // `Card` itself: `Card`'s `ref` forwarding doesn't reliably reach a real
-    // DOM node (confirmed directly - `ref.current` had no `scrollIntoView`).
     <div
       ref={ref}
       className={classNames('rule-box', { 'rule-box--focused': isFocused })}
@@ -68,12 +64,8 @@ const RuleBox = ({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
     >
-      <Card>
-        <Card.Body className="rule-box__body">
-          <ScoreThresholdField rulePayload={rule.rulePayload} />
-          <CriterionChipList criteria={criteria} subsectionNamesByUsageKey={subsectionNamesByUsageKey} />
-        </Card.Body>
-      </Card>
+      <ScoreThresholdField rulePayload={rule.rulePayload} />
+      <CriterionChipList criteria={criteria} subsectionNamesByUsageKey={subsectionNamesByUsageKey} />
     </div>
   );
 };
