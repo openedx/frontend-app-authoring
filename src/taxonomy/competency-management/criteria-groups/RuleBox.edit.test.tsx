@@ -52,7 +52,9 @@ describe('<RuleBox /> editing (#794)', () => {
   it('renders the score as plain text, not an input, when canEdit is omitted (default false)', () => {
     render70PercentRuleBox();
 
-    expect(screen.getByText('With a score of 70% or higher')).toBeInTheDocument();
+    expect(screen.getByText('70% or higher').closest('.score-threshold-field')).toHaveTextContent(
+      'With a score of 70% or higher',
+    );
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
 

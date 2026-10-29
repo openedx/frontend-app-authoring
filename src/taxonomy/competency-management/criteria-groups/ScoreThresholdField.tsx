@@ -129,7 +129,8 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
               aria-invalid={!!validationMessage}
               isInvalid={!!validationMessage}
               disabled={isSaving}
-              onChange={(event) => setInputValue(event.target.value)}
+              onChange={(event) =>
+                setInputValue(event.target.value)}
               onKeyDown={handleKeyDown}
               onBlur={() => {
                 void saveScoreIfChanged();
