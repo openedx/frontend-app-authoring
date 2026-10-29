@@ -1,8 +1,13 @@
-import { fireEvent, renderHook } from '@testing-library/react';
+import { act, fireEvent, renderHook } from '@src/testUtils';
 import { useLocation } from 'react-router-dom';
 import { history } from '@edx/frontend-platform';
 
-import { useScrollToHashElement, useEscapeClick, useLoadOnScroll } from './hooks';
+import {
+  useScrollToHashElement,
+  useEscapeClick,
+  useLoadOnScroll,
+  useStickyState,
+} from './hooks';
 
 jest.mock('react-router-dom', () => ({
   useLocation: jest.fn(),
@@ -115,6 +120,48 @@ describe('Custom Hooks', () => {
       fireEvent.scroll(window);
 
       expect(fetchNextPage).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('useStickyState', () => {
+    const key = 'use-sticky-state-test';
+
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it('persists the value and restores it on the next mount', () => {
+      const { result } = renderHook(() => useStickyState(1, key));
+      expect(result.current[0]).toBe(1);
+
+      act(() => result.current[1](5));
+      expect(localStorage.getItem(key)).toBe('5');
+
+      const { result: remounted } = renderHook(() => useStickyState(1, key));
+      expect(remounted.current[0]).toBe(5);
+    });
+
+    it('ignores a stored value that is not valid JSON', () => {
+      localStorage.setItem(key, '{not json');
+      const { result } = renderHook(() => useStickyState('default', key));
+      expect(result.current[0]).toBe('default');
+    });
+
+    it('keeps working when storage is unavailable', () => {
+      const getItem = jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        throw new Error('blocked');
+      });
+      const setItem = jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('blocked');
+      });
+
+      const { result } = renderHook(() => useStickyState('default', key));
+      expect(result.current[0]).toBe('default');
+      act(() => result.current[1]('changed'));
+      expect(result.current[0]).toBe('changed');
+
+      getItem.mockRestore();
+      setItem.mockRestore();
     });
   });
 });
