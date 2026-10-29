@@ -44,7 +44,7 @@ const CourseGroupList = () => {
   // state it names.
   useEffect(() => {
     if (takesKeyboardFocus && emptyStateRef.current) {
-      emptyStateRef.current.focus({ preventScroll: true });
+      queueMicrotask(() => emptyStateRef.current?.focus({ preventScroll: true }));
       consumeKeyboardFocusRequest();
     }
   }, [takesKeyboardFocus, accessibleCourseGroups.length, consumeKeyboardFocusRequest]);

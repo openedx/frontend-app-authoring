@@ -17,7 +17,8 @@ const messages = defineMessages({
   removeRuleGroupMenuItem: {
     id: 'course-authoring.competency-management.criteria-groups.remove-rule-group-menu-item',
     defaultMessage: 'Remove group',
-    description: 'Menu item that removes a rule group, or discards the unsaved one, with its rule boxes.',
+    description: 'Menu item that opens the confirmation for removing a rule group with its rule boxes, or discards '
+      + 'the unsaved one.',
   },
   ruleBoxMoreActionsLabel: {
     id: 'course-authoring.competency-management.criteria-groups.rule-box-more-actions-label',
@@ -35,7 +36,8 @@ const messages = defineMessages({
   removeRuleBoxMenuItem: {
     id: 'course-authoring.competency-management.criteria-groups.remove-rule-box-menu-item',
     defaultMessage: 'Remove rule',
-    description: 'Menu item that removes a rule box and all of its content, or discards the unsaved one.',
+    description: 'Menu item that opens the confirmation for removing a rule box and all of its content, or discards '
+      + 'the unsaved one.',
   },
   courseGroupMoreActionsLabel: {
     id: 'course-authoring.competency-management.criteria-groups.course-group-more-actions-label',
@@ -46,7 +48,8 @@ const messages = defineMessages({
   removeFromCompetencyMenuItem: {
     id: 'course-authoring.competency-management.criteria-groups.remove-from-competency-menu-item',
     defaultMessage: 'Remove from {competencyName}',
-    description: 'Menu item that removes a course group, with all its rule groups, from the active competency. '
+    description: 'Menu item that opens the confirmation for removing a course group, with all its rule groups, from '
+      + 'the active competency. '
       + '{competencyName} is the name of that competency.',
   },
   logicOperatorAnyLabel: {

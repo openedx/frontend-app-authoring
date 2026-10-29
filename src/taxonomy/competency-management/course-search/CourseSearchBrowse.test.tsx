@@ -1822,48 +1822,76 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
     });
   });
 
+  /** One course whose `sub-1a` is associated, with every groups read after the first held until `release`. */
+  const renderWithAssociatedSubsection1A = async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    Element.prototype.scrollIntoView = jest.fn();
+    const course = buildCourse();
+    const tagId = Number(activeCompetency.id);
+    const groupsUrl = competencyManagementApiUrls.competencyCriteriaGroups(tagId);
+    const withOneAssociation = {
+      groups: [
+        group(500, null, null, 0),
+        group(1, 500, course.courseKey, 0),
+        group(10, 1, null, 0),
+      ],
+      criteria: [criterion(901, 'sub-1a', 10)],
+      criteriaCount: 1,
+      totalCriteriaCount: 1,
+    };
+    const withNoAssociations = { groups: [], criteria: [], criteriaCount: 0, totalCriteriaCount: 0 };
+    const run = mockHeldGroupsRefetch(axiosMock, tagId, withOneAssociation, withNoAssociations);
+    axiosMock.onDelete(competencyManagementApiUrls.deleteCompetencyCriterion(tagId, 901))
+      .reply(200, { id: 901, archived: false });
+    axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([course]));
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(course.courseKey)).reply(
+      200,
+      buildOutlineIndex({
+        sections: [{
+          id: 'section-1',
+          displayName: 'Section 1',
+          children: [
+            { id: 'sub-1a', displayName: 'Subsection 1A', overrides: { graded: true } },
+            { id: 'sub-1b', displayName: 'Subsection 1B', overrides: { graded: true } },
+          ],
+        }],
+      }),
+    );
+    renderCourseSearchBrowse();
+    const coursesContainer = screen.getByText('Courses & Content').closest(
+      '.course-search-browse__container',
+    ) as HTMLElement;
+    await user.click(await within(coursesContainer).findByRole('button', { name: 'Expand' }));
+    await user.click(await within(coursesContainer).findByRole('button', { name: 'Expand' }));
+    return { user, coursesContainer, run, groupsUrl };
+  };
+
+  describe('removing an association (#786)', () => {
+    it('asks for confirmation before removing from the courses panel, and sends nothing until Remove', async () => {
+      const { user, coursesContainer, run, groupsUrl } = await renderWithAssociatedSubsection1A();
+
+      await user.click(
+        await within(coursesContainer).findByRole('button', { name: 'Remove the association with Subsection 1A' }),
+      );
+
+      const dialog = await screen.findByRole('dialog', { name: 'Remove Subsection 1A from Test Competency?' });
+      expect(axiosMock.history.delete).toHaveLength(0);
+
+      await user.click(within(dialog).getByRole('button', { name: 'Remove' }));
+      await waitFor(() => expect(axiosMock.history.get.filter((req) => req.url === groupsUrl)).toHaveLength(2));
+      expect(axiosMock.history.delete).toHaveLength(1);
+      await act(async () => {
+        run.release();
+      });
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    });
+  });
+
   describe('removing a rule box', () => {
     mockScrollIntoView();
 
     it('disables a subsection\'s select button, in the courses panel, until the refetch lands', async () => {
-      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-      const course = buildCourse();
-      const tagId = Number(activeCompetency.id);
-      const groupsUrl = competencyManagementApiUrls.competencyCriteriaGroups(tagId);
-      const withOneAssociation = {
-        groups: [
-          group(500, null, null, 0),
-          group(1, 500, course.courseKey, 0),
-          group(10, 1, null, 0),
-        ],
-        criteria: [criterion(901, 'sub-1a', 10)],
-        criteriaCount: 1,
-        totalCriteriaCount: 1,
-      };
-      const withNoAssociations = { groups: [], criteria: [], criteriaCount: 0, totalCriteriaCount: 0 };
-      const reads = mockHeldGroupsRefetch(axiosMock, tagId, withOneAssociation, withNoAssociations);
-      axiosMock.onDelete(competencyManagementApiUrls.deleteCompetencyCriterion(tagId, 901))
-        .reply(200, { id: 901, archived: false });
-      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([course]));
-      axiosMock.onGet(getCourseOutlineIndexApiUrl(course.courseKey)).reply(
-        200,
-        buildOutlineIndex({
-          sections: [{
-            id: 'section-1',
-            displayName: 'Section 1',
-            children: [
-              { id: 'sub-1a', displayName: 'Subsection 1A', overrides: { graded: true } },
-              { id: 'sub-1b', displayName: 'Subsection 1B', overrides: { graded: true } },
-            ],
-          }],
-        }),
-      );
-      renderCourseSearchBrowse();
-      const coursesContainer = screen.getByText('Courses & Content').closest(
-        '.course-search-browse__container',
-      ) as HTMLElement;
-      await user.click(await within(coursesContainer).findByRole('button', { name: 'Expand' }));
-      await user.click(await within(coursesContainer).findByRole('button', { name: 'Expand' }));
+      const { user, coursesContainer, run, groupsUrl } = await renderWithAssociatedSubsection1A();
       const selectButton = await within(coursesContainer).findByRole('button', { name: /Subsection 1B/ });
       expect(selectButton).toBeEnabled();
       expect(within(coursesContainer).queryByRole('button', { name: 'Associate this competency with Subsection 1A' }))
@@ -1875,12 +1903,16 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
         }),
       );
       await user.click(screen.getByRole('button', { name: 'Remove rule' }));
+      const dialog = await screen.findByRole('dialog', { name: 'Remove this rule from Test Competency?' });
+      expect(axiosMock.history.delete).toHaveLength(0);
+      await user.click(within(dialog).getByRole('button', { name: 'Remove' }));
 
       await waitFor(() => expect(axiosMock.history.get.filter((req) => req.url === groupsUrl)).toHaveLength(2));
-      expect(within(coursesContainer).getByRole('button', { name: /Subsection 1B/ })).toBeDisabled();
+      // The open dialog hides the panel from the accessibility tree.
+      expect(within(coursesContainer).getByRole('button', { name: /Subsection 1B/, hidden: true })).toBeDisabled();
 
       await act(async () => {
-        reads.release();
+        run.release();
       });
       await waitFor(() =>
         expect(within(coursesContainer).getByRole('button', { name: /Subsection 1B/ })).toBeEnabled()

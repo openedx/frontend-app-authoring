@@ -1,10 +1,12 @@
+import { buildOutlineIndex } from '@src/course-outline/__mocks__';
+import { RemovalTargetKind } from './constants';
 import type {
   CompetencyCriteriaTree,
   CompetencyCriterion,
   GradeRulePayload,
   RuleBox,
 } from './data/types';
-import type { CompetencyCriteriaGroupsIndex, PageOrderSnapshot } from './utils';
+import type { CompetencyCriteriaGroupsIndex, PageOrderSnapshot, RemovalTarget } from './utils';
 import {
   associatedObjectIds,
   bottomTierGroupsForCourse,
@@ -19,6 +21,8 @@ import {
   ruleKeyAfterRemoval,
   ruleKeyOf,
   snapshotPageOrder,
+  subsectionNamesFromOutline,
+  summarizeRemoval,
   visibleCourseGroups,
 } from './utils';
 import { systemDefaultProfile } from './__mocks__';
@@ -603,5 +607,177 @@ describe('selectionTargetAfterRemoval', () => {
   it('is null when no course group with a rule group is left', () => {
     const fresh = buildTree([]);
     expect(targetAfterRemoval(snapshot, fresh, { groupId: 10, ruleKey: 'k' }, null)).toBeNull();
+  });
+});
+
+describe('subsectionNamesFromOutline', () => {
+  it('maps every subsection id, across sections, to its display name', () => {
+    const { courseStructure } = buildOutlineIndex({
+      sections: [
+        {
+          id: 'section-1',
+          displayName: 'Section 1',
+          children: [
+            // `usageKey: undefined` mirrors the real `course_index` response, which never populates it.
+            { id: 'sub-1a', displayName: 'Subsection 1A', overrides: { usageKey: undefined } },
+            { id: 'sub-1b', displayName: 'Subsection 1B' },
+          ],
+        },
+        {
+          id: 'section-2',
+          displayName: 'Section 2',
+          children: [{ id: 'sub-2a', displayName: 'Subsection 2A' }],
+        },
+      ],
+    });
+
+    expect(subsectionNamesFromOutline(courseStructure)).toEqual({
+      'sub-1a': 'Subsection 1A',
+      'sub-1b': 'Subsection 1B',
+      'sub-2a': 'Subsection 2A',
+    });
+  });
+
+  it('is empty for a course with no sections', () => {
+    expect(subsectionNamesFromOutline(buildOutlineIndex([]).courseStructure)).toEqual({});
+  });
+});
+
+describe('summarizeRemoval', () => {
+  const courseKey = 'course-v1:OrgX+CS101+2024';
+  const courseNames = new Map([[courseKey, 'Intro to CS']]);
+  const subsectionNames = { 'block-a': 'Quiz A', 'block-b': 'Quiz B', 'block-d': 'Quiz D' };
+  const index = buildCompetencyCriteriaGroupsIndex(fixtureResponse);
+  const summarize = (target: RemovalTarget, names = subsectionNames) => (
+    summarizeRemoval(target, index, systemDefaultProfile, courseNames, names)
+  );
+  // Group 11 and its criterion are gone, so group 10 is the course's only group.
+  const onlyGroupIndex = buildCompetencyCriteriaGroupsIndex({
+    groups: fixtureResponse.groups.filter((group) => group.id !== 11),
+    criteria: fixtureResponse.criteria.filter((criterion) => criterion.groupId !== 11),
+  });
+
+  const targetsWithACourse: RemovalTarget[] = [
+    { kind: RemovalTargetKind.RuleGroup, groupId: 10 },
+    { kind: RemovalTargetKind.CourseGroup, groupId: 1 },
+    { kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [101] },
+  ];
+  it.each(targetsWithACourse)('falls back to the course key for a $kind when the outline gave no name', (target) => {
+    expect(summarizeRemoval(target, index, systemDefaultProfile, new Map(), subsectionNames))
+      .toMatchObject({ courseName: courseKey });
+  });
+
+  describe('association', () => {
+    it('names the content from the subsection names', () => {
+      expect(summarize({ kind: RemovalTargetKind.Association, criterionId: 101, returnFocusTo: 'group' }))
+        .toEqual({ kind: RemovalTargetKind.Association, contentName: 'Quiz A' });
+    });
+
+    it('has a null name for a subsection the outline no longer lists', () => {
+      expect(summarize({ kind: RemovalTargetKind.Association, criterionId: 103, returnFocusTo: 'subsection' }))
+        .toEqual({ kind: RemovalTargetKind.Association, contentName: null });
+    });
+
+    it('is null for a criterion the data does not have', () => {
+      expect(summarize({ kind: RemovalTargetKind.Association, criterionId: 999, returnFocusTo: 'group' })).toBeNull();
+    });
+  });
+
+  describe('ruleGroup', () => {
+    it('counts the group\'s associations and names its course', () => {
+      expect(summarize({ kind: RemovalTargetKind.RuleGroup, groupId: 10 })).toEqual({
+        kind: RemovalTargetKind.RuleGroup,
+        associationCount: 3,
+        courseName: 'Intro to CS',
+        isOnlyGroupInCourse: false,
+      });
+    });
+
+    it('flags the only group in its course', () => {
+      expect(summarizeRemoval(
+        { kind: RemovalTargetKind.RuleGroup, groupId: 10 },
+        onlyGroupIndex,
+        systemDefaultProfile,
+        courseNames,
+        subsectionNames,
+      )).toEqual({
+        kind: RemovalTargetKind.RuleGroup,
+        associationCount: 3,
+        courseName: 'Intro to CS',
+        isOnlyGroupInCourse: true,
+      });
+    });
+
+    it('is null for a missing group and for a course-level group', () => {
+      expect(summarize({ kind: RemovalTargetKind.RuleGroup, groupId: 999 })).toBeNull();
+      expect(summarize({ kind: RemovalTargetKind.RuleGroup, groupId: 1 })).toBeNull();
+    });
+  });
+
+  describe('courseGroup', () => {
+    it('sums the associations of every leaf group under the course', () => {
+      expect(summarize({ kind: RemovalTargetKind.CourseGroup, groupId: 1 })).toEqual({
+        kind: RemovalTargetKind.CourseGroup,
+        associationCount: 4,
+        courseName: 'Intro to CS',
+      });
+    });
+
+    it('is null for a leaf group and for a missing group', () => {
+      expect(summarize({ kind: RemovalTargetKind.CourseGroup, groupId: 10 })).toBeNull();
+      expect(summarize({ kind: RemovalTargetKind.CourseGroup, groupId: 999 })).toBeNull();
+    });
+  });
+
+  describe('ruleBox', () => {
+    it('lists the names of the given criteria in criterion order and counts the other rules', () => {
+      expect(summarize({ kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [101, 102] })).toEqual({
+        kind: RemovalTargetKind.RuleBox,
+        contentNames: ['Quiz A', 'Quiz B'],
+        otherRuleCount: 1,
+        courseName: 'Intro to CS',
+        isOnlyGroupInCourse: false,
+      });
+    });
+
+    it('counts every box the ids span as removed', () => {
+      expect(summarize({ kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [101, 102, 104] })).toMatchObject({
+        contentNames: ['Quiz A', 'Quiz B', 'Quiz D'],
+        otherRuleCount: 0,
+      });
+    });
+
+    it('skips an id the group no longer has', () => {
+      expect(summarize({ kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [101, 999] })).toMatchObject({
+        contentNames: ['Quiz A'],
+        otherRuleCount: 1,
+      });
+    });
+
+    it('has a null entry for a subsection the outline no longer lists', () => {
+      expect(summarize({ kind: RemovalTargetKind.RuleBox, groupId: 11, criterionIds: [103] })).toMatchObject({
+        contentNames: [null],
+        otherRuleCount: 0,
+      });
+    });
+
+    it('flags the only group in its course', () => {
+      expect(summarizeRemoval(
+        { kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [104] },
+        onlyGroupIndex,
+        systemDefaultProfile,
+        courseNames,
+        subsectionNames,
+      )).toMatchObject({ contentNames: ['Quiz D'], otherRuleCount: 1, isOnlyGroupInCourse: true });
+    });
+
+    it('is null when none of the ids is left in the group', () => {
+      expect(summarize({ kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [999] })).toBeNull();
+      expect(summarize({ kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [103] })).toBeNull();
+    });
+
+    it('is null for a missing group', () => {
+      expect(summarize({ kind: RemovalTargetKind.RuleBox, groupId: 999, criterionIds: [101] })).toBeNull();
+    });
   });
 });

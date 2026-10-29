@@ -1,9 +1,11 @@
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import {
+  act,
   initializeMocks,
   render,
   screen,
+  waitFor,
   within,
 } from '@src/testUtils';
 import {
@@ -233,7 +235,7 @@ describe('<CourseGroupList />', () => {
     expect(courseASection.getByRole('button', { name: 'With a score of 70% or higher' })).toBeInTheDocument();
   });
 
-  it('takes keyboard focus on the empty state when a request asks for it, then consumes the request', () => {
+  it('takes keyboard focus on the empty state when a request asks for it, then consumes the request', async () => {
     const consumeKeyboardFocusRequest = jest.fn();
     renderList({
       accessibleCourseGroups: [],
@@ -241,13 +243,14 @@ describe('<CourseGroupList />', () => {
       consumeKeyboardFocusRequest,
     });
 
-    expect(screen.getByText(byTextContent(noAssociationsMessage)).parentElement).toHaveFocus();
+    await waitFor(() => expect(screen.getByText(byTextContent(noAssociationsMessage)).parentElement).toHaveFocus());
     expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
   });
 
-  it('leaves the empty state unfocused without a request', () => {
+  it('leaves the empty state unfocused without a request', async () => {
     renderList({ accessibleCourseGroups: [] });
 
+    await act(async () => {});
     expect(screen.getByText(byTextContent(noAssociationsMessage)).parentElement).not.toHaveFocus();
   });
 });

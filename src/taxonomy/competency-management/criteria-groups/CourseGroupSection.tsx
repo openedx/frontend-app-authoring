@@ -10,9 +10,10 @@ import classNames from 'classnames';
 
 import { useCourseOutlineIndex } from '@src/course-outline/data';
 import { useCompetencyAssociations } from '@src/taxonomy/competency-management/CompetencyAssociationsContext';
+import { RemovalTargetKind } from '@src/taxonomy/competency-management/constants';
 import { courseKeyOfSelection } from '@src/taxonomy/competency-management/criterionTarget';
 import type { CourseCompetencyCriteriaGroup } from '@src/taxonomy/competency-management/data/types';
-import { bottomTierGroupsForCourse } from '@src/taxonomy/competency-management/utils';
+import { bottomTierGroupsForCourse, subsectionNamesFromOutline } from '@src/taxonomy/competency-management/utils';
 import AddControl from './AddControl';
 import type { AddControlProps } from './AddControl';
 import CriteriaGroupBox from './CriteriaGroupBox';
@@ -43,7 +44,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     isAssociating,
     courseList,
     competencyName,
-    deleteGroup,
+    requestRemoval,
     isDeletingGroupOrRuleBoxOrCriterion,
     keyboardFocusRequest,
     consumeKeyboardFocusRequest,
@@ -53,15 +54,10 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   const menuToggleRef = useRef<HTMLButtonElement>(null);
   const { data } = useCourseOutlineIndex(courseGroup.courseKey, { refetchOnMount: false });
 
-  const subsectionNamesByUsageKey = useMemo(() => {
-    const names: Record<string, string> = {};
-    (data?.courseStructure.childInfo?.children ?? []).forEach((section) => {
-      (section.childInfo?.children ?? []).forEach((subsection) => {
-        names[subsection.id] = subsection.displayName;
-      });
-    });
-    return names;
-  }, [data]);
+  const subsectionNamesByUsageKey = useMemo(
+    () => (data ? subsectionNamesFromOutline(data.courseStructure) : {}),
+    [data],
+  );
 
   // A placeholder group (`selection.groupId === null`) is shown as one more card after the real ones.
   const showPlaceholderGroup = selection?.groupId === null && placeholder.parentRuleGroupId === courseGroup.id;
@@ -172,7 +168,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
             toggleLabel={intl.formatMessage(messages.courseGroupMoreActionsLabel, { courseName })}
             removeLabel={intl.formatMessage(messages.removeFromCompetencyMenuItem, { competencyName })}
             disabled={isMenuDisabled}
-            onRemove={() => deleteGroup(courseGroup.id)}
+            onRemove={() => requestRemoval({ kind: RemovalTargetKind.CourseGroup, groupId: courseGroup.id })}
           />
         )}
       />

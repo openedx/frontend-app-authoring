@@ -32,6 +32,7 @@ import CourseRow from './course-search/CourseRow';
 import { CourseGroupList } from './criteria-groups';
 import { apiUrls } from './data/api';
 import type { CompetencyCriteriaGroupsResponse } from './data/types';
+import { RemovalConfirmationModal } from './removal-confirmation';
 
 let axiosMock: ReturnType<typeof initializeMocks>['axiosMock'];
 
@@ -74,6 +75,7 @@ const renderPanel = (rows: Course[] = [courseBRow]) => {
   return render(
     <CompetencyAssociationsProvider tagId={tagId} competencyName="Test Competency" competencyExternalId="CCRS-1.3">
       <CourseGroupList />
+      <RemovalConfirmationModal />
       {rows.map((row) => <CourseRow key={row.courseKey} course={row} />)}
     </CompetencyAssociationsProvider>,
   );
@@ -569,6 +571,13 @@ describe('competency associations over the real provider', () => {
       await user.click(screen.getByRole('button', { name: `More actions for rule group ${position} in Course A` }));
     };
 
+    /** Every removal opens its confirmation first; nothing is sent until its Remove button is clicked. */
+    const confirmRemoval = async () => {
+      const dialog = await screen.findByRole('dialog');
+      expect(axiosMock.history.delete).toHaveLength(0);
+      await user.click(within(dialog).getByRole('button', { name: 'Remove' }));
+    };
+
     const expandCourseA = async () => {
       await user.click(await screen.findByRole('button', { name: 'Expand' }));
       await user.click(await screen.findByRole('button', { name: 'Expand' }));
@@ -583,6 +592,7 @@ describe('competency associations over the real provider', () => {
 
       await openRuleGroupMenu(2);
       await user.click(screen.getByRole('button', { name: 'Remove group' }));
+      await confirmRemoval();
 
       expect(await screen.findByRole('button', { name: 'Associate CCRS-1.3 with Homework 1' })).toBeInTheDocument();
       expect(axiosMock.history.delete).toHaveLength(1);
@@ -599,6 +609,7 @@ describe('competency associations over the real provider', () => {
 
       await openRuleGroupMenu(2);
       await user.click(screen.getByRole('button', { name: 'Remove group' }));
+      await confirmRemoval();
 
       await waitFor(() => expect(groupHeaders()).toHaveLength(1));
       expect(currentStates(groupHeaders())).toEqual(['true']);
@@ -633,6 +644,7 @@ describe('competency associations over the real provider', () => {
       await expandCourseA();
       await user.click(screen.getByRole('button', { name: 'More actions for rule group 1 in Course A' }));
       await user.click(screen.getByRole('button', { name: 'Remove group' }));
+      await confirmRemoval();
 
       const emptyMessage = await screen.findByText(byTextContent('No content associated with Test Competency yet.'));
       await waitFor(() => expect(emptyMessage.parentElement).toHaveFocus());
@@ -654,6 +666,7 @@ describe('competency associations over the real provider', () => {
       const item = await screen.findByRole('button', { name: 'Remove group' });
       await waitFor(() => expect(item).toHaveFocus());
       await user.keyboard('{Enter}');
+      await confirmRemoval();
 
       await waitFor(() => expect(groupHeaders()).toHaveLength(1));
       await waitFor(() => expect(groupHeaders()[0]).toHaveFocus());
@@ -676,6 +689,7 @@ describe('competency associations over the real provider', () => {
 
       await user.click(screen.getByRole('button', { name: 'More actions for Course B' }));
       await user.click(screen.getByRole('button', { name: 'Remove from Test Competency' }));
+      await confirmRemoval();
 
       await waitFor(() => expect(groupHeaders()).toHaveLength(1));
       await waitFor(() => expect(groupHeaders()[0]).toHaveFocus());

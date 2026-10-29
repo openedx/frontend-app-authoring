@@ -29,6 +29,7 @@ import CompetencyIcon from '@src/generic/CompetencyIcon';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import rootMessages from '../messages';
+import { RemovalTargetKind } from '@src/taxonomy/competency-management/constants';
 import messages from './messages';
 
 export interface CourseOutlineSubtreeProps {
@@ -137,7 +138,7 @@ interface SubsectionRowProps {
 /**
  * One graded subsection: its name plus the competency pill. The applied pill shows regardless of
  * `canEditCourse`, and holds a remove button when the author can edit, including in a blocked course.
- * Takes keyboard focus back after a remove started from this row.
+ * Takes keyboard focus back after a confirmed remove.
  *
  * A course is blocked for the competency being edited when one of its ancestors or descendants
  * already has associations there. A blocked row's associate button is disabled, grey, and has a
@@ -154,7 +155,7 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
     isAssociating,
     groupsIndex,
     isDeletingGroupOrRuleBoxOrCriterion,
-    removeCriterion,
+    requestRemoval,
     keyboardFocusRequest,
     consumeKeyboardFocusRequest,
     status,
@@ -175,7 +176,8 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
   useEffect(() => {
     const target = isAssociated ? removeButtonRef.current : associateButtonRef.current;
     if (takesKeyboardFocus && target) {
-      target.focus();
+      // After the dialog's own focus return, which runs in a microtask when it unmounts.
+      queueMicrotask(() => target.focus());
       consumeKeyboardFocusRequest();
     }
   }, [takesKeyboardFocus, consumeKeyboardFocusRequest, isAssociated, canAssociate]);
@@ -219,7 +221,11 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
                 const criterion = [...(groupsIndex?.criteriaByGroupId.values() ?? [])].flat()
                   .find((candidate) => candidate.objectId === subsection.id);
                 if (criterion) {
-                  removeCriterion(criterion.id, 'subsection');
+                  requestRemoval({
+                    kind: RemovalTargetKind.Association,
+                    criterionId: criterion.id,
+                    returnFocusTo: 'subsection',
+                  });
                 }
               }}
             />

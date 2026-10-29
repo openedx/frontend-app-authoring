@@ -1,3 +1,4 @@
+import { StrictMode } from 'react';
 import {
   act,
   fireEvent,
@@ -73,6 +74,17 @@ describe('<LoadingButton />', () => {
 
     // StatefulButton only sets aria-disabled (not disabled) when the state is pending
     // expect(buttonElement).toBeEnabled();
+    expect(buttonElement).not.toHaveAttribute('aria-disabled', 'true');
+    expect(container.getElementsByClassName('icon-spin').length).toBe(0);
+  });
+
+  it('clears the spinner after the click settles under StrictMode', async () => {
+    const { container, getByRole } = render(<StrictMode>{RootWrapper(() => Promise.resolve())}</StrictMode>);
+    const buttonElement = getByRole('button');
+
+    fireEvent.click(buttonElement);
+    await act(async () => {});
+
     expect(buttonElement).not.toHaveAttribute('aria-disabled', 'true');
     expect(container.getElementsByClassName('icon-spin').length).toBe(0);
   });

@@ -1,3 +1,5 @@
+import type { CourseStructure } from '@src/course-outline/data';
+import { RemovalTargetKind } from './constants';
 import type {
   BottomTierCompetencyCriteriaGroup,
   CompetencyCriteriaGroup,
@@ -202,6 +204,110 @@ export function visibleCourseGroups(
 
 export function associatedObjectIds(response: CompetencyCriteriaTree): Set<string> {
   return new Set(response.criteria.map((criterion) => criterion.objectId));
+}
+
+/** Maps subsection usage keys to display names for one course's outline. The keys come from `.id` because the real
+ * `course_index` response never populates `.usageKey` (see `CourseOutlineSubtree`'s `SubsectionRow`).
+ */
+export function subsectionNamesFromOutline(courseStructure: CourseStructure): Record<string, string> {
+  const names: Record<string, string> = {};
+  (courseStructure.childInfo?.children ?? []).forEach((section) => {
+    (section.childInfo?.children ?? []).forEach((subsection) => {
+      names[subsection.id] = subsection.displayName;
+    });
+  });
+  return names;
+}
+
+/** One removal the author asked for, before confirmation (`#786`). It holds ids only, and `summarizeRemoval`
+ * resolves them to names.
+ */
+export type RemovalTarget =
+  | { kind: RemovalTargetKind.Association; criterionId: number; returnFocusTo: 'group' | 'subsection'; }
+  | { kind: RemovalTargetKind.RuleGroup; groupId: number; }
+  | { kind: RemovalTargetKind.CourseGroup; groupId: number; }
+  | { kind: RemovalTargetKind.RuleBox; groupId: number; criterionIds: number[]; };
+
+/** What the confirmation dialog says about a removal. A `null` name is a subsection that its course outline no longer
+ * lists, and the dialog shows a fallback label for it.
+ */
+export type RemovalSummary =
+  | { kind: RemovalTargetKind.Association; contentName: string | null; }
+  | { kind: RemovalTargetKind.RuleGroup; associationCount: number; courseName: string; isOnlyGroupInCourse: boolean; }
+  | { kind: RemovalTargetKind.CourseGroup; associationCount: number; courseName: string; }
+  | {
+    kind: RemovalTargetKind.RuleBox;
+    contentNames: (string | null)[];
+    otherRuleCount: number;
+    courseName: string;
+    isOnlyGroupInCourse: boolean;
+  };
+
+/** Describes `target` for the confirmation dialog from the loaded data, or returns `null` when the data no longer has
+ * it. A course whose outline gave no name falls back to its key.
+ */
+export function summarizeRemoval(
+  target: RemovalTarget,
+  index: CompetencyCriteriaGroupsIndex,
+  systemDefaultProfile: CompetencyRuleProfile,
+  courseNamesByKey: Map<string, string>,
+  subsectionNamesByUsageKey: Record<string, string>,
+): RemovalSummary | null {
+  const courseOf = (groupId: number): { courseKey: string; courseName: string; } | null => {
+    const parentId = index.groupsById.get(groupId)?.parentId;
+    const courseKey = parentId == null ? null : index.groupsById.get(parentId)?.courseKey;
+    return courseKey ? { courseKey, courseName: courseNamesByKey.get(courseKey) ?? courseKey } : null;
+  };
+
+  switch (target.kind) {
+    case RemovalTargetKind.Association: {
+      const criterion = Array.from(index.criteriaByGroupId.values()).flat()
+        .find((candidate) => candidate.id === target.criterionId);
+      return criterion
+        ? { kind: RemovalTargetKind.Association, contentName: subsectionNamesByUsageKey[criterion.objectId] ?? null }
+        : null;
+    }
+    case RemovalTargetKind.RuleGroup: {
+      const course = courseOf(target.groupId);
+      return course
+        ? {
+          kind: RemovalTargetKind.RuleGroup,
+          associationCount: (index.criteriaByGroupId.get(target.groupId) ?? []).length,
+          courseName: course.courseName,
+          isOnlyGroupInCourse: bottomTierGroupsForCourse(index, course.courseKey).length === 1,
+        }
+        : null;
+    }
+    case RemovalTargetKind.CourseGroup: {
+      const courseKey = index.groupsById.get(target.groupId)?.courseKey;
+      if (!courseKey) {
+        return null;
+      }
+      return {
+        kind: RemovalTargetKind.CourseGroup,
+        associationCount: bottomTierGroupsForCourse(index, courseKey)
+          .reduce((total, group) => total + (index.criteriaByGroupId.get(group.id) ?? []).length, 0),
+        courseName: courseNamesByKey.get(courseKey) ?? courseKey,
+      };
+    }
+    case RemovalTargetKind.RuleBox: {
+      const removedIds = new Set(target.criterionIds);
+      const removed = (index.criteriaByGroupId.get(target.groupId) ?? []).filter((criterion) =>
+        removedIds.has(criterion.id)
+      );
+      const boxes = ruleBoxesForGroup(target.groupId, index, systemDefaultProfile);
+      const course = courseOf(target.groupId);
+      return removed.length > 0 && course
+        ? {
+          kind: RemovalTargetKind.RuleBox,
+          contentNames: removed.map((criterion) => subsectionNamesByUsageKey[criterion.objectId] ?? null),
+          otherRuleCount: boxes.filter((box) => !box.criteria.some((criterion) => removedIds.has(criterion.id))).length,
+          courseName: course.courseName,
+          isOnlyGroupInCourse: bottomTierGroupsForCourse(index, course.courseKey).length === 1,
+        }
+        : null;
+    }
+  }
 }
 
 /** One course-level group and its bottom-tier groups, as rendered. */

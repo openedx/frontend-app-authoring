@@ -42,9 +42,13 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
 
   const componentMounted = useRef(true);
 
-  // This is used to prevent setting the isLoading state after the component has been unmounted.
-  useEffect(() => () => {
-    componentMounted.current = false;
+  // Guards against setting state after unmount. The body sets the ref too, since StrictMode runs the cleanup once at
+  // mount in development.
+  useEffect(() => {
+    componentMounted.current = true;
+    return () => {
+      componentMounted.current = false;
+    };
   }, []);
 
   const loadingOnClick = useCallback(async (e: any) => {

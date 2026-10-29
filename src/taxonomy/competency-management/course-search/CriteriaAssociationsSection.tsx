@@ -8,6 +8,7 @@ import type { CompetencyTreeNode } from '../CompetencyTree';
 import { CompetencyTooltip, useCompetencyTooltip } from '../competency-tooltip';
 import { CourseGroupList } from '../criteria-groups';
 import rootMessages from '../messages';
+import { RemovalConfirmationModal } from '@src/taxonomy/competency-management/removal-confirmation';
 import messages from './messages';
 
 export interface CriteriaAssociationsSectionProps {
@@ -85,6 +86,8 @@ const CriteriaAssociationsSection = ({ competency }: CriteriaAssociationsSection
       </div>
       {/* The course list shows its own error, and the groups are not shown. */}
       {!courseList.isError && <CourseGroupList />}
+
+      <RemovalConfirmationModal />
     </div>
   );
 };

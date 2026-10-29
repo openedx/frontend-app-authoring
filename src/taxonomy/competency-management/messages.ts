@@ -55,11 +55,6 @@ const messages = defineMessages({
     description: 'Toast shown in place of the generic create-criterion failure when the backend rejects the '
       + 'new criterion because an ancestor or descendant competency already has criteria in the same course.',
   },
-  deleteGroupFailedToastMessage: {
-    id: 'course-authoring.competency-management.delete-group-failed-toast-message',
-    defaultMessage: 'There was a problem removing this group. Please try again.',
-    description: 'Toast shown when removing a course group or rule group fails.',
-  },
   removeCriterionButtonLabel: {
     id: 'course-authoring.competency-management.remove-criterion-button-label',
     defaultMessage: 'Remove the association with {subsectionName}',
@@ -67,21 +62,11 @@ const messages = defineMessages({
       + 'competency, on a rule box chip and on a subsection row in the course list. {subsectionName} is the name of '
       + 'the subsection.',
   },
-  removeAssociationFailedToastMessage: {
-    id: 'course-authoring.competency-management.remove-association-failed-toast-message',
-    defaultMessage: 'There was a problem removing this association. Please try again.',
-    description: 'Toast shown when removing one subsection\'s association with a competency fails.',
-  },
-  deleteRuleBoxFailedToastMessage: {
-    id: 'course-authoring.competency-management.delete-rule-box-failed-toast-message',
-    defaultMessage: 'There was a problem removing this rule. Please try again.',
-    description: 'Toast shown when removing a rule box fails before any of its associations were removed.',
-  },
-  deleteRuleBoxPartiallyFailedToastMessage: {
-    id: 'course-authoring.competency-management.delete-rule-box-partially-failed-toast-message',
-    defaultMessage: 'Some of this rule\'s associations couldn\'t be removed. Please try again.',
-    description: 'Toast shown when removing a rule box stops partway, so some of its associations were removed and '
-      + 'the rest are still shown.',
+  removalFailedAfterCancelToastMessage: {
+    id: 'course-authoring.competency-management.removal-failed-after-cancel-toast-message',
+    defaultMessage: 'The removal you confirmed didn\'t go through. The panel was refreshed.',
+    description: 'Toast shown when a removal fails after the author already dismissed its confirmation dialog, so '
+      + 'the dialog\'s own error alert is no longer on screen.',
   },
   updateGroupOperatorFailedToastMessage: {
     id: 'course-authoring.competency-management.update-group-operator-failed-toast-message',
