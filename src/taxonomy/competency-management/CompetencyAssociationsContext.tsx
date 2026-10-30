@@ -133,6 +133,24 @@ export interface CompetencyAssociationsProviderProps {
   children: ReactNode;
 }
 
+/** Where focus should move when `courseId` is expanded, or `null` to leave it
+ * as is: already on one of that course's groups, or the course has no group.
+ */
+function courseExpansionFocus(
+  courseId: string,
+  focus: CriteriaFocus | null,
+  index: CompetencyCriteriaGroupsIndex,
+  systemDefaultProfile: CompetencyRuleProfile,
+): CriteriaFocus | null {
+  const focusedGroup = focus ? index.groupsById.get(focus.groupId) : undefined;
+  const focusedCourseGroup = focusedGroup?.parentId != null ? index.groupsById.get(focusedGroup.parentId) : undefined;
+  if (focus !== null && focusedCourseGroup?.courseKey === courseId) {
+    return null;
+  }
+  const target = lastBottomTierGroupForCourse(index, courseId);
+  return target ? { groupId: target.id, ruleKey: lastRealRuleKeyIn(target.id, index, systemDefaultProfile) } : null;
+}
+
 /** Provides per-competency criteria-association state to the right-hand
  * course panel.
  *
@@ -153,10 +171,16 @@ export const CompetencyAssociationsProvider = ({
   const [prevTagId, setPrevTagId] = useState(tagId);
   const [focus, setFocus] = useState<CriteriaFocus | null>(null);
   const [expandedCourseIds, setExpandedCourseIds] = useState<Set<string>>(new Set());
+  // A course expanded before its group tree and default profile loaded.
+  const [pendingExpandedCourseId, setPendingExpandedCourseId] = useState<string | null>(null);
   const hasRunInitialFocusRef = useRef(false);
+  // Lets an in-flight create tell whether its competency is still the active one.
+  const latestTagIdRef = useRef(tagId);
+  latestTagIdRef.current = tagId;
   if (tagId !== prevTagId) {
     setPrevTagId(tagId);
     setFocus(null);
+    setPendingExpandedCourseId(null);
     hasRunInitialFocusRef.current = false;
   }
 
@@ -174,19 +198,24 @@ export const CompetencyAssociationsProvider = ({
     [groupsQuery.data],
   );
 
+  // Applied during render so the initial-focus effect below already sees it.
+  if (pendingExpandedCourseId !== null && index && systemDefaultProfile) {
+    const next = courseExpansionFocus(pendingExpandedCourseId, focus, index, systemDefaultProfile);
+    setPendingExpandedCourseId(null);
+    if (next) {
+      setFocus(next);
+    }
+  }
+
   const notifyCourseExpanded = useCallback((courseId: string) => {
     setExpandedCourseIds((prev) => (prev.has(courseId) ? prev : new Set(prev).add(courseId)));
     if (!index || !systemDefaultProfile) {
+      setPendingExpandedCourseId(courseId);
       return;
     }
-    const focusedGroup = focus ? index.groupsById.get(focus.groupId) : undefined;
-    const focusedCourseGroup = focusedGroup?.parentId != null ? index.groupsById.get(focusedGroup.parentId) : undefined;
-    if (focus !== null && focusedCourseGroup?.courseKey === courseId) {
-      return;
-    }
-    const target = lastBottomTierGroupForCourse(index, courseId);
-    if (target) {
-      setFocus({ groupId: target.id, ruleKey: lastRealRuleKeyIn(target.id, index, systemDefaultProfile) });
+    const next = courseExpansionFocus(courseId, focus, index, systemDefaultProfile);
+    if (next) {
+      setFocus(next);
     }
   }, [focus, index, systemDefaultProfile]);
 
@@ -227,6 +256,7 @@ export const CompetencyAssociationsProvider = ({
   );
 
   const focusGroup = useCallback((groupId: number) => {
+    setPendingExpandedCourseId(null);
     setFocus((prev) => {
       if (prev?.groupId === groupId) {
         // No-op: clicking the group already in focus must not re-resolve
@@ -240,6 +270,7 @@ export const CompetencyAssociationsProvider = ({
   }, [index, systemDefaultProfile]);
 
   const focusRuleBox = useCallback((groupId: number, ruleKey: string) => {
+    setPendingExpandedCourseId(null);
     setFocus({ groupId, ruleKey });
   }, []);
 
@@ -333,6 +364,9 @@ export const CompetencyAssociationsProvider = ({
 
     createCriterion.mutate({ tagId, payload }, {
       onSuccess: (criterion) => {
+        if (latestTagIdRef.current !== tagId) {
+          return;
+        }
         // From the response itself, not `lastRealRuleKeyIn` against the
         // local tree: the groups query hasn't refetched yet, so the local
         // tree still doesn't know about this brand-new criterion (or

@@ -4,6 +4,7 @@ import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import {
+  act,
   fireEvent,
   initializeMocks,
   render,
@@ -202,6 +203,7 @@ const TestConsumer = () => {
       <button type="button" onClick={() => ctx.focusGroup(10)}>focus-group-10</button>
       <button type="button" onClick={() => ctx.focusGroup(20)}>focus-group-20</button>
       <button type="button" onClick={() => ctx.focusRuleBox(10, 'grade:gte:0.7:percent')}>focus-rulebox-10</button>
+      <button type="button" onClick={() => ctx.notifyCourseExpanded(courseA)}>expand-course-a</button>
       <button type="button" onClick={() => ctx.notifyCourseExpanded(courseB)}>expand-course-b</button>
       <button type="button" onClick={() => ctx.associateSubsection('new-sub', courseA)}>associate-course-a</button>
       <button type="button" onClick={() => ctx.associateSubsection('new-sub', courseB)}>associate-course-b</button>
@@ -490,6 +492,124 @@ describe('CompetencyAssociationsProvider', () => {
     });
   });
 
+  describe('course expanded before the association data loads', () => {
+    let loadGroups: () => void;
+    let loadProfile: () => void;
+
+    const providerFor = (id: number) => (
+      <CompetencyAssociationsProvider tagId={id} competencyExternalId="CCRS-1.3">
+        <TestConsumer />
+      </CompetencyAssociationsProvider>
+    );
+
+    /** The groups and profile responses stay pending until `loadProfile()`
+     * and `loadGroups()` are called.
+     */
+    const renderLoading = ({ courseBOutlineStatus = 200 } = {}) => {
+      axiosMock.onGet(groupsUrl).reply(() =>
+        new Promise((resolve) => {
+          loadGroups = () => resolve([200, courseBGroupsResponse]);
+        })
+      );
+      axiosMock.onGet(profileUrl).reply(() =>
+        new Promise((resolve) => {
+          loadProfile = () => resolve([200, profileResponse]);
+        })
+      );
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseB)).reply(courseBOutlineStatus, outlineFixture);
+      return render(providerFor(tagId));
+    };
+
+    const finishLoading = async () => {
+      await waitFor(() => expect(loadGroups).toBeDefined());
+      await waitFor(() => expect(loadProfile).toBeDefined());
+      await act(async () => {
+        loadGroups();
+        loadProfile();
+      });
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+      await waitFor(() => expect(screen.getByTestId('profile-status')).toHaveTextContent('profile-success'));
+    };
+
+    it('focuses the expanded course\'s last group and rule box once the data arrives, and uses it to associate', async () => {
+      renderLoading();
+      axiosMock.onPost(createUrl).reply(201, {
+        id: 920,
+        group_id: 21,
+        rule_profile_id: null,
+        rule_type_override: 'grade',
+        rule_payload_override: { op: 'eq', value: 1, scale: 'percent' },
+        object_tag_id: tagId,
+      });
+      fireEvent.click(screen.getByText('expand-course-b'));
+      expect(screen.getByTestId('focus')).toHaveTextContent('null');
+
+      await finishLoading();
+
+      expect(screen.getByTestId('focus')).toHaveTextContent(
+        JSON.stringify({ groupId: 21, ruleKey: 'grade:eq:1:percent' }),
+      );
+      fireEvent.click(screen.getByText('associate-course-b'));
+      await waitFor(() => expect(axiosMock.history.post).toHaveLength(1));
+      expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+        object_id: 'new-sub',
+        group_id: 21,
+        rule_type_override: 'grade',
+        rule_payload_override: { op: 'eq', value: 1, scale: 'percent' },
+      });
+    });
+
+    it('keeps the author\'s own focus when they picked a group after expanding', async () => {
+      renderLoading();
+      fireEvent.click(screen.getByText('expand-course-b'));
+      fireEvent.click(screen.getByText('focus-group-10'));
+
+      await finishLoading();
+
+      expect(screen.getByTestId('focus')).toHaveTextContent('"groupId":10');
+    });
+
+    it('applies only the most recently expanded course', async () => {
+      renderLoading();
+      fireEvent.click(screen.getByText('expand-course-b'));
+      fireEvent.click(screen.getByText('expand-course-a'));
+
+      await finishLoading();
+
+      expect(screen.getByTestId('focus')).toHaveTextContent('"groupId":10');
+    });
+
+    it('wins over the sole-group auto-focus', async () => {
+      // courseB's outline fails, so courseA's group 10 is the only accessible
+      // bottom-tier group and is what the auto-focus would pick.
+      renderLoading({ courseBOutlineStatus: 403 });
+      fireEvent.click(screen.getByText('expand-course-b'));
+
+      await finishLoading();
+      await waitFor(() => expect(screen.getByTestId('accessible-course-group-ids')).toHaveTextContent(courseA));
+
+      expect(screen.getByTestId('focus')).toHaveTextContent('"groupId":21');
+    });
+
+    it('is dropped when the competency changes', async () => {
+      const otherTagId = 43;
+      const { rerender } = renderLoading();
+      axiosMock.onGet(apiUrls.competencyCriteriaGroups(otherTagId)).reply(200, courseBGroupsResponse);
+      fireEvent.click(screen.getByText('expand-course-b'));
+
+      rerender(providerFor(otherTagId));
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+      await waitFor(() => expect(loadProfile).toBeDefined());
+      await act(async () => {
+        loadProfile();
+      });
+      await waitFor(() => expect(screen.getByTestId('profile-status')).toHaveTextContent('profile-success'));
+
+      expect(screen.getByTestId('focus')).toHaveTextContent('null');
+    });
+  });
+
   describe('associateSubsection', () => {
     it('sends the focused group\'s id and rule when the focus is a group belonging to the clicked subsection\'s course', async () => {
       axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
@@ -605,6 +725,49 @@ describe('CompetencyAssociationsProvider', () => {
         expect(screen.getByTestId('focus')).toHaveTextContent('"groupId":999');
       });
       expect(screen.getByTestId('focus')).toHaveTextContent('"ruleKey":"grade:eq:1:percent"');
+    });
+
+    it('ignores a create response that arrives after the competency changed', async () => {
+      const otherTagId = 43;
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(apiUrls.competencyCriteriaGroups(otherTagId)).reply(200, noGroupsResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
+      let respond: () => void = () => {};
+      axiosMock.onPost(createUrl).reply(() =>
+        new Promise((resolve) => {
+          respond = () =>
+            resolve([201, {
+              id: 905,
+              group_id: 777,
+              rule_profile_id: 1,
+              rule_type_override: null,
+              rule_payload_override: null,
+              object_tag_id: tagId,
+            }]);
+        })
+      );
+      const ui = (id: number) => (
+        <CompetencyAssociationsProvider tagId={id} competencyExternalId="CCRS-1.3">
+          <TestConsumer />
+        </CompetencyAssociationsProvider>
+      );
+      const { rerender } = render(ui(tagId));
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+      fireEvent.click(screen.getByText('associate-course-a'));
+      await waitFor(() => expect(axiosMock.history.post).toHaveLength(1));
+
+      rerender(ui(otherTagId));
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+      fireEvent.click(screen.getByText('focus-999'));
+      await act(async () => {
+        respond();
+        await new Promise((resolve) => {
+          setTimeout(resolve, 0);
+        });
+      });
+
+      expect(screen.getByTestId('focus')).toHaveTextContent('"groupId":999');
     });
 
     it('shows a specific toast when the create request 400s with a tag_id field error', async () => {
