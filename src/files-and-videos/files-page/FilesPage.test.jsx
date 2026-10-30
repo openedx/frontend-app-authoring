@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import ReactDOM from 'react-dom';
+import { Helmet } from 'react-helmet';
 import { saveAs } from 'file-saver';
 
 import { camelCaseObject } from '@edx/frontend-platform';
@@ -114,6 +115,14 @@ describe('FilesAndUploads', () => {
       await mockStore(RequestStatus.DENIED);
 
       expect(screen.getByTestId('under-construction-placeholder')).toBeVisible();
+    });
+
+    it('sets the page title through Helmet', async () => {
+      await emptyMockStore(RequestStatus.SUCCESSFUL);
+
+      await waitFor(() => {
+        expect(Helmet.peek().title).toContain(`${filesPageMessages.heading.defaultMessage} | `);
+      });
     });
 
     it('should have Files title', async () => {
