@@ -174,11 +174,15 @@ export const CompetencyAssociationsProvider = ({
   // A course expanded before its group tree and default profile loaded.
   const [pendingExpandedCourseId, setPendingExpandedCourseId] = useState<string | null>(null);
   const hasRunInitialFocusRef = useRef(false);
-  // Lets an in-flight create tell whether its competency is still the active one.
-  const latestTagIdRef = useRef(tagId);
-  latestTagIdRef.current = tagId;
-  if (tagId !== prevTagId) {
+  // Bumped on every competency change, so an in-flight create can tell that
+  // the author left and came back, which a tagId comparison can't.
+  const [selectionId, setSelectionId] = useState(0);
+  const latestSelectionIdRef = useRef(selectionId);
+  latestSelectionIdRef.current = selectionId;
+  const competencyChanged = tagId !== prevTagId;
+  if (competencyChanged) {
     setPrevTagId(tagId);
+    setSelectionId(selectionId + 1);
     setFocus(null);
     setPendingExpandedCourseId(null);
     hasRunInitialFocusRef.current = false;
@@ -199,7 +203,9 @@ export const CompetencyAssociationsProvider = ({
   );
 
   // Applied during render so the initial-focus effect below already sees it.
-  if (pendingExpandedCourseId !== null && index && systemDefaultProfile) {
+  // Skipped on the render that changes competency: the pending course belongs
+  // to the previous one, but `index` may already be the new one's cached tree.
+  if (!competencyChanged && pendingExpandedCourseId !== null && index && systemDefaultProfile) {
     const next = courseExpansionFocus(pendingExpandedCourseId, focus, index, systemDefaultProfile);
     setPendingExpandedCourseId(null);
     if (next) {
@@ -364,7 +370,7 @@ export const CompetencyAssociationsProvider = ({
 
     createCriterion.mutate({ tagId, payload }, {
       onSuccess: (criterion) => {
-        if (latestTagIdRef.current !== tagId) {
+        if (latestSelectionIdRef.current !== selectionId) {
           return;
         }
         // From the response itself, not `lastRealRuleKeyIn` against the
@@ -395,7 +401,7 @@ export const CompetencyAssociationsProvider = ({
         );
       },
     });
-  }, [associatedIds, index, systemDefaultProfile, focus, tagId, createCriterion, showToast, intl]);
+  }, [associatedIds, index, systemDefaultProfile, focus, tagId, selectionId, createCriterion, showToast, intl]);
 
   const contextValue = useMemo<CompetencyAssociationsContextValue>(() => ({
     focus,

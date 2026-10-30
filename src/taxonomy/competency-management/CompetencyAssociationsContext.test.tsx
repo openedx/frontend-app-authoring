@@ -592,6 +592,24 @@ describe('CompetencyAssociationsProvider', () => {
       expect(screen.getByTestId('focus')).toHaveTextContent('"groupId":21');
     });
 
+    it('does not apply a pending expansion to a previously loaded competency it switches to', async () => {
+      const otherTagId = 43;
+      const { rerender } = renderLoading();
+      axiosMock.onGet(apiUrls.competencyCriteriaGroups(otherTagId)).reply(200, courseBGroupsResponse);
+      rerender(providerFor(otherTagId));
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+      await act(async () => {
+        loadProfile();
+      });
+      await waitFor(() => expect(screen.getByTestId('profile-status')).toHaveTextContent('profile-success'));
+
+      rerender(providerFor(tagId));
+      fireEvent.click(screen.getByText('expand-course-b'));
+      rerender(providerFor(otherTagId));
+
+      expect(screen.getByTestId('focus')).toHaveTextContent('null');
+    });
+
     it('is dropped when the competency changes', async () => {
       const otherTagId = 43;
       const { rerender } = renderLoading();
@@ -758,6 +776,50 @@ describe('CompetencyAssociationsProvider', () => {
       await waitFor(() => expect(axiosMock.history.post).toHaveLength(1));
 
       rerender(ui(otherTagId));
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+      fireEvent.click(screen.getByText('focus-999'));
+      await act(async () => {
+        respond();
+        await new Promise((resolve) => {
+          setTimeout(resolve, 0);
+        });
+      });
+
+      expect(screen.getByTestId('focus')).toHaveTextContent('"groupId":999');
+    });
+
+    it('ignores a create response that arrives after leaving and returning to the competency', async () => {
+      const otherTagId = 43;
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(apiUrls.competencyCriteriaGroups(otherTagId)).reply(200, noGroupsResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineFixture);
+      let respond: () => void = () => {};
+      axiosMock.onPost(createUrl).reply(() =>
+        new Promise((resolve) => {
+          respond = () =>
+            resolve([201, {
+              id: 906,
+              group_id: 777,
+              rule_profile_id: 1,
+              rule_type_override: null,
+              rule_payload_override: null,
+              object_tag_id: tagId,
+            }]);
+        })
+      );
+      const ui = (id: number) => (
+        <CompetencyAssociationsProvider tagId={id} competencyExternalId="CCRS-1.3">
+          <TestConsumer />
+        </CompetencyAssociationsProvider>
+      );
+      const { rerender } = render(ui(tagId));
+      await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
+      fireEvent.click(screen.getByText('associate-course-a'));
+      await waitFor(() => expect(axiosMock.history.post).toHaveLength(1));
+
+      rerender(ui(otherTagId));
+      rerender(ui(tagId));
       await waitFor(() => expect(screen.getByTestId('groups-status')).toHaveTextContent('groups-success'));
       fireEvent.click(screen.getByText('focus-999'));
       await act(async () => {
