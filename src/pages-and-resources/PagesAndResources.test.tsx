@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet';
 import {
   screen,
   waitFor,
@@ -11,6 +12,7 @@ import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import { PagesAndResources } from '.';
+import messages from './messages';
 
 // Mock authz hooks
 jest.mock('@src/authz/hooks', () => ({
@@ -76,6 +78,20 @@ describe('PagesAndResources', () => {
       canManagePagesAndResources: canManage,
     } as ReturnType<typeof useCourseUserPermissions>);
   };
+
+  it('sets the page title through Helmet', async () => {
+    initializeMocks({
+      initialState: {
+        models: { courseApps: {} },
+        pagesAndResources: { courseAppIds: [] },
+      },
+    });
+    renderComponent();
+
+    await waitFor(() => {
+      expect(Helmet.peek().title).toEqual(`${messages.heading.defaultMessage} | ${process.env.SITE_NAME}`);
+    });
+  });
 
   it('doesn\'t show content permissions section if relevant apps are not enabled', async () => {
     const initialState = {
