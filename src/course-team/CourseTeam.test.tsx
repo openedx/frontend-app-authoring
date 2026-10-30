@@ -1,4 +1,5 @@
 import userEvent from '@testing-library/user-event';
+import { Helmet } from 'react-helmet';
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import {
   screen,
@@ -67,6 +68,18 @@ describe('<CourseTeam />', () => {
     expect(screen.getByRole('button', { name: messages.addNewMemberButton.defaultMessage })).toBeInTheDocument();
     expect(screen.getByTestId('course-team-sidebar')).toBeInTheDocument();
     expect(screen.queryAllByTestId('course-team-member')).toHaveLength(3);
+  });
+
+  it('sets the page title through Helmet', async () => {
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(200, courseTeamMock);
+
+    render();
+
+    await waitFor(() => {
+      expect(Helmet.peek().title).toEqual(`${messages.headingTitle.defaultMessage} | ${process.env.SITE_NAME}`);
+    });
   });
 
   it('render CourseTeam component with 1 team member correctly', async () => {
