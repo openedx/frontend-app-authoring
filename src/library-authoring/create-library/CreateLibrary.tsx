@@ -17,10 +17,9 @@ import {
   Widgets,
   PersonOutline,
 } from '@openedx/paragon/icons';
-import AlertError from '@src/generic/alert-error';
 import classNames from 'classnames';
 import { Formik } from 'formik';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 
@@ -37,6 +36,22 @@ import { CreateContentLibraryArgs } from './data/api';
 import { useCreateLibraryV2, useCreateLibraryRestore, useGetLibraryRestoreStatus } from './data/apiHooks';
 import { DROPZONE_ACCEPT_TYPES, LibraryRestoreStatus, VALID_ARCHIVE_EXTENSIONS } from './data/restoreConstants';
 import messages from './messages';
+
+interface CreateLibraryFormValues {
+  title: string;
+  org: string;
+  slug: string;
+}
+
+/**
+ * The server answers 400 with a `slug` error when the org already has a library with that ID.
+ * The form only submits slugs that pass the server's own slug format check, so a `slug` error
+ * here always means the ID is taken.
+ */
+const isLibraryIdTaken = (error: unknown) => {
+  const { response } = (error ?? {}) as { response?: { status?: number; data?: { slug?: unknown; }; }; };
+  return response?.status === 400 && !!response.data?.slug;
+};
 
 /**
  * Renders the form and logic to create a new library.
@@ -64,6 +79,9 @@ export const CreateLibrary = ({
   const [isFromArchive, setIsFromArchive] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [restoreTaskId, setRestoreTaskId] = useState<string>('');
+  // The org + ID pair the server rejected as already taken. It stays invalid until either changes.
+  // Read at validation time, so a schema built in an earlier render still sees the latest pair.
+  const takenLibraryKeyRef = useRef<{ org: string; slug: string; } | null>(null);
 
   const {
     mutate,
@@ -251,7 +269,7 @@ export const CreateLibrary = ({
           </div>
         )}
 
-        {(restoreTaskId || isError || restoreMutation.isError) && (
+        {(restoreTaskId || restoreMutation.isError) && (
           <div className="mb-4">
             {(restoreStatus?.state === LibraryRestoreStatus.Pending
               || restoreStatus?.state === LibraryRestoreStatus.InProgress) && (
@@ -284,7 +302,7 @@ export const CreateLibrary = ({
           </div>
         )}
 
-        <Formik
+        <Formik<CreateLibraryFormValues>
           initialValues={{
             title: '',
             org: '',
@@ -305,9 +323,19 @@ export const CreateLibrary = ({
               .matches(
                 validSlugIdRegex,
                 intl.formatMessage(messages.invalidSlugError),
+              )
+              .test(
+                'library-id-not-taken',
+                intl.formatMessage(messages.slugAlreadyExistsError),
+                (slug, context) =>
+                  !(
+                    takenLibraryKeyRef.current
+                    && takenLibraryKeyRef.current.slug === slug
+                    && takenLibraryKeyRef.current.org === context.parent.org
+                  ),
               ),
           })}
-          onSubmit={(values) => {
+          onSubmit={(values, { validateForm }) => {
             const submitData = { ...values } as CreateContentLibraryArgs;
 
             // If we're creating from archive and have a successful restore, include the learningPackageId
@@ -315,7 +343,15 @@ export const CreateLibrary = ({
               submitData.learning_package = restoreStatus.result.learningPackageId;
             }
 
-            mutate(submitData);
+            mutate(submitData, {
+              onError: (createError) => {
+                if (isLibraryIdTaken(createError)) {
+                  takenLibraryKeyRef.current = { org: values.org, slug: values.slug };
+                  // Validates the current values, so a late reply doesn't flag an ID the user already changed.
+                  void validateForm();
+                }
+              },
+            });
           }}
         >
           {(formikProps) => (
@@ -388,7 +424,11 @@ export const CreateLibrary = ({
             </Form>
           )}
         </Formik>
-        {isError && <AlertError error={error} />}
+        {isError && !isLibraryIdTaken(error) && (
+          <Alert variant="danger" className="mt-3">
+            {intl.formatMessage(messages.createLibraryError)}
+          </Alert>
+        )}
       </Container>
       {!showInModal && <StudioFooterSlot />}
     </>
