@@ -7,10 +7,6 @@
 // of the following" and "With a score of X% or higher", the connector line
 // between sibling bottom-tier groups, and chip truncation.
 .course-group-list {
-  // Connector line color, read off the design screenshot; not an existing
-  // Paragon or app-wide token.
-  $connector-line-color: #DDDDDD;
-
   // Vertical gap between adjacent course-level group cards.
   > * + * {
     margin-top: 16px;
@@ -185,7 +181,7 @@
     &__line {
       flex: 1;
       height: 1px;
-      background-color: $connector-line-color;
+      background-color: var(--pgn-color-gray-200);
     }
 
     &__label {
