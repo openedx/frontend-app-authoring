@@ -175,6 +175,20 @@ export const getLibraryContainerRestoreApiUrl = (containerId: string) =>
  */
 export const getLibraryContainerChildrenApiUrl = (containerId: string, published: boolean = false) =>
   `${getLibraryContainerApiUrl(containerId)}children/?published=${published}`;
+
+/**
+ * Axios request config for the optional downstream-course-review bypass shared by
+ * `getContainerMetadata` and `getLibraryContainerChildren`.
+ *
+ * Passing `downstreamBlockId` lets the backend grant access via the course's
+ * `view_library_updates` permission when the caller is reviewing this container/block from a
+ * course it doesn't otherwise have library access from. It must be the downstream course
+ * block's usage key, not a bare course id: the backend verifies that block is actually linked
+ * to the upstream resource being requested before granting access.
+ */
+const downstreamReviewConfig = (downstreamBlockId?: string) => (
+  downstreamBlockId ? { params: { downstream_block_id: downstreamBlockId } } : undefined
+);
 /**
  * Get the URL for a single container hierarchy api.
  */
@@ -589,8 +603,14 @@ export async function libraryPasteClipboard({
 /**
  * Fetch library block metadata.
  */
-export async function getLibraryBlockMetadata(usageKey: string): Promise<LibraryBlockMetadata> {
-  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockMetadataUrl(usageKey));
+export async function getLibraryBlockMetadata(
+  usageKey: string,
+  downstreamBlockId?: string,
+): Promise<LibraryBlockMetadata> {
+  const { data } = await getAuthenticatedHttpClient().get(
+    getLibraryBlockMetadataUrl(usageKey),
+    downstreamReviewConfig(downstreamBlockId),
+  );
   return camelCaseObject(data);
 }
 
@@ -782,8 +802,11 @@ export interface Container {
 /**
  * Get the container metadata.
  */
-export async function getContainerMetadata(containerId: string): Promise<Container> {
-  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerApiUrl(containerId));
+export async function getContainerMetadata(containerId: string, downstreamBlockId?: string): Promise<Container> {
+  const { data } = await getAuthenticatedHttpClient().get(
+    getLibraryContainerApiUrl(containerId),
+    downstreamReviewConfig(downstreamBlockId),
+  );
   return camelCaseObject(data);
 }
 
@@ -824,9 +847,11 @@ export async function restoreContainer(containerId: string) {
 export async function getLibraryContainerChildren<ChildType = LibraryBlockMetadata | Container>(
   containerId: string,
   published: boolean = false,
+  downstreamBlockId?: string,
 ): Promise<ChildType[]> {
   const { data } = await getAuthenticatedHttpClient().get(
     getLibraryContainerChildrenApiUrl(containerId, published),
+    downstreamReviewConfig(downstreamBlockId),
   );
   return camelCaseObject(data);
 }
