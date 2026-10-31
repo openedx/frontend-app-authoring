@@ -59,6 +59,9 @@ const TinyMceWidget = ({
   isLibrary,
   onChange,
   staticRootUrl,
+  // Preview the block's theme in the editing area. Only meaningful for the text
+  // editor, which is the one whose learner view is themed.
+  useMfeTheming = false,
   ...editorConfig
 }) => {
   const { isImgOpen, openImgModal, closeImgModal } = hooks.imgModalToggle();
@@ -101,6 +104,7 @@ const TinyMceWidget = ({
             openImgModal,
             openSourceCodeModal,
             editorType,
+            useMfeTheming,
             // @ts-ignore FIXME: 'editorRef' is not an accepted parameter of editorConfig()
             editorRef,
             enableImageUpload: isLibraryV1Key(learningContextId) ? false : enableImageUpload,
