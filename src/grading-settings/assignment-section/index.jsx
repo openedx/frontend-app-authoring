@@ -15,7 +15,7 @@ import messages from './messages';
 const MIN_NUMBER_VALUE = 0;
 const MAX_NUMBER_VALUE = 100;
 
-const isDropCountTooHigh = ({ minCount, dropCount }) => dropCount > 0 && dropCount >= minCount;
+const isDropCountTooHigh = ({ minCount, dropCount }) => minCount > 0 && dropCount > 0 && dropCount >= minCount;
 
 const AssignmentSection = ({
   handleRemoveAssignment,

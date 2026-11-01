@@ -126,6 +126,13 @@ describe('<AssignmentSection />', () => {
     expect(queryByText(undroppableErrorMessage)).not.toBeInTheDocument();
     expect(assignmentNumberOfDroppableInput).not.toHaveClass('is-invalid');
   });
+  it('checking only the minCount error is shown when minCount is not greater than 0', () => {
+    const { getByTestId, getByText, queryByText } = render(<StatefulRootWrapper />);
+    fireEvent.change(getByTestId('assignment-minCount-input'), { target: { value: '0' } });
+    expect(getByText(messages.totalNumberErrorMessage.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(undroppableErrorMessage)).not.toBeInTheDocument();
+    expect(getByTestId('assignment-dropCount-input')).not.toHaveClass('is-invalid');
+  });
   it('checking correct error msg if assignment type name contains only spaces', () => {
     const setShowSavePrompt = jest.fn();
     const { getByText, getByTestId } = render(<RootWrapper setShowSavePrompt={setShowSavePrompt} />);
