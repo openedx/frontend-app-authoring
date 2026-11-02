@@ -16,6 +16,7 @@ import { CompetencyAssociationsProvider } from '../CompetencyAssociationsContext
 import {
   byTextContent,
   defaultProfileResponse,
+  mockHeldGroupsRefetch,
   MockCompetencyAssociationsProvider,
   mockScrollIntoView,
 } from '../__mocks__';
@@ -1844,19 +1845,14 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
             rulePayloadOverride: null,
           },
         ],
-        criteria_count: 1,
-        total_criteria_count: 1,
+        criteriaCount: 1,
+        totalCriteriaCount: 1,
       };
-      // Replaces `beforeEach`'s empty reply: the first read has the association, every later one is held.
-      let release: () => void = () => {};
-      let reads = 0;
-      axiosMock.onGet(groupsUrl).reply(() => {
-        reads += 1;
-        return reads === 1
-          ? [200, withOneAssociation]
-          : new Promise((resolve) => {
-            release = () => resolve([200, { groups: [], criteria: [], criteria_count: 0, total_criteria_count: 0 }]);
-          });
+      const reads = mockHeldGroupsRefetch(axiosMock, tagId, withOneAssociation, {
+        groups: [],
+        criteria: [],
+        criteriaCount: 0,
+        totalCriteriaCount: 0,
       });
       axiosMock.onDelete(competencyManagementApiUrls.deleteCompetencyCriterion(tagId, 901))
         .reply(200, { id: 901, archived: false });
@@ -1892,11 +1888,11 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       );
       await user.click(screen.getByRole('button', { name: 'Remove rule' }));
 
-      await waitFor(() => expect(reads).toBe(2));
+      await waitFor(() => expect(axiosMock.history.get.filter((req) => req.url === groupsUrl)).toHaveLength(2));
       expect(within(coursesContainer).getByRole('button', { name: /Subsection 1B/ })).toBeDisabled();
 
       await act(async () => {
-        release();
+        reads.release();
       });
       await waitFor(() =>
         expect(within(coursesContainer).getByRole('button', { name: /Subsection 1B/ })).toBeEnabled()

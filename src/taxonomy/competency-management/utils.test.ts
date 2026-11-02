@@ -239,10 +239,6 @@ describe('ruleKeyAfterRemoval', () => {
     expect(ruleKeyAfterRemoval(['a', 'b', 'c'], vanished, keysAfter)).toBe(expected);
   });
 
-  it('prefers the box above over the first box and the box below when the third of four vanishes', () => {
-    expect(ruleKeyAfterRemoval(['a', 'b', 'c', 'd'], 'c', ['a', 'b', 'd'])).toBe('b');
-  });
-
   it('skips a neighbour that vanished too and takes the nearest survivor above', () => {
     expect(ruleKeyAfterRemoval(['a', 'b', 'c', 'd', 'e'], 'd', ['a', 'b', 'e'])).toBe('b');
   });

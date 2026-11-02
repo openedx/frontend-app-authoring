@@ -14,6 +14,7 @@ import {
   byTextContent,
   courseListUrl,
   defaultProfileResponse,
+  mockHeldGroupsRefetch,
   mockScrollIntoView,
 } from '../__mocks__';
 import { CompetencyAssociationsProvider, useCompetencyAssociations } from '../CompetencyAssociationsContext';
@@ -143,13 +144,12 @@ describe('<CriteriaAssociationsSection />', () => {
       criteriaCount: 2,
       totalCriteriaCount: 2,
     };
-    const without903: CompetencyCriteriaGroupsResponse = {
+    const onlyDefaultBox: CompetencyCriteriaGroupsResponse = {
       groups: hierarchy,
       criteria: [defaultRuleCriterion],
       criteriaCount: 1,
       totalCriteriaCount: 1,
     };
-    const onlyBox = without903;
     const nothingLeft: CompetencyCriteriaGroupsResponse = {
       groups: [],
       criteria: [],
@@ -160,19 +160,12 @@ describe('<CriteriaAssociationsSection />', () => {
     const eightyPercentToggleName = 'More actions for the rule with a score of 80% or higher';
     const defaultToggleName = 'More actions for the rule with a score of 70% or higher';
 
-    /** Serves `initial`, then holds every later groups GET until `release` is called. */
+    /** `mockHeldGroupsRefetch`, plus the profile, outline and delete replies a run needs. */
     const mockRun = (
       initial: CompetencyCriteriaGroupsResponse,
       refetched: CompetencyCriteriaGroupsResponse,
       deleteStatus = 200,
     ) => {
-      const control = { release: () => {} };
-      axiosMock.onGet(groupsUrl).replyOnce(200, initial);
-      axiosMock.onGet(groupsUrl).reply(() => (
-        new Promise((resolve) => {
-          control.release = () => resolve([200, refetched]);
-        })
-      ));
       axiosMock.onGet(apiUrls.defaultCompetencyRuleProfile()).reply(200, {
         count: 1,
         next: null,
@@ -193,7 +186,7 @@ describe('<CriteriaAssociationsSection />', () => {
       [901, 903].forEach((id) => {
         axiosMock.onDelete(apiUrls.deleteCompetencyCriterion(tagId, id)).reply(deleteStatus, { id, archived: false });
       });
-      return control;
+      return mockHeldGroupsRefetch(axiosMock, tagId, initial, refetched);
     };
 
     const waitForHeldRefetch = () =>
@@ -227,7 +220,7 @@ describe('<CriteriaAssociationsSection />', () => {
     };
 
     it('returns keyboard focus to the group\'s header once the rule is removed', async () => {
-      await removeEightyPercentRuleFromKeyboard(200, without903);
+      await removeEightyPercentRuleFromKeyboard(200, onlyDefaultBox);
 
       await waitFor(() =>
         expect(screen.getByRole('button', { name: 'By completing all of the following' })).toHaveFocus()
@@ -246,7 +239,7 @@ describe('<CriteriaAssociationsSection />', () => {
 
     it('leaves the empty state, with no course or group card, when the last box on the page is removed', async () => {
       const user = userEvent.setup();
-      const run = mockRun(onlyBox, nothingLeft);
+      const run = mockRun(onlyDefaultBox, nothingLeft);
       renderSection();
       expect(await screen.findByText('Demo Course')).toBeInTheDocument();
 
@@ -264,15 +257,15 @@ describe('<CriteriaAssociationsSection />', () => {
 
     it('disables every actions menu on the panel until the refetch lands', async () => {
       const user = userEvent.setup();
-      const run = mockRun(withBothBoxes, without903);
+      const run = mockRun(withBothBoxes, onlyDefaultBox);
       renderSection();
 
       await user.click(await screen.findByRole('button', { name: eightyPercentToggleName }));
       await user.click(screen.getByRole('button', { name: 'Remove rule' }));
       await waitForHeldRefetch();
 
-      // The course menu, the group menu and the two rule menus.
       const heldMenus = screen.getAllByRole('button', { name: /More actions/ });
+      // The course menu, the group menu, and the 70% and 80% rule menus.
       expect(heldMenus).toHaveLength(4);
       heldMenus.forEach((menu) => expect(menu).toBeDisabled());
 
@@ -280,6 +273,7 @@ describe('<CriteriaAssociationsSection />', () => {
 
       await waitFor(() => {
         const menus = screen.getAllByRole('button', { name: /More actions/ });
+        // The course menu, the group menu, and the 70% rule menu; the 80% one went with its box.
         expect(menus).toHaveLength(3);
         menus.forEach((menu) => expect(menu).toBeEnabled());
       });

@@ -11,7 +11,7 @@ import LogicOperatorSelect from './LogicOperatorSelect';
 import RuleBoxList from './RuleBoxList';
 import messages from './messages';
 
-const isTextEntryElement = (element: Element | null): boolean => (
+const isInputOrEditableElement = (element: Element | null): boolean => (
   element instanceof HTMLInputElement
   || element instanceof HTMLTextAreaElement
   || element instanceof HTMLSelectElement
@@ -95,7 +95,7 @@ const CriteriaGroupBox = (
   useEffect(() => {
     if (takesKeyboardFocus && selectButtonRef.current) {
       // Moving focus off a text field would interrupt the author's typing.
-      if (!isTextEntryElement(document.activeElement)) {
+      if (!isInputOrEditableElement(document.activeElement)) {
         selectButtonRef.current.focus({ preventScroll: selectionMoved });
       }
       consumeKeyboardFocusRequest();
