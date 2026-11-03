@@ -41,7 +41,7 @@ const StatefulRootWrapper = (props = {}) => {
   return <RootWrapper graders={gradingData.graders} setGradingData={setGradingDataState} {...props} />;
 };
 
-const undroppableErrorMessage = messages.numberOfDroppableUndroppableErrorMessage.defaultMessage
+const dropCountTooHighErrorMessage = messages.numberOfDroppableSecondErrorMessage.defaultMessage
   .replace('{type}', defaultAssignments.type);
 
 describe('<AssignmentSection />', () => {
@@ -112,7 +112,7 @@ describe('<AssignmentSection />', () => {
     const { getByText, getByTestId } = render(<StatefulRootWrapper setShowSavePrompt={setShowSavePrompt} />);
     const assignmentNumberOfDroppableInput = getByTestId('assignment-dropCount-input');
     fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '2' } });
-    expect(getByText(undroppableErrorMessage)).toBeInTheDocument();
+    expect(getByText(dropCountTooHighErrorMessage)).toBeInTheDocument();
     expect(assignmentNumberOfDroppableInput).toHaveClass('is-invalid');
     expect(setShowSavePrompt).toHaveBeenLastCalledWith(false);
   });
@@ -120,17 +120,17 @@ describe('<AssignmentSection />', () => {
     const { getByTestId, queryByText } = render(<StatefulRootWrapper />);
     const assignmentNumberOfDroppableInput = getByTestId('assignment-dropCount-input');
     fireEvent.change(getByTestId('assignment-minCount-input'), { target: { value: '1' } });
-    expect(queryByText(undroppableErrorMessage)).toBeInTheDocument();
+    expect(queryByText(dropCountTooHighErrorMessage)).toBeInTheDocument();
     expect(assignmentNumberOfDroppableInput).toHaveClass('is-invalid');
     fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '0' } });
-    expect(queryByText(undroppableErrorMessage)).not.toBeInTheDocument();
+    expect(queryByText(dropCountTooHighErrorMessage)).not.toBeInTheDocument();
     expect(assignmentNumberOfDroppableInput).not.toHaveClass('is-invalid');
   });
   it('checking only the minCount error is shown when minCount is not greater than 0', () => {
     const { getByTestId, getByText, queryByText } = render(<StatefulRootWrapper />);
     fireEvent.change(getByTestId('assignment-minCount-input'), { target: { value: '0' } });
     expect(getByText(messages.totalNumberErrorMessage.defaultMessage)).toBeInTheDocument();
-    expect(queryByText(undroppableErrorMessage)).not.toBeInTheDocument();
+    expect(queryByText(dropCountTooHighErrorMessage)).not.toBeInTheDocument();
     expect(getByTestId('assignment-dropCount-input')).not.toHaveClass('is-invalid');
   });
   it('checking correct error msg if assignment type name contains only spaces', () => {

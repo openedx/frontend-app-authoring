@@ -149,7 +149,7 @@ const AssignmentSection = ({
                 min={MIN_NUMBER_VALUE}
                 errorMsg={dropCountError
                   ? intl.formatMessage(messages.numberOfDroppableErrorMessage)
-                  : intl.formatMessage(messages.numberOfDroppableUndroppableErrorMessage, { type: gradeField.type })}
+                  : intl.formatMessage(messages.numberOfDroppableSecondErrorMessage, { type: gradeField.type })}
                 name={dropCount}
                 value={gradeField.dropCount}
                 onChange={(e) => handleAssignmentChange(e, gradeField.id)}
