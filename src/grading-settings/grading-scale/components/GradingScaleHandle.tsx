@@ -1,19 +1,34 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { MAXIMUM_SCALE_LENGTH } from '../utils';
+
+interface RangeSegment {
+  previous: number;
+  current: number;
+}
+
+interface GradingScaleHandleProps {
+  idx: number;
+  value: number;
+  gradingSegments: RangeSegment[];
+  getHandleProps: (props: { style: React.CSSProperties; }) => React.ButtonHTMLAttributes<HTMLButtonElement>;
+  ariaLabel: string;
+  isEditable?: boolean;
+}
 
 const GradingScaleHandle = ({
   idx,
   value,
   gradingSegments,
   getHandleProps,
+  ariaLabel,
   isEditable = true,
-}) => (
+}: GradingScaleHandleProps) => (
   <button
     key={value}
     className="grading-scale-segment-btn-resize"
     type="button"
+    aria-label={ariaLabel}
     disabled={!isEditable || gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH}
     {...getHandleProps({
       style: (!isEditable || gradingSegments[idx].current === MAXIMUM_SCALE_LENGTH) ?
@@ -25,18 +40,5 @@ const GradingScaleHandle = ({
     })}
   />
 );
-
-GradingScaleHandle.propTypes = {
-  idx: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-  getHandleProps: PropTypes.func.isRequired,
-  gradingSegments: PropTypes.arrayOf(
-    PropTypes.shape({
-      current: PropTypes.number.isRequired,
-      previous: PropTypes.number.isRequired,
-    }),
-  ).isRequired,
-  isEditable: PropTypes.bool,
-};
 
 export default GradingScaleHandle;

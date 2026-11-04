@@ -7,7 +7,7 @@ import { GradingScaleHandle, GradingScaleSegment, GradingScaleTicks } from './co
 import messages from './messages';
 
 import { useRanger } from './react-ranger';
-import { convertGradeData, MAXIMUM_SCALE_LENGTH } from './utils';
+import { convertGradeData, getLettersOnLongScale, getLettersOnShortScale, MAXIMUM_SCALE_LENGTH } from './utils';
 
 const DEFAULT_GRADE_LETTERS = ['A', 'B', 'C', 'D'];
 const getDefaultPassText = intl => intl.formatMessage(messages.defaultPassText);
@@ -188,6 +188,19 @@ const GradingScale = ({
     setGradingData(prevData => ({ ...prevData, gradeCutoffs: convertedResult }));
   };
 
+  // Same names as the segment fields show. Segment `n` displays gradingSegments[n - 1].
+  const getSegmentName = (segmentIdx) => (gradingSegments.length === 2
+    ? getLettersOnShortScale(segmentIdx, letters, intl)
+    : getLettersOnLongScale(segmentIdx, letters, gradingSegments));
+
+  // Handle `idx` sits on top of gradingSegments[idx], so it moves the cutoff
+  // between that grade and the one above it (segments `idx` and `idx + 1`).
+  const getHandleAriaLabel = (idx) =>
+    intl.formatMessage(messages.segmentBoundaryAriaLabel, {
+      higherGrade: getSegmentName(idx),
+      lowerGrade: getSegmentName(idx + 1),
+    });
+
   const {
     getTrackProps,
     ticks,
@@ -240,6 +253,7 @@ const GradingScale = ({
             gradingSegments={gradingSegments}
             value={value}
             idx={idx}
+            ariaLabel={getHandleAriaLabel(idx)}
             isEditable={isEditable}
           />
         ))}
