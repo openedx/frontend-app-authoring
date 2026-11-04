@@ -53,8 +53,7 @@ const messages = defineMessages({
     defaultMessage: 'This competency can\'t be associated with this content because a parent or child '
       + 'competency already has criteria in this course.',
     description: 'Toast shown in place of the generic create-criterion failure when the backend rejects the '
-      + 'new criterion because an ancestor or descendant competency already has criteria in the same course '
-      + '(a 400 response with a "tag_id" field error).',
+      + 'new criterion because an ancestor or descendant competency already has criteria in the same course.',
   },
 });
 
