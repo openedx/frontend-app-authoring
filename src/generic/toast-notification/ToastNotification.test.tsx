@@ -1,9 +1,10 @@
 import userEvent from '@testing-library/user-event';
 import { initializeMocks, render, screen } from '@src/testUtils';
-import { InfoOutline } from '@openedx/paragon/icons';
-import ProcessingNotification from '.';
+import ToastNotification from '.';
 
 const mockUndo = jest.fn();
+
+const TestIcon = () => <svg data-testid="test-icon" />;
 
 const props = {
   title: 'ThIs IS a Test. OK?',
@@ -14,39 +15,39 @@ const props = {
   },
 };
 
-describe('<ProcessingNotification />', () => {
+describe('<ToastNotification />', () => {
   beforeEach(() => {
     initializeMocks();
   });
 
   it('renders successfully', async () => {
     const user = userEvent.setup();
-    render(<ProcessingNotification {...props} close={() => {}} />);
+    render(<ToastNotification {...props} close={() => {}} />);
     await screen.findByText(props.title);
     const undo = await screen.findByText('Undo');
     const alert = await screen.findByRole('alert', { hidden: true });
-    expect(alert.classList.contains('processing-notification-hide-close-button')).toBeFalsy();
+    expect(alert.classList.contains('toast-notification-hide-close-button')).toBeFalsy();
     await user.click(undo);
     expect(mockUndo).toHaveBeenCalled();
   });
 
   it('add hide-close-button class if no close action is passed', async () => {
-    render(<ProcessingNotification {...props} />);
+    render(<ToastNotification {...props} />);
     await screen.findByText(props.title);
     const alert = await screen.findByRole('alert', { hidden: true });
-    expect(alert.classList.contains('processing-notification-hide-close-button')).toBeTruthy();
+    expect(alert.classList.contains('toast-notification-hide-close-button')).toBeTruthy();
   });
 
   it('renders the spinning gear icon by default', async () => {
-    const { container } = render(<ProcessingNotification {...props} />);
+    const { container } = render(<ToastNotification {...props} />);
     await screen.findByText(props.title);
-    expect(container.ownerDocument.querySelector('.processing-notification-icon')).toBeInTheDocument();
+    expect(container.ownerDocument.querySelector('.toast-notification-spinner')).toBeInTheDocument();
   });
 
-  it('renders a custom icon without the spinning class', async () => {
-    render(<ProcessingNotification {...props} icon={InfoOutline} />);
+  it('renders the toast icon instead of the spinner', async () => {
+    render(<ToastNotification {...props} icon={TestIcon} />);
     await screen.findByText(props.title);
-    expect(document.querySelector('.processing-notification-icon')).not.toBeInTheDocument();
-    expect(document.querySelector('.pgn__icon.mb-0.mr-2')).toBeInTheDocument();
+    expect(screen.getByTestId('test-icon')).toBeInTheDocument();
+    expect(document.querySelector('.toast-notification-spinner')).not.toBeInTheDocument();
   });
 });

@@ -2,13 +2,14 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { InfoOutline } from '@openedx/paragon/icons';
 import { ToastContext, ToastProvider } from '.';
 import initializeStore from '../../store';
 
 interface WraperProps {
   children: React.ReactNode;
 }
+
+const TestIcon = () => <svg data-testid="test-icon" />;
 
 const TestComponentToShow = () => {
   const { showToast } = React.useContext(ToastContext);
@@ -45,7 +46,7 @@ const TestComponentWithIcon = () => {
   const { showToast } = React.useContext(ToastContext);
 
   React.useEffect(() => {
-    showToast('This is the Toast!', undefined, undefined, InfoOutline);
+    showToast('This is the Toast!', undefined, undefined, TestIcon);
   }, [showToast]);
 
   return <div>Content</div>;
@@ -87,14 +88,15 @@ describe('<ToastProvider />', () => {
     expect(await screen.findByText('This is the Toast!')).toBeInTheDocument();
   });
 
-  it('should render a custom icon without the spinning class', async () => {
+  it('should render the toast icon instead of the spinner', async () => {
     render(
       <RootWrapper>
         <TestComponentWithIcon />
       </RootWrapper>,
     );
     expect(await screen.findByText('This is the Toast!')).toBeInTheDocument();
-    expect(document.querySelector('.processing-notification-icon')).not.toBeInTheDocument();
+    expect(screen.getByTestId('test-icon')).toBeInTheDocument();
+    expect(document.querySelector('.toast-notification-spinner')).not.toBeInTheDocument();
   });
 
   it('should render the spinning gear icon by default', async () => {
@@ -104,7 +106,7 @@ describe('<ToastProvider />', () => {
       </RootWrapper>,
     );
     expect(await screen.findByText('This is the Toast!')).toBeInTheDocument();
-    expect(document.querySelector('.processing-notification-icon')).toBeInTheDocument();
+    expect(document.querySelector('.toast-notification-spinner')).toBeInTheDocument();
   });
 
   it('should close toast after 5000ms', async () => {

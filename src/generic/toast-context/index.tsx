@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import ProcessingNotification, { type ProcessingNotificationProps } from '../processing-notification';
+import ToastNotification, { type ToastNotificationProps } from '@src/generic/toast-notification';
 
 export interface ToastActionData {
   label: string;
@@ -11,12 +11,12 @@ export interface ToastContextData {
   toastMessage: string | null;
   toastAction?: ToastActionData;
   toastDelay?: number;
-  toastIcon?: ProcessingNotificationProps['icon'];
+  toastIcon?: ToastNotificationProps['icon'];
   showToast: (
     message: string,
     action?: ToastActionData,
     delay?: number,
-    icon?: ProcessingNotificationProps['icon'],
+    icon?: ToastNotificationProps['icon'],
   ) => void;
   closeToast: () => void;
 }
@@ -53,7 +53,7 @@ export const ToastProvider = (props: ToastProviderProps) => {
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
   const [toastAction, setToastAction] = React.useState<ToastActionData>();
   const [toastDelay, setToastDelay] = React.useState<number>();
-  const [toastIcon, setToastIcon] = React.useState<ProcessingNotificationProps['icon']>();
+  const [toastIcon, setToastIcon] = React.useState<ToastNotificationProps['icon']>();
 
   const resetState = React.useCallback(() => {
     setToastMessage(null);
@@ -73,11 +73,12 @@ export const ToastProvider = (props: ToastProviderProps) => {
     message,
     action?: ToastActionData,
     delay?: number,
-    icon?: ProcessingNotificationProps['icon'],
+    icon?: ToastNotificationProps['icon'],
   ) => {
     setToastMessage(message);
     setToastAction(action);
     setToastDelay(delay);
+    // An icon is a component function, so a bare `setToastIcon(icon)` would call it as an updater.
     setToastIcon(() => icon);
   }, [setToastMessage, setToastAction]);
   const closeToast = React.useCallback(() => resetState(), [setToastMessage, setToastAction]);
@@ -108,7 +109,7 @@ export const ToastProvider = (props: ToastProviderProps) => {
     <ToastContext.Provider value={context}>
       {props.children}
       {toastMessage && (
-        <ProcessingNotification
+        <ToastNotification
           isShow={toastMessage !== null}
           title={toastMessage}
           action={toastAction}
