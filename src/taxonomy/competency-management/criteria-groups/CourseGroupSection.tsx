@@ -29,7 +29,7 @@ export interface CourseGroupSectionProps {
  */
 const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   const intl = useIntl();
-  const { focus, index } = useCompetencyAssociations();
+  const { focus, groupsIndex } = useCompetencyAssociations();
   const [isCollapsed, setIsCollapsed] = useState(false);
   // `refetchOnMount: false`: mirrors `CourseOutlineSubtree` - avoids a
   // wasted refetch of already-cached data on every mount.
@@ -51,11 +51,11 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     return names;
   }, [data, isError]);
 
-  // `index` is only `undefined` during `CourseGroupList`'s own loading/error
+  // `groupsIndex` is only `undefined` during `CourseGroupList`'s own loading/error
   // states, before this component ever mounts.
-  const bottomTierGroups = index ? bottomTierGroupsForCourse(index, courseGroup.courseKey) : [];
+  const bottomTierGroups = groupsIndex ? bottomTierGroupsForCourse(groupsIndex, courseGroup.courseKey) : [];
 
-  const containsFocus = !!focus && index?.groupsById.get(focus.groupId)?.parentId === courseGroup.id;
+  const containsFocus = !!focus && groupsIndex?.groupsById.get(focus.groupId)?.parentId === courseGroup.id;
 
   const toggleLabel = isCollapsed
     ? intl.formatMessage(messages.expandCourseGroupButtonLabel)

@@ -22,7 +22,7 @@ export interface CriteriaGroupBoxProps {
  */
 const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBoxProps) => {
   const intl = useIntl();
-  const { focus, focusGroup, index, systemDefaultProfile } = useCompetencyAssociations();
+  const { focus, focusGroup, groupsIndex, systemDefaultProfile } = useCompetencyAssociations();
   const ref = useRef<HTMLDivElement>(null);
 
   const isFocused = focus?.groupId === group.id;
@@ -76,11 +76,11 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBox
           ),
         })}
       </div>
-      {index && systemDefaultProfile && (
+      {groupsIndex && systemDefaultProfile && (
         <div className="criteria-group-box__rules">
           <RuleBoxList
             groupId={group.id}
-            index={index}
+            index={groupsIndex}
             systemDefaultProfile={systemDefaultProfile}
             subsectionNamesByUsageKey={subsectionNamesByUsageKey}
           />

@@ -8,7 +8,7 @@ import {
   within,
 } from '@src/testUtils';
 import type { CompetencyRuleProfile } from '../data/types';
-import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../testHelpers';
+import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../__mocks__';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import CourseOutlineSubtree from './CourseOutlineSubtree';
 
@@ -96,7 +96,7 @@ const loadedProfile: CompetencyRuleProfile = {
 const renderSubtree = (contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {}) =>
   render(
     <MockCompetencyAssociationsProvider
-      value={{ index: loadedIndex, systemDefaultProfile: loadedProfile, ...contextOverrides }}
+      value={{ groupsIndex: loadedIndex, systemDefaultProfile: loadedProfile, ...contextOverrides }}
     >
       <CourseOutlineSubtree courseId={courseId} />
     </MockCompetencyAssociationsProvider>,
@@ -383,7 +383,7 @@ describe('<CourseOutlineSubtree />', () => {
 
   it.each([
     ['systemDefaultProfile', { systemDefaultProfile: undefined }],
-    ['index', { index: undefined }],
+    ['groupsIndex', { groupsIndex: undefined }],
   ])('renders a graded subsection without a button while %s is not loaded', async (_name, overrides) => {
     const user = userEvent.setup();
     axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
@@ -393,5 +393,23 @@ describe('<CourseOutlineSubtree />', () => {
 
     expect(screen.getByText('Subsection 1A (graded)')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Subsection 1A (graded)' })).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['a create is in flight', { isAssociating: true }],
+    ['the associations are still loading', { status: 'pending' as const }],
+    ['the associations failed to load', { status: 'error' as const }],
+  ])('disables the graded subsection button and ignores clicks while %s', async (_name, overrides) => {
+    const user = userEvent.setup();
+    const associateSubsection = jest.fn();
+    axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+    renderSubtree({ associateSubsection, ...overrides });
+
+    await user.click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
+    const row = (await screen.findByText('Subsection 1A (graded)')).closest('button') as HTMLElement;
+    await user.click(row);
+
+    expect(row).toBeDisabled();
+    expect(associateSubsection).not.toHaveBeenCalled();
   });
 });

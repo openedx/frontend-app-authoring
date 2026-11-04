@@ -5,7 +5,7 @@ import {
   screen,
   within,
 } from '@src/testUtils';
-import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../testHelpers';
+import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../__mocks__';
 import type {
   BottomTierCompetencyCriteriaGroup,
   CompetencyCriteriaGroupsResponse,
@@ -30,7 +30,6 @@ const group: BottomTierCompetencyCriteriaGroup = {
   name: 'leaf',
   ordering: 0,
   logicOperator: 'AND',
-  archived: false,
 };
 
 const response: CompetencyCriteriaGroupsResponse = {
@@ -54,7 +53,7 @@ const renderBox = (
   subsectionNamesByUsageKey: Record<string, string> = {},
 ) => (
   render(
-    <MockCompetencyAssociationsProvider value={{ index, systemDefaultProfile, ...contextOverrides }}>
+    <MockCompetencyAssociationsProvider value={{ groupsIndex: index, systemDefaultProfile, ...contextOverrides }}>
       <CriteriaGroupBox group={group} subsectionNamesByUsageKey={subsectionNamesByUsageKey} />
     </MockCompetencyAssociationsProvider>,
   )

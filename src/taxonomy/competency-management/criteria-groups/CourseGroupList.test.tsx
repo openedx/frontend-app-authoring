@@ -1,6 +1,5 @@
-import type { UseQueryResult } from '@tanstack/react-query';
 import { initializeMocks, render, screen } from '@src/testUtils';
-import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../testHelpers';
+import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../__mocks__';
 import type { CompetencyCriteriaGroupsResponse, CompetencyRuleProfile } from '../data/types';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import CourseGroupList from './CourseGroupList';
@@ -25,7 +24,6 @@ const populatedGroupsResponse: CompetencyCriteriaGroupsResponse = {
       name: 'root',
       ordering: 0,
       logicOperator: 'AND',
-      archived: false,
     },
     {
       id: 1,
@@ -35,29 +33,10 @@ const populatedGroupsResponse: CompetencyCriteriaGroupsResponse = {
       name: 'course',
       ordering: 0,
       logicOperator: 'AND',
-      archived: false,
     },
   ],
   criteria: [],
 };
-
-const buildQueryResult = <T,>(overrides: Partial<UseQueryResult<T>>): UseQueryResult<T> => ({
-  isLoading: false,
-  isError: false,
-  data: undefined,
-  ...overrides,
-} as UseQueryResult<T>);
-
-const loadingGroupsQuery = buildQueryResult<CompetencyCriteriaGroupsResponse>({ isLoading: true });
-const loadedEmptyGroupsQuery = buildQueryResult<CompetencyCriteriaGroupsResponse>({ data: emptyGroupsResponse });
-const loadedPopulatedGroupsQuery = buildQueryResult<CompetencyCriteriaGroupsResponse>({
-  data: populatedGroupsResponse,
-});
-const erroredGroupsQuery = buildQueryResult<CompetencyCriteriaGroupsResponse>({ isError: true });
-
-const loadingProfileQuery = buildQueryResult<CompetencyRuleProfile>({ isLoading: true });
-const loadedProfileQuery = buildQueryResult<CompetencyRuleProfile>({ data: systemDefaultProfile });
-const erroredProfileQuery = buildQueryResult<CompetencyRuleProfile>({ isError: true });
 
 const renderList = (contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {}) => (
   render(
@@ -72,50 +51,22 @@ describe('<CourseGroupList />', () => {
     initializeMocks();
   });
 
-  it('renders a loading state while the groups query is still loading', () => {
-    renderList({ groupsQuery: loadingGroupsQuery, profileQuery: loadedProfileQuery });
-    expect(screen.getByRole('status')).toBeInTheDocument();
-  });
-
-  it('renders a loading state while the default-rule-profile query is still loading, even if groups already loaded', () => {
-    renderList({ groupsQuery: loadedEmptyGroupsQuery, profileQuery: loadingProfileQuery });
-    expect(screen.getByRole('status')).toBeInTheDocument();
-  });
-
-  it('renders a loading state, not the empty state, while course outlines are still loading', () => {
-    renderList({
-      groupsQuery: loadedPopulatedGroupsQuery,
-      profileQuery: loadedProfileQuery,
-      index: buildCompetencyCriteriaGroupsIndex(populatedGroupsResponse),
-      systemDefaultProfile,
-      accessibleCourseGroups: [],
-      areCourseOutlinesLoading: true,
-    });
+  it('renders a loading state, not the empty state, while the status is pending', () => {
+    renderList({ status: 'pending' });
     expect(screen.getByRole('status')).toBeInTheDocument();
     expect(screen.queryByText('No content associated.')).not.toBeInTheDocument();
   });
 
-  it('renders a failed state when the groups query errors', () => {
-    renderList({ groupsQuery: erroredGroupsQuery, profileQuery: loadedProfileQuery });
+  it('renders a failed state, not the empty state, when the status is error', () => {
+    renderList({ status: 'error', error: new Error('boom') });
     expect(screen.getByText('There was a problem loading this competency\'s associations. Please try again.'))
       .toBeInTheDocument();
-  });
-
-  it('renders a failed state when the default-rule-profile query errors, even if groups already loaded', () => {
-    renderList({
-      groupsQuery: loadedEmptyGroupsQuery,
-      profileQuery: erroredProfileQuery,
-      index: buildCompetencyCriteriaGroupsIndex(emptyGroupsResponse),
-    });
-    expect(screen.getByText('There was a problem loading this competency\'s associations. Please try again.'))
-      .toBeInTheDocument();
+    expect(screen.queryByText('No content associated.')).not.toBeInTheDocument();
   });
 
   it('renders the empty state when accessibleCourseGroups is empty, not throwing', () => {
     renderList({
-      groupsQuery: loadedEmptyGroupsQuery,
-      profileQuery: loadedProfileQuery,
-      index: buildCompetencyCriteriaGroupsIndex(emptyGroupsResponse),
+      groupsIndex: buildCompetencyCriteriaGroupsIndex(emptyGroupsResponse),
       systemDefaultProfile,
       accessibleCourseGroups: [],
     });
@@ -129,9 +80,7 @@ describe('<CourseGroupList />', () => {
       + 'groups response has one - accessibleCourseGroups decides this, not the raw response\'s own count',
     () => {
       renderList({
-        groupsQuery: loadedPopulatedGroupsQuery,
-        profileQuery: loadedProfileQuery,
-        index: buildCompetencyCriteriaGroupsIndex(populatedGroupsResponse),
+        groupsIndex: buildCompetencyCriteriaGroupsIndex(populatedGroupsResponse),
         systemDefaultProfile,
         // The one course-level group didn't pass the outline-accessibility
         // check, so it must render identically to no associations at all.
@@ -142,13 +91,11 @@ describe('<CourseGroupList />', () => {
   );
 
   it('renders course group sections for every accessible course-level group', async () => {
-    const index = buildCompetencyCriteriaGroupsIndex(populatedGroupsResponse);
+    const groupsIndex = buildCompetencyCriteriaGroupsIndex(populatedGroupsResponse);
     renderList({
-      groupsQuery: loadedPopulatedGroupsQuery,
-      profileQuery: loadedProfileQuery,
-      index,
+      groupsIndex,
       systemDefaultProfile,
-      accessibleCourseGroups: index.courseGroups,
+      accessibleCourseGroups: groupsIndex.courseGroups,
     });
     expect(screen.queryByText('No content associated.')).not.toBeInTheDocument();
     // The outline isn't mocked here, so it degrades to the raw course id via

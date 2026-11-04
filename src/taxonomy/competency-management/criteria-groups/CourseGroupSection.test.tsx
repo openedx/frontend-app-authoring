@@ -6,7 +6,7 @@ import {
   render,
   screen,
 } from '@src/testUtils';
-import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../testHelpers';
+import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../__mocks__';
 import type {
   CompetencyCriteriaGroupsResponse,
   CompetencyRuleProfile,
@@ -27,7 +27,6 @@ const courseGroup: CourseCompetencyCriteriaGroup = {
   name: 'course',
   ordering: 0,
   logicOperator: 'OR',
-  archived: false,
   courseKey,
 };
 
@@ -44,7 +43,6 @@ const response: CompetencyCriteriaGroupsResponse = {
       name: 'root',
       ordering: 0,
       logicOperator: 'AND',
-      archived: false,
     },
     courseGroup,
     {
@@ -55,7 +53,6 @@ const response: CompetencyCriteriaGroupsResponse = {
       name: 'leaf',
       ordering: 0,
       logicOperator: 'AND',
-      archived: false,
     },
     {
       id: 11,
@@ -65,7 +62,6 @@ const response: CompetencyCriteriaGroupsResponse = {
       name: 'leaf',
       ordering: 1,
       logicOperator: 'AND',
-      archived: false,
     },
   ],
   criteria: [
@@ -121,7 +117,7 @@ const renderSection = (
   contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {},
 ) => (
   render(
-    <MockCompetencyAssociationsProvider value={{ index, systemDefaultProfile, ...contextOverrides }}>
+    <MockCompetencyAssociationsProvider value={{ groupsIndex: index, systemDefaultProfile, ...contextOverrides }}>
       <CourseGroupSection courseGroup={courseGroup} />
     </MockCompetencyAssociationsProvider>,
   )

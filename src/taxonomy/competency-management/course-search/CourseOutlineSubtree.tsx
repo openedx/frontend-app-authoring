@@ -30,9 +30,10 @@ interface SubsectionRowProps {
  * One row for a single graded subsection.
  *
  * Renders a button that calls `associateSubsection` when clicked, unless
- * `canEditCourse(courseId)` is false or the association data (`index`,
+ * `canEditCourse(courseId)` is false or the association data (`groupsIndex`,
  * `systemDefaultProfile`) isn't loaded yet, in which case it renders the same
- * content as a non-interactive `div`. The already-associated pill
+ * content as a non-interactive `div`. The button is disabled unless
+ * `status` is `'success'` and no create is in flight. The already-associated pill
  * shows regardless of `canEditCourse`, so a view-only course still shows
  * what's associated; its cancel icon is
  * decorative (removal is out of scope). Re-clicking an already-associated
@@ -46,13 +47,16 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
     associateSubsection,
     canEditCourse,
     competencyExternalId,
-    index,
+    groupsIndex,
+    isAssociating,
+    status,
     systemDefaultProfile,
   } = useCompetencyAssociations();
   // The real `course_index` response populates `.id`, never `.usageKey`
   // (declared on the shared `XBlockBase` type but always `undefined` here).
   const isAssociated = associatedObjectIds.has(subsection.id);
-  const canSelect = canEditCourse(courseId) && !!index && !!systemDefaultProfile;
+  const canSelect = canEditCourse(courseId) && !!groupsIndex && !!systemDefaultProfile;
+  const isDisabled = status !== 'success' || isAssociating;
 
   const rowClassName = 'course-search-browse__subsection d-flex align-items-center justify-content-between';
   const rowContent = (
@@ -102,6 +106,7 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
       block
       className={rowClassName}
       data-associated={isAssociated}
+      disabled={isDisabled}
       onClick={() => associateSubsection(subsection.id, courseId)}
     >
       {rowContent}
