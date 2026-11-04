@@ -65,7 +65,6 @@ export interface CompetencyAssociationsContextValue {
    * selected inside it.
    */
   focusGroup: (groupId: number) => void;
-  /** Focuses one specific rule box, and the group it belongs to, together. */
   focusRuleBox: (groupId: number, ruleKey: string) => void;
   /** Call only from a course's own chevron on expand, never on collapse or a
    * page-level "Expand All". Feeds `canEditCourse` for a group-less course and
@@ -116,7 +115,6 @@ export function useCompetencyAssociations(): CompetencyAssociationsContextValue 
 
 export interface CompetencyAssociationsProviderProps {
   tagId: number;
-  /** The active competency's short external id, or `null` when it has none. */
   competencyExternalId: string | null;
   children: ReactNode;
 }
@@ -396,8 +394,8 @@ export const CompetencyAssociationsProvider = ({
 
     createCriterion({ tagId, payload }).then(
       (criterion) => {
-        // Read from the response: the groups query has not refetched yet, so
-        // the local tree does not know about a brand-new criterion or group.
+        // Read from the response: this callback closed over the pre-create `groupsIndex`,
+        // which does not know a brand-new criterion or group.
         dispatch({
           type: 'createSucceeded',
           generation,

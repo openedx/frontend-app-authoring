@@ -22,7 +22,6 @@ export const competencyQueryKeys = {
    * @param tagId ID of the competency (tag)
    */
   competency: (tagId: number) => [...competencyQueryKeys.all, 'competency', tagId],
-  /** @param tagId ID of the competency (tag) */
   competencyCriteriaGroups: (tagId: number) => [
     ...competencyQueryKeys.competency(tagId),
     'criteriaGroups',
@@ -34,10 +33,6 @@ export const competencyQueryKeys = {
   Array<string | number | undefined> | ((...args: any[]) => Array<string | number | undefined>)
 >;
 
-/**
- * Load a competency's existing criteria groups and criteria.
- * @param tagId The id of the competency (tag).
- */
 export const useCompetencyCriteriaGroups = (tagId: number) => (
   useQuery({
     queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId),
@@ -45,7 +40,6 @@ export const useCompetencyCriteriaGroups = (tagId: number) => (
   })
 );
 
-/** Load the studio-wide default competency rule profile. */
 export const useDefaultCompetencyRuleProfile = () => (
   useQuery({
     queryKey: competencyQueryKeys.defaultRuleProfile(),

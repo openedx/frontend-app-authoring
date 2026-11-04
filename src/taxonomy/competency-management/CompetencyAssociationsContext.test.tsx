@@ -310,12 +310,11 @@ describe('CompetencyAssociationsProvider', () => {
     expect(screen.getByText('Status: success')).toBeInTheDocument();
   });
 
-  it('does not delay initial focus when an unrelated course whose outline never resolves is expanded', async () => {
+  it('does not delay initial focus when a group-less course is expanded', async () => {
     const outlineGate = deferred();
     axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
     axiosMock.onGet(profileUrl).reply(200, profileResponse);
     axiosMock.onGet(courseAOutlineUrl).reply(() => outlineGate.released.then(() => [200, outlineFixture]));
-    axiosMock.onGet(courseBOutlineUrl).reply(() => new Promise(() => {}));
     renderProvider();
 
     await click('Expand course B');

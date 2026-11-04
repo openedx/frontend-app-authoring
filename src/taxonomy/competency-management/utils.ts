@@ -21,7 +21,6 @@ export interface CompetencyCriteriaGroupsIndex {
   courseGroups: CourseCompetencyCriteriaGroup[];
 }
 
-/** Indexes a response's flat `groups` and `criteria` arrays for lookup by id, parent, and containing group. */
 export function buildCompetencyCriteriaGroupsIndex(
   response: CompetencyCriteriaGroupsResponse,
 ): CompetencyCriteriaGroupsIndex {
@@ -149,7 +148,6 @@ export function visibleCourseGroups(
   return index.courseGroups.filter((courseGroup) => accessibleCourseIds.has(courseGroup.courseKey));
 }
 
-/** Every criterion's `objectId` across the whole response. */
 export function associatedObjectIds(response: CompetencyCriteriaGroupsResponse): Set<string> {
   return new Set(response.criteria.map((criterion) => criterion.objectId));
 }

@@ -13,10 +13,8 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 const getCbeV1Endpoint = () => new URL('api/cbe/v1/', getApiBaseUrl()).href;
 const getCompetencyManagementV1Endpoint = () => new URL('competencies/', getCbeV1Endpoint()).href;
 
-/** Builds a URL under `api/cbe/v1/competencies/`. */
 const makeUrl = (path: string): string => new URL(path, getCompetencyManagementV1Endpoint()).href;
 
-/** Builds a URL under `api/cbe/v1/`, outside `competencies/`. */
 const makeCbeV1Url = (path: string): string => new URL(path, getCbeV1Endpoint()).href;
 
 export const apiUrls = {
@@ -28,10 +26,6 @@ export const apiUrls = {
   createCompetencyCriterion: (tagId: number) => makeUrl(`${tagId}/criteria/`),
 } satisfies Record<string, (...args: any[]) => string>;
 
-/**
- * Get one competency's existing criteria groups and criteria.
- * @param tagId The id of the competency (tag) to load associations for.
- */
 export async function getCompetencyCriteriaGroups(tagId: number): Promise<CompetencyCriteriaGroupsResponse> {
   const { data } = await getAuthenticatedHttpClient().get(apiUrls.competencyCriteriaGroups(tagId));
   return camelCaseObject(data);

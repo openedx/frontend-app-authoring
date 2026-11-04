@@ -12,7 +12,6 @@ export type CompetencyGroupLogicOperator = 'AND' | 'OR';
 export interface CompetencyCriteriaGroup {
   id: number;
   parentId: number | null;
-  /** The competency (tag) this group belongs to. */
   tagId: number;
   courseKey: string | null;
   name: string;

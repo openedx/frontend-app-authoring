@@ -65,7 +65,7 @@ describe('useDefaultCompetencyRuleProfile', () => {
 });
 
 describe('useCreateCompetencyCriterion', () => {
-  it('invalidates that tagId\'s groups query on success, without suppressing the refetch', async () => {
+  it('invalidates that tagId\'s groups query on success', async () => {
     const { axiosMock, queryClient } = initializeMocks();
     axiosMock.onPost(apiUrls.createCompetencyCriterion(tagId)).reply(201, {
       id: 999,
@@ -247,8 +247,7 @@ describe('useCourseTaggingPermissions', () => {
   });
 
   it(
-    'expanding to a second course re-issues the query with both ids without losing the first course\'s '
-      + 'already-resolved answer',
+    'keeps the first course\'s already-resolved answer while a second course is added to the query',
     async () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
       jest.mocked(useUserPermissions).mockReturnValue({
