@@ -21,13 +21,13 @@ export const competencyQueryKeys = {
   /** Base key for data specific to one competency (tag). No data is stored directly in this key.
    * @param tagId ID of the competency (tag)
    */
-  competency: (tagId: number | undefined) => [...competencyQueryKeys.all, 'competency', tagId],
+  competency: (tagId: number) => [...competencyQueryKeys.all, 'competency', tagId],
   /** @param tagId ID of the competency (tag) */
-  competencyCriteriaGroups: (tagId: number | undefined) => [
+  competencyCriteriaGroups: (tagId: number) => [
     ...competencyQueryKeys.competency(tagId),
     'criteriaGroups',
   ],
-  /** The studio-wide default rule profile - not scoped to any one competency. */
+  /** The studio-wide default rule profile. */
   defaultRuleProfile: () => [...competencyQueryKeys.all, 'defaultRuleProfile'],
 } satisfies Record<
   string,
@@ -35,19 +35,17 @@ export const competencyQueryKeys = {
 >;
 
 /**
- * Load a competency's existing criteria groups and criteria (`#681`).
- * @param tagId The id of the selected competency, or `undefined` while
- * none is selected yet - the query is disabled until a real id is available.
+ * Load a competency's existing criteria groups and criteria.
+ * @param tagId The id of the competency (tag).
  */
-export const useCompetencyCriteriaGroups = (tagId: number | undefined) => (
+export const useCompetencyCriteriaGroups = (tagId: number) => (
   useQuery({
     queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId),
-    queryFn: () => api.getCompetencyCriteriaGroups(tagId as number),
-    enabled: tagId !== undefined,
+    queryFn: () => api.getCompetencyCriteriaGroups(tagId),
   })
 );
 
-/** Load the studio-wide default competency rule profile (`#773`). */
+/** Load the studio-wide default competency rule profile. */
 export const useDefaultCompetencyRuleProfile = () => (
   useQuery({
     queryKey: competencyQueryKeys.defaultRuleProfile(),
@@ -56,7 +54,7 @@ export const useDefaultCompetencyRuleProfile = () => (
 );
 
 /**
- * Build the mutation to create a new criterion under a competency (`#665`).
+ * Build the mutation to create a new criterion under a competency.
  * Invalidates that competency's criteria-groups query on success so the new
  * criterion shows up without a manual refetch.
  */
@@ -71,7 +69,8 @@ export const useCreateCompetencyCriterion = () => {
       { tagId, payload }: { tagId: number; payload: CreateCompetencyCriterionPayload; },
     ) => api.createCompetencyCriterion(tagId, payload),
     onSuccess: (_data, { tagId }) => {
-      queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
+      // Returned so the mutation stays pending until the refetch completes.
+      return queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
     },
   });
 };
@@ -84,30 +83,28 @@ export interface UseCourseTaggingPermissionsReturn {
 
 /**
  * Whether the signed-in author can manage this competency's associations for
- * each of the given courses, via the studio-wide `courses.manage_tags`
- * authz action (`COURSE_PERMISSIONS.MANAGE_TAGS`).
+ * each of the given courses, via the `courses.manage_tags` authz action
+ * (`COURSE_PERMISSIONS.MANAGE_TAGS`).
  *
- * Reproduces `useCourseUserPermissions`'s fallback rules for a *list* of
- * courses: every course resolves to `true` when `enableAuthzCourseAuthoring`
- * is off, and to `false` while that flag or the permissions call is loading.
+ * It has to serve both the pre-authz path and the authz path: every course
+ * resolves to `true` when `enableAuthzCourseAuthoring` is off, and to `false`
+ * while that flag or the permissions call is loading.
  *
- * A course id's last-known answer survives a later, bigger `courseIds` call
- * (e.g. expanding a second course): `useUserPermissions`'s cache key embeds
- * the whole query object, so a bigger set is a new, momentarily-loading
- * query, and without this every already-resolved course would flash back to
- * `false` too.
+ * It also works around `useUserPermissions` keying its cache on the whole
+ * query object: adding a course (e.g. expanding a second one) makes a new,
+ * momentarily loading query, which would flip every already-resolved course
+ * back to `false`. A course id's last-known answer is kept instead.
  */
 export const useCourseTaggingPermissions = (courseIds: string[]): UseCourseTaggingPermissionsReturn => {
-  // The studio-wide endpoint returns the same flag regardless of course, so
-  // no course id is passed here (the parameter is optional).
+  // `AUTHZ_COURSE_AUTHORING_FLAG` is a `CourseWaffleFlag`, read per course on the platform. This reads
+  // the studio-wide value, which can disagree with a course-scoped override. With the flag off the client
+  // reports every course editable and the backend refuses unauthorized creates.
   const waffleFlags = useWaffleFlags();
   const isWaffleFlagsLoading = waffleFlags?.isLoading ?? true;
   const isAuthzEnabled = waffleFlags?.enableAuthzCourseAuthoring ?? false;
 
-  // Memoized on a sorted/joined id string, not the `courseIds` array
-  // reference, so this query object - and so `useUserPermissions`'s own
-  // cache key, which embeds the whole object - stays stable across renders
-  // that pass an equivalent but differently-ordered or new-reference array.
+  // Memoized on a sorted id string, not the array reference, so the query object (and the cache key
+  // that embeds it) stays stable across equivalent `courseIds` arrays.
   const sortedCourseIdsKey = [...courseIds].sort().join(',');
   const query = useMemo<PermissionValidationQuery>(() => {
     if (!sortedCourseIdsKey) {
@@ -119,8 +116,6 @@ export const useCourseTaggingPermissions = (courseIds: string[]): UseCourseTaggi
     }, {});
   }, [sortedCourseIdsKey]);
 
-  // Mirrors `useCourseUserPermissions`'s own `isAuthzEnabled && !!courseId`
-  // gate, generalized to "there's at least one course id to check."
   const shouldValidatePermissions = isAuthzEnabled && courseIds.length > 0;
   const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions(
     query,
@@ -129,9 +124,6 @@ export const useCourseTaggingPermissions = (courseIds: string[]): UseCourseTaggi
 
   const isLoading = isWaffleFlagsLoading || (isAuthzEnabled && isLoadingUserPermissions);
 
-  // Accumulates every course id's last-known answer as permissions calls
-  // resolve, so a course already resolved once keeps that answer while a
-  // later, bigger query is still in flight (see the docstring above).
   const [resolvedAnswers, setResolvedAnswers] = useState<Record<string, boolean>>({});
   useEffect(() => {
     if (!isLoadingUserPermissions && userPermissions) {

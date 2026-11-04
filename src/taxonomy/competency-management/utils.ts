@@ -9,32 +9,19 @@ import type {
   RuleBox,
 } from './data/types';
 
-/** An indexed view over `#681`'s flat `groups`/`criteria` arrays, built
- * once per response by `buildCompetencyCriteriaGroupsIndex` so every other
- * derivation in this file can do O(1) lookups instead of re-scanning the
- * flat arrays.
- */
+/** Lookup maps over a response's flat `groups` and `criteria` arrays. */
 export interface CompetencyCriteriaGroupsIndex {
   /** Every group (root, course-level, or leaf), keyed by its own id. */
   groupsById: Map<number, CompetencyCriteriaGroup>;
-  /** Every group's direct children, keyed by parent id. The root's
-   * children are course-level groups; a course-level group's children are
-   * its leaf (bottom-tier) groups; a leaf group has no entry here (it has
-   * no children).
-   */
+  /** Every group's direct children, keyed by parent id. Leaf groups have no entry. */
   childGroupsByParentId: Map<number, CompetencyCriteriaGroup[]>;
   /** Every criterion belonging to one leaf group, keyed by that group's id. */
   criteriaByGroupId: Map<number, CompetencyCriterion[]>;
-  /** Every course-level group (`courseKey !== null`), in the order the API
-   * returned them.
-   */
+  /** Every course-level group, in the order the API returned them. */
   courseGroups: CourseCompetencyCriteriaGroup[];
 }
 
-/** Indexes `#681`'s flat `groups`/`criteria` response for lookup by id,
- * parent, and containing group - the shape every other function in this
- * file operates on.
- */
+/** Indexes a response's flat `groups` and `criteria` arrays for lookup by id, parent, and containing group. */
 export function buildCompetencyCriteriaGroupsIndex(
   response: CompetencyCriteriaGroupsResponse,
 ): CompetencyCriteriaGroupsIndex {
@@ -69,11 +56,7 @@ export function buildCompetencyCriteriaGroupsIndex(
   };
 }
 
-/** The rule that actually governs a criterion: its own override fields
- * when set, otherwise the system default rule profile's rule. ADR 0002
- * guarantees a criterion carries exactly one of {a shared rule-profile
- * reference} or {both override fields}, never both, never neither.
- */
+/** The rule that governs a criterion: its own override fields when set, otherwise the system default rule. */
 export function effectiveRuleOf(
   criterion: Pick<CompetencyCriterion, 'ruleTypeOverride' | 'rulePayloadOverride'>,
   systemDefaultProfile: CompetencyRuleProfile,
@@ -84,11 +67,8 @@ export function effectiveRuleOf(
   return { ruleType: systemDefaultProfile.ruleType, rulePayload: systemDefaultProfile.rulePayload };
 }
 
-/** A stable key for a criterion's effective rule, built from the rule's
- * own fixed-order fields - never `JSON.stringify`ing the payload object,
- * since an object's own key-insertion order isn't guaranteed stable across
- * two otherwise-identical payloads (e.g. one built by the API client, one
- * reconstructed from a form).
+/** A stable key for a criterion's effective rule. It is built from fixed-order fields, not
+ * `JSON.stringify`, because key order can differ between two otherwise identical payloads.
  */
 export function ruleKeyOf(
   criterion: Pick<CompetencyCriterion, 'ruleTypeOverride' | 'rulePayloadOverride'>,
@@ -99,11 +79,7 @@ export function ruleKeyOf(
   return `${ruleType}:${op}:${value}:${scale}`;
 }
 
-/** Groups one leaf group's criteria into rule boxes by
- * `ruleKeyOf` - criteria sharing the same effective rule render as a
- * single box. Boxes are ordered by their lowest criterion `id` ascending,
- * rule key as a tie-break.
- */
+/** Groups one leaf group's criteria into rule boxes by effective rule, ordered by lowest criterion `id`. */
 export function ruleBoxesForGroup(
   groupId: number,
   index: CompetencyCriteriaGroupsIndex,
@@ -131,11 +107,8 @@ export function ruleBoxesForGroup(
     });
 }
 
-/** The rule key of a bottom-tier group's last rule box (the one with the
- * highest lowest-criterion-id, i.e. the most recently added), or `null` if
- * the group has no criteria yet.
- */
-export function lastRealRuleKeyIn(
+/** The key of a bottom-tier group's last rule box, or `null` if the group has no criteria. */
+export function lastRuleKeyIn(
   groupId: number,
   index: CompetencyCriteriaGroupsIndex,
   systemDefaultProfile: CompetencyRuleProfile,
@@ -144,12 +117,7 @@ export function lastRealRuleKeyIn(
   return boxes.length ? boxes[boxes.length - 1].key : null;
 }
 
-/** Every bottom-tier group under the course-level group for the given
- * course, ordered per ADR 0002's `ordering` field ascending, `id` as
- * tie-break - the order `CourseGroupSection` renders its group cards in.
- * Empty if that course has no course-level group yet, or that group has no
- * bottom-tier children yet.
- */
+/** The bottom-tier groups of one course, ordered by `ordering` then `id`. Empty if the course has none. */
 export function bottomTierGroupsForCourse(
   index: CompetencyCriteriaGroupsIndex,
   courseId: string,
@@ -162,10 +130,7 @@ export function bottomTierGroupsForCourse(
   return [...children].sort((a, b) => (a.ordering - b.ordering) || (a.id - b.id));
 }
 
-/** The last group in `bottomTierGroupsForCourse`'s order, or `null` if
- * that course has no course-level group yet, or that group has no
- * bottom-tier children yet.
- */
+/** The last group in `bottomTierGroupsForCourse`'s order, or `null` if the course has none. */
 export function lastBottomTierGroupForCourse(
   index: CompetencyCriteriaGroupsIndex,
   courseId: string,
@@ -174,14 +139,8 @@ export function lastBottomTierGroupForCourse(
   return sorted.length ? sorted[sorted.length - 1] : null;
 }
 
-/** Every course-level group whose own course the author can actually see.
- *
- * `index.courseGroups` alone isn't enough: the response can carry an
- * association for a course the content-search lookup doesn't return for
- * this author, which must never render, not even with a placeholder name.
- * `accessibleCourseIds` is `CompetencyAssociationsContext`'s own answer to
- * whether a course's outline fetch resolved successfully; this file has no
- * fetch of its own, so the caller supplies that answer.
+/** The course-level groups whose course the author can see. The response can include courses
+ * the author has no access to, and those must not render.
  */
 export function visibleCourseGroups(
   index: CompetencyCriteriaGroupsIndex,
@@ -190,10 +149,7 @@ export function visibleCourseGroups(
   return index.courseGroups.filter((courseGroup) => accessibleCourseIds.has(courseGroup.courseKey));
 }
 
-/** Every criterion's `objectId` across the whole response, as a set - the
- * create mutation's duplicate guard uses this to tell whether a clicked
- * subsection already has a criterion associated with it.
- */
+/** Every criterion's `objectId` across the whole response. */
 export function associatedObjectIds(response: CompetencyCriteriaGroupsResponse): Set<string> {
   return new Set(response.criteria.map((criterion) => criterion.objectId));
 }

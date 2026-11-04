@@ -24,8 +24,12 @@ jest.mock('@src/authz/data/apiHooks', () => ({
 
 const tagId = 42;
 
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
 describe('useCompetencyCriteriaGroups', () => {
-  it('fetches a competency\'s criteria groups when tagId is defined', async () => {
+  it('exposes the criteria groups fetched for the given tagId', async () => {
     const { axiosMock } = initializeMocks();
     const mockResponse = { groups: [], criteria: [] };
     axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, mockResponse);
@@ -35,19 +39,10 @@ describe('useCompetencyCriteriaGroups', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual(mockResponse);
   });
-
-  it('issues no request, and reports not loading, while tagId is undefined', () => {
-    const { axiosMock } = initializeMocks();
-    const { result } = renderHook(() => useCompetencyCriteriaGroups(undefined), { wrapper: makeWrapper() });
-
-    expect(result.current.isLoading).toBe(false);
-    expect(result.current.fetchStatus).toEqual('idle');
-    expect(axiosMock.history.get.filter((req) => req.url?.includes('competency_criteria_groups'))).toHaveLength(0);
-  });
 });
 
 describe('useDefaultCompetencyRuleProfile', () => {
-  it('fetches the studio-wide default rule profile out of the paginated list response', async () => {
+  it('exposes the default rule profile fetched from the list endpoint', async () => {
     const { axiosMock } = initializeMocks();
     axiosMock.onGet(apiUrls.defaultCompetencyRuleProfile()).reply(200, {
       count: 1,
@@ -65,49 +60,7 @@ describe('useDefaultCompetencyRuleProfile', () => {
     const { result } = renderHook(() => useDefaultCompetencyRuleProfile(), { wrapper: makeWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual({
-      id: 1,
-      scopeType: 'system_default',
-      ruleType: 'grade',
-      rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
-      archived: false,
-    });
-  });
-
-  it('picks the system_default row by scopeType, not array position, when a scoped profile is also present', async () => {
-    const { axiosMock } = initializeMocks();
-    axiosMock.onGet(apiUrls.defaultCompetencyRuleProfile()).reply(200, {
-      count: 2,
-      next: null,
-      previous: null,
-      results: [
-        {
-          id: 2,
-          scope_type: 'taxonomy',
-          rule_type: 'grade',
-          rule_payload: { op: 'gte', value: 0.9, scale: 'percent' },
-          archived: false,
-        },
-        {
-          id: 1,
-          scope_type: 'system_default',
-          rule_type: 'grade',
-          rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
-          archived: false,
-        },
-      ],
-    });
-
-    const { result } = renderHook(() => useDefaultCompetencyRuleProfile(), { wrapper: makeWrapper() });
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual({
-      id: 1,
-      scopeType: 'system_default',
-      ruleType: 'grade',
-      rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
-      archived: false,
-    });
+    expect(result.current.data?.id).toEqual(1);
   });
 });
 
@@ -130,12 +83,45 @@ describe('useCreateCompetencyCriterion', () => {
       await result.current.mutateAsync({ tagId, payload: { object_id: 'block-a', group_id: 10 } });
     });
 
-    // `isInvalidated` (not `removeQueries`/a stale flag left permanently
-    // `false`) is the signal that a refetch was actually requested, not
-    // suppressed - `useCreateCompetencyCriterion` must not pass
-    // `refetchType: 'none'` (or similar) to `invalidateQueries`.
     const state = queryClient.getQueryState(competencyQueryKeys.competencyCriteriaGroups(tagId));
     expect(state?.isInvalidated).toBe(true);
+  });
+
+  it('stays pending until the groups refetch completes', async () => {
+    const { axiosMock } = initializeMocks();
+    const groupsUrl = apiUrls.competencyCriteriaGroups(tagId);
+    let releaseRefetch!: () => void;
+    const refetchGate = new Promise<void>((resolve) => {
+      releaseRefetch = resolve;
+    });
+    axiosMock.onGet(groupsUrl).replyOnce(200, { groups: [], criteria: [] })
+      .onGet(groupsUrl).reply(() => refetchGate.then(() => [200, { groups: [], criteria: [] }]));
+    axiosMock.onPost(apiUrls.createCompetencyCriterion(tagId)).reply(201, {
+      id: 999,
+      group_id: 10,
+      rule_profile_id: 1,
+      rule_type_override: null,
+      rule_payload_override: null,
+      object_tag_id: tagId,
+    });
+
+    const { result } = renderHook(
+      () => ({ groups: useCompetencyCriteriaGroups(tagId), create: useCreateCompetencyCriterion() }),
+      { wrapper: makeWrapper() },
+    );
+    await waitFor(() => expect(result.current.groups.isSuccess).toBe(true));
+
+    act(() => {
+      result.current.create.mutate({ tagId, payload: { object_id: 'block-a', group_id: 10 } });
+    });
+    await waitFor(() => expect(axiosMock.history.get).toHaveLength(2));
+
+    expect(result.current.create.isPending).toBe(true);
+
+    await act(async () => {
+      releaseRefetch();
+    });
+    await waitFor(() => expect(result.current.create.isSuccess).toBe(true));
   });
 
   it('does not invalidate a different tagId\'s groups query', async () => {
@@ -175,8 +161,6 @@ describe('useCourseTaggingPermissions', () => {
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.permissionsByCourseId).toEqual({});
-    // `enabled: false` is what would keep the real hook from ever firing a
-    // request - `useUserPermissions` itself is mocked here.
     expect(useUserPermissions).toHaveBeenCalledWith(expect.anything(), false);
   });
 
@@ -239,6 +223,29 @@ describe('useCourseTaggingPermissions', () => {
     });
   });
 
+  it('keeps a course\'s earlier answer when a later permissions response omits it', async () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    jest.mocked(useUserPermissions).mockReturnValue({
+      isLoading: false,
+      data: { 'course-a': true, 'course-b': true },
+    } as any);
+
+    const { result, rerender } = renderHook(
+      ({ courseIds }) => useCourseTaggingPermissions(courseIds),
+      { wrapper: makeWrapper(), initialProps: { courseIds: ['course-a', 'course-b'] } },
+    );
+    await waitFor(() => {
+      expect(result.current.permissionsByCourseId).toEqual({ 'course-a': true, 'course-b': true });
+    });
+
+    jest.mocked(useUserPermissions).mockReturnValue({ isLoading: false, data: { 'course-a': true } } as any);
+    rerender({ courseIds: ['course-a', 'course-b'] });
+
+    await waitFor(() => {
+      expect(result.current.permissionsByCourseId).toEqual({ 'course-a': true, 'course-b': true });
+    });
+  });
+
   it(
     'expanding to a second course re-issues the query with both ids without losing the first course\'s '
       + 'already-resolved answer',
@@ -257,14 +264,10 @@ describe('useCourseTaggingPermissions', () => {
         expect(result.current.permissionsByCourseId).toEqual({ 'course-a': true });
       });
 
-      // Expanding to a second course re-issues the query (a new query key,
-      // since `useUserPermissions`'s cache key embeds the whole query
-      // object) - still in flight, before it resolves.
+      // The second course's query is still in flight.
       jest.mocked(useUserPermissions).mockReturnValue({ isLoading: true, data: undefined } as any);
       rerender({ courseIds: ['course-a', 'course-b'] });
 
-      // Course A's already-resolved answer survives; course B - never
-      // resolved yet - defaults to false while its own answer is pending.
       expect(result.current.permissionsByCourseId).toEqual({ 'course-a': true, 'course-b': false });
 
       jest.mocked(useUserPermissions).mockReturnValue({

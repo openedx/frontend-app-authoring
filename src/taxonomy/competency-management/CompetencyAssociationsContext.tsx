@@ -4,7 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
+  useReducer,
   useState,
 } from 'react';
 import type { ReactNode } from 'react';
@@ -12,11 +12,9 @@ import { Error as ErrorIcon, InfoOutline } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useQueries } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
 
 import { getCourseOutlineIndex } from '@src/course-outline/data';
-// Bypasses the public barrel deliberately: this is the same query key
-// `useCourseOutlineIndex` uses, so the `useQueries` calls below share its
-// cache instead of refetching per course.
 import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import { useToastContext } from '@src/generic/toast-context';
 
@@ -27,7 +25,6 @@ import {
   useDefaultCompetencyRuleProfile,
 } from './data/apiHooks';
 import type {
-  CompetencyCriteriaGroupsResponse,
   CompetencyRuleProfile,
   CourseCompetencyCriteriaGroup,
   CreateCompetencyCriterionPayload,
@@ -40,74 +37,67 @@ import {
   bottomTierGroupsForCourse,
   buildCompetencyCriteriaGroupsIndex,
   lastBottomTierGroupForCourse,
-  lastRealRuleKeyIn,
+  lastRuleKeyIn,
   ruleBoxesForGroup,
   ruleKeyOf,
   visibleCourseGroups,
 } from './utils';
 
-/** A rule box only means anything inside its own group, so `groupId` and
- * `ruleKey` are always written together (see `focusGroup`/`focusRuleBox`).
- * `ruleKey` is `null` when the focused group has no rule box yet.
- */
+/** `ruleKey` is `null` when the focused group has no rule box yet. */
 export interface CriteriaFocus {
   groupId: number;
   ruleKey: string | null;
 }
 
 export interface CompetencyAssociationsContextValue {
+  /** `'pending'` until the groups, the default rule profile and every course
+   * outline have settled, then `'success'` for the rest of that competency,
+   * even when a later groups refetch adds a course whose outline has not
+   * loaded yet. `'error'` if the groups or the profile failed. Any failed
+   * outline fetch hides its course and does not affect `status`.
+   */
+  status: 'pending' | 'error' | 'success';
+  /** The groups or profile failure behind `status === 'error'`. */
+  error: Error | null;
   focus: CriteriaFocus | null;
-  /** Focuses a group and its last real rule box (`lastRealRuleKeyIn`). A
-   * no-op when `groupId` is already focused, so re-clicking the group
-   * heading doesn't discard a rule box the author had selected inside it.
+  /** Focuses a group and its last rule box. A no-op when `groupId` is already
+   * focused, so re-clicking the group heading keeps the rule box the author
+   * selected inside it.
    */
   focusGroup: (groupId: number) => void;
   /** Focuses one specific rule box, and the group it belongs to, together. */
   focusRuleBox: (groupId: number, ruleKey: string) => void;
-  /** Notify the provider that a course was expanded in the content panel.
-   * Call only from that panel's own per-course chevron on expand, never on
-   * collapse or from a page-level "Expand All". Feeds `canEditCourse` for a
-   * group-less course, and moves focus to the course's last bottom-tier group
-   * and its last rule box when focus is unset or on another course's group.
+  /** Call only from a course's own chevron on expand, never on collapse or a
+   * page-level "Expand All". Feeds `canEditCourse` for a group-less course and
+   * moves focus to the course's last group and rule box when focus is unset or
+   * on another course's group.
    */
   notifyCourseExpanded: (courseId: string) => void;
-  /** Associates a piece of course content (a gradable subsection) with the
-   * active competency.
+  /** Creates a criterion for the subsection in the active competency. Shows a
+   * toast instead of sending a request when the subsection is already
+   * associated or the groups tree or default profile has not loaded.
    */
   associateSubsection: (objectId: string, courseId: string) => void;
-  /** Whether the signed-in author can create/manage associations for the
-   * given course (`useCourseTaggingPermissions`'s `courses.manage_tags`).
+  isAssociating: boolean;
+  /** Whether the author can manage associations for the course
+   * (`courses.manage_tags`).
    */
   canEditCourse: (courseId: string) => boolean;
-  groupsQuery: UseQueryResult<CompetencyCriteriaGroupsResponse>;
-  profileQuery: UseQueryResult<CompetencyRuleProfile>;
-  /** Built from `groupsQuery.data`; `undefined` until that query resolves. */
-  index: CompetencyCriteriaGroupsIndex | undefined;
+  /** `undefined` until the groups query resolves. */
+  groupsIndex: CompetencyCriteriaGroupsIndex | undefined;
   systemDefaultProfile: CompetencyRuleProfile | undefined;
-  /** Every already-associated criterion's `objectId`, across the whole
-   * tree: the create mutation's duplicate guard and the content panel's
-   * "already associated" marking both read this.
+  /** The `objectId` of every criterion in the tree, for the duplicate guard
+   * and the content panel's "already associated" marking.
    */
   associatedObjectIds: Set<string>;
-  /** `utils.ts`'s `visibleCourseGroups`, filtered by this provider's own
-   * per-course outline-fetch results.
+  /** Course-level groups whose course outline loaded. A course added by a later
+   * groups refetch joins once its outline loads.
    */
   accessibleCourseGroups: CourseCompetencyCriteriaGroup[];
-  /** Whether any course-level group's outline fetch is still pending.
-   * `accessibleCourseGroups` is incomplete until this is `false`. A failed
-   * fetch counts as resolved.
-   */
-  areCourseOutlinesLoading: boolean;
-  /** The active competency's short external id (e.g. "CCRS-1.3"), shown on
-   * an already-associated subsection's badge. `null` when the competency
-   * has none.
-   */
+  /** The active competency's short external id (e.g. "CCRS-1.3"), or `null`. */
   competencyExternalId: string | null;
 }
 
-// Exported so component tests can render a hand-built value via
-// `<CompetencyAssociationsContext.Provider>` without mocking every HTTP
-// request the real provider would issue - see e.g. `criteria-groups/RuleBox.test.tsx`.
 export const CompetencyAssociationsContext = createContext<CompetencyAssociationsContextValue | undefined>(undefined);
 
 /** Reads the current competency-associations context. Throws outside a
@@ -126,15 +116,13 @@ export function useCompetencyAssociations(): CompetencyAssociationsContextValue 
 
 export interface CompetencyAssociationsProviderProps {
   tagId: number;
-  /** The active competency's short external id, for the already-associated
-   * badge in the content panel below. `null` when the competency has none.
-   */
+  /** The active competency's short external id, or `null` when it has none. */
   competencyExternalId: string | null;
   children: ReactNode;
 }
 
-/** Where focus should move when `courseId` is expanded, or `null` to leave it
- * as is: already on one of that course's groups, or the course has no group.
+/** The focus to move to when `courseId` is expanded, or `null` when focus
+ * already sits on one of that course's groups or the course has no group.
  */
 function courseExpansionFocus(
   courseId: string,
@@ -148,17 +136,77 @@ function courseExpansionFocus(
     return null;
   }
   const target = lastBottomTierGroupForCourse(index, courseId);
-  return target ? { groupId: target.id, ruleKey: lastRealRuleKeyIn(target.id, index, systemDefaultProfile) } : null;
+  return target ? { groupId: target.id, ruleKey: lastRuleKeyIn(target.id, index, systemDefaultProfile) } : null;
 }
 
-/** Provides per-competency criteria-association state to the right-hand
- * course panel.
+interface ProviderState {
+  tagId: number;
+  /** Bumped on every competency change, so an in-flight create can tell the
+   * author left and came back, which a `tagId` comparison cannot.
+   */
+  generation: number;
+  focus: CriteriaFocus | null;
+  /** A course expanded before the groups and default profile loaded. */
+  pendingCourseId: string | null;
+  initialFocusDone: boolean;
+  /** Latches once `status` first reaches `'success'` for the competency. */
+  settled: boolean;
+}
+
+type ProviderAction =
+  | { type: 'competencyChanged'; tagId: number; }
+  | { type: 'focusGroup'; groupId: number; ruleKey: string | null; }
+  | { type: 'focusRuleBox'; groupId: number; ruleKey: string; }
+  | { type: 'setFocus'; focus: CriteriaFocus; }
+  | { type: 'createSucceeded'; generation: number; focus: CriteriaFocus; }
+  | { type: 'courseExpandedBeforeLoad'; courseId: string; }
+  | { type: 'pendingCourseResolved'; focus: CriteriaFocus | null; }
+  | { type: 'initialFocusRan'; focus: CriteriaFocus | null; }
+  | { type: 'settled'; };
+
+function providerReducer(state: ProviderState, action: ProviderAction): ProviderState {
+  switch (action.type) {
+    case 'competencyChanged':
+      return {
+        tagId: action.tagId,
+        generation: state.generation + 1,
+        focus: null,
+        pendingCourseId: null,
+        initialFocusDone: false,
+        settled: false,
+      };
+    case 'focusGroup':
+      if (state.focus?.groupId === action.groupId) {
+        return state.pendingCourseId === null ? state : { ...state, pendingCourseId: null };
+      }
+      return { ...state, focus: { groupId: action.groupId, ruleKey: action.ruleKey }, pendingCourseId: null };
+    case 'focusRuleBox':
+      return { ...state, focus: { groupId: action.groupId, ruleKey: action.ruleKey }, pendingCourseId: null };
+    case 'setFocus':
+      return { ...state, focus: action.focus };
+    case 'createSucceeded':
+      return action.generation === state.generation ? { ...state, focus: action.focus } : state;
+    case 'courseExpandedBeforeLoad':
+      return { ...state, pendingCourseId: action.courseId };
+    case 'pendingCourseResolved':
+      return { ...state, pendingCourseId: null, focus: action.focus ?? state.focus };
+    case 'initialFocusRan':
+      // A focus set before the gate opened wins over the auto-focus.
+      return state.focus === null && action.focus !== null
+        ? { ...state, initialFocusDone: true, focus: action.focus, pendingCourseId: null }
+        : { ...state, initialFocusDone: true };
+    case 'settled':
+      return { ...state, settled: true };
+    default:
+      return state;
+  }
+}
+
+/** Provides per-competency criteria-association state to the course panel.
  *
- * Never remounted (no `key={tagId}`), so it doesn't reset
- * `CourseSearchBrowse`'s own state on competency change; instead it resets
- * its focus by comparing the incoming `tagId` against the previous render's
- * value, React's documented alternative to a remounting `key`. The expanded
- * courses persist, mirroring the content panel's own expansion state.
+ * Not remounted per competency (no `key={tagId}`), so the content panel keeps
+ * its own state; a `tagId` change instead resets focus during render. Expanded
+ * courses persist across competencies.
  */
 export const CompetencyAssociationsProvider = ({
   tagId,
@@ -168,31 +216,33 @@ export const CompetencyAssociationsProvider = ({
   const intl = useIntl();
   const { showToast } = useToastContext();
 
-  const [prevTagId, setPrevTagId] = useState(tagId);
-  const [focus, setFocus] = useState<CriteriaFocus | null>(null);
+  const [state, dispatch] = useReducer(providerReducer, {
+    tagId,
+    generation: 0,
+    focus: null,
+    pendingCourseId: null,
+    initialFocusDone: false,
+    settled: false,
+  });
+  const {
+    focus,
+    generation,
+    pendingCourseId,
+    initialFocusDone,
+    settled,
+  } = state;
   const [expandedCourseIds, setExpandedCourseIds] = useState<Set<string>>(new Set());
-  // A course expanded before its group tree and default profile loaded.
-  const [pendingExpandedCourseId, setPendingExpandedCourseId] = useState<string | null>(null);
-  const hasRunInitialFocusRef = useRef(false);
-  // Bumped on every competency change, so an in-flight create can tell that
-  // the author left and came back, which a tagId comparison can't.
-  const [selectionId, setSelectionId] = useState(0);
-  const latestSelectionIdRef = useRef(selectionId);
-  latestSelectionIdRef.current = selectionId;
-  const competencyChanged = tagId !== prevTagId;
+
+  const competencyChanged = tagId !== state.tagId;
   if (competencyChanged) {
-    setPrevTagId(tagId);
-    setSelectionId(selectionId + 1);
-    setFocus(null);
-    setPendingExpandedCourseId(null);
-    hasRunInitialFocusRef.current = false;
+    dispatch({ type: 'competencyChanged', tagId });
   }
 
   const groupsQuery = useCompetencyCriteriaGroups(tagId);
   const profileQuery = useDefaultCompetencyRuleProfile();
-  const createCriterion = useCreateCompetencyCriterion();
+  const { mutateAsync: createCriterion, isPending: isAssociating } = useCreateCompetencyCriterion();
 
-  const index = useMemo(
+  const groupsIndex = useMemo(
     () => (groupsQuery.data ? buildCompetencyCriteriaGroupsIndex(groupsQuery.data) : undefined),
     [groupsQuery.data],
   );
@@ -204,118 +254,97 @@ export const CompetencyAssociationsProvider = ({
 
   // Applied during render so the initial-focus effect below already sees it.
   // Skipped on the render that changes competency: the pending course belongs
-  // to the previous one, but `index` may already be the new one's cached tree.
-  if (!competencyChanged && pendingExpandedCourseId !== null && index && systemDefaultProfile) {
-    const next = courseExpansionFocus(pendingExpandedCourseId, focus, index, systemDefaultProfile);
-    setPendingExpandedCourseId(null);
-    if (next) {
-      setFocus(next);
-    }
+  // to the previous one, but `groupsIndex` may already be the new one's cached tree.
+  if (!competencyChanged && pendingCourseId !== null && groupsIndex && systemDefaultProfile) {
+    dispatch({
+      type: 'pendingCourseResolved',
+      focus: courseExpansionFocus(pendingCourseId, focus, groupsIndex, systemDefaultProfile),
+    });
   }
 
   const notifyCourseExpanded = useCallback((courseId: string) => {
     setExpandedCourseIds((prev) => (prev.has(courseId) ? prev : new Set(prev).add(courseId)));
-    if (!index || !systemDefaultProfile) {
-      setPendingExpandedCourseId(courseId);
+    if (!groupsIndex || !systemDefaultProfile) {
+      dispatch({ type: 'courseExpandedBeforeLoad', courseId });
       return;
     }
-    const next = courseExpansionFocus(courseId, focus, index, systemDefaultProfile);
+    const next = courseExpansionFocus(courseId, focus, groupsIndex, systemDefaultProfile);
     if (next) {
-      setFocus(next);
+      dispatch({ type: 'setFocus', focus: next });
     }
-  }, [focus, index, systemDefaultProfile]);
+  }, [focus, groupsIndex, systemDefaultProfile]);
 
-  // Every course-level group's course key, unfiltered - each must be
-  // fetched to determine accessibility (see `accessibleCourseIds` below).
-  // Also feeds the initial-focus gate and, unioned with `expandedCourseIds`,
-  // `canEditCourse`'s permission check.
   const courseIdsWithGroups = useMemo(
-    () => (index ? index.courseGroups.map((courseGroup) => courseGroup.courseKey) : []),
-    [index],
+    () => (groupsIndex ? groupsIndex.courseGroups.map((courseGroup) => courseGroup.courseKey) : []),
+    [groupsIndex],
   );
 
-  const outlineQueries = useQueries({
+  // Stays referentially stable because TanStack structurally shares the result; `useCallback` avoids recomputing it.
+  const combineOutlines = useCallback((results: UseQueryResult[]) => ({
+    accessibleCourseIds: courseIdsWithGroups.filter((_, i) => results[i]?.isSuccess).sort(),
+    isPending: results.some((result) => result.isPending),
+  }), [courseIdsWithGroups]);
+
+  const outlines = useQueries({
+    // Same key and `retry: false` as `useCourseOutlineIndex`, so the cache is shared.
     queries: courseIdsWithGroups.map((courseId) => ({
       queryKey: courseOutlineQueryKeys.index(courseId),
       queryFn: () => getCourseOutlineIndex(courseId),
       retry: false as const,
     })),
+    combine: combineOutlines,
   });
-  const allVisibleCourseOutlinesResolved = outlineQueries.every((query) => !query.isLoading);
-
-  // A course counts as accessible only once its outline fetch succeeds - a
-  // failed fetch is excluded entirely rather than shown with a placeholder
-  // name, and a still-loading one doesn't count as accessible either.
-  const accessibleCourseIds = useMemo(() => {
-    const ids = new Set<string>();
-    courseIdsWithGroups.forEach((courseId, i) => {
-      if (outlineQueries[i]?.isSuccess) {
-        ids.add(courseId);
-      }
-    });
-    return ids;
-  }, [courseIdsWithGroups, outlineQueries]);
 
   const accessibleCourseGroups = useMemo(
-    () => (index ? visibleCourseGroups(index, accessibleCourseIds) : []),
-    [index, accessibleCourseIds],
+    () => (groupsIndex ? visibleCourseGroups(groupsIndex, new Set(outlines.accessibleCourseIds)) : []),
+    [groupsIndex, outlines.accessibleCourseIds],
   );
 
+  let status: CompetencyAssociationsContextValue['status'] = 'success';
+  if (groupsQuery.isError || profileQuery.isError) {
+    status = 'error';
+  } else if (!settled && (groupsQuery.isPending || profileQuery.isPending || outlines.isPending)) {
+    status = 'pending';
+  }
+  // Skipped on the render that changes competency, whose data belongs to the previous one.
+  if (!competencyChanged && !settled && status === 'success') {
+    dispatch({ type: 'settled' });
+  }
+  const error = groupsQuery.error ?? profileQuery.error;
+
   const focusGroup = useCallback((groupId: number) => {
-    setPendingExpandedCourseId(null);
-    setFocus((prev) => {
-      if (prev?.groupId === groupId) {
-        // No-op: clicking the group already in focus must not re-resolve
-        // its default rule box, or it would silently throw away whichever
-        // rule box the author had selected inside it.
-        return prev;
-      }
-      const ruleKey = (index && systemDefaultProfile) ? lastRealRuleKeyIn(groupId, index, systemDefaultProfile) : null;
-      return { groupId, ruleKey };
-    });
-  }, [index, systemDefaultProfile]);
+    const ruleKey = (groupsIndex && systemDefaultProfile)
+      ? lastRuleKeyIn(groupId, groupsIndex, systemDefaultProfile)
+      : null;
+    dispatch({ type: 'focusGroup', groupId, ruleKey });
+  }, [groupsIndex, systemDefaultProfile]);
 
   const focusRuleBox = useCallback((groupId: number, ruleKey: string) => {
-    setPendingExpandedCourseId(null);
-    setFocus({ groupId, ruleKey });
+    dispatch({ type: 'focusRuleBox', groupId, ruleKey });
   }, []);
 
-  // Runs at most once per competency: once groups, profile, and every
-  // course-with-a-group's outline have resolved, focus the sole bottom-tier
-  // group if exactly one exists among *accessible* course-level groups (an
-  // inaccessible one isn't rendered, so it must never be auto-focus
-  // eligible). Independent of `expandedCourseIds`, which must not delay
-  // this gate. A click that sets focus first beats this auto-focus; the
-  // effect still marks itself as run, it just skips writing.
+  // Runs once per competency, after groups, profile and every outline have
+  // settled. An inaccessible course's group is not rendered, so it is never
+  // auto-focus eligible. Independent of `expandedCourseIds`, which must not
+  // delay it.
   useEffect(() => {
-    if (hasRunInitialFocusRef.current) {
-      return;
-    }
-    if (!groupsQuery.isSuccess || !profileQuery.isSuccess || !allVisibleCourseOutlinesResolved || !index) {
-      return;
-    }
-    hasRunInitialFocusRef.current = true;
-    if (focus !== null) {
+    if (initialFocusDone || status !== 'success' || !groupsIndex || !systemDefaultProfile) {
       return;
     }
     const allBottomTierGroups = accessibleCourseGroups
-      .flatMap((courseGroup) => bottomTierGroupsForCourse(index, courseGroup.courseKey));
-    if (allBottomTierGroups.length === 1) {
-      focusGroup(allBottomTierGroups[0].id);
-    }
-  }, [
-    groupsQuery.isSuccess,
-    profileQuery.isSuccess,
-    allVisibleCourseOutlinesResolved,
-    index,
-    accessibleCourseGroups,
-    focus,
-    focusGroup,
-  ]);
+      .flatMap((courseGroup) => bottomTierGroupsForCourse(groupsIndex, courseGroup.courseKey));
+    dispatch({
+      type: 'initialFocusRan',
+      focus: allBottomTierGroups.length === 1
+        ? {
+          groupId: allBottomTierGroups[0].id,
+          ruleKey: lastRuleKeyIn(allBottomTierGroups[0].id, groupsIndex, systemDefaultProfile),
+        }
+        : null,
+    });
+  }, [initialFocusDone, status, groupsIndex, systemDefaultProfile, accessibleCourseGroups]);
 
-  // `canEditCourse`'s course list: every course with a group plus every
-  // course expanded in the content panel (even group-less). Must not feed
-  // the initial-focus gate above.
+  // Every course with a group plus every expanded course, even a group-less one.
   const courseIdsForPermissions = useMemo(() => {
     const ids = new Set(expandedCourseIds);
     courseIdsWithGroups.forEach((courseId) => ids.add(courseId));
@@ -330,14 +359,11 @@ export const CompetencyAssociationsProvider = ({
 
   const associateSubsection = useCallback((objectId: string, courseId: string) => {
     if (associatedIds.has(objectId)) {
-      // Not a real failure - the backend is still the real backstop for a
-      // race, this only spares the author a failed-request error for
-      // something that isn't actually one.
       showToast(intl.formatMessage(messages.alreadyAssociatedToastMessage), undefined, undefined, InfoOutline);
       return;
     }
-    if (!index || !systemDefaultProfile) {
-      // The content panel only offers this action once both are loaded.
+    if (!groupsIndex || !systemDefaultProfile) {
+      showToast(intl.formatMessage(messages.createCriterionFailedToastMessage), undefined, undefined, ErrorIcon);
       return;
     }
 
@@ -346,11 +372,11 @@ export const CompetencyAssociationsProvider = ({
     let rulePayloadOverride: GradeRulePayload | undefined;
 
     if (focus) {
-      const focusedGroup = index.groupsById.get(focus.groupId);
+      const focusedGroup = groupsIndex.groupsById.get(focus.groupId);
       if (focusedGroup && focusedGroup.parentId !== null) {
-        const courseGroup = index.groupsById.get(focusedGroup.parentId);
+        const courseGroup = groupsIndex.groupsById.get(focusedGroup.parentId);
         if (courseGroup?.courseKey === courseId && focus.ruleKey !== null) {
-          const box = ruleBoxesForGroup(focus.groupId, index, systemDefaultProfile)
+          const box = ruleBoxesForGroup(focus.groupId, groupsIndex, systemDefaultProfile)
             .find((candidate) => candidate.key === focus.ruleKey);
           if (box) {
             groupId = focus.groupId;
@@ -368,25 +394,21 @@ export const CompetencyAssociationsProvider = ({
       ...(rulePayloadOverride !== undefined ? { rule_payload_override: rulePayloadOverride } : {}),
     };
 
-    createCriterion.mutate({ tagId, payload }, {
-      onSuccess: (criterion) => {
-        if (latestSelectionIdRef.current !== selectionId) {
-          return;
-        }
-        // From the response itself, not `lastRealRuleKeyIn` against the
-        // local tree: the groups query hasn't refetched yet, so the local
-        // tree still doesn't know about this brand-new criterion (or
-        // group) and would resolve a stale/`null` rule key.
-        setFocus({
-          groupId: criterion.groupId,
-          ruleKey: ruleKeyOf(criterion, systemDefaultProfile),
+    createCriterion({ tagId, payload }).then(
+      (criterion) => {
+        // Read from the response: the groups query has not refetched yet, so
+        // the local tree does not know about a brand-new criterion or group.
+        dispatch({
+          type: 'createSucceeded',
+          generation,
+          focus: { groupId: criterion.groupId, ruleKey: ruleKeyOf(criterion, systemDefaultProfile) },
         });
       },
-      onError: (error) => {
-        // The backend's hierarchy dominance check (ADR 0002): rejects a new
-        // criterion when an ancestor or descendant competency already has
-        // criteria in the same course, as a 400 with a `tag_id` field error.
-        const { response } = error;
+      (createError: AxiosError) => {
+        // A 400 with a `tag_id` field error is the backend's hierarchy
+        // dominance check: an ancestor or descendant competency already has
+        // criteria in this course.
+        const { response } = createError;
         const isHierarchyConflict = response?.status === 400
           && typeof response.data === 'object' && response.data !== null && 'tag_id' in response.data;
         showToast(
@@ -400,38 +422,48 @@ export const CompetencyAssociationsProvider = ({
           ErrorIcon,
         );
       },
-    });
-  }, [associatedIds, index, systemDefaultProfile, focus, tagId, selectionId, createCriterion, showToast, intl]);
+    );
+  }, [
+    associatedIds,
+    groupsIndex,
+    systemDefaultProfile,
+    focus,
+    tagId,
+    generation,
+    createCriterion,
+    showToast,
+    intl,
+  ]);
 
   const contextValue = useMemo<CompetencyAssociationsContextValue>(() => ({
+    status,
+    error,
     focus,
     focusGroup,
     focusRuleBox,
     notifyCourseExpanded,
     associateSubsection,
+    isAssociating,
     canEditCourse,
-    groupsQuery,
-    profileQuery,
-    index,
+    groupsIndex,
     systemDefaultProfile,
     associatedObjectIds: associatedIds,
     accessibleCourseGroups,
-    areCourseOutlinesLoading: !allVisibleCourseOutlinesResolved,
     competencyExternalId,
   }), [
+    status,
+    error,
     focus,
     focusGroup,
     focusRuleBox,
     notifyCourseExpanded,
     associateSubsection,
+    isAssociating,
     canEditCourse,
-    groupsQuery,
-    profileQuery,
-    index,
+    groupsIndex,
     systemDefaultProfile,
     associatedIds,
     accessibleCourseGroups,
-    allVisibleCourseOutlinesResolved,
     competencyExternalId,
   ]);
 

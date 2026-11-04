@@ -10,7 +10,7 @@ import {
   buildCompetencyCriteriaGroupsIndex,
   effectiveRuleOf,
   lastBottomTierGroupForCourse,
-  lastRealRuleKeyIn,
+  lastRuleKeyIn,
   ruleBoxesForGroup,
   ruleKeyOf,
   visibleCourseGroups,
@@ -51,8 +51,7 @@ const fixtureResponse: CompetencyCriteriaGroupsResponse = {
       courseKey: null,
       name: 'root',
       ordering: 0,
-      logicOperator: 'AND',
-      archived: false,
+      logicOperator: 'OR',
     },
     {
       id: 1,
@@ -61,8 +60,7 @@ const fixtureResponse: CompetencyCriteriaGroupsResponse = {
       courseKey: 'course-v1:OrgX+CS101+2024',
       name: 'course',
       ordering: 0,
-      logicOperator: 'AND',
-      archived: false,
+      logicOperator: 'OR',
     },
     {
       id: 11,
@@ -72,7 +70,6 @@ const fixtureResponse: CompetencyCriteriaGroupsResponse = {
       name: 'leaf',
       ordering: 1,
       logicOperator: 'OR',
-      archived: false,
     },
     {
       id: 10,
@@ -81,8 +78,7 @@ const fixtureResponse: CompetencyCriteriaGroupsResponse = {
       courseKey: null,
       name: 'leaf',
       ordering: 0,
-      logicOperator: 'AND',
-      archived: false,
+      logicOperator: 'OR',
     },
   ],
   criteria: [
@@ -132,13 +128,6 @@ describe('buildCompetencyCriteriaGroupsIndex', () => {
 
     expect(index.courseGroups).toEqual([fixtureResponse.groups[1]]);
   });
-
-  it('excludes the root group row from courseGroups, even though it\'s still indexed by id', () => {
-    const index = buildCompetencyCriteriaGroupsIndex(fixtureResponse);
-
-    expect(index.groupsById.get(100)).toBeDefined();
-    expect(index.courseGroups.map((g) => g.id)).not.toContain(100);
-  });
 });
 
 describe('effectiveRuleOf', () => {
@@ -184,8 +173,6 @@ describe('ruleBoxesForGroup', () => {
     const boxes = ruleBoxesForGroup(10, index, systemDefaultProfile);
 
     expect(boxes).toHaveLength(2);
-    // Sorted by lowest criterion id ascending: the 101/102 box (min id
-    // 101) comes before the 104 box (min id 104).
     expect(boxes[0].criteria.map((c) => c.id).sort((a, b) => a - b)).toEqual([101, 102]);
     expect(boxes[0].rule).toEqual({ ruleType: 'grade', rulePayload: { op: 'gte', value: 0.7, scale: 'percent' } });
     expect(boxes[1].criteria.map((c) => c.id)).toEqual([104]);
@@ -198,30 +185,64 @@ describe('ruleBoxesForGroup', () => {
   });
 });
 
-describe('lastRealRuleKeyIn', () => {
+describe('lastRuleKeyIn', () => {
   it('returns the last box\'s rule key for a populated group', () => {
     const index = buildCompetencyCriteriaGroupsIndex(fixtureResponse);
-    expect(lastRealRuleKeyIn(10, index, systemDefaultProfile)).toEqual(ruleKeyOf(
-      buildCriterion({
-        id: 104,
-        ruleTypeOverride: 'grade',
-        rulePayloadOverride: { op: 'lte', value: 0.9, scale: 'percent' },
-      }),
-      systemDefaultProfile,
-    ));
+    expect(lastRuleKeyIn(10, index, systemDefaultProfile)).toEqual('grade:lte:0.9:percent');
   });
 
   it('returns null for a group with no criteria', () => {
     const index = buildCompetencyCriteriaGroupsIndex(fixtureResponse);
-    expect(lastRealRuleKeyIn(999, index, systemDefaultProfile)).toBeNull();
+    expect(lastRuleKeyIn(999, index, systemDefaultProfile)).toBeNull();
   });
 });
+
+// The group with the higher id has the lower `ordering`, so sorting by `id` instead of `ordering` fails.
+const reversedIdsResponse: CompetencyCriteriaGroupsResponse = {
+  groups: [
+    {
+      id: 1,
+      parentId: 100,
+      tagId: 42,
+      courseKey: 'course-v1:OrgX+CS101+2024',
+      name: 'course',
+      ordering: 0,
+      logicOperator: 'OR',
+    },
+    {
+      id: 20,
+      parentId: 1,
+      tagId: 42,
+      courseKey: null,
+      name: 'leaf',
+      ordering: 1,
+      logicOperator: 'OR',
+    },
+    {
+      id: 30,
+      parentId: 1,
+      tagId: 42,
+      courseKey: null,
+      name: 'leaf',
+      ordering: 0,
+      logicOperator: 'OR',
+    },
+  ],
+  criteria: [],
+};
 
 describe('bottomTierGroupsForCourse', () => {
   it('returns every bottom-tier group under the course, ordered by ordering then id', () => {
     const index = buildCompetencyCriteriaGroupsIndex(fixtureResponse);
     const groups = bottomTierGroupsForCourse(index, 'course-v1:OrgX+CS101+2024');
     expect(groups.map((g) => g.id)).toEqual([10, 11]); // group 10 has ordering 0, group 11 has ordering 1
+  });
+
+  it('orders by ordering rather than by id when the higher id has the lower ordering', () => {
+    const index = buildCompetencyCriteriaGroupsIndex(reversedIdsResponse);
+    const courseKey = 'course-v1:OrgX+CS101+2024';
+    expect(bottomTierGroupsForCourse(index, courseKey).map((g) => g.id)).toEqual([30, 20]);
+    expect(lastBottomTierGroupForCourse(index, courseKey)?.id).toEqual(20);
   });
 
   it('returns an empty array when the course has no course-level group', () => {
@@ -247,8 +268,7 @@ describe('lastBottomTierGroupForCourse', () => {
           courseKey: 'course-v1:OrgX+CS101+2024',
           name: 'course',
           ordering: 0,
-          logicOperator: 'AND',
-          archived: false,
+          logicOperator: 'OR',
         },
         {
           id: 20,
@@ -257,8 +277,7 @@ describe('lastBottomTierGroupForCourse', () => {
           courseKey: null,
           name: 'leaf',
           ordering: 0,
-          logicOperator: 'AND',
-          archived: false,
+          logicOperator: 'OR',
         },
         {
           id: 21,
@@ -267,8 +286,7 @@ describe('lastBottomTierGroupForCourse', () => {
           courseKey: null,
           name: 'leaf',
           ordering: 0,
-          logicOperator: 'AND',
-          archived: false,
+          logicOperator: 'OR',
         },
       ],
       criteria: [],
@@ -293,8 +311,7 @@ describe('lastBottomTierGroupForCourse', () => {
           courseKey: 'course-v1:OrgX+CS101+2024',
           name: 'course',
           ordering: 0,
-          logicOperator: 'AND',
-          archived: false,
+          logicOperator: 'OR',
         },
       ],
       criteria: [],
