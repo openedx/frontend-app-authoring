@@ -497,6 +497,9 @@ export const editorConfig = ({
       // Protect self-closing <script /> tags from being mangled,
       // to preserve backwards compatibility with content that relied on this behavior
       protect: [/<script[^>]*\/>/g],
+      // TinyMCE v8 strips HTML comments containing markup (e.g. `<!-- <p>old intro</p> -->`) when sanitizing.
+      // Authors commonly comment out markup this way, so preserve it to avoid silently losing content on save.
+      allow_html_in_comments: true,
       // Paste moved into core in TinyMCE v6 with paste_data_images defaulting to true, so pasted screenshots
       // now land in the content as base64 data URIs (We previously used TinyMCE v5 which dropped them).
       paste_data_images: true,

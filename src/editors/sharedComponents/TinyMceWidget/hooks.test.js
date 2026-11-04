@@ -1,5 +1,6 @@
 import 'CourseAuthoring/editors/setupEditorTest';
 import { getConfig } from '@edx/frontend-platform';
+import tinymce from 'tinymce';
 import { MockUseState } from '../../testUtils';
 
 import * as tinyMCE from '../../data/constants/tinyMCE';
@@ -370,6 +371,18 @@ describe('TinyMceEditor hooks', () => {
         const editorContentHtml = 'SomE hTML content';
         output = module.editorConfig({ ...props, editorContentHtml });
         expect(output.initialValue).toBe(editorContentHtml);
+      });
+
+      it('preserves HTML comments that contain markup', () => {
+        const html = '<p>a</p><!-- <p>old intro</p> --><p>b</p>';
+        const schema = tinymce.html.Schema({ valid_elements: output.init.valid_elements });
+        const parser = tinymce.html.DomParser({
+          validate: true,
+          sanitize: true,
+          allow_html_in_comments: output.init.allow_html_in_comments,
+        }, schema);
+        const serialized = tinymce.html.Serializer({}, schema).serialize(parser.parse(html));
+        expect(serialized).toEqual(html);
       });
 
       it('calls setupCustomBehavior on setup', () => {
