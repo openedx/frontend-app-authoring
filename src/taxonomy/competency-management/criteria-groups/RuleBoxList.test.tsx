@@ -1,5 +1,5 @@
 import { initializeMocks, render, screen } from '@src/testUtils';
-import { MockCompetencyAssociationsProvider } from '../testHelpers';
+import { MockCompetencyAssociationsProvider } from '../__mocks__';
 import type { CompetencyCriteriaGroupsResponse, CompetencyRuleProfile } from '../data/types';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import RuleBoxList from './RuleBoxList';
@@ -24,7 +24,6 @@ const response: CompetencyCriteriaGroupsResponse = {
       name: 'leaf',
       ordering: 0,
       logicOperator: 'AND',
-      archived: false,
     },
   ],
   criteria: [

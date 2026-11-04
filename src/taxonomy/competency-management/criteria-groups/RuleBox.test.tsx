@@ -4,7 +4,7 @@ import {
   render,
   screen,
 } from '@src/testUtils';
-import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../testHelpers';
+import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../__mocks__';
 import type { CompetencyCriterion } from '../data/types';
 import RuleBox from './RuleBox';
 
