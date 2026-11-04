@@ -4,3 +4,11 @@
 //   .video-controls {
 //   }
 // }
+
+.transcript-language-select-menu {
+  // Intentionally matches the Files & Videos language picker
+  // (src/files-and-videos/videos-page/info-sidebar/transcript-item/LanguageSelect.scss).
+  max-height: 275px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
