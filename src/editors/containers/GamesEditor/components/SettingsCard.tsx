@@ -7,6 +7,8 @@ interface Props {
   /** The current value, shown in place of the controls while the card is collapsed. */
   summary: string;
   className?: string;
+  /** True while a save is out: the trigger is a div, out of the disabled fieldset's reach. */
+  isSaving?: boolean;
   children: React.ReactNode;
 }
 
@@ -19,14 +21,20 @@ const SettingsCard = ({
   title,
   summary,
   className = '',
+  isSaving = false,
   children,
 }: Props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   return (
     <Card className={`${className} border border-light-700 shadow-none`}>
       <Card.Section className="settingsCardTitleSection">
-        <Collapsible.Advanced open={isOpen} onToggle={setIsOpen}>
-          <Collapsible.Trigger className="collapsible-trigger d-flex">
+        <Collapsible.Advanced
+          open={isOpen}
+          onToggle={(next) => {
+            if (!isSaving) { setIsOpen(next); }
+          }}
+        >
+          <Collapsible.Trigger className="collapsible-trigger d-flex" aria-disabled={isSaving}>
             <span className="flex-grow-1 text-primary-500 x-small">{title}</span>
             <Collapsible.Visible whenClosed>
               <Icon src={KeyboardArrowDown} />

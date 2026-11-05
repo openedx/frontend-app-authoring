@@ -22,6 +22,7 @@ import GamesEditor from '.';
 import * as editorViewHooks from './gameContent';
 import * as api from './data/api';
 import { emptyCard, useGameState } from './data/useGameState';
+import type { ImageType } from './types';
 import { verticalSortableListCollisionDetection } from '@src/generic/DraggableList/verticalSortableList';
 
 const blockId = 'block-v1:org+course+run+type@games+block@abc';
@@ -68,6 +69,30 @@ const renderEditor = (
       learningContextId: app.learningContextId ?? undefined,
     },
   );
+
+/**
+ * Loaded cards start collapsed, so a test that reads or types into a card opens
+ * it first, the way an author does. Every card is opened, and finding none is a
+ * failure: a test whose block loads no cards (a failed or pending fetch) reads
+ * no fields, and renders with `renderEditor` instead.
+ */
+const expandLoadedCards = async () => {
+  const expandButtons = await screen.findAllByRole('button', { name: 'Expand card' });
+  expandButtons.forEach((button) => fireEvent.click(button));
+};
+
+const renderEditorWithCardsOpen = async (
+  props: Partial<React.ComponentProps<typeof GamesEditor>> = {},
+  app: AppState = {},
+) => {
+  const result = renderEditor(props, app);
+  await expandLoadedCards();
+  return result;
+};
+
+/** A card's own chrome, found from its drag handle; the deck and flat lists both render it. */
+const cardRoot = (cardName: string) =>
+  screen.getByRole('button', { name: `Reorder ${cardName}` }).closest('.card') as HTMLElement;
 
 /** Re-initialises the editors' store, as Editor.tsx does when the page moves to another block. */
 const reinitialize = (overrides: AppState) =>
@@ -135,7 +160,7 @@ describe('GamesEditor', () => {
   });
 
   it('renders the saved cards', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('Photosynthesis')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('How plants eat')).toBeInTheDocument();
   });
@@ -170,7 +195,7 @@ describe('saving', () => {
   it('signals the course refresh through sessionStorage, like the shared save does', async () => {
     sessionStorage.removeItem('courseRefreshTriggerOnComponentEditSave');
     localStorage.removeItem('courseRefreshTriggerOnComponentEditSave');
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
     const { onSave } = MockedEditorContainer.mock.lastCall[0];
     await onSave();
@@ -179,7 +204,7 @@ describe('saving', () => {
   });
 
   it('sends the card key the block loaded, so the card keeps its identity', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
     const { onSave } = MockedEditorContainer.mock.lastCall[0];
     await onSave();
@@ -247,7 +272,7 @@ describe('saving', () => {
 
   it('saves through the block own handler, storage keys included', async () => {
     const onClose = jest.fn();
-    renderEditor({ onClose });
+    await renderEditorWithCardsOpen({ onClose });
     await waitFor(() => expect(api.getSettings).toHaveBeenCalled());
     // Saving is refused until the settings are in, so wait for the card itself,
     // not just for the request to have gone out.
@@ -286,13 +311,13 @@ describe('per-card state after a reorder', () => {
   const cardMenus = () => screen.getAllByRole('button', { name: 'Card actions' });
 
   it('keeps the error on the invalid card when it is moved up', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('Second term')).toBeInTheDocument();
 
-    // Save: the wrapper's own validation flags card 2.
+    // Save: the seam's validation flags card 2.
     const { onSave } = MockedEditorContainer.mock.lastCall[0];
     await act(async () => {
-      await expect(onSave()).rejects.toThrow('Game cards failed validation.');
+      expect(await onSave()).toMatchObject({ persisted: false });
     });
     expect(await screen.findByText('Enter a definition')).toBeInTheDocument();
     expect(mockedApi.saveSettings).not.toHaveBeenCalled();
@@ -310,7 +335,7 @@ describe('per-card state after a reorder', () => {
   });
 
   it('keeps text typed into a card with that card when it is moved', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     const first = await screen.findByDisplayValue('First term');
     // Type without blurring: the text must still travel with the card.
     fireEvent.change(first, { target: { value: 'Edited first term' } });
@@ -333,13 +358,13 @@ describe('accessible names', () => {
   });
 
   it('names the card actions menu', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('A');
     expect(screen.getByRole('button', { name: 'Card actions' })).toBeInTheDocument();
   });
 
   it('labels the term and definition fields', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('A');
     expect(screen.getByLabelText('Term')).toHaveValue('A');
     expect(screen.getByLabelText('Definition')).toHaveValue('B');
@@ -358,7 +383,7 @@ describe('card heading controls', () => {
   // also toggled the card. The menu must open on its own.
   it('opens the card menu without collapsing the card', async () => {
     const user = userEvent.setup();
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('a');
     await user.click(screen.getByRole('button', { name: 'Card actions' }));
     expect(await screen.findByText('Delete')).toBeInTheDocument();
@@ -366,17 +391,24 @@ describe('card heading controls', () => {
     expect(screen.getByRole('button', { name: 'Collapse card' })).toBeInTheDocument();
   });
 
-  it('still collapses and expands the card from the chevron and from the heading', async () => {
+  // A loaded card starts collapsed: the row shows the one-line preview and the
+  // fields mount only when the author opens it, from the chevron or the heading.
+  it('starts a loaded card collapsed and expands it from the chevron and the heading', async () => {
+    const user = userEvent.setup();
     renderEditor();
-    await screen.findByDisplayValue('a');
-    // The body leaves the DOM once Paragon's exit transition ends.
-    fireEvent.click(screen.getByRole('button', { name: 'Collapse card' }));
-    await waitFor(() => expect(screen.queryByDisplayValue('a')).not.toBeInTheDocument());
-    fireEvent.click(screen.getByRole('button', { name: 'Expand card' }));
+    // The preview is the collapsed row's content; the fields are not mounted.
+    expect(await screen.findByText('a')).toBeInTheDocument();
+    expect(screen.queryByDisplayValue('a')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Expand card' }));
+
     expect(screen.getByDisplayValue('a')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Collapse card' })).toBeInTheDocument();
+
     // The heading is the only control that reports the expanded state.
-    fireEvent.click(screen.getByRole('button', { expanded: true }));
+    await user.click(screen.getByRole('button', { expanded: true }));
     await waitFor(() => expect(screen.queryByDisplayValue('a')).not.toBeInTheDocument());
+    expect(screen.getByRole('button', { name: 'Expand card' })).toBeInTheDocument();
   });
 });
 
@@ -395,7 +427,7 @@ describe('image settings while a save is in flight', () => {
   // A native button gives keyboard activation and the button role for free;
   // a div with role="button" has to re-implement both by hand.
   it('renders the image settings trigger as a native button', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Image settings' }).tagName).toBe('BUTTON');
   });
@@ -403,7 +435,7 @@ describe('image settings while a save is in flight', () => {
   // The modal sits outside the disabled fieldset. An alt-text change made
   // while the request is out is not in the payload and is lost on close.
   it('cannot be opened once Save has been clicked', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
     const { onSave } = MockedEditorContainer.mock.lastCall[0];
     act(() => {
@@ -418,7 +450,7 @@ describe('image settings while a save is in flight', () => {
 
   it('is not in the document until an image is clicked, and leaves it on Save', async () => {
     const user = userEvent.setup();
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
     expect(screen.queryByRole('dialog', { name: 'Image Settings' })).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Image settings' }));
@@ -428,7 +460,7 @@ describe('image settings while a save is in flight', () => {
   });
 
   it('can be opened before Save is clicked', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Image settings' }));
     expect(await screen.findByText('Image Settings')).toBeInTheDocument();
@@ -437,7 +469,7 @@ describe('image settings while a save is in flight', () => {
   // Save can be clicked while the modal is already open. Its own Save must
   // then be disabled, and its callback must not write into the card either.
   it('cannot save alt text from a modal that was open when Save was clicked', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Image settings' }));
     const dialog = await screen.findByRole('dialog', { name: 'Image Settings' });
@@ -467,7 +499,7 @@ describe('changing the Studio endpoint for the same block', () => {
     mockedApi.getSettings.mockResolvedValueOnce({
       data: { game_type: 'matching', cards: [{ term: 'old server', definition: 'd' }] },
     });
-    renderEditor({}, { studioEndpointUrl: 'http://a' });
+    await renderEditorWithCardsOpen({}, { studioEndpointUrl: 'http://a' });
     expect(await screen.findByDisplayValue('old server')).toBeInTheDocument();
 
     mockedApi.getSettings.mockReturnValueOnce(new Promise(() => {})); // new server never answers
@@ -476,7 +508,10 @@ describe('changing the Studio endpoint for the same block', () => {
 
     expect(screen.queryByDisplayValue('old server')).not.toBeInTheDocument();
     const { onSave } = MockedEditorContainer.mock.lastCall[0];
-    await expect(onSave()).rejects.toThrow('not loaded');
+    expect(await onSave()).toMatchObject({
+      persisted: false,
+      error: expect.objectContaining({ message: expect.stringMatching(/not loaded/) }),
+    });
     expect(mockedApi.saveSettings).not.toHaveBeenCalled();
   });
 });
@@ -495,7 +530,7 @@ describe('images without alt text', () => {
   // The block shows learners the card's text as the alt of an image that has
   // none; the editor's preview does the same, so what the author sees matches.
   it('falls back to the card text as the alt of an image with none, as the block does', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 't' })).toBeInTheDocument();
     expect(screen.queryByText('Term image')).not.toBeInTheDocument();
@@ -503,7 +538,7 @@ describe('images without alt text', () => {
 
   // The trigger is named by its own label, not by the image inside it.
   it('names the image-settings trigger independently of the image', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Image settings' })).toBeInTheDocument();
   });
@@ -511,7 +546,7 @@ describe('images without alt text', () => {
   // A relative URL from the block is shown from the block's Studio, but is
   // stored and saved as it came, so learner content never names the host.
   it('shows a relative image URL from the Studio host but keeps it relative in the content', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('t')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 't' })).toHaveAttribute('src', 'http://studio/media/i.png');
     expect(latestContainerProps().getContent().cards[0].term_image).toBe('/media/i.png');
@@ -531,12 +566,12 @@ describe('settings are always loaded fresh', () => {
   // reopening the editor after a save would otherwise show the old cards.
   it('fetches again when the same block is opened a second time', async () => {
     mockedApi.getSettings.mockResolvedValueOnce(settings('Before the save'));
-    const first = renderEditor();
+    const first = await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('Before the save')).toBeInTheDocument();
     first.unmount();
 
     mockedApi.getSettings.mockResolvedValueOnce(settings('After the save'));
-    renderEditor();
+    await renderEditorWithCardsOpen();
     expect(await screen.findByDisplayValue('After the save')).toBeInTheDocument();
     expect(screen.queryByDisplayValue('Before the save')).not.toBeInTheDocument();
     expect(mockedApi.getSettings).toHaveBeenCalledTimes(2);
@@ -547,7 +582,7 @@ describe('settings are always loaded fresh', () => {
   // author's unsaved work.
   it('does not refetch, or lose edits, when the window regains focus', async () => {
     mockedApi.getSettings.mockResolvedValue(settings('From the server'));
-    renderEditor();
+    await renderEditorWithCardsOpen();
     const term = await screen.findByDisplayValue('From the server');
     fireEvent.change(term, { target: { value: 'Typed by the author' } });
     fireEvent.blur(term);
@@ -569,13 +604,7 @@ describe('settings are always loaded fresh', () => {
 // this editor that is wrong in both directions: requests must go out (and fail)
 // at once, exactly as a plain HTTP call would.
 describe('while the browser is offline', () => {
-  const saveArgs = {
-    gameType: 'flashcards' as const,
-    isShuffled: true,
-    hasTimer: false,
-    cards: [],
-    title: 'Games',
-  };
+  const saveArgs = { title: 'Games' };
 
   beforeEach(() => {
     initializeMocks();
@@ -614,6 +643,8 @@ describe('while the browser is offline', () => {
     const { result } = renderGameState();
     await waitFor(() => expect(result.current.state.isLoaded).toBe(true));
 
+    // The loaded block has no cards, so the author makes the one they upload to.
+    act(() => result.current.actions.addCard());
     act(() => onlineManager.setOnline(false));
     mockedApi.uploadImage.mockRejectedValue(new Error('Network Error'));
     await act(async () => {
@@ -653,133 +684,23 @@ describe('loading', () => {
   });
 });
 
-describe('getContent', () => {
-  const settings = { shuffle: true, timer: true };
-
-  it('keeps an image-only card for flashcards and drops it for matching', () => {
-    const imageOnly = { ...emptyCard(), term_image: 'http://x/i.png' };
-    expect(editorViewHooks.getContent({ type: 'flashcards', settings, list: [imageOnly] }).cards).toHaveLength(1);
-    expect(editorViewHooks.getContent({ type: 'matching', settings, list: [imageOnly] }).cards).toHaveLength(0);
-  });
-
-  it('drops blank cards and keeps text-only cards for both game types', () => {
-    const list = [emptyCard(), { ...emptyCard(), term: 'a' }];
-    expect(editorViewHooks.getContent({ type: 'flashcards', settings, list }).cards).toHaveLength(1);
-    expect(editorViewHooks.getContent({ type: 'matching', settings, list }).cards).toHaveLength(1);
-  });
-});
-
+// gameContent.test.ts owns the card and deck-name rules. Only the two
+// image-without-text branches it cannot reach from a blank card stay here: the
+// definition side, and a side whose opposite has text.
 describe('validateCards', () => {
-  const card = (term: string, definition: string) => ({ ...emptyCard(), term, definition });
+  it('flags an image side with no text on it, whichever side it is', () => {
+    const definitionOnly = { ...emptyCard(), definition_image: 'http://x/d.png' };
+    expect(editorViewHooks.validateCards({ type: 'flashcards', list: [definitionOnly] }).errors)
+      .toEqual({ [`${definitionOnly.id}_definition`]: 'imageWithoutText' });
 
-  it('flags an image-only side of a flashcard with no text on either side', () => {
-    const imageOnly = { ...card('', ''), definition_image: 'http://x/d.png' };
-    const { errors } = editorViewHooks.validateCards({ list: [imageOnly], type: 'flashcards' });
-    expect(errors).toEqual({ [`${imageOnly.id}_definition`]: 'imageWithoutText' });
-  });
-
-  it('flags a missing term when only the definition is filled', () => {
-    const onlyDefinition = card('', 'b');
-    const { errors } = editorViewHooks.validateCards({ list: [onlyDefinition], type: 'matching' });
-    expect(errors).toEqual({ [`${onlyDefinition.id}_term`]: true });
-  });
-
-  it('asks for text beside a flashcard image on the side that has none', () => {
-    const termImage = { ...card('', 'b'), term_image: 'http://x/t.png' };
-    const definitionImage = { ...card('a', ''), definition_image: 'http://x/d.png' };
-    const { errors } = editorViewHooks.validateCards({ list: [termImage, definitionImage], type: 'flashcards' });
-    expect(errors).toEqual({
-      [`${termImage.id}_term`]: 'imageWithoutText',
-      [`${definitionImage.id}_definition`]: 'imageWithoutText',
-    });
-  });
-
-  it('reports validity purely from the collected errors', () => {
-    const { errors, isValid } = editorViewHooks.validateCards({ list: [card('a', '')], type: 'matching' });
-    expect(Object.keys(errors)).toHaveLength(1);
-    expect(isValid).toBe(false);
-  });
-
-  // A blank placeholder card already saves as an empty game (getContent drops
-  // it). Deleting the last card must reach the same outcome, not a Save that
-  // is refused with nothing to point at.
-  it('accepts an empty card list', () => {
-    expect(editorViewHooks.validateCards({ type: 'matching', list: [] }).isValid).toBe(true);
-  });
-
-  it('still rejects a card with a term but no definition', () => {
-    const { isValid, errors } = editorViewHooks.validateCards({ type: 'matching', list: [card('t', '')] });
-    expect(isValid).toBe(false);
-    expect(Object.keys(errors)).toHaveLength(1);
-  });
-
-  // Deleting the last card, then Save: the block receives an empty list.
-  it('lets the author delete the last card and save', async () => {
-    initializeMocks();
-    mockedApi.getSettings.mockResolvedValue({
-      data: { game_type: 'matching', cards: [{ term: 'only', definition: 'card' }] },
-    });
-    mockedApi.saveSettings.mockResolvedValue({ data: { success: true } });
-    renderEditor();
-    expect(await screen.findByDisplayValue('only')).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: 'Card actions' }));
-    fireEvent.click(await screen.findByText('Delete'));
-    expect(screen.queryByDisplayValue('only')).not.toBeInTheDocument();
-
-    const { onSave } = MockedEditorContainer.mock.lastCall[0];
-    await onSave();
-    const [, content] = mockedApi.saveSettings.mock.calls[0];
-    expect(content.cards).toEqual([]);
-  });
-});
-
-describe('buildSavePayload', () => {
-  const { buildSavePayload } = jest.requireActual('./data/api');
-
-  it('sends the image storage keys, so a card stays linked to its stored file', () => {
-    const payload = buildSavePayload({
-      gameType: 'flashcards',
-      isShuffled: true,
-      hasTimer: false,
-      title: 'Games',
-      cards: [{
-        term: 't',
-        definition: 'd',
-        term_image: 'http://x/i.png',
-        term_image_path: 'gamesxblock/abc/hash.png',
-      }],
-    });
-    expect(payload.cards[0].term_image_path).toEqual('gamesxblock/abc/hash.png');
-    expect(payload.cards[0]).toHaveProperty('definition_image_path');
-  });
-
-  // Matching hides the images but must not lose them: switching to Matching
-  // and back would otherwise wipe every image.
-  it('keeps image fields and sends has_timer for matching games', () => {
-    const payload = buildSavePayload({
-      gameType: 'matching',
-      isShuffled: false,
-      hasTimer: true,
-      title: 'Games',
-      cards: [{ term: 't', definition: 'd', term_image: '/media/i.png' }],
-    });
-    expect(payload.cards[0].term_image).toEqual('/media/i.png');
-    expect(payload.has_timer).toBe(true);
-  });
-
-  // The setting is hidden for flashcards but still stored by the block, whose
-  // save handler treats a missing value as true. Sending it keeps a timer the
-  // author turned off from switching itself back on.
-  it('sends has_timer for flashcards too', () => {
-    const payload = buildSavePayload({
-      gameType: 'flashcards',
-      isShuffled: true,
-      hasTimer: false,
-      title: 'G',
-      cards: [],
-    });
-    expect(payload.has_timer).toBe(false);
+    // Text on the other side does not excuse an image with none beside it.
+    const definitionImage = { ...emptyCard(), term: 'a', definition_image: 'http://x/d.png' };
+    const termImage = { ...emptyCard(), definition: 'b', term_image: 'http://x/t.png' };
+    expect(editorViewHooks.validateCards({ type: 'flashcards', list: [definitionImage, termImage] }).errors)
+      .toEqual({
+        [`${definitionImage.id}_definition`]: 'imageWithoutText',
+        [`${termImage.id}_term`]: 'imageWithoutText',
+      });
   });
 });
 
@@ -790,13 +711,16 @@ describe('saving before the settings have loaded', () => {
     mockedApi.saveSettings.mockResolvedValue({ data: { success: true } });
   });
 
-  // The pre-load list is a single blank placeholder card. It validates clean,
-  // so without a gate a Save click would overwrite the block's real content.
-  it('fails validation and refuses to save', async () => {
+  // The pre-load list is empty, and an empty list validates clean, so without
+  // the seam's loaded gate a Save click would overwrite the block's real
+  // content.
+  it('refuses to save before the settings have loaded', async () => {
     renderEditor();
-    const { validateEntry, onSave } = MockedEditorContainer.mock.calls[0][0];
-    expect(validateEntry()).toBe(false);
-    await expect(onSave()).rejects.toThrow(/not loaded/);
+    const { onSave } = MockedEditorContainer.mock.calls[0][0];
+    expect(await onSave()).toMatchObject({
+      persisted: false,
+      error: expect.objectContaining({ message: expect.stringMatching(/not loaded/) }),
+    });
     expect(api.saveSettings).not.toHaveBeenCalled();
   });
 });
@@ -808,11 +732,18 @@ const latestContainerProps = () => MockedEditorContainer.mock.calls.filter(([pro
 const loadedSettings = {
   data: { game_type: 'flashcards', cards: [{ term: 'Photosynthesis', definition: 'How plants eat' }] },
 };
-const pickFile = (inputId: string) => {
-  const input = document.getElementById(inputId);
-  if (!input) { throw new Error(`No file input #${inputId}`); }
-  fireEvent.change(input, { target: { files: [new File(['x'], 'x.png', { type: 'image/png' })] } });
+// Card ids are runtime UUIDs, so a card's hidden file input is found by the
+// field prefix of its id. These tests render a single card, so it is unique.
+const fileInput = (imageType: ImageType) => {
+  const selector = `input[type="file"][id^="${imageType}_image_upload|"]`;
+  const inputs = document.querySelectorAll<HTMLInputElement>(selector);
+  if (inputs.length !== 1) { throw new Error(`Expected one ${imageType} file input, found ${inputs.length}`); }
+  return inputs[0];
 };
+const pickFile = (imageType: ImageType) =>
+  fireEvent.change(fileInput(imageType), {
+    target: { files: [new File(['x'], 'x.png', { type: 'image/png' })] },
+  });
 
 describe('image requests after the settings have loaded', () => {
   beforeEach(() => {
@@ -821,16 +752,16 @@ describe('image requests after the settings have loaded', () => {
     mockedApi.saveSettings.mockResolvedValue({ data: { success: true } });
   });
 
-  // Regression: the upload handler once closed over the pre-load placeholder
-  // list, so it looked up a card id that no longer existed and the
-  // update was dropped. Proven here by saving: only an update that reached the
-  // loaded card puts the storage path in the payload.
-  it('attaches an uploaded image to the loaded card, not the placeholder', async () => {
+  // Regression: the upload handler once closed over the pre-load list, so it
+  // looked up a card id that was not there and the update was dropped. Proven
+  // here by saving: only an update that reached the loaded card puts the
+  // storage path in the payload.
+  it('attaches an uploaded image to the loaded card, not the pre-load state', async () => {
     mockedApi.uploadImage.mockResolvedValue({ data: { success: true, url: '/media/x.png', file_path: 'games/x.png' } });
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
 
-    pickFile('term_image_upload|0');
+    pickFile('term');
     await waitFor(() => expect(api.uploadImage).toHaveBeenCalledTimes(1));
 
     await waitFor(async () => {
@@ -842,10 +773,10 @@ describe('image requests after the settings have loaded', () => {
 
   it('shows a dismissible error when an image upload fails', async () => {
     mockedApi.uploadImage.mockResolvedValue({ data: { success: false, error: 'too large' } });
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
 
-    pickFile('term_image_upload|0');
+    pickFile('term');
     expect(await screen.findByText(/last image change could not be saved/)).toBeInTheDocument();
     expect(screen.getByText('too large')).toBeInTheDocument();
 
@@ -859,12 +790,12 @@ describe('image requests after the settings have loaded', () => {
   // the pick; the clear is observed on the element's own `value` setter.
   it('clears the file input once the file is read, so the same file can be chosen again', async () => {
     mockedApi.uploadImage.mockResolvedValue({ data: { success: false, error: 'too large' } });
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
-    const input = document.getElementById('term_image_upload|0') as HTMLInputElement;
+    const input = fileInput('term');
     const setValue = jest.spyOn(input, 'value', 'set');
 
-    pickFile('term_image_upload|0');
+    pickFile('term');
     await waitFor(() => expect(api.uploadImage).toHaveBeenCalledTimes(1));
     expect(setValue).toHaveBeenCalledWith('');
   });
@@ -877,7 +808,7 @@ describe('unsaved-change detection', () => {
   });
 
   it('counts a typed edit as unsaved before the field is left', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     const input = await screen.findByDisplayValue('Photosynthesis');
     expect(latestContainerProps().isDirty()).toBe(false);
 
@@ -886,7 +817,7 @@ describe('unsaved-change detection', () => {
   });
 
   it('does not arm the discard prompt just because a card was collapsed', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
     fireEvent.click(screen.getByRole('button', { name: 'Collapse card' }));
     expect(latestContainerProps().isDirty()).toBe(false);
@@ -908,6 +839,7 @@ describe('settings load failure', () => {
     expect(screen.getByText('boom')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /try again/i }));
+    await expandLoadedCards();
     expect(await screen.findByDisplayValue('Photosynthesis')).toBeInTheDocument();
     expect(api.getSettings).toHaveBeenCalledTimes(2);
   });
@@ -927,10 +859,10 @@ describe('saving while an image request is in flight', () => {
         finishUpload = resolve;
       }),
     );
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
 
-    pickFile('term_image_upload|0');
+    pickFile('term');
     await waitFor(() => expect(api.uploadImage).toHaveBeenCalledTimes(1));
 
     const saving = latestContainerProps().onSave();
@@ -950,7 +882,7 @@ describe('saving while an image request is in flight', () => {
 
   // Regression: a failed request used to be swallowed, so the save went ahead
   // with the old image state and closed the editor on top of the error.
-  it('rejects, without saving or closing, when the pending upload fails', async () => {
+  it('reports the failure, without saving or closing, when the pending upload fails', async () => {
     let finishUpload;
     mockedApi.uploadImage.mockReturnValue(
       new Promise((resolve) => {
@@ -958,17 +890,19 @@ describe('saving while an image request is in flight', () => {
       }),
     );
     const onClose = jest.fn();
-    renderEditor({ onClose });
+    await renderEditorWithCardsOpen({ onClose });
     await screen.findByDisplayValue('Photosynthesis');
 
-    pickFile('term_image_upload|0');
+    pickFile('term');
     await waitFor(() => expect(api.uploadImage).toHaveBeenCalledTimes(1));
 
     const saving = latestContainerProps().onSave();
+    let outcome;
     await act(async () => {
       finishUpload({ data: { success: false, error: 'too large' } });
-      await expect(saving).rejects.toThrow('too large');
+      outcome = await saving;
     });
+    expect(outcome).toMatchObject({ persisted: false, error: expect.objectContaining({ message: 'too large' }) });
     expect(api.saveSettings).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
     expect(screen.getByText('too large')).toBeInTheDocument();
@@ -1013,14 +947,17 @@ describe('a save the block rejects', () => {
 
   // The block's save_settings handler reports failure as HTTP 200 with
   // `success: false`, so a resolved request is not yet a successful save.
-  it('rejects with the block error and keeps the editor open', async () => {
+  it('reports the block error and keeps the editor open', async () => {
     mockedApi.saveSettings.mockResolvedValue({ data: { success: false, error: 'Each card must be an object' } });
     const onClose = jest.fn();
-    renderEditor({ onClose });
+    await renderEditorWithCardsOpen({ onClose });
     await screen.findByDisplayValue('Photosynthesis');
 
     await act(async () => {
-      await expect(latestContainerProps().onSave()).rejects.toThrow('Each card must be an object');
+      expect(await latestContainerProps().onSave()).toMatchObject({
+        persisted: false,
+        error: expect.objectContaining({ message: 'Each card must be an object' }),
+      });
     });
     expect(onClose).not.toHaveBeenCalled();
     expect(await screen.findByText('Each card must be an object')).toBeInTheDocument();
@@ -1037,22 +974,25 @@ describe('handler failures with no detail message', () => {
   // text. The editor must not fall back to an untranslated string.
   it('shows a translated heading for a failed upload, not the English fallback', async () => {
     mockedApi.uploadImage.mockResolvedValue({ data: { success: false } });
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
 
-    pickFile('term_image_upload|0');
+    pickFile('term');
     expect(await screen.findByText('The last image change could not be saved.')).toBeInTheDocument();
     expect(screen.queryByText('Upload failed')).not.toBeInTheDocument();
   });
 
   it('shows the save heading for a failed save, not the image one or the English fallback', async () => {
     mockedApi.saveSettings.mockResolvedValue({ data: { success: false } });
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
 
     await act(async () => {
       // No server detail, so the error carries only its code.
-      await expect(latestContainerProps().onSave()).rejects.toMatchObject({ code: 'saveFailed', message: '' });
+      expect(await latestContainerProps().onSave()).toMatchObject({
+        persisted: false,
+        error: expect.objectContaining({ code: 'saveFailed', message: '' }),
+      });
     });
     expect(await screen.findByText('The game could not be saved.')).toBeInTheDocument();
     expect(screen.queryByText('Save failed')).not.toBeInTheDocument();
@@ -1061,11 +1001,14 @@ describe('handler failures with no detail message', () => {
 
   it('keeps the server detail under the save heading when there is one', async () => {
     mockedApi.saveSettings.mockResolvedValue({ data: { success: false, error: 'Each card must be an object' } });
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
 
     await act(async () => {
-      await expect(latestContainerProps().onSave()).rejects.toThrow('Each card must be an object');
+      expect(await latestContainerProps().onSave()).toMatchObject({
+        persisted: false,
+        error: expect.objectContaining({ message: 'Each card must be an object' }),
+      });
     });
     expect(await screen.findByText('The game could not be saved.')).toBeInTheDocument();
     expect(screen.getByText('Each card must be an object')).toBeInTheDocument();
@@ -1079,8 +1022,8 @@ describe('validation after a pending upload', () => {
     mockedApi.saveSettings.mockResolvedValue({ data: { success: true } });
   });
 
-  // Regression: validateEntry runs at the Save click, before the upload lands.
-  // A blank card validates clean then, and is image-only by the time it saves.
+  // Regression: the card validated clean at the Save click, before the upload
+  // landed, and was image-only by the time the save went out.
   it('refuses to save an image-only card the upload produced', async () => {
     let finishUpload;
     mockedApi.uploadImage.mockReturnValue(
@@ -1089,18 +1032,23 @@ describe('validation after a pending upload', () => {
       }),
     );
     const onClose = jest.fn();
+    const user = userEvent.setup();
     renderEditor({ onClose });
-    await waitFor(() => expect(latestContainerProps().validateEntry()).toBe(true));
+    // A loaded block with no cards offers only its Add button: the author
+    // creates the card they fill in; the load ships no draft to type into.
+    await user.click(await screen.findByRole('button', { name: 'Add card' }));
+    expect(screen.getAllByPlaceholderText('Enter your term')).toHaveLength(1);
 
-    pickFile('term_image_upload|0');
+    pickFile('term');
     await waitFor(() => expect(api.uploadImage).toHaveBeenCalledTimes(1));
-    expect(latestContainerProps().validateEntry()).toBe(true);
 
     const saving = latestContainerProps().onSave();
+    let outcome;
     await act(async () => {
       finishUpload({ data: { success: true, url: '/media/x.png', file_path: 'games/x.png' } });
-      await expect(saving).rejects.toThrow(/validation/i);
+      outcome = await saving;
     });
+    expect(outcome).toMatchObject({ persisted: false });
     expect(api.saveSettings).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
     expect(await screen.findByText('Text is required for flashcard images.')).toBeInTheDocument();
@@ -1116,25 +1064,23 @@ describe('validation with text not yet blurred', () => {
   });
 
   // Safari, and Firefox on macOS, do not blur the focused field when Save is
-  // clicked, so the click-time check can run before the field is left. It
-  // must validate what the author sees.
+  // clicked, so validation can run before the field is left. It must validate
+  // what the author sees.
   it('accepts a field the author has filled in but not left', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('a');
-    expect(latestContainerProps().validateEntry()).toBe(false);
     fireEvent.change(screen.getByLabelText('Definition'), { target: { value: 'b' } });
-    expect(latestContainerProps().validateEntry()).toBe(true);
+    expect(await latestContainerProps().onSave()).toMatchObject({ persisted: true });
   });
 
-  it('rejects a field the author has just cleared but not left', async () => {
+  it('reports a field the author has just cleared but not left', async () => {
     mockedApi.getSettings.mockResolvedValue({
       data: { game_type: 'matching', cards: [{ term: 'a', definition: 'b' }] },
     });
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('a');
-    expect(latestContainerProps().validateEntry()).toBe(true);
     fireEvent.change(screen.getByLabelText('Definition'), { target: { value: '' } });
-    expect(latestContainerProps().validateEntry()).toBe(false);
+    expect(await latestContainerProps().onSave()).toMatchObject({ persisted: false });
   });
 });
 
@@ -1145,7 +1091,7 @@ describe('unsaved title changes', () => {
   });
 
   it('counts a title-only edit as dirty', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
     expect(latestContainerProps().isDirty()).toBe(false);
 
@@ -1196,13 +1142,7 @@ describe('removing a saved image', () => {
     expect(result.current.state.isDirty).toBe(true);
 
     await act(async () => {
-      await result.current.actions.save({
-        gameType: 'flashcards',
-        isShuffled: true,
-        hasTimer: false,
-        cards: result.current.state.list,
-        title: 'Games',
-      });
+      await result.current.actions.save({ title: 'Games' });
     });
     // Settings load and the save: no other request, and no way to make one.
     expect(api.uploadImage).not.toHaveBeenCalled();
@@ -1320,10 +1260,10 @@ describe('text typed while a save waits on an upload', () => {
         finishUpload = resolve;
       }),
     );
-    renderEditor();
+    await renderEditorWithCardsOpen();
     const term = await screen.findByDisplayValue('Photosynthesis');
 
-    pickFile('term_image_upload|0');
+    pickFile('term');
     await waitFor(() => expect(api.uploadImage).toHaveBeenCalledTimes(1));
 
     const saving = latestContainerProps().onSave();
@@ -1350,7 +1290,7 @@ describe('saving from the standalone editor route', () => {
   // save falls back to the return URL there, and so must this one.
   it('navigates to the return URL after a save', async () => {
     const navigateTo = jest.spyOn(editorHooks, 'navigateTo').mockImplementation(() => {});
-    renderEditor({ onClose: null });
+    await renderEditorWithCardsOpen({ onClose: null });
     await screen.findByDisplayValue('Photosynthesis');
 
     await act(async () => {
@@ -1363,7 +1303,7 @@ describe('saving from the standalone editor route', () => {
 
   // The standalone route initialises the store without an endpoint.
   it('falls back to the configured Studio when the store has no endpoint', async () => {
-    renderEditor({ onClose: null }, { studioEndpointUrl: null });
+    await renderEditorWithCardsOpen({ onClose: null }, { studioEndpointUrl: null });
     await waitFor(() => expect(mockedApi.getSettings).toHaveBeenCalled());
     expect(mockedApi.getSettings).toHaveBeenCalledWith(
       expect.objectContaining({ studioEndpointUrl: getConfig().STUDIO_BASE_URL }),
@@ -1373,7 +1313,7 @@ describe('saving from the standalone editor route', () => {
   it('does not navigate when the page supplied a way to close', async () => {
     const navigateTo = jest.spyOn(editorHooks, 'navigateTo').mockImplementation(() => {});
     const onClose = jest.fn();
-    renderEditor({ onClose });
+    await renderEditorWithCardsOpen({ onClose });
     await screen.findByDisplayValue('Photosynthesis');
 
     await act(async () => {
@@ -1403,10 +1343,10 @@ describe('a save still waiting when the editor goes away', () => {
       }),
     );
     const onClose = jest.fn();
-    const { unmount } = renderEditor({ onClose });
+    const { unmount } = await renderEditorWithCardsOpen({ onClose });
     await screen.findByDisplayValue('Photosynthesis');
 
-    pickFile('term_image_upload|0');
+    pickFile('term');
     await waitFor(() => expect(api.uploadImage).toHaveBeenCalledTimes(1));
 
     const saving = latestContainerProps().onSave();
@@ -1414,7 +1354,10 @@ describe('a save still waiting when the editor goes away', () => {
 
     await act(async () => {
       finishUpload({ data: { success: true, url: '/media/x.png', file_path: 'games/x.png' } });
-      await expect(saving).rejects.toThrow(/closed/i);
+      expect(await saving).toMatchObject({
+        persisted: false,
+        error: expect.objectContaining({ message: expect.stringMatching(/closed/i) }),
+      });
     });
     expect(api.saveSettings).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
@@ -1444,7 +1387,7 @@ describe('a save response arriving after the editor has gone away', () => {
     const afterSave = jest.fn();
     const spies = { onClose: jest.fn(), returnFunction: jest.fn(() => afterSave) };
     const navigateTo = jest.spyOn(editorHooks, 'navigateTo').mockImplementation(() => {});
-    const { unmount } = renderEditor({ onClose: null, ...propsFor(spies) });
+    const { unmount } = await renderEditorWithCardsOpen({ onClose: null, ...propsFor(spies) });
     await screen.findByDisplayValue('Photosynthesis');
 
     const saving = latestContainerProps().onSave();
@@ -1477,7 +1420,7 @@ describe('switching to another block without remounting', () => {
     mockedApi.getSettings
       .mockResolvedValueOnce(loadedSettings)
       .mockReturnValueOnce(new Promise(() => {})); // second block never loads
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
 
     reinitialize({ blockId: otherBlockId });
@@ -1486,8 +1429,10 @@ describe('switching to another block without remounting', () => {
     );
 
     expect(screen.queryByDisplayValue('Photosynthesis')).not.toBeInTheDocument();
-    expect(latestContainerProps().validateEntry()).toBe(false);
-    await expect(latestContainerProps().onSave()).rejects.toThrow(/not loaded/);
+    expect(await latestContainerProps().onSave()).toMatchObject({
+      persisted: false,
+      error: expect.objectContaining({ message: expect.stringMatching(/not loaded/) }),
+    });
     expect(api.saveSettings).not.toHaveBeenCalled();
   });
 });
@@ -1508,10 +1453,10 @@ describe('a title changed while a save waits on an upload', () => {
         finishUpload = resolve;
       }),
     );
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
 
-    pickFile('term_image_upload|0');
+    pickFile('term');
     await waitFor(() => expect(api.uploadImage).toHaveBeenCalledTimes(1));
 
     const saving = latestContainerProps().onSave();
@@ -1544,18 +1489,20 @@ describe('while the save request is out', () => {
         finishSave = resolve;
       }),
     );
-    renderEditor();
+    await renderEditorWithCardsOpen();
     const term = await screen.findByDisplayValue('Photosynthesis');
     expect(term).toBeEnabled();
 
     const saving = latestContainerProps().onSave();
     await waitFor(() => expect(term).toBeDisabled());
-    expect(screen.getByRole('button', { name: /^add$/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /^add card$/i })).toBeDisabled();
 
+    let outcome;
     await act(async () => {
       finishSave({ data: { success: false, error: 'nope' } });
-      await expect(saving).rejects.toThrow('nope');
+      outcome = await saving;
     });
+    expect(outcome).toMatchObject({ persisted: false, error: expect.objectContaining({ message: 'nope' }) });
     await waitFor(() => expect(term).toBeEnabled());
   });
 
@@ -1568,7 +1515,7 @@ describe('while the save request is out', () => {
     const onClose = jest.fn(() => {
       dirtyAtClose = latestContainerProps().isDirty();
     });
-    renderEditor({ onClose });
+    await renderEditorWithCardsOpen({ onClose });
     const term = await screen.findByDisplayValue('Photosynthesis');
     fireEvent.change(term, { target: { value: 'Edited' } });
     fireEvent.blur(term);
@@ -1620,7 +1567,7 @@ describe('typing into a card', () => {
 
   it('is in the game state immediately, without a blur', async () => {
     const user = userEvent.setup();
-    renderEditor();
+    await renderEditorWithCardsOpen();
     const term = await screen.findByLabelText('Term');
     await user.type(term, '!');
     // getContent reads the store state the view rendered from, not a local buffer.
@@ -1629,7 +1576,7 @@ describe('typing into a card', () => {
 
   it('keeps the same input, with the same value, when the field is tabbed out of', async () => {
     const user = userEvent.setup();
-    renderEditor();
+    await renderEditorWithCardsOpen();
     const term = await screen.findByLabelText('Term');
     await user.type(term, '!');
     await user.tab();
@@ -1649,7 +1596,7 @@ describe('settings in the sidebar', () => {
 
   it('changes shuffle, timer and game type', async () => {
     const user = userEvent.setup();
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('a');
     const content = () => latestContainerProps().getContent();
 
@@ -1687,29 +1634,62 @@ describe('card list controls', () => {
 
   it('adds an empty card at the end', async () => {
     const user = userEvent.setup();
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('First');
-    await user.click(screen.getByRole('button', { name: 'Add' }));
+    await user.click(screen.getByRole('button', { name: 'Add card' }));
     expect(terms()).toEqual(['First', 'Second', '']);
   });
 
-  it('leaves the order alone when the first card is moved up or the last moved down', async () => {
-    const user = userEvent.setup();
-    renderEditor();
-    await screen.findByDisplayValue('First');
-    const menus = () => screen.getAllByRole('button', { name: 'Card actions' });
+  // The cards' own action menus, in list order. A blank draft has no drag
+  // handle, so its row is found from its menu rather than by card name.
+  const cardMenus = () => screen.getAllByRole('button', { name: 'Card actions' });
+  const cardAt = (index: number) => cardMenus()[index].closest('.card') as HTMLElement;
+  // A menu item is an anchor with role="button": disabled, it says so with
+  // aria-disabled rather than the `disabled` attribute.
+  const moveItem = (index: number, label: 'Move up' | 'Move down') =>
+    within(cardAt(index)).getByRole('button', { name: label });
 
-    const menuItem = (index: number, label: string) =>
-      within(menus()[index].closest('.dropdown') as HTMLElement).findByText(label);
-    await user.click(menus()[0]);
-    await user.click(await menuItem(0, 'Move up'));
-    await user.click(menus()[1]);
-    await user.click(await menuItem(1, 'Move down'));
-    expect(terms()).toEqual(['First', 'Second']);
+  // A matching game's visible list is its whole list, so the first card has
+  // nowhere above it and the last nowhere below: those items say so, rather
+  // than accepting a click that could only fail.
+  it('disables moving the first card up and the last card down', async () => {
+    const user = userEvent.setup();
+    await renderEditorWithCardsOpen();
+    await screen.findByDisplayValue('First');
+
+    await user.click(cardMenus()[0]);
+    expect(moveItem(0, 'Move up')).toHaveAttribute('aria-disabled', 'true');
+    expect(moveItem(0, 'Move down')).not.toHaveAttribute('aria-disabled', 'true');
+
+    await user.click(cardMenus()[1]);
+    expect(moveItem(1, 'Move down')).toHaveAttribute('aria-disabled', 'true');
+    expect(moveItem(1, 'Move up')).not.toHaveAttribute('aria-disabled', 'true');
+  });
+
+  // The card an author adds is a blank draft, not a card to move: it has no
+  // drag handle, and neither menu move offers to send it anywhere, even though
+  // the cards above it can still move.
+  it('disables both moves on a newly added blank draft with cards above it', async () => {
+    const user = userEvent.setup();
+    await renderEditorWithCardsOpen();
+    await screen.findByDisplayValue('First');
+    await user.click(screen.getByRole('button', { name: 'Add card' }));
+    expect(terms()).toEqual(['First', 'Second', '']);
+
+    await user.click(cardMenus()[2]);
+    expect(moveItem(2, 'Move up')).toHaveAttribute('aria-disabled', 'true');
+    expect(moveItem(2, 'Move down')).toHaveAttribute('aria-disabled', 'true');
+
+    // The real card above the draft row cannot move down past it: the draft is
+    // not saved, so that move would leave the saved order exactly as it is.
+    await user.click(cardMenus()[1]);
+    expect(moveItem(1, 'Move down')).toHaveAttribute('aria-disabled', 'true');
+    // Upwards still changes the saved order, so that way stays open.
+    expect(moveItem(1, 'Move up')).not.toHaveAttribute('aria-disabled', 'true');
   });
 
   it('reorders cards by keyboard drag', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('First');
     const [firstId, secondId] = latestContainerProps().getContent().cards.map((c) => c.id);
     const collision = jest.mocked(verticalSortableListCollisionDetection);
@@ -1717,7 +1697,7 @@ describe('card list controls', () => {
       jest.requireActual('@src/generic/DraggableList/verticalSortableList').verticalSortableListCollisionDetection;
     collision.mockReturnValue([{ id: secondId }]);
     try {
-      const handle = screen.getAllByRole('button', { name: 'Drag to reorder' })[0];
+      const handle = screen.getAllByRole('button', { name: /^Reorder / })[0];
       fireEvent.keyDown(handle, { code: 'Space' });
       await act(() =>
         new Promise((resolve) => {
@@ -1725,7 +1705,14 @@ describe('card list controls', () => {
         })
       );
       fireEvent.keyDown(handle, { code: 'Space' });
-      await waitFor(() => expect(terms()).toEqual(['Second', 'First']));
+
+      // The drag collapses the card it picked up, and the drop leaves it
+      // collapsed: its fields leave the DOM once Paragon's exit transition ends.
+      // Reading every input would still see the exiting one, so it proves
+      // nothing about the state the drop settled in.
+      await waitFor(() => expect(screen.queryByDisplayValue('First')).not.toBeInTheDocument());
+      expect(within(cardRoot('First')).getByRole('button', { name: 'Expand card' })).toBeInTheDocument();
+      // The order the drop committed is the order the block would save.
       expect(latestContainerProps().getContent().cards.map((c) => c.id)).toEqual([secondId, firstId]);
     } finally {
       collision.mockImplementation(real);
@@ -1756,7 +1743,7 @@ describe('image controls on a card', () => {
 
   it('removes an image with its button', async () => {
     const user = userEvent.setup();
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('t');
     await user.click(screen.getAllByRole('button', { name: 'Remove image' })[0]);
     const [cardContent] = latestContainerProps().getContent().cards;
@@ -1769,11 +1756,11 @@ describe('image controls on a card', () => {
     const user = userEvent.setup();
     const click = jest.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(() => {});
     try {
-      renderEditor();
+      await renderEditorWithCardsOpen();
       await screen.findByDisplayValue('Photosynthesis');
       await user.click(screen.getAllByRole('button', { name: 'Add image' })[1]);
       expect(click).toHaveBeenCalledTimes(1);
-      expect(click.mock.contexts[0]).toBe(document.getElementById('definition_image_upload|0'));
+      expect(click.mock.contexts[0]).toBe(fileInput('definition'));
     } finally {
       click.mockRestore();
     }
@@ -1784,9 +1771,9 @@ describe('image controls on a card', () => {
     mockedApi.uploadImage.mockResolvedValue({
       data: { success: true, url: '/media/d.png', file_path: 'games/abc/new.png' },
     });
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
-    pickFile('definition_image_upload|0');
+    pickFile('definition');
     await waitFor(() =>
       expect(latestContainerProps().getContent().cards[0].definition_image_path).toBe('games/abc/new.png')
     );
@@ -1813,16 +1800,16 @@ describe('image controls on a card', () => {
     mockedApi.uploadImage.mockResolvedValue({
       data: { success: true, url: '/media/new.png', file_path: 'games/abc/new.png' },
     });
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
-    pickFile('definition_image_upload|0');
+    pickFile('definition');
     await waitFor(() => expect(latestContainerProps().getContent().cards[0].definition_image).toBe('/media/new.png'));
     expect(latestContainerProps().getContent().cards[0].definition_image_alt).toBe('');
   });
 
   it.each(['{Enter}', ' '])('opens image settings from the keyboard with %j', async (key) => {
     const user = userEvent.setup();
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('t');
     screen.getAllByRole('button', { name: 'Image settings' })[0].focus();
     await user.keyboard(key);
@@ -1831,7 +1818,7 @@ describe('image controls on a card', () => {
 
   it('saves new alt text for the definition image', async () => {
     const user = userEvent.setup();
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('t');
     await user.click(screen.getAllByRole('button', { name: 'Image settings' })[1]);
     const dialog = await screen.findByRole('dialog', { name: 'Image Settings' });
@@ -1853,13 +1840,13 @@ describe('validation feedback', () => {
 
   it('opens a collapsed card that has an error, and the alert can be dismissed', async () => {
     const user = userEvent.setup();
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('a');
     await user.click(screen.getByRole('button', { name: 'Collapse card' }));
     await waitFor(() => expect(screen.queryByDisplayValue('a')).not.toBeInTheDocument());
 
-    act(() => {
-      expect(latestContainerProps().validateEntry()).toBe(false);
+    await act(async () => {
+      expect(await latestContainerProps().onSave()).toMatchObject({ persisted: false });
     });
     // The invalid card is expanded again so the flagged field can be seen.
     expect(await screen.findByDisplayValue('a')).toBeInTheDocument();
@@ -1879,7 +1866,7 @@ describe('after a successful save', () => {
 
   it('hands the response to returnFunction when one is given', async () => {
     const afterSave = jest.fn();
-    renderEditor({ onClose: null, returnFunction: () => afterSave });
+    await renderEditorWithCardsOpen({ onClose: null, returnFunction: () => afterSave });
     await screen.findByDisplayValue('Photosynthesis');
     await act(async () => {
       await latestContainerProps().onSave();
@@ -1898,7 +1885,7 @@ describe('the title that gets saved', () => {
   // The title header commits to the store right as Save starts (on blur), so
   // the save must read the store then, not a copy taken at the last render.
   it('is the one in the store when the save starts, even before a re-render', async () => {
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
     const { onSave } = latestContainerProps();
     await act(async () => {
@@ -1924,7 +1911,7 @@ describe('save analytics', () => {
   // own save must send it too, or Games saves vanish from tracking.
   it('sends the editor save event once the block has accepted the save', async () => {
     mockedApi.saveSettings.mockResolvedValue({ data: { success: true } });
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
     await act(async () => {
       await latestContainerProps().onSave();
@@ -1938,10 +1925,13 @@ describe('save analytics', () => {
 
   it('sends nothing when the block rejects the save', async () => {
     mockedApi.saveSettings.mockResolvedValue({ data: { success: false, error: 'nope' } });
-    renderEditor();
+    await renderEditorWithCardsOpen();
     await screen.findByDisplayValue('Photosynthesis');
     await act(async () => {
-      await expect(latestContainerProps().onSave()).rejects.toThrow('nope');
+      expect(await latestContainerProps().onSave()).toMatchObject({
+        persisted: false,
+        error: expect.objectContaining({ message: 'nope' }),
+      });
     });
     expect(saveEvents()).toEqual([]);
   });

@@ -9,6 +9,7 @@ import type {
   RequestErrorCode,
   SaveArgs,
 } from '@src/editors/containers/GamesEditor/types';
+import { getContent } from '../gameContent';
 import { useGameSettings, useSaveGameSettings, useUploadGameImage } from './apiHooks';
 import { createStore } from './gameStore';
 import * as t from './gameTransitions';
@@ -51,30 +52,9 @@ export const useGameState = (block: BlockRef | null) => {
   const { data: loadedSettings, dataUpdatedAt } = settingsQuery;
   React.useEffect(() => {
     if (!loadedSettings) { return; }
-    const data = loadedSettings;
-    const cards = (data.cards || []).map((card) => ({
-      ...t.emptyCard(),
-      card_key: card.card_key,
-      term: card.term || '',
-      // Image URLs are kept as the block returns them (relative to its
-      // Studio); the view resolves them for display. See imageDisplayUrl.
-      term_image: card.term_image || '',
-      term_image_path: card.term_image_path || '',
-      term_image_alt: card.term_image_alt || '',
-      definition: card.definition || '',
-      definition_image: card.definition_image || '',
-      definition_image_path: card.definition_image_path || '',
-      definition_image_alt: card.definition_image_alt || '',
-    }));
-    store.set(t.loaded({
-      ...t.initialState,
-      type: data.game_type || 'flashcards',
-      settings: {
-        shuffle: data.is_shuffled !== undefined ? data.is_shuffled : true,
-        timer: data.has_timer !== undefined ? data.has_timer : true,
-      },
-      list: cards.length ? cards : [t.emptyCard()],
-    }));
+    // Every deck the block returned, or one Deck 1 built from its `cards`
+    // when the backend predates decks. Every deck starts editable.
+    store.set(t.stateFromSettings(loadedSettings));
   }, [dataUpdatedAt]);
 
   // A failed fetch, first or retried. Keyed on `errorUpdatedAt` so a second
@@ -129,20 +109,36 @@ export const useGameState = (block: BlockRef | null) => {
       setShuffleStatus: (value: boolean) => store.update((s) => t.updateSetting(s, 'shuffle', value)),
       setTimerStatus: (value: boolean) => store.update((s) => t.updateSetting(s, 'timer', value)),
       updateType: (value: GameType) => store.update((s) => t.updateType(s, value)),
-      updateTerm: ({ index, term }: { index: number; term: string; }) =>
-        store.update((s) => t.updateCardField(s, { index }, 'term', term)),
-      updateDefinition: ({ index, definition }: { index: number; definition: string; }) =>
-        store.update((s) => t.updateCardField(s, { index }, 'definition', definition)),
-      updateTermImageAlt: ({ index, termImageAlt }: { index: number; termImageAlt: string; }) =>
-        store.update((s) => t.updateCardField(s, { index }, 'term_image_alt', termImageAlt)),
-      updateDefinitionImageAlt: ({ index, definitionImageAlt }: { index: number; definitionImageAlt: string; }) =>
-        store.update((s) => t.updateCardField(s, { index }, 'definition_image_alt', definitionImageAlt)),
-      toggleOpen: ({ index, isOpen }: { index: number; isOpen: boolean; }) =>
-        store.update((s) => t.setCardOpen(s, index, !!isOpen)),
-      setList: (value: Card[]) => store.update((s) => t.setList(s, value)),
-      addCard: () => store.update((s) => t.addCard(s)),
-      removeCard: ({ index }: { index: number; }) => store.update((s) => t.removeCard(s, index)),
-
+      // Every card action takes a position in the active deck or the card's
+      // own id, so several deck bodies can render and edit at once without
+      // selecting a deck as a render side effect.
+      updateTerm: (value: t.CardTarget & { term: string; }) =>
+        store.update((s) => t.updateCardField(s, value, 'term', value.term)),
+      updateDefinition: (value: t.CardTarget & { definition: string; }) =>
+        store.update((s) => t.updateCardField(s, value, 'definition', value.definition)),
+      updateTermImageAlt: (value: t.CardTarget & { termImageAlt: string; }) =>
+        store.update((s) => t.updateCardField(s, value, 'term_image_alt', value.termImageAlt)),
+      updateDefinitionImageAlt: (value: t.CardTarget & { definitionImageAlt: string; }) =>
+        store.update((s) => t.updateCardField(s, value, 'definition_image_alt', value.definitionImageAlt)),
+      toggleOpen: (value: t.CardTarget & { isOpen: boolean; }) =>
+        store.update((s) => t.setCardOpen(s, value, !!value.isOpen)),
+      setList: (value: Card[] | { deckId: string; cards: Card[]; }) =>
+        store.update((s) => (Array.isArray(value) ? t.setList(s, value) : t.setList(s, value.cards, value.deckId))),
+      addCard: (deckId?: string) => store.update((s) => t.addCard(s, undefined, deckId)),
+      removeCard: (target: t.CardTarget) => store.update((s) => t.removeCard(s, target)),
+      selectDeck: (deckId: string) => store.update((s) => t.selectDeck(s, deckId)),
+      addDeck: (name?: string) => store.update((s) => t.addDeck(s, name)),
+      renameDeck: ({ deckId, name }: { deckId: string; name: string; }) =>
+        store.update((s) => t.renameDeck(s, deckId, name)),
+      deleteDeck: ({ deckId }: { deckId: string; }) => store.update((s) => t.deleteDeck(s, deckId)),
+      // A deck drag reports where the deck lands; the transition owns clamping
+      // and the no-op that must not dirty the state.
+      moveDeck: ({ deckId, toIndex }: { deckId: string; toIndex: number; }) =>
+        store.update((s) => t.moveDeck(s, deckId, toIndex)),
+      // A drag reports the card, its target deck and the position in it; the
+      // transition owns clamping, the blank-draft rule and the no-op.
+      moveCard: ({ cardId, toDeckId, toIndex }: { cardId: string; toDeckId: string; toIndex: number; }) =>
+        store.update((s) => t.moveCard(s, cardId, { deckId: toDeckId, index: toIndex })),
       uploadGameImage: (
         { cardId, imageFile, imageType }: { cardId: string; imageFile: File; imageType: ImageType; },
       ) => {
@@ -172,15 +168,38 @@ export const useGameState = (block: BlockRef | null) => {
       // keys the shared saveBlock payload builder drops.
       // The handler reports failure as HTTP 200 with `success: false`, so a
       // resolved request is not yet a successful save.
-      save: (content: SaveArgs) =>
-        saveSettings(content).then((response) => {
-          if (response.data?.success === false) {
-            const error = requestError('saveFailed', response.data.error);
-            store.update((s) => t.setError(s, error));
-            throw error;
-          }
-          return response;
-        }),
+      save: ({ title }: { title: string | null; }) => {
+        // The payload comes from the state, so a caller holding older cards or
+        // decks cannot overwrite what the editor shows: the caller supplies
+        // only the title, which lives in the editors' store rather than this
+        // one. `cards` is the primary deck; `decks` goes only to a backend
+        // that declared the field.
+        const latest = store.get();
+        const { cards, decks } = getContent(latest);
+        const args: SaveArgs = {
+          gameType: latest.type,
+          isShuffled: latest.settings.shuffle,
+          hasTimer: latest.settings.timer,
+          title,
+          cards,
+        };
+        if (latest.supportsDecks) { args.decks = decks; }
+        return saveSettings(args)
+          .then((response) => {
+            if (response.data?.success === false) {
+              throw requestError('saveFailed', response.data.error);
+            }
+            return response;
+          })
+          // Whichever way it failed - the block's success:false body or a
+          // request that never landed (offline, session lost, 5xx) - the editor
+          // shows it, and the caller still sees the rejection.
+          .catch((error: RequestError) => {
+            const failure = error.code === 'saveFailed' ? error : requestError('saveFailed', error.message);
+            store.update((s) => t.setError(s, failure));
+            throw failure;
+          });
+      },
 
       reload: () => {
         store.update(t.clearError);

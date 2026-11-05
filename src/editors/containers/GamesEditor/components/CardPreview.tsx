@@ -18,7 +18,7 @@ interface PreviewSideProps {
 const PreviewSide = ({ field, text, imageUrl, imageAlt, withImages }: PreviewSideProps) => {
   const intl = useIntl();
   return (
-    <span className={`preview-${field} d-flex align-items-center position-absolute text-truncate px-2`}>
+    <span className={`preview-${field} d-flex align-items-center w-50 px-2`}>
       {withImages
         ? (
           <span
@@ -44,8 +44,8 @@ const PreviewSide = ({ field, text, imageUrl, imageAlt, withImages }: PreviewSid
         )
         : ''}
       {text !== ''
-        ? text
-        : <span className="text-gray">{intl.formatMessage(messages.noTextLabel)}</span>}
+        ? <span className="text-truncate">{text}</span>
+        : <span className="text-gray text-truncate">{intl.formatMessage(messages.noTextLabel)}</span>}
     </span>
   );
 };
@@ -54,23 +54,21 @@ const PreviewSide = ({ field, text, imageUrl, imageAlt, withImages }: PreviewSid
 const CardPreview = ({ card, type, studioEndpointUrl }: { card: Card; type: GameType; studioEndpointUrl: string; }) => {
   const withImages = type === 'flashcards';
   return (
-    <div className="preview-block position-relative w-100 mr-2">
-      <span className="align-middle">
-        <PreviewSide
-          field="term"
-          text={card.term}
-          imageUrl={imageDisplayUrl(card.term_image, studioEndpointUrl)}
-          imageAlt={imageAlt(card.term_image_alt, card.term)}
-          withImages={withImages}
-        />
-        <PreviewSide
-          field="definition"
-          text={card.definition}
-          imageUrl={imageDisplayUrl(card.definition_image, studioEndpointUrl)}
-          imageAlt={imageAlt(card.definition_image_alt, card.definition)}
-          withImages={withImages}
-        />
-      </span>
+    <div className="preview-block d-flex align-items-center w-100 mr-2">
+      <PreviewSide
+        field="term"
+        text={card.term}
+        imageUrl={imageDisplayUrl(card.term_image, studioEndpointUrl)}
+        imageAlt={imageAlt(card.term_image_alt, card.term)}
+        withImages={withImages}
+      />
+      <PreviewSide
+        field="definition"
+        text={card.definition}
+        imageUrl={imageDisplayUrl(card.definition_image, studioEndpointUrl)}
+        imageAlt={imageAlt(card.definition_image_alt, card.definition)}
+        withImages={withImages}
+      />
     </div>
   );
 };

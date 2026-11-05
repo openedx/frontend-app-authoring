@@ -39,6 +39,21 @@ export const navigateCallback = ({
 
 export const nullMethod = () => ({});
 
+/**
+ * What an `onSave` override may resolve with, so the container knows whether
+ * the save actually persisted. A plain resolve (no result) still means
+ * persisted, so existing overrides are unaffected; only a rejection is treated
+ * as an unexpected failure.
+ */
+export interface EditorSaveOverrideResult {
+  persisted: boolean;
+  error?: unknown;
+}
+
+/** Whether an `onSave` override resolved with a persisted/not result. */
+export const isSaveOverrideResult = (value: unknown): value is EditorSaveOverrideResult =>
+  typeof value === 'object' && value !== null && 'persisted' in value;
+
 export const saveBlock = ({
   analytics,
   content,

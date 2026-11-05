@@ -268,6 +268,35 @@ describe('EditorContainer onSave override', () => {
     expect(screen.queryByText(/Content save failed/)).not.toBeInTheDocument();
   });
 
+  // A games save that failed validation renders its errors inline; the author
+  // still has unsaved work, so leaving the page must keep warning.
+  it('keeps the leave-page warning armed when the override reports it did not persist', async () => {
+    const onSave = jest.fn(() => Promise.resolve({ persisted: false }));
+    renderContainer({ onSave, isDirty: () => true });
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+
+    await waitFor(() => {
+      const leaving = new Event('beforeunload', { cancelable: true });
+      window.dispatchEvent(leaving);
+      expect(leaving.defaultPrevented).toBe(true);
+    });
+    expect(screen.queryByText(/Content save failed/)).not.toBeInTheDocument();
+  });
+
+  // An override that predates the result contract resolves with nothing, which
+  // still means the save landed.
+  it('marks the editor saved when an override resolves without a result', async () => {
+    const onSave = jest.fn(() => Promise.resolve());
+    renderContainer({ onSave, isDirty: () => true });
+    fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+
+    await waitFor(() => {
+      const leaving = new Event('beforeunload', { cancelable: true });
+      window.dispatchEvent(leaving);
+      expect(leaving.defaultPrevented).toBe(false);
+    });
+  });
+
   // Safari, and Firefox on macOS, do not move focus to a clicked button, so a
   // field that commits on blur (the title header does) would keep its edit
   // out of the save. Save blurs it first, as Chrome does on the click.

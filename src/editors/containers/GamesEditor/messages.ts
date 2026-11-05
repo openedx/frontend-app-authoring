@@ -51,6 +51,36 @@ const messages = defineMessages({
     defaultMessage: 'Term',
     description: 'Label for term input field',
   },
+  deckListLabel: {
+    id: 'GameEditor.deckListLabel',
+    defaultMessage: 'Decks',
+    description: 'Accessible name for the list of decks in the game editor.',
+  },
+  deckNameDuplicate: {
+    id: 'GameEditor.deckNameDuplicate',
+    defaultMessage: 'Deck names must be unique',
+    description: 'Error shown when two decks have the same name, ignoring case.',
+  },
+  deckNameErrorAlert: {
+    id: 'GameEditor.deckNameErrorAlert',
+    defaultMessage: 'Every deck needs a name and no two decks can share one.',
+    description: 'Alert shown when a save is blocked because a deck name is missing or duplicated.',
+  },
+  deckNameErrorHeading: {
+    id: 'GameEditor.deckNameErrorHeading',
+    defaultMessage: 'Deck names need fixing',
+    description: 'Heading of the alert shown when a save is blocked by a deck name.',
+  },
+  deckNameInputLabel: {
+    id: 'GameEditor.deckNameInputLabel',
+    defaultMessage: 'Deck {number} name',
+    description: 'Accessible label for the name field of the deck at this position.',
+  },
+  deckNameRequired: {
+    id: 'GameEditor.deckNameRequired',
+    defaultMessage: 'Enter a deck name',
+    description: 'Error shown when a deck name is left empty.',
+  },
   definitionLabel: {
     id: 'GameEditor.definitionLabel',
     defaultMessage: 'Definition',
@@ -86,10 +116,20 @@ const messages = defineMessages({
     defaultMessage: 'Please check your entries and try again.',
     description: 'Alert message for validation errors in the game editor.',
   },
+  validationErrorHiddenDecks: {
+    id: 'GameEditor.validationErrorHiddenDecks',
+    defaultMessage: 'Cards in {deckNames} need fixing before this game can be saved. Switch to Flashcards to repair them.',
+    description: 'Alert line naming the decks whose cards are invalid when Matching hides the deck rows.',
+  },
   noTextLabel: {
     id: 'GameEditor.noTextLabel',
     defaultMessage: 'No text',
     description: 'Label shown when a card has no text content.',
+  },
+  newDeckLabel: {
+    id: 'GameEditor.newDeckLabel',
+    defaultMessage: 'Add deck',
+    description: 'Action that adds an empty deck to the game.',
   },
   noImageLabel: {
     id: 'GameEditor.noImageLabel',
@@ -111,6 +151,26 @@ const messages = defineMessages({
     defaultMessage: 'Move down',
     description: 'Label for move down dropdown item.',
   },
+  deleteDeckConfirmBody: {
+    id: 'GameEditor.deleteDeckConfirmBody',
+    defaultMessage: '{deckName} has {cardCount, plural, one {1 card} other {# cards}}. Deleting the deck also deletes its cards.',
+    description: 'Body of the dialog that asks before deleting a deck that still has cards.',
+  },
+  deleteDeckConfirmButton: {
+    id: 'GameEditor.deleteDeckConfirmButton',
+    defaultMessage: 'Delete deck',
+    description: 'Button that confirms deleting a deck and its cards.',
+  },
+  deleteDeckConfirmTitle: {
+    id: 'GameEditor.deleteDeckConfirmTitle',
+    defaultMessage: 'Delete deck?',
+    description: 'Title of the dialog that asks before deleting a deck that still has cards.',
+  },
+  deleteDeckLabel: {
+    id: 'GameEditor.deleteDeckLabel',
+    defaultMessage: 'Delete {deckName}',
+    description: 'Accessible label for the button that deletes one deck.',
+  },
   deleteLabel: {
     id: 'GameEditor.deleteLabel',
     defaultMessage: 'Delete',
@@ -118,8 +178,13 @@ const messages = defineMessages({
   },
   addLabel: {
     id: 'GameEditor.addLabel',
-    defaultMessage: 'Add',
-    description: 'Label for add button.',
+    defaultMessage: 'Add card',
+    description: 'Label for the button that adds a card to the deck being edited.',
+  },
+  addCardToDeckLabel: {
+    id: 'GameEditor.addCardToDeckLabel',
+    defaultMessage: 'Add card to {deckName}',
+    description: 'Accessible name for the button that adds a card to one deck, which names the deck because several may be open.',
   },
   typeLabel: {
     id: 'GameEditor.typeLabel',
@@ -206,10 +271,130 @@ const messages = defineMessages({
     defaultMessage: 'Expand card',
     description: 'Accessible label for the button that expands a collapsed card.',
   },
+  expandDeckLabel: {
+    id: 'GameEditor.expandDeckLabel',
+    defaultMessage: 'Expand {deckName}',
+    description: 'Accessible label for the control that shows the cards of one deck.',
+  },
   collapseCardLabel: {
     id: 'GameEditor.collapseCardLabel',
     defaultMessage: 'Collapse card',
     description: 'Accessible label for the button that collapses an expanded card.',
+  },
+  collapseDeckLabel: {
+    id: 'GameEditor.collapseDeckLabel',
+    defaultMessage: 'Collapse {deckName}',
+    description: 'Accessible label for the control that hides the cards of one deck.',
+  },
+  dragScreenReaderInstructions: {
+    id: 'GameEditor.dragScreenReaderInstructions',
+    defaultMessage: 'To pick up an item, press Space or Enter. Use the arrow keys to move it. Press Space or Enter to drop it, or press Escape to cancel.',
+    description: 'Instructions read to screen-reader users when they focus a drag handle, for a card or a deck.',
+  },
+  dragCardHandleLabel: {
+    id: 'GameEditor.dragCardHandleLabel',
+    defaultMessage: 'Reorder {cardName}',
+    description: 'Accessible name and tooltip of the handle that drags one card; it names the card because several are on screen.',
+  },
+  dragCardHandleLabelNoText: {
+    id: 'GameEditor.dragCardHandleLabelNoText',
+    defaultMessage: 'Reorder card with no text',
+    description: 'Accessible name and tooltip of the handle that drags a card whose term is empty, so it is not read as "Reorder No text".',
+  },
+  dragDeckHandleLabel: {
+    id: 'GameEditor.dragDeckHandleLabel',
+    defaultMessage: 'Reorder {deckName}',
+    description: 'Accessible name and tooltip of the handle that drags one deck; it names the deck because several are on screen.',
+  },
+  dragDeckHandleLabelNoName: {
+    id: 'GameEditor.dragDeckHandleLabelNoName',
+    defaultMessage: 'Reorder deck {position}',
+    description: 'Accessible name and tooltip of the handle that drags a deck with an empty name, naming its position instead.',
+  },
+  dragPickedUp: {
+    id: 'GameEditor.dragPickedUp',
+    defaultMessage: 'Picked up {cardName} in {deckName}.',
+    description: 'Screen-reader announcement when a card drag starts, naming the card and its deck.',
+  },
+  dragOverPosition: {
+    id: 'GameEditor.dragOverPosition',
+    defaultMessage: '{cardName} moved over position {position} of {deckName}.',
+    description: 'Screen-reader announcement when a dragged card is over a position in a deck.',
+  },
+  dragOverEnd: {
+    id: 'GameEditor.dragOverEnd',
+    defaultMessage: '{cardName} moved over the end of {deckName}.',
+    description: 'Screen-reader announcement when a dragged card is over a deck row, which appends it.',
+  },
+  dragOverEmptyDeck: {
+    id: 'GameEditor.dragOverEmptyDeck',
+    defaultMessage: '{cardName} moved over the empty deck {deckName}.',
+    description: 'Screen-reader announcement when a dragged card is over a deck that has no cards.',
+  },
+  dragOverNothing: {
+    id: 'GameEditor.dragOverNothing',
+    defaultMessage: '{cardName} is outside the deck list.',
+    description: 'Screen-reader announcement when a dragged card is not over any deck or card.',
+  },
+  dragDroppedAtPosition: {
+    id: 'GameEditor.dragDroppedAtPosition',
+    defaultMessage: 'Dropped {cardName} at position {position} of {deckName}.',
+    description: 'Screen-reader announcement when a dragged card is dropped at a position in a deck.',
+  },
+  dragDroppedAtEnd: {
+    id: 'GameEditor.dragDroppedAtEnd',
+    defaultMessage: 'Dropped {cardName} at the end of {deckName}.',
+    description: 'Screen-reader announcement when a dragged card is dropped after the last card of a deck.',
+  },
+  dragDroppedInEmptyDeck: {
+    id: 'GameEditor.dragDroppedInEmptyDeck',
+    defaultMessage: 'Dropped {cardName} in the empty deck {deckName}.',
+    description: 'Screen-reader announcement when a dragged card is dropped into a deck that had no cards.',
+  },
+  dragDroppedNowhere: {
+    id: 'GameEditor.dragDroppedNowhere',
+    defaultMessage: 'Dropped {cardName}.',
+    description: 'Screen-reader announcement when a dragged card is dropped outside any deck or position.',
+  },
+  dragCancelled: {
+    id: 'GameEditor.dragCancelled',
+    defaultMessage: 'Drag cancelled. {cardName} stayed in {deckName}.',
+    description: 'Screen-reader announcement when a card drag is cancelled, naming the card and its deck.',
+  },
+  dragDeckPickedUp: {
+    id: 'GameEditor.dragDeckPickedUp',
+    defaultMessage: 'Picked up {deckName} at position {position} of the deck list.',
+    description: 'Screen-reader announcement when a deck drag starts, naming the deck and its position in the outline.',
+  },
+  dragDeckOverPosition: {
+    id: 'GameEditor.dragDeckOverPosition',
+    defaultMessage: '{deckName} moved over position {position} of the deck list.',
+    description: 'Screen-reader announcement when a dragged deck is over a position in the outline.',
+  },
+  dragDeckDroppedAtPosition: {
+    id: 'GameEditor.dragDeckDroppedAtPosition',
+    defaultMessage: 'Dropped {deckName} at position {position} of the deck list.',
+    description: 'Screen-reader announcement when a dragged deck is dropped at a position in the outline.',
+  },
+  dragDeckDroppedNowhere: {
+    id: 'GameEditor.dragDeckDroppedNowhere',
+    defaultMessage: 'Dropped {deckName}.',
+    description: 'Screen-reader announcement when a dragged deck is dropped where it already was.',
+  },
+  dragDeckCancelled: {
+    id: 'GameEditor.dragDeckCancelled',
+    defaultMessage: 'Drag cancelled. {deckName} stayed at position {position} of the deck list.',
+    description: 'Screen-reader announcement when a deck drag is cancelled, naming the deck and the position it kept.',
+  },
+  dragUnknownCard: {
+    id: 'GameEditor.dragUnknownCard',
+    defaultMessage: 'a card',
+    description: 'Fallback name for a card in drag announcements when the card cannot be found by its id.',
+  },
+  dragUnknownDeck: {
+    id: 'GameEditor.dragUnknownDeck',
+    defaultMessage: 'a deck',
+    description: 'Fallback name for a deck in drag announcements when the deck cannot be found by its id.',
   },
   requestErrorHeading: {
     id: 'GameEditor.requestErrorHeading',

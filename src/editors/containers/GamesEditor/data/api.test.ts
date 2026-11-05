@@ -89,6 +89,24 @@ describe('buildSavePayload', () => {
     expect(cards[0]).toMatchObject({ term_image: '/media/a.png', term_image_path: 'games/a.png', term_image_alt: 'A' });
   });
 
+  // The block's save handler stores what it is given, and this editor owns the
+  // payload builder precisely because the shared one drops these keys. A card
+  // whose image the author removed must still carry an empty path, or the block
+  // keeps the file it already had; a card that never had one must not be saved
+  // with the key missing either.
+  it('sends all six image fields empty for a card with no image', () => {
+    const { cards } = api.buildSavePayload({ ...base, cards: [{ term: 'a', definition: 'b' }] });
+
+    expect(cards[0]).toMatchObject({
+      term_image: '',
+      term_image_path: '',
+      term_image_alt: '',
+      definition_image: '',
+      definition_image_path: '',
+      definition_image_alt: '',
+    });
+  });
+
   // The block's save handler defaults a missing has_timer to true, so a
   // flashcards save that omits it would switch a disabled timer back on.
   it('sends has_timer for every game type', () => {
@@ -111,5 +129,59 @@ describe('the Studio endpoint', () => {
       isLibrary: false,
     });
     expect(data).toEqual({ cards: [] });
+  });
+});
+
+describe('buildSavePayload decks', () => {
+  const base = {
+    gameType: 'flashcards' as const,
+    isShuffled: true,
+    hasTimer: false,
+    title: 'T',
+  };
+
+  // The block replaces its whole deck list with what it receives, and keeps
+  // `cards` as the primary deck's mirror for older clients and learners.
+  it('sends every deck in order, and mirrors the first one in cards', () => {
+    const payload = api.buildSavePayload({
+      ...base,
+      cards: [],
+      decks: [
+        { deckKey: 'dk-1', name: '  Basics  ', cards: [{ term: 'a', definition: 'b', card_key: 'k1' }] },
+        { name: 'Advanced', cards: [{ term: 'c', definition: 'd', term_image_path: 'games/abc/c.png' }] },
+      ],
+    });
+
+    const { decks } = payload;
+    expect(decks).toHaveLength(2);
+    expect(decks![0]).toMatchObject({ deck_key: 'dk-1', name: 'Basics' });
+    expect(decks![1]).toMatchObject({ name: 'Advanced' });
+    expect(decks![1]).not.toHaveProperty('deck_key');
+    expect(decks![1].cards[0].term_image_path).toEqual('games/abc/c.png');
+    // Card order restarts in each deck: position inside its deck is what counts.
+    expect(decks![0].cards[0].order).toEqual(1);
+    expect(decks![1].cards[0].order).toEqual(1);
+    expect(payload.cards).toEqual(decks![0].cards);
+    expect(payload.cards[0].card_key).toEqual('k1');
+  });
+
+  // A backend that predates decks must not be sent the field: it declares no
+  // such thing, and the block keeps `cards` as the whole game.
+  it('omits decks for a backend the caller knows nothing about', () => {
+    const payload = api.buildSavePayload({ ...base, cards: [{ term: 'a', definition: 'b' }] });
+
+    expect(payload).not.toHaveProperty('decks');
+    expect(payload.cards).toHaveLength(1);
+    expect(payload.cards[0].term).toEqual('a');
+  });
+
+  // Saving before the editors' store has the block title must not send a name
+  // that would reset the block's own.
+  it('omits display_name when there is no title yet', () => {
+    const untitled = api.buildSavePayload({ ...base, title: null, cards: [] });
+    expect(untitled).not.toHaveProperty('display_name');
+
+    const titled = api.buildSavePayload({ ...base, cards: [] });
+    expect(titled.display_name).toEqual('T');
   });
 });

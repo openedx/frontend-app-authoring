@@ -47,6 +47,27 @@ describe('TitleHeader', () => {
       expect(screen.getByText('Loading...')).toBeInTheDocument();
     });
 
+    // The title hooks seed their state from the block's title: they must not run
+    // against an empty store, and the loading render must not run a different
+    // hook list than the initialized one.
+    test('mounts the title hooks only once the editor is initialized', () => {
+      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+      const { rerender } = render(<TitleHeader isInitialized={false} />);
+
+      expect(screen.getByText('Loading...')).toBeInTheDocument();
+      expect(hooks.localTitleHooks).not.toHaveBeenCalled();
+      expect(redux.useSelector).not.toHaveBeenCalled();
+
+      rerender(<TitleHeader isInitialized />);
+
+      expect(hooks.localTitleHooks).toHaveBeenCalledTimes(1);
+      expect(screen.getByRole('button', { name: 'Edit Title' })).toBeInTheDocument();
+
+      const logged = errorSpy.mock.calls.map((call) => String(call[0])).join('\n');
+      errorSpy.mockRestore();
+      expect(logged).not.toMatch(/change in the order of Hooks/);
+    });
+
     test('renders component correctly when initialized is true', () => {
       render(<TitleHeader {...props} />);
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument();

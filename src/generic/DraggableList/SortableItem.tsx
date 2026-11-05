@@ -11,6 +11,10 @@ import { DragIndicator } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
+// Data attribute rather than a selector built from the id: the drag layer
+// resolves the handle by scanning for this, never by interpolating an id.
+const dragHandleAttribute = { 'data-drag-handle': 'true' };
+
 interface SortableItemProps {
   id: string;
   children?: React.ReactNode;
@@ -22,6 +26,8 @@ interface SortableItemProps {
   onKeyDown?: KeyboardEventHandler;
   disabled?: boolean;
   cardClassName?: string;
+  /** Accessible name and tooltip of the handle; defaults to the generic text. */
+  dragHandleLabel?: string;
 }
 
 const SortableItem = ({
@@ -35,8 +41,10 @@ const SortableItem = ({
   onKeyDown,
   disabled,
   cardClassName = '',
+  dragHandleLabel,
 }: SortableItemProps) => {
   const intl = useIntl();
+  const handleLabel = dragHandleLabel ?? intl.formatMessage(messages.tooltipContent);
   const {
     attributes,
     listeners,
@@ -76,11 +84,16 @@ const SortableItem = ({
           {!disabled && (
             <IconButtonWithTooltip
               tooltipPlacement="top"
-              tooltipContent={intl.formatMessage(messages.tooltipContent)}
+              tooltipContent={handleLabel}
               src={DragIndicator}
               iconAs={Icon}
               variant="light"
-              alt={intl.formatMessage(messages.tooltipContent)}
+              alt={handleLabel}
+              // Only the handle refuses touch scrolling, so a pointer drag on a
+              // touch screen is not cancelled by the browser's scroll gesture;
+              // the rest of the card still scrolls the page.
+              style={{ touchAction: 'none' }}
+              {...dragHandleAttribute}
               {...attributes}
               {...listeners}
             />

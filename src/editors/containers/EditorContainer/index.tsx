@@ -18,6 +18,7 @@ import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { parseErrorMsg } from '@src/library-authoring/add-content/AddContent';
 import libraryMessages from '@src/library-authoring/add-content/messages';
 import usePromptIfDirty from '@src/generic/promptIfDirty/usePromptIfDirty';
+import { isSaveOverrideResult } from '@src/editors/hooks';
 
 import { EditorComponent } from '../../EditorComponent';
 import TitleHeader from './components/TitleHeader';
@@ -80,6 +81,12 @@ interface Props extends EditorComponent {
    * Cancel and close are refused: the request cannot be taken back.
    */
   onSave?: (() => void | Promise<unknown>) | null;
+  /**
+   * Keeps Save disabled until the editor's own content is ready. For an editor
+   * whose fields arrive after this container is initialised (GamesEditor's
+   * settings fetch), a click before then could only fail.
+   */
+  saveDisabled?: boolean;
 }
 
 const EditorContainer: React.FC<Props> = ({
@@ -90,6 +97,7 @@ const EditorContainer: React.FC<Props> = ({
   validateEntry = null,
   returnFunction = null,
   onSave: onSaveOverride = null,
+  saveDisabled = false,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -112,7 +120,7 @@ const EditorContainer: React.FC<Props> = ({
   const [isFullscreen, , , toggleFullscreen] = useToggle(false);
   const handleCancel = hooks.handleCancel({ onClose, returnFunction });
   const { createFailed, createFailedError } = hooks.createFailed();
-  const disableSave = !isInitialized || overrideSaving;
+  const disableSave = !isInitialized || overrideSaving || saveDisabled;
   const saveFailed = hooks.saveFailed();
   const clearSaveFailed = hooks.clearSaveError({ dispatch });
   const clearCreateFailed = hooks.clearCreateError({ dispatch });
@@ -153,8 +161,9 @@ const EditorContainer: React.FC<Props> = ({
     setOverrideSaveFailed(false);
     setOverridePending(true);
     try {
-      await onSaveOverride();
-      setSaved(true);
+      const result = await onSaveOverride();
+      // An override that did not persist leaves the unsaved-changes warning armed.
+      setSaved(isSaveOverrideResult(result) ? result.persisted : true);
     } catch {
       setOverrideSaveFailed(true);
     } finally {

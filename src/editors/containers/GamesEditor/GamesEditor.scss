@@ -1,26 +1,20 @@
-// Everything here is scoped to the wrapper GameEditor renders, so the
-// editor's .card/.sidebar rules never reach Paragon or Studio.
+// Everything here is scoped to the wrapper GameEditor renders. Root classes
+// that could collide with Paragon/Studio are feature-prefixed (e.g. .games-sidebar).
 //
-// Layout, spacing, colour and type come from Paragon utility classes on the
-// elements themselves. This file only holds what those classes do not cover:
-// flex `gap`, fixed sizes, and overrides of Paragon component styles.
+// Layout, spacing, colour and type come from Paragon components and utility
+// classes on the elements themselves. This file only holds what those do not
+// cover: fixed sizes and overrides of Paragon component styles.
 .xblock-games-editor {
-  .page-body {
-    gap: 1.5rem;
-  }
-
   .terms {
     flex: 1 0 0;
-    gap: 1rem;
   }
 
   .terms > div {
     width: 100%;
   }
 
-  .sidebar {
+  .games-sidebar {
     width: 320px;
-    gap: 1rem;
   }
 
   .card-number {
@@ -43,7 +37,6 @@
   }
 
   .card-image-area {
-    gap: .625rem;
     max-height: 200px;
   }
 
@@ -51,38 +44,8 @@
     height: 1px;
   }
 
-  .add-button:hover {
-    text-decoration: none;
-  }
-
-  .add-button .btn-icon-before {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
   .toggle-button {
     flex: 1;
-  }
-
-  .preview-term,
-  .preview-definition {
-    max-width: 45%;
-  }
-
-  .preview-term {
-    left: 0;
-  }
-
-  .preview-definition {
-    left: 50%;
-  }
-
-  .preview-block {
-    bottom: 30%;
-  }
-
-  .description {
-    gap: .25rem;
   }
 
   .description-header,
@@ -96,12 +59,6 @@
     border: none;
   }
 
-  .card-heading-row,
-  .card-heading-wrapper,
-  .card-heading {
-    gap: .75rem;
-  }
-
   // Lets the collapsed preview truncate instead of widening the row.
   .card-heading-wrapper {
     min-width: 0;
@@ -109,7 +66,6 @@
 
   .card-term,
   .card-definition {
-    gap: 1rem;
     font-size: .875rem;
     line-height: 1.75rem;
   }
@@ -143,4 +99,21 @@
   .card-dropdown {
     z-index: 10;
   }
+
+  // Lets a long deck name truncate instead of widening the row.
+  .deck-outline-name {
+    min-width: 0;
+  }
+
+  // A card or deck the pointer is over while dragging.
+  .deck-outline-drop-active {
+    outline: 2px dashed var(--pgn-color-primary-500);
+    outline-offset: -2px;
+  }
+}
+
+// Short Games editors keep a half-viewport dialog; the modal flex body
+// absorbs the extra space.
+.pgn__modal.editor-modal:has(.xblock-games-editor) {
+  min-height: 50vh;
 }

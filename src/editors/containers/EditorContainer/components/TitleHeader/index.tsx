@@ -16,15 +16,14 @@ interface Props {
   isEditDisabled?: boolean;
 }
 
-const TitleHeader = ({
-  isInitialized,
-  isEditDisabled = false,
-}: Props) => {
+/**
+ * The title and its edit affordance. Mounted only once the editor is ready, so
+ * `localTitleHooks` seeds its state from the block's title rather than an empty
+ * store, and the loading render never runs a different hook list than this one.
+ */
+const TitleHeaderBody = ({ isEditDisabled }: { isEditDisabled: boolean; }) => {
   const intl = useIntl();
-  if (!isInitialized) { return <FormattedMessage {...messages.loading} />; }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const dispatch = useDispatch();
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const title = useSelector(selectors.app.displayTitle);
 
   const {
@@ -71,4 +70,14 @@ const TitleHeader = ({
     </div>
   );
 };
+
+/**
+ * The loading render mounts no title hooks at all: the body arrives with the
+ * editor and seeds itself from the title that arrives with it.
+ */
+const TitleHeader = ({ isInitialized, isEditDisabled = false }: Props) => {
+  if (!isInitialized) { return <FormattedMessage {...messages.loading} />; }
+  return <TitleHeaderBody isEditDisabled={isEditDisabled} />;
+};
+
 export default TitleHeader;

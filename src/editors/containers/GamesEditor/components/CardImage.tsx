@@ -1,5 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Icon, IconButton, OverlayTrigger, Tooltip } from '@openedx/paragon';
+import { Button, Icon, IconButton, OverlayTrigger, Stack, Tooltip } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 
 import messages from '@src/editors/containers/GamesEditor/messages';
@@ -9,7 +9,8 @@ import PictureIcon from './PictureIcon';
 interface CardImageProps {
   url: string;
   altText: string;
-  index: number;
+  /** The card's id: every deck may render a card at the same position. */
+  cardId: string;
   imageType: ImageType;
   /** Locks the settings trigger while a save is out. */
   isSaving: boolean;
@@ -21,7 +22,7 @@ interface CardImageProps {
 export const CardImage = ({
   url,
   altText,
-  index,
+  cardId,
   imageType,
   isSaving,
   onOpenSettings,
@@ -33,11 +34,15 @@ export const CardImage = ({
     onOpenSettings();
   };
   return (
-    <div className="card-image-area d-flex align-items-center justify-content-center align-self-stretch px-4 pb-2">
+    <Stack
+      direction="horizontal"
+      gap={2.5}
+      className="card-image-area justify-content-center align-self-stretch px-4 pb-2"
+    >
       <OverlayTrigger
         placement="bottom"
         overlay={
-          <Tooltip id={`image-settings-tooltip-${imageType}-${index}`}>
+          <Tooltip id={`image-settings-tooltip-${imageType}-${cardId}`}>
             {intl.formatMessage(messages.imageSettingsTooltip)}
           </Tooltip>
         }
@@ -68,7 +73,7 @@ export const CardImage = ({
         variant="primary"
         onClick={onRemove}
       />
-    </div>
+    </Stack>
   );
 };
 

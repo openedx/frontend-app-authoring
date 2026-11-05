@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Form } from '@openedx/paragon';
+import { Form, Stack } from '@openedx/paragon';
 
 import type { FieldError, TextField } from '@src/editors/containers/GamesEditor/gameContent';
 import messages from '@src/editors/containers/GamesEditor/messages';
@@ -23,7 +23,8 @@ const fieldMessages = {
 
 interface CardFieldProps {
   field: TextField;
-  index: number;
+  /** The card's id: every deck may render a card at the same position. */
+  cardId: string;
   value: string;
   error: FieldError | undefined;
   onChange: (value: string) => void;
@@ -38,7 +39,7 @@ interface CardFieldProps {
 /** One text field of a card, the term or the definition, with its image and length count. */
 const CardField = ({
   field,
-  index,
+  cardId,
   value,
   error,
   onChange,
@@ -48,10 +49,12 @@ const CardField = ({
 }: CardFieldProps) => {
   const intl = useIntl();
   const text = fieldMessages[field];
-  const id = `${field}|${index}`;
+  const id = `${field}|${cardId}`;
   return (
-    <div
-      className={`card-${field} d-flex flex-column align-items-start align-self-stretch p-4 text-primary-500 font-weight-bold`}
+    <Stack
+      direction="vertical"
+      gap={3}
+      className={`card-${field} align-items-start align-self-stretch p-4 text-primary-500 font-weight-bold`}
     >
       <Form.Label htmlFor={id} className="mb-0">
         {intl.formatMessage(text.label)}
@@ -86,7 +89,7 @@ const CardField = ({
           </small>
         </div>
       </div>
-    </div>
+    </Stack>
   );
 };
 
