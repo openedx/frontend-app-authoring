@@ -162,6 +162,48 @@ describe('useOutlineNodeExpansion', () => {
       expect(result.current.isExpanded).toBe(true);
     });
 
+    it('should be expanded in the same render the node becomes the drop target', () => {
+      const renders: boolean[] = [];
+      const { rerender } = renderHook(
+        ({ overId }: { overId: string | null; }) => {
+          const expansion = useOutlineNodeExpansion({
+            ...defaultParams,
+            overId,
+            isSectionsExpanded: false,
+          });
+          renders.push(expansion.isExpanded);
+          return expansion;
+        },
+        { initialProps: { overId: null } },
+      );
+      renders.length = 0;
+
+      rerender({ overId: 'section-1' });
+
+      // The render before the expand effect has run.
+      expect(renders[0]).toBe(true);
+    });
+
+    it('should stay expanded after the drag moves on', () => {
+      const { result, rerender } = renderHook(
+        ({ overId }: { overId: string | null; }) =>
+          useOutlineNodeExpansion({
+            ...defaultParams,
+            overId,
+            isSectionsExpanded: false,
+          }),
+        { initialProps: { overId: 'section-1' } },
+      );
+
+      rerender({ overId: null });
+      expect(result.current.isExpanded).toBe(true);
+    });
+
+    it('should not expand at depth 2 when it is the drop target', () => {
+      const { result } = renderHook(() => useOutlineNodeExpansion({ ...defaultParams, depth: 2, overId: 'section-1' }));
+      expect(result.current.isExpanded).toBe(false);
+    });
+
     it('should not affect expansion at depth 2', () => {
       const { result, rerender } = renderHook(
         ({ activeId }: { activeId: string | null; }) =>
