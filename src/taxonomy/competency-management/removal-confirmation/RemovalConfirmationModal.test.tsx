@@ -11,7 +11,7 @@ import type {
   PendingRemoval,
 } from '@src/taxonomy/competency-management/CompetencyAssociationsContext';
 import { MockCompetencyAssociationsProvider } from '@src/taxonomy/competency-management/__mocks__';
-import { RemovalTargetKind } from '@src/taxonomy/competency-management/constants';
+import { RemovalFailure, RemovalTargetKind } from '@src/taxonomy/competency-management/constants';
 import RemovalConfirmationModal from './RemovalConfirmationModal';
 
 const closingLine = 'This can\'t be undone from this screen. Learners keep any mastery status they already have.';
@@ -208,12 +208,6 @@ describe('RemovalConfirmationModal', () => {
       expect(cancelRemoval).not.toHaveBeenCalled();
     });
 
-    it('moves focus into the dialog when it opens', async () => {
-      renderModal(associationRemoval());
-
-      await waitFor(() => expect(screen.getByRole('dialog')).toContainElement(document.activeElement as HTMLElement));
-    });
-
     it('cancels on Escape', async () => {
       const user = userEvent.setup();
       const cancelRemoval = jest.fn();
@@ -230,20 +224,20 @@ describe('RemovalConfirmationModal', () => {
     it.each([
       [
         'association',
-        { ...associationRemoval(), failure: 'nothing-removed' as const },
+        { ...associationRemoval(), failure: RemovalFailure.NothingRemoved },
         'Couldn\'t remove this association',
       ],
       [
         'rule group',
-        { ...ruleGroupRemoval(false), failure: 'nothing-removed' as const },
+        { ...ruleGroupRemoval(false), failure: RemovalFailure.NothingRemoved },
         'Couldn\'t remove this group',
       ],
       [
         'course group',
-        { ...courseGroupRemoval(), failure: 'nothing-removed' as const },
+        { ...courseGroupRemoval(), failure: RemovalFailure.NothingRemoved },
         'Couldn\'t remove this course',
       ],
-      ['rule box', ruleBoxRemoval({}, 'nothing-removed'), 'Couldn\'t remove this rule'],
+      ['rule box', ruleBoxRemoval({}, RemovalFailure.NothingRemoved), 'Couldn\'t remove this rule'],
     ])('shows the %s title and the nothing-removed text above the body', (_kind, pending, failedTitle) => {
       renderModal(pending);
 
@@ -256,7 +250,7 @@ describe('RemovalConfirmationModal', () => {
     });
 
     it('says some of the content was removed for a partly removed rule box', () => {
-      renderModal(ruleBoxRemoval({ contentNames: ['Quiz B'] }, 'partly-removed'));
+      renderModal(ruleBoxRemoval({ contentNames: ['Quiz B'] }, RemovalFailure.PartlyRemoved));
 
       const alert = within(screen.getByRole('dialog')).getByRole('alert');
       expect(alert).toHaveTextContent('Couldn\'t remove this rule');

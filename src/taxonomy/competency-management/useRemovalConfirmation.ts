@@ -10,16 +10,63 @@ import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import { useToastContext } from '@src/generic/toast-context';
 
 import type { PendingRemoval } from './CompetencyAssociationsContext';
-import { RemovalTargetKind } from './constants';
+import { RemovalFailure, RemovalTargetKind } from './constants';
 import { competencyQueryKeys, RuleBoxDeleteError } from './data/apiHooks';
 import type { CompetencyCriteriaGroupsResponse, CompetencyRuleProfile } from './data/types';
 import messages from './messages';
-import type { CompetencyCriteriaGroupsIndex, RemovalTarget } from './utils';
+import type { CompetencyCriteriaGroupsIndex, RemovalSummary, RemovalTarget } from './utils';
 import {
   buildCompetencyCriteriaGroupsIndex,
   subsectionNamesFromOutline,
   summarizeRemoval,
 } from './utils';
+
+interface OutlineNames {
+  courseNamesByKey: Map<string, string>;
+  subsectionNamesByUsageKey: Record<string, string>;
+}
+
+/** Rebuilds a failed removal's dialog, so a retry describes and sends only what is left. A rule box's deletes stop at
+ * the first failure, and `removedCount` is how many of its criteria were removed before it: the refetched data cannot
+ * say, because it is the pre-delete data when the refetch fails too. Returns `null` when the target is gone from the
+ * refetched data, which is the outcome the author asked for. `summary` is `null` when there is no fresh data to
+ * rebuild it from, and the dialog keeps the one it shows.
+ */
+const pendingRemovalAfterFailure = (
+  target: RemovalTarget,
+  removedCount: number,
+  freshData: CompetencyCriteriaGroupsResponse | undefined,
+  systemDefaultProfile: CompetencyRuleProfile | undefined,
+  { courseNamesByKey, subsectionNamesByUsageKey }: OutlineNames,
+): Omit<PendingRemoval, 'summary'> & { summary: RemovalSummary | null; } | null => {
+  let retryTarget: RemovalTarget = target;
+  if (target.kind === RemovalTargetKind.RuleBox) {
+    const unsentIds = target.criterionIds.slice(removedCount);
+    retryTarget = {
+      ...target,
+      criterionIds: freshData
+        ? unsentIds.filter((id) => freshData.criteria.some((criterion) => criterion.id === id))
+        : unsentIds,
+    };
+  }
+  const freshSummary = freshData && systemDefaultProfile
+    ? summarizeRemoval(
+      retryTarget,
+      buildCompetencyCriteriaGroupsIndex(freshData),
+      systemDefaultProfile,
+      courseNamesByKey,
+      subsectionNamesByUsageKey,
+    )
+    : null;
+  if (freshData && systemDefaultProfile && freshSummary === null) {
+    return null;
+  }
+  return {
+    target: retryTarget,
+    summary: freshSummary,
+    failure: removedCount > 0 ? RemovalFailure.PartlyRemoved : RemovalFailure.NothingRemoved,
+  };
+};
 
 interface UseRemovalConfirmationArgs {
   tagId: number;
@@ -152,46 +199,22 @@ export function useRemovalConfirmation({
       const removedCount = target.kind === RemovalTargetKind.RuleBox && error instanceof RuleBoxDeleteError
         ? error.removedCount
         : 0;
-      // The refetch has landed, so the summary is rebuilt from it: a retry then describes what is left.
-      const freshData = queryClient.getQueryData<CompetencyCriteriaGroupsResponse>(
-        competencyQueryKeys.competencyCriteriaGroups(tagId, listedCourseKeys),
+      // The refetch has landed, so the dialog is rebuilt from it.
+      const afterFailure = pendingRemovalAfterFailure(
+        target,
+        removedCount,
+        queryClient.getQueryData<CompetencyCriteriaGroupsResponse>(
+          competencyQueryKeys.competencyCriteriaGroups(tagId, listedCourseKeys),
+        ),
+        systemDefaultProfile,
+        outlineNames(),
       );
-      // A retry sends only what is left of a rule box.
-      let retryTarget: RemovalTarget = target;
-      if (target.kind === RemovalTargetKind.RuleBox) {
-        const unsentIds = target.criterionIds.slice(removedCount);
-        retryTarget = {
-          ...target,
-          criterionIds: freshData
-            ? unsentIds.filter((id) => freshData.criteria.some((criterion) => criterion.id === id))
-            : unsentIds,
-        };
-      }
-      const { courseNamesByKey, subsectionNamesByUsageKey } = outlineNames();
-      const freshSummary = freshData && systemDefaultProfile
-        ? summarizeRemoval(
-          retryTarget,
-          buildCompetencyCriteriaGroupsIndex(freshData),
-          systemDefaultProfile,
-          courseNamesByKey,
-          subsectionNamesByUsageKey,
-        )
-        : null;
-      if (freshData && systemDefaultProfile && freshSummary === null) {
+      if (!afterFailure) {
         // The target is gone from the refetched data, which is the outcome the author asked for.
         setPendingRemoval(null);
         return;
       }
-      setPendingRemoval((prev) => {
-        if (!prev) {
-          return prev;
-        }
-        return {
-          target: retryTarget,
-          summary: freshSummary ?? prev.summary,
-          failure: removedCount > 0 ? 'partly-removed' : 'nothing-removed',
-        };
-      });
+      setPendingRemoval((prev) => prev && { ...afterFailure, summary: afterFailure.summary ?? prev.summary });
     } finally {
       if (confirmingGenerationRef.current === startGeneration) {
         confirmingGenerationRef.current = null;

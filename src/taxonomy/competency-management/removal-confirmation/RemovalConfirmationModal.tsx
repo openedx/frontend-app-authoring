@@ -4,6 +4,7 @@ import { Error as ErrorIcon } from '@openedx/paragon/icons';
 import AlertMessage from '@src/generic/alert-message';
 import DeleteModal from '@src/generic/delete-modal/DeleteModal';
 import { useCompetencyAssociations } from '@src/taxonomy/competency-management/CompetencyAssociationsContext';
+import { RemovalFailure } from '@src/taxonomy/competency-management/constants';
 import messages from './messages';
 import { describeRemoval } from './utils';
 
@@ -42,7 +43,9 @@ const RemovalConfirmationModal = () => {
               icon={ErrorIcon}
               title={failedTitle}
               description={intl.formatMessage(
-                failure === 'partly-removed' ? messages.partlyRemovedMessage : messages.nothingRemovedMessage,
+                failure === RemovalFailure.PartlyRemoved
+                  ? messages.partlyRemovedMessage
+                  : messages.nothingRemovedMessage,
               )}
             />
           )}
