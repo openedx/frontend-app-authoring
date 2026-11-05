@@ -1,4 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { Stack } from '@openedx/paragon';
 import type { CompetencyGroupLogicOperator } from '../data/types';
 import LogicOperatorSelect from './LogicOperatorSelect';
 import messages from './messages';
@@ -18,7 +19,7 @@ const GroupConnector = ({ logicOperator }: GroupConnectorProps) => {
   const intl = useIntl();
 
   return (
-    <div className="group-connector" data-testid="group-connector">
+    <Stack direction="horizontal" gap={2} className="group-connector">
       <span className="group-connector__line" aria-hidden="true" />
       <LogicOperatorSelect
         className="group-connector__label"
@@ -29,7 +30,7 @@ const GroupConnector = ({ logicOperator }: GroupConnectorProps) => {
         }}
       />
       <span className="group-connector__line" aria-hidden="true" />
-    </div>
+    </Stack>
   );
 };
 

@@ -2,6 +2,7 @@ import type {
   CompetencyCriteriaGroup,
   CompetencyCriteriaGroupsResponse,
   CompetencyCriterion,
+  CompetencyRuleProfile,
   GradeRulePayload,
 } from '../data/types';
 
@@ -60,6 +61,15 @@ export const defaultProfileResponse = {
       archived: false,
     },
   ],
+};
+
+/** `defaultProfileResponse`'s row, camelCased as the app sees it. */
+export const systemDefaultProfile: CompetencyRuleProfile = {
+  id: 1,
+  scopeType: 'system_default',
+  ruleType: 'grade',
+  rulePayload: gteRule,
+  archived: false,
 };
 
 const rootGroup = group(500, null, null, 0);

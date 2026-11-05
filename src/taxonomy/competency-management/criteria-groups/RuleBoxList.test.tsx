@@ -1,58 +1,44 @@
-import { initializeMocks, render, screen } from '@src/testUtils';
-import { MockCompetencyAssociationsProvider } from '../__mocks__';
-import type { CompetencyCriteriaGroupsResponse, CompetencyRuleProfile } from '../data/types';
-import { buildCompetencyCriteriaGroupsIndex } from '../utils';
+import { initializeMocks, render, screen, within } from '@src/testUtils';
+import {
+  criterion,
+  group,
+  MockCompetencyAssociationsProvider,
+  systemDefaultProfile,
+} from '../__mocks__';
+import type { CompetencyCriteriaGroupsResponse } from '../data/types';
+import { buildCompetencyCriteriaGroupsIndex, ruleBoxesForGroup } from '../utils';
 import RuleBoxList from './RuleBoxList';
-
-const systemDefaultProfile: CompetencyRuleProfile = {
-  id: 1,
-  scopeType: 'system_default',
-  ruleType: 'grade',
-  rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
-  archived: false,
-};
 
 // Group 10 holds two criteria sharing the default profile's rule (101, 102)
 // and one with a different override (103).
 const response: CompetencyCriteriaGroupsResponse = {
-  groups: [
-    {
-      id: 10,
-      parentId: null,
-      tagId: 42,
-      courseKey: null,
-      name: 'leaf',
-      ordering: 0,
-      logicOperator: 'AND',
-    },
-  ],
+  groups: [group(10, null, null, 0)],
   criteria: [
-    {
-      id: 101,
-      objectId: 'block-a',
-      groupId: 10,
-      ruleProfileId: 1,
-      ruleTypeOverride: null,
-      rulePayloadOverride: null,
-    },
-    {
-      id: 102,
-      objectId: 'block-b',
-      groupId: 10,
-      ruleProfileId: 1,
-      ruleTypeOverride: null,
-      rulePayloadOverride: null,
-    },
-    {
-      id: 103,
-      objectId: 'block-c',
-      groupId: 10,
+    criterion(101, 'block-a', 10),
+    criterion(102, 'block-b', 10),
+    criterion(103, 'block-c', 10, {
       ruleProfileId: null,
       ruleTypeOverride: 'grade',
       rulePayloadOverride: { op: 'lte', value: 0.9, scale: 'percent' },
-    },
+    }),
   ],
 };
+
+const boxes = ruleBoxesForGroup(10, buildCompetencyCriteriaGroupsIndex(response), systemDefaultProfile);
+
+const renderList = (focus: { groupId: number; ruleKey: string; } | null = null) => (
+  render(
+    <MockCompetencyAssociationsProvider value={{ focus }}>
+      <RuleBoxList
+        groupId={10}
+        boxes={boxes}
+        subsectionNamesByUsageKey={{ 'block-a': 'Subsection A', 'block-b': 'Subsection B', 'block-c': 'Subsection C' }}
+      />
+    </MockCompetencyAssociationsProvider>,
+  )
+);
+
+const originalScrollIntoView = Element.prototype.scrollIntoView;
 
 describe('<RuleBoxList />', () => {
   beforeEach(() => {
@@ -61,74 +47,38 @@ describe('<RuleBoxList />', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    Element.prototype.scrollIntoView = originalScrollIntoView;
   });
 
-  it('renders two criteria sharing a rule as one box, and a different rule as a second box', () => {
-    const index = buildCompetencyCriteriaGroupsIndex(response);
-    render(
-      <MockCompetencyAssociationsProvider>
-        <RuleBoxList
-          groupId={10}
-          index={index}
-          systemDefaultProfile={systemDefaultProfile}
-          subsectionNamesByUsageKey={{
-            'block-a': 'Subsection A',
-            'block-b': 'Subsection B',
-            'block-c': 'Subsection C',
-          }}
-        />
-      </MockCompetencyAssociationsProvider>,
-    );
+  it('renders two criteria sharing a rule as one box, and an override rule as a second box with its own threshold', () => {
+    renderList();
 
-    const boxes = screen.getAllByRole('button');
-    expect(boxes).toHaveLength(2);
-    // Box 1 (min criterion id 101) holds both Subsection A and B.
-    expect(boxes[0]).toHaveTextContent('Subsection A');
-    expect(boxes[0]).toHaveTextContent('Subsection B');
-    expect(boxes[0]).toHaveTextContent('With a score of 70% or higher');
-    // Box 2 (min criterion id 103) holds only Subsection C, with its own rule.
-    expect(boxes[1]).toHaveTextContent('Subsection C');
-    expect(boxes[1]).toHaveTextContent('With a score of 90% or lower');
+    const controls = screen.getAllByRole('button');
+    expect(controls.map((control) => control.textContent)).toEqual([
+      'With a score of 70% or higher',
+      'With a score of 90% or lower',
+    ]);
+    const [defaultBox, overrideBox] = controls.map((control) => within(control.parentElement!));
+    expect(defaultBox.getAllByText(/^Subsection/).map((chip) => chip.textContent)).toEqual([
+      'Subsection A',
+      'Subsection B',
+    ]);
+    expect(overrideBox.getAllByText(/^Subsection/).map((chip) => chip.textContent)).toEqual(['Subsection C']);
   });
 
-  it('marks only the box matching the context focus as focused', () => {
-    const index = buildCompetencyCriteriaGroupsIndex(response);
-    render(
-      <MockCompetencyAssociationsProvider value={{ focus: { groupId: 10, ruleKey: 'grade:lte:0.9:percent' } }}>
-        <RuleBoxList
-          groupId={10}
-          index={index}
-          systemDefaultProfile={systemDefaultProfile}
-          subsectionNamesByUsageKey={{}}
-        />
-      </MockCompetencyAssociationsProvider>,
-    );
+  it('marks only the box matching the context focus as current', () => {
+    renderList({ groupId: 10, ruleKey: 'grade:lte:0.9:percent' });
 
-    const boxes = screen.getAllByRole('button');
-    expect(boxes[0].className).not.toContain('rule-box--focused');
-    expect(boxes[1].className).toContain('rule-box--focused');
+    const [defaultBox, overrideBox] = screen.getAllByRole('button');
+    expect(defaultBox).toHaveAttribute('aria-current', 'false');
+    expect(overrideBox).toHaveAttribute('aria-current', 'true');
   });
 
-  it('renders no box as focused, without throwing, when the focused key matches none rendered', () => {
-    const index = buildCompetencyCriteriaGroupsIndex(response);
-    expect(() =>
-      render(
-        <MockCompetencyAssociationsProvider
-          value={{ focus: { groupId: 10, ruleKey: 'stale-key-that-matches-nothing' } }}
-        >
-          <RuleBoxList
-            groupId={10}
-            index={index}
-            systemDefaultProfile={systemDefaultProfile}
-            subsectionNamesByUsageKey={{}}
-          />
-        </MockCompetencyAssociationsProvider>,
-      )
-    ).not.toThrow();
+  it('marks no box as current when the focused key matches none rendered', () => {
+    renderList({ groupId: 10, ruleKey: 'stale-key-that-matches-nothing' });
 
-    screen.getAllByRole('button').forEach((box) => {
-      expect(box.className).not.toContain('rule-box--focused');
+    screen.getAllByRole('button').forEach((control) => {
+      expect(control).toHaveAttribute('aria-current', 'false');
     });
   });
 });

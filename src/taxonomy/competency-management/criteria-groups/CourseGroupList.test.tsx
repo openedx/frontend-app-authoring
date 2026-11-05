@@ -1,42 +1,15 @@
+import { buildOutlineIndex } from '@src/course-outline/__mocks__';
+import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import { initializeMocks, render, screen } from '@src/testUtils';
-import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../__mocks__';
-import type { CompetencyCriteriaGroupsResponse, CompetencyRuleProfile } from '../data/types';
+import {
+  buildMockCompetencyAssociationsContextValue,
+  courseA,
+  courseB,
+  MockCompetencyAssociationsProvider,
+  twoCoursesResponse,
+} from '../__mocks__';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import CourseGroupList from './CourseGroupList';
-
-const systemDefaultProfile: CompetencyRuleProfile = {
-  id: 1,
-  scopeType: 'system_default',
-  ruleType: 'grade',
-  rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
-  archived: false,
-};
-
-const emptyGroupsResponse: CompetencyCriteriaGroupsResponse = { groups: [], criteria: [] };
-
-const populatedGroupsResponse: CompetencyCriteriaGroupsResponse = {
-  groups: [
-    {
-      id: 100,
-      parentId: null,
-      tagId: 42,
-      courseKey: null,
-      name: 'root',
-      ordering: 0,
-      logicOperator: 'AND',
-    },
-    {
-      id: 1,
-      parentId: 100,
-      tagId: 42,
-      courseKey: 'course-v1:OrgX+CS101+2024',
-      name: 'course',
-      ordering: 0,
-      logicOperator: 'AND',
-    },
-  ],
-  criteria: [],
-};
 
 const renderList = (contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {}) => (
   render(
@@ -47,13 +20,15 @@ const renderList = (contextOverrides: Parameters<typeof buildMockCompetencyAssoc
 );
 
 describe('<CourseGroupList />', () => {
+  let axiosMock: ReturnType<typeof initializeMocks>['axiosMock'];
+
   beforeEach(() => {
-    initializeMocks();
+    ({ axiosMock } = initializeMocks());
   });
 
   it('renders a loading state, not the empty state, while the status is pending', () => {
     renderList({ status: 'pending' });
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
     expect(screen.queryByText('No content associated.')).not.toBeInTheDocument();
   });
 
@@ -64,10 +39,9 @@ describe('<CourseGroupList />', () => {
     expect(screen.queryByText('No content associated.')).not.toBeInTheDocument();
   });
 
-  it('renders the empty state when accessibleCourseGroups is empty, not throwing', () => {
+  it('renders the empty state when no course group is accessible, whatever the groups index holds', () => {
     renderList({
-      groupsIndex: buildCompetencyCriteriaGroupsIndex(emptyGroupsResponse),
-      systemDefaultProfile,
+      groupsIndex: buildCompetencyCriteriaGroupsIndex(twoCoursesResponse),
       accessibleCourseGroups: [],
     });
     expect(screen.getByText('No content associated.')).toBeInTheDocument();
@@ -75,32 +49,28 @@ describe('<CourseGroupList />', () => {
       .toBeInTheDocument();
   });
 
-  it(
-    'renders the empty state when every course-level group is inaccessible, even though the raw '
-      + 'groups response has one - accessibleCourseGroups decides this, not the raw response\'s own count',
-    () => {
-      renderList({
-        groupsIndex: buildCompetencyCriteriaGroupsIndex(populatedGroupsResponse),
-        systemDefaultProfile,
-        // The one course-level group didn't pass the outline-accessibility
-        // check, so it must render identically to no associations at all.
-        accessibleCourseGroups: [],
-      });
-      expect(screen.getByText('No content associated.')).toBeInTheDocument();
-    },
-  );
-
-  it('renders course group sections for every accessible course-level group', async () => {
-    const groupsIndex = buildCompetencyCriteriaGroupsIndex(populatedGroupsResponse);
+  it('renders one card per accessible course group and none for the others in the groups index', async () => {
+    // Course A's outline resolves, so a card for it would render if the list did not filter it out.
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(
+      200,
+      buildOutlineIndex({
+        overrides: { courseStructure: { displayName: 'Course A' } },
+      }),
+    );
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseB)).reply(
+      200,
+      buildOutlineIndex({
+        overrides: { courseStructure: { displayName: 'Course B' } },
+      }),
+    );
+    const groupsIndex = buildCompetencyCriteriaGroupsIndex(twoCoursesResponse);
     renderList({
       groupsIndex,
-      systemDefaultProfile,
-      accessibleCourseGroups: groupsIndex.courseGroups,
+      accessibleCourseGroups: groupsIndex.courseGroups.filter((courseGroup) => courseGroup.courseKey === courseB),
     });
+
+    expect(await screen.findByRole('heading', { name: 'From within Course B ...' })).toBeInTheDocument();
+    expect(screen.getAllByRole('heading')).toHaveLength(1);
     expect(screen.queryByText('No content associated.')).not.toBeInTheDocument();
-    // The outline isn't mocked here, so it degrades to the raw course id via
-    // its defensive fallback - enough to prove a real `CourseGroupSection`
-    // was mounted.
-    expect(await screen.findByText('course-v1:OrgX+CS101+2024')).toBeInTheDocument();
   });
 });

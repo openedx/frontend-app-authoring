@@ -1,102 +1,42 @@
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import {
-  fireEvent,
   initializeMocks,
   render,
   screen,
+  userEvent,
+  waitFor,
 } from '@src/testUtils';
-import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../__mocks__';
-import type {
-  CompetencyCriteriaGroupsResponse,
-  CompetencyRuleProfile,
-  CourseCompetencyCriteriaGroup,
-} from '../data/types';
+import {
+  courseA,
+  criterion,
+  MockCompetencyAssociationsProvider,
+  twoGroupsResponse,
+} from '../__mocks__';
+import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
+import type { CourseCompetencyCriteriaGroup } from '../data/types';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import CourseGroupSection from './CourseGroupSection';
 
 let axiosMock: ReturnType<typeof initializeMocks>['axiosMock'];
+let queryClient: ReturnType<typeof initializeMocks>['queryClient'];
 
-const courseKey = 'course-v1:OrgX+CS101+2024';
+const courseKey = courseA;
 const outlineApiUrl = getCourseOutlineIndexApiUrl(courseKey);
 
-const courseGroup: CourseCompetencyCriteriaGroup = {
-  id: 1,
-  parentId: 100,
-  tagId: 42,
-  name: 'course',
-  ordering: 0,
-  logicOperator: 'OR',
-  courseKey,
-};
-
-// The competency's root group (id 100, never rendered), plus two leaf
-// groups (10, 11) under the same course, each with one criterion pointing
-// at a real subsection in the outline fixture below.
-const response: CompetencyCriteriaGroupsResponse = {
-  groups: [
-    {
-      id: 100,
-      parentId: null,
-      tagId: 42,
-      courseKey: null,
-      name: 'root',
-      ordering: 0,
-      logicOperator: 'AND',
-    },
-    courseGroup,
-    {
-      id: 10,
-      parentId: 1,
-      tagId: 42,
-      courseKey: null,
-      name: 'leaf',
-      ordering: 0,
-      logicOperator: 'AND',
-    },
-    {
-      id: 11,
-      parentId: 1,
-      tagId: 42,
-      courseKey: null,
-      name: 'leaf',
-      ordering: 1,
-      logicOperator: 'AND',
-    },
-  ],
-  criteria: [
-    {
-      id: 101,
-      objectId: 'sub-1a',
-      groupId: 10,
-      ruleProfileId: 1,
-      ruleTypeOverride: null,
-      rulePayloadOverride: null,
-    },
-    {
-      id: 102,
-      objectId: 'sub-2a',
-      groupId: 11,
-      ruleProfileId: 1,
-      ruleTypeOverride: null,
-      rulePayloadOverride: null,
-    },
-  ],
-};
-
-const systemDefaultProfile: CompetencyRuleProfile = {
-  id: 1,
-  scopeType: 'system_default',
-  ruleType: 'grade',
-  rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
-  archived: false,
+// Course A's two leaf groups (10, 11), each holding one criterion on a subsection in the outline below.
+const response = {
+  ...twoGroupsResponse,
+  criteria: [criterion(101, 'sub-1a', 10), criterion(102, 'sub-2a', 11)],
 };
 
 const index = buildCompetencyCriteriaGroupsIndex(response);
+const [courseGroup] = index.courseGroups;
 
-// `usageKey: undefined` mirrors the real `course_index` response, which
-// never populates `usage_key` - so these tests only pass if
-// `CourseGroupSection` reads `.id`, not `.usageKey`.
+const ruleKeyOfDefault = 'grade:gte:0.7:percent';
+
+// `usageKey: undefined` mirrors the `course_index` response, which never populates it.
 const outlineFixture = buildOutlineIndex({
   sections: [
     {
@@ -114,95 +54,138 @@ const outlineFixture = buildOutlineIndex({
 });
 
 const renderSection = (
-  contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {},
+  contextOverrides: MockCompetencyAssociationsOverrides = {},
+  section: CourseCompetencyCriteriaGroup = courseGroup,
 ) => (
   render(
-    <MockCompetencyAssociationsProvider value={{ groupsIndex: index, systemDefaultProfile, ...contextOverrides }}>
-      <CourseGroupSection courseGroup={courseGroup} />
+    <MockCompetencyAssociationsProvider value={{ groupsIndex: index, ...contextOverrides }}>
+      <CourseGroupSection courseGroup={section} />
     </MockCompetencyAssociationsProvider>,
   )
 );
 
+const originalScrollIntoView = Element.prototype.scrollIntoView;
+
 describe('<CourseGroupSection />', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
-    ({ axiosMock } = initializeMocks());
+    ({ axiosMock, queryClient } = initializeMocks());
+    user = userEvent.setup();
     Element.prototype.scrollIntoView = jest.fn();
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    Element.prototype.scrollIntoView = originalScrollIntoView;
   });
 
-  it('resolves its header and chip names from its own outline fetch', async () => {
+  it('resolves its heading and chip names from its own outline fetch', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
     renderSection();
 
-    expect(await screen.findByText('Demo Course')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'From within Demo Course ...' })).toBeInTheDocument();
     expect(screen.getByText('Subsection 1A')).toBeInTheDocument();
     expect(screen.getByText('Subsection 2A')).toBeInTheDocument();
   });
 
-  it(
-    'does not throw if its own outline fetch fails (defensive only)',
-    async () => {
-      axiosMock.onGet(outlineApiUrl).reply(403);
-      expect(() => renderSection()).not.toThrow();
-      expect(await screen.findByText(courseKey)).toBeInTheDocument();
-    },
-  );
-
-  it('renders exactly one connector for its two bottom-tier groups (N children -> N-1 connectors)', async () => {
-    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+  it('renders nothing when its outline request fails', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(403);
     renderSection();
 
-    await screen.findByText('Demo Course');
-    expect(screen.getAllByTestId('group-connector')).toHaveLength(1);
+    await waitFor(() => {
+      expect(queryClient.getQueryState(courseOutlineQueryKeys.index(courseKey))?.status).toBe('error');
+    });
+    expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('collapses and re-expands independently via its own chevron', async () => {
+  it.each(
+    [
+      ['OR', 'Or'],
+      ['AND', 'And'],
+    ] as const,
+  )('puts one %s connector between its two bottom-tier groups', async (logicOperator, label) => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    renderSection({}, { ...courseGroup, logicOperator });
+
+    await screen.findByText('Subsection 1A');
+    expect(screen.getAllByText(label)).toHaveLength(1);
+  });
+
+  it('marks only the focused group and its rule box when two groups share the default rule key', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    renderSection({ focus: { groupId: 10, ruleKey: ruleKeyOfDefault } });
+
+    await screen.findByText('Subsection 1A');
+    const [firstHeader, secondHeader] = screen.getAllByRole('button', { name: 'By completing any of the following' });
+    const [firstRuleBox, secondRuleBox] = screen.getAllByRole('button', { name: 'With a score of 70% or higher' });
+    expect(firstHeader).toHaveAttribute('aria-current', 'true');
+    expect(secondHeader).toHaveAttribute('aria-current', 'false');
+    expect(firstRuleBox).toHaveAttribute('aria-current', 'true');
+    expect(secondRuleBox).toHaveAttribute('aria-current', 'false');
+  });
+
+  it('collapses and re-expands independently via its own toggle', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
     renderSection();
 
-    await screen.findByText('Demo Course');
-    expect(screen.getByText('Subsection 1A')).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: 'Collapse' }));
+    await user.click(await screen.findByRole('button', { name: 'Collapse Demo Course' }));
     expect(screen.queryByText('Subsection 1A')).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Expand' }));
+    await user.click(screen.getByRole('button', { name: 'Expand Demo Course' }));
     expect(screen.getByText('Subsection 1A')).toBeInTheDocument();
   });
 
-  it('renders nothing as focused, without throwing, when a collapsed section holds the focused group/rule box', async () => {
+  it('reopens a collapsed card when the focus moves into it', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
-    renderSection({ focus: { groupId: 10, ruleKey: 'grade:gte:0.7:percent' } });
+    const { rerender } = renderSection();
 
-    await screen.findByText('Demo Course');
-    fireEvent.click(screen.getByRole('button', { name: 'Collapse' }));
+    await user.click(await screen.findByRole('button', { name: 'Collapse Demo Course' }));
+    expect(screen.queryByText('Subsection 1A')).not.toBeInTheDocument();
+
+    rerender(
+      <MockCompetencyAssociationsProvider
+        value={{ groupsIndex: index, focus: { groupId: 10, ruleKey: ruleKeyOfDefault } }}
+      >
+        <CourseGroupSection courseGroup={courseGroup} />
+      </MockCompetencyAssociationsProvider>,
+    );
+
+    expect(await screen.findByText('Subsection 1A')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Collapse Demo Course' })).toBeInTheDocument();
+  });
+
+  it('stays collapsed when the focus moves to a group outside it', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const { rerender } = renderSection();
+
+    await user.click(await screen.findByRole('button', { name: 'Collapse Demo Course' }));
+
+    rerender(
+      <MockCompetencyAssociationsProvider
+        value={{ groupsIndex: index, focus: { groupId: 999, ruleKey: null } }}
+      >
+        <CourseGroupSection courseGroup={courseGroup} />
+      </MockCompetencyAssociationsProvider>,
+    );
 
     expect(screen.queryByText('Subsection 1A')).not.toBeInTheDocument();
-    expect(screen.queryByText(/By completing/)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Expand Demo Course' })).toBeInTheDocument();
   });
 
-  it('marks itself focused only when it contains the focused group', async () => {
+  it.each([
+    [10, true],
+    [999, false],
+  ])('marks itself focused only when it contains the focused group (focused group %i)', async (groupId, isFocused) => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
-    const { container, unmount } = renderSection({ focus: { groupId: 10, ruleKey: null } });
+    const { container } = renderSection({ focus: { groupId, ruleKey: null } });
 
-    await screen.findByText('Demo Course');
-    expect(container.querySelector('.course-group-section')).toHaveClass('course-group-section--focused');
-
-    unmount();
-    const { container: other } = renderSection({ focus: { groupId: 999, ruleKey: null } });
-    await screen.findByText('Demo Course');
-    expect(other.querySelector('.course-group-section')).not.toHaveClass('course-group-section--focused');
-  });
-
-  it('places the toggle before the course title', async () => {
-    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
-    renderSection();
-
-    const title = await screen.findByText('Demo Course');
-    const toggle = screen.getByRole('button', { name: 'Collapse' });
-    expect(toggle.compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    await screen.findByText('Subsection 1A');
+    const card = container.querySelector('.course-group-section');
+    if (isFocused) {
+      expect(card).toHaveClass('course-group-section--focused');
+    } else {
+      expect(card).not.toHaveClass('course-group-section--focused');
+    }
   });
 });

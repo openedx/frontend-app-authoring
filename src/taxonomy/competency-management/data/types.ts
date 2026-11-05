@@ -94,7 +94,9 @@ export interface EffectiveRule {
  */
 export interface RuleBox {
   /** The effective rule serialized as `ruleType:op:value:scale`, for example
-   * `grade:gte:0.7:percent`. It is what `focus.ruleKey` points at.
+   * `grade:gte:0.7:percent`. It is what `focus.ruleKey` points at. A box's
+   * identity is its rule key, so a rule or default-profile change re-keys the
+   * box and focus moves to the group's last box.
    */
   key: string;
   rule: EffectiveRule;

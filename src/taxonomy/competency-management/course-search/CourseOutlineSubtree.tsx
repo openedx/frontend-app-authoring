@@ -2,12 +2,7 @@ import { type ReactNode, useState } from 'react';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Icon, IconButton } from '@openedx/paragon';
-import {
-  AddCircle,
-  Cancel,
-  ExpandLess,
-  ExpandMore,
-} from '@openedx/paragon/icons';
+import { AddCircle, ExpandLess, ExpandMore } from '@openedx/paragon/icons';
 
 import { useCourseOutlineIndex } from '@src/course-outline/data';
 import type { XBlock } from '@src/data/types';
@@ -27,18 +22,8 @@ interface SubsectionRowProps {
 }
 
 /**
- * One row for a single graded subsection.
- *
- * Renders a button that calls `associateSubsection` when clicked, unless
- * `canEditCourse(courseId)` is false or the association data (`groupsIndex`,
- * `systemDefaultProfile`) isn't loaded yet, in which case it renders the same
- * content as a non-interactive `div`. The button is disabled unless
- * `status` is `'success'` and no create is in flight. The already-associated pill
- * shows regardless of `canEditCourse`, so a view-only course still shows
- * what's associated; its cancel icon is
- * decorative (removal is out of scope). Re-clicking an already-associated
- * row hits the duplicate guard inside `associateSubsection` (an
- * informational toast), not a failed request.
+ * One graded subsection: its name plus the competency pill, the row's only
+ * control. The applied pill shows regardless of `canEditCourse`.
  */
 const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
   const intl = useIntl();
@@ -47,70 +32,65 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
     associateSubsection,
     canEditCourse,
     competencyExternalId,
-    groupsIndex,
     isAssociating,
     status,
-    systemDefaultProfile,
   } = useCompetencyAssociations();
-  // The real `course_index` response populates `.id`, never `.usageKey`
-  // (declared on the shared `XBlockBase` type but always `undefined` here).
+  // The `course_index` response populates `.id`, never `.usageKey`.
   const isAssociated = associatedObjectIds.has(subsection.id);
-  const canSelect = canEditCourse(courseId) && !!groupsIndex && !!systemDefaultProfile;
-  const isDisabled = status !== 'success' || isAssociating;
+  const canAssociate = status === 'success' && canEditCourse(courseId);
 
-  const rowClassName = 'course-search-browse__subsection d-flex align-items-center justify-content-between';
-  const rowContent = (
+  const pillContent = (
     <>
-      <span>{subsection.displayName}</span>
-      {(isAssociated || canSelect) && (
-        <span
-          className={`course-search-browse__subsection-pill course-search-browse__subsection-pill--${
-            isAssociated ? 'applied' : 'available'
-          }`}
-        >
-          {isAssociated && competencyExternalId && (
-            <span className="sr-only">
-              {intl.formatMessage(rootMessages.competencyIdAccessibleLabel, { externalId: competencyExternalId })}
-            </span>
-          )}
-          <CompetencyIcon aria-hidden="true" />
-          {competencyExternalId && (
-            <span className="course-search-browse__subsection-pill-id" aria-hidden="true">
-              {competencyExternalId}
-            </span>
-          )}
-          <span className="course-search-browse__subsection-pill-divider" aria-hidden="true" />
-          <Icon
-            src={isAssociated ? Cancel : AddCircle}
-            size="xs"
-            className="course-search-browse__subsection-pill-action"
-            aria-hidden="true"
-          />
+      <CompetencyIcon aria-hidden="true" />
+      {competencyExternalId && (
+        <span className="course-search-browse__subsection-pill-id" aria-hidden="true">
+          {competencyExternalId}
         </span>
       )}
     </>
   );
 
-  if (!canSelect) {
-    return (
-      <div className={rowClassName} data-associated={isAssociated}>
-        {rowContent}
-      </div>
+  let pill: ReactNode = null;
+  if (isAssociated) {
+    pill = (
+      <span className="course-search-browse__subsection-pill course-search-browse__subsection-pill--applied">
+        <span className="sr-only">{intl.formatMessage(messages.subsectionAssociatedLabel)}</span>
+        {competencyExternalId && (
+          <span className="sr-only">
+            {intl.formatMessage(rootMessages.competencyIdAccessibleLabel, { externalId: competencyExternalId })}
+          </span>
+        )}
+        {pillContent}
+      </span>
+    );
+  } else if (canAssociate) {
+    const subsectionName = subsection.displayName;
+    pill = (
+      <Button
+        variant="tertiary"
+        type="button"
+        className="course-search-browse__subsection-pill course-search-browse__subsection-pill--available"
+        aria-label={competencyExternalId
+          ? intl.formatMessage(messages.associateSubsectionButtonLabel, {
+            externalId: competencyExternalId,
+            subsectionName,
+          })
+          : intl.formatMessage(messages.associateSubsectionWithoutIdButtonLabel, { subsectionName })}
+        disabled={isAssociating}
+        onClick={() => associateSubsection(subsection.id, courseId)}
+      >
+        {pillContent}
+        <span className="course-search-browse__subsection-pill-divider" aria-hidden="true" />
+        <Icon src={AddCircle} size="xs" aria-hidden="true" />
+      </Button>
     );
   }
 
   return (
-    <Button
-      variant="tertiary"
-      type="button"
-      block
-      className={rowClassName}
-      data-associated={isAssociated}
-      disabled={isDisabled}
-      onClick={() => associateSubsection(subsection.id, courseId)}
-    >
-      {rowContent}
-    </Button>
+    <div className="course-search-browse__subsection d-flex align-items-center justify-content-between">
+      <span>{subsection.displayName}</span>
+      {pill}
+    </div>
   );
 };
 
@@ -162,7 +142,7 @@ const SectionHeader = ({
  * Lazily-fetched course outline shown inside an expanded `CourseRow`.
  *
  * Renders each section as a header, and under it only its graded
- * subsections as clickable rows; ungraded subsections and anything below a
+ * subsections as rows; ungraded subsections and anything below a
  * subsection (units/verticals) are never rendered.
  */
 const CourseOutlineSubtree = ({ courseId }: CourseOutlineSubtreeProps) => {

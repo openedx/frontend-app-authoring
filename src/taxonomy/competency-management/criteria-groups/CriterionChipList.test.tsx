@@ -1,16 +1,6 @@
 import { initializeMocks, render, screen } from '@src/testUtils';
-import type { CompetencyCriterion } from '../data/types';
+import { criterion } from '../__mocks__';
 import CriterionChipList from './CriterionChipList';
-
-const buildCriterion = (overrides: Partial<CompetencyCriterion> = {}): CompetencyCriterion => ({
-  id: 1,
-  objectId: 'block-a',
-  groupId: 10,
-  ruleProfileId: 1,
-  ruleTypeOverride: null,
-  rulePayloadOverride: null,
-  ...overrides,
-});
 
 describe('<CriterionChipList />', () => {
   beforeEach(() => {
@@ -19,8 +9,8 @@ describe('<CriterionChipList />', () => {
 
   it('renders one chip per criterion, using the resolved subsection name', () => {
     const criteria = [
-      buildCriterion({ id: 1, objectId: 'block-a' }),
-      buildCriterion({ id: 2, objectId: 'block-b' }),
+      criterion(1, 'block-a', 10),
+      criterion(2, 'block-b', 10),
     ];
     render(
       <CriterionChipList
@@ -33,23 +23,14 @@ describe('<CriterionChipList />', () => {
     expect(screen.getByText('Subsection B')).toBeInTheDocument();
   });
 
-  it('falls back to a neutral label when a criterion\'s objectId isn\'t in the resolved names', () => {
+  it('shows the "Content unavailable" warning label when a criterion\'s objectId isn\'t in the resolved names', () => {
     render(
       <CriterionChipList
-        criteria={[buildCriterion({ id: 1, objectId: 'deleted-block' })]}
+        criteria={[criterion(1, 'deleted-block', 10)]}
         subsectionNamesByUsageKey={{}}
       />,
     );
 
     expect(screen.getByText('Content unavailable')).toBeInTheDocument();
-  });
-
-  it('renders nothing for an empty criteria list', () => {
-    const { container } = render(
-      <CriterionChipList criteria={[]} subsectionNamesByUsageKey={{}} />,
-    );
-    // `container` isn't empty outright - the test harness's own provider
-    // wrappers still render - so check no chip list markup was produced.
-    expect(container.querySelector('.criterion-chip-list')).not.toBeInTheDocument();
   });
 });

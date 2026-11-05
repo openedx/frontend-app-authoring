@@ -27,10 +27,10 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
   const [selectedCompetency, setSelectedCompetency] = useState<CompetencyTreeNode | null>(null);
   const isDesktop = useIsDesktop();
 
-  // Rendered once and reused in both branches below at the same element-tree
-  // position: `CompetencyTree` keeps its own expand/collapse state locally,
-  // so moving it between states would make React remount it and silently
-  // reset what the user had expanded.
+  // Rendered once and reused, bare, in both branches below: `CompetencyTree`
+  // keeps its own expand/collapse state locally, so moving it to a different
+  // position in the element tree between states would remount it and reset
+  // that state.
   const tree = (
     <CompetencyTree
       taxonomyId={taxonomyId}

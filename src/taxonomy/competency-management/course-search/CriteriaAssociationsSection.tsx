@@ -6,6 +6,7 @@ import { Badge } from '@openedx/paragon';
 import type { CompetencyTreeNode } from '../CompetencyTree';
 import { CompetencyTooltip, useCompetencyTooltip } from '../competency-tooltip';
 import { CourseGroupList } from '../criteria-groups';
+import rootMessages from '../messages';
 import messages from './messages';
 
 export interface CriteriaAssociationsSectionProps {
@@ -15,14 +16,8 @@ export interface CriteriaAssociationsSectionProps {
   competency: CompetencyTreeNode;
 }
 
-/** The associations section above "Courses & Content": the selected
- * competency's existing criteria groups, rendered as a tree of course-level
- * groups, bottom-tier groups, and rule boxes.
- *
- * `CourseGroupList` reads its own data and focus state from
- * `CompetencyAssociationsContext`; this component only renders the static
- * label/mastery lines, which need `competency` directly since the context
- * doesn't track its name.
+/** The associations section above "Courses & Content": the section label, the
+ * "Demonstrate Mastery For" line naming `competency`, and the competency's criteria groups.
  */
 const CriteriaAssociationsSection = ({ competency }: CriteriaAssociationsSectionProps) => {
   const intl = useIntl();
@@ -65,13 +60,13 @@ const CriteriaAssociationsSection = ({ competency }: CriteriaAssociationsSection
       >
         <span className="text-truncate" ref={nameRef}>
           {intl.formatMessage(messages.demonstrateMasteryForLabel, {
-            competencyName: <strong>{competency.value}</strong>,
+            competencyName: <span className="font-weight-bold">{competency.value}</span>,
           })}
         </span>
         {competency.externalId && (
           <>
             <span className="sr-only">
-              {intl.formatMessage(messages.competencyIdAccessibleLabel, {
+              {intl.formatMessage(rootMessages.competencyIdAccessibleLabel, {
                 externalId: competency.externalId,
               })}
             </span>
