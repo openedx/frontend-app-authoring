@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useFormikContext } from 'formik';
-import { PdfState } from '@src/editors/containers/PdfEditor/contexts';
+import { PdfBlockContext, PdfState } from '@src/editors/containers/PdfEditor/contexts';
 import { optional, useUrlValidator } from '@src/editors/utils/validators';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import CheckboxField from '@src/editors/sharedComponents/CheckboxField';
@@ -10,7 +10,8 @@ import messages from './messages';
 const DownloadOptions: React.FC = () => {
   const intl = useIntl();
   const { values } = useFormikContext<PdfState>();
-  const urlValidator = optional(useUrlValidator());
+  const { isLibrary } = useContext(PdfBlockContext);
+  const urlValidator = optional(useUrlValidator({ allowAbsolute: isLibrary }));
   if (values.disableAllDownload) {
     // Download configuration is disabled at the instance-level, so don't even show these options.
     return <></>; // eslint-disable-line react/jsx-no-useless-fragment
