@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet';
 import {
   initializeMocks,
   render,
@@ -88,6 +89,14 @@ describe('<ScheduleAndDetails />', () => {
     axiosMock
       .onPut(getCourseDetailsApiUrl(courseId))
       .reply(200);
+  });
+
+  it('sets the page title through Helmet', async () => {
+    renderComponent();
+    expect(
+      await screen.findByText(pacingMessages.pacingTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(Helmet.peek().title).toContain(`${messages.headingTitle.defaultMessage} | `);
   });
 
   it('should render without errors', async () => {
