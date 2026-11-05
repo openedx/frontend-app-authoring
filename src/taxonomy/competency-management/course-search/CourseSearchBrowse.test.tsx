@@ -1885,6 +1885,50 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       });
       await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
     });
+
+    it('returns keyboard focus to the subsection\'s row once the dialog closes', async () => {
+      const { user, coursesContainer, run, groupsUrl } = await renderWithAssociatedSubsection1A();
+      await user.click(
+        await within(coursesContainer).findByRole('button', { name: 'Remove the association with Subsection 1A' }),
+      );
+      const dialog = await screen.findByRole('dialog', { name: 'Remove Subsection 1A from Test Competency?' });
+
+      await user.click(within(dialog).getByRole('button', { name: 'Remove' }));
+      await waitFor(() => expect(axiosMock.history.get.filter((req) => req.url === groupsUrl)).toHaveLength(2));
+      await act(async () => {
+        run.release();
+      });
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      await waitFor(() =>
+        expect(within(coursesContainer).getByRole('button', { name: 'Associate this competency with Subsection 1A' }))
+          .toHaveFocus()
+      );
+    });
+
+    // The courses panel gives the dialog's focus return a nearby target, which the empty state must win against.
+    it('moves keyboard focus to the empty state once the dialog closes on the last rule', async () => {
+      const { user, run, groupsUrl } = await renderWithAssociatedSubsection1A();
+      await user.click(
+        await screen.findByRole('button', {
+          name: 'More actions for the rule with a score of 70% or higher in rule group 1 in Test Course',
+        }),
+      );
+      await user.click(screen.getByRole('button', { name: 'Remove rule' }));
+      const dialog = await screen.findByRole('dialog', { name: 'Remove this rule from Test Competency?' });
+
+      await user.click(within(dialog).getByRole('button', { name: 'Remove' }));
+      await waitFor(() => expect(axiosMock.history.get.filter((req) => req.url === groupsUrl)).toHaveLength(2));
+      await act(async () => {
+        run.release();
+      });
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      await waitFor(() =>
+        expect(screen.getByText(byTextContent('No content associated with Test Competency yet.')).parentElement)
+          .toHaveFocus()
+      );
+    });
   });
 
   describe('removing a rule box', () => {

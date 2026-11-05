@@ -53,16 +53,22 @@ const CourseGroupList = () => {
     return <CenteredSpinner />;
   }
 
-  if (status === 'error' || !criteriaCounts) {
-    return (
-      <AlertMessage
-        variant="danger"
-        description={intl.formatMessage(messages.courseGroupListErrorMessage)}
-      />
-    );
+  const loadError = (
+    <AlertMessage
+      variant="danger"
+      description={intl.formatMessage(messages.courseGroupListErrorMessage)}
+    />
+  );
+
+  if (status === 'error') {
+    return loadError;
   }
 
   if (accessibleCourseGroups.length === 0) {
+    // The groups stay listed, without counts, after a groups refetch fails; the empty states cannot do without them.
+    if (!criteriaCounts) {
+      return loadError;
+    }
     if (courseList.isPlaceholderData) {
       return <CenteredSpinner />;
     }

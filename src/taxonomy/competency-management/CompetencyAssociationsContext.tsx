@@ -157,8 +157,8 @@ export interface PendingRemoval {
 }
 
 export interface CompetencyAssociationsContextBase {
-  /** The course list, groups or profile failure, or the first course-outline failure other
-   * than a 403 or 404, behind `status === 'error'`.
+  /** The course list or profile failure, a groups failure before any groups loaded, or the first course-outline
+   * failure other than a 403 or 404, behind `status === 'error'`.
    */
   error: Error | null;
   selection: CriteriaSelection | null;
@@ -285,9 +285,11 @@ export interface CompetencyAssociationsContextBase {
  * `'pending'` until the course list, the groups, the default rule profile and
  * every course outline have settled, then `'success'` until the competency or the set of
  * listed courses changes, even when a later groups refetch adds a course whose
- * outline has not loaded yet. `'error'` if the course list, the groups, the profile
- * or any course outline failed, including a failure after `'success'`. An outline that
- * fails with a 403 or 404 only hides its course and does not affect `status`.
+ * outline has not loaded yet. `'error'` if the course list, the profile or any course
+ * outline failed, including a failure after `'success'`, or if the groups failed before
+ * any groups data loaded. A groups refetch that fails after data loaded keeps the last
+ * loaded groups and `status`. An outline that fails with a 403 or 404 only hides its
+ * course and does not affect `status`.
  */
 export type CompetencyAssociationsContextValue =
   & CompetencyAssociationsContextBase
@@ -598,7 +600,7 @@ function reduceProviderState(state: ProviderState, action: ProviderAction): Prov
     case 'groupDeleted':
       return action.generation === state.generation ? reduceGroupDeleted(state, action) : state;
     case 'deleteRefetchFailed':
-      // The tree is not rendered while it is in error, so no card shows the selection.
+      // The loaded groups may predate the delete, so selection is cleared instead of resolved against them.
       return action.generation === state.generation ? moveSelection(state, null, null) : state;
     case 'placeholderDiscarded':
       return moveSelection(state, action.selection, action.keyboardFocusRequest);
@@ -906,7 +908,12 @@ export const CompetencyAssociationsProvider = ({
 
   // A failed list hides the panel, and `status` follows it. A list that failed with no data leaves
   // `listedCourseKeys` undefined and the groups query skipped, which would otherwise read as `'pending'` for good.
-  const error = courseListQuery.error ?? groupsQuery.error ?? profileQuery.error ?? outlines.error;
+  // A groups refetch that fails after data loaded keeps the loaded groups, so an item whose delete failed stays
+  // listed behind the removal dialog.
+  const error = courseListQuery.error
+    ?? (groupsQuery.data ? null : groupsQuery.error)
+    ?? profileQuery.error
+    ?? outlines.error;
   let status: 'pending' | 'error' | 'success' = 'success';
   if (error) {
     status = 'error';

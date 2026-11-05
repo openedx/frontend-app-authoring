@@ -478,6 +478,26 @@ describe('<CriteriaAssociationsSection />', () => {
       expect(mockShowToast).not.toHaveBeenCalled();
     });
 
+    it('keeps the cached groups listed, with no failed state, when a refetch fails', async () => {
+      const user = userEvent.setup();
+      mockProfileAndOutline(namedOutline);
+      axiosMock.onGet(groupsUrl).replyOnce(200, group10With70And80PercentRuleBoxesResponse);
+      axiosMock.onGet(groupsUrl).reply(500);
+      axiosMock.onDelete(apiUrls.deleteCompetencyCriterion(tagId, 901)).reply(500);
+      renderSection();
+      await user.click(await screen.findByRole('button', { name: chipRemoveName }));
+      const dialog = await screen.findByRole('dialog', { name: dialogName });
+
+      await user.click(within(dialog).getByRole('button', { name: 'Remove' }));
+      await waitFor(() => expect(axiosMock.history.get.filter((req) => req.url === groupsUrl)).toHaveLength(2));
+      await user.click(await within(dialog).findByRole('button', { name: 'Cancel' }));
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      expect(screen.getByRole('button', { name: chipRemoveName })).toBeInTheDocument();
+      expect(screen.queryByText('There was a problem loading this competency\'s associations. Please try again.'))
+        .not.toBeInTheDocument();
+    });
+
     it('opens the group dialog from "Remove group" with the count and the only-group sentence', async () => {
       const user = userEvent.setup();
       mockServerRepliesForRuleBoxDelete(group10With70And80PercentRuleBoxesResponse, noGroupsOrCriteriaResponse, 200, namedOutline);
