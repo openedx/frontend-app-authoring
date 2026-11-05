@@ -76,7 +76,6 @@ export async function getCourseDetails(courseId: string, username: string): Prom
  * TODO: clarify our strategy here: https://github.com/openedx/frontend-app-authoring/issues/2094
  */
 export const waffleFlagDefaults = {
-  enableCourseOptimizer: false,
   enableNotifications: false,
   enableCourseOptimizerCheckPrevRunLinks: false,
   useNewVideoUploadsPage: true,
