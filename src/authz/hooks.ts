@@ -1,6 +1,7 @@
 import { useWaffleFlags } from '@src/data/apiHooks';
 import { useUserPermissions } from '@src/authz/data/apiHooks';
 import { PermissionValidationAnswer, PermissionValidationQuery } from '@src/authz/types';
+import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
 
 type UseCourseUserPermissionsReturn<Query extends PermissionValidationQuery> = {
   isLoading: boolean;
@@ -75,4 +76,20 @@ export const useCourseUserPermissions = <Query extends PermissionValidationQuery
     isAuthzEnabled,
     ...permissionResults as PermissionValidationAnswer<Query>,
   };
+};
+
+/**
+ * Validates the `view_library` permission for one or more libraries in a single request.
+ *
+ * @param libraryKeys - Library key, or list of library keys, to validate.
+ * @returns React Query result whose `data` is keyed by library key, e.g. `data?.['lib:OpenedX:CSPROB']`.
+ */
+export const useLibraryViewPermissions = (libraryKeys: string | string[]) => {
+  const keys = Array.isArray(libraryKeys) ? libraryKeys : [libraryKeys];
+  return useUserPermissions(
+    Object.fromEntries(
+      keys.map((key) => [key, { action: CONTENT_LIBRARY_PERMISSIONS.VIEW_LIBRARY, scope: key }]),
+    ),
+    keys.length > 0,
+  );
 };

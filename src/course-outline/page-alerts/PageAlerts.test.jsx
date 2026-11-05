@@ -19,15 +19,22 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   }),
 }));
 
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
 let mockNotices = {};
 jest.mock('@src/course-outline/data/apiHooks', () => ({
   ...jest.requireActual('@src/course-outline/data/apiHooks'),
   usePasteFileNotices: () => ({ data: mockNotices }),
 }));
 
+let mockEntityLinksSummary = [];
 jest.mock('../../course-libraries/data/apiHooks', () => ({
   useEntityLinksSummaryByDownstreamContext: () => ({
-    data: [],
+    data: mockEntityLinksSummary,
     isLoading: false,
   }),
 }));
@@ -57,6 +64,7 @@ const mockPermissions = (overrides = {}) =>
     isAuthzEnabled: true,
     canManagePagesAndResources: true,
     canManageAdvancedSettings: true,
+    canManageLibraryUpdates: true,
     ...overrides,
   });
 
@@ -279,5 +287,41 @@ describe('<PageAlerts />', () => {
       },
     });
     expect(screen.queryByText('some error')).toBeInTheDocument();
+  });
+
+  it('renders out of sync alert with the manage message', async () => {
+    mockEntityLinksSummary = [{ readyToSyncCount: 7, lastPublishedAt: '2025-05-01T22:20:44.989042Z' }];
+    renderComponent();
+    expect(
+      await screen.findByText(
+        '7 library components are out of sync. Review updates to accept or ignore changes',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('renders out of sync alert with the read only message when user cannot manage library updates', async () => {
+    mockEntityLinksSummary = [{ readyToSyncCount: 7, lastPublishedAt: '2025-05-01T22:20:44.989042Z' }];
+    mockPermissions({ canManageLibraryUpdates: false });
+    renderComponent();
+    expect(
+      await screen.findByText(
+        '7 library components are out of sync. Review updates to see what changed',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('does not render out of sync alert while permissions are loading', async () => {
+    mockEntityLinksSummary = [{ readyToSyncCount: 7, lastPublishedAt: '2025-05-01T22:20:44.989042Z' }];
+    mockPermissions({ isLoading: true, canManageLibraryUpdates: false });
+    renderComponent();
+    expect(screen.queryByText(/library components are out of sync/)).not.toBeInTheDocument();
+  });
+
+  it('navigates to the libraries review tab from the out of sync alert', async () => {
+    mockEntityLinksSummary = [{ readyToSyncCount: 7, lastPublishedAt: '2025-05-01T22:20:44.989042Z' }];
+    renderComponent();
+    const reviewBtn = await screen.findByRole('button', { name: 'Review' });
+    fireEvent.click(reviewBtn);
+    expect(mockNavigate).toHaveBeenCalledWith('/course/course-id/libraries?tab=review');
   });
 });
