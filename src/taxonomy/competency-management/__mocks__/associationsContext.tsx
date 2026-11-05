@@ -9,10 +9,6 @@ import type { CompetencyCriteriaGroupsIndex } from '../utils';
 import type { CompetencyRuleProfile } from '../data/types';
 import { singleGroupResponse, systemDefaultProfile } from './criteriaGroups';
 
-/** Overrides for a context value. `groupsIndex` and `systemDefaultProfile` fall back to a real
- * index and profile when `status` is `'success'` (the default) and are dropped otherwise,
- * so the built value is always a valid state of the discriminated union.
- */
 export type MockCompetencyAssociationsOverrides = Partial<CompetencyAssociationsContextBase> & {
   status?: CompetencyAssociationsContextValue['status'];
   groupsIndex?: CompetencyCriteriaGroupsIndex;
@@ -21,7 +17,8 @@ export type MockCompetencyAssociationsOverrides = Partial<CompetencyAssociations
 
 /** A full context value with only the fields a test cares about overridden, so
  * component tests can control focus and data without the real provider's HTTP requests.
- * The default is a loaded context over `singleGroupResponse` and the system default profile.
+ * The default is a loaded context over `singleGroupResponse` and the system default profile;
+ * `groupsIndex` and `systemDefaultProfile` are dropped unless `status` is `'success'`.
  */
 export const buildMockCompetencyAssociationsContextValue = (
   overrides: MockCompetencyAssociationsOverrides = {},

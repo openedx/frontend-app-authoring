@@ -71,6 +71,7 @@ describe('<CourseGroupList />', () => {
 
     expect(await screen.findByRole('heading', { name: 'From within Course B ...' })).toBeInTheDocument();
     expect(screen.getAllByRole('heading')).toHaveLength(1);
+    expect(screen.queryByRole('heading', { name: /From within Course A/ })).not.toBeInTheDocument();
     expect(screen.queryByText('No content associated.')).not.toBeInTheDocument();
   });
 });

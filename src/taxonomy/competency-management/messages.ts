@@ -29,7 +29,7 @@ const messages = defineMessages({
   competencyIdAccessibleLabel: {
     id: 'course-authoring.competency-management.competency-id.accessible-label',
     defaultMessage: 'Competency ID: {externalId}',
-    description: 'Accessible name for a Competency ID badge, read by screen readers since the badge text itself is aria-hidden.',
+    description: 'Screen-reader text naming a Competency ID badge; the visible badge is hidden from screen readers.',
   },
   importCompetencyFrameworkButton: {
     id: 'course-authoring.competency-management.button.import-framework.label',

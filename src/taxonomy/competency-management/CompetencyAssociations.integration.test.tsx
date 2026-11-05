@@ -90,6 +90,7 @@ describe('competency associations over the real provider', () => {
     renderPanel();
     // Focus starts on course A's group, with the course B card collapsed.
     await user.click((await screen.findAllByRole('button', { name: 'By completing any of the following' }))[0]);
+    expect(groupHeaders()[0]).toHaveAttribute('aria-current', 'true');
     await user.click(await screen.findByRole('button', { name: 'Collapse Course B' }));
     expect(screen.queryByText('Homework 1')).not.toBeInTheDocument();
 
