@@ -22,8 +22,8 @@ interface SubsectionRowProps {
 }
 
 /**
- * One graded subsection: its name plus the competency pill, the row's only
- * control. The applied pill shows regardless of `canEditCourse`.
+ * One graded subsection: its name plus the competency pill. The applied pill
+ * shows regardless of `canEditCourse`.
  */
 const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
   const intl = useIntl();
@@ -94,6 +94,19 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
   );
 };
 
+const PermissionsError = () => {
+  const intl = useIntl();
+  const { hasPermissionsError } = useCompetencyAssociations();
+  if (!hasPermissionsError) {
+    return null;
+  }
+  return (
+    <div role="alert" className="text-danger small">
+      {intl.formatMessage(messages.permissionsErrorMessage)}
+    </div>
+  );
+};
+
 interface SectionHeaderProps {
   displayName: string;
   hasGradedSubsection: boolean;
@@ -147,11 +160,8 @@ const SectionHeader = ({
  */
 const CourseOutlineSubtree = ({ courseId }: CourseOutlineSubtreeProps) => {
   const intl = useIntl();
-  // `refetchOnMount: false`: without it, collapsing and re-expanding the
-  // same course (unmount/remount) within the query cache's staleTime would
-  // trigger a wasted refetch of already-cached data.
+  // Re-expanding a course should not refetch an outline already loaded, even once stale or invalidated.
   const { data, isLoading, isError } = useCourseOutlineIndex(courseId, { refetchOnMount: false });
-  // Ids of sections currently expanded; every section starts collapsed.
   const [expandedSectionIds, setExpandedSectionIds] = useState<Set<string>>(new Set());
 
   const handleToggleSection = (sectionId: string) => {
@@ -193,7 +203,7 @@ const CourseOutlineSubtree = ({ courseId }: CourseOutlineSubtreeProps) => {
     if (!hasGradedSubsection) {
       content = <div className="small">{intl.formatMessage(messages.noGradedSubsectionsMessage)}</div>;
     } else {
-      content = sectionsWithGradedSubsections.map(({ section, gradedSubsections }) => {
+      const sectionRows = sectionsWithGradedSubsections.map(({ section, gradedSubsections }) => {
         const sectionId = String(section.id);
         const sectionHasGradedSubsection = gradedSubsections.length > 0;
         const isExpanded = expandedSectionIds.has(sectionId);
@@ -216,6 +226,12 @@ const CourseOutlineSubtree = ({ courseId }: CourseOutlineSubtreeProps) => {
           </div>
         );
       });
+      content = (
+        <>
+          <PermissionsError />
+          {sectionRows}
+        </>
+      );
     }
   }
 

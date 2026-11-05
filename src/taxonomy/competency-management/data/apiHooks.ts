@@ -71,6 +71,7 @@ export const useCreateCompetencyCriterion = () => {
 
 export interface UseCourseTaggingPermissionsReturn {
   isLoading: boolean;
+  isError: boolean;
   isAuthzEnabled: boolean;
   permissionsByCourseId: Record<string, boolean>;
 }
@@ -111,12 +112,17 @@ export const useCourseTaggingPermissions = (courseIds: string[]): UseCourseTaggi
   }, [sortedCourseIdsKey]);
 
   const shouldValidatePermissions = isAuthzEnabled && courseIds.length > 0;
-  const { isLoading: isLoadingUserPermissions, data: userPermissions } = useUserPermissions(
+  const {
+    isLoading: isLoadingUserPermissions,
+    isError: isUserPermissionsError,
+    data: userPermissions,
+  } = useUserPermissions(
     query,
     shouldValidatePermissions,
   );
 
   const isLoading = isWaffleFlagsLoading || (isAuthzEnabled && isLoadingUserPermissions);
+  const isError = isAuthzEnabled && isUserPermissionsError;
 
   const [resolvedAnswers, setResolvedAnswers] = useState<Record<string, boolean>>({});
   useEffect(() => {
@@ -137,5 +143,10 @@ export const useCourseTaggingPermissions = (courseIds: string[]): UseCourseTaggi
     return result;
   }, [courseIds, isWaffleFlagsLoading, isAuthzEnabled, resolvedAnswers]);
 
-  return { isLoading, isAuthzEnabled, permissionsByCourseId };
+  return {
+    isLoading,
+    isError,
+    isAuthzEnabled,
+    permissionsByCourseId,
+  };
 };

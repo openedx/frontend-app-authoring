@@ -7,13 +7,12 @@ describe('<ScoreThresholdField />', () => {
   });
 
   it('renders "or higher" for a gte rule, as plain text with no control', () => {
-    render(<ScoreThresholdField rulePayload={{ op: 'gte', value: 0.7, scale: 'percent' }} />);
+    const { container } = render(<ScoreThresholdField rulePayload={{ op: 'gte', value: 0.7, scale: 'percent' }} />);
 
     expect(screen.getByText('70% or higher').closest('.score-threshold-field')).toHaveTextContent(
       'With a score of 70% or higher',
     );
-    expect(screen.queryByRole('button')).not.toBeInTheDocument();
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    expect(container.querySelector('input, select, textarea, button')).toBeNull();
   });
 
   it('renders "or lower" for a lte rule', () => {
@@ -27,8 +26,12 @@ describe('<ScoreThresholdField />', () => {
     expect(screen.queryByText(/or higher|or lower/)).not.toBeInTheDocument();
   });
 
-  it('rounds a fractional value to the nearest whole percent', () => {
-    render(<ScoreThresholdField rulePayload={{ op: 'gte', value: 0.666, scale: 'percent' }} />);
-    expect(screen.getByText('67% or higher')).toBeInTheDocument();
+  it.each([
+    [0.666, '66.6%'],
+    [0.855, '85.5%'],
+    [0.7, '70%'],
+  ])('shows the value %s as %s, keeping up to one decimal', (value, expected) => {
+    render(<ScoreThresholdField rulePayload={{ op: 'gte', value, scale: 'percent' }} />);
+    expect(screen.getByText(`${expected} or higher`)).toBeInTheDocument();
   });
 });

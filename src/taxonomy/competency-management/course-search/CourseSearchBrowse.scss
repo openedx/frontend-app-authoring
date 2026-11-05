@@ -147,8 +147,6 @@
     color: var(--pgn-color-info-900);
   }
 
-  // Wraps `&__associations-label`, the "Demonstrate Mastery For" line and the
-  // criteria groups under it.
   &__associations {
     padding: $container-padding-y $container-padding-x;
   }
@@ -220,8 +218,7 @@
     flex-shrink: 0;
   }
 
-  // One level deeper than `&__group`, further indented, with the lightest
-  // border color continuing the darkest-to-lightest progression.
+  // One level deeper than `&__group`, further indented.
   &__subsection {
     margin-left: $indent-step;
     font-size: 14px;
@@ -233,8 +230,6 @@
     padding: 10px 8px;
   }
 
-  // Target icon | competency ID, plus a divider and an add icon when it is the
-  // button that associates the subsection.
   &__subsection-pill {
     display: inline-flex;
     align-items: center;

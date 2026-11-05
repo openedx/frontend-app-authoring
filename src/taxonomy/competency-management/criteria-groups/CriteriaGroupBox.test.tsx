@@ -5,7 +5,7 @@ import {
   userEvent,
   within,
 } from '@src/testUtils';
-import { MockCompetencyAssociationsProvider, singleGroupResponse } from '../__mocks__';
+import { mockScrollIntoView, MockCompetencyAssociationsProvider, singleGroupResponse } from '../__mocks__';
 import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
 import type { BottomTierCompetencyCriteriaGroup } from '../data/types';
 import CriteriaGroupBox from './CriteriaGroupBox';
@@ -29,19 +29,13 @@ const renderBox = (
 const headerButton = () => screen.getByRole('button', { name: 'By completing any of the following' });
 const ruleBoxButton = () => screen.getByRole('button', { name: /^With a score of/ });
 
-const originalScrollIntoView = Element.prototype.scrollIntoView;
-
 describe('<CriteriaGroupBox />', () => {
+  const scrollIntoView = mockScrollIntoView();
   let user: ReturnType<typeof userEvent.setup>;
 
   beforeEach(() => {
     initializeMocks();
     user = userEvent.setup();
-    Element.prototype.scrollIntoView = jest.fn();
-  });
-
-  afterEach(() => {
-    Element.prototype.scrollIntoView = originalScrollIntoView;
   });
 
   it('renders the group\'s any/all sentence as its header and its rule box chips', () => {
@@ -119,15 +113,14 @@ describe('<CriteriaGroupBox />', () => {
   ])('scrolls once, and only the right element, when $name: $scrolledElement', ({ focus, scrolledElement }) => {
     const { container } = renderBox({ focus });
 
-    const scroll = Element.prototype.scrollIntoView as jest.Mock;
     if (scrolledElement === null) {
-      expect(scroll).not.toHaveBeenCalled();
+      expect(scrollIntoView).not.toHaveBeenCalled();
       return;
     }
-    expect(scroll).toHaveBeenCalledTimes(1);
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
     const expectedElement = scrolledElement === 'group'
       ? container.querySelector('.criteria-group-box')
       : ruleBoxButton().closest('.rule-box');
-    expect(scroll.mock.contexts[0]).toBe(expectedElement);
+    expect(scrollIntoView.mock.contexts[0]).toBe(expectedElement);
   });
 });

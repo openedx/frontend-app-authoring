@@ -1,5 +1,9 @@
 import { initializeMocks, render, screen, userEvent } from '@src/testUtils';
-import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../__mocks__';
+import {
+  buildMockCompetencyAssociationsContextValue,
+  mockScrollIntoView,
+  MockCompetencyAssociationsProvider,
+} from '../__mocks__';
 import type { CompetencyCriterion } from '../data/types';
 import RuleBox from './RuleBox';
 
@@ -32,19 +36,13 @@ const renderRuleBox = (contextOverrides: Parameters<typeof buildMockCompetencyAs
   )
 );
 
-const originalScrollIntoView = Element.prototype.scrollIntoView;
-
 describe('<RuleBox />', () => {
+  const scrollIntoView = mockScrollIntoView();
   let user: ReturnType<typeof userEvent.setup>;
 
   beforeEach(() => {
     initializeMocks();
     user = userEvent.setup();
-    Element.prototype.scrollIntoView = jest.fn();
-  });
-
-  afterEach(() => {
-    Element.prototype.scrollIntoView = originalScrollIntoView;
   });
 
   it('renders the given rule\'s score threshold and its chips', () => {
@@ -91,6 +89,6 @@ describe('<RuleBox />', () => {
     renderRuleBox({ focus });
 
     expect(screen.getByRole('button')).toHaveAttribute('aria-current', String(isFocused));
-    expect(Element.prototype.scrollIntoView).toHaveBeenCalledTimes(isFocused ? 1 : 0);
+    expect(scrollIntoView).toHaveBeenCalledTimes(isFocused ? 1 : 0);
   });
 });

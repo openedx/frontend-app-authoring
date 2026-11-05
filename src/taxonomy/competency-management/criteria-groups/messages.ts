@@ -33,25 +33,10 @@ const messages = defineMessages({
   },
   scoreThresholdLabel: {
     id: 'course-authoring.competency-management.criteria-groups.score-threshold-label',
-    defaultMessage: 'With a score of {threshold}',
-    description: 'Label stating a rule box\'s score threshold. "{threshold}" is the highlighted '
-      + 'value box, e.g. "75% or higher".',
-  },
-  scoreThresholdValue: {
-    id: 'course-authoring.competency-management.criteria-groups.score-threshold-value',
-    defaultMessage: '{percent}%',
-    description: 'The percentage inside a rule box\'s score threshold value box, before the or-higher/or-lower '
-      + 'suffix. "{percent}" is a whole-number percentage (0-100), converted from the rule\'s 0.0-1.0 fraction.',
-  },
-  scoreThresholdOrHigherSuffix: {
-    id: 'course-authoring.competency-management.criteria-groups.score-threshold-or-higher-suffix',
-    defaultMessage: 'or higher',
-    description: 'Suffix appended to the score threshold label when the rule requires at least the given score.',
-  },
-  scoreThresholdOrLowerSuffix: {
-    id: 'course-authoring.competency-management.criteria-groups.score-threshold-or-lower-suffix',
-    defaultMessage: 'or lower',
-    description: 'Suffix appended to the score threshold label when the rule requires at most the given score.',
+    defaultMessage: 'With a score of <threshold>{op, select, gte {{value} or higher} lte {{value} or lower} other {{value}}}</threshold>',
+    description: 'Label stating a rule box\'s score threshold, for example "With a score of 75% or higher". '
+      + '"{op}" is the comparison: gte (at least), lte (at most) or any other value for an exact match. '
+      + '"{value}" is the already formatted percentage. "<threshold>" wraps the part shown in the highlighted box.',
   },
   unknownSubsectionLabel: {
     id: 'course-authoring.competency-management.criteria-groups.unknown-subsection-label',

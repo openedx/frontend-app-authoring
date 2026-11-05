@@ -10,15 +10,9 @@ import rootMessages from '../messages';
 import messages from './messages';
 
 export interface CriteriaAssociationsSectionProps {
-  /** The currently selected competency, named in the "Demonstrate Mastery
-   * For" line along with its Competency ID badge.
-   */
   competency: CompetencyTreeNode;
 }
 
-/** The associations section above "Courses & Content": the section label, the
- * "Demonstrate Mastery For" line naming `competency`, and the competency's criteria groups.
- */
 const CriteriaAssociationsSection = ({ competency }: CriteriaAssociationsSectionProps) => {
   const intl = useIntl();
 

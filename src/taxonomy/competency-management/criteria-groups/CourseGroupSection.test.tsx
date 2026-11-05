@@ -10,7 +10,10 @@ import {
 } from '@src/testUtils';
 import {
   courseA,
+  courseOther,
   criterion,
+  group,
+  mockScrollIntoView,
   MockCompetencyAssociationsProvider,
   twoGroupsResponse,
 } from '../__mocks__';
@@ -33,6 +36,12 @@ const response = {
 
 const index = buildCompetencyCriteriaGroupsIndex(response);
 const [courseGroup] = index.courseGroups;
+
+const threeGroupsIndex = buildCompetencyCriteriaGroupsIndex({
+  groups: [...twoGroupsResponse.groups, group(12, 1, null, 2)],
+  criteria: response.criteria,
+});
+const [threeGroupsCourseGroup] = threeGroupsIndex.courseGroups;
 
 const ruleKeyOfDefault = 'grade:gte:0.7:percent';
 
@@ -64,19 +73,13 @@ const renderSection = (
   )
 );
 
-const originalScrollIntoView = Element.prototype.scrollIntoView;
-
 describe('<CourseGroupSection />', () => {
+  mockScrollIntoView();
   let user: ReturnType<typeof userEvent.setup>;
 
   beforeEach(() => {
     ({ axiosMock, queryClient } = initializeMocks());
     user = userEvent.setup();
-    Element.prototype.scrollIntoView = jest.fn();
-  });
-
-  afterEach(() => {
-    Element.prototype.scrollIntoView = originalScrollIntoView;
   });
 
   it('resolves its heading and chip names from its own outline fetch', async () => {
@@ -104,13 +107,18 @@ describe('<CourseGroupSection />', () => {
       ['OR', 'Or'],
       ['AND', 'And'],
     ] as const,
-  )('puts one %s connector between its two bottom-tier groups', async (logicOperator, label) => {
-    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
-    renderSection({}, { ...courseGroup, logicOperator });
+  )(
+    'puts the same %s connector between each adjacent pair of its three bottom-tier groups',
+    async (logicOperator, label) => {
+      axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+      renderSection({ groupsIndex: threeGroupsIndex }, { ...threeGroupsCourseGroup, logicOperator });
 
-    await screen.findByText('Subsection 1A');
-    expect(screen.getAllByText(label)).toHaveLength(1);
-  });
+      await screen.findByText('Subsection 1A');
+      expect(screen.getAllByRole('button', { name: 'By completing any of the following' })).toHaveLength(3);
+      expect(screen.getAllByText(label)).toHaveLength(2);
+      expect(screen.queryByText(logicOperator === 'OR' ? 'And' : 'Or')).not.toBeInTheDocument();
+    },
+  );
 
   it('marks only the focused group and its rule box when two groups share the default rule key', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
@@ -123,6 +131,10 @@ describe('<CourseGroupSection />', () => {
     expect(secondHeader).toHaveAttribute('aria-current', 'false');
     expect(firstRuleBox).toHaveAttribute('aria-current', 'true');
     expect(secondRuleBox).toHaveAttribute('aria-current', 'false');
+    expect(firstHeader.parentElement).toHaveClass('criteria-group-box--focused');
+    expect(secondHeader.parentElement).not.toHaveClass('criteria-group-box--focused');
+    expect(firstRuleBox.parentElement).toHaveClass('rule-box--focused');
+    expect(secondRuleBox.parentElement).not.toHaveClass('rule-box--focused');
   });
 
   it('collapses and re-expands independently via its own toggle', async () => {
@@ -155,6 +167,26 @@ describe('<CourseGroupSection />', () => {
     expect(screen.getByRole('button', { name: 'Collapse Demo Course' })).toBeInTheDocument();
   });
 
+  it('reopens a collapsed card on its own course\'s expansion even when the focus was already inside it', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const focus = { groupId: 10, ruleKey: ruleKeyOfDefault };
+    const sectionWith = (expansionCountByCourseId: Record<string, number>) => (
+      <MockCompetencyAssociationsProvider value={{ groupsIndex: index, focus, expansionCountByCourseId }}>
+        <CourseGroupSection courseGroup={courseGroup} />
+      </MockCompetencyAssociationsProvider>
+    );
+    const { rerender } = render(sectionWith({}));
+
+    await user.click(await screen.findByRole('button', { name: 'Collapse Demo Course' }));
+    expect(screen.queryByText('Subsection 1A')).not.toBeInTheDocument();
+
+    rerender(sectionWith({ [courseOther]: 1 }));
+    expect(screen.queryByText('Subsection 1A')).not.toBeInTheDocument();
+
+    rerender(sectionWith({ [courseKey]: 1 }));
+    expect(await screen.findByText('Subsection 1A')).toBeInTheDocument();
+  });
+
   it('stays collapsed when the focus moves to a group outside it', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
     const { rerender } = renderSection();
@@ -178,10 +210,9 @@ describe('<CourseGroupSection />', () => {
     [999, false],
   ])('marks itself focused only when it contains the focused group (focused group %i)', async (groupId, isFocused) => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
-    const { container } = renderSection({ focus: { groupId, ruleKey: null } });
+    renderSection({ focus: { groupId, ruleKey: null } });
 
-    await screen.findByText('Subsection 1A');
-    const card = container.querySelector('.course-group-section');
+    const card = (await screen.findByRole('heading')).closest('.course-group-section');
     if (isFocused) {
       expect(card).toHaveClass('course-group-section--focused');
     } else {

@@ -14,6 +14,8 @@
   // The accent bar is always a left border so a focus change recolors it
   // instead of shifting the content.
   .course-group-section {
+    --pgn-spacing-card-spacer-x: 0;
+
     padding: var(--pgn-spacing-spacer-3) var(--pgn-spacing-spacer-2);
     border: 0;
     border-left: 8px solid transparent;
@@ -23,11 +25,6 @@
 
     &--focused {
       border-left-color: var(--pgn-color-info-600);
-    }
-
-    .pgn__card-header,
-    .pgn__card-body {
-      padding: 0;
     }
 
     .pgn__card-header .pgn__card-header-title-sm {
@@ -108,14 +105,13 @@
   }
 
   .rule-box {
-    position: relative;
     padding: var(--pgn-spacing-spacer-1-5) var(--pgn-spacing-spacer-1-5) var(--pgn-spacing-spacer-1-5)
       var(--pgn-spacing-spacer-2-5);
     border: 1px solid var(--pgn-color-gray-300);
     border-radius: var(--pgn-size-border-radius-base);
     background-color: var(--pgn-color-white);
 
-    // The control's overlay makes the whole box clickable while the chips stay siblings of the control.
+    // The control carries `.stretched-link`, which makes the whole box clickable while the chips stay siblings of it.
     &__control {
       display: flex;
       align-self: flex-start;
@@ -125,12 +121,6 @@
       font: inherit;
       text-align: start;
       cursor: pointer;
-
-      &::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-      }
 
       &:focus-visible {
         outline: 0;
@@ -167,7 +157,7 @@
     color: var(--pgn-color-info-600);
   }
 
-  // Truncation lands on `.pgn__chip__label`, the nested element holding a chip's text.
+  // `max-width` makes Paragon's own label truncation apply.
   .criterion-chip {
     --pgn-color-chip-bg-dark: var(--pgn-color-primary-500);
     --pgn-color-chip-border-base: var(--pgn-color-primary-500);
@@ -179,9 +169,6 @@
 
     .pgn__chip__label {
       font-weight: 400;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
     }
   }
 

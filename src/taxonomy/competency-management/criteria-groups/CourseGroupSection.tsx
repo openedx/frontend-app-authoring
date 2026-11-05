@@ -22,7 +22,12 @@ export interface CourseGroupSectionProps {
  */
 const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   const intl = useIntl();
-  const { focus, groupsIndex, status } = useCompetencyAssociations();
+  const {
+    expansionCountByCourseId,
+    focus,
+    groupsIndex,
+    status,
+  } = useCompetencyAssociations();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { data } = useCourseOutlineIndex(courseGroup.courseKey, { refetchOnMount: false });
 
@@ -39,12 +44,14 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   const containsFocus = status === 'success' && !!focus
     && groupsIndex.groupsById.get(focus.groupId)?.parentId === courseGroup.id;
 
-  // A collapsed card reopens when the focus moves into it, so the focused box is visible.
+  const expansionCount = expansionCountByCourseId[courseGroup.courseKey] ?? 0;
+
+  // A collapsed card reopens when the focus moves into it or its course is expanded, so the focused box is visible.
   useEffect(() => {
     if (containsFocus) {
       setIsCollapsed(false);
     }
-  }, [focus, containsFocus]);
+  }, [focus, containsFocus, expansionCount]);
 
   if (status !== 'success' || !data) {
     return null;

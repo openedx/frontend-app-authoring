@@ -8,7 +8,6 @@ export interface RuleBoxListProps {
   subsectionNamesByUsageKey: Record<string, string>;
 }
 
-/** Renders one `RuleBox` per rule box of a bottom-tier group. */
 const RuleBoxList = ({
   groupId,
   boxes,

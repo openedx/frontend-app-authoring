@@ -13,7 +13,7 @@ export interface GroupConnectorProps {
 }
 
 /** The Or/And connector rendered between two adjacent sibling bottom-tier
- * groups within the same course. N sibling groups render N-1 of these.
+ * groups within the same course.
  */
 const GroupConnector = ({ logicOperator }: GroupConnectorProps) => {
   const intl = useIntl();

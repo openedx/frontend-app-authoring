@@ -34,6 +34,8 @@ export const buildMockCompetencyAssociationsContextValue = (
     notifyCourseExpanded: jest.fn(),
     associateSubsection: jest.fn(),
     isAssociating: false,
+    hasPermissionsError: false,
+    expansionCountByCourseId: {},
     canEditCourse: () => true,
     associatedObjectIds: new Set(),
     accessibleCourseGroups: [],
