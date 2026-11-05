@@ -30,9 +30,7 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
-  useSelector: () => ({
-    useReactMarkdownEditor: true, // or false depending on the test
-  }),
+  useSelector: () => ({}),
 }));
 
 // Always mock out the "fetch course images" endpoint:

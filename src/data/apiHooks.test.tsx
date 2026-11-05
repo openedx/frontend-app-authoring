@@ -18,7 +18,7 @@ const FlagComponent = ({ courseId }: { courseId?: string; }) => {
     <ul>
       <li aria-label="isLoading">{waffleFlags.isLoading ? 'loading' : 'false'}</li>
       <li aria-label="isError">{waffleFlags.isError ? 'error' : 'false'}</li>
-      <li aria-label="useReactMarkdownEditor">{waffleFlags.useReactMarkdownEditor ? 'enabled' : 'disabled'}</li>
+      <li aria-label="useNewPdfEditor">{waffleFlags.useNewPdfEditor ? 'enabled' : 'disabled'}</li>
     </ul>
   );
 };
@@ -37,17 +37,17 @@ describe('useWaffleFlags', () => {
     expect(await screen.findByLabelText('isLoading')).toHaveTextContent('loading');
     expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
     // The default should be enabled, even before we hear back from the server:
-    expect(await screen.findByLabelText('useReactMarkdownEditor')).toHaveTextContent('enabled');
+    expect(await screen.findByLabelText('useNewPdfEditor')).toHaveTextContent('enabled');
 
     // Then, the server responds with a new value:
-    resolveResponse([200, { useReactMarkdownEditor: false }]);
+    resolveResponse([200, { useNewPdfEditor: false }]);
 
     // Now, we're no longer loading and we have the new value:
     await waitFor(async () => {
       expect(await screen.findByLabelText('isLoading')).toHaveTextContent('false');
     });
     expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
-    expect(await screen.findByLabelText('useReactMarkdownEditor')).toHaveTextContent('disabled');
+    expect(await screen.findByLabelText('useNewPdfEditor')).toHaveTextContent('disabled');
   });
 
   it('uses the default values if there\'s an error', async () => {
@@ -63,7 +63,7 @@ describe('useWaffleFlags', () => {
     expect(await screen.findByLabelText('isLoading')).toHaveTextContent('loading');
     expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
     // The default should be enabled, even before we hear back from the server:
-    expect(await screen.findByLabelText('useReactMarkdownEditor')).toHaveTextContent('enabled');
+    expect(await screen.findByLabelText('useNewPdfEditor')).toHaveTextContent('enabled');
 
     // Then, the server responds with an error
     resolveResponse([500, {}]);
@@ -73,14 +73,14 @@ describe('useWaffleFlags', () => {
       expect(await screen.findByLabelText('isLoading')).toHaveTextContent('false');
     });
     expect(await screen.findByLabelText('isError')).toHaveTextContent('error');
-    expect(await screen.findByLabelText('useReactMarkdownEditor')).toHaveTextContent('enabled');
+    expect(await screen.findByLabelText('useNewPdfEditor')).toHaveTextContent('enabled');
   });
 
   it('uses the global flag values while loading the course-specific flags', async () => {
     const { axiosMock } = initializeMocks();
     const courseId = 'course-v1:A+b+C';
     // Set the global flag OFF:
-    axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, { useReactMarkdownEditor: false });
+    axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, { useNewPdfEditor: false });
     // Control when we respond with the course-specific flag value:
     let resolveResponse;
     const promise = new Promise<[number, unknown]>(resolve => {
@@ -92,7 +92,7 @@ describe('useWaffleFlags', () => {
     render(<FlagComponent />);
     await waitFor(async () => {
       // Once it loads the flags from the server, the global 'false' value will override the default 'true':
-      expect(await screen.findByLabelText('useReactMarkdownEditor')).toHaveTextContent('disabled');
+      expect(await screen.findByLabelText('useNewPdfEditor')).toHaveTextContent('disabled');
     });
 
     // Now check the course-specific flag:
@@ -102,15 +102,15 @@ describe('useWaffleFlags', () => {
     // Now, the course-specific value is loading but in the meantime we use the global default:
     expect(await screen.findByLabelText('isLoading')).toHaveTextContent('loading');
     expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
-    expect(await screen.findByLabelText('useReactMarkdownEditor')).toHaveTextContent('disabled');
+    expect(await screen.findByLabelText('useNewPdfEditor')).toHaveTextContent('disabled');
 
     // Now the server responds: the course-specific flag is ON:
-    resolveResponse([200, { useReactMarkdownEditor: true }]);
+    resolveResponse([200, { useNewPdfEditor: true }]);
     await waitFor(async () => {
       expect(await screen.findByLabelText('isLoading')).toHaveTextContent('false');
     });
     expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
-    expect(await screen.findByLabelText('useReactMarkdownEditor')).toHaveTextContent('enabled');
+    expect(await screen.findByLabelText('useNewPdfEditor')).toHaveTextContent('enabled');
   });
 });
 
