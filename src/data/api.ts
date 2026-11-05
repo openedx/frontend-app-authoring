@@ -79,7 +79,6 @@ export const waffleFlagDefaults = {
   enableNotifications: false,
   useNewVideoUploadsPage: true,
   useNewPdfEditor: true,
-  useReactMarkdownEditor: true,
   useVideoGalleryFlow: false,
   enableAuthzCourseAuthoring: false,
 } as const;
