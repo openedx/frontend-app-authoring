@@ -37,7 +37,6 @@ import {
   isDataEmpty,
 } from '../utils';
 import FilterModal from './filterModal';
-import { useWaffleFlags } from '../../data/apiHooks';
 import {
   courseOptimizerQueryKeys,
   useRerunLinkUpdateStatus,
@@ -70,7 +69,6 @@ interface Props {
 const ScanResults: FC<Props> = ({ data, courseId }) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
-  const waffleFlags = useWaffleFlags(courseId);
   const [isUpdateAllInProgress, setIsUpdateAllInProgress] = useState(false);
   const [isSingleLinkPolling, setIsSingleLinkPolling] = useState(false);
   const [singleLinkTimedOut, setSingleLinkTimedOut] = useState(false);
@@ -97,7 +95,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     };
   }, []);
   const rerunLinkUpdateStatusQuery = useRerunLinkUpdateStatus(courseId, {
-    enabled: waffleFlags.enableCourseOptimizerCheckPrevRunLinks,
     manualPolling: isSingleLinkPolling || singleLinkTimedOut,
   });
   // Server status owns interval refetches; single-link updates own bounded manual GETs.
@@ -664,18 +661,16 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
             <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
           </div>
         </div>
-        {waffleFlags.enableCourseOptimizerCheckPrevRunLinks && (
-          <div className="scan-results">
-            <div className="scan-header-second-title-container px-3">
-              <header className="sub-header-content">
-                <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
-              </header>
-            </div>
-            <div className="no-results-found-container">
-              <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
-            </div>
+        <div className="scan-results">
+          <div className="scan-header-second-title-container px-3">
+            <header className="sub-header-content">
+              <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
+            </header>
           </div>
-        )}
+          <div className="no-results-found-container">
+            <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
+          </div>
+        </div>
       </>
     );
   }
@@ -825,9 +820,8 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
           })}
       </div>
 
-      {/* Show previous-run links only when the feature is enabled and matching links exist. */}
-      {waffleFlags.enableCourseOptimizerCheckPrevRunLinks
-        && allSections.length > 0
+      {/* Show previous-run links only when matching links exist. */}
+      {allSections.length > 0
         && hasPreviousRunLinksInSections
         && previousRunSections.length > 0 && (
         <div className="scan-results">
@@ -892,8 +886,8 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
         </div>
       )}
 
-      {/* The feature can be enabled even when there are no previous-run links to display. */}
-      {waffleFlags.enableCourseOptimizerCheckPrevRunLinks && !hasPreviousRunLinksInSections && (
+      {/* Show an empty previous-run section when there are no previous-run links to display. */}
+      {!hasPreviousRunLinksInSections && (
         <div className="scan-results">
           <div className="scan-header-second-title-container px-3">
             <header className="sub-header-content">
