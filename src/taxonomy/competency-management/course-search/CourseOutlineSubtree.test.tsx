@@ -194,7 +194,7 @@ describe('<CourseOutlineSubtree />', () => {
   it('does nothing when a section with no graded subsections is clicked', async () => {
     const user = userEvent.setup();
     axiosMock.onGet(outlineApiUrl).reply(200, partiallyGradedOutline);
-    renderSubtree();
+    renderSubtreeWithAssociations();
 
     const header = await screen.findByText('Section 2');
     await user.click(header);
@@ -210,7 +210,7 @@ describe('<CourseOutlineSubtree />', () => {
       + 'one request in total',
     async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      const { unmount } = renderSubtree();
+      const { unmount } = renderSubtreeWithAssociations();
 
       await screen.findByText('Section 1');
       expect(axiosMock.history.get).toHaveLength(1);
@@ -218,7 +218,7 @@ describe('<CourseOutlineSubtree />', () => {
       // Simulate the parent CourseRow collapsing then re-expanding the same
       // course within the query cache's staleTime: must serve cached data.
       unmount();
-      renderSubtree();
+      renderSubtreeWithAssociations();
 
       await screen.findByText('Section 1');
       expect(axiosMock.history.get).toHaveLength(1);
@@ -313,6 +313,28 @@ describe('<CourseOutlineSubtree />', () => {
 
       expect(await screen.findByText('Subsection 1A (graded)')).toBeInTheDocument();
       expect(screen.queryByRole('button', { name: /Associate/ })).not.toBeInTheDocument();
+    });
+
+    it('shows one permissions error, and no add button, when the permissions check failed', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({ hasPermissionsError: true, canEditCourse: () => false });
+      await expandFirstSection();
+
+      expect(await screen.findByText('Subsection 1A (graded)')).toBeInTheDocument();
+      expect(screen.getAllByRole('alert')).toHaveLength(1);
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        'There was a problem checking whether you can edit this course. Please try again.',
+      );
+      expect(screen.queryByRole('button', { name: /Associate/ })).not.toBeInTheDocument();
+    });
+
+    it('shows no permissions error when the permissions check succeeded', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations();
+      await expandFirstSection();
+
+      expect(await screen.findByText('Subsection 1A (graded)')).toBeInTheDocument();
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
 
     it('disables the add button and ignores clicks while a create is in flight', async () => {

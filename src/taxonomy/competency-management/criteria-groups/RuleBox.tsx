@@ -7,7 +7,6 @@ import CriterionChipList from './CriterionChipList';
 import ScoreThresholdField from './ScoreThresholdField';
 
 export interface RuleBoxProps {
-  /** `groupId` and `ruleKey` together identify this box when matching it against the focus. */
   groupId: number;
   ruleKey: string;
   rule: EffectiveRule;
@@ -37,11 +36,11 @@ const RuleBox = ({
     <Stack
       ref={ref}
       gap={1.5}
-      className={classNames('rule-box', { 'rule-box--focused': isFocused })}
+      className={classNames('rule-box position-relative', { 'rule-box--focused': isFocused })}
     >
       <button
         type="button"
-        className="rule-box__control"
+        className="rule-box__control stretched-link"
         aria-current={isFocused}
         onClick={() => focusRuleBox(groupId, ruleKey)}
       >

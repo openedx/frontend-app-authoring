@@ -75,6 +75,14 @@ export interface CompetencyAssociationsContextBase {
    */
   associateSubsection: (objectId: string, courseId: string) => void;
   isAssociating: boolean;
+  /** How many times each course row has been expanded, so a card can reopen on an
+   * expansion that leaves focus where it already was.
+   */
+  expansionCountByCourseId: Record<string, number>;
+  /** The permissions request failed, so `canEditCourse` is `false` for courses it
+   * could not resolve.
+   */
+  hasPermissionsError: boolean;
   /** Whether the author can manage associations for the course
    * (`courses.manage_tags`).
    */
@@ -94,12 +102,9 @@ export interface CompetencyAssociationsContextBase {
 /** Discriminated on `status`. `groupsIndex` and `systemDefaultProfile` are
  * always defined when `status` is `'success'`, and may be missing otherwise.
  *
- * `'pending'` until the groups, the default rule profile and every course
- * outline have settled, then `'success'` for the rest of that competency, even
- * when a later groups refetch adds a course whose outline has not loaded yet.
- * `'error'` if the groups, the profile or any course outline failed, including
- * a failure after `'success'`. An outline that fails with a 403 or 404 only
- * hides its course and does not affect `status`.
+ * `'success'` holds for the rest of a competency even when a later groups
+ * refetch adds a course whose outline has not loaded yet. An outline that
+ * fails with a 403 or 404 only hides its course and does not affect `status`.
  */
 export type CompetencyAssociationsContextValue =
   & CompetencyAssociationsContextBase
@@ -143,6 +148,16 @@ function isInaccessibleCourseError(error: unknown): boolean {
   return isAxiosError(error) && (error.response?.status === 403 || error.response?.status === 404);
 }
 
+function isFocusInCourse(
+  courseId: string,
+  focus: CriteriaFocus | null,
+  index: CompetencyCriteriaGroupsIndex,
+): focus is CriteriaFocus {
+  const focusedGroup = focus ? index.groupsById.get(focus.groupId) : undefined;
+  const focusedCourseGroup = focusedGroup?.parentId != null ? index.groupsById.get(focusedGroup.parentId) : undefined;
+  return focusedCourseGroup?.courseKey === courseId;
+}
+
 /** The focus to move to when `courseId` is expanded, or `null` when focus
  * already sits on one of that course's groups or the course has no group.
  */
@@ -152,9 +167,7 @@ function courseExpansionFocus(
   index: CompetencyCriteriaGroupsIndex,
   systemDefaultProfile: CompetencyRuleProfile,
 ): CriteriaFocus | null {
-  const focusedGroup = focus ? index.groupsById.get(focus.groupId) : undefined;
-  const focusedCourseGroup = focusedGroup?.parentId != null ? index.groupsById.get(focusedGroup.parentId) : undefined;
-  if (focus !== null && focusedCourseGroup?.courseKey === courseId) {
+  if (isFocusInCourse(courseId, focus, index)) {
     return null;
   }
   const target = lastBottomTierGroupForCourse(index, courseId);
@@ -260,6 +273,7 @@ export const CompetencyAssociationsProvider = ({
     settled,
   } = state;
   const [expandedCourseIds, setExpandedCourseIds] = useState<Set<string>>(new Set());
+  const [expansionCountByCourseId, setExpansionCountByCourseId] = useState<Record<string, number>>({});
 
   const competencyChanged = tagId !== state.tagId;
   if (competencyChanged) {
@@ -268,7 +282,8 @@ export const CompetencyAssociationsProvider = ({
 
   const groupsQuery = useCompetencyCriteriaGroups(tagId);
   const profileQuery = useDefaultCompetencyRuleProfile();
-  const { mutateAsync: createCriterion, isPending: isAssociating } = useCreateCompetencyCriterion();
+  const { mutateAsync: createCriterion, isPending: isCreatePending, variables } = useCreateCompetencyCriterion();
+  const isAssociating = isCreatePending && variables?.tagId === tagId;
 
   const groupsIndex = useMemo(
     () => (groupsQuery.data ? buildCompetencyCriteriaGroupsIndex(groupsQuery.data) : undefined),
@@ -292,6 +307,7 @@ export const CompetencyAssociationsProvider = ({
 
   const notifyCourseExpanded = useCallback((courseId: string) => {
     setExpandedCourseIds((prev) => (prev.has(courseId) ? prev : new Set(prev).add(courseId)));
+    setExpansionCountByCourseId((prev) => ({ ...prev, [courseId]: (prev[courseId] ?? 0) + 1 }));
     if (!groupsIndex || !systemDefaultProfile) {
       dispatch({ type: 'courseExpandedBeforeLoad', courseId });
       return;
@@ -392,7 +408,7 @@ export const CompetencyAssociationsProvider = ({
     return Array.from(ids);
   }, [expandedCourseIds, courseIdsWithGroups]);
 
-  const { permissionsByCourseId } = useCourseTaggingPermissions(courseIdsForPermissions);
+  const { permissionsByCourseId, isError: hasPermissionsError } = useCourseTaggingPermissions(courseIdsForPermissions);
   const canEditCourse = useCallback(
     (courseId: string) => permissionsByCourseId[courseId] ?? false,
     [permissionsByCourseId],
@@ -412,19 +428,19 @@ export const CompetencyAssociationsProvider = ({
     let ruleTypeOverride: string | undefined;
     let rulePayloadOverride: GradeRulePayload | undefined;
 
-    if (focus) {
-      const focusedGroup = groupsIndex.groupsById.get(focus.groupId);
-      if (focusedGroup && focusedGroup.parentId !== null) {
-        const courseGroup = groupsIndex.groupsById.get(focusedGroup.parentId);
-        if (courseGroup?.courseKey === courseId) {
-          groupId = focus.groupId;
-          const box = ruleBoxesForGroup(focus.groupId, groupsIndex, systemDefaultProfile)
-            .find((candidate) => candidate.key === focus.ruleKey);
-          if (box) {
-            ruleTypeOverride = box.rule.ruleType;
-            rulePayloadOverride = box.rule.rulePayload;
-          }
-        }
+    const target = isFocusInCourse(courseId, focus, groupsIndex)
+      ? focus
+      : courseExpansionFocus(courseId, focus, groupsIndex, systemDefaultProfile);
+    if (target) {
+      groupId = target.groupId;
+      const box = ruleBoxesForGroup(target.groupId, groupsIndex, systemDefaultProfile)
+        .find((candidate) => candidate.key === target.ruleKey);
+      if (box) {
+        ruleTypeOverride = box.rule.ruleType;
+        rulePayloadOverride = box.rule.rulePayload;
+      }
+      if (target !== focus) {
+        dispatch({ type: 'setFocus', focus: target });
       }
     }
 
@@ -485,6 +501,8 @@ export const CompetencyAssociationsProvider = ({
       notifyCourseExpanded,
       associateSubsection,
       isAssociating,
+      expansionCountByCourseId,
+      hasPermissionsError,
       canEditCourse,
       associatedObjectIds: associatedIds,
       accessibleCourseGroups,
@@ -503,6 +521,8 @@ export const CompetencyAssociationsProvider = ({
     notifyCourseExpanded,
     associateSubsection,
     isAssociating,
+    expansionCountByCourseId,
+    hasPermissionsError,
     canEditCourse,
     groupsIndex,
     systemDefaultProfile,

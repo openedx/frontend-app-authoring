@@ -6,14 +6,12 @@ import messages from './messages';
 export interface CriterionChipListProps {
   criteria: CompetencyCriterion[];
   /** A criterion whose `objectId` has no entry here (deleted content or
-   * search-index lag) shows the "Content unavailable" warning label.
+   * search-index lag) shows the text "Content unavailable".
    */
   subsectionNamesByUsageKey: Record<string, string>;
 }
 
-/** The chips inside one rule box, one per criterion. Rule boxes are computed
- * from criteria, so a box never has no criteria.
- */
+/** The chips inside one rule box, one per criterion. */
 const CriterionChipList = ({ criteria, subsectionNamesByUsageKey }: CriterionChipListProps) => {
   const intl = useIntl();
 

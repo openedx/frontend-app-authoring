@@ -6,7 +6,6 @@ import { LoadingSpinner } from '@src/generic/Loading';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import CourseGroupSection from './CourseGroupSection';
 import messages from './messages';
-// @ts-ignore
 import './criteria-groups.scss';
 
 /** The associations tree for the selected competency: loading, failed, empty, or the

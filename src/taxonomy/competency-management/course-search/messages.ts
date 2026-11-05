@@ -68,6 +68,13 @@ const messages = defineMessages({
     description: 'Message shown in an expanded course row when the course outline contains no subsections '
       + 'marked as graded, in place of the section/subsection list.',
   },
+  permissionsErrorMessage: {
+    id: 'course-authoring.competency-management.course-search.permissions-error-message',
+    defaultMessage: 'There was a problem checking whether you can edit this course. Please try again.',
+    description: 'Inline error message shown above an expanded course\'s outline when the request that checks '
+      + 'the author\'s permission to manage competency associations fails. The "Associate" controls are hidden '
+      + 'until it succeeds.',
+  },
   dateRangeLabel: {
     id: 'course-authoring.competency-management.course-search.date-range-label',
     defaultMessage: 'Start Date',

@@ -2,6 +2,7 @@ import { initializeMocks, render, screen, within } from '@src/testUtils';
 import {
   criterion,
   group,
+  mockScrollIntoView,
   MockCompetencyAssociationsProvider,
   systemDefaultProfile,
 } from '../__mocks__';
@@ -26,28 +27,25 @@ const response: CompetencyCriteriaGroupsResponse = {
 
 const boxes = ruleBoxesForGroup(10, buildCompetencyCriteriaGroupsIndex(response), systemDefaultProfile);
 
-const renderList = (focus: { groupId: number; ruleKey: string; } | null = null) => (
+const renderList = (
+  focus: { groupId: number; ruleKey: string; } | null = null,
+  listedBoxes = boxes,
+) => (
   render(
     <MockCompetencyAssociationsProvider value={{ focus }}>
       <RuleBoxList
         groupId={10}
-        boxes={boxes}
+        boxes={listedBoxes}
         subsectionNamesByUsageKey={{ 'block-a': 'Subsection A', 'block-b': 'Subsection B', 'block-c': 'Subsection C' }}
       />
     </MockCompetencyAssociationsProvider>,
   )
 );
 
-const originalScrollIntoView = Element.prototype.scrollIntoView;
-
 describe('<RuleBoxList />', () => {
+  mockScrollIntoView();
   beforeEach(() => {
     initializeMocks();
-    Element.prototype.scrollIntoView = jest.fn();
-  });
-
-  afterEach(() => {
-    Element.prototype.scrollIntoView = originalScrollIntoView;
   });
 
   it('renders two criteria sharing a rule as one box, and an override rule as a second box with its own threshold', () => {
@@ -64,6 +62,28 @@ describe('<RuleBoxList />', () => {
       'Subsection B',
     ]);
     expect(overrideBox.getAllByText(/^Subsection/).map((chip) => chip.textContent)).toEqual(['Subsection C']);
+  });
+
+  it('renders a criterion following the default and one overriding it with the same rule as one box', () => {
+    const sameRuleIndex = buildCompetencyCriteriaGroupsIndex({
+      groups: [group(10, null, null, 0)],
+      criteria: [
+        criterion(101, 'block-a', 10),
+        criterion(102, 'block-b', 10, {
+          ruleProfileId: null,
+          ruleTypeOverride: systemDefaultProfile.ruleType,
+          rulePayloadOverride: systemDefaultProfile.rulePayload,
+        }),
+      ],
+    });
+    renderList(null, ruleBoxesForGroup(10, sameRuleIndex, systemDefaultProfile));
+
+    const controls = screen.getAllByRole('button');
+    expect(controls).toHaveLength(1);
+    expect(controls[0]).toHaveTextContent('With a score of 70% or higher');
+    expect(
+      within(controls[0].parentElement!).getAllByText(/^Subsection/).map((chip) => chip.textContent),
+    ).toEqual(['Subsection A', 'Subsection B']);
   });
 
   it('marks only the box matching the context focus as current', () => {

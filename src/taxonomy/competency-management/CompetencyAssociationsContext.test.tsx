@@ -106,6 +106,7 @@ const TestConsumer = () => {
       <p>Status: {ctx.status}</p>
       <p>Error: {ctx.error?.message ?? 'none'}</p>
       <p>Associating: {String(ctx.isAssociating)}</p>
+      <p>Course A expansions: {ctx.expansionCountByCourseId[courseA] ?? 0}</p>
       <p>Groups index: {ctx.groupsIndex ? 'loaded' : 'missing'}</p>
       <p>Competency: {String(ctx.competencyExternalId)}</p>
       <p>Can edit course B: {String(ctx.canEditCourse(courseB))}</p>
@@ -415,6 +416,21 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Expand course B');
 
       expect(screen.getByText(focusOnGroup(21))).toBeInTheDocument();
+    });
+
+    it('counts every expansion of a course, even one that leaves focus unchanged', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      renderProvider();
+      await waitForSuccess();
+      expect(screen.getByText('Course A expansions: 0')).toBeInTheDocument();
+
+      await click('Expand course A');
+      await click('Expand course A');
+
+      expect(screen.getByText('Course A expansions: 2')).toBeInTheDocument();
+      expect(screen.getByText(focusOnGroup(10))).toBeInTheDocument();
     });
 
     it('leaves focus unchanged when the expanded course has no groups', async () => {
@@ -840,7 +856,7 @@ describe('CompetencyAssociationsProvider', () => {
       });
     });
 
-    it('omits group_id and rule fields when focus is unset', async () => {
+    it('omits group_id and rule fields when focus is unset and the course has no groups', async () => {
       axiosMock.onGet(groupsUrl).reply(200, noGroupsResponse);
       axiosMock.onGet(profileUrl).reply(200, profileResponse);
       axiosMock.onPost(createUrl).reply(201, createdCriterion(20));
@@ -850,6 +866,60 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Associate in course A');
 
       await expectSinglePost({ object_id: 'new-sub' });
+    });
+
+    describe('when focus is not on the clicked subsection\'s course, and the course has groups', () => {
+      beforeEach(() => {
+        axiosMock.onGet(groupsUrl).reply(200, courseBGroupsResponse);
+        axiosMock.onGet(profileUrl).reply(200, profileResponse);
+        axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+        axiosMock.onGet(courseBOutlineUrl).reply(200, outlineFixture);
+      });
+
+      it('targets the course\'s last group and rule box when nothing is focused, and focuses them', async () => {
+        axiosMock.onPost(createUrl).reply(201, createdCriterion(21, eqRule));
+        renderProvider();
+        await waitForSuccess();
+        noFocus();
+
+        await click('Associate in course B');
+
+        await expectSinglePost({
+          object_id: 'new-sub',
+          group_id: 21,
+          rule_type_override: 'grade',
+          rule_payload_override: eqRule,
+        });
+        expect(screen.getByText(focusOn(21, eqKey))).toBeInTheDocument();
+      });
+
+      it('targets the course\'s last group when focus is on another course\'s group', async () => {
+        axiosMock.onPost(createUrl).reply(201, createdCriterion(10));
+        renderProvider();
+        await waitForSuccess();
+        await click('Focus group 21');
+
+        await click('Associate in course A');
+
+        await expectSinglePost({ object_id: 'new-sub', group_id: 10 });
+        expect(screen.getByText(focusOn(10, null))).toBeInTheDocument();
+      });
+
+      it('targets the course\'s last group when the focused group no longer exists in the tree', async () => {
+        axiosMock.onPost(createUrl).reply(201, createdCriterion(21, eqRule));
+        renderProvider();
+        await waitForSuccess();
+        await click('Focus group 999');
+
+        await click('Associate in course B');
+
+        await expectSinglePost({
+          object_id: 'new-sub',
+          group_id: 21,
+          rule_type_override: 'grade',
+          rule_payload_override: eqRule,
+        });
+      });
     });
 
     it('omits group_id and rule fields when focus is a group belonging to a different course', async () => {
@@ -948,6 +1018,26 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Associate in course A');
 
       await screen.findByText('Associating: true');
+    });
+
+    it('reports a create in flight only for the competency it was started in', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(otherGroupsUrl).reply(200, noGroupsResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      axiosMock.onPost(createUrl).reply(() => new Promise(() => {}));
+      const { rerender } = renderProvider();
+      await waitForSuccess();
+      await click('Associate in course A');
+      await screen.findByText('Associating: true');
+
+      rerender(providerFor(otherTagId));
+      await waitForSuccess();
+      expect(screen.getByText('Associating: false')).toBeInTheDocument();
+
+      rerender(providerFor(tagId));
+      await waitForSuccess();
+      expect(screen.getByText('Associating: true')).toBeInTheDocument();
     });
 
     it('shows a specific toast when the create request 400s with a tag_id field error', async () => {
