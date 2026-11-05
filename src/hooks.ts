@@ -1,5 +1,6 @@
 import {
   type Dispatch,
+  type RefObject,
   type SetStateAction,
   useCallback,
   useEffect,
@@ -47,43 +48,57 @@ export const useEscapeClick = ({ onEscape, dependency }: { onEscape: () => void;
 };
 
 /**
- * Hook which loads next page of items on scroll
+ * Load the next page on scroll, using the content's nearest scrollable ancestor when provided.
  */
 export const useLoadOnScroll = (
   hasNextPage: boolean | undefined,
   isFetchingNextPage: boolean,
   fetchNextPage: () => void,
   enabled: boolean,
+  contentRef?: RefObject<HTMLElement>,
 ) => {
   useEffect(() => {
     if (enabled) {
       const canFetchNextPage = hasNextPage && !isFetchingNextPage;
+      let scrollContainer: HTMLElement | undefined;
+      let ancestor = contentRef?.current?.parentElement;
+      while (ancestor && ancestor !== document.body && ancestor !== document.documentElement) {
+        if (/auto|scroll/.test(window.getComputedStyle(ancestor).overflowY)) {
+          scrollContainer = ancestor;
+          break;
+        }
+        ancestor = ancestor.parentElement;
+      }
+      const scrollTarget = scrollContainer ?? window;
       // Used `loadLimit` to fetch next page before reach the end of the screen.
       const loadLimit = 300;
 
       const onscroll = () => {
         // Verify the position of the scroll to implement an infinite scroll.
-        const scrolledTo = window.scrollY + window.innerHeight;
-        const scrollDiff = document.body.scrollHeight - scrolledTo;
+        const scrollDiff = scrollContainer
+          ? scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight
+          : document.body.scrollHeight - window.scrollY - window.innerHeight;
         const isNearToBottom = scrollDiff <= loadLimit;
         if (isNearToBottom && canFetchNextPage) {
           fetchNextPage();
         }
       };
-      window.addEventListener('scroll', onscroll);
+      scrollTarget.addEventListener('scroll', onscroll);
 
-      // If the content is less than the screen height, fetch the next page.
-      const hasNoScroll = (document.body.scrollHeight - loadLimit) <= window.innerHeight;
+      // Fill the scroll container if the first page does not fill its viewport.
+      const contentHeight = scrollContainer?.scrollHeight ?? document.body.scrollHeight;
+      const viewportHeight = scrollContainer?.clientHeight ?? window.innerHeight;
+      const hasNoScroll = (contentHeight - loadLimit) <= viewportHeight;
       if (hasNoScroll && canFetchNextPage) {
         fetchNextPage();
       }
 
       return () => {
-        window.removeEventListener('scroll', onscroll);
+        scrollTarget.removeEventListener('scroll', onscroll);
       };
     }
     return () => {};
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage, enabled, contentRef]);
 };
 
 /**
