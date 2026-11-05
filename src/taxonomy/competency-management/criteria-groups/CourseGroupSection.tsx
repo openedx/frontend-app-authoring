@@ -79,7 +79,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
             />
             <h3 className="course-group-section__heading">
               {intl.formatMessage(messages.fromWithinCourseLabel, {
-                courseName: <strong key="course-name">{courseName}</strong>,
+                courseName: <span key="course-name" className="font-weight-bold">{courseName}</span>,
               })}
             </h3>
           </Stack>

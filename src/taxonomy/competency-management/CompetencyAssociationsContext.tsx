@@ -174,6 +174,25 @@ function courseExpansionFocus(
   return target ? { groupId: target.id, ruleKey: lastRuleKeyIn(target.id, index, systemDefaultProfile) } : null;
 }
 
+/** The rule key to move focus to when the focused key matches no rule box, or `undefined` when focus is fine. */
+function resolveStaleRuleKey(
+  focus: CriteriaFocus,
+  index: CompetencyCriteriaGroupsIndex,
+  systemDefaultProfile: CompetencyRuleProfile,
+): string | null | undefined {
+  if (!index.groupsById.has(focus.groupId)) {
+    return undefined;
+  }
+  // A rule box is keyed by its rule, so a refetch or a default-profile change can leave the key stale.
+  const hasFocusedBox = ruleBoxesForGroup(focus.groupId, index, systemDefaultProfile)
+    .some((box) => box.key === focus.ruleKey);
+  if (hasFocusedBox) {
+    return undefined;
+  }
+  const resolved = lastRuleKeyIn(focus.groupId, index, systemDefaultProfile);
+  return resolved === focus.ruleKey ? undefined : resolved;
+}
+
 interface ProviderState {
   tagId: number;
   /** Bumped on every competency change, so an in-flight create can tell the
@@ -193,7 +212,7 @@ type ProviderAction =
   | { type: 'focusGroup'; groupId: number; ruleKey: string | null; }
   | { type: 'focusRuleBox'; groupId: number; ruleKey: string; }
   | { type: 'setFocus'; focus: CriteriaFocus; }
-  | { type: 'ruleKeyResolved'; groupId: number; from: string | null; to: string | null; }
+  | { type: 'ruleKeyResolved'; groupId: number; staleRuleKey: string | null; resolvedRuleKey: string | null; }
   | { type: 'createSucceeded'; generation: number; focus: CriteriaFocus; }
   | { type: 'courseExpandedBeforeLoad'; courseId: string; }
   | { type: 'pendingCourseResolved'; focus: CriteriaFocus | null; }
@@ -222,8 +241,8 @@ function providerReducer(state: ProviderState, action: ProviderAction): Provider
       return { ...state, focus: action.focus };
     case 'ruleKeyResolved':
       // Guarded so an action computed from a stale focus cannot overwrite a focus dispatched after it.
-      return state.focus?.groupId === action.groupId && state.focus.ruleKey === action.from
-        ? { ...state, focus: { groupId: action.groupId, ruleKey: action.to } }
+      return state.focus?.groupId === action.groupId && state.focus.ruleKey === action.staleRuleKey
+        ? { ...state, focus: { groupId: action.groupId, ruleKey: action.resolvedRuleKey } }
         : state;
     case 'createSucceeded':
       return action.generation === state.generation ? { ...state, focus: action.focus } : state;
@@ -357,16 +376,11 @@ export const CompetencyAssociationsProvider = ({
     dispatch({ type: 'settled' });
   }
 
-  // A rule box is keyed by its rule, so a refetch or a default-profile change can leave the key stale.
-  if (!competencyChanged && focus && groupsIndex && systemDefaultProfile && groupsIndex.groupsById.has(focus.groupId)) {
-    const hasFocusedBox = ruleBoxesForGroup(focus.groupId, groupsIndex, systemDefaultProfile)
-      .some((box) => box.key === focus.ruleKey);
-    if (!hasFocusedBox) {
-      const to = lastRuleKeyIn(focus.groupId, groupsIndex, systemDefaultProfile);
-      if (to !== focus.ruleKey) {
-        dispatch({ type: 'ruleKeyResolved', groupId: focus.groupId, from: focus.ruleKey, to });
-      }
-    }
+  const resolvedRuleKey = !competencyChanged && focus && groupsIndex && systemDefaultProfile
+    ? resolveStaleRuleKey(focus, groupsIndex, systemDefaultProfile)
+    : undefined;
+  if (focus && resolvedRuleKey !== undefined) {
+    dispatch({ type: 'ruleKeyResolved', groupId: focus.groupId, staleRuleKey: focus.ruleKey, resolvedRuleKey });
   }
 
   const focusGroup = useCallback((groupId: number) => {

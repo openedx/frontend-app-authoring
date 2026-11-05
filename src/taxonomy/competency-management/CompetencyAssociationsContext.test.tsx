@@ -775,6 +775,8 @@ describe('CompetencyAssociationsProvider', () => {
       await expectSinglePost({ object_id: 'new-sub', group_id: 10 });
     });
 
+    // Unlike "focuses the response's group and rule after a successful create", whose group 999 is absent from the
+    // tree so re-resolution never runs, this refetches a tree containing the new box and checks focus stays on it.
     it('keeps focus on the rule box a create just added to the focused group', async () => {
       axiosMock.onPost(createUrl).reply(() => {
         groupsReply = {

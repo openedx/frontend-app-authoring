@@ -172,6 +172,12 @@
     }
   }
 
+  // Above the rule box's `.stretched-link::after` (z-index 1), so per-chip controls stay clickable.
+  .criterion-chip-list {
+    position: relative;
+    z-index: 2;
+  }
+
   .group-connector {
     &__line {
       flex: 1;
