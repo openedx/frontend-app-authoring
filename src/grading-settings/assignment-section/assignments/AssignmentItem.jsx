@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Form } from '@openedx/paragon';
 
-import { defaultAssignmentsPropTypes } from '../utils/enum';
-
 const AssignmentItem = ({
   title,
   descriptions,
@@ -17,8 +15,6 @@ const AssignmentItem = ({
   onChange,
   value,
   errorEffort,
-  secondErrorMsg,
-  gradeField,
   trailingElement,
   disabled = false,
 }) => (
@@ -49,11 +45,6 @@ const AssignmentItem = ({
           {errorMsg}
         </Form.Control.Feedback>
       )}
-      {gradeField?.dropCount !== 0 && gradeField?.dropCount > gradeField?.minCount && (
-        <Form.Control.Feedback className="feedback-error" type="invalid">
-          {secondErrorMsg}
-        </Form.Control.Feedback>
-      )}
     </Form.Group>
   </li>
 );
@@ -63,9 +54,7 @@ AssignmentItem.defaultProps = {
   errorMsg: undefined,
   min: undefined,
   value: '',
-  secondErrorMsg: undefined,
   errorEffort: false,
-  gradeField: undefined,
   trailingElement: undefined,
 };
 
@@ -78,11 +67,9 @@ AssignmentItem.propTypes = {
   errorMsg: PropTypes.string,
   name: PropTypes.string.isRequired,
   className: PropTypes.string.isRequired,
-  secondErrorMsg: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   errorEffort: PropTypes.bool,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  gradeField: PropTypes.shape(defaultAssignmentsPropTypes),
   trailingElement: PropTypes.string,
   disabled: PropTypes.bool,
 };

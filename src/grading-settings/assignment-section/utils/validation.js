@@ -54,7 +54,7 @@ export const validationAssignmentFields = (
 
   switch (assignmentName) {
     case assignmentType:
-      if (assignmentValue === '') {
+      if (assignmentValue.trim() === '') {
         updateAssignmentErrorList(assignmentName, assignmentId, setErrorList, setShowSavePrompt);
         return;
       }
@@ -77,7 +77,7 @@ export const validationAssignmentFields = (
       );
       break;
     case weightOfTotalGrade:
-      if (assignmentValue < 0 || assignmentValue > 100 || assignmentValue === '-0') {
+      if (assignmentValue < 0 || assignmentValue > 100 || assignmentValue === '' || assignmentValue === '-0') {
         updateAssignmentErrorList(
           assignmentName,
           assignmentId,
