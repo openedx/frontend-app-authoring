@@ -32,18 +32,13 @@ const CourseRow = ({ course }: CourseRowProps) => {
     : intl.formatMessage(messages.expandRowButtonLabel);
 
   const handleToggle = () => {
-    // Reads `isExpanded` directly rather than a functional updater: React
-    // may invoke a functional updater more than once, so calling
-    // `notifyCourseExpanded` (another component's state setter) from inside
-    // one would risk React's "Cannot update a component while rendering a
-    // different component" warning.
-    const next = !isExpanded;
-    if (next) {
-      // Only on expand, never on collapse - see `notifyCourseExpanded`'s
-      // own docstring for why this direction matters.
+    // Not a functional state updater: React may call one twice, and
+    // `notifyCourseExpanded` sets another component's state.
+    const willExpand = !isExpanded;
+    if (willExpand) {
       notifyCourseExpanded(course.courseKey);
     }
-    setIsExpanded(next);
+    setIsExpanded(willExpand);
   };
 
   return (

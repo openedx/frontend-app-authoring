@@ -29,12 +29,12 @@ const messages = defineMessages({
     id: 'course-authoring.competency-management.criteria-groups.criteria-group-box-label',
     defaultMessage: 'By completing {operator} of the following',
     description: 'Header sentence on a bottom-tier group\'s bracket, naming how its rule boxes combine. '
-      + '"{operator}" is rendered as the any/all control, not plain text.',
+      + '"{operator}" is replaced by the word "any" or "all".',
   },
   scoreThresholdLabel: {
     id: 'course-authoring.competency-management.criteria-groups.score-threshold-label',
     defaultMessage: 'With a score of {threshold}',
-    description: 'Closed-state label for a rule box\'s score threshold. "{threshold}" is the highlighted '
+    description: 'Label stating a rule box\'s score threshold. "{threshold}" is the highlighted '
       + 'value box, e.g. "75% or higher".',
   },
   scoreThresholdValue: {
@@ -46,14 +46,12 @@ const messages = defineMessages({
   scoreThresholdOrHigherSuffix: {
     id: 'course-authoring.competency-management.criteria-groups.score-threshold-or-higher-suffix',
     defaultMessage: 'or higher',
-    description: 'Suffix appended to the score threshold label when the rule\'s comparison is "at least" '
-      + '(op: gte).',
+    description: 'Suffix appended to the score threshold label when the rule requires at least the given score.',
   },
   scoreThresholdOrLowerSuffix: {
     id: 'course-authoring.competency-management.criteria-groups.score-threshold-or-lower-suffix',
     defaultMessage: 'or lower',
-    description: 'Suffix appended to the score threshold label when the rule\'s comparison is "at most" '
-      + '(op: lte). No suffix is appended for an exact-match rule (op: eq).',
+    description: 'Suffix appended to the score threshold label when the rule requires at most the given score.',
   },
   unknownSubsectionLabel: {
     id: 'course-authoring.competency-management.criteria-groups.unknown-subsection-label',
@@ -65,25 +63,37 @@ const messages = defineMessages({
     id: 'course-authoring.competency-management.criteria-groups.from-within-course-label',
     defaultMessage: 'From within {courseName} ...',
     description: 'Header sentence on a course-level group\'s card, naming the course its bottom-tier groups '
-      + 'belong to. "{courseName}" is rendered in bold, not plain text.',
+      + 'belong to. "{courseName}" is the course\'s name.',
   },
   expandCourseGroupButtonLabel: {
     id: 'course-authoring.competency-management.criteria-groups.expand-course-group.button-label',
-    defaultMessage: 'Expand',
+    defaultMessage: 'Expand {courseName}',
     description: 'Accessible label for the disclosure control that expands a collapsed course-level '
-      + 'associations group.',
+      + 'associations group. "{courseName}" is the course\'s name.',
   },
   collapseCourseGroupButtonLabel: {
     id: 'course-authoring.competency-management.criteria-groups.collapse-course-group.button-label',
-    defaultMessage: 'Collapse',
+    defaultMessage: 'Collapse {courseName}',
     description: 'Accessible label for the disclosure control that collapses an expanded course-level '
-      + 'associations group.',
+      + 'associations group. "{courseName}" is the course\'s name.',
   },
   courseGroupListErrorMessage: {
     id: 'course-authoring.competency-management.criteria-groups.course-group-list-error-message',
     defaultMessage: 'There was a problem loading this competency\'s associations. Please try again.',
     description: 'Inline error message shown when loading a competency\'s existing criteria groups, or the '
       + 'system default rule profile, fails.',
+  },
+  noAssociationsMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.no-associations-message',
+    defaultMessage: 'No content associated.',
+    description: 'First line of the empty state shown in the associations block when the selected competency '
+      + 'has no course content associated with it yet.',
+  },
+  noAssociationsPromptMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.no-associations-prompt-message',
+    defaultMessage: 'Make content selections to associate this competency with course content.',
+    description: 'Second line of the empty state shown in the associations block, prompting the user '
+      + 'to make content selections below.',
   },
 });
 

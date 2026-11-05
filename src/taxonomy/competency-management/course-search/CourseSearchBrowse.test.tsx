@@ -4,6 +4,7 @@ import {
   initializeMocks,
   render,
   screen,
+  userEvent,
   waitFor,
   within,
 } from '@src/testUtils';
@@ -11,6 +12,7 @@ import { getApiBaseUrl, type Course } from '@src/studio-home/data/api';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { CompetencyAssociationsProvider } from '../CompetencyAssociationsContext';
+import { defaultProfileResponse, MockCompetencyAssociationsProvider } from '../__mocks__';
 import { apiUrls as competencyManagementApiUrls } from '../data/api';
 import type { CompetencyTreeNode } from '../CompetencyTree';
 import CourseRow from './CourseRow';
@@ -81,19 +83,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
     ({ axiosMock } = initializeMocks());
     axiosMock.onGet(competencyManagementApiUrls.competencyCriteriaGroups(Number(activeCompetency.id)))
       .reply(200, { groups: [], criteria: [] });
-    axiosMock.onGet(competencyManagementApiUrls.defaultCompetencyRuleProfile())
-      .reply(200, {
-        count: 1,
-        next: null,
-        previous: null,
-        results: [{
-          id: 1,
-          scope_type: 'system_default',
-          rule_type: 'grade',
-          rule_payload: { op: 'gte', value: 0.7, scale: 'percent' },
-          archived: false,
-        }],
-      });
+    axiosMock.onGet(competencyManagementApiUrls.defaultCompetencyRuleProfile()).reply(200, defaultProfileResponse);
   });
 
   afterAll(() => {
@@ -108,13 +98,13 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
         axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
         renderCourseSearchBrowse();
 
-        // The name renders in its own `<strong>`, so the sentence is not a single text node.
+        // The name renders in its own span, so the sentence is not a single text node.
         const masteryLine = await screen.findByText(
           (_, element) =>
             element?.classList.contains('course-search-browse__associations-mastery') === true
             && element.textContent === 'Demonstrate Mastery For Test Competency',
         );
-        expect(within(masteryLine).getByText('Test Competency', { selector: 'strong' })).toBeInTheDocument();
+        expect(within(masteryLine).getByText('Test Competency')).toBeInTheDocument();
 
         expect(await screen.findByText('No content associated.')).toBeInTheDocument();
         expect(
@@ -128,10 +118,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       const competencyWithExternalId: CompetencyTreeNode = { ...activeCompetency, externalId: 'EXT-042' };
       renderCourseSearchBrowse(competencyWithExternalId);
 
-      // The competency name renders inside its own `<strong>` node (see
-      // `CourseSearchBrowse.tsx`), and the badge/sr-only text follow it in
-      // the same line, so a plain full-text match no longer applies here -
-      // check the line starts with the expected sentence instead.
+      // The badge and its screen-reader text follow the sentence in the same line, so match on its start.
       await screen.findByText(
         (_, element) =>
           element?.tagName.toLowerCase() === 'div'
@@ -256,9 +243,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
       renderCourseSearchBrowse();
 
-      // The competency name renders inside its own `<strong>` node (see
-      // `CourseSearchBrowse.tsx`), so the full sentence isn't a single text
-      // node - match on the line's own full text instead.
+      // The name renders in its own span, so match on the line's full text.
       await screen.findByText(
         (_, element) =>
           element?.tagName.toLowerCase() === 'div'
@@ -273,7 +258,8 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()], 2));
       renderCourseSearchBrowse();
 
-      // Scoped to the course list: the associations section briefly shows its own spinner too.
+      // Scoped to the course list: `CourseGroupList` renders its own `LoadingSpinner` (`role="status"`) while
+      // pending, so an unscoped `getByRole('status')` finds two.
       const coursesContainer = screen.getByText('Courses & Content').closest(
         '.course-search-browse__container',
       ) as HTMLElement;
@@ -545,6 +531,25 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       fireEvent.click(collapseButton);
       expect(screen.getByRole('button', { name: 'Expand' })).toHaveAttribute('aria-expanded', 'false');
       expect(screen.queryByText(outlineSectionHeading)).not.toBeInTheDocument();
+    });
+
+    it('notifies the context once when expanded and not when collapsed', async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      const course = buildCourse();
+      const notifyCourseExpanded = jest.fn();
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(course.courseKey)).reply(200, buildOutlineIndex([]));
+      render(
+        <MockCompetencyAssociationsProvider value={{ notifyCourseExpanded }}>
+          <CourseRow course={course} />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Expand' }));
+      expect(notifyCourseExpanded).toHaveBeenCalledTimes(1);
+      expect(notifyCourseExpanded).toHaveBeenCalledWith(course.courseKey);
+
+      await user.click(screen.getByRole('button', { name: 'Collapse' }));
+      expect(notifyCourseExpanded).toHaveBeenCalledTimes(1);
     });
   });
 });

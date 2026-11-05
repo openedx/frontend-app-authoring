@@ -6,6 +6,7 @@ import * as authzApi from '@src/authz/data/api';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
+import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import {
   act,
   initializeMocks,
@@ -19,6 +20,7 @@ import {
   courseB,
   courseBGroupsResponse,
   courseOther,
+  criterion,
   defaultProfileResponse as profileResponse,
   eqRule,
   gteRule,
@@ -212,7 +214,7 @@ describe('CompetencyAssociationsProvider', () => {
   });
 
   describe('accessibleCourseGroups', () => {
-    it.each([403, 500])(
+    it.each([403, 404])(
       'excludes a course-level group whose own outline fetch fails with %s, keeping a sibling course\'s group',
       async (outlineStatus) => {
         axiosMock.onGet(groupsUrl).reply(200, twoCoursesResponse);
@@ -224,8 +226,42 @@ describe('CompetencyAssociationsProvider', () => {
         await waitFor(() => expect(accessibleCourses()).toHaveTextContent(courseA));
         expect(accessibleCourses()).not.toHaveTextContent(courseB);
         expect(screen.getByText('Status: success')).toBeInTheDocument();
+        expect(screen.getByText('Error: none')).toBeInTheDocument();
       },
     );
+
+    it.each([
+      ['a 500', () => axiosMock.onGet(courseBOutlineUrl).reply(500), /500/],
+      ['a network error', () => axiosMock.onGet(courseBOutlineUrl).networkError(), /Network Error/],
+    ])(
+      'reports an error when a course outline fetch fails with %s',
+      async (_description, failCourseBOutline, errorMessage) => {
+        axiosMock.onGet(groupsUrl).reply(200, twoCoursesResponse);
+        axiosMock.onGet(profileUrl).reply(200, profileResponse);
+        axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+        failCourseBOutline();
+        renderProvider();
+
+        await screen.findByText('Status: error');
+        expect(screen.getByText(errorMessage)).toBeInTheDocument();
+        expect(accessibleCourses()).not.toHaveTextContent(courseB);
+      },
+    );
+
+    it('reports an error when a course outline refetch fails after the status was success', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).replyOnce(200, outlineFixture).onGet(courseAOutlineUrl).reply(500);
+      renderProvider();
+      await waitForSuccess();
+
+      await act(async () => {
+        await queryClient.invalidateQueries({ queryKey: courseOutlineQueryKeys.index(courseA) });
+      });
+
+      await screen.findByText('Status: error');
+      expect(screen.getByText(/^Error: .*500/)).toBeInTheDocument();
+    });
 
     it('excludes every course-level group and auto-focuses nothing when every course outline fails', async () => {
       axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
@@ -476,6 +512,16 @@ describe('CompetencyAssociationsProvider', () => {
       expect(screen.getByText(focusOnGroup(10))).toBeInTheDocument();
     });
 
+    it('moves focus to course B\'s last group (21) when an earlier pick (10) also has a stale rule key', async () => {
+      renderWithPendingGroupsAndProfile();
+      await click('Focus rule box 10 gte');
+      await click('Expand course B');
+
+      await finishLoading();
+
+      expect(screen.getByText(focusOn(21, eqKey))).toBeInTheDocument();
+    });
+
     it('focuses course A\'s only group (10) when course A is expanded after course B', async () => {
       renderWithPendingGroupsAndProfile();
       await click('Expand course B');
@@ -652,6 +698,90 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Focus rule box 21 gte');
 
       expect(screen.getByText(focusOn(21, gteKey))).toBeInTheDocument();
+    });
+  });
+
+  describe('when the focused rule key matches none of the focused group\'s rule boxes', () => {
+    const groupsWithRule = (rule: GradeRulePayload | null) => ({
+      ...singleGroupResponse,
+      criteria: rule
+        ? [
+          criterion(900, 'existing-sub', 10, {
+            ruleProfileId: null,
+            ruleTypeOverride: 'grade',
+            rulePayloadOverride: rule,
+          }),
+        ]
+        : [],
+    });
+    let groupsReply: typeof singleGroupResponse;
+
+    const refetchGroupsAs = async (reply: typeof singleGroupResponse) => {
+      groupsReply = reply;
+      await act(async () => {
+        await queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
+      });
+    };
+
+    beforeEach(() => {
+      groupsReply = singleGroupResponse;
+      axiosMock.onGet(groupsUrl).reply(() => [200, groupsReply]);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+    });
+
+    it('moves focus to the group\'s last rule box and creates into it', async () => {
+      axiosMock.onPost(createUrl).reply(201, createdCriterion(10, eqRule));
+      renderProvider();
+      await screen.findByText(focusOn(10, gteKey));
+
+      await refetchGroupsAs(groupsWithRule(eqRule));
+
+      expect(await screen.findByText(focusOn(10, eqKey))).toBeInTheDocument();
+      await click('Associate in course A');
+      await expectSinglePost({
+        object_id: 'new-sub',
+        group_id: 10,
+        rule_type_override: 'grade',
+        rule_payload_override: eqRule,
+      });
+    });
+
+    it('keeps the group focused with no rule box when it has none left, and creates into it', async () => {
+      axiosMock.onPost(createUrl).reply(201, createdCriterion(10));
+      renderProvider();
+      await screen.findByText(focusOn(10, gteKey));
+
+      await refetchGroupsAs(groupsWithRule(null));
+
+      expect(await screen.findByText(focusOn(10, null))).toBeInTheDocument();
+      await click('Associate in course A');
+      await expectSinglePost({ object_id: 'new-sub', group_id: 10 });
+    });
+
+    it('keeps focus on the rule box a create just added to the focused group', async () => {
+      axiosMock.onPost(createUrl).reply(() => {
+        groupsReply = {
+          ...singleGroupResponse,
+          criteria: [
+            ...singleGroupResponse.criteria,
+            criterion(920, 'new-sub', 10, {
+              ruleProfileId: null,
+              ruleTypeOverride: 'grade',
+              rulePayloadOverride: eqRule,
+            }),
+          ],
+        };
+        return [201, createdCriterion(10, eqRule)];
+      });
+      renderProvider();
+      await screen.findByText(focusOn(10, gteKey));
+
+      await click('Associate in course A');
+
+      expect(await screen.findByText(focusOn(10, eqKey))).toBeInTheDocument();
+      await flushEffects();
+      expect(screen.getByText(focusOn(10, eqKey))).toBeInTheDocument();
     });
   });
 

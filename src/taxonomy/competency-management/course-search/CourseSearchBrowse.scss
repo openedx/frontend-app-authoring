@@ -147,33 +147,19 @@
     color: var(--pgn-color-info-900);
   }
 
-  // Wraps `&__associations-label` and the "Demonstrate Mastery For"/empty-state text under it.
+  // Wraps `&__associations-label`, the "Demonstrate Mastery For" line and the
+  // criteria groups under it.
   &__associations {
     padding: $container-padding-y $container-padding-x;
   }
 
   // Figma gives regular weight for this text layer - only the interpolated
-  // competency name (its own `<strong>` in the JSX) is bold.
+  // competency name (its own bold `<span>` in the JSX) is bold.
   &__associations-mastery {
     margin-top: 8px;
     font-size: 15.8px;
     line-height: 24.5px;
     letter-spacing: normal;
-  }
-
-  // Always shown: there's no backend endpoint yet to list a competency's
-  // actual associations (see `CourseSearchBrowse.tsx`).
-  &__associations-empty-state {
-    // The empty state repeats the competency name, so a long one has to wrap here.
-    overflow-wrap: anywhere;
-    margin-top: 8px;
-    font-size: 15.8px;
-    line-height: 24.5px;
-    letter-spacing: normal;
-    background-color: var(--pgn-color-info-100);
-    border-radius: 12px; // approximate "border-radius/lg" token value - confirm later
-    text-align: center;
-    padding: 32px 16px; // approximate - not directly readable from the inspector screenshot, confirm later
   }
 
   // A node with children's own envelope, recursing to any depth - shared by
@@ -235,32 +221,20 @@
   }
 
   // One level deeper than `&__group`, further indented, with the lightest
-  // border color continuing the darkest-to-lightest progression. Font-size/
-  // weight read off Figma, overriding the tertiary `Button`'s own 18px/
-  // normal default. A non-selectable row is a plain `div` with the same box.
+  // border color continuing the darkest-to-lightest progression.
   &__subsection {
-    // This is a Paragon `<Button block>` (width: 100%); without the
-    // matching `width: calc(...)`, `margin-left` would push it past its
-    // parent's right edge.
     margin-left: $indent-step;
-    width: calc(100% - #{$indent-step});
     font-size: 14px;
     font-weight: 700;
     background-color: var(--pgn-color-white);
-    border: 1px solid transparent;
     border-left: 6px solid $group-border-color-subsection;
     border-radius: 5px;
     box-shadow: $block-shadow;
     padding: 10px 8px;
-    text-align: left;
-    // Paragon's `.btn` sets `inline-flex`/`justify-content: center`, which
-    // (not `text-align`) controls this button's text position.
-    justify-content: space-between;
   }
 
-  // Target icon | competency ID | divider | action icon. The action icon is
-  // decorative in both states (add is the row's own click, remove is out of
-  // scope), so the pill carries no interaction of its own.
+  // Target icon | competency ID, plus a divider and an add icon when it is the
+  // button that associates the subsection.
   &__subsection-pill {
     display: inline-flex;
     align-items: center;
@@ -281,9 +255,17 @@
     }
 
     &--available {
-      background-color: var(--pgn-color-white);
       border-style: dashed;
-      color: var(--pgn-color-info-600);
+
+      --pgn-btn-color: var(--pgn-color-info-600);
+      --pgn-btn-bg: var(--pgn-color-white);
+      --pgn-btn-border-color: var(--pgn-color-info-600);
+      --pgn-btn-hover-color: var(--pgn-color-info-600);
+      --pgn-btn-hover-bg: var(--pgn-color-info-100);
+      --pgn-btn-hover-border-color: var(--pgn-color-info-600);
+      --pgn-btn-disabled-color: var(--pgn-color-info-600);
+      --pgn-btn-disabled-bg: var(--pgn-color-white);
+      --pgn-btn-disabled-border-color: var(--pgn-color-info-600);
     }
   }
 

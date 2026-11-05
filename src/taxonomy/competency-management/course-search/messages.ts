@@ -84,31 +84,32 @@ const messages = defineMessages({
   associationsSectionLabel: {
     id: 'course-authoring.competency-management.course-search.associations-section-label',
     defaultMessage: 'Competency Criteria Associations',
-    description: 'Header label shown above the "Demonstrate Mastery For" line and the associations empty '
-      + 'state, once a competency is selected.',
+    description: 'Header label shown above the "Demonstrate Mastery For" line and the criteria groups, once a '
+      + 'competency is selected.',
   },
   demonstrateMasteryForLabel: {
     id: 'course-authoring.competency-management.course-search.demonstrate-mastery-for-label',
     defaultMessage: 'Demonstrate Mastery For {competencyName}',
     description: 'Line shown under the associations section label, naming the currently active competency.',
   },
-  noAssociationsMessage: {
-    id: 'course-authoring.competency-management.course-search.no-associations-message',
-    defaultMessage: 'No content associated.',
-    description: 'First line of the empty state shown in the associations block when the selected competency '
-      + 'has no course content associated with it yet.',
+  associateSubsectionButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.associate-subsection.button-label',
+    defaultMessage: 'Associate {externalId} with {subsectionName}',
+    description: 'Accessible name of the pill button that associates the active competency with a subsection. '
+      + '{externalId} is the competency\'s short external id, for example "CCRS-1.3"; {subsectionName} is the '
+      + 'subsection\'s display name.',
   },
-  noAssociationsPromptMessage: {
-    id: 'course-authoring.competency-management.course-search.no-associations-prompt-message',
-    defaultMessage: 'Make content selections to associate this competency with course content.',
-    description: 'Second line of the static empty state shown in the associations block, prompting the user '
-      + 'to make content selections below.',
+  associateSubsectionWithoutIdButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.associate-subsection-without-id.button-label',
+    defaultMessage: 'Associate this competency with {subsectionName}',
+    description: 'Accessible name of the pill button that associates the active competency with a subsection, '
+      + 'used when the competency has no external id. {subsectionName} is the subsection\'s display name.',
   },
-  competencyIdAccessibleLabel: {
-    id: 'course-authoring.competency-management.course-search.competency-id.accessible-label',
-    defaultMessage: 'Competency ID: {externalId}',
-    description: 'Accessible name for the Competency ID badge shown next to the "Demonstrate Mastery For" line, '
-      + 'read by screen readers since the badge itself is aria-hidden.',
+  subsectionAssociatedLabel: {
+    id: 'course-authoring.competency-management.course-search.subsection-associated-label',
+    defaultMessage: 'Associated',
+    description: 'Screen-reader-only text inside the pill on a subsection that is already associated with the '
+      + 'active competency.',
   },
 });
 

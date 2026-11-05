@@ -7,8 +7,8 @@ import {
   userEvent,
   within,
 } from '@src/testUtils';
-import type { CompetencyRuleProfile } from '../data/types';
-import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../__mocks__';
+import { MockCompetencyAssociationsProvider } from '../__mocks__';
+import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import CourseOutlineSubtree from './CourseOutlineSubtree';
 
@@ -23,9 +23,7 @@ const mixedOutline = buildOutlineIndex({
       id: 'section-1',
       displayName: 'Section 1',
       children: [
-        // `usageKey: undefined` mirrors the real `course_index` response,
-        // which never populates `usage_key` - so these tests only pass if
-        // `SubsectionRow` reads `.id`, not `.usageKey`.
+        // `usageKey: undefined` mirrors the real `course_index` response, so the tests need `.id`.
         { id: 'sub-1a', displayName: 'Subsection 1A (graded)', overrides: { graded: true, usageKey: undefined } },
         { id: 'sub-1b', displayName: 'Subsection 1B (ungraded)', overrides: { graded: false } },
       ],
@@ -82,25 +80,19 @@ const allUngradedOutline = buildOutlineIndex({
 const noSubsectionsOutline = buildOutlineIndex([]);
 
 const loadedIndex = buildCompetencyCriteriaGroupsIndex({ groups: [], criteria: [] });
-const loadedProfile: CompetencyRuleProfile = {
-  id: 1,
-  scopeType: 'system_default',
-  ruleType: 'grade',
-  rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
-  archived: false,
-};
 
-// Most tests below care about outline rendering, not the association data
-// layer, so a lightly-mocked provider is enough; a few near the end
-// override `associatedObjectIds`/`associateSubsection` directly.
-const renderSubtree = (contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {}) =>
+const renderSubtree = () => render(<CourseOutlineSubtree courseId={courseId} />);
+
+const renderSubtreeWithAssociations = (contextOverrides: MockCompetencyAssociationsOverrides = {}) =>
   render(
-    <MockCompetencyAssociationsProvider
-      value={{ groupsIndex: loadedIndex, systemDefaultProfile: loadedProfile, ...contextOverrides }}
-    >
+    <MockCompetencyAssociationsProvider value={{ groupsIndex: loadedIndex, ...contextOverrides }}>
       <CourseOutlineSubtree courseId={courseId} />
     </MockCompetencyAssociationsProvider>,
   );
+
+const expandFirstSection = async () => {
+  await userEvent.setup().click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
+};
 
 describe('<CourseOutlineSubtree />', () => {
   beforeEach(() => {
@@ -129,7 +121,7 @@ describe('<CourseOutlineSubtree />', () => {
     async () => {
       const user = userEvent.setup();
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      renderSubtree();
+      renderSubtreeWithAssociations();
 
       expect(await screen.findByText('Section 1')).toBeInTheDocument();
       expect(screen.getByText('Section 2')).toBeInTheDocument();
@@ -144,8 +136,8 @@ describe('<CourseOutlineSubtree />', () => {
       await user.click(expandButtons[0]);
       await user.click(screen.getByRole('button', { name: 'Expand' }));
 
-      expect(screen.getByRole('button', { name: 'Subsection 1A (graded)' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Subsection 2A (graded)' })).toBeInTheDocument();
+      expect(screen.getByText('Subsection 1A (graded)')).toBeInTheDocument();
+      expect(screen.getByText('Subsection 2A (graded)')).toBeInTheDocument();
 
       expect(screen.queryByText('Subsection 1B (ungraded)')).not.toBeInTheDocument();
       expect(screen.queryByText('Unit 2A1')).not.toBeInTheDocument();
@@ -158,7 +150,7 @@ describe('<CourseOutlineSubtree />', () => {
     async () => {
       const user = userEvent.setup();
       axiosMock.onGet(outlineApiUrl).reply(200, partiallyGradedOutline);
-      renderSubtree();
+      renderSubtreeWithAssociations();
 
       expect(await screen.findByText('Section 1')).toBeInTheDocument();
       const section2Header = screen.getByText('Section 2');
@@ -173,8 +165,8 @@ describe('<CourseOutlineSubtree />', () => {
 
       // Expanding Section 1 reveals only its own graded subsection row -
       // Section 2's ungraded subsection never renders a row at all.
-      expect(screen.getByRole('button', { name: 'Subsection 1A (graded)' })).toBeInTheDocument();
-      expect(screen.getAllByRole('button')).toHaveLength(2); // the collapse icon + the subsection row
+      expect(screen.getByText('Subsection 1A (graded)')).toBeInTheDocument();
+      expect(screen.getAllByRole('button')).toHaveLength(2); // the collapse icon + the subsection's pill
       expect(screen.queryByText('Subsection 2A (ungraded)')).not.toBeInTheDocument();
     },
   );
@@ -233,183 +225,108 @@ describe('<CourseOutlineSubtree />', () => {
     },
   );
 
-  it(
-    'marks a subsection as already associated by its real id - the field the real course_index response '
-      + 'actually populates, never the always-undefined usageKey',
-    async () => {
-      const user = userEvent.setup();
+  describe('subsection pill', () => {
+    it('shows the applied pill, and no add button, only on the subsections already associated', async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      renderSubtree({ associatedObjectIds: new Set(['sub-1a']) });
+      renderSubtreeWithAssociations({ associatedObjectIds: new Set(['sub-1a']), competencyExternalId: 'EXT-042' });
 
-      // Expand both sections' graded subsections: `sub-1a` (Section 1) and
-      // `sub-2a` (Section 2) - `sub-1b` is ungraded, so it never renders a
-      // row at all (see the "shows a disclosure icon..." test above).
+      const user = userEvent.setup();
       const expandButtons = await screen.findAllByRole('button', { name: 'Expand' });
       await user.click(expandButtons[0]);
       await user.click(screen.getByRole('button', { name: 'Expand' }));
 
-      expect(screen.getByRole('button', { name: 'Subsection 1A (graded)' })).toHaveAttribute(
-        'data-associated',
-        'true',
-      );
-      // A sibling row whose id isn't in the set stays unmarked - proves the
-      // lookup is a real per-row match, not something that's always true.
-      expect(screen.getByRole('button', { name: 'Subsection 2A (graded)' })).toHaveAttribute(
-        'data-associated',
-        'false',
-      );
-    },
-  );
+      expect(screen.getAllByText('Associated')).toHaveLength(1);
+      expect(screen.getByText('Competency ID: EXT-042')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Subsection 1A/ })).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Associate EXT-042 with Subsection 2A (graded)' }))
+        .toBeInTheDocument();
+    });
 
-  it(
-    'calls associateSubsection with the subsection\'s real id when a selectable row is clicked - not the '
-      + 'usageKey field the real API never populates',
-    async () => {
+    it('hides the competency id from assistive tech on the applied pill and states it in screen-reader text', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({ associatedObjectIds: new Set(['sub-1a']), competencyExternalId: 'EXT-042' });
+      await expandFirstSection();
+
+      expect(await screen.findByText('EXT-042')).toHaveAttribute('aria-hidden', 'true');
+      expect(screen.getByText('Competency ID: EXT-042')).toBeInTheDocument();
+      expect(screen.getByText('Associated')).toBeInTheDocument();
+    });
+
+    it('omits the competency id from the applied pill when the competency has none', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({ associatedObjectIds: new Set(['sub-1a']), competencyExternalId: null });
+      await expandFirstSection();
+
+      expect(await screen.findByText('Associated')).toBeInTheDocument();
+      expect(screen.queryByText('Competency ID:', { exact: false })).not.toBeInTheDocument();
+    });
+
+    it('associates by the subsection\'s id when its pill is clicked, but not when its name is clicked', async () => {
       const user = userEvent.setup();
       const associateSubsection = jest.fn();
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      renderSubtree({ associateSubsection });
+      renderSubtreeWithAssociations({ associateSubsection, competencyExternalId: 'EXT-042' });
+      await expandFirstSection();
 
-      await user.click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
-      await user.click(screen.getByRole('button', { name: 'Subsection 1A (graded)' }));
+      await user.click(await screen.findByText('Subsection 1A (graded)'));
+      expect(associateSubsection).not.toHaveBeenCalled();
 
+      await user.click(screen.getByRole('button', { name: 'Associate EXT-042 with Subsection 1A (graded)' }));
+      expect(associateSubsection).toHaveBeenCalledTimes(1);
       expect(associateSubsection).toHaveBeenCalledWith('sub-1a', courseId);
-    },
-  );
-
-  it(
-    'renders the Competency ID badge on an already-associated row when competencyExternalId is set '
-      + '(moved here from CourseSearchBrowse.test.tsx along with the badge itself)',
-    async () => {
-      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      renderSubtree({ associatedObjectIds: new Set(['sub-1a']), competencyExternalId: 'EXT-042' });
-
-      await userEvent.setup().click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
-      // The badge's own text becomes part of the button's accessible name
-      // once set, so find the row by its label text instead of `getByRole`.
-      const row = (await screen.findByText('Subsection 1A (graded)')).closest('button') as HTMLElement;
-
-      expect(within(row).getByText('EXT-042')).toHaveAttribute('aria-hidden', 'true');
-      expect(within(row).getByText('Competency ID: EXT-042')).toBeInTheDocument();
-    },
-  );
-
-  it('renders no Competency ID badge on an already-associated row when competencyExternalId is falsy', async () => {
-    axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-    renderSubtree({ associatedObjectIds: new Set(['sub-1a']), competencyExternalId: null });
-
-    await userEvent.setup().click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
-    const row = (await screen.findByText('Subsection 1A (graded)')).closest('button') as HTMLElement;
-
-    expect(within(row).queryByText('Competency ID:', { exact: false })).not.toBeInTheDocument();
-  });
-
-  describe('association pill', () => {
-    const openFirstSection = async () => {
-      await userEvent.setup().click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
-      return (await screen.findByText('Subsection 1A (graded)')).closest('.course-search-browse__subsection')!;
-    };
-
-    it('renders the applied pill with an inert hidden cancel icon on an associated row', async () => {
-      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      renderSubtree({ associatedObjectIds: new Set(['sub-1a']), competencyExternalId: 'EXT-042' });
-      const row = await openFirstSection();
-
-      const pill = row.querySelector('.course-search-browse__subsection-pill--applied')!;
-      expect(pill).toBeInTheDocument();
-      expect(row.querySelector('.course-search-browse__subsection-pill--available')).not.toBeInTheDocument();
-      expect(within(pill as HTMLElement).getByText('EXT-042')).toBeInTheDocument();
-      const action = pill.querySelector('.course-search-browse__subsection-pill-action')!;
-      expect(action).toHaveAttribute('aria-hidden', 'true');
-      expect(within(action as HTMLElement).queryByRole('button')).not.toBeInTheDocument();
     });
 
-    it('renders the available pill on a selectable, unassociated row', async () => {
+    it('names the pill button without an id when the competency has no external id', async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      renderSubtree({ competencyExternalId: 'EXT-042' });
-      const row = await openFirstSection();
+      renderSubtreeWithAssociations({ competencyExternalId: null });
+      await expandFirstSection();
 
-      expect(row.querySelector('.course-search-browse__subsection-pill--available')).toBeInTheDocument();
-      expect(row.querySelector('.course-search-browse__subsection-pill--applied')).not.toBeInTheDocument();
+      expect(await screen.findByRole('button', { name: 'Associate this competency with Subsection 1A (graded)' }))
+        .toBeInTheDocument();
     });
 
-    it('renders no pill on an unassociated row that cannot be selected', async () => {
+    it('shows the applied pill but no add button when the course cannot be edited', async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      renderSubtree({ canEditCourse: () => false });
-      const row = await openFirstSection();
-
-      expect(row.querySelector('.course-search-browse__subsection-pill')).not.toBeInTheDocument();
-    });
-
-    it('does nothing when the cancel icon of a non-selectable applied row is clicked', async () => {
-      const associateSubsection = jest.fn();
-      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      renderSubtree({
+      renderSubtreeWithAssociations({
         canEditCourse: () => false,
-        associateSubsection,
         associatedObjectIds: new Set(['sub-1a']),
         competencyExternalId: 'EXT-042',
       });
-      const row = await openFirstSection();
+      const user = userEvent.setup();
+      const expandButtons = await screen.findAllByRole('button', { name: 'Expand' });
+      await user.click(expandButtons[0]);
+      await user.click(screen.getByRole('button', { name: 'Expand' }));
 
-      await userEvent.setup().click(row.querySelector('.course-search-browse__subsection-pill-action')!);
+      expect(screen.getByText('Associated')).toBeInTheDocument();
+      expect(screen.getByText('Subsection 2A (graded)')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Associate/ })).not.toBeInTheDocument();
+    });
 
+    it.each([
+      ['canEditCourse is false', { canEditCourse: () => false }],
+      ['status is pending', { status: 'pending' as const }],
+      ['status is error', { status: 'error' as const }],
+    ])('shows no add button on an unassociated subsection when %s', async (_name, overrides) => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations(overrides);
+      await expandFirstSection();
+
+      expect(await screen.findByText('Subsection 1A (graded)')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Associate/ })).not.toBeInTheDocument();
+    });
+
+    it('disables the add button and ignores clicks while a create is in flight', async () => {
+      const user = userEvent.setup();
+      const associateSubsection = jest.fn();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({ associateSubsection, isAssociating: true, competencyExternalId: 'EXT-042' });
+      await expandFirstSection();
+
+      const addButton = await screen.findByRole('button', { name: 'Associate EXT-042 with Subsection 1A (graded)' });
+      await user.click(addButton);
+
+      expect(addButton).toBeDisabled();
       expect(associateSubsection).not.toHaveBeenCalled();
     });
-  });
-
-  it(
-    'renders a graded subsection of a non-writable course with no button role, still showing the '
-      + 'already-associated marking',
-    async () => {
-      const user = userEvent.setup();
-      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      renderSubtree({
-        canEditCourse: () => false,
-        associatedObjectIds: new Set(['sub-1a']),
-        competencyExternalId: 'EXT-042',
-      });
-
-      await user.click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
-
-      const row = screen.getByText('Subsection 1A (graded)').closest('.course-search-browse__subsection')!;
-      expect(row.tagName).toBe('DIV');
-      expect(row).toHaveAttribute('data-associated', 'true');
-      expect(within(row as HTMLElement).queryByRole('button')).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /Subsection 1A/ })).not.toBeInTheDocument();
-      expect(within(row as HTMLElement).getByText('Competency ID: EXT-042')).toBeInTheDocument();
-    },
-  );
-
-  it.each([
-    ['systemDefaultProfile', { systemDefaultProfile: undefined }],
-    ['groupsIndex', { groupsIndex: undefined }],
-  ])('renders a graded subsection without a button while %s is not loaded', async (_name, overrides) => {
-    const user = userEvent.setup();
-    axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-    renderSubtree({ canEditCourse: () => true, ...overrides });
-
-    await user.click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
-
-    expect(screen.getByText('Subsection 1A (graded)')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Subsection 1A (graded)' })).not.toBeInTheDocument();
-  });
-
-  it.each([
-    ['a create is in flight', { isAssociating: true }],
-    ['the associations are still loading', { status: 'pending' as const }],
-    ['the associations failed to load', { status: 'error' as const }],
-  ])('disables the graded subsection button and ignores clicks while %s', async (_name, overrides) => {
-    const user = userEvent.setup();
-    const associateSubsection = jest.fn();
-    axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-    renderSubtree({ associateSubsection, ...overrides });
-
-    await user.click((await screen.findAllByRole('button', { name: 'Expand' }))[0]);
-    const row = (await screen.findByText('Subsection 1A (graded)')).closest('button') as HTMLElement;
-    await user.click(row);
-
-    expect(row).toBeDisabled();
-    expect(associateSubsection).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Stack } from '@openedx/paragon';
 import classNames from 'classnames';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import type { CompetencyCriterion, EffectiveRule } from '../data/types';
@@ -6,26 +7,15 @@ import CriterionChipList from './CriterionChipList';
 import ScoreThresholdField from './ScoreThresholdField';
 
 export interface RuleBoxProps {
-  /** The group this box belongs to, and this box's own rule key - together
-   * this box's identity for focus comparisons against
-   * `CompetencyAssociationsContext`'s `focus`.
-   */
+  /** `groupId` and `ruleKey` together identify this box when matching it against the focus. */
   groupId: number;
   ruleKey: string;
-  /** The rule this box displays, given as a prop rather than read from a
-   * criterion - so this same component can later serve a not-yet-saved box
-   * that has no criterion of its own yet.
-   */
   rule: EffectiveRule;
   criteria: CompetencyCriterion[];
   subsectionNamesByUsageKey: Record<string, string>;
 }
 
-/** One rule box: the rule it's given, its chips, and focus/click behavior.
- * Scrolls itself into view (`block: 'nearest'`) when it becomes the focused
- * box - the innermost focused element, so its containing `CriteriaGroupBox`
- * does not also scroll itself in that case.
- */
+/** One rule box: its score threshold, which focuses the box, and its criterion chips. */
 const RuleBox = ({
   groupId,
   ruleKey,
@@ -43,30 +33,22 @@ const RuleBox = ({
     }
   }, [isFocused]);
 
-  const handleClick: React.MouseEventHandler = () => {
-    focusRuleBox(groupId, ruleKey);
-  };
-
-  const handleKeyDown: React.KeyboardEventHandler = (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      focusRuleBox(groupId, ruleKey);
-    }
-  };
-
   return (
-    <div
+    <Stack
       ref={ref}
+      gap={1.5}
       className={classNames('rule-box', { 'rule-box--focused': isFocused })}
-      role="button"
-      tabIndex={0}
-      aria-pressed={isFocused}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
     >
-      <ScoreThresholdField rulePayload={rule.rulePayload} />
+      <button
+        type="button"
+        className="rule-box__control"
+        aria-current={isFocused}
+        onClick={() => focusRuleBox(groupId, ruleKey)}
+      >
+        <ScoreThresholdField rulePayload={rule.rulePayload} />
+      </button>
       <CriterionChipList criteria={criteria} subsectionNamesByUsageKey={subsectionNamesByUsageKey} />
-    </div>
+    </Stack>
   );
 };
 

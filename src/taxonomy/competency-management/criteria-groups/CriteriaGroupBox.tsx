@@ -3,6 +3,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import classNames from 'classnames';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import type { BottomTierCompetencyCriteriaGroup } from '../data/types';
+import { ruleBoxesForGroup } from '../utils';
 import LogicOperatorSelect from './LogicOperatorSelect';
 import RuleBoxList from './RuleBoxList';
 import messages from './messages';
@@ -13,54 +14,38 @@ export interface CriteriaGroupBoxProps {
 }
 
 /** One bottom-tier group's "By completing any/all of the following"
- * bracket, plus its rule boxes. The "By completing..." band is the group's
- * focus control; the rule boxes are siblings of it, not descendants, so no
- * interactive element contains another. Scrolls itself into view when it's the
- * focused group but no rule box within it is focused - a focused rule box,
- * being the more specific/innermost target, scrolls itself instead (see
- * `RuleBox`), so exactly one of the two ever scrolls for a given focus.
+ * bracket, plus its rule boxes. The "By completing..." band focuses the
+ * group; the rule boxes are its siblings, not descendants.
+ *
+ * At most one of the group and its rule boxes scrolls into view: a focused
+ * rule box scrolls itself, and the group scrolls only when none of its boxes
+ * matches the focused rule key.
  */
 const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBoxProps) => {
   const intl = useIntl();
-  const { focus, focusGroup, groupsIndex, systemDefaultProfile } = useCompetencyAssociations();
+  const { focus, focusGroup, status, groupsIndex, systemDefaultProfile } = useCompetencyAssociations();
   const ref = useRef<HTMLDivElement>(null);
 
   const isFocused = focus?.groupId === group.id;
-  // `null` whenever this group isn't the focused one, so a `RuleBox` in a
-  // different group never matches it by accident.
-  const focusedRuleKey = isFocused ? focus!.ruleKey : null;
+  const boxes = status === 'success' ? ruleBoxesForGroup(group.id, groupsIndex, systemDefaultProfile) : [];
+  const hasFocusedBox = isFocused && boxes.some((box) => box.key === focus.ruleKey);
 
   useEffect(() => {
-    if (isFocused && focusedRuleKey === null) {
+    if (isFocused && !hasFocusedBox) {
       ref.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
-  }, [isFocused, focusedRuleKey]);
-
-  const handleClick: React.MouseEventHandler = () => {
-    focusGroup(group.id);
-  };
-
-  const handleKeyDown: React.KeyboardEventHandler = (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      focusGroup(group.id);
-    }
-  };
+  }, [isFocused, hasFocusedBox]);
 
   return (
-    // Not itself interactive, since the rule boxes it contains are; the
-    // group's own control is the header.
     <div
       ref={ref}
       className={classNames('criteria-group-box', { 'criteria-group-box--focused': isFocused })}
     >
-      <div
+      <button
+        type="button"
         className="criteria-group-box__header"
-        role="button"
-        tabIndex={0}
-        aria-pressed={isFocused}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
+        aria-current={isFocused}
+        onClick={() => focusGroup(group.id)}
       >
         {intl.formatMessage(messages.criteriaGroupBoxLabel, {
           operator: (
@@ -75,13 +60,12 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBox
             />
           ),
         })}
-      </div>
-      {groupsIndex && systemDefaultProfile && (
+      </button>
+      {status === 'success' && (
         <div className="criteria-group-box__rules">
           <RuleBoxList
             groupId={group.id}
-            index={groupsIndex}
-            systemDefaultProfile={systemDefaultProfile}
+            boxes={boxes}
             subsectionNamesByUsageKey={subsectionNamesByUsageKey}
           />
         </div>

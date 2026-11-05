@@ -12,6 +12,7 @@ import { Error as ErrorIcon, InfoOutline } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useQueries } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import type { AxiosError } from 'axios';
 
 import { getCourseOutlineIndex } from '@src/course-outline/data';
@@ -43,21 +44,18 @@ import {
   visibleCourseGroups,
 } from './utils';
 
-/** `ruleKey` is `null` when the focused group has no rule box yet. */
+/** `ruleKey` is `null` when the focused group has no rule box. A key that matches none of the
+ * group's rule boxes is re-resolved to the group's last box.
+ */
 export interface CriteriaFocus {
   groupId: number;
   ruleKey: string | null;
 }
 
-export interface CompetencyAssociationsContextValue {
-  /** `'pending'` until the groups, the default rule profile and every course
-   * outline have settled, then `'success'` for the rest of that competency,
-   * even when a later groups refetch adds a course whose outline has not
-   * loaded yet. `'error'` if the groups or the profile failed. Any failed
-   * outline fetch hides its course and does not affect `status`.
+export interface CompetencyAssociationsContextBase {
+  /** The groups or profile failure, or the first course-outline failure other
+   * than a 403 or 404, behind `status === 'error'`.
    */
-  status: 'pending' | 'error' | 'success';
-  /** The groups or profile failure behind `status === 'error'`. */
   error: Error | null;
   focus: CriteriaFocus | null;
   /** Focuses a group and its last rule box. A no-op when `groupId` is already
@@ -66,10 +64,9 @@ export interface CompetencyAssociationsContextValue {
    */
   focusGroup: (groupId: number) => void;
   focusRuleBox: (groupId: number, ruleKey: string) => void;
-  /** Call only from a course's own chevron on expand, never on collapse or a
-   * page-level "Expand All". Feeds `canEditCourse` for a group-less course and
-   * moves focus to the course's last group and rule box when focus is unset or
-   * on another course's group.
+  /** Call when a course row expands, never when it collapses. Feeds `canEditCourse`
+   * for a group-less course and moves focus to the course's last group and rule box
+   * when focus is unset or on another course's group.
    */
   notifyCourseExpanded: (courseId: string) => void;
   /** Creates a criterion for the subsection in the active competency. Shows a
@@ -82,9 +79,6 @@ export interface CompetencyAssociationsContextValue {
    * (`courses.manage_tags`).
    */
   canEditCourse: (courseId: string) => boolean;
-  /** `undefined` until the groups query resolves. */
-  groupsIndex: CompetencyCriteriaGroupsIndex | undefined;
-  systemDefaultProfile: CompetencyRuleProfile | undefined;
   /** The `objectId` of every criterion in the tree, for the duplicate guard
    * and the content panel's "already associated" marking.
    */
@@ -96,6 +90,31 @@ export interface CompetencyAssociationsContextValue {
   /** The active competency's short external id (e.g. "CCRS-1.3"), or `null`. */
   competencyExternalId: string | null;
 }
+
+/** Discriminated on `status`. `groupsIndex` and `systemDefaultProfile` are
+ * always defined when `status` is `'success'`, and may be missing otherwise.
+ *
+ * `'pending'` until the groups, the default rule profile and every course
+ * outline have settled, then `'success'` for the rest of that competency, even
+ * when a later groups refetch adds a course whose outline has not loaded yet.
+ * `'error'` if the groups, the profile or any course outline failed, including
+ * a failure after `'success'`. An outline that fails with a 403 or 404 only
+ * hides its course and does not affect `status`.
+ */
+export type CompetencyAssociationsContextValue =
+  & CompetencyAssociationsContextBase
+  & (
+    | {
+      status: 'success';
+      groupsIndex: CompetencyCriteriaGroupsIndex;
+      systemDefaultProfile: CompetencyRuleProfile;
+    }
+    | {
+      status: 'pending' | 'error';
+      groupsIndex: CompetencyCriteriaGroupsIndex | undefined;
+      systemDefaultProfile: CompetencyRuleProfile | undefined;
+    }
+  );
 
 export const CompetencyAssociationsContext = createContext<CompetencyAssociationsContextValue | undefined>(undefined);
 
@@ -117,6 +136,11 @@ export interface CompetencyAssociationsProviderProps {
   tagId: number;
   competencyExternalId: string | null;
   children: ReactNode;
+}
+
+/** A 403 or 404 on a course outline means the author cannot see that course. */
+function isInaccessibleCourseError(error: unknown): boolean {
+  return isAxiosError(error) && (error.response?.status === 403 || error.response?.status === 404);
 }
 
 /** The focus to move to when `courseId` is expanded, or `null` when focus
@@ -156,6 +180,7 @@ type ProviderAction =
   | { type: 'focusGroup'; groupId: number; ruleKey: string | null; }
   | { type: 'focusRuleBox'; groupId: number; ruleKey: string; }
   | { type: 'setFocus'; focus: CriteriaFocus; }
+  | { type: 'ruleKeyResolved'; groupId: number; from: string | null; to: string | null; }
   | { type: 'createSucceeded'; generation: number; focus: CriteriaFocus; }
   | { type: 'courseExpandedBeforeLoad'; courseId: string; }
   | { type: 'pendingCourseResolved'; focus: CriteriaFocus | null; }
@@ -182,6 +207,11 @@ function providerReducer(state: ProviderState, action: ProviderAction): Provider
       return { ...state, focus: { groupId: action.groupId, ruleKey: action.ruleKey }, pendingCourseId: null };
     case 'setFocus':
       return { ...state, focus: action.focus };
+    case 'ruleKeyResolved':
+      // Guarded so an action computed from a stale focus cannot overwrite a focus dispatched after it.
+      return state.focus?.groupId === action.groupId && state.focus.ruleKey === action.from
+        ? { ...state, focus: { groupId: action.groupId, ruleKey: action.to } }
+        : state;
     case 'createSucceeded':
       return action.generation === state.generation ? { ...state, focus: action.focus } : state;
     case 'courseExpandedBeforeLoad':
@@ -281,6 +311,7 @@ export const CompetencyAssociationsProvider = ({
   const combineOutlines = useCallback((results: UseQueryResult[]) => ({
     accessibleCourseIds: courseIdsWithGroups.filter((_, i) => results[i]?.isSuccess).sort(),
     isPending: results.some((result) => result.isPending),
+    error: results.find((result) => result.isError && !isInaccessibleCourseError(result.error))?.error ?? null,
   }), [courseIdsWithGroups]);
 
   const outlines = useQueries({
@@ -298,17 +329,29 @@ export const CompetencyAssociationsProvider = ({
     [groupsIndex, outlines.accessibleCourseIds],
   );
 
-  let status: CompetencyAssociationsContextValue['status'] = 'success';
-  if (groupsQuery.isError || profileQuery.isError) {
+  const error = groupsQuery.error ?? profileQuery.error ?? outlines.error;
+  let status: 'pending' | 'error' | 'success' = 'success';
+  if (error) {
     status = 'error';
-  } else if (!settled && (groupsQuery.isPending || profileQuery.isPending || outlines.isPending)) {
+  } else if (!groupsIndex || !systemDefaultProfile || (!settled && outlines.isPending)) {
     status = 'pending';
   }
   // Skipped on the render that changes competency, whose data belongs to the previous one.
   if (!competencyChanged && !settled && status === 'success') {
     dispatch({ type: 'settled' });
   }
-  const error = groupsQuery.error ?? profileQuery.error;
+
+  // A rule box is keyed by its rule, so a refetch or a default-profile change can leave the key stale.
+  if (!competencyChanged && focus && groupsIndex && systemDefaultProfile && groupsIndex.groupsById.has(focus.groupId)) {
+    const hasFocusedBox = ruleBoxesForGroup(focus.groupId, groupsIndex, systemDefaultProfile)
+      .some((box) => box.key === focus.ruleKey);
+    if (!hasFocusedBox) {
+      const to = lastRuleKeyIn(focus.groupId, groupsIndex, systemDefaultProfile);
+      if (to !== focus.ruleKey) {
+        dispatch({ type: 'ruleKeyResolved', groupId: focus.groupId, from: focus.ruleKey, to });
+      }
+    }
+  }
 
   const focusGroup = useCallback((groupId: number) => {
     const ruleKey = (groupsIndex && systemDefaultProfile)
@@ -373,11 +416,11 @@ export const CompetencyAssociationsProvider = ({
       const focusedGroup = groupsIndex.groupsById.get(focus.groupId);
       if (focusedGroup && focusedGroup.parentId !== null) {
         const courseGroup = groupsIndex.groupsById.get(focusedGroup.parentId);
-        if (courseGroup?.courseKey === courseId && focus.ruleKey !== null) {
+        if (courseGroup?.courseKey === courseId) {
+          groupId = focus.groupId;
           const box = ruleBoxesForGroup(focus.groupId, groupsIndex, systemDefaultProfile)
             .find((candidate) => candidate.key === focus.ruleKey);
           if (box) {
-            groupId = focus.groupId;
             ruleTypeOverride = box.rule.ruleType;
             rulePayloadOverride = box.rule.rulePayload;
           }
@@ -433,22 +476,25 @@ export const CompetencyAssociationsProvider = ({
     intl,
   ]);
 
-  const contextValue = useMemo<CompetencyAssociationsContextValue>(() => ({
-    status,
-    error,
-    focus,
-    focusGroup,
-    focusRuleBox,
-    notifyCourseExpanded,
-    associateSubsection,
-    isAssociating,
-    canEditCourse,
-    groupsIndex,
-    systemDefaultProfile,
-    associatedObjectIds: associatedIds,
-    accessibleCourseGroups,
-    competencyExternalId,
-  }), [
+  const contextValue = useMemo<CompetencyAssociationsContextValue>(() => {
+    const shared: CompetencyAssociationsContextBase = {
+      error,
+      focus,
+      focusGroup,
+      focusRuleBox,
+      notifyCourseExpanded,
+      associateSubsection,
+      isAssociating,
+      canEditCourse,
+      associatedObjectIds: associatedIds,
+      accessibleCourseGroups,
+      competencyExternalId,
+    };
+    if (status === 'success' && groupsIndex && systemDefaultProfile) {
+      return { ...shared, status, groupsIndex, systemDefaultProfile };
+    }
+    return { ...shared, status: status === 'error' ? 'error' : 'pending', groupsIndex, systemDefaultProfile };
+  }, [
     status,
     error,
     focus,

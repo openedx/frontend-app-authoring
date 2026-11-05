@@ -1,6 +1,6 @@
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Card, IconButton } from '@openedx/paragon';
+import { Card, IconButton, Stack } from '@openedx/paragon';
 import { ExpandLess, ExpandMore } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 
@@ -17,56 +17,51 @@ export interface CourseGroupSectionProps {
 }
 
 /** One accessible course-level group: its own header ("From within
- * **{course name}** ...") and its bottom-tier group cards, connected
- * pairwise by `GroupConnector`.
- *
- * `CourseGroupList` only mounts this for a course already confirmed
- * accessible, so `useCourseOutlineIndex` below is normally reading an
- * already-resolved, already-cached success (same hook/query key
- * `CourseOutlineSubtree` uses). The `isError`/raw-course-key fallback is
- * defensive only (e.g. a cache eviction between the check and this render),
- * not a real "inaccessible course" state.
+ * **{course name}** ...") and its bottom-tier group cards, with an Or/And connector
+ * between each adjacent pair. Renders nothing until the course outline has loaded.
  */
 const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   const intl = useIntl();
-  const { focus, groupsIndex } = useCompetencyAssociations();
+  const { focus, groupsIndex, status } = useCompetencyAssociations();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  // `refetchOnMount: false`: mirrors `CourseOutlineSubtree` - avoids a
-  // wasted refetch of already-cached data on every mount.
-  const { data, isError } = useCourseOutlineIndex(courseGroup.courseKey, { refetchOnMount: false });
-
-  const courseDisplayName = (!isError && data) ? data.courseStructure.displayName : courseGroup.courseKey;
+  const { data } = useCourseOutlineIndex(courseGroup.courseKey, { refetchOnMount: false });
 
   const subsectionNamesByUsageKey = useMemo(() => {
     const names: Record<string, string> = {};
-    if (!isError && data) {
-      (data.courseStructure.childInfo?.children ?? []).forEach((section) => {
-        (section.childInfo?.children ?? []).forEach((subsection) => {
-          // The real `course_index` response populates `.id`, never
-          // `.usageKey` (see `CourseOutlineSubtree`'s `SubsectionRow`).
-          names[subsection.id] = subsection.displayName;
-        });
+    (data?.courseStructure.childInfo?.children ?? []).forEach((section) => {
+      (section.childInfo?.children ?? []).forEach((subsection) => {
+        names[subsection.id] = subsection.displayName;
       });
-    }
+    });
     return names;
-  }, [data, isError]);
+  }, [data]);
 
-  // `groupsIndex` is only `undefined` during `CourseGroupList`'s own loading/error
-  // states, before this component ever mounts.
-  const bottomTierGroups = groupsIndex ? bottomTierGroupsForCourse(groupsIndex, courseGroup.courseKey) : [];
+  const containsFocus = status === 'success' && !!focus
+    && groupsIndex.groupsById.get(focus.groupId)?.parentId === courseGroup.id;
 
-  const containsFocus = !!focus && groupsIndex?.groupsById.get(focus.groupId)?.parentId === courseGroup.id;
+  // A collapsed card reopens when the focus moves into it, so the focused box is visible.
+  useEffect(() => {
+    if (containsFocus) {
+      setIsCollapsed(false);
+    }
+  }, [focus, containsFocus]);
 
-  const toggleLabel = isCollapsed
-    ? intl.formatMessage(messages.expandCourseGroupButtonLabel)
-    : intl.formatMessage(messages.collapseCourseGroupButtonLabel);
+  if (status !== 'success' || !data) {
+    return null;
+  }
+
+  const courseName = data.courseStructure.displayName;
+  const toggleLabel = intl.formatMessage(
+    isCollapsed ? messages.expandCourseGroupButtonLabel : messages.collapseCourseGroupButtonLabel,
+    { courseName },
+  );
 
   return (
     <Card className={classNames('course-group-section', { 'course-group-section--focused': containsFocus })}>
       <Card.Header
         size="sm"
         title={
-          <div className="course-group-section__title">
+          <Stack direction="horizontal" gap={1} className="course-group-section__title">
             <IconButton
               src={isCollapsed ? ExpandMore : ExpandLess}
               alt={toggleLabel}
@@ -75,25 +70,27 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
               size="inline"
               onClick={() => setIsCollapsed((prev) => !prev)}
             />
-            <span>
+            <h3 className="course-group-section__heading">
               {intl.formatMessage(messages.fromWithinCourseLabel, {
-                courseName: <strong key="course-name">{courseDisplayName}</strong>,
+                courseName: <strong key="course-name">{courseName}</strong>,
               })}
-            </span>
-          </div>
+            </h3>
+          </Stack>
         }
       />
       {!isCollapsed && (
         <Card.Body className="course-group-section__body">
-          {bottomTierGroups.map((group, groupIndex) => (
-            <Fragment key={group.id}>
-              {groupIndex > 0 && <GroupConnector logicOperator={courseGroup.logicOperator} />}
-              <CriteriaGroupBox
-                group={group}
-                subsectionNamesByUsageKey={subsectionNamesByUsageKey}
-              />
-            </Fragment>
-          ))}
+          <Stack gap={2}>
+            {bottomTierGroupsForCourse(groupsIndex, courseGroup.courseKey).map((group, groupIndex) => (
+              <Fragment key={group.id}>
+                {groupIndex > 0 && <GroupConnector logicOperator={courseGroup.logicOperator} />}
+                <CriteriaGroupBox
+                  group={group}
+                  subsectionNamesByUsageKey={subsectionNamesByUsageKey}
+                />
+              </Fragment>
+            ))}
+          </Stack>
         </Card.Body>
       )}
     </Card>

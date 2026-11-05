@@ -1,17 +1,16 @@
-// Scoped under `.course-group-list` (this subtree's own root - see
-// `CourseGroupList.tsx`), mirroring `../CompetencyTree.scss` and
-// `../course-search/CourseSearchBrowse.scss`'s own single-root-class scoping.
-//
-// What's added here is what Paragon has no prop for: the nested group boxes
-// with a focus accent bar, the inline-sentence layout of "By completing any
-// of the following" and "With a score of X% or higher", the connector line
-// between sibling bottom-tier groups, and chip truncation.
-.course-group-list {
-  // Vertical gap between adjacent course-level group cards.
-  > * + * {
-    margin-top: 16px;
-  }
+// What Paragon has no prop for: the focus accent bars, the sentence layouts and the chip truncation.
+.course-group-list__empty-state {
+  margin-top: var(--pgn-spacing-spacer-2);
+  padding: var(--pgn-spacing-spacer-4-5) var(--pgn-spacing-spacer-3);
+  border-radius: 12px;
+  background-color: var(--pgn-color-info-100);
+  font-size: 15.8px;
+  line-height: 24.5px;
+  letter-spacing: normal;
+  text-align: center;
+}
 
+.course-group-list {
   // The accent bar is always a left border so a focus change recolors it
   // instead of shifting the content.
   .course-group-section {
@@ -45,27 +44,25 @@
     }
 
     &__title {
-      display: flex;
-      align-items: center;
-      gap: var(--pgn-spacing-spacer-1);
-
       .btn-icon {
         flex-shrink: 0;
         color: var(--pgn-color-primary-900);
       }
 
       .btn-icon .pgn__icon {
-        width: 1rem;
-        height: 1rem;
+        width: var(--pgn-size-icon-xs);
+        height: var(--pgn-size-icon-xs);
       }
+    }
+
+    &__heading {
+      margin: 0;
+      color: inherit;
+      font: inherit;
     }
 
     &__body {
       margin-top: var(--pgn-spacing-spacer-2);
-
-      > * + * {
-        margin-top: var(--pgn-spacing-spacer-2);
-      }
     }
   }
 
@@ -83,9 +80,15 @@
     }
 
     &__header {
-      font-size: 1.125rem;
-      line-height: 1.75rem;
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: none;
       color: var(--pgn-color-gray-700);
+      font: inherit;
+      line-height: 1.75rem;
+      text-align: start;
       cursor: pointer;
 
       &:focus-visible {
@@ -94,8 +97,6 @@
       }
     }
 
-    // The any/all word itself, passed as `LogicOperatorSelect`'s own
-    // `className` from `CriteriaGroupBox.tsx`.
     &__header-operator {
       font-weight: 700;
       line-height: 1.5rem;
@@ -103,23 +104,44 @@
 
     &__rules {
       margin-top: var(--pgn-spacing-spacer-2);
-
-      .rule-box-list > * + * {
-        margin-top: var(--pgn-spacing-spacer-2);
-      }
     }
   }
 
   .rule-box {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pgn-spacing-spacer-1-5);
+    position: relative;
     padding: var(--pgn-spacing-spacer-1-5) var(--pgn-spacing-spacer-1-5) var(--pgn-spacing-spacer-1-5)
       var(--pgn-spacing-spacer-2-5);
     border: 1px solid var(--pgn-color-gray-300);
     border-radius: var(--pgn-size-border-radius-base);
     background-color: var(--pgn-color-white);
-    cursor: pointer;
+
+    // The control's overlay makes the whole box clickable while the chips stay siblings of the control.
+    &__control {
+      display: flex;
+      align-self: flex-start;
+      padding: 0;
+      border: 0;
+      background: none;
+      font: inherit;
+      text-align: start;
+      cursor: pointer;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+      }
+
+      &:focus-visible {
+        outline: 0;
+
+        &::after {
+          border-radius: var(--pgn-size-border-radius-base);
+          outline: 2px solid var(--pgn-color-info-600);
+          outline-offset: 2px;
+        }
+      }
+    }
 
     &--focused {
       padding-left: var(--pgn-spacing-spacer-1-5);
@@ -132,8 +154,7 @@
   .score-threshold-field {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    align-self: flex-start;
+    gap: var(--pgn-spacing-spacer-1);
     height: 1.9375rem;
     padding: 3px 5px;
     border: 1px solid var(--pgn-color-gray-200);
@@ -143,17 +164,10 @@
   }
 
   .score-threshold-field__value {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
     color: var(--pgn-color-info-600);
   }
 
-  // Each chip's own truncation - a long subsection name shows an ellipsis
-  // rather than wrapping the chip onto a second line or overflowing its
-  // row. `Chip`'s own label is a nested `<div>` (`.pgn__chip__label`, a
-  // Paragon-internal class - confirmed via `Chip`'s own source), so the
-  // truncation properties land there, not on the chip's own root element.
+  // Truncation lands on `.pgn__chip__label`, the nested element holding a chip's text.
   .criterion-chip {
     --pgn-color-chip-bg-dark: var(--pgn-color-primary-500);
     --pgn-color-chip-border-base: var(--pgn-color-primary-500);
@@ -171,13 +185,7 @@
     }
   }
 
-  // A thin line - label - line row between two adjacent sibling bottom-tier
-  // groups within the same course-level group (see `GroupConnector.tsx`).
   .group-connector {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
     &__line {
       flex: 1;
       height: 1px;

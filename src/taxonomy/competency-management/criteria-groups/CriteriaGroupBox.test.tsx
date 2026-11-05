@@ -1,120 +1,93 @@
 import {
-  fireEvent,
   initializeMocks,
   render,
   screen,
+  userEvent,
   within,
 } from '@src/testUtils';
-import { buildMockCompetencyAssociationsContextValue, MockCompetencyAssociationsProvider } from '../__mocks__';
-import type {
-  BottomTierCompetencyCriteriaGroup,
-  CompetencyCriteriaGroupsResponse,
-  CompetencyRuleProfile,
-} from '../data/types';
-import { buildCompetencyCriteriaGroupsIndex } from '../utils';
+import { MockCompetencyAssociationsProvider, singleGroupResponse } from '../__mocks__';
+import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
+import type { BottomTierCompetencyCriteriaGroup } from '../data/types';
 import CriteriaGroupBox from './CriteriaGroupBox';
 
-const systemDefaultProfile: CompetencyRuleProfile = {
-  id: 1,
-  scopeType: 'system_default',
-  ruleType: 'grade',
-  rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
-  archived: false,
-};
+// The leaf group (10) of the provider's default groups index, which holds one criterion on 'existing-sub'.
+const group = singleGroupResponse.groups.find(({ id }) => id === 10) as BottomTierCompetencyCriteriaGroup;
 
-const group: BottomTierCompetencyCriteriaGroup = {
-  id: 10,
-  parentId: 1,
-  tagId: 42,
-  courseKey: null,
-  name: 'leaf',
-  ordering: 0,
-  logicOperator: 'AND',
-};
-
-const response: CompetencyCriteriaGroupsResponse = {
-  groups: [group],
-  criteria: [
-    {
-      id: 101,
-      objectId: 'block-a',
-      groupId: 10,
-      ruleProfileId: 1,
-      ruleTypeOverride: null,
-      rulePayloadOverride: null,
-    },
-  ],
-};
-
-const index = buildCompetencyCriteriaGroupsIndex(response);
+const ruleKey = 'grade:gte:0.7:percent';
 
 const renderBox = (
-  contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {},
+  contextOverrides: MockCompetencyAssociationsOverrides = {},
   subsectionNamesByUsageKey: Record<string, string> = {},
 ) => (
   render(
-    <MockCompetencyAssociationsProvider value={{ groupsIndex: index, systemDefaultProfile, ...contextOverrides }}>
+    <MockCompetencyAssociationsProvider value={contextOverrides}>
       <CriteriaGroupBox group={group} subsectionNamesByUsageKey={subsectionNamesByUsageKey} />
     </MockCompetencyAssociationsProvider>,
   )
 );
 
+const headerButton = () => screen.getByRole('button', { name: 'By completing any of the following' });
+const ruleBoxButton = () => screen.getByRole('button', { name: /^With a score of/ });
+
+const originalScrollIntoView = Element.prototype.scrollIntoView;
+
 describe('<CriteriaGroupBox />', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
     initializeMocks();
+    user = userEvent.setup();
     Element.prototype.scrollIntoView = jest.fn();
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    Element.prototype.scrollIntoView = originalScrollIntoView;
   });
 
-  it('renders the group\'s any/all label as plain text with no control', () => {
-    const { container } = renderBox({}, { 'block-a': 'Subsection A' });
+  it('renders the group\'s any/all sentence as its header and its rule box chips', () => {
+    renderBox({}, { 'existing-sub': 'Subsection A' });
 
-    // The header sentence is split across sibling text nodes (plain text +
-    // the any/all `<span>`), so its full text is checked via textContent
-    // rather than `getByText`, which doesn't match text split across nodes.
-    expect(container.querySelector('.criteria-group-box__header')).toHaveTextContent(
-      'By completing all of the following',
-    );
-    // Two `role="button"` elements exist (the group's own header band and the
-    // one rendered rule box) - neither is a `SelectMenu` trigger, since no
-    // `onChange` was given to the any/all control.
-    expect(screen.getAllByRole('button')).toHaveLength(2);
+    expect(headerButton()).toBeInTheDocument();
     expect(screen.getByText('Subsection A')).toBeInTheDocument();
   });
 
-  it('calls focusGroup with its own id when the header band is clicked', () => {
-    const focusGroup = jest.fn();
-    const { container } = renderBox({ focusGroup });
-
-    fireEvent.click(container.querySelector('.criteria-group-box__header')!);
-    expect(focusGroup).toHaveBeenCalledWith(10);
-  });
-
-  it('calls focusGroup when the header band is activated with Enter or Space', () => {
+  it('calls focusGroup with its own id when the header is clicked', async () => {
     const focusGroup = jest.fn();
     renderBox({ focusGroup });
-    const [header] = screen.getAllByRole('button');
 
-    fireEvent.keyDown(header, { key: 'Enter' });
-    fireEvent.keyDown(header, { key: ' ' });
-
-    expect(focusGroup).toHaveBeenCalledTimes(2);
+    await user.click(headerButton());
     expect(focusGroup).toHaveBeenCalledWith(10);
   });
 
-  it('exposes focus state via aria-pressed on the header band and the rule box', () => {
-    const { unmount } = renderBox();
-    expect(screen.getAllByRole('button').map((el) => el.getAttribute('aria-pressed'))).toEqual(['false', 'false']);
-    unmount();
+  it.each(['{Enter}', ' '])('calls focusGroup once when the header is activated with %j', async (key) => {
+    const focusGroup = jest.fn();
+    renderBox({ focusGroup });
 
-    renderBox({ focus: { groupId: 10, ruleKey: null } });
-    expect(screen.getAllByRole('button').map((el) => el.getAttribute('aria-pressed'))).toEqual(['true', 'false']);
+    await user.tab();
+    expect(headerButton()).toHaveFocus();
+    await user.keyboard(key);
+    expect(focusGroup).toHaveBeenCalledTimes(1);
+    expect(focusGroup).toHaveBeenCalledWith(10);
   });
 
-  it('never nests an element with role button inside another', () => {
+  it.each([
+    { name: 'nothing is focused', focus: null, header: 'false', ruleBox: 'false' },
+    { name: 'another group is focused', focus: { groupId: 11, ruleKey }, header: 'false', ruleBox: 'false' },
+    {
+      name: 'the group is focused without a rule key',
+      focus: { groupId: 10, ruleKey: null },
+      header: 'true',
+      ruleBox: 'false',
+    },
+    { name: 'the group\'s rule box is focused', focus: { groupId: 10, ruleKey }, header: 'true', ruleBox: 'true' },
+  ])('marks the header and rule box current when $name', ({ focus, header, ruleBox }) => {
+    renderBox({ focus });
+
+    expect(headerButton()).toHaveAttribute('aria-current', header);
+    expect(ruleBoxButton()).toHaveAttribute('aria-current', ruleBox);
+  });
+
+  it('never nests a button inside another', () => {
     renderBox();
 
     screen.getAllByRole('button').forEach((button) => {
@@ -122,28 +95,39 @@ describe('<CriteriaGroupBox />', () => {
     });
   });
 
-  it('clicking a rule box inside focuses only the rule box, not also the group', () => {
+  it('clicking a rule box focuses only the rule box, not also the group', async () => {
     const focusGroup = jest.fn();
     const focusRuleBox = jest.fn();
     renderBox({ focusGroup, focusRuleBox });
 
-    // The rule box is the second `role="button"` (the header band is first).
-    fireEvent.click(screen.getAllByRole('button')[1]);
+    await user.click(ruleBoxButton());
 
     expect(focusRuleBox).toHaveBeenCalledTimes(1);
     expect(focusGroup).not.toHaveBeenCalled();
   });
 
-  it('scrolls the group container into view when it is focused with no rule box focused', () => {
-    renderBox({ focus: { groupId: 10, ruleKey: null } });
-    expect(Element.prototype.scrollIntoView).toHaveBeenCalledTimes(1);
-  });
+  it.each([
+    { name: 'nothing is focused', focus: null, scrolledElement: null },
+    { name: 'another group is focused', focus: { groupId: 11, ruleKey }, scrolledElement: null },
+    {
+      name: 'the group is focused without a rule key',
+      focus: { groupId: 10, ruleKey: null },
+      scrolledElement: 'group',
+    },
+    { name: 'the focused rule key matches no box', focus: { groupId: 10, ruleKey: 'stale' }, scrolledElement: 'group' },
+    { name: 'a rule box in the group is focused', focus: { groupId: 10, ruleKey }, scrolledElement: 'rule box' },
+  ])('scrolls once, and only the right element, when $name: $scrolledElement', ({ focus, scrolledElement }) => {
+    const { container } = renderBox({ focus });
 
-  it('does not scroll the group container when a rule box within it is the focused one', () => {
-    renderBox({ focus: { groupId: 10, ruleKey: 'grade:gte:0.7:percent' } });
-
-    // The rule box itself still scrolls (it's the innermost focused
-    // element), but the group container must not also call it a second time.
-    expect(Element.prototype.scrollIntoView).toHaveBeenCalledTimes(1);
+    const scroll = Element.prototype.scrollIntoView as jest.Mock;
+    if (scrolledElement === null) {
+      expect(scroll).not.toHaveBeenCalled();
+      return;
+    }
+    expect(scroll).toHaveBeenCalledTimes(1);
+    const expectedElement = scrolledElement === 'group'
+      ? container.querySelector('.criteria-group-box')
+      : ruleBoxButton().closest('.rule-box');
+    expect(scroll.mock.contexts[0]).toBe(expectedElement);
   });
 });
