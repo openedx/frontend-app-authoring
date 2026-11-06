@@ -34,6 +34,10 @@
       color: var(--pgn-color-primary-700);
     }
 
+    .pgn__card-header {
+      padding: .375rem var(--pgn-spacing-spacer-2) .3125rem;
+    }
+
     // Paragon gives the title its own top margin, which would push the
     // header below the card's padding.
     .pgn__card-header .pgn__card-header-content {
@@ -42,8 +46,21 @@
 
     &__title {
       .btn-icon {
+        // Shrinks the button to the icon so the chevron sits flush with the text gap.
+        --pgn-size-icon-button-diameter-inline: var(--pgn-size-icon-xs);
+        // Drops Paragon's focus circle so the `:focus-visible` outline is the only indicator.
+        --btn-icon-box-shadow: none;
+        --btn-icon-hover-bg-color: var(--pgn-color-primary-100);
+        --btn-icon-hover-color: var(--pgn-color-primary-900);
+
         flex-shrink: 0;
+        padding: 0;
         color: var(--pgn-color-primary-900);
+
+        &:focus-visible {
+          outline: 2px solid var(--pgn-color-info-600);
+          outline-offset: 2px;
+        }
       }
 
       .btn-icon .pgn__icon {
@@ -59,7 +76,7 @@
     }
 
     &__body {
-      margin-top: var(--pgn-spacing-spacer-2);
+      margin-top: .1875rem;
     }
   }
 
