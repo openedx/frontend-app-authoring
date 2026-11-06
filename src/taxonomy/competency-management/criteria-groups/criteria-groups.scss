@@ -4,8 +4,8 @@
   padding: var(--pgn-spacing-spacer-4-5) var(--pgn-spacing-spacer-3);
   border-radius: 12px;
   background-color: var(--pgn-color-info-100);
-  font-size: 15.8px;
-  line-height: 24.5px;
+  font-size: var(--pgn-typography-font-size-sm);
+  line-height: var(--pgn-typography-line-height-base);
   letter-spacing: normal;
   text-align: center;
 }
@@ -16,7 +16,7 @@
   .course-group-section {
     --pgn-spacing-card-spacer-x: 0;
 
-    padding: var(--pgn-spacing-spacer-3) var(--pgn-spacing-spacer-2);
+    padding: 0 var(--pgn-spacing-spacer-2) var(--pgn-spacing-spacer-2);
     border: 0;
     border-left: 8px solid transparent;
     border-radius: .5rem;

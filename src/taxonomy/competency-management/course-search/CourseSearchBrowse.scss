@@ -154,9 +154,9 @@
   // Figma gives regular weight for this text layer - only the interpolated
   // competency name (its own bold `<span>` in the JSX) is bold.
   &__associations-mastery {
-    margin-top: 8px;
-    font-size: 15.8px;
-    line-height: 24.5px;
+    margin: var(--pgn-spacing-spacer-3) 0;
+    font-size: var(--pgn-typography-font-size-sm);
+    line-height: 25px;
     letter-spacing: normal;
   }
 
