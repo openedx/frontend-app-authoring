@@ -37,8 +37,16 @@ export interface UnitTabProps {
   };
   setFieldValue: (key: string, value: any) => void;
   showWarning: boolean;
+  isHiddenByParent?: boolean;
   userPartitionInfo?: UserPartitionInfo;
 }
+
+/** Explains that a parent section or subsection hides the unit, whatever the unit's own setting is. */
+export const UnitHiddenByParentAlert = () => (
+  <Alert className="mt-2" variant="info">
+    <FormattedMessage {...messages.unitHiddenByParent} />
+  </Alert>
+);
 
 export const DiscussionEditComponent = ({
   discussionEnabled,
@@ -168,6 +176,7 @@ export const UnitTab = ({
   values,
   setFieldValue,
   showWarning,
+  isHiddenByParent = false,
   userPartitionInfo,
 }: UnitTabProps) => {
   const {
@@ -212,6 +221,7 @@ export const UnitTab = ({
           >
             <FormattedMessage {...messages.hideFromLearners} />
           </Form.Checkbox>
+          {isHiddenByParent && <UnitHiddenByParentAlert />}
           {/* istanbul ignore next */ showWarning && (
             <Alert className="mt-2" variant="warning">
               <FormattedMessage {...messages.unitVisibilityWarning} />

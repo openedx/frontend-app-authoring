@@ -82,6 +82,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-visibility-warning',
     defaultMessage: 'If the unit was previously published and released to learners, any changes you made to the unit when it was hidden will now be visible to learners.',
   },
+  unitHiddenByParent: {
+    id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-hidden-by-parent',
+    defaultMessage: 'This unit is hidden from learners because its section or subsection is hidden. To show it to learners, make that section or subsection visible.',
+    description: 'Shown in a unit\'s visibility settings when a parent section or subsection hides the unit, so the unit\'s own "Hide from learners" setting cannot make it visible',
+  },
   subsectionVisibilityWarning: {
     id: 'course-authoring.course-outline.configure-modal.unit-tab.subsection-visibility-warning',
     defaultMessage: 'If you select an option other than "Hide entire subsection", published units in this subsection will become available to learners unless they are explicitly hidden.',
