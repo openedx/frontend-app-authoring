@@ -142,6 +142,25 @@ describe('SettingsWidget', () => {
       const { container } = renderSettingsWidget({}, { initialState: modifiedInitialState });
       expect(container.querySelectorAll('switcheditorcard')).toHaveLength(1);
     });
+
+    test('shows only the advanced SwitchEditorCard when the problem has no markdown', () => {
+      const showAdvancedSettingsCardsProps = {
+        ...showAdvancedSettingsCardsBaseProps,
+        isAdvancedCardsVisible: true,
+      };
+      jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
+      const modifiedInitialState: PartialEditorState = {
+        problem: {
+          problemType: null,
+          isMarkdownEditorEnabled: false,
+          rawOLX: '<problem></problem>',
+          rawMarkdown: '', // e.g. authored in the visual or advanced editor, so no markdown to switch to
+          isDirty: false,
+        },
+      };
+      const { container } = renderSettingsWidget({}, { initialState: modifiedInitialState });
+      expect(container.querySelectorAll('switcheditorcard')).toHaveLength(1);
+    });
   });
 
   describe('isLibrary', () => {

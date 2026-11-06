@@ -22,10 +22,8 @@ import {
 import {
   mockApiResponse,
   mockApiResponseForNoResultFound,
-  mockApiResponseWithPreviousRunLinks,
   mockApiResponseEmpty,
 } from './mocks/mockApiResponse';
-import { useWaffleFlags } from '../data/apiHooks';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 
 let axiosMock: MockAdapter;
@@ -77,19 +75,10 @@ const authoritativeCompletedLinksApiResponse = {
   },
 };
 
-// Mock the waffle flags hook
-jest.mock('../data/apiHooks', () => ({
-  ...jest.requireActual('../data/apiHooks'),
-  useWaffleFlags: jest.fn(() => ({
-    enableCourseOptimizerCheckPrevRunLinks: false,
-  })),
-}));
-
 jest.mock('@src/authz/hooks', () => ({
   useCourseUserPermissions: jest.fn(),
 }));
 
-const mockedUseWaffleFlags = jest.mocked(useWaffleFlags);
 const mockedUseCourseUserPermissions = jest.mocked(useCourseUserPermissions);
 
 const mockPermissions = (overrides: Partial<ReturnType<typeof useCourseUserPermissions>> = {}) =>
@@ -162,12 +151,18 @@ describe('CourseOptimizerPage', () => {
       expect(optimizerStatusRequests).toHaveLength(0);
     });
 
-    it('does not fetch rerun status when the optional feature is disabled', async () => {
+    it('does not fetch rerun status or show an error when the scan found no previous-run links', async () => {
+      // Backends with previous-run link checks disabled reject this request with 400.
+      axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(400, {
+        error: 'Course optimizer check for previous run links is not enabled.',
+      });
       render(<OptimizerPage />);
-      await waitFor(() => expect(screen.getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument());
+
+      expect(await screen.findByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
       expect(axiosMock.history.get.filter(({ url }) => url === getRerunLinkUpdateStatusApiUrl(courseId))).toHaveLength(
         0,
       );
+      expect(screen.queryByText(scanResultsMessages.updateLinksError.defaultMessage)).not.toBeInTheDocument();
     });
 
     it('should render the component', () => {
@@ -253,7 +248,7 @@ describe('CourseOptimizerPage', () => {
         .onGet(getLinkCheckStatusApiUrl(courseId))
         .reply(200, { LinkCheckStatus: 'Succeeded' });
       render(<OptimizerPage />);
-      expect(await screen.findByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
+      expect((await screen.findAllByText(scanResultsMessages.noResultsFound.defaultMessage)).length).toBeGreaterThan(0);
     });
 
     it('shows the connection error when starting a scan fails', async () => {
@@ -373,6 +368,7 @@ describe('CourseOptimizerPage', () => {
     it('should show no results found message when filter with no links is selected', async () => {
       const {
         getByText,
+        getAllByText,
         getByLabelText,
       } = await setupOptimizerPage(mockApiResponseForNoResultFound);
       // Check if the modal is opened
@@ -381,34 +377,20 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(getByLabelText(scanResultsMessages.lockedLabel.defaultMessage));
 
       await waitFor(() => {
-        expect(getByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
+        expect(getAllByText(scanResultsMessages.noResultsFound.defaultMessage).length).toBeGreaterThan(0);
       });
     });
 
     it('should always show no scan data message when data is empty', async () => {
       axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseEmpty);
-      const { getByText } = render(<OptimizerPage />);
+      const { getAllByText } = render(<OptimizerPage />);
 
       await waitFor(() => {
-        expect(getByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
+        expect(getAllByText(scanResultsMessages.noResultsFound.defaultMessage).length).toBeGreaterThan(0);
       }, { timeout: 5000 });
     });
 
     describe('Previous Run Links Feature', () => {
-      beforeEach(() => {
-        // Enable the waffle flag for previous run links
-        mockedUseWaffleFlags.mockReturnValue({
-          enableCourseOptimizerCheckPrevRunLinks: true,
-        } as ReturnType<typeof useWaffleFlags>);
-      });
-
-      afterEach(() => {
-        // Reset to default (disabled)
-        mockedUseWaffleFlags.mockReturnValue({
-          enableCourseOptimizerCheckPrevRunLinks: false,
-        } as ReturnType<typeof useWaffleFlags>);
-      });
-
       const setupTerminalRerun = (
         initialRerunResponse: object = { status: null, results: [] },
         completedLinkCheckResponse: object = mockApiResponseEmpty,
@@ -573,7 +555,7 @@ describe('CourseOptimizerPage', () => {
         await waitFor(() => expect(screen.queryByTestId('update-all-course')).not.toBeInTheDocument());
       });
 
-      it('should show no results found for previous run links when flag is enabled but no links exist', async () => {
+      it('should show no results found for previous run links when no links exist', async () => {
         axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseForNoResultFound);
         const { getByText, getAllByText } = render(<OptimizerPage />);
 
@@ -583,22 +565,6 @@ describe('CourseOptimizerPage', () => {
           const noResultsElements = getAllByText(scanResultsMessages.noResultsFound.defaultMessage);
           expect(noResultsElements.length).toBeGreaterThan(0);
         }, { timeout: 5000 });
-      });
-
-      it('should not show previous run links section when waffle flag is disabled', async () => {
-        // Disable the flag
-        mockedUseWaffleFlags.mockReturnValue({
-          enableCourseOptimizerCheckPrevRunLinks: false,
-        } as ReturnType<typeof useWaffleFlags>);
-
-        axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseWithPreviousRunLinks);
-        const { getByText, queryByText } = render(<OptimizerPage />);
-
-        fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
-
-        await waitFor(() => {
-          expect(queryByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).not.toBeInTheDocument();
-        });
       });
     });
   });

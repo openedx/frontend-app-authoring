@@ -41,13 +41,10 @@ const SettingsWidget = ({
   images,
   isLibrary,
 }) => {
-  const {
-    learningContextId,
-    isMarkdownEditorEnabledForContext,
-  } = useEditorContext();
+  const { learningContextId } = useEditorContext();
   const rawMarkdown = useSelector(selectors.problem.rawMarkdown);
   const isMarkdownEditorEnabled = useSelector(selectors.problem.isMarkdownEditorEnabled);
-  const showMarkdownEditorButton = isMarkdownEditorEnabledForContext && rawMarkdown;
+  const showMarkdownEditorButton = rawMarkdown;
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
   const feedbackCard = () => {
     if ([ProblemTypeKeys.MULTISELECT].includes(problemType)) {
