@@ -486,11 +486,8 @@ const layerUrls = (entry?: ThemeUrlEntry): string[] => {
 };
 
 /**
- * Build the stylesheet injected into the TinyMCE editing area.
- *
- * `content_style` is the only styling hook that reaches the author's content:
- * `content_css` is explicitly disabled and the skin is off, so anything not in
- * this string is unstyled in the editor.
+ * Return the deployment theme stylesheets, in the order the platform applies
+ * them, or an empty list when the editor is not themed.
  *
  * When the block has `use_mfe_theming` set, the learner view renders the same
  * content inside a shadow root with the deployment's Paragon theme attached, so
@@ -502,32 +499,66 @@ const layerUrls = (entry?: ThemeUrlEntry): string[] => {
  * the same order the block applies them: Paragon core, brand core, then the
  * active variant's Paragon stylesheet and brand override. Repeated URLs are
  * dropped, since deployments may point `default` and `brandOverride` at one file.
+ */
+export const getThemeStylesheetUrls = ({ editorType, useMfeTheming }: {
+  editorType?: string;
+  useMfeTheming?: boolean;
+}): string[] => {
+  if (editorType !== 'text' || !useMfeTheming) {
+    return [];
+  }
+  const themeUrls = (getConfig() as Record<string, any>).PARAGON_THEME_URLS as ThemeUrls | undefined;
+  if (!themeUrls) {
+    return [];
+  }
+  const variantName = activeVariant(themeUrls);
+  const variant = variantName ? themeUrls.variants?.[variantName] : undefined;
+  return [...layerUrls(themeUrls.core), ...layerUrls(variant)]
+    .filter((url, index, all) => all.indexOf(url) === index);
+};
+
+/**
+ * Build the inline stylesheet injected into the TinyMCE editing area.
  *
- * The `@import`s are prepended because CSS requires `@import` to precede every
- * other rule. When a theme is present only `getEditorStyles()` follows: the
- * theme owns the content typography, and injecting the fallback content styles
- * after it would out-specify it and win. Without a theme the full
- * `tinyMCEStyles` is used, fallback typography included.
+ * When a theme is present only `getEditorStyles()` is returned: the theme owns
+ * the content typography, and injecting the fallback content styles after it
+ * would out-specify it and win. Without a theme the full `tinyMCEStyles` is
+ * used, fallback typography included.
  */
 export const contentStyle = ({ editorType, useMfeTheming }: {
   editorType?: string;
   useMfeTheming?: boolean;
 }): string => {
-  if (editorType !== 'text' || !useMfeTheming) {
-    return tinyMCEStyles;
+  if (getThemeStylesheetUrls({ editorType, useMfeTheming }).length) {
+    return getEditorStyles();
   }
-  const themeUrls = (getConfig() as Record<string, any>).PARAGON_THEME_URLS as ThemeUrls | undefined;
-  if (!themeUrls) {
-    return tinyMCEStyles;
-  }
-  const variantName = activeVariant(themeUrls);
-  const variant = variantName ? themeUrls.variants?.[variantName] : undefined;
-  const urls = [...layerUrls(themeUrls.core), ...layerUrls(variant)]
-    .filter((url, index, all) => all.indexOf(url) === index);
+  return tinyMCEStyles;
+};
+
+/**
+ * Attach the deployment theme to the editor iframe.
+ *
+ * The stylesheets go in as `<link>` elements from `onInit`, once TinyMCE has
+ * finished writing the iframe document. Neither `@import`s nor `content_css`
+ * works here: TinyMCE builds the iframe with `document.write` and a
+ * `document_base_url` that points at the LMS, and Firefox leaves stylesheets
+ * created during that bootstrap unapplied (they only take effect if they are
+ * inserted, or re-inserted, after the document is live). Injecting them here
+ * previews the same theme in every browser.
+ */
+const injectThemeStylesheets = (editor, urls: string[]) => {
   if (!urls.length) {
-    return tinyMCEStyles;
+    return;
   }
-  return `${urls.map((url) => `@import url("${url}");`).join('\n')}\n${getEditorStyles()}`;
+  const doc = editor.getDoc();
+  doc.head.querySelectorAll('link[data-mfe-theme]').forEach((link) => link.remove());
+  urls.forEach((url) => {
+    const link = doc.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = url;
+    link.setAttribute('data-mfe-theme', 'true');
+    doc.head.appendChild(link);
+  });
 };
 
 export const editorConfig = ({
@@ -552,6 +583,7 @@ export const editorConfig = ({
   const lmsEndpointUrl = getConfig().LMS_BASE_URL;
 
   const baseURL = staticRootUrl || lmsEndpointUrl;
+  const themeStylesheetUrls = getThemeStylesheetUrls({ editorType, useMfeTheming });
   const {
     toolbar,
     config,
@@ -565,6 +597,7 @@ export const editorConfig = ({
     onInit: (_evt, editor) => {
       setEditorRef(editor);
       if (editorType === 'text') {
+        injectThemeStylesheets(editor, themeStylesheetUrls);
         initializeEditor();
       }
     },

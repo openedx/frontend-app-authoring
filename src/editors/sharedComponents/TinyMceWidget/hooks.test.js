@@ -3,6 +3,7 @@ import { getConfig } from '@edx/frontend-platform';
 import { MockUseState } from '../../testUtils';
 
 import * as tinyMCE from '../../data/constants/tinyMCE';
+import tinyMCEStyles, { getEditorStyles } from '../../data/constants/tinyMCEStyles';
 import { keyStore } from '../../utils';
 import pluginConfig from './pluginConfig';
 // This 'module' self-import hack enables mocking during tests.
@@ -620,6 +621,157 @@ describe('TinyMceEditor hooks', () => {
         expect(result.find(img => img.width === 123 || img.height === 321)).toBeFalsy();
         expect(foundMatch).toBe(false);
       });
+    });
+  });
+
+  describe('theme stylesheets', () => {
+    const themeUrls = {
+      core: {
+        urls: { default: 'paragon/core.min.css', brandOverride: 'brand/core.min.css' },
+      },
+      defaults: { light: 'light' },
+      variants: {
+        light: {
+          urls: { default: 'paragon/light.min.css', brandOverride: 'brand/light.min.css' },
+        },
+      },
+    };
+    const expectedUrls = [
+      'paragon/core.min.css',
+      'brand/core.min.css',
+      'paragon/light.min.css',
+      'brand/light.min.css',
+    ];
+
+    afterEach(() => {
+      delete getConfig().PARAGON_THEME_URLS;
+    });
+
+    it('layers Paragon and brand URLs in the order the platform applies them', () => {
+      getConfig().PARAGON_THEME_URLS = themeUrls;
+      expect(module.getThemeStylesheetUrls({ editorType: 'text', useMfeTheming: true }))
+        .toEqual(expectedUrls);
+    });
+
+    it('accepts flat single-url entries and drops repeated URLs', () => {
+      getConfig().PARAGON_THEME_URLS = {
+        core: { url: 'single.min.css' },
+        variants: { light: { url: 'single.min.css' } },
+      };
+      expect(module.getThemeStylesheetUrls({ editorType: 'text', useMfeTheming: true }))
+        .toEqual(['single.min.css']);
+    });
+
+    it('picks the light variant when no default is declared', () => {
+      getConfig().PARAGON_THEME_URLS = {
+        core: { url: 'core.min.css' },
+        variants: {
+          dark: { url: 'dark.min.css' },
+          light: { url: 'light.min.css' },
+        },
+      };
+      expect(module.getThemeStylesheetUrls({ editorType: 'text', useMfeTheming: true }))
+        .toEqual(['core.min.css', 'light.min.css']);
+    });
+
+    it('returns no stylesheets for unthemed blocks, other editors, or missing config', () => {
+      expect(module.getThemeStylesheetUrls({ editorType: 'text', useMfeTheming: false })).toEqual([]);
+      expect(module.getThemeStylesheetUrls({ editorType: 'question', useMfeTheming: true })).toEqual([]);
+      expect(module.getThemeStylesheetUrls({ editorType: 'text', useMfeTheming: true })).toEqual([]);
+    });
+
+    it('keeps only the functional styles inline when themed', () => {
+      getConfig().PARAGON_THEME_URLS = themeUrls;
+      const style = module.contentStyle({ editorType: 'text', useMfeTheming: true });
+      expect(style).toEqual(getEditorStyles());
+      expect(style).not.toContain('@import');
+    });
+
+    it('falls back to the full content styles without a theme', () => {
+      expect(module.contentStyle({ editorType: 'text', useMfeTheming: true })).toEqual(tinyMCEStyles);
+      expect(module.contentStyle({ editorType: 'text', useMfeTheming: false })).toEqual(tinyMCEStyles);
+    });
+
+    it('injects the theme into the editor iframe as links on init', () => {
+      getConfig().PARAGON_THEME_URLS = themeUrls;
+      const editorDocument = document.implementation.createHTMLDocument('editor');
+      const editor = { getDoc: () => editorDocument };
+      const setEditorRef = jest.fn();
+      const initializeEditor = jest.fn();
+      const config = module.editorConfig({
+        editorContentHtml: null,
+        editorType: 'text',
+        useMfeTheming: true,
+        setEditorRef,
+        images: { current: [] },
+        initializeEditor,
+        openImgModal: jest.fn(),
+        openSourceCodeModal: jest.fn(),
+        updateContent: jest.fn(),
+        content: '',
+      });
+
+      expect(config.init.content_css).toBe(false);
+      expect(config.init.content_style).not.toContain('@import');
+      expect(config.init.content_style).toContain(getEditorStyles());
+
+      config.onInit(null, editor);
+      const links = [...editorDocument.head.querySelectorAll('link[data-mfe-theme]')];
+      expect(links.map((link) => link.href)).toEqual(expectedUrls);
+      expect(links.every((link) => link.rel === 'stylesheet')).toBe(true);
+      expect(setEditorRef).toHaveBeenCalledWith(editor);
+      expect(initializeEditor).toHaveBeenCalledTimes(1);
+    });
+
+    it('replaces previously injected theme links instead of duplicating them', () => {
+      getConfig().PARAGON_THEME_URLS = themeUrls;
+      const editorDocument = document.implementation.createHTMLDocument('editor');
+      const stale = editorDocument.createElement('link');
+      stale.rel = 'stylesheet';
+      stale.href = 'stale.min.css';
+      stale.setAttribute('data-mfe-theme', 'true');
+      editorDocument.head.appendChild(stale);
+      const editor = { getDoc: () => editorDocument };
+      const config = module.editorConfig({
+        editorContentHtml: null,
+        editorType: 'text',
+        useMfeTheming: true,
+        setEditorRef: jest.fn(),
+        images: { current: [] },
+        initializeEditor: jest.fn(),
+        openImgModal: jest.fn(),
+        openSourceCodeModal: jest.fn(),
+        updateContent: jest.fn(),
+        content: '',
+      });
+
+      config.onInit(null, editor);
+      const hrefs = [...editorDocument.head.querySelectorAll('link[data-mfe-theme]')]
+        .map((link) => link.href);
+      expect(hrefs).toEqual(expectedUrls);
+    });
+
+    it('leaves the iframe untouched for unthemed editors', () => {
+      getConfig().PARAGON_THEME_URLS = themeUrls;
+      const editorDocument = document.implementation.createHTMLDocument('editor');
+      const editor = { getDoc: () => editorDocument };
+      const config = module.editorConfig({
+        editorContentHtml: null,
+        editorType: 'text',
+        useMfeTheming: false,
+        setEditorRef: jest.fn(),
+        images: { current: [] },
+        initializeEditor: jest.fn(),
+        openImgModal: jest.fn(),
+        openSourceCodeModal: jest.fn(),
+        updateContent: jest.fn(),
+        content: '',
+      });
+
+      expect(config.init.content_css).toBe(false);
+      expect(config.init.content_style).toContain(tinyMCEStyles);
+      config.onInit(null, editor);
+      expect(editorDocument.head.querySelectorAll('link[data-mfe-theme]').length).toBe(0);
     });
   });
 });
