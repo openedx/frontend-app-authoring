@@ -39,9 +39,11 @@
     }
 
     // Paragon gives the title its own top margin, which would push the
-    // header below the card's padding.
+    // header below the card's padding, and `overflow: auto`, which would
+    // clip the toggle's focus outline.
     .pgn__card-header .pgn__card-header-content {
       margin-top: 0;
+      overflow: visible;
     }
 
     &__title {
