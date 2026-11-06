@@ -24,7 +24,6 @@ export interface OutlineTreeProps {
   courseActions: XBlockActions;
   courseUsageKey: string;
   hasOutlineIndexError: boolean;
-  isCustomRelativeDatesActive: boolean;
   isSectionsExpanded: boolean;
   isSelfPaced: boolean;
   discussionsSettings?: { providerType: string; enableGradedUnits: boolean; };
@@ -60,7 +59,6 @@ const OutlineTree = ({
   courseActions,
   courseUsageKey,
   hasOutlineIndexError,
-  isCustomRelativeDatesActive,
   isSectionsExpanded,
   isSelfPaced,
   discussionsSettings,
@@ -131,7 +129,6 @@ const OutlineTree = ({
         depth={depth}
         index={index}
         isSelfPaced={isSelfPaced}
-        isCustomRelativeDatesActive={isCustomRelativeDatesActive}
         isSectionsExpanded={isSectionsExpanded}
         onOpenConfigureModal={openConfigureModal}
         onOpenDeleteModal={openDeleteModal}
