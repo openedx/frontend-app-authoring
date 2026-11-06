@@ -102,9 +102,12 @@ export interface CompetencyAssociationsContextBase {
 /** Discriminated on `status`. `groupsIndex` and `systemDefaultProfile` are
  * always defined when `status` is `'success'`, and may be missing otherwise.
  *
- * `'success'` holds for the rest of a competency even when a later groups
- * refetch adds a course whose outline has not loaded yet. An outline that
- * fails with a 403 or 404 only hides its course and does not affect `status`.
+ * `'pending'` until the groups, the default rule profile and every course
+ * outline have settled, then `'success'` for the rest of that competency, even
+ * when a later groups refetch adds a course whose outline has not loaded yet.
+ * `'error'` if the groups, the profile or any course outline failed, including
+ * a failure after `'success'`. An outline that fails with a 403 or 404 only
+ * hides its course and does not affect `status`.
  */
 export type CompetencyAssociationsContextValue =
   & CompetencyAssociationsContextBase
