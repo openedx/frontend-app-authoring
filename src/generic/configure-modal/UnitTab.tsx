@@ -37,7 +37,7 @@ export interface UnitTabProps {
   };
   setFieldValue: (key: string, value: any) => void;
   showWarning: boolean;
-  isHiddenByParent?: boolean;
+  isHiddenByParent: boolean;
   userPartitionInfo?: UserPartitionInfo;
 }
 
@@ -176,7 +176,7 @@ export const UnitTab = ({
   values,
   setFieldValue,
   showWarning,
-  isHiddenByParent = false,
+  isHiddenByParent,
   userPartitionInfo,
 }: UnitTabProps) => {
   const {
