@@ -10,7 +10,7 @@
   $line-color: rgb(0 0 0 / .08);
   $shadow-color: rgb(0 0 0 / .12);
   $border-radius: 8px;
-  $indent: 25px;
+  $indent: 20px;
   // Figma's 25px row inset (left edge to label) doesn't fit Paragon's
   // default 36px `IconButton size="sm"` hit area, so the chevron is shrunk
   // to this size - see `.competency-row .btn-icon-sm` below.
@@ -46,7 +46,7 @@
     border-radius: var(--pgn-size-badge-border-radius-base);
     // `ml-auto` (see `CompetencyTreeItem.tsx`) only pushes the badge right
     // within the row; this adds the gap to the row's own right edge.
-    margin-right: 5px;
+    margin-right: 4px;
 
     --pgn-spacing-badge-padding-y: 1.5px;
     --pgn-spacing-badge-padding-x-base: 6px;
@@ -74,7 +74,8 @@
     border: 1px solid $line-color;
     border-radius: $border-radius;
     box-shadow: 0 1px 4px $shadow-color;
-    padding: 12px 16px;
+    // Narrow side gutters: the top-level groups sit 29px from the left edge and 5px from the right (Figma).
+    padding: 12px 4px 12px 8px;
 
     // Fills the fixed height set on `.competency-tree` above, scrolling
     // internally past that instead of growing the page (e.g. on
@@ -154,7 +155,7 @@
   }
 
   .competency-row--root + ul {
-    margin-top: 12px + $disclosure-hit-area-inset;
+    margin-top: $group-padding;
   }
 
   .competency-group {
@@ -164,6 +165,12 @@
 
   li:not(.competency-group) > .competency-row {
     padding-left: 4px;
+    min-height: 2.125rem;
+  }
+
+  // The group's own padding already insets the badge.
+  .competency-group > .competency-row .competency-row__badge {
+    margin-right: 0;
   }
 
   .competency-node--selectable {
@@ -182,7 +189,11 @@
   }
 
   ul > li + li {
-    margin-top: 10px;
+    margin-top: $group-padding;
+  }
+
+  .competency-row--root + ul > li + li {
+    margin-top: 14px;
   }
 
   // Sized for the longer label so the button doesn't resize when it swaps
