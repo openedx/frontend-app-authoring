@@ -15,7 +15,7 @@ const ScoreThresholdField = ({ rulePayload }: ScoreThresholdFieldProps) => {
       {intl.formatMessage(messages.scoreThresholdLabel, {
         op: rulePayload.op,
         // `rulePayload.value` is a 0.0-1.0 fraction (openedx-core ADR 0002), not a 0-100 percentage.
-        value: intl.formatNumber(rulePayload.value, { style: 'percent', maximumFractionDigits: 1 }),
+        value: intl.formatNumber(rulePayload.value, { style: 'percent', maximumFractionDigits: 0 }),
         threshold: (chunks: React.ReactNode[]) => (
           <span key="threshold" className="score-threshold-field__value">{chunks}</span>
         ),

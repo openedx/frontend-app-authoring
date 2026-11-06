@@ -27,10 +27,10 @@ describe('<ScoreThresholdField />', () => {
   });
 
   it.each([
-    [0.666, '66.6%'],
-    [0.855, '85.5%'],
+    [0.666, '67%'],
+    [0.855, '86%'],
     [0.7, '70%'],
-  ])('shows the value %s as %s, keeping up to one decimal', (value, expected) => {
+  ])('shows the value %s as %s, rounded to a whole number', (value, expected) => {
     render(<ScoreThresholdField rulePayload={{ op: 'gte', value, scale: 'percent' }} />);
     expect(screen.getByText(`${expected} or higher`)).toBeInTheDocument();
   });
