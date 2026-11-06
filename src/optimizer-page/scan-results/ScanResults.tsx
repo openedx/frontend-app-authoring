@@ -94,7 +94,34 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       activeSinglePollersRef.current = 0;
     };
   }, []);
+  const { sections } = data || {};
+
+  // Turn course updates and custom pages into sections so all results use the same layout.
+  const renderableSections = useMemo(
+    () =>
+      buildSyntheticSections(
+        data?.courseUpdates,
+        data?.customPages,
+        {
+          courseUpdates: intl.formatMessage(messages.courseUpdatesHeader),
+          customPages: intl.formatMessage(messages.customPagesHeader),
+        },
+      ),
+    [data?.courseUpdates, data?.customPages, intl],
+  );
+
+  const allSections = useMemo(
+    () => [...renderableSections, ...(sections || [])],
+    [renderableSections, sections],
+  );
+
+  const hasPreviousRunLinksInSections = useMemo(
+    () => hasPreviousRunLinks(allSections),
+    [allSections],
+  );
+  // Only previous-run links need rerun link update status, so skip the request when the scan found none.
   const rerunLinkUpdateStatusQuery = useRerunLinkUpdateStatus(courseId, {
+    enabled: hasPreviousRunLinksInSections,
     manualPolling: isSingleLinkPolling || singleLinkTimedOut,
   });
   // Server status owns interval refetches; single-link updates own bounded manual GETs.
@@ -133,26 +160,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   const [openStates, setOpenStates] = useState<boolean[]>([]);
   const [buttonRef, setButtonRef] = useState<HTMLButtonElement | null>(null);
   const [prevRunOpenStates, setPrevRunOpenStates] = useState<boolean[]>([]);
-  const { sections } = data || {};
-
-  // Turn course updates and custom pages into sections so all results use the same layout.
-  const renderableSections = useMemo(
-    () =>
-      buildSyntheticSections(
-        data?.courseUpdates,
-        data?.customPages,
-        {
-          courseUpdates: intl.formatMessage(messages.courseUpdatesHeader),
-          customPages: intl.formatMessage(messages.customPagesHeader),
-        },
-      ),
-    [data?.courseUpdates, data?.customPages, intl],
-  );
-
-  const allSections = useMemo(
-    () => [...renderableSections, ...(sections || [])],
-    [renderableSections, sections],
-  );
 
   const {
     brokenLinksCounts,
@@ -160,10 +167,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     externalForbiddenLinksCounts,
   } = useMemo(() => countBrokenLinks({ sections: allSections }), [allSections]);
 
-  const hasPreviousRunLinksInSections = useMemo(
-    () => hasPreviousRunLinks(allSections),
-    [allSections],
-  );
   const previousRunLinksCounts = useMemo(
     () => countPreviousRunLinksBySection(allSections),
     [allSections],

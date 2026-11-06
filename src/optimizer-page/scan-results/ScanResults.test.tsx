@@ -306,6 +306,18 @@ describe('ScanResults', () => {
       expect(screen.getByText(messages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
       expect(screen.getByTestId('update-all-course')).toBeInTheDocument();
       expect(mockedUseRerunLinkUpdateStatus).toHaveBeenCalledWith(courseId, {
+        enabled: true,
+        manualPolling: false,
+      });
+    });
+
+    it('does not enable the rerun status query when the scan found no previous-run links', () => {
+      renderScanResults({ ...mockData, courseUpdates: [] });
+
+      expect(screen.getByText(messages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
+      expect(screen.queryByTestId('update-all-course')).not.toBeInTheDocument();
+      expect(mockedUseRerunLinkUpdateStatus).toHaveBeenCalledWith(courseId, {
+        enabled: false,
         manualPolling: false,
       });
     });
