@@ -87,12 +87,12 @@
     padding: var(--pgn-spacing-spacer-1-5);
     border-left: 8px solid transparent;
     border-radius: .5rem;
-    background-color: var(--pgn-color-white);
+    // Alternates white, gray, white with the card and the rule box, as the competency tree does.
+    background-color: var(--pgn-color-light-200);
     box-shadow: var(--pgn-elevation-box-shadow-centered-1);
 
     &--focused {
       border-left-color: var(--pgn-color-info-400);
-      background-color: var(--pgn-color-light-200);
     }
 
     &__header {

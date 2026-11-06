@@ -89,10 +89,13 @@
     border-top: 1px solid $line-color;
     display: flex;
     flex-direction: column;
-    flex: 1;
-    min-height: 0;
     gap: 16px;
     padding: $container-padding-y $container-padding-x;
+
+    @media (--pgn-size-breakpoint-min-width-lg) {
+      flex: 1 1 0;
+      min-height: 0;
+    }
   }
 
   // Only the course rows scroll, so the label and the pagination stay visible.
@@ -149,6 +152,13 @@
 
   &__associations {
     padding: $container-padding-y $container-padding-x;
+
+    // Equal halves with `&__container`, each scrolling on its own.
+    @media (--pgn-size-breakpoint-min-width-lg) {
+      flex: 1 1 0;
+      min-height: 0;
+      overflow-y: auto;
+    }
   }
 
   // Figma gives regular weight for this text layer - only the interpolated
