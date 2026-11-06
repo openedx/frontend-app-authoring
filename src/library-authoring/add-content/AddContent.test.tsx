@@ -78,7 +78,10 @@ describe('<AddContent />', () => {
     axiosMock = mocks.axiosMock;
     mockShowToast = mocks.mockShowToast;
     axiosMock.onGet(getContentLibraryApiUrl(libraryId)).reply(200, {});
-    jest.spyOn(textEditorHooks, 'getContent').mockImplementation(() => () => '<p>Edited HTML content</p>');
+    jest.spyOn(textEditorHooks, 'getContent').mockImplementation(() => () => ({
+      data: '<p>Edited HTML content</p>',
+      use_mfe_theming: false,
+    }));
   });
   afterEach(() => {
     jest.restoreAllMocks();
