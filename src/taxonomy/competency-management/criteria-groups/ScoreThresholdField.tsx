@@ -84,7 +84,6 @@ const ScoreThresholdField = ({ rulePayload, onChange, getInlineValidationMessage
     }
   };
 
-  // `rulePayload.value` is a 0.0-1.0 fraction (openedx-core ADR 0002), not a 0-100 percentage.
   const value = onChange
     ? (
       <>

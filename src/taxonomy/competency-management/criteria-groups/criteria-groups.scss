@@ -203,6 +203,10 @@
     display: inline-flex;
     align-items: center;
     gap: var(--pgn-spacing-spacer-1);
+    // A `Form.Group`: drop Paragon's form-group bottom margin, and hug the text instead of stretching when
+    // the editable variant places it directly in the rule box's column.
+    align-self: flex-start;
+    margin-bottom: 0;
     height: 1.9375rem;
     padding: 3px 5px;
     border: 1px solid var(--pgn-color-gray-200);
