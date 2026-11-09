@@ -10,6 +10,8 @@ export const fileInput = ({ onAddFile }) => {
     if (file) {
       onAddFile(file);
     }
+    // Clear the value so selecting the same file again fires a new change event.
+    e.target.value = '';
   };
   return {
     click,

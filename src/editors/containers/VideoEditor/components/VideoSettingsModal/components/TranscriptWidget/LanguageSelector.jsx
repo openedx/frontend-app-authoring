@@ -54,11 +54,12 @@ const LanguageSelector = ({
 }) => {
   const openLanguages = useSelector(selectors.video.openLanguages);
   const intl = useIntl();
+  // Language for the next upload; the saved language is the `language` prop.
   const [localLang, setLocalLang] = React.useState(language);
   const input = fileInput({ onAddFile: hooks.addFileCallback({ dispatch: useDispatch(), localLang }) });
   const onLanguageChange = hooks.onSelectLanguage({
     dispatch: useDispatch(),
-    languageBeforeChange: localLang,
+    languageBeforeChange: language,
     setLocalLang,
     triggerupload: input.click,
   });
