@@ -95,7 +95,7 @@ const LanguageSelector = ({
         >
           {getTitle()}
         </Dropdown.Toggle>
-        <Dropdown.Menu className="transcript-language-select-menu">
+        <Dropdown.Menu>
           {Object.entries(videoTranscriptLanguages).map(([lang, text]) => {
             if (language === lang) {
               return (
