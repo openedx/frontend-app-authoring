@@ -278,6 +278,9 @@
 
   // `aria-disabled` alone gets no disabled look from Paragon, and `.disabled` would drop the focus ring.
   .add-control .btn[aria-disabled='true'] {
+    --pgn-btn-color: var(--pgn-btn-disabled-color);
+    --pgn-btn-bg: var(--pgn-btn-disabled-bg);
+    --pgn-btn-border-color: var(--pgn-btn-disabled-border-color);
     --pgn-btn-hover-color: var(--pgn-btn-disabled-color);
     --pgn-btn-hover-bg: var(--pgn-btn-disabled-bg);
     --pgn-btn-hover-border-color: var(--pgn-btn-disabled-border-color);

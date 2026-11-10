@@ -1,4 +1,10 @@
-import { initializeMocks, render, screen, userEvent } from '@src/testUtils';
+import {
+  initializeMocks,
+  render,
+  screen,
+  userEvent,
+  waitFor,
+} from '@src/testUtils';
 import AddControl from './AddControl';
 
 const placeholderText = 'Fill in the empty box before adding another.';
@@ -45,7 +51,27 @@ describe('<AddControl />', () => {
     expect(button).toHaveFocus();
     expect(await screen.findByRole('tooltip')).toHaveTextContent(text);
 
+    expect(button).toHaveAccessibleDescription(text);
+    expect(button).toHaveAttribute('aria-describedby', screen.getByRole('tooltip').id);
+
+    await user.tab();
+    await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+    expect(button).toHaveAccessibleDescription(text);
+
     await user.click(button);
+    await user.keyboard('{Enter}');
+    await user.keyboard(' ');
     expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it('closes the tooltip when the control becomes enabled while it is open', async () => {
+    const props = { label: 'Rule', accessibleLabel: 'Add Rule', onClick: jest.fn() };
+    const { rerender } = render(<AddControl {...props} disabledReason="saving" />);
+    await user.tab();
+    expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+
+    rerender(<AddControl {...props} disabledReason={null} />);
+
+    await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
   });
 });

@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -32,7 +32,13 @@ const AddControl = ({
   const intl = useIntl();
   const tooltipId = useId();
   const descriptionId = useId();
+  const [show, setShow] = useState(false);
   const disabled = disabledReason !== null;
+  const isTooltipOpen = disabled && show;
+  let describedBy: string | undefined;
+  if (disabled) {
+    describedBy = isTooltipOpen ? tooltipId : descriptionId;
+  }
   const reasonText = intl.formatMessage(
     disabledReason === 'saving' ? messages.addControlSavingTooltip : messages.addControlDisabledTooltip,
   );
@@ -42,7 +48,9 @@ const AddControl = ({
       <span className="connector-line" aria-hidden="true" />
       <OverlayTrigger
         placement="top"
-        trigger={disabled ? ['hover', 'focus'] : []}
+        trigger={['hover', 'focus']}
+        show={isTooltipOpen}
+        onToggle={setShow}
         overlay={<Tooltip id={tooltipId}>{reasonText}</Tooltip>}
       >
         <Button
@@ -51,7 +59,9 @@ const AddControl = ({
           iconBefore={Add}
           aria-label={accessibleLabel}
           aria-disabled={disabled}
-          aria-describedby={disabled ? descriptionId : undefined}
+          // While the tooltip is open the popper appends its id with a comma, which breaks an id list,
+          // so the button points at the tooltip alone, which carries the same text.
+          aria-describedby={describedBy}
           onClick={disabled ? undefined : onClick}
         >
           {label}

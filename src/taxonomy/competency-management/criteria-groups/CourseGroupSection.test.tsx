@@ -269,6 +269,11 @@ describe('<CourseGroupSection />', () => {
       { isAssociating: true },
       'Saving the new rule. Wait for it to finish before adding another.',
     ],
+    [
+      'a rule is being saved and a placeholder exists',
+      { isAssociating: true, hasPlaceholder: true },
+      'Saving the new rule. Wait for it to finish before adding another.',
+    ],
   ])('disables "Add Rule Group" and explains why while %s', async (_name, overrides, text) => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
     const addPlaceholderGroup = jest.fn();
