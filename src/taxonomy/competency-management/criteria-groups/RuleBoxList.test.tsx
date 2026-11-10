@@ -189,11 +189,93 @@ describe('<RuleBoxList />', () => {
       expect(setPlaceholderRulePayload).toHaveBeenCalledWith({ op: 'gte', value: 0.75, scale: 'percent' });
     });
 
+    it('does not focus the score input again once the author has set a score', () => {
+      render(
+        <MockCompetencyAssociationsProvider
+          value={{
+            focus: { groupId: 10, ruleKey: null },
+            placeholder: {
+              parentRuleGroupId: null,
+              logicOperator: 'OR',
+              rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
+            },
+          }}
+        >
+          <RuleBoxList groupId={10} boxes={boxes} subsectionNamesByUsageKey={{}} canEdit />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+      const inputs = screen.getAllByLabelText('Score threshold percentage');
+      expect(inputs[inputs.length - 1]).not.toHaveFocus();
+    });
+
     it('focuses the placeholder\'s score input when it appears', () => {
       renderTakenPlaceholder();
 
       const inputs = screen.getAllByLabelText('Score threshold percentage');
       expect(inputs[inputs.length - 1]).toHaveFocus();
+    });
+  });
+
+  describe('rejected duplicate placeholder', () => {
+    const renderRejected = (count: number, boxesInGroup = boxes) => {
+      const ui = (rejectionCount: number) => (
+        <MockCompetencyAssociationsProvider
+          value={{
+            focus: { groupId: 10, ruleKey: null },
+            placeholderDuplicateRejected: true,
+            placeholderRejectionCount: rejectionCount,
+          }}
+        >
+          <RuleBoxList groupId={10} boxes={boxesInGroup} subsectionNamesByUsageKey={{}} canEdit />
+        </MockCompetencyAssociationsProvider>
+      );
+      return { ...render(ui(count)), ui };
+    };
+
+    const scoreInputs = () => screen.getAllByLabelText('Score threshold percentage');
+
+    it('focuses the suggestion link and marks the score input invalid', () => {
+      renderRejected(1);
+
+      expect(screen.getByRole('button', { name: 'Use 75% or higher' })).toHaveFocus();
+      expect(scoreInputs()[scoreInputs().length - 1]).toHaveAttribute('aria-invalid', 'true');
+    });
+
+    it('moves focus back to the link on each further rejection', () => {
+      const { rerender, ui } = renderRejected(1);
+      scoreInputs()[0].focus();
+      expect(screen.getByRole('button', { name: 'Use 75% or higher' })).not.toHaveFocus();
+
+      rerender(ui(2));
+
+      expect(screen.getByRole('button', { name: 'Use 75% or higher' })).toHaveFocus();
+    });
+
+    it('shows the hint without a link and focuses the score input when no score is free', () => {
+      const takenScores = [70, 75, 80, 85, 90, 95, 100];
+      const fullBoxes = ruleBoxesForGroup(
+        10,
+        buildCompetencyCriteriaGroupsIndex({
+          groups: [group(10, null, null, 0)],
+          criteria: takenScores.map((percent, i) => (
+            i === 0
+              ? criterion(300 + i, `block-${i}`, 10)
+              : criterion(300 + i, `block-${i}`, 10, {
+                ruleProfileId: null,
+                ruleTypeOverride: 'grade',
+                rulePayloadOverride: { op: 'gte', value: percent / 100, scale: 'percent' },
+              })
+          )),
+        }),
+        systemDefaultProfile,
+      );
+
+      renderRejected(1, fullBoxes);
+
+      expect(screen.getByText(/already uses/)).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /^Use / })).not.toBeInTheDocument();
+      expect(scoreInputs()[scoreInputs().length - 1]).toHaveFocus();
     });
   });
 

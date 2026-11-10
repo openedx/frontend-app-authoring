@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Stack } from '@openedx/paragon';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
@@ -32,10 +32,13 @@ const RuleBoxList = ({
     setPlaceholderRulePayload,
   } = useCompetencyAssociations();
   // The score field remounts on every score change; only "Add Rule" and the suggestion link may move focus.
-  const refocusAfterSuggestion = useRef(false);
+  const [focusAfterSuggestion, setFocusAfterSuggestion] = useState(false);
   useEffect(() => {
-    refocusAfterSuggestion.current = false;
-  });
+    if (focusAfterSuggestion) {
+      setFocusAfterSuggestion(false);
+    }
+  }, [focusAfterSuggestion]);
+  const suggestionLinkRef = useRef<HTMLButtonElement>(null);
 
   const getInlineValidationMessage = (candidateBox: RuleBoxData) => (value: string): string => {
     const candidate: EffectiveRule = {
@@ -67,11 +70,11 @@ const RuleBoxList = ({
         <>
           {' '}
           <Button
+            ref={suggestionLinkRef}
             variant="link"
             size="inline"
-            className="rule-box__use-suggestion"
             onClick={() => {
-              refocusAfterSuggestion.current = true;
+              setFocusAfterSuggestion(true);
               setPlaceholderRulePayload(suggestedScore);
             }}
           >
@@ -112,7 +115,8 @@ const RuleBoxList = ({
             criteria: [],
           })}
           hint={placeholderHint || undefined}
-          autoFocusSelect={placeholder.rulePayload === null || refocusAfterSuggestion.current}
+          autoFocusSelect={placeholder.rulePayload === null || focusAfterSuggestion}
+          rejectionFocusRef={suggestedScore ? suggestionLinkRef : undefined}
         />
       )}
     </Stack>
