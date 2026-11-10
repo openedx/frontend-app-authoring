@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   initializeMocks,
   render,
@@ -13,7 +14,7 @@ import {
   systemDefaultProfile,
 } from '../__mocks__';
 import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
-import type { CompetencyCriteriaGroupsResponse } from '../data/types';
+import type { CompetencyCriteriaGroupsResponse, GradeRulePayload } from '../data/types';
 import { buildCompetencyCriteriaGroupsIndex, ruleBoxesForGroup } from '../utils';
 import RuleBoxList from './RuleBoxList';
 
@@ -207,6 +208,41 @@ describe('<RuleBoxList />', () => {
 
       const inputs = screen.getAllByLabelText('Score threshold percentage');
       expect(inputs[inputs.length - 1]).not.toHaveFocus();
+    });
+
+    it('focuses the input after the suggestion is applied, and not after the next typed score', async () => {
+      const user = userEvent.setup();
+      const StatefulProvider = () => {
+        const [rulePayload, setRulePayload] = useState<GradeRulePayload | null>(null);
+        return (
+          <MockCompetencyAssociationsProvider
+            value={{
+              focus: { groupId: 10, ruleKey: null },
+              placeholder: { parentRuleGroupId: null, logicOperator: 'OR', rulePayload },
+              placeholderDuplicateRejected: false,
+              setPlaceholderRulePayload: setRulePayload,
+            }}
+          >
+            <RuleBoxList groupId={10} boxes={boxes} subsectionNamesByUsageKey={{}} canEdit />
+          </MockCompetencyAssociationsProvider>
+        );
+      };
+      render(<StatefulProvider />);
+      const lastInput = () => {
+        const inputs = screen.getAllByLabelText('Score threshold percentage');
+        return inputs[inputs.length - 1];
+      };
+
+      await user.click(screen.getByRole('button', { name: 'Use 75% or higher' }));
+      expect(lastInput()).toHaveValue('75');
+      expect(lastInput()).toHaveFocus();
+
+      await user.clear(lastInput());
+      await user.type(lastInput(), '80');
+      await user.keyboard('{Enter}');
+
+      expect(lastInput()).toHaveValue('80');
+      expect(lastInput()).not.toHaveFocus();
     });
 
     it('focuses the placeholder\'s score input when it appears', () => {
