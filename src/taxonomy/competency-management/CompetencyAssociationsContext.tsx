@@ -38,6 +38,7 @@ import { courseKeyOfFocus, resolveCreateTarget } from './criterionTarget';
 import messages from './messages';
 import {
   initialPlaceholder,
+  isPlaceholderOrphaned,
   PLACEHOLDER_REJECTION_CLEARING_ACTIONS,
   reducePlaceholderAction,
   usePlaceholderActions,
@@ -87,6 +88,10 @@ export interface CompetencyAssociationsContextBase {
    * The request is not sent.
    */
   placeholderDuplicateRejected: boolean;
+  /** How many rejections happened, so a repeat rejection while `placeholderDuplicateRejected` is already
+   * true is still observable. Resets only when the competency changes.
+   */
+  placeholderRejectionCount: number;
   /** Drops the placeholder by clearing `focus`. */
   discardPlaceholder: () => void;
   /** Focuses a group and its last rule box. A no-op when `groupId` is already
@@ -234,6 +239,7 @@ export interface ProviderState {
   focus: CriteriaFocus | null;
   placeholder: CriteriaPlaceholder;
   placeholderDuplicateRejected: boolean;
+  placeholderRejectionCount: number;
   /** A course expanded before the groups and default profile loaded. */
   pendingCourseId: string | null;
   initialFocusDone: boolean;
@@ -264,6 +270,7 @@ function reduceProviderState(state: ProviderState, action: ProviderAction): Prov
         focus: null,
         placeholder: initialPlaceholder,
         placeholderDuplicateRejected: false,
+        placeholderRejectionCount: 0,
         pendingCourseId: null,
         initialFocusDone: false,
         settled: false,
@@ -308,7 +315,11 @@ function reduceProviderState(state: ProviderState, action: ProviderAction): Prov
 
 function providerReducer(state: ProviderState, action: ProviderAction): ProviderState {
   if (action.type === 'placeholderDuplicateRejected') {
-    return { ...state, placeholderDuplicateRejected: true };
+    return {
+      ...state,
+      placeholderDuplicateRejected: true,
+      placeholderRejectionCount: state.placeholderRejectionCount + 1,
+    };
   }
   const next = reduceProviderState(state, action);
   const clears = PLACEHOLDER_REJECTION_CLEARING_ACTIONS.has(action.type)
@@ -336,6 +347,7 @@ export const CompetencyAssociationsProvider = ({
     focus: null,
     placeholder: initialPlaceholder,
     placeholderDuplicateRejected: false,
+    placeholderRejectionCount: 0,
     pendingCourseId: null,
     initialFocusDone: false,
     settled: false,
@@ -344,6 +356,7 @@ export const CompetencyAssociationsProvider = ({
     focus,
     placeholder,
     placeholderDuplicateRejected,
+    placeholderRejectionCount,
     generation,
     pendingCourseId,
     initialFocusDone,
@@ -441,6 +454,10 @@ export const CompetencyAssociationsProvider = ({
     : undefined;
   if (focus?.groupId != null && resolvedRuleKey !== undefined) {
     dispatch({ type: 'ruleKeyResolved', groupId: focus.groupId, staleRuleKey: focus.ruleKey, resolvedRuleKey });
+  }
+
+  if (!competencyChanged && groupsIndex && isPlaceholderOrphaned(focus, placeholder, groupsIndex)) {
+    dispatch({ type: 'discardPlaceholder' });
   }
 
   const focusGroup = useCallback((groupId: number) => {
@@ -624,6 +641,7 @@ export const CompetencyAssociationsProvider = ({
       setPlaceholderRulePayload,
       discardPlaceholder,
       placeholderDuplicateRejected,
+      placeholderRejectionCount,
       focusGroup,
       focusRuleBox,
       notifyCourseExpanded,
@@ -654,6 +672,7 @@ export const CompetencyAssociationsProvider = ({
     setPlaceholderRulePayload,
     discardPlaceholder,
     placeholderDuplicateRejected,
+    placeholderRejectionCount,
     focusGroup,
     focusRuleBox,
     notifyCourseExpanded,

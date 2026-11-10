@@ -2,7 +2,8 @@ import { useCallback } from 'react';
 import type { Dispatch } from 'react';
 
 import type { CompetencyGroupLogicOperator, GradeRulePayload } from './data/types';
-import type { ProviderAction, ProviderState } from './CompetencyAssociationsContext';
+import type { CriteriaFocus, ProviderAction, ProviderState } from './CompetencyAssociationsContext';
+import type { CompetencyCriteriaGroupsIndex } from './utils';
 
 /** The author's choices on the placeholder group or rule box. The rule payload is shared by both shapes, since only
  * one placeholder exists at a time.
@@ -51,6 +52,19 @@ export function reducePlaceholderAction(state: ProviderState, action: Placeholde
     default:
       return state;
   }
+}
+
+/** Whether the focused placeholder's real group, or its parent for a placeholder group, left the groups tree. */
+export function isPlaceholderOrphaned(
+  focus: CriteriaFocus | null,
+  placeholder: CriteriaPlaceholder,
+  groupsIndex: CompetencyCriteriaGroupsIndex,
+): boolean {
+  if (focus === null || focus.ruleKey !== null) {
+    return false;
+  }
+  const anchorId = focus.groupId ?? placeholder.parentRuleGroupId;
+  return anchorId !== null && !groupsIndex.groupsById.has(anchorId);
 }
 
 /** Actions that change what the author sees in the placeholder, so a rejection no longer applies. */
