@@ -27,21 +27,13 @@ export interface ScoreThresholdFieldProps {
   hintIsError?: boolean;
 }
 
-/** A score as text, such as "75% or higher", for messages that name a score. Read from the same message as the
- * field's own label, so the wording stays in one place.
- */
-export const formatScoreSummary = (intl: IntlShape, rulePayload: GradeRulePayload): string => {
-  let summary = '';
-  intl.formatMessage(messages.scoreThresholdLabel, {
+/** A score as text, such as "75% or higher", for messages that name a score. */
+export const formatScoreSummary = (intl: IntlShape, rulePayload: GradeRulePayload): string => (
+  intl.formatMessage(messages.scoreThresholdPhrase, {
     op: rulePayload.op,
     value: intl.formatNumber(rulePayload.value, { style: 'percent', maximumFractionDigits: 0 }),
-    threshold: (chunks: ReactNode[]) => {
-      summary = chunks.filter((chunk): chunk is string => typeof chunk === 'string').join('');
-      return summary;
-    },
-  });
-  return summary;
-};
+  })
+);
 
 /** `rulePayload.value` is a 0.0-1.0 fraction (openedx-core ADR 0002), not a 0-100 percentage. */
 const percentOf = (rulePayload: GradeRulePayload): string => String(Math.round(rulePayload.value * 100));
@@ -158,8 +150,7 @@ const ScoreThresholdField = ({
   return (
     <Form.Group as="span" controlId={inputId} className="score-threshold-field">
       {intl.formatMessage(messages.scoreThresholdLabel, {
-        op: rulePayload.op,
-        value,
+        score: intl.formatMessage(messages.scoreThresholdPhrase, { op: rulePayload.op, value }),
         threshold: (chunks: React.ReactNode[]) => (
           <span key="threshold" className="score-threshold-field__value">{chunks}</span>
         ),

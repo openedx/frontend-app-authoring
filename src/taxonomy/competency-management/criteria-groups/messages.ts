@@ -31,12 +31,19 @@ const messages = defineMessages({
     description: 'Header sentence on a bottom-tier group\'s bracket, naming how its rule boxes combine. '
       + '"{operator}" is replaced by the word "any" or "all".',
   },
+  scoreThresholdPhrase: {
+    id: 'course-authoring.competency-management.criteria-groups.score-threshold-phrase',
+    defaultMessage: '{op, select, gte {{value} or higher} lte {{value} or lower} other {{value}}}',
+    description: 'A rule\'s score threshold, for example "75% or higher". '
+      + '"{op}" is the comparison: gte (at least), lte (at most) or any other value for an exact match. '
+      + '"{value}" is the already formatted percentage.',
+  },
   scoreThresholdLabel: {
     id: 'course-authoring.competency-management.criteria-groups.score-threshold-label',
-    defaultMessage: 'With a score of <threshold>{op, select, gte {{value} or higher} lte {{value} or lower} other {{value}}}</threshold>',
+    defaultMessage: 'With a score of <threshold>{score}</threshold>',
     description: 'Label stating a rule box\'s score threshold, for example "With a score of 75% or higher". '
-      + '"{op}" is the comparison: gte (at least), lte (at most) or any other value for an exact match. '
-      + '"{value}" is the already formatted percentage. "<threshold>" wraps the part shown in the highlighted box.',
+      + '"{score}" is the threshold phrase, such as "75% or higher". '
+      + '"<threshold>" wraps the part shown in the highlighted box.',
   },
   unknownSubsectionLabel: {
     id: 'course-authoring.competency-management.criteria-groups.unknown-subsection-label',
