@@ -36,6 +36,13 @@ import type {
 } from './data/types';
 import { courseKeyOfFocus, resolveCreateTarget } from './criterionTarget';
 import messages from './messages';
+import {
+  initialPlaceholder,
+  PLACEHOLDER_REJECTION_CLEARING_ACTIONS,
+  reducePlaceholderAction,
+  usePlaceholderActions,
+} from './placeholderState';
+import type { CriteriaPlaceholder, PlaceholderAction } from './placeholderState';
 import type { CompetencyCriteriaGroupsIndex } from './utils';
 import {
   associatedObjectIds,
@@ -49,6 +56,8 @@ import {
   visibleCourseGroups,
 } from './utils';
 
+export type { CriteriaPlaceholder };
+
 /** A non-null `ruleKey` that matches none of the group's rule boxes is re-resolved to the group's last box.
  *
  * `ruleKey === null` focuses a not-yet-saved placeholder rule box in the group, and `groupId === null`
@@ -58,17 +67,6 @@ export interface CriteriaFocus {
   groupId: number | null;
   ruleKey: string | null;
 }
-
-/** The author's choices on the placeholder group or rule box. The rule payload is shared by both shapes, since only
- * one placeholder exists at a time.
- */
-export interface CriteriaPlaceholder {
-  parentRuleGroupId: number | null;
-  logicOperator: CompetencyGroupLogicOperator;
-  rulePayload: GradeRulePayload | null;
-}
-
-const initialPlaceholder: CriteriaPlaceholder = { parentRuleGroupId: null, logicOperator: 'OR', rulePayload: null };
 
 export interface CompetencyAssociationsContextBase {
   /** The groups or profile failure, or the first course-outline failure other
@@ -227,7 +225,7 @@ function resolveStaleRuleKey(
   return resolved === focus.ruleKey ? undefined : resolved;
 }
 
-interface ProviderState {
+export interface ProviderState {
   tagId: number;
   /** Bumped on every competency change, so an in-flight create can tell the
    * author left and came back, which a `tagId` comparison cannot.
@@ -248,11 +246,7 @@ type ProviderAction =
   | { type: 'focusGroup'; groupId: number; ruleKey: string | null; }
   | { type: 'focusRuleBox'; groupId: number; ruleKey: string; }
   | { type: 'setFocus'; focus: CriteriaFocus; }
-  | { type: 'addPlaceholderRuleBox'; groupId: number; }
-  | { type: 'addPlaceholderGroup'; parentRuleGroupId: number; }
-  | { type: 'setPlaceholderLogicOperator'; logicOperator: CompetencyGroupLogicOperator; }
-  | { type: 'setPlaceholderRulePayload'; rulePayload: GradeRulePayload; }
-  | { type: 'discardPlaceholder'; }
+  | PlaceholderAction
   | { type: 'placeholderDuplicateRejected'; }
   | { type: 'ruleKeyResolved'; groupId: number; staleRuleKey: string | null; resolvedRuleKey: string | null; }
   | { type: 'createSucceeded'; generation: number; focus: CriteriaFocus; }
@@ -284,25 +278,11 @@ function reduceProviderState(state: ProviderState, action: ProviderAction): Prov
     case 'setFocus':
       return { ...state, focus: action.focus };
     case 'addPlaceholderRuleBox':
-      return {
-        ...state,
-        focus: { groupId: action.groupId, ruleKey: null },
-        placeholder: { ...state.placeholder, rulePayload: null },
-        pendingCourseId: null,
-      };
     case 'addPlaceholderGroup':
-      return {
-        ...state,
-        focus: { groupId: null, ruleKey: null },
-        placeholder: { ...initialPlaceholder, parentRuleGroupId: action.parentRuleGroupId },
-        pendingCourseId: null,
-      };
     case 'setPlaceholderLogicOperator':
-      return { ...state, placeholder: { ...state.placeholder, logicOperator: action.logicOperator } };
     case 'discardPlaceholder':
-      return { ...state, focus: null };
     case 'setPlaceholderRulePayload':
-      return { ...state, placeholder: { ...state.placeholder, rulePayload: action.rulePayload } };
+      return reducePlaceholderAction(state, action);
     case 'ruleKeyResolved':
       // Guarded so an action computed from a stale focus cannot overwrite a focus dispatched after it.
       return state.focus?.groupId === action.groupId && state.focus.ruleKey === action.staleRuleKey
@@ -325,19 +305,6 @@ function reduceProviderState(state: ProviderState, action: ProviderAction): Prov
       return state;
   }
 }
-
-/** Actions that change what the author sees in the placeholder, so a rejection no longer applies. */
-const PLACEHOLDER_REJECTION_CLEARING_ACTIONS: ReadonlySet<ProviderAction['type']> = new Set([
-  'competencyChanged',
-  'focusGroup',
-  'focusRuleBox',
-  'setFocus',
-  'addPlaceholderRuleBox',
-  'addPlaceholderGroup',
-  'setPlaceholderRulePayload',
-  'discardPlaceholder',
-  'createSucceeded',
-]);
 
 function providerReducer(state: ProviderState, action: ProviderAction): ProviderState {
   if (action.type === 'placeholderDuplicateRejected') {
@@ -487,25 +454,13 @@ export const CompetencyAssociationsProvider = ({
     dispatch({ type: 'focusRuleBox', groupId, ruleKey });
   }, []);
 
-  const addPlaceholderRuleBox = useCallback((groupId: number) => {
-    dispatch({ type: 'addPlaceholderRuleBox', groupId });
-  }, []);
-
-  const addPlaceholderGroup = useCallback((parentRuleGroupId: number) => {
-    dispatch({ type: 'addPlaceholderGroup', parentRuleGroupId });
-  }, []);
-
-  const setPlaceholderLogicOperator = useCallback((logicOperator: CompetencyGroupLogicOperator) => {
-    dispatch({ type: 'setPlaceholderLogicOperator', logicOperator });
-  }, []);
-
-  const setPlaceholderRulePayload = useCallback((rulePayload: GradeRulePayload) => {
-    dispatch({ type: 'setPlaceholderRulePayload', rulePayload });
-  }, []);
-
-  const discardPlaceholder = useCallback(() => {
-    dispatch({ type: 'discardPlaceholder' });
-  }, []);
+  const {
+    addPlaceholderRuleBox,
+    addPlaceholderGroup,
+    setPlaceholderLogicOperator,
+    setPlaceholderRulePayload,
+    discardPlaceholder,
+  } = usePlaceholderActions(dispatch);
 
   const hasPlaceholder = focus !== null && focus.ruleKey === null;
 
