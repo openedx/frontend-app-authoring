@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useMutationWithProcessingNotification } from '@src/generic/processing-notification/data/apiHooks';
+import { useMutationWithProcessingNotification } from '@src/generic/toast-notification/data/apiHooks';
 import * as api from './api';
 
 export const textbooksQueryKeys = {

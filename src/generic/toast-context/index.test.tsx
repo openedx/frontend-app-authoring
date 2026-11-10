@@ -9,6 +9,8 @@ interface WraperProps {
   children: React.ReactNode;
 }
 
+const TestIcon = () => <svg data-testid="test-icon" />;
+
 const TestComponentToShow = () => {
   const { showToast } = React.useContext(ToastContext);
 
@@ -35,6 +37,16 @@ const TestComponentWithDelay = ({ delay }: { delay: number; }) => {
 
   React.useEffect(() => {
     showToast('This is the Toast!', undefined, delay);
+  }, [showToast]);
+
+  return <div>Content</div>;
+};
+
+const TestComponentWithIcon = () => {
+  const { showToast } = React.useContext(ToastContext);
+
+  React.useEffect(() => {
+    showToast('This is the Toast!', undefined, undefined, TestIcon);
   }, [showToast]);
 
   return <div>Content</div>;
@@ -74,6 +86,27 @@ describe('<ToastProvider />', () => {
       </RootWrapper>,
     );
     expect(await screen.findByText('This is the Toast!')).toBeInTheDocument();
+  });
+
+  it('should render the toast icon instead of the spinner', async () => {
+    render(
+      <RootWrapper>
+        <TestComponentWithIcon />
+      </RootWrapper>,
+    );
+    expect(await screen.findByText('This is the Toast!')).toBeInTheDocument();
+    expect(screen.getByTestId('test-icon')).toBeInTheDocument();
+    expect(document.querySelector('.toast-notification-spinner')).not.toBeInTheDocument();
+  });
+
+  it('should render the spinning gear icon by default', async () => {
+    render(
+      <RootWrapper>
+        <TestComponentToShow />
+      </RootWrapper>,
+    );
+    expect(await screen.findByText('This is the Toast!')).toBeInTheDocument();
+    expect(document.querySelector('.toast-notification-spinner')).toBeInTheDocument();
   });
 
   it('should close toast after 5000ms', async () => {
