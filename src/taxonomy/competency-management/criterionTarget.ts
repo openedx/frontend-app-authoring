@@ -29,7 +29,8 @@ export function courseKeyOfFocus(
   return index.groupsById.get(courseGroupId)?.courseKey ?? undefined;
 }
 
-// openedx-core ADR 0002: an override is complete or absent, so the pair is only sent for a score that differs from the default.
+// openedx-core ADR 0002: the override pair is sent complete or not at all.
+// A score equal to the default sends no pair, so the criterion follows the default profile.
 function overrideFields(profile: CompetencyRuleProfile, rulePayload: GradeRulePayload | null): CreateCriterionFields {
   if (rulePayload === null || isSameRulePayload(rulePayload, profile.rulePayload)) {
     return {};
