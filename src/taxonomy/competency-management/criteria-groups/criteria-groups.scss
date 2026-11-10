@@ -262,13 +262,13 @@
     z-index: 2;
   }
 
-  .group-connector {
-    &__line {
-      flex: 1;
-      height: 1px;
-      background-color: var(--pgn-color-gray-200);
-    }
+  .connector-line {
+    flex: 1;
+    height: 1px;
+    background-color: var(--pgn-color-gray-200);
+  }
 
+  .group-connector {
     &__label {
       font-size: var(--pgn-typography-font-size-sm);
       font-weight: 700;
@@ -276,16 +276,16 @@
     }
   }
 
-  // The "+ Rule" and "+ Rule Group" control: a button between two lines styled like `.group-connector`'s.
-  .add-control {
-    display: flex;
-    align-items: center;
-    gap: var(--pgn-spacing-spacer-2);
+  // `aria-disabled` alone gets no disabled look from Paragon, and `.disabled` would drop the focus ring.
+  .add-control .btn[aria-disabled='true'] {
+    --pgn-btn-hover-color: var(--pgn-btn-disabled-color);
+    --pgn-btn-hover-bg: var(--pgn-btn-disabled-bg);
+    --pgn-btn-hover-border-color: var(--pgn-btn-disabled-border-color);
+    --pgn-btn-active-color: var(--pgn-btn-disabled-color);
+    --pgn-btn-active-bg: var(--pgn-btn-disabled-bg);
+    --pgn-btn-active-border-color: var(--pgn-btn-disabled-border-color);
 
-    &__line {
-      flex: 1;
-      height: 1px;
-      background-color: var(--pgn-color-gray-200);
-    }
+    opacity: var(--pgn-other-btn-disabled-opacity);
+    cursor: default;
   }
 }

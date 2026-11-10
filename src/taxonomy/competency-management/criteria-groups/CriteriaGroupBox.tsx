@@ -5,6 +5,7 @@ import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import type { BottomTierCompetencyCriteriaGroup } from '../data/types';
 import { ruleBoxesForGroup } from '../utils';
 import AddControl from './AddControl';
+import type { AddControlProps } from './AddControl';
 import LogicOperatorSelect from './LogicOperatorSelect';
 import RuleBoxList from './RuleBoxList';
 import messages from './messages';
@@ -38,6 +39,7 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
     addPlaceholderRuleBox,
     setPlaceholderLogicOperator,
     hasPlaceholder,
+    isAssociating,
   } = useCompetencyAssociations();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -80,6 +82,13 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
       />
     ),
   });
+
+  let disabledReason: AddControlProps['disabledReason'] = null;
+  if (isAssociating) {
+    disabledReason = 'saving';
+  } else if (hasPlaceholder) {
+    disabledReason = 'placeholder';
+  }
 
   return (
     <div
@@ -124,7 +133,8 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
           {canEdit && groupId !== null && (
             <AddControl
               label={intl.formatMessage(messages.addRuleButtonLabel)}
-              disabled={hasPlaceholder}
+              accessibleLabel={intl.formatMessage(messages.addRuleAccessibleLabel)}
+              disabledReason={disabledReason}
               onClick={() => addPlaceholderRuleBox(groupId)}
             />
           )}

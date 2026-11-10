@@ -192,6 +192,25 @@ describe('competency associations over the real provider', () => {
     expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({ object_id: 'a-sub-1', group_id: 10 });
   });
 
+  it('moves focus to the new placeholder group\'s score input after "Add Rule Group" is activated', async () => {
+    axiosMock.onGet(groupsUrl).reply(200, courseBGroupsResponse);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseB)).reply(
+      200,
+      outlineOf('Course B', { 'b-sub-1': 'Homework 1', 'b-sub-2': 'Homework 2' }),
+    );
+    renderPanel();
+    await screen.findByText('Homework 1');
+    const addButtons = screen.getAllByRole('button', { name: 'Add Rule Group' });
+    const scoreInputsBefore = screen.getAllByLabelText('Score threshold percentage').length;
+
+    await user.click(addButtons[addButtons.length - 1]);
+
+    const scoreInputs = screen.getAllByLabelText('Score threshold percentage');
+    expect(scoreInputs).toHaveLength(scoreInputsBefore + 1);
+    expect(scoreInputs).toContain(document.activeElement);
+  });
+
   it('moves the focus when a second group header and then a second rule box are clicked', async () => {
     axiosMock.onGet(groupsUrl).reply(200, courseBGroupsResponse);
     axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));

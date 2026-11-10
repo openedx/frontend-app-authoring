@@ -262,6 +262,27 @@ describe('<CourseGroupSection />', () => {
     expect(addPlaceholderGroup).toHaveBeenCalledWith(courseGroup.id);
   });
 
+  it.each([
+    ['a placeholder already exists', { hasPlaceholder: true }, 'Fill in the empty box before adding another.'],
+    [
+      'a rule is being saved',
+      { isAssociating: true },
+      'Saving the new rule. Wait for it to finish before adding another.',
+    ],
+  ])('disables "Add Rule Group" and explains why while %s', async (_name, overrides, text) => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const addPlaceholderGroup = jest.fn();
+    renderSection({ ...overrides, addPlaceholderGroup, canEditCourse: () => true });
+
+    await screen.findByText('Demo Course');
+    const button = screen.getByRole('button', { name: 'Add Rule Group' });
+    expect(button).toHaveAttribute('aria-disabled', 'true');
+    expect(button).toHaveAccessibleDescription(text);
+
+    await user.click(button);
+    expect(addPlaceholderGroup).not.toHaveBeenCalled();
+  });
+
   it('hides "Add Rule Group" when the author cannot edit this course', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
     renderSection();

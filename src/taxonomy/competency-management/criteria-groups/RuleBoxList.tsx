@@ -112,7 +112,7 @@ const RuleBoxList = ({
             criteria: [],
           })}
           hint={placeholderHint || undefined}
-          autoFocusSelect={groupId !== null && (placeholder.rulePayload === null || refocusAfterSuggestion.current)}
+          autoFocusSelect={placeholder.rulePayload === null || refocusAfterSuggestion.current}
         />
       )}
     </Stack>

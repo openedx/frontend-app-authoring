@@ -1,53 +1,65 @@
 import { useId } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, OverlayTrigger, Tooltip } from '@openedx/paragon';
+import {
+  Button,
+  OverlayTrigger,
+  Stack,
+  Tooltip,
+} from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 import messages from './messages';
 
 export interface AddControlProps {
   /** The visible label, such as "Rule" or "Rule Group". */
   label: string;
+  /** The accessible name, such as "Add Rule". */
+  accessibleLabel: string;
   onClick: React.MouseEventHandler;
-  /** True while a placeholder exists, which explains itself in a tooltip. */
-  disabled: boolean;
+  /** Why the control is disabled, or `null` when it is enabled. */
+  disabledReason: 'placeholder' | 'saving' | null;
 }
 
 /** The "+ Rule" and "+ Rule Group" control, centered between two connector lines.
- * A disabled button fires no hover or focus events, so the tooltip hangs off a
- * focusable wrapper span instead.
+ * A disabled control keeps `aria-disabled` instead of `disabled`, so it stays focusable and the
+ * tooltip opens on focus as well as hover.
  */
-const AddControl = ({ label, onClick, disabled }: AddControlProps) => {
+const AddControl = ({
+  label,
+  accessibleLabel,
+  onClick,
+  disabledReason,
+}: AddControlProps) => {
   const intl = useIntl();
   const tooltipId = useId();
-
-  const button = (
-    <Button
-      variant="outline-primary"
-      size="sm"
-      iconBefore={Add}
-      disabled={disabled}
-      onClick={onClick}
-    >
-      <span className="sr-only">{intl.formatMessage(messages.addControlAccessiblePrefix)}{' '}</span>
-      {label}
-    </Button>
+  const descriptionId = useId();
+  const disabled = disabledReason !== null;
+  const reasonText = intl.formatMessage(
+    disabledReason === 'saving' ? messages.addControlSavingTooltip : messages.addControlDisabledTooltip,
   );
 
   return (
-    <div className="add-control">
-      <span className="add-control__line" aria-hidden="true" />
-      {disabled ?
-        (
-          <OverlayTrigger
-            placement="top"
-            overlay={<Tooltip id={tooltipId}>{intl.formatMessage(messages.addControlDisabledTooltip)}</Tooltip>}
-          >
-            <span className="add-control__button-wrapper" tabIndex={0}>{button}</span>
-          </OverlayTrigger>
-        ) :
-        button}
-      <span className="add-control__line" aria-hidden="true" />
-    </div>
+    <Stack direction="horizontal" gap={2} className="add-control">
+      <span className="connector-line" aria-hidden="true" />
+      <OverlayTrigger
+        placement="top"
+        trigger={disabled ? ['hover', 'focus'] : []}
+        overlay={<Tooltip id={tooltipId}>{reasonText}</Tooltip>}
+      >
+        <Button
+          variant="outline-primary"
+          size="sm"
+          iconBefore={Add}
+          aria-label={accessibleLabel}
+          aria-disabled={disabled}
+          aria-describedby={disabled ? descriptionId : undefined}
+          onClick={disabled ? undefined : onClick}
+        >
+          {label}
+        </Button>
+      </OverlayTrigger>
+      <span id={descriptionId} className="sr-only">{disabled ? reasonText : ''}</span>
+      <span className="connector-line" aria-hidden="true" />
+    </Stack>
   );
 };
 

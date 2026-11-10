@@ -127,17 +127,27 @@ const messages = defineMessages({
     defaultMessage: 'Rule Group',
     description: 'Label for the button that adds a new, not-yet-saved bottom-tier group to a course-level group.',
   },
-  addControlAccessiblePrefix: {
-    id: 'course-authoring.competency-management.criteria-groups.add-control-accessible-prefix',
-    defaultMessage: 'Add',
-    description: 'Visually hidden word placed before the "Rule" or "Rule Group" button label, so the '
-      + 'accessible name reads "Add Rule" while the visible label stays "Rule".',
+  addRuleAccessibleLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.add-rule-accessible-label',
+    defaultMessage: 'Add Rule',
+    description: 'Accessible name of the button that adds a new rule box, whose visible label is just "Rule".',
+  },
+  addRuleGroupAccessibleLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.add-rule-group-accessible-label',
+    defaultMessage: 'Add Rule Group',
+    description: 'Accessible name of the button that adds a new rule group, whose visible label is just "Rule Group".',
   },
   addControlDisabledTooltip: {
     id: 'course-authoring.competency-management.criteria-groups.add-control-disabled-tooltip',
     defaultMessage: 'Fill in the empty box before adding another.',
     description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while a not-yet-saved placeholder '
       + 'already exists elsewhere in the tree.',
+  },
+  addControlSavingTooltip: {
+    id: 'course-authoring.competency-management.criteria-groups.add-control-saving-tooltip',
+    defaultMessage: 'Saving the new rule. Wait for it to finish before adding another.',
+    description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while a newly associated rule is '
+      + 'still being saved.',
   },
   placeholderRuleBoxHint: {
     id: 'course-authoring.competency-management.criteria-groups.placeholder-rule-box-hint',

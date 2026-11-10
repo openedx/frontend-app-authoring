@@ -81,15 +81,23 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     expect(addPlaceholderRuleBox).toHaveBeenCalledWith(10);
   });
 
-  it('disables "Add Rule" with a tooltip while a placeholder already exists', async () => {
-    renderBox({ hasPlaceholder: true });
+  it.each([
+    ['a placeholder already exists', { hasPlaceholder: true }, 'Fill in the empty box before adding another.'],
+    [
+      'a rule is being saved',
+      { isAssociating: true },
+      'Saving the new rule. Wait for it to finish before adding another.',
+    ],
+  ])('disables "Add Rule" and explains why while %s', async (_name, overrides, text) => {
+    const addPlaceholderRuleBox = jest.fn();
+    renderBox({ ...overrides, addPlaceholderRuleBox });
 
     const addRuleButton = screen.getByRole('button', { name: 'Add Rule' });
-    expect(addRuleButton).toBeDisabled();
+    expect(addRuleButton).toHaveAttribute('aria-disabled', 'true');
+    expect(addRuleButton).toHaveAccessibleDescription(text);
 
-    // A disabled button fires no hover events, so the tooltip hangs off its focusable wrapper.
-    await user.hover(addRuleButton.closest('.add-control__button-wrapper')!);
-    expect(await screen.findByText('Fill in the empty box before adding another.')).toBeInTheDocument();
+    await user.click(addRuleButton);
+    expect(addPlaceholderRuleBox).not.toHaveBeenCalled();
   });
 
   it('hides "Add Rule" when canEdit is false', () => {

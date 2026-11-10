@@ -10,6 +10,7 @@ import { courseKeyOfFocus } from '../criterionTarget';
 import type { CourseCompetencyCriteriaGroup } from '../data/types';
 import { bottomTierGroupsForCourse } from '../utils';
 import AddControl from './AddControl';
+import type { AddControlProps } from './AddControl';
 import CriteriaGroupBox from './CriteriaGroupBox';
 import GroupConnector from './GroupConnector';
 import messages from './messages';
@@ -34,6 +35,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     addPlaceholderGroup,
     discardPlaceholder,
     hasPlaceholder,
+    isAssociating,
   } = useCompetencyAssociations();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { data } = useCourseOutlineIndex(courseGroup.courseKey, { refetchOnMount: false });
@@ -85,6 +87,13 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     { courseName },
   );
 
+  let disabledReason: AddControlProps['disabledReason'] = null;
+  if (isAssociating) {
+    disabledReason = 'saving';
+  } else if (hasPlaceholder) {
+    disabledReason = 'placeholder';
+  }
+
   return (
     <Card className={classNames('course-group-section', { 'course-group-section--focused': containsFocus })}>
       <Card.Header
@@ -129,7 +138,8 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
             {canEdit && (
               <AddControl
                 label={intl.formatMessage(messages.addRuleGroupButtonLabel)}
-                disabled={hasPlaceholder}
+                accessibleLabel={intl.formatMessage(messages.addRuleGroupAccessibleLabel)}
+                disabledReason={disabledReason}
                 onClick={() => addPlaceholderGroup(courseGroup.id)}
               />
             )}
