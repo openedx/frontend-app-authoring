@@ -149,12 +149,14 @@ const ScoreThresholdField = ({
 
   return (
     <Form.Group as="span" controlId={inputId} className="score-threshold-field">
-      {intl.formatMessage(messages.scoreThresholdLabel, {
-        score: intl.formatMessage(messages.scoreThresholdPhrase, { op: rulePayload.op, value }),
-        threshold: (chunks: React.ReactNode[]) => (
-          <span key="threshold" className="score-threshold-field__value">{chunks}</span>
-        ),
-      })}
+      <span className="score-threshold-field__sentence">
+        {intl.formatMessage(messages.scoreThresholdLabel, {
+          score: intl.formatMessage(messages.scoreThresholdPhrase, { op: rulePayload.op, value }),
+          threshold: (chunks: React.ReactNode[]) => (
+            <span key="threshold" className="score-threshold-field__value">{chunks}</span>
+          ),
+        })}
+      </span>
       {validationMessage && (
         <Form.Control.Feedback type="invalid" hasIcon={false}>
           {validationMessage}
