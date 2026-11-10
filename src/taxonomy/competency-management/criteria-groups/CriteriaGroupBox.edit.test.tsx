@@ -5,9 +5,15 @@ import {
   userEvent,
   within,
 } from '@src/testUtils';
-import { mockScrollIntoView, MockCompetencyAssociationsProvider, singleGroupResponse } from '../__mocks__';
+import {
+  buildMockCompetencyAssociationsContextValue,
+  mockScrollIntoView,
+  MockCompetencyAssociationsProvider,
+  singleGroupResponse,
+} from '../__mocks__';
 import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
 import type { BottomTierCompetencyCriteriaGroup } from '../data/types';
+import { CompetencyAssociationsContext } from '../CompetencyAssociationsContext';
 import CriteriaGroupBox from './CriteriaGroupBox';
 
 const group = singleGroupResponse.groups.find(({ id }) => id === 10) as BottomTierCompetencyCriteriaGroup;
@@ -111,30 +117,50 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     expect(screen.queryByRole('button', { name: 'Add Rule' })).not.toBeInTheDocument();
   });
 
-  it('edits a placeholder card\'s operator through setPlaceholderLogicOperator, not updateGroupOperator', async () => {
-    const setPlaceholderLogicOperator = jest.fn();
-    const updateGroupOperator = jest.fn();
+  it.each(
+    [
+      ['AND', 'all', 'any', 'OR'],
+      ['OR', 'any', 'all', 'AND'],
+    ] as const,
+  )(
+    'edits a placeholder card\'s operator from %s through setPlaceholderLogicOperator, not updateGroupOperator',
+    async (current, currentLabel, pickedLabel, expected) => {
+      const setPlaceholderLogicOperator = jest.fn();
+      const updateGroupOperator = jest.fn();
+      render(
+        <MockCompetencyAssociationsProvider
+          value={{
+            focus: { groupId: null, ruleKey: null },
+            placeholder: { parentRuleGroupId: 1, logicOperator: current, rulePayload: null },
+            setPlaceholderLogicOperator,
+            updateGroupOperator,
+          }}
+        >
+          <CriteriaGroupBox subsectionNamesByUsageKey={{}} canEdit />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+      await user.click(screen.getByRole('button', { name: currentLabel }));
+      await user.click(screen.getByText(pickedLabel));
+
+      expect(setPlaceholderLogicOperator).toHaveBeenCalledWith(expected);
+      expect(updateGroupOperator).not.toHaveBeenCalled();
+    },
+  );
+
+  it('renders no add control and no rule boxes when the panel failed, even with a loaded group index', () => {
+    const loaded = buildMockCompetencyAssociationsContextValue();
     render(
-      <MockCompetencyAssociationsProvider
-        value={{
-          focus: { groupId: null, ruleKey: null },
-          placeholder: { parentRuleGroupId: 1, logicOperator: 'AND', rulePayload: null },
-          setPlaceholderLogicOperator,
-          updateGroupOperator,
-        }}
-      >
-        <CriteriaGroupBox subsectionNamesByUsageKey={{}} canEdit />
-      </MockCompetencyAssociationsProvider>,
+      <CompetencyAssociationsContext.Provider value={{ ...loaded, status: 'error', error: new Error('boom') }}>
+        <CriteriaGroupBox group={group} subsectionNamesByUsageKey={{}} canEdit />
+      </CompetencyAssociationsContext.Provider>,
     );
 
-    await user.click(screen.getByRole('button', { name: 'all' }));
-    await user.click(screen.getByText('any'));
-
-    expect(setPlaceholderLogicOperator).toHaveBeenCalledWith('OR');
-    expect(updateGroupOperator).not.toHaveBeenCalled();
+    expect(screen.queryByRole('button', { name: 'Add Rule' })).not.toBeInTheDocument();
+    expect(document.querySelector('.rule-box')).not.toBeInTheDocument();
   });
 
-  it('does not scroll the group itself when focused with a placeholder rule box, which scrolls instead', () => {
+  it('scrolls the placeholder rule box once, not the group', () => {
     renderBox({ focus: { groupId: 10, ruleKey: null } });
 
     expect(scrollIntoView).toHaveBeenCalledTimes(1);

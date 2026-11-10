@@ -133,7 +133,7 @@ describe('competency-management api calls', () => {
     });
   });
 
-  it('passes a new criterion\'s logic_operator through unchanged (creating a new bottom-tier group, #671)', async () => {
+  it('passes a new criterion\'s logic_operator through unchanged', async () => {
     const { axiosMock } = initializeMocks();
     const payload = { object_id: 'block-a', logic_operator: 'OR' as const };
     axiosMock.onPost(apiUrls.createCompetencyCriterion(tagId)).reply(201, {

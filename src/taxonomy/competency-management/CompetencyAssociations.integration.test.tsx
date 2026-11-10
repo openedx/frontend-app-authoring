@@ -69,6 +69,7 @@ const renderPanel = (rows: Course[] = [courseBRow]) =>
 
 // The author can edit these courses, so each header and rule box has an empty select button beside its editable control.
 const groupHeaders = () => Array.from(document.querySelectorAll<HTMLElement>('.criteria-group-box__select-button'));
+const groupCards = () => Array.from(document.querySelectorAll<HTMLElement>('.criteria-group-box'));
 const ruleBoxControls = () => Array.from(document.querySelectorAll<HTMLElement>('.rule-box__select-button'));
 const ruleBoxWithScore = (percent: string) => {
   const control = ruleBoxControls().find((candidate) => (
@@ -209,6 +210,63 @@ describe('competency associations over the real provider', () => {
     const scoreInputs = screen.getAllByLabelText('Score threshold percentage');
     expect(scoreInputs).toHaveLength(scoreInputsBefore + 1);
     expect(scoreInputs).toContain(document.activeElement);
+  });
+
+  it('collapsing a course discards its placeholder group, so expanding it again shows one group card', async () => {
+    axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(
+      200,
+      outlineOf('Course A', { 'a-sub-1': 'Homework A' }),
+    );
+    renderPanel([]);
+    await screen.findByRole('heading', { name: 'From within Course A ...' });
+    expect(groupCards()).toHaveLength(1);
+
+    await user.click(screen.getByRole('button', { name: 'Add Rule Group' }));
+    expect(groupCards()).toHaveLength(2);
+
+    await user.click(screen.getByRole('button', { name: 'Collapse Course A' }));
+    await user.click(await screen.findByRole('button', { name: 'Expand Course A' }));
+
+    await screen.findByRole('heading', { name: 'From within Course A ...' });
+    expect(groupCards()).toHaveLength(1);
+  });
+
+  it('creates the criterion once the author takes the suggested score after a taken default is rejected', async () => {
+    axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(
+      200,
+      outlineOf('Course A', { 'a-sub-1': 'Homework A' }),
+    );
+    axiosMock.onPost(createUrl).reply(201, {
+      id: 903,
+      group_id: 10,
+      rule_profile_id: null,
+      rule_type_override: 'grade',
+      rule_payload_override: { op: 'gte', value: 0.75, scale: 'percent' },
+      object_tag_id: tagId,
+    });
+    renderPanel([courseARow]);
+    await screen.findByRole('heading', { name: 'From within Course A ...' });
+    await user.click(screen.getByRole('button', { name: 'Add Rule' }));
+    await user.click(await screen.findByRole('button', { name: 'Expand' }));
+    await user.click(await screen.findByRole('button', { name: 'Expand' }));
+    expect(screen.getByRole('button', { name: 'Use 75% or higher' })).toBeInTheDocument();
+
+    await user.click(await screen.findByRole('button', { name: 'Associate CCRS-1.3 with Homework A' }));
+
+    expect(axiosMock.history.post).toHaveLength(0);
+    expect(screen.getByRole('button', { name: 'Use 75% or higher' })).toHaveFocus();
+    await user.click(screen.getByRole('button', { name: 'Use 75% or higher' }));
+    await user.click(screen.getByRole('button', { name: 'Associate CCRS-1.3 with Homework A' }));
+
+    await waitFor(() => expect(axiosMock.history.post).toHaveLength(1));
+    expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+      object_id: 'a-sub-1',
+      group_id: 10,
+      rule_type_override: 'grade',
+      rule_payload_override: { op: 'gte', value: 0.75, scale: 'percent' },
+    });
   });
 
   it('moves the focus when a second group header and then a second rule box are clicked', async () => {

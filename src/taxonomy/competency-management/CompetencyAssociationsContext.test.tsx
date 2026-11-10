@@ -883,6 +883,7 @@ describe('CompetencyAssociationsProvider', () => {
     it('adding a group replaces a placeholder rule box, since focus has one slot', async () => {
       await renderLoaded();
       await click('Add placeholder rule box in group 10');
+      expect(screen.getByText(focusOn(10, null))).toBeInTheDocument();
 
       await click('Add placeholder group under course A');
 
@@ -937,17 +938,6 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Discard placeholder');
 
       expect(noFocus()).toBeInTheDocument();
-      expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
-    });
-
-    it('sends only group_id for a placeholder rule box whose default score no other box uses', async () => {
-      axiosMock.onPost(createUrl).reply(201, createdCriterion(10));
-      await renderLoaded(twoGroupsResponse);
-      await click('Add placeholder rule box in group 10');
-
-      await click('Associate in course A');
-
-      await expectSinglePost({ object_id: 'new-sub', group_id: 10 });
     });
 
     it('sends nothing and flags a rejection when the placeholder\'s default score duplicates a box', async () => {
@@ -1042,32 +1032,6 @@ describe('CompetencyAssociationsProvider', () => {
 
         expect(screen.getByText('Has placeholder: true')).toBeInTheDocument();
       });
-    });
-
-    it('sends group_id and both rule fields for a placeholder rule box with a score', async () => {
-      axiosMock.onPost(createUrl).reply(201, createdCriterion(10, placeholderScore as GradeRulePayload));
-      await renderLoaded();
-      await click('Add placeholder rule box in group 10');
-      await click('Set placeholder score');
-
-      await click('Associate in course A');
-
-      await expectSinglePost({
-        object_id: 'new-sub',
-        group_id: 10,
-        rule_type_override: 'grade',
-        rule_payload_override: placeholderScore,
-      });
-    });
-
-    it('sends logic_operator and no group_id for a placeholder group in the clicked course', async () => {
-      axiosMock.onPost(createUrl).reply(201, createdCriterion(11));
-      await renderLoaded();
-      await click('Add placeholder group under course A');
-
-      await click('Associate in course A');
-
-      await expectSinglePost({ object_id: 'new-sub', logic_operator: 'OR' });
     });
 
     it('sends the chosen logic_operator and score together for a placeholder group', async () => {

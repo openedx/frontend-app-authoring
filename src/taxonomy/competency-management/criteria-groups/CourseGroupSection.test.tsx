@@ -9,6 +9,7 @@ import {
   waitFor,
 } from '@src/testUtils';
 import {
+  buildMockCompetencyAssociationsContextValue,
   courseA,
   courseOther,
   criterion,
@@ -19,6 +20,7 @@ import {
 } from '../__mocks__';
 import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
 import type { CourseCompetencyCriteriaGroup } from '../data/types';
+import { CompetencyAssociationsContext } from '../CompetencyAssociationsContext';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import CourseGroupSection from './CourseGroupSection';
 
@@ -288,9 +290,25 @@ describe('<CourseGroupSection />', () => {
     expect(addPlaceholderGroup).not.toHaveBeenCalled();
   });
 
+  it('renders nothing when the panel failed, even with a loaded group index', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const loaded = buildMockCompetencyAssociationsContextValue({ groupsIndex: index, canEditCourse: () => true });
+    render(
+      <CompetencyAssociationsContext.Provider value={{ ...loaded, status: 'error', error: new Error('boom') }}>
+        <CourseGroupSection courseGroup={courseGroup} />
+      </CompetencyAssociationsContext.Provider>,
+    );
+
+    await waitFor(() => {
+      expect(queryClient.getQueryState(courseOutlineQueryKeys.index(courseKey))?.status).toBe('success');
+    });
+    expect(screen.queryByRole('button', { name: 'Add Rule Group' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+  });
+
   it('hides "Add Rule Group" when the author cannot edit this course', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
-    renderSection();
+    renderSection({ canEditCourse: () => false });
 
     await screen.findByText('Demo Course');
     expect(screen.queryByRole('button', { name: 'Add Rule Group' })).not.toBeInTheDocument();
@@ -313,7 +331,7 @@ describe('<CourseGroupSection />', () => {
     expect(discardPlaceholder).toHaveBeenCalledTimes(1);
   });
 
-  it('does not discard a placeholder that belongs to another section when collapsing', async () => {
+  it('does not discard a placeholder whose parent group belongs to a different course section', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
     const discardPlaceholder = jest.fn();
     renderSection({
@@ -328,7 +346,7 @@ describe('<CourseGroupSection />', () => {
     expect(discardPlaceholder).not.toHaveBeenCalled();
   });
 
-  it('does not discard the placeholder again when the section is expanded', async () => {
+  it('discards once on collapse and not again on expand', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
     const discardPlaceholder = jest.fn();
     renderSection({ focus: { groupId: 10, ruleKey: null }, discardPlaceholder });

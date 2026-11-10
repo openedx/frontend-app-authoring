@@ -362,6 +362,7 @@ describe('<RuleBoxList />', () => {
       expect(container.querySelectorAll('.rule-box')).toHaveLength(1);
     });
 
+    // A placeholder has no saved criteria, so its score lives in context until content is picked.
     it('writes a score change to setPlaceholderRulePayload, not updateRuleScore', async () => {
       const user = userEvent.setup();
       const setPlaceholderRulePayload = jest.fn();

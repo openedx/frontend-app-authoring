@@ -358,7 +358,7 @@ describe('isRuleTakenInGroup / nextUnusedScore', () => {
     expect(isRuleTakenInGroup(ruleOf('gte', 75), [boxOf('gte', 75, 'other')])).toBe(false);
   });
 
-  it('ignores the box being edited, by key', () => {
+  it('does not count the box being edited as already using its own score', () => {
     const box = boxOf('gte', 75);
     expect(isRuleTakenInGroup(ruleOf('gte', 75), [box], box.key)).toBe(false);
   });
