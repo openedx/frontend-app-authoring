@@ -59,14 +59,11 @@ import {
 
 export type { CriteriaPlaceholder };
 
-/** The rule box or group the author is working in. A `ruleKey` is a rule box's key within its group.
- *
- * `ruleKey === null` focuses a placeholder rule box in the group, which is not saved yet.
- * `groupId === null` focuses a placeholder group, whose parent is `placeholder.parentRuleGroupId`.
- *
- * A non-null `ruleKey` that matches none of the group's rule boxes is re-resolved to the group's last box.
- * For a saved group with no criteria there is no last box, so the result is `ruleKey: null`, and the
- * group renders its placeholder rule box on purpose.
+/** The rule box or group the author is working in; `ruleKey` is a rule box's key within its group.
+ * `ruleKey === null` is an unsaved placeholder rule box in the group, and `groupId === null` is an unsaved
+ * placeholder group under `placeholder.parentRuleGroupId`. A non-null `ruleKey` that matches no box re-resolves
+ * to the group's last box, or to `null` for a saved group with no criteria, which then renders its placeholder
+ * rule box on purpose.
  */
 export interface CriteriaFocus {
   groupId: number | null;
@@ -80,9 +77,8 @@ export interface CompetencyAssociationsContextBase {
   error: Error | null;
   focus: CriteriaFocus | null;
   placeholder: CriteriaPlaceholder;
-  /** Whether a placeholder rule box or group exists, which disables both add controls.
-   * It is also true when a saved group with no criteria is focused, since that group
-   * renders its placeholder rule box on purpose.
+  /** Whether a placeholder rule box or group exists, which disables both add controls. Also true for a focused
+   * saved group with no criteria, which renders its placeholder rule box on purpose.
    */
   hasPlaceholder: boolean;
   /** Starts a placeholder rule box in a bottom-tier group, replacing any other placeholder. */
@@ -95,8 +91,8 @@ export interface CompetencyAssociationsContextBase {
    * The request is not sent.
    */
   placeholderDuplicateRejected: boolean;
-  /** How many rejections happened, so a repeat rejection while `placeholderDuplicateRejected` is already
-   * true is still observable. Resets only when the competency changes.
+  /** Counts rejections, so a repeat rejection while `placeholderDuplicateRejected` is already true is still
+   * observable. Resets only when the competency changes.
    */
   placeholderRejectionCount: number;
   /** Drops the placeholder by clearing `focus`. */

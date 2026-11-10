@@ -22,10 +22,10 @@ export interface CriteriaGroupBoxProps {
  * bracket, plus its rule boxes. The "By completing..." band focuses the
  * group; the rule boxes are its siblings, not descendants.
  *
- * A focused rule box scrolls itself into view. The group scrolls only when
- * the focus is on it and none of its rule boxes is focused. A saved group
- * with no criteria has no rule key to match, so its focus is a placeholder
- * rule box by design, and that box scrolls.
+ * A focused rule box scrolls itself into view; the group scrolls only when
+ * it is focused and none of its rule boxes is. A saved group with no criteria
+ * has no rule key to match, so it is focused as its placeholder rule box by
+ * design, and that box scrolls.
  */
 const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: CriteriaGroupBoxProps) => {
   const intl = useIntl();
@@ -51,7 +51,6 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
   const boxes = status === 'success' && groupId !== null
     ? ruleBoxesForGroup(groupId, groupsIndex, systemDefaultProfile)
     : [];
-  // `ruleKey === null` is a placeholder rule box, which `RuleBox` scrolls.
   const hasFocusedBox = isFocused && (focus.ruleKey === null || boxes.some((box) => box.key === focus.ruleKey));
 
   useEffect(() => {
