@@ -31,7 +31,8 @@ const RuleBoxList = ({
     systemDefaultProfile,
     setPlaceholderRulePayload,
   } = useCompetencyAssociations();
-  // The score field remounts on every score change; only "Add Rule" and the suggestion link may move focus.
+  // The placeholder remounts on every score change (see the key below), so its score field is focused only on
+  // first mount and right after the "Use {score}" link is clicked, which this state marks.
   const [focusAfterSuggestion, setFocusAfterSuggestion] = useState(false);
   useEffect(() => {
     if (focusAfterSuggestion) {

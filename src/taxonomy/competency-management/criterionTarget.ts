@@ -29,7 +29,7 @@ export function courseKeyOfFocus(
   return index.groupsById.get(courseGroupId)?.courseKey ?? undefined;
 }
 
-// ADR 0002: an override is complete or absent, so the pair is only sent for a score that differs from the default.
+// openedx-core ADR 0002: an override is complete or absent, so the pair is only sent for a score that differs from the default.
 function overrideFields(profile: CompetencyRuleProfile, rulePayload: GradeRulePayload | null): CreateCriterionFields {
   if (rulePayload === null || isSameRulePayload(rulePayload, profile.rulePayload)) {
     return {};
@@ -44,7 +44,7 @@ function fieldsForRealRuleBox(
   profile: CompetencyRuleProfile,
 ): CreateCriterionFields {
   const box = ruleBoxesForGroup(groupId, index, profile).find((candidate) => candidate.key === ruleKey);
-  // A stale key still targets the group, so the criterion lands there with the group's own default rule.
+  // A stale key still targets the group, so the criterion lands there with no override and follows the default profile.
   if (!box) {
     return { group_id: groupId };
   }

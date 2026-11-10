@@ -59,10 +59,14 @@ import {
 
 export type { CriteriaPlaceholder };
 
-/** A non-null `ruleKey` that matches none of the group's rule boxes is re-resolved to the group's last box.
+/** The rule box or group the author is working in. A `ruleKey` is a rule box's key within its group.
  *
- * `ruleKey === null` focuses a not-yet-saved placeholder rule box in the group, and `groupId === null`
- * a placeholder group, whose parent is `placeholder.parentRuleGroupId`. A single focus means a single placeholder.
+ * `ruleKey === null` focuses a placeholder rule box in the group, which is not saved yet.
+ * `groupId === null` focuses a placeholder group, whose parent is `placeholder.parentRuleGroupId`.
+ *
+ * A non-null `ruleKey` that matches none of the group's rule boxes is re-resolved to the group's last box.
+ * For a saved group with no criteria there is no last box, so the result is `ruleKey: null`, and the
+ * group renders its placeholder rule box on purpose.
  */
 export interface CriteriaFocus {
   groupId: number | null;
@@ -76,7 +80,10 @@ export interface CompetencyAssociationsContextBase {
   error: Error | null;
   focus: CriteriaFocus | null;
   placeholder: CriteriaPlaceholder;
-  /** Whether a placeholder rule box or group exists, which disables both add controls. */
+  /** Whether a placeholder rule box or group exists, which disables both add controls.
+   * It is also true when a saved group with no criteria is focused, since that group
+   * renders its placeholder rule box on purpose.
+   */
   hasPlaceholder: boolean;
   /** Starts a placeholder rule box in a bottom-tier group, replacing any other placeholder. */
   addPlaceholderRuleBox: (groupId: number) => void;
@@ -525,7 +532,7 @@ export const CompetencyAssociationsProvider = ({
       return;
     }
 
-    // Focus on another course falls back to that course's last group, whose rule box has no placeholder score.
+    // Focus in another course resolves to that course's last group, so the placeholder score does not apply there.
     const isFocusInCourse = courseKeyOfFocus(focus, placeholder, groupsIndex) === courseId;
     const target = isFocusInCourse
       ? focus
