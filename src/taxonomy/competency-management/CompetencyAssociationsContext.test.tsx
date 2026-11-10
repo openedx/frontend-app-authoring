@@ -973,6 +973,14 @@ describe('CompetencyAssociationsProvider', () => {
       expect(screen.getByText('Duplicate rejected: false')).toBeInTheDocument();
     });
 
+    it('drops the focus on a group missing from the loaded tree', async () => {
+      await renderLoaded();
+
+      await click('Focus group 999');
+
+      expect(noFocus()).toBeInTheDocument();
+    });
+
     it('counts each rejection, including a repeat while the flag is already set', async () => {
       await renderLoaded();
       await click('Add placeholder rule box in group 10');
@@ -1163,7 +1171,7 @@ describe('CompetencyAssociationsProvider', () => {
         axiosMock.onPost(createUrl).reply(201, createdCriterion(21, eqRule));
         renderProvider();
         await waitForSuccess();
-        await click('Focus group 999');
+        await click('Focus rule box 999 gte');
 
         await click('Associate in course B');
 
