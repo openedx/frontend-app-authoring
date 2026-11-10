@@ -123,6 +123,11 @@ export function isRuleTakenInGroup(rule: EffectiveRule, boxes: RuleBox[], exclud
   ));
 }
 
+/** Whether two grade payloads have the same operator, scale, and rounded percent. */
+export const isSameRulePayload = (a: GradeRulePayload, b: GradeRulePayload): boolean => (
+  a.op === b.op && a.scale === b.scale && percentOf(a) === percentOf(b)
+);
+
 const SUGGESTED_SCORE_STEP = 5;
 
 /** The nearest unused score in steps of 5, moving stricter: `gte` up, `lte`

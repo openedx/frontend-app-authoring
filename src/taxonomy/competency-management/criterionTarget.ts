@@ -4,7 +4,7 @@ import type {
   CreateCompetencyCriterionPayload,
   GradeRulePayload,
 } from './data/types';
-import { isRuleTakenInGroup, ruleBoxesForGroup } from './utils';
+import { isRuleTakenInGroup, isSameRulePayload, ruleBoxesForGroup } from './utils';
 import type { CompetencyCriteriaGroupsIndex } from './utils';
 
 export type CreateCriterionFields = Omit<CreateCompetencyCriterionPayload, 'object_id'>;
@@ -23,12 +23,15 @@ export function courseKeyOfFocus(
   const courseGroupId = focus.groupId === null
     ? placeholder.parentRuleGroupId
     : index.groupsById.get(focus.groupId)?.parentId;
-  return courseGroupId != null ? index.groupsById.get(courseGroupId)?.courseKey ?? undefined : undefined;
+  if (courseGroupId == null) {
+    return undefined;
+  }
+  return index.groupsById.get(courseGroupId)?.courseKey ?? undefined;
 }
 
-// ADR 0002: an override is complete or absent, so the pair is only sent once the author has set a score.
+// ADR 0002: an override is complete or absent, so the pair is only sent for a score that differs from the default.
 function overrideFields(profile: CompetencyRuleProfile, rulePayload: GradeRulePayload | null): CreateCriterionFields {
-  if (rulePayload === null) {
+  if (rulePayload === null || isSameRulePayload(rulePayload, profile.rulePayload)) {
     return {};
   }
   return { rule_type_override: profile.ruleType, rule_payload_override: rulePayload };

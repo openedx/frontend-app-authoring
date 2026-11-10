@@ -5,7 +5,7 @@ import type {
   CompetencyRuleProfile,
 } from './data/types';
 import { resolveCreateTarget, courseKeyOfFocus } from './criterionTarget';
-import { buildCompetencyCriteriaGroupsIndex, ruleBoxesForGroup } from './utils';
+import { buildCompetencyCriteriaGroupsIndex } from './utils';
 
 const C = 'course-v1:OrgX+CS101+2024';
 
@@ -56,8 +56,9 @@ const response: CompetencyCriteriaGroupsResponse = {
 const index = buildCompetencyCriteriaGroupsIndex(response);
 const untouched: CriteriaPlaceholder = { parentRuleGroupId: null, logicOperator: 'OR', rulePayload: null };
 const changed = { op: 'gte', value: 0.85, scale: 'percent' } as const;
-const defaultBoxKey = ruleBoxesForGroup(10, index, profile)[0].key;
-const defaultBoxPayload = ruleBoxesForGroup(10, index, profile)[0].rule.rulePayload;
+const defaultBoxKey = 'grade:gte:0.7:percent';
+const defaultBoxPayload = { op: 'gte', value: 0.7, scale: 'percent' } as const;
+const takenNonDefaultPayload = { op: 'lte', value: 0.5, scale: 'percent' } as const;
 
 describe('courseKeyOfFocus', () => {
   it('resolves a real group through its parent course group', () => {
@@ -80,6 +81,15 @@ describe('courseKeyOfFocus', () => {
 describe('resolveCreateTarget', () => {
   const placeholderGroupFocus = { groupId: null, ruleKey: null };
   const underCourse = { ...untouched, parentRuleGroupId: 1 };
+
+  it.each([
+    ['a placeholder rule box in another course', 'course-v1:Other+X+1', { groupId: 10, ruleKey: null }, untouched],
+    ['a placeholder group in another course', 'course-v1:Other+X+1', placeholderGroupFocus, underCourse],
+    ['a placeholder group without a parent', C, placeholderGroupFocus, untouched],
+  ])('creates in the default place for %s', (_name, courseId, focus, placeholder) => {
+    expect(resolveCreateTarget(courseId, focus, placeholder, index, profile))
+      .toEqual({ kind: 'create', fields: {} });
+  });
 
   it('creates in the default place without focus', () => {
     expect(resolveCreateTarget(C, null, untouched, index, profile)).toEqual({ kind: 'create', fields: {} });
@@ -109,22 +119,53 @@ describe('resolveCreateTarget', () => {
       .toEqual({ kind: 'duplicate' });
   });
 
-  it('ignores a placeholder rule box focused in another course', () => {
-    expect(resolveCreateTarget('course-v1:Other+X+1', { groupId: 10, ruleKey: null }, untouched, index, profile))
-      .toEqual({ kind: 'create', fields: {} });
-  });
-
   it('rejects a placeholder rule box whose chosen rule is taken', () => {
     expect(
       resolveCreateTarget(
         C,
-        { groupId: 10, ruleKey: null },
-        { ...untouched, rulePayload: defaultBoxPayload },
+        { groupId: 11, ruleKey: null },
+        { ...untouched, rulePayload: takenNonDefaultPayload },
         index,
         profile,
       ),
     )
       .toEqual({ kind: 'duplicate' });
+  });
+
+  it('rejects a placeholder rule box set back to a default rule that is taken', () => {
+    expect(
+      resolveCreateTarget(
+        C,
+        { groupId: 10, ruleKey: null },
+        { ...untouched, rulePayload: { ...defaultBoxPayload } },
+        index,
+        profile,
+      ),
+    )
+      .toEqual({ kind: 'duplicate' });
+  });
+
+  it('sends no override for a placeholder rule box set back to the default score', () => {
+    expect(
+      resolveCreateTarget(
+        C,
+        { groupId: 11, ruleKey: null },
+        { ...untouched, rulePayload: { ...defaultBoxPayload } },
+        index,
+        profile,
+      ),
+    )
+      .toEqual({ kind: 'create', fields: { group_id: 11 } });
+  });
+
+  it('sends no override for a placeholder group set back to the default score', () => {
+    expect(resolveCreateTarget(
+      C,
+      placeholderGroupFocus,
+      { ...underCourse, rulePayload: { ...defaultBoxPayload } },
+      index,
+      profile,
+    )).toEqual({ kind: 'create', fields: { logic_operator: 'OR' } });
   });
 
   it('sends the override pair for a changed placeholder rule box', () => {
@@ -158,16 +199,6 @@ describe('resolveCreateTarget', () => {
       kind: 'create',
       fields: { logic_operator: 'AND', rule_type_override: 'grade', rule_payload_override: changed },
     });
-  });
-
-  it('ignores a placeholder group from another course', () => {
-    expect(resolveCreateTarget('course-v1:Other+X+1', placeholderGroupFocus, underCourse, index, profile))
-      .toEqual({ kind: 'create', fields: {} });
-  });
-
-  it('ignores a placeholder group without a parent', () => {
-    expect(resolveCreateTarget(C, placeholderGroupFocus, untouched, index, profile))
-      .toEqual({ kind: 'create', fields: {} });
   });
 
   it('never rejects a placeholder group as a duplicate', () => {
