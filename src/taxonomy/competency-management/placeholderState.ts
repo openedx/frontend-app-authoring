@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import type { Dispatch } from 'react';
 
 import type { CompetencyGroupLogicOperator, GradeRulePayload } from './data/types';
-import type { ProviderState } from './CompetencyAssociationsContext';
+import type { ProviderAction, ProviderState } from './CompetencyAssociationsContext';
 
 /** The author's choices on the placeholder group or rule box. The rule payload is shared by both shapes, since only
  * one placeholder exists at a time.
@@ -54,7 +54,7 @@ export function reducePlaceholderAction(state: ProviderState, action: Placeholde
 }
 
 /** Actions that change what the author sees in the placeholder, so a rejection no longer applies. */
-export const PLACEHOLDER_REJECTION_CLEARING_ACTIONS: ReadonlySet<string> = new Set([
+export const PLACEHOLDER_REJECTION_CLEARING_ACTIONS: ReadonlySet<ProviderAction['type']> = new Set([
   'competencyChanged',
   'focusGroup',
   'focusRuleBox',
@@ -66,7 +66,15 @@ export const PLACEHOLDER_REJECTION_CLEARING_ACTIONS: ReadonlySet<string> = new S
   'createSucceeded',
 ]);
 
-export function usePlaceholderActions(dispatch: Dispatch<PlaceholderAction>) {
+export interface PlaceholderActions {
+  addPlaceholderRuleBox: (groupId: number) => void;
+  addPlaceholderGroup: (parentRuleGroupId: number) => void;
+  setPlaceholderLogicOperator: (logicOperator: CompetencyGroupLogicOperator) => void;
+  setPlaceholderRulePayload: (rulePayload: GradeRulePayload) => void;
+  discardPlaceholder: () => void;
+}
+
+export function usePlaceholderActions(dispatch: Dispatch<PlaceholderAction>): PlaceholderActions {
   const addPlaceholderRuleBox = useCallback((groupId: number) => {
     dispatch({ type: 'addPlaceholderRuleBox', groupId });
   }, [dispatch]);

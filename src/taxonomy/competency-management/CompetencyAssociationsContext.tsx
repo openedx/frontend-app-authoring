@@ -241,7 +241,7 @@ export interface ProviderState {
   settled: boolean;
 }
 
-type ProviderAction =
+export type ProviderAction =
   | { type: 'competencyChanged'; tagId: number; }
   | { type: 'focusGroup'; groupId: number; ruleKey: string | null; }
   | { type: 'focusRuleBox'; groupId: number; ruleKey: string; }
