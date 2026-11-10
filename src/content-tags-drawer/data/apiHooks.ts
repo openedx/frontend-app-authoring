@@ -44,7 +44,7 @@ export const contentTagsQueryKeys = {
     'contentData',
     contentId,
   ],
-  contentTagsCount: (contentPattern: string) => [
+  contentTagsCount: (contentPattern?: string) => [
     ...contentTagsQueryKeys.all,
     'contentTagsCount',
     contentPattern,
