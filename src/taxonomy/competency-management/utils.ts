@@ -109,6 +109,11 @@ export function ruleBoxesForGroup(
 
 const percentOf = (rulePayload: GradeRulePayload): number => Math.round(rulePayload.value * 100);
 
+/** Whether two grade payloads have the same operator, scale, and rounded percent. */
+export const isSameRulePayload = (a: GradeRulePayload, b: GradeRulePayload): boolean => (
+  a.op === b.op && a.scale === b.scale && percentOf(a) === percentOf(b)
+);
+
 /** Whether a rule box with the same rule type, operator, and rounded percent
  * already exists. Compares percents rather than `ruleKeyOf`'s raw-fraction
  * key, which could differ by formatting alone. `excludeKey` skips the box
@@ -118,15 +123,9 @@ export function isRuleTakenInGroup(rule: EffectiveRule, boxes: RuleBox[], exclud
   return boxes.some((box) => (
     box.key !== excludeKey
     && box.rule.ruleType === rule.ruleType
-    && box.rule.rulePayload.op === rule.rulePayload.op
-    && percentOf(box.rule.rulePayload) === percentOf(rule.rulePayload)
+    && isSameRulePayload(box.rule.rulePayload, rule.rulePayload)
   ));
 }
-
-/** Whether two grade payloads have the same operator, scale, and rounded percent. */
-export const isSameRulePayload = (a: GradeRulePayload, b: GradeRulePayload): boolean => (
-  a.op === b.op && a.scale === b.scale && percentOf(a) === percentOf(b)
-);
 
 const SUGGESTED_SCORE_STEP = 5;
 
