@@ -1,80 +1,37 @@
-import React from 'react';
 import { Button, Form, Image } from '@openedx/paragon';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import BaseModal from '@src/editors/sharedComponents/BaseModal';
-import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import type { ImageData } from '@src/editors/containers/FlashcardsEditor/types';
-import './FlashcardsImageSettingsModal.scss';
-
-/**
- * Alt-text state for one image. Mounted fresh per image (the parent keys this
- * component), so it starts from that image and needs no re-sync on open. The
- * image editors' shared alt-text hook reads Formik context, which this editor
- * does not use.
- *
- * There is no "decorative" option: the block shows learners the card's text
- * as the alt of an image that has none, so an empty alt never reaches them.
- */
-const useAltText = (savedText: string) => {
-  const [value, setValue] = React.useState(savedText);
-  const [showError, setShowError] = React.useState(false);
-
-  return {
-    value,
-    setValue: (next: string) => {
-      setValue(next);
-      if (next) { setShowError(false); }
-    },
-    error: {
-      show: showError,
-      set: () => setShowError(true),
-      dismiss: () => setShowError(false),
-    },
-  };
-};
+import { ImageData } from '@src/editors/containers/FlashcardsEditor/types';
+import { useState } from 'react';
 
 interface Props {
-  /** The image being edited. The modal is open for as long as it is mounted. */
   imageData: ImageData;
-  /** Close without saving (Cancel, the close icon). */
-  close: () => void;
-  /** Save callback, given the updated alt text. The parent closes the modal. */
-  onSave: (result: { altText: string; }) => void;
-  /** Blocks Save while the editor itself is saving, so a change cannot be lost. */
-  isSaveDisabled: boolean;
+  onCancel: () => void;
+  onSave: (altText: string) => void;
 }
 
 /**
  * Simplified image settings modal for editor flashcards
- * Only includes alt-text controls, excludes width/height dimensions
+ * Only includes alt text controls, excludes width/height dimensions
+ *
+ * NOTE: alt text is optional here, because the image alt text defaults to the term or definition text.
  */
-const FlashcardsImageSettingsModal = ({
-  close,
+export const FlashcardsImageSettingsModal = ({
+  onCancel,
   imageData,
   onSave,
-  isSaveDisabled,
 }: Props) => {
   const intl = useIntl();
-  const altText = useAltText(imageData.altText || '');
-
-  const handleSave = () => {
-    if (!altText.value?.trim()) {
-      altText.error.set();
-      return;
-    }
-
-    onSave({ altText: altText.value });
-  };
+  const [altText, setAltText] = useState(imageData.altText);
 
   return (
     <BaseModal
-      close={close}
+      close={onCancel}
       confirmAction={
         <Button
           variant="primary"
-          onClick={handleSave}
-          disabled={isSaveDisabled}
+          onClick={() => onSave(altText)}
         >
           <FormattedMessage {...messages.saveButtonLabel} />
         </Button>
@@ -82,29 +39,20 @@ const FlashcardsImageSettingsModal = ({
       isOpen
       title={intl.formatMessage(messages.imageSettingsTitle)}
     >
-      <ErrorAlert
-        dismissError={altText.error.dismiss}
-        hideHeading
-        isError={altText.error.show}
-      >
-        <FormattedMessage {...messages.altTextError} />
-      </ErrorAlert>
-      <div className="d-flex flex-row m-2 flashcards-img-settings-container">
-        <div className="flashcards-img-thumbnail-container">
+      <div className="d-flex flex-row m-2">
+        <div className="d-flex align-items-center justify-content-center" style={{ width: '250px' }}>
           <Image
-            className="flashcards-img-thumbnail"
+            style={{ maxWidth: '250px', maxHeight: '250px', objectFit: 'contain' }}
             src={imageData.url}
-            alt={imageData.altText || ''}
           />
         </div>
-        <div className="flashcards-img-settings-controls ml-3">
+        <div className="flex-grow-1 ml-3" style={{ minWidth: '375px' }}>
           <Form.Group>
             <Form.Control
               floatingLabel={intl.formatMessage(messages.altTextLabel)}
-              isInvalid={altText.error.show}
-              onChange={(e) => altText.setValue(e.target.value)}
+              onChange={(e) => setAltText(e.target.value)}
               type="input"
-              value={altText.value}
+              value={altText}
             />
           </Form.Group>
         </div>
@@ -112,5 +60,3 @@ const FlashcardsImageSettingsModal = ({
     </BaseModal>
   );
 };
-
-export default FlashcardsImageSettingsModal;

@@ -2,20 +2,14 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import Button from '@src/editors/sharedComponents/Button';
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import type { FlashcardsSettings } from '@src/editors/containers/FlashcardsEditor/types';
 import { Card } from '@openedx/paragon';
+import { useFormikContext } from 'formik';
+import { FlashcardsState } from '../types';
 
-interface SettingsSidebarProps {
-  settings: FlashcardsSettings;
-  setShuffleStatus: (value: boolean) => void;
-}
-
-/** The flashcard game's settings. */
-const SettingsSidebar = ({
-  settings,
-  setShuffleStatus,
-}: SettingsSidebarProps) => {
+const SettingsSidebar = () => {
   const intl = useIntl();
+  const { values, setValues } = useFormikContext<FlashcardsState>();
+
   return (
     <div className="w-25">
       <div className="text-primary-500 font-weight-bold mb-3">
@@ -30,15 +24,15 @@ const SettingsSidebar = ({
             <div className="pb-3 mb-2 text-gray-600">{intl.formatMessage(messages.shuffleSettingsDescription)}</div>
             <div className="d-flex flex-row gap-0 w-100">
               <Button
-                onClick={() => setShuffleStatus(false)}
-                variant={!settings.shuffle ? 'primary' : 'outline-primary'}
+                onClick={() => setValues({ ...values, isShuffled: false })}
+                variant={!values.isShuffled ? 'primary' : 'outline-primary'}
                 className="flex-grow-1 rounded-0"
               >
                 {intl.formatMessage(messages.offLabel)}
               </Button>
               <Button
-                onClick={() => setShuffleStatus(true)}
-                variant={settings.shuffle ? 'primary' : 'outline-primary'}
+                onClick={() => setValues({ ...values, isShuffled: true })}
+                variant={values.isShuffled ? 'primary' : 'outline-primary'}
                 className="flex-grow-1 rounded-0"
               >
                 {intl.formatMessage(messages.onLabel)}

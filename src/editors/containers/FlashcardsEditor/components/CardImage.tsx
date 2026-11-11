@@ -2,16 +2,13 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Icon, IconButton, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 
-import messages from '@src/editors/containers/GamesEditor/messages';
-import type { ImageType } from '@src/editors/containers/GamesEditor/types';
+import messages from '@src/editors/containers/FlashcardsEditor/messages';
 
 interface CardImageProps {
   url: string;
   altText: string;
   index: number;
-  imageType: ImageType;
-  /** Locks the settings trigger while a save is out. */
-  isSaving: boolean;
+  imageType: 'term' | 'definition';
   onOpenSettings: () => void;
   onRemove: () => void;
 }
@@ -22,15 +19,11 @@ export const CardImage = ({
   altText,
   index,
   imageType,
-  isSaving,
   onOpenSettings,
   onRemove,
 }: CardImageProps) => {
   const intl = useIntl();
-  const openSettings = () => {
-    if (isSaving) { return; }
-    onOpenSettings();
-  };
+
   return (
     <div className="d-flex align-items-center justify-content-center align-self-stretch px-4 pb-2">
       <OverlayTrigger
@@ -47,11 +40,7 @@ export const CardImage = ({
           // Named here, not by the image inside: a decorative image has an
           // empty alt, which would leave this button with no name.
           aria-label={intl.formatMessage(messages.imageSettingsTooltip)}
-          // Outside the disabled fieldset, so locked by hand: an alt-text
-          // change made while a save is out is not in that save's payload.
-          // `aria-disabled` rather than `disabled` keeps it in the tab order.
-          aria-disabled={isSaving}
-          onClick={openSettings}
+          onClick={onOpenSettings}
         >
           <img
             style={{ maxHeight: '200px' }}

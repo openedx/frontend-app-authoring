@@ -1,377 +1,125 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Alert,
-  Button as PgnButton,
-  Icon,
-  OverlayTrigger,
-  Spinner,
-  Tooltip,
-} from '@openedx/paragon';
-import { Info, InfoOutline, Plus } from '@openedx/paragon/icons';
-
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { Button, Icon, OverlayTrigger, Spinner, Tooltip } from '@openedx/paragon';
+import { EditorComponent } from '@src/editors/EditorComponent';
 import EditorContainer from '@src/editors/containers/EditorContainer';
-import Button from '@src/editors/sharedComponents/Button';
+import { FieldArray, useFormikContext } from 'formik';
+import { isEqual } from 'lodash';
+import { PropsWithChildren, useContext, useEffect, useRef, useState } from 'react';
+import { FlashcardsEditorContext } from '../context';
+import messages from '../messages';
+import { emptyCard, FlashcardsState, ImageData } from '../types';
+import { InfoOutline, Plus } from '@openedx/paragon/icons';
 import DraggableList from '@src/generic/DraggableList';
-import type { FlashcardsActions } from '@src/editors/containers/FlashcardsEditor/data/useFlashcardsState';
-import {
-  cardKeyOf,
-  fieldKey,
-  getContent,
-  imageDisplayUrl,
-  type TextField,
-  validateCards,
-  type ValidationErrors,
-} from '@src/editors/containers/FlashcardsEditor/flashcardsContent';
-import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import type {
-  BlockEditorProps,
-  Card,
-  FlashcardsSettings,
-  ImageData,
-  ImageType,
-  RequestError,
-} from '@src/editors/containers/FlashcardsEditor/types';
 import FlashcardsCard from './FlashcardsCard';
-import FlashcardsImageSettingsModal from './FlashcardsImageSettingsModal';
 import SettingsSidebar from './SettingsSidebar';
+import { FlashcardsImageSettingsModal } from './FlashcardsImageSettingsModal';
 
-/** Which image the settings modal is editing. */
-type ImageSettingsTarget = { imageData: ImageData; cardIndex: number; imageType: ImageType; };
-
-// The card and setting actions come straight from useFlashcardsState, so reuse its
-// contract. `getLatestState`, `waitForPendingRequests` and `save` are consumed
-// by the block wrapper (FlashcardsEditorForBlock), not by the view.
-type ViewActions = Omit<
-  FlashcardsActions,
-  'getLatestState' | 'waitForPendingRequests' | 'save' | 'reload' | 'clearError'
->;
-
-export interface FlashcardsEditorProps extends ViewActions {
-  onClose: (() => void) | null;
-  onSave: () => Promise<unknown>;
-  returnFunction?: BlockEditorProps['returnFunction'];
-  blockFinished: boolean;
-  /** The block's Studio, which its relative image URLs are shown from. */
-  studioEndpointUrl: string;
-  settings: FlashcardsSettings;
-  list: Card[];
-  isDirty: () => boolean;
-  error: RequestError | null;
-  loadFailed: boolean;
-  reload: () => void;
-  clearError: () => void;
-}
-
-/**
- * The Flashcards editor itself: the card list, the settings sidebar and the alerts,
- * inside the shared EditorContainer. Holds only view state (validation
- * messages, the open image settings, whether a save is out); the game content
- * comes in through props.
- */
-const FlashcardsEditor = ({
-  onClose,
-  onSave,
-  returnFunction = null,
-  blockFinished,
-  studioEndpointUrl,
-
-  settings,
-  setShuffleStatus,
-
-  list,
-  updateTerm,
-  updateDefinition,
-  updateTermImageAlt,
-  updateDefinitionImageAlt,
-  toggleOpen,
-  setList,
-  addCard,
-  removeCard,
-
-  uploadFlashcardsImage,
-  deleteFlashcardsImage,
-
-  isDirty,
-  error,
-  loadFailed,
-  reload,
-  clearError,
-}: FlashcardsEditorProps) => {
+const EditorWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const intl = useIntl();
-  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
-  const [isAlertVisible, setIsAlertVisible] = useState(true);
-  // True from the Save click until the save has settled. The form is disabled
-  // meanwhile: the response closes the editor, so anything typed during the
-  // wait would be lost without a word.
-  const [isSaving, setIsSaving] = useState(false);
-  // Which image the settings modal is editing; null while it is closed.
-  const [imageSettings, setImageSettings] = useState<ImageSettingsTarget | null>(null);
-  const closeImageSettings = useCallback(() => setImageSettings(null), []);
-
-  // Writes one text field of a card straight into the game state and clears
-  // that field's validation error, so the message goes away as the author types.
-  const handleInputChange = useCallback((index: number, field: TextField, value: string) => {
-    if (field === 'term') {
-      updateTerm({ index, term: value });
-    } else {
-      updateDefinition({ index, definition: value });
-    }
-    const card = list[index];
-    if (!card) { return; }
-    const key = fieldKey(card.card_key, field);
-    setValidationErrors((prev) => {
-      if (!prev[key]) { return prev; }
-      const next = { ...prev };
-      delete next[key];
-      return next;
-    });
-  }, [list, updateTerm, updateDefinition]);
-
-  // Validates the cards as they are in the game state, which is what the
-  // author sees: there is no unsaved text outside it.
-  const validateAllCards = useCallback(() => {
-    const { errors, isValid } = validateCards({ list });
-    setValidationErrors(errors);
-    return isValid;
-  }, [list]);
-
-  // Show alert when new validation errors appear
-  useEffect(() => {
-    if (Object.keys(validationErrors).length > 0) {
-      setIsAlertVisible(true);
-    }
-  }, [validationErrors]);
-
-  const cardsWithErrors = useMemo(() => new Set(Object.keys(validationErrors).map(cardKeyOf)), [validationErrors]);
-
-  // Opens every card that has an error, so the author can see the message.
-  useEffect(() => {
-    list.forEach((card, index) => {
-      if (cardsWithErrors.has(card.card_key) && !card.editorOpen) {
-        toggleOpen({ index, isOpen: true });
-      }
-    });
-  }, [cardsWithErrors, list, toggleOpen]);
-
-  // The save revalidates after waiting on image requests, by which point this
-  // component's own check (validateEntry, run at the click) is out of date.
-  // Show what it found the same way.
-  const handleSave = useCallback(() => {
-    setIsSaving(true);
-    return onSave()
-      .catch((saveError) => {
-        if (saveError?.validationErrors) {
-          setValidationErrors(saveError.validationErrors);
-        }
-        throw saveError;
-      })
-      .finally(() => setIsSaving(false));
-  }, [onSave]);
-
-  const moveCard = useCallback((from: number, to: number) => {
-    if (to < 0 || to >= list.length) { return; }
-    const next = list.slice();
-    [next[from], next[to]] = [next[to], next[from]];
-    setList(next);
-  }, [list, setList]);
-
-  // DraggableList keeps its own mirror through `setState` and reports the final
-  // order through `updateOrder`. Here both are the same store, so the mirror
-  // setter is the persist and `updateOrder` has nothing left to do.
-  // The 'id' adding/removing is because DraggableList expects an 'id' field, but cards have a 'card_key' field.
-  const applyListUpdate: React.Dispatch<React.SetStateAction<(Card & { id: string; })[]>> = useCallback((next) => {
-    setList(
-      typeof next === 'function' ? next(list.map(card => ({ id: card.card_key, ...card }))) : next.map(card => {
-        const { id, ...updatedCard } = card;
-        return updatedCard;
-      }),
+  const { isPending, fetchError } = useContext(FlashcardsEditorContext);
+  if (fetchError) {
+    return (
+      <div className="text-center p-6">
+        <FormattedMessage {...messages.loadErrorHeading} />
+      </div>
     );
-  }, [list, setList]);
+  }
+  if (isPending) {
+    return (
+      <div className="text-center p-6">
+        <Spinner
+          animation="border"
+          className="m-3"
+          screenReaderText={intl.formatMessage(messages.loadingSpinner)}
+        />
+      </div>
+    );
+  }
+  return <>{children}</>; /* eslint-disable-line react/jsx-no-useless-fragment */
+};
 
-  const openImageSettings = useCallback((card: Card, index: number, imageType: ImageType) => {
-    setImageSettings({
-      imageData: {
-        url: imageDisplayUrl(card[`${imageType}_image`], studioEndpointUrl),
-        altText: card[`${imageType}_image_alt`] || '',
-      },
-      cardIndex: index,
-      imageType,
-    });
-  }, [studioEndpointUrl]);
+export const FlashcardsEditorComponent: React.FC<EditorComponent> = (props) => {
+  const intl = useIntl();
+  const { fields } = useContext(FlashcardsEditorContext);
+  const originalState = useRef({ ...fields });
+  const { values, setValues, setFieldValue } = useFormikContext<FlashcardsState>();
 
-  const handleImageSettingsSave = useCallback(({ altText }: { altText: string; }) => {
-    // A modal that was already open when Save was clicked must not write
-    // into a save that has already gone out.
-    if (isSaving || !imageSettings) { return; }
-    const { cardIndex, imageType } = imageSettings;
-    if (imageType === 'term') {
-      updateTermImageAlt({ index: cardIndex, termImageAlt: altText });
-    } else {
-      updateDefinitionImageAlt({ index: cardIndex, definitionImageAlt: altText });
-    }
-    closeImageSettings();
-  }, [imageSettings, updateTermImageAlt, updateDefinitionImageAlt, isSaving, closeImageSettings]);
+  useEffect(() => {
+    // Form is initialized before we get these values, so we have to set them
+    // when they arrive.
+    void setValues(fields); // eslint-disable-line no-void
+  }, [fields]);
 
-  const loadError = (
-    <Alert
-      variant="danger"
-      icon={Info}
-      actions={[
-        <PgnButton key="retry" variant="outline-primary" onClick={reload}>
-          {intl.formatMessage(messages.retryButton)}
-        </PgnButton>,
-      ]}
-    >
-      <Alert.Heading>
-        {intl.formatMessage(messages.loadErrorHeading)}
-      </Alert.Heading>
-      {error?.message && <p className="mb-0">{error.message}</p>}
-    </Alert>
-  );
+  const isDirty = () => isEqual(originalState, values);
 
-  const loading = loadFailed ? loadError : (
-    <div className="text-center p-6">
-      <Spinner
-        animation="border"
-        className="m-3"
-        screenReaderText={intl.formatMessage(messages.loadingSpinner)}
-      />
-    </div>
-  );
+  const getContent = () => {
+    const settings = { ...values };
+    // TODO: strip out empty cards
+    return settings;
+  };
+
+  const [imageSettings, setImageSettings] = useState<ImageData | null>(null);
 
   return (
-    <EditorContainer
-      getContent={() => getContent({ settings, list })}
-      onClose={onClose}
-      // For the container's cancel and discard flows; the save path honours
-      // it itself.
-      returnFunction={returnFunction}
-      // Saves through the block's own handler. Without this the shared
-      // saveBlock thunk takes over, and its payload builder drops the
-      // *_image_path storage keys, losing the link from a card to its file.
-      onSave={handleSave}
-      isDirty={isDirty}
-      // Until the block's settings have loaded the list is a placeholder blank
-      // card, which validates clean and would overwrite the real content.
-      validateEntry={() => blockFinished && validateAllCards()}
-    >
-      <div className="xblock-flashcards-editor">
+    <EditorContainer {...props} isDirty={isDirty} getContent={getContent}>
+      <EditorWrapper>
         <div className="h-75 overflow-auto">
-          {Object.keys(validationErrors).length > 0 && isAlertVisible && (
-            <Alert
-              variant="danger"
-              className="mt-2"
-              icon={Info}
-              dismissible
-              onClose={() => setIsAlertVisible(false)}
-            >
-              <Alert.Heading>
-                {intl.formatMessage(messages.validationErrorHeading)}
-              </Alert.Heading>
-              <p>{intl.formatMessage(messages.validationErrorAlert)}</p>
-            </Alert>
-          )}
-          {error && !loadFailed && (
-            <Alert
-              variant="danger"
-              className="mt-2"
-              icon={Info}
-              dismissible
-              onClose={clearError}
-            >
-              <Alert.Heading>
-                {intl.formatMessage(
-                  error.code === 'saveFailed' ? messages.saveErrorHeading : messages.requestErrorHeading,
-                )}
-              </Alert.Heading>
-              {error.message && <p className="mb-0">{error.message}</p>}
-            </Alert>
-          )}
-          {!blockFinished ? loading : (
-            // A disabled fieldset disables every control inside it.
-            <fieldset disabled={isSaving}>
-              <div className="d-flex w-100 py-2">
-                <div className="flex-grow-1 mr-3">
-                  <div className="w-100 mb-3 d-flex align-items-center">
-                    <div className="text-primary-500 font-weight-bold mr-1">
-                      {intl.formatMessage(messages.descriptionHeaderFlashcard)}
-                    </div>
-                    <OverlayTrigger
-                      placement="bottom"
-                      overlay={
-                        <Tooltip id="description-tooltip">
-                          {intl.formatMessage(messages.descriptionFlashcard)}
-                        </Tooltip>
-                      }
-                    >
-                      <Icon src={InfoOutline} />
-                    </OverlayTrigger>
-                  </div>
-                  <DraggableList
-                    itemList={list.map((card) => ({ id: card.card_key, ...card }))}
-                    setState={applyListUpdate}
-                    updateOrder={() => () => undefined}
-                  >
-                    {list.map((card, index) => (
-                      <FlashcardsCard
-                        key={card.card_key}
-                        card={card}
-                        index={index}
-                        studioEndpointUrl={studioEndpointUrl}
-                        errors={{
-                          term: validationErrors[fieldKey(card.card_key, 'term')],
-                          definition: validationErrors[fieldKey(card.card_key, 'definition')],
-                        }}
-                        isSaving={isSaving}
-                        onToggle={(isOpen) => toggleOpen({ index, isOpen })}
-                        onChange={(field, value) => handleInputChange(index, field, value)}
-                        onMoveUp={() => moveCard(index, index - 1)}
-                        onMoveDown={() => moveCard(index, index + 1)}
-                        onDelete={() => removeCard({ index })}
-                        // Fire and forget: the hook tracks the request and reports its failure.
-                        onImagePicked={(imageType, file) => {
-                          void uploadFlashcardsImage({ cardKey: card.card_key, imageFile: file, imageType });
-                        }}
-                        onImageRemoved={(imageType) => deleteFlashcardsImage({ cardKey: card.card_key, imageType })}
-                        onOpenImageSettings={(imageType) => openImageSettings(card, index, imageType)}
-                      />
-                    ))}
-                  </DraggableList>
-                  <Button
-                    className="text-primary-500 pl-3"
-                    onClick={() => addCard()}
-                    iconBefore={Plus}
-                    variant="tertiary"
-                  >
-                    {intl.formatMessage(messages.addLabel)}
-                  </Button>
+          <div className="d-flex w-100 py-2">
+            <div className="flex-grow-1 mr-3">
+              <div className="w-100 mb-3 d-flex align-items-center">
+                <div className="text-primary-500 font-weight-bold mr-1">
+                  {intl.formatMessage(messages.descriptionHeaderFlashcard)}
                 </div>
-                <SettingsSidebar
-                  settings={settings}
-                  setShuffleStatus={setShuffleStatus}
-                />
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={
+                    <Tooltip id="description-tooltip">
+                      {intl.formatMessage(messages.descriptionFlashcard)}
+                    </Tooltip>
+                  }
+                >
+                  <Icon src={InfoOutline} />
+                </OverlayTrigger>
               </div>
-            </fieldset>
-          )}
+              <FieldArray name="cards">
+                {(arrayHelpers) => (
+                  <>
+                    <DraggableList
+                      itemList={fields.cards.map((card) => ({ id: card.cardKey, ...card }))}
+                      setState={() => {/* TODO */}}
+                      updateOrder={() => () => undefined}
+                    >
+                      {fields.cards.map((card, index) => (
+                        <FlashcardsCard
+                          key={card.cardKey}
+                          index={index}
+                        />
+                      ))}
+                    </DraggableList>
+                    <Button
+                      className="text-primary-500 pl-3"
+                      onClick={() => arrayHelpers.push(emptyCard())}
+                      iconBefore={Plus}
+                      variant="tertiary"
+                    >
+                      {intl.formatMessage(messages.addLabel)}
+                    </Button>
+                  </>
+                )}
+              </FieldArray>
+            </div>
+            <SettingsSidebar />
+          </div>
         </div>
-      </div>
-      {imageSettings && (
-        <FlashcardsImageSettingsModal
-          key={`${imageSettings.cardIndex}-${imageSettings.imageType}-${imageSettings.imageData.url}`}
-          imageData={imageSettings.imageData}
-          close={closeImageSettings}
-          onSave={handleImageSettingsSave}
-          isSaveDisabled={isSaving}
-        />
-      )}
+        {imageSettings !== null && (
+          <FlashcardsImageSettingsModal
+            imageData={imageSettings}
+            onCancel={() => setImageSettings(null)}
+            onSave={(altText) =>
+              setFieldValue(`cards.${imageSettings.index}.${imageSettings.cardSide}ImageAlt`, altText)}
+          />
+        )}
+      </EditorWrapper>
     </EditorContainer>
   );
 };
-
-export default FlashcardsEditor;

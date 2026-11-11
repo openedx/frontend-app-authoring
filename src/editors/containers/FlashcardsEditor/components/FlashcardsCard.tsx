@@ -4,92 +4,66 @@ import { Collapsible, Dropdown, Icon, IconButton } from '@openedx/paragon';
 import { ExpandLess, ExpandMore, MoreHoriz } from '@openedx/paragon/icons';
 
 import { SortableItem } from '@src/generic/DraggableList';
-import {
-  type FieldError,
-  imageAlt,
-  imageDisplayUrl,
-  type TextField,
-} from '@src/editors/containers/FlashcardsEditor/flashcardsContent';
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import type { Card, ImageType } from '@src/editors/containers/FlashcardsEditor/types';
+import type { CardSide, FlashcardsState } from '@src/editors/containers/FlashcardsEditor/types';
 import CardField from './CardField';
 import { CardImage } from './CardImage';
 import CardPreview from './CardPreview';
+import { useFormikContext } from 'formik';
+import { imageDisplayUrl } from '../utils';
 
 const acceptedImages = 'image/png, image/jpeg, image/gif, image/webp';
 
 interface FlashcardsCardProps {
-  card: Card;
   index: number;
-  /** The block's Studio, which its relative image URLs are shown from. */
-  studioEndpointUrl: string;
-  errors: Partial<Record<TextField, FieldError>>;
-  /** Locks the image settings trigger, which sits outside the disabled fieldset's reach. */
-  isSaving: boolean;
-  onToggle: (isOpen: boolean) => void;
-  onChange: (field: TextField, value: string) => void;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
-  onDelete: () => void;
-  onImagePicked: (imageType: ImageType, file: File) => void;
-  onImageRemoved: (imageType: ImageType) => void;
-  onOpenImageSettings: (imageType: ImageType) => void;
 }
 
 /** One card of the game: a collapsible, draggable term and definition pair. */
 const FlashcardsCard = ({
-  card,
   index,
-  studioEndpointUrl,
-  errors,
-  isSaving,
-  onToggle,
-  onChange,
-  onMoveUp,
-  onMoveDown,
-  onDelete,
-  onImagePicked,
-  onImageRemoved,
-  onOpenImageSettings,
 }: FlashcardsCardProps) => {
   const intl = useIntl();
+  const { values, setFieldValue } = useFormikContext<FlashcardsState>();
+  const card = values.cards[index];
+  // values could be empty while the state is being fetched(?)
+  if (card == undefined) { return null; }
   const fileInputs = {
     term: useRef<HTMLInputElement>(null),
     definition: useRef<HTMLInputElement>(null),
   };
-  const handlePick = (imageType: ImageType) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePick = (_cardSide: CardSide) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.currentTarget;
     const file = input.files?.[0];
     // Clear the selection now: a browser fires no `change` for re-choosing the
     // same file, so a failed upload could otherwise not be retried with it.
     // The File object is independent of the selection and stays usable.
     input.value = '';
-    if (file) { onImagePicked(imageType, file); }
+    if (file) {
+      // onImagePicked(_cardSide, file);
+    }
   };
 
-  const handleRemove = (imageType: ImageType) => {
-    const input = fileInputs[imageType].current;
+  const handleRemove = (cardSide: CardSide) => {
+    const input = fileInputs[cardSide].current;
     if (input) { input.value = ''; }
-    onImageRemoved(imageType);
+    // onImageRemoved(imageType);
   };
 
-  const field = (name: TextField) => {
+  const field = (name: CardSide) => {
     const imageUrl = card[`${name}_image`];
     return (
       <CardField
         field={name}
         index={index}
         value={card[name]}
-        error={errors[name]}
-        onChange={(value) => onChange(name, value)}
+        onChange={(value) => setFieldValue(`cards.${index}.${name}`, value)}
         image={imageUrl !== '' && (
           <CardImage
-            url={imageDisplayUrl(imageUrl, studioEndpointUrl)}
-            altText={imageAlt(card[`${name}_image_alt`], card[name])}
+            url={imageDisplayUrl(imageUrl)}
+            altText={card[`${name}_image_alt`] || card[name]}
             index={index}
             imageType={name}
-            isSaving={isSaving}
-            onOpenSettings={() => onOpenImageSettings(name)}
+            onOpenSettings={() => {/* TODO */}}
             onRemove={() => handleRemove(name)}
           />
         )}
@@ -98,9 +72,13 @@ const FlashcardsCard = ({
     );
   };
 
+  const onToggle = (value: boolean) => {
+    void setFieldValue(`cards.${index}.editorOpen`, value);
+  };
+
   return (
     <SortableItem
-      id={card.card_key}
+      id={card.cardKey}
       actions={null}
       actionStyle={{
         position: 'absolute',
@@ -146,7 +124,7 @@ const FlashcardsCard = ({
                 {index + 1}
               </div>
               {!card.editorOpen
-                ? <CardPreview card={card} studioEndpointUrl={studioEndpointUrl} />
+                ? <CardPreview card={card} />
                 : <div className="d-flex align-self-stretch flex-grow-1" />}
             </div>
           </Collapsible.Trigger>
@@ -161,14 +139,14 @@ const FlashcardsCard = ({
               variant="primary"
             />
             <Dropdown.Menu align="right">
-              <Dropdown.Item onClick={onMoveUp}>
+              <Dropdown.Item onClick={() => {/* TODO */}}>
                 {intl.formatMessage(messages.moveUpLabel)}
               </Dropdown.Item>
-              <Dropdown.Item onClick={onMoveDown}>
+              <Dropdown.Item onClick={() => {/* TODO */}}>
                 {intl.formatMessage(messages.moveDownLabel)}
               </Dropdown.Item>
               <Dropdown.Divider />
-              <Dropdown.Item onClick={onDelete}>
+              <Dropdown.Item onClick={() => {/* TODO */}}>
                 {intl.formatMessage(messages.deleteLabel)}
               </Dropdown.Item>
             </Dropdown.Menu>

@@ -16,11 +16,6 @@ const messages = defineMessages({
     defaultMessage: 'Enter your terms and definitions below. Learners will review each card by viewing the term, then flipping to reveal the definition.',
     description: 'Flashcard Description',
   },
-  timerSettingsDescription: {
-    id: 'FlashcardsEditor.TimerSettingsDescription',
-    defaultMessage: 'Measure the time it takes learners to match all terms and definitions. Used to calculate a learner\'s score.',
-    description: 'Timer Settings Option Description',
-  },
   enterYourTerm: {
     id: 'FlashcardsEditor.enterYourTerm',
     defaultMessage: 'Enter your term',
@@ -146,20 +141,10 @@ const messages = defineMessages({
     defaultMessage: 'Alt text',
     description: 'Label for the image alt-text field.',
   },
-  altTextError: {
-    id: 'FlashcardsEditor.altTextError',
-    defaultMessage: 'Alt text is required.',
-    description: 'Error shown in the image settings dialog when the author tries to save an image with no alt text.',
-  },
   loadErrorHeading: {
     id: 'FlashcardsEditor.loadErrorHeading',
     defaultMessage: 'The flashcards settings could not be loaded.',
     description: 'Heading shown when fetching the block settings fails.',
-  },
-  retryButton: {
-    id: 'FlashcardsEditor.retryButton',
-    defaultMessage: 'Try again',
-    description: 'Button that retries loading the block settings.',
   },
   addImageLabel: {
     id: 'FlashcardsEditor.addImageLabel',

@@ -1,21 +1,22 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, OverlayTrigger, Tooltip } from '@openedx/paragon';
 
-import { imageAlt, imageDisplayUrl, type TextField } from '@src/editors/containers/FlashcardsEditor/flashcardsContent';
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import type { Card } from '@src/editors/containers/FlashcardsEditor/types';
+import { useId } from 'react';
+import { Card } from '../types';
+import { imageDisplayUrl } from '../utils';
 import PictureIcon from './PictureIcon';
 
 interface PreviewSideProps {
-  field: TextField;
   text: string;
   imageUrl: string;
   imageAlt: string;
 }
 
 /** One side of a collapsed card: its image (or a placeholder icon), then its text. */
-const PreviewSide = ({ field, text, imageUrl, imageAlt }: PreviewSideProps) => {
+const PreviewSide = ({ text, imageUrl, imageAlt }: PreviewSideProps) => {
   const intl = useIntl();
+  const id = useId();
   return (
     <span className="d-inline-flex align-items-center text-truncate w-50 px-2">
       <span
@@ -39,7 +40,7 @@ const PreviewSide = ({ field, text, imageUrl, imageAlt }: PreviewSideProps) => {
             <OverlayTrigger
               placement="top"
               overlay={
-                <Tooltip id={`no-${field}-image-tooltip`}>
+                <Tooltip id={id}>
                   {intl.formatMessage(messages.noImageLabel)}
                 </Tooltip>
               }
@@ -56,20 +57,18 @@ const PreviewSide = ({ field, text, imageUrl, imageAlt }: PreviewSideProps) => {
 };
 
 /** The one-line summary a collapsed card shows in its heading. */
-const CardPreview = ({ card, studioEndpointUrl }: { card: Card; studioEndpointUrl: string; }) => {
+const CardPreview = ({ card }: { card: Card; }) => {
   return (
     <div className="w-100 mr-2">
       <PreviewSide
-        field="term"
         text={card.term}
-        imageUrl={imageDisplayUrl(card.term_image, studioEndpointUrl)}
-        imageAlt={imageAlt(card.term_image_alt, card.term)}
+        imageUrl={imageDisplayUrl(card.termImage)}
+        imageAlt={card.termImageAlt || card.term}
       />
       <PreviewSide
-        field="definition"
         text={card.definition}
-        imageUrl={imageDisplayUrl(card.definition_image, studioEndpointUrl)}
-        imageAlt={imageAlt(card.definition_image_alt, card.definition)}
+        imageUrl={imageDisplayUrl(card.definitionImage)}
+        imageAlt={card.definitionImageAlt || card.definition}
       />
     </div>
   );

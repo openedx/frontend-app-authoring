@@ -2,12 +2,12 @@ import type { ReactNode } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form, Icon, IconButton } from '@openedx/paragon';
 
-import type { FieldError, TextField } from '@src/editors/containers/GamesEditor/gameContent';
-import messages from '@src/editors/containers/GamesEditor/messages';
+import messages from '@src/editors/containers/FlashcardsEditor/messages';
 import PictureIcon from './PictureIcon';
 
 // The block's limit on either text field of a card.
 // This is not enforced on the backend.
+// TODO: determine if a limit is desirable or not, and make the frontend and backend consistent.
 export const MAX_FIELD_LENGTH = 120;
 
 const fieldMessages = {
@@ -24,10 +24,9 @@ const fieldMessages = {
 } as const;
 
 interface CardFieldProps {
-  field: TextField;
+  field: 'term' | 'definition';
   index: number;
   value: string;
-  error: FieldError | undefined;
   onChange: (value: string) => void;
   /** The field's current image, if it has one. */
   image: ReactNode;
@@ -40,7 +39,6 @@ const CardField = ({
   field,
   index,
   value,
-  error,
   onChange,
   image,
   onClickUpload,
@@ -66,7 +64,6 @@ const CardField = ({
             onChange={(e) => onChange(e.target.value)}
             style={{ borderRadius: 0 }}
             maxLength={MAX_FIELD_LENGTH}
-            isInvalid={!!error}
           />
           <IconButton
             src={PictureIcon}
@@ -77,13 +74,6 @@ const CardField = ({
           />
         </div>
         <div className="d-flex justify-content-between align-items-center align-self-stretch mr-5">
-          <span>
-            {error && (
-              <Form.Control.Feedback type="invalid" hasIcon={false}>
-                {intl.formatMessage(error === 'imageWithoutText' ? messages.imageWithoutTextError : text.required)}
-              </Form.Control.Feedback>
-            )}
-          </span>
           <small className="text-muted mr-1">
             {value.length}/{MAX_FIELD_LENGTH}
           </small>
