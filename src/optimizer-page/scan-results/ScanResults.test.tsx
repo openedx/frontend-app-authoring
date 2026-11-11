@@ -268,7 +268,7 @@ describe('ScanResults', () => {
   ])('renders the no-results state for %s', (_name, data) => {
     renderScanResults(data);
 
-    expect(screen.getAllByText(messages.noResultsFound.defaultMessage).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(messages.noResultsFound.defaultMessage)).toHaveLength(2);
   });
 
   it('opens the filter modal and applies and clears filters', async () => {
@@ -1066,7 +1066,7 @@ describe('ScanResults', () => {
 
     await user.click(screen.getByRole('button', { name: messages.filterButtonLabel.defaultMessage }));
     await user.click(screen.getByLabelText(messages.lockedLabel.defaultMessage));
-    expect(screen.getAllByText(messages.noResultsFound.defaultMessage).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(messages.noResultsFound.defaultMessage)).toHaveLength(2);
   });
 
   it('hides a filtered unit but keeps the section visible when other units remain', async () => {

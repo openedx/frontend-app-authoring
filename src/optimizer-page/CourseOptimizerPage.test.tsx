@@ -248,7 +248,7 @@ describe('CourseOptimizerPage', () => {
         .onGet(getLinkCheckStatusApiUrl(courseId))
         .reply(200, { LinkCheckStatus: 'Succeeded' });
       render(<OptimizerPage />);
-      expect((await screen.findAllByText(scanResultsMessages.noResultsFound.defaultMessage)).length).toBeGreaterThan(0);
+      expect(await screen.findAllByText(scanResultsMessages.noResultsFound.defaultMessage)).toHaveLength(2);
     });
 
     it('shows the connection error when starting a scan fails', async () => {
@@ -377,7 +377,7 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(getByLabelText(scanResultsMessages.lockedLabel.defaultMessage));
 
       await waitFor(() => {
-        expect(getAllByText(scanResultsMessages.noResultsFound.defaultMessage).length).toBeGreaterThan(0);
+        expect(getAllByText(scanResultsMessages.noResultsFound.defaultMessage)).toHaveLength(2);
       });
     });
 
@@ -386,7 +386,7 @@ describe('CourseOptimizerPage', () => {
       const { getAllByText } = render(<OptimizerPage />);
 
       await waitFor(() => {
-        expect(getAllByText(scanResultsMessages.noResultsFound.defaultMessage).length).toBeGreaterThan(0);
+        expect(getAllByText(scanResultsMessages.noResultsFound.defaultMessage)).toHaveLength(2);
       }, { timeout: 5000 });
     });
 

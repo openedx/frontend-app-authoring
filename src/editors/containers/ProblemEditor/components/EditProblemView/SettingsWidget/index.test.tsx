@@ -140,7 +140,9 @@ describe('SettingsWidget', () => {
         },
       };
       const { container } = renderSettingsWidget({}, { initialState: modifiedInitialState });
-      expect(container.querySelectorAll('switcheditorcard')).toHaveLength(1);
+      const cards = container.querySelectorAll('switcheditorcard');
+      expect(cards).toHaveLength(1);
+      expect(cards[0].getAttribute('editortype')).toBe('advanced');
     });
 
     test('shows only the advanced SwitchEditorCard when the problem has no markdown', () => {
@@ -159,7 +161,9 @@ describe('SettingsWidget', () => {
         },
       };
       const { container } = renderSettingsWidget({}, { initialState: modifiedInitialState });
-      expect(container.querySelectorAll('switcheditorcard')).toHaveLength(1);
+      const cards = container.querySelectorAll('switcheditorcard');
+      expect(cards).toHaveLength(1);
+      expect(cards[0].getAttribute('editortype')).toBe('advanced');
     });
   });
 
