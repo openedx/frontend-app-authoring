@@ -1,5 +1,6 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
+import type { CollisionDetection, DroppableContainer } from '@dnd-kit/core';
 
 // Capture DndContext handlers so we can invoke them directly in tests.
 type DndHandlers = {
@@ -7,6 +8,7 @@ type DndHandlers = {
   onDragOver: (e: any) => void;
   onDragEnd: (e: any) => void;
   onDragCancel: () => void;
+  collisionDetection: CollisionDetection;
 };
 const mockDndHandlers: { current: DndHandlers | null; } = { current: null };
 
@@ -20,9 +22,10 @@ jest.mock('@dnd-kit/core', () => {
         onDragOver,
         onDragEnd,
         onDragCancel,
+        collisionDetection,
         children,
       }: any) => {
-        mockDndHandlers.current = { onDragStart, onDragOver, onDragEnd, onDragCancel };
+        mockDndHandlers.current = { onDragStart, onDragOver, onDragEnd, onDragCancel, collisionDetection };
         return <div data-testid="dnd-context-mock">{children}</div>;
       },
     ),
@@ -45,6 +48,7 @@ jest.mock('react-dom', () => {
 });
 
 import DraggableList from './DraggableList';
+import { DragContext } from './DragContextProvider';
 
 const makeSection = (id: string, subsections: any[] = []) => ({
   id,
@@ -110,12 +114,12 @@ function fireDragOver(
 
 function fireDragEnd(
   activeId: string,
-  overId: string,
+  overId: string | null,
 ) {
   const handlers = mockDndHandlers.current!;
   handlers.onDragEnd({
     active: { id: activeId },
-    over: { id: overId },
+    over: overId ? { id: overId } : null,
   });
 }
 
@@ -128,6 +132,7 @@ function renderList(
     onSubsectionDrop: jest.Mock;
     onUnitDrop: jest.Mock;
   }>,
+  children: React.ReactNode = <div data-testid="children" />,
 ) {
   const callbacks = {
     onPreviewTreeChange: jest.fn(),
@@ -139,7 +144,7 @@ function renderList(
   };
   render(
     <DraggableList items={items} {...callbacks}>
-      <div data-testid="children" />
+      {children}
     </DraggableList>,
   );
   return callbacks;
@@ -185,5 +190,75 @@ describe('DraggableList — drag-local tree ref', () => {
 
       expect(callbacks.onUnitDrop).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe('DraggableList — drop target', () => {
+  const OverId = () => <span data-testid="over-id">{React.useContext(DragContext).overId}</span>;
+
+  const unitA = makeUnit('unit-A');
+  const subsectionA = makeSubsection('sub-A', [unitA]);
+  const subsectionB = makeSubsection('sub-B');
+  const items = [makeSection('sec-1', [subsectionA]), makeSection('sec-2', [subsectionB])];
+
+  const renderWithOverId = () => renderList(items, undefined, <OverId />);
+
+  const dragUnitOverSubsectionB = () => {
+    act(() => {
+      fireDragStart('unit-A', 'Unit A', 'vertical');
+      fireDragOver('unit-A', 'sub-B', { category: 'vertical' }, { category: 'sequential' });
+    });
+  };
+
+  const container = (id: string, category: string) => ({
+    id,
+    key: id,
+    disabled: false,
+    data: { current: { category, childAddable: true } },
+    node: { current: null },
+    rect: { current: null },
+  } as DroppableContainer);
+
+  beforeEach(() => {
+    mockDndHandlers.current = null;
+  });
+
+  it('does not offer sections to a dragged unit once its card unmounts', () => {
+    renderWithOverId();
+    const rect = { width: 10, height: 10, top: 0, left: 0, right: 10, bottom: 10 };
+
+    // dnd-kit passes empty data when the dragged unit has moved into a collapsed subsection.
+    const collisions = mockDndHandlers.current!.collisionDetection({
+      active: { id: 'unit-A', data: { current: {} }, rect: { current: { initial: null, translated: null } } },
+      collisionRect: rect,
+      droppableRects: new Map([['sec-2', rect], ['sub-B', rect], ['unit-B', rect]]),
+      droppableContainers: [
+        container('sec-2', 'chapter'),
+        container('sub-B', 'sequential'),
+        container('unit-B', 'vertical'),
+      ],
+      pointerCoordinates: null,
+    });
+
+    expect(new Set(collisions.map(({ id }) => id))).toEqual(new Set(['sub-B', 'unit-B']));
+  });
+
+  it('clears the drop target when a drag is cancelled', () => {
+    renderWithOverId();
+    dragUnitOverSubsectionB();
+    expect(screen.getByTestId('over-id')).toHaveTextContent('sub-B');
+
+    act(() => mockDndHandlers.current!.onDragCancel());
+
+    expect(screen.getByTestId('over-id')).toBeEmptyDOMElement();
+  });
+
+  it('clears the drop target when a drag ends outside any target', () => {
+    renderWithOverId();
+    dragUnitOverSubsectionB();
+
+    act(() => fireDragEnd('unit-A', null));
+
+    expect(screen.getByTestId('over-id')).toBeEmptyDOMElement();
   });
 });
