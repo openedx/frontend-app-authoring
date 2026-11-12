@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useLayoutEffect,
   useId,
   useRef,
   useState,
@@ -17,8 +18,8 @@ export interface ScoreSettingsPopoverProps {
   onCommit: (rulePayload: GradeRulePayload) => Promise<void>;
   /** Asks the owner to close. Called after a commit, an Enter with nothing changed, or Escape. */
   onRequestClose: () => void;
-  /** Called when committing. A non-empty result blocks the commit and is shown inline. */
-  getInlineValidationMessage?: (value: string) => string;
+  /** Called with the payload about to be committed. A non-empty result blocks the commit and is shown inline. */
+  getInlineValidationMessage?: (candidate: GradeRulePayload) => string;
   /** Guidance under the controls. */
   hint?: string;
   /** Renders `hint` as an error and marks the input invalid. */
@@ -38,6 +39,12 @@ export interface ScoreSettingsPopoverProps {
 const percentOf = (rulePayload: GradeRulePayload): string => String(Math.round(rulePayload.value * 100));
 
 const OPERATOR_SYMBOLS: Record<GradeRulePayload['op'], string> = { gte: '>=', lte: '<=', eq: '=' };
+
+const OPERATOR_LABELS = {
+  gte: messages.comparisonGteLabel,
+  lte: messages.comparisonLteLabel,
+  eq: messages.comparisonEqLabel,
+};
 
 /** Body of the popover that edits a rule box's comparison and score. Validates and commits on Enter,
  * or when the owner calls `commitRef.current`.
@@ -85,12 +92,14 @@ const ScoreSettingsPopover = ({
       setValidationMessage(intl.formatMessage(messages.scoreThresholdRangeValidationMessage));
       return false;
     }
-    if (numericPercent === Math.round(rulePayload.value * 100) && localOp === rulePayload.op) {
+    if (String(numericPercent) === percentOf(rulePayload) && localOp === rulePayload.op) {
       // Skipped so a no-op close does not re-send the rounded display value over the stored fraction.
       setValidationMessage('');
       return true;
     }
-    const message = getInlineValidationMessage ? getInlineValidationMessage(inputValue) : '';
+    const message = getInlineValidationMessage
+      ? getInlineValidationMessage({ ...rulePayload, op: localOp, value: numericPercent / 100 })
+      : '';
     if (message) {
       setValidationMessage(message);
       return false;
@@ -112,7 +121,9 @@ const ScoreSettingsPopover = ({
 
   // Always the latest closure, so the owner's ref never commits stale input.
   const commitRefLatest = useRef(commit);
-  commitRefLatest.current = commit;
+  useLayoutEffect(() => {
+    commitRefLatest.current = commit;
+  });
 
   useEffect(() => {
     if (!commitRef) {
@@ -152,7 +163,9 @@ const ScoreSettingsPopover = ({
               id={toggleId}
               variant="outline-primary"
               size="sm"
-              aria-label={intl.formatMessage(messages.comparisonOperatorAccessibleLabel)}
+              aria-label={intl.formatMessage(messages.comparisonOperatorAccessibleLabel, {
+                operator: intl.formatMessage(OPERATOR_LABELS[localOp]),
+              })}
             >
               {OPERATOR_SYMBOLS[localOp]}
             </Dropdown.Toggle>
@@ -191,7 +204,8 @@ const ScoreSettingsPopover = ({
             aria-label={intl.formatMessage(messages.scoreThresholdInputAccessibleLabel)}
             aria-invalid={showAsInvalid}
             isInvalid={showAsInvalid}
-            disabled={isSaving}
+            readOnly={isSaving}
+            aria-busy={isSaving}
             data-autofocus={!focusSuggestion ? '' : undefined}
             onChange={(event) => setInputValue(event.target.value)}
             onFocus={(event) => event.currentTarget.select()}

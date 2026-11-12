@@ -43,14 +43,14 @@ describe('<ScoreSettingsPopover />', () => {
     renderPopover();
 
     expect(screen.getByRole('dialog', { name: 'Competency Completion Rule' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Comparison' })).toHaveTextContent('>=');
+    expect(screen.getByRole('button', { name: 'Comparison, or higher' })).toHaveTextContent('>=');
     expect(screen.getByRole('textbox')).toHaveValue('70');
     expect(screen.getByText('%')).toBeInTheDocument();
   });
 
   it('shows "<=" in the toggle for a lte rule', () => {
     renderPopover({ rulePayload: { ...gte70, op: 'lte' } });
-    expect(screen.getByRole('button', { name: 'Comparison' })).toHaveTextContent('<=');
+    expect(screen.getByRole('button', { name: 'Comparison, or lower' })).toHaveTextContent('<=');
   });
 
   it('commits the typed percent on Enter and requests close', async () => {
@@ -68,9 +68,9 @@ describe('<ScoreSettingsPopover />', () => {
     const user = userEvent.setup();
     const { onCommit, onRequestClose } = renderPopover();
 
-    await user.click(screen.getByRole('button', { name: 'Comparison' }));
+    await user.click(screen.getByRole('button', { name: 'Comparison, or higher' }));
     await user.click(screen.getByRole('button', { name: 'or lower' }));
-    expect(screen.getByRole('button', { name: 'Comparison' })).toHaveTextContent('<=');
+    expect(screen.getByRole('button', { name: 'Comparison, or lower' })).toHaveTextContent('<=');
     expect(onCommit).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole('textbox'));
@@ -125,7 +125,7 @@ describe('<ScoreSettingsPopover />', () => {
     await typeScore(user, '85');
     await user.keyboard('{Enter}');
 
-    expect(getInlineValidationMessage).toHaveBeenCalledWith('85');
+    expect(getInlineValidationMessage).toHaveBeenCalledWith({ op: 'gte', value: 0.85, scale: 'percent' });
     expect(screen.getByText('Duplicate score.')).toBeInTheDocument();
     expect(onCommit).not.toHaveBeenCalled();
     expect(onRequestClose).not.toHaveBeenCalled();
@@ -140,6 +140,7 @@ describe('<ScoreSettingsPopover />', () => {
     await user.keyboard('{Enter}');
 
     await waitFor(() => expect(input).toHaveValue('70'));
+    expect(input).toHaveFocus();
     expect(onRequestClose).not.toHaveBeenCalled();
   });
 
@@ -152,15 +153,83 @@ describe('<ScoreSettingsPopover />', () => {
         resolveCommit = resolve;
       })
     );
-    renderPopover({ onCommit, commitRef });
+    const { onRequestClose } = renderPopover({ onCommit, commitRef });
 
     await typeScore(user, '85');
     await user.keyboard('{Enter}');
     await expect(commitRef.current!()).resolves.toBe(false);
 
     expect(onCommit).toHaveBeenCalledTimes(1);
+    expect(onRequestClose).not.toHaveBeenCalled();
     resolveCommit!();
     await waitFor(() => expect(screen.getByRole('textbox')).not.toBeDisabled());
+  });
+
+  it.each(['', 'abc'])('reverts on Enter and closes without committing for the input "%s"', async (typed) => {
+    const user = userEvent.setup();
+    const commitRef: MutableRefObject<(() => Promise<boolean>) | null> = { current: null };
+    const { onCommit, onRequestClose } = renderPopover({ commitRef });
+
+    const input = screen.getByRole('textbox');
+    await user.clear(input);
+    if (typed) {
+      await user.type(input, typed);
+    }
+    await user.keyboard('{Enter}');
+
+    expect(input).toHaveValue('70');
+    expect(onCommit).not.toHaveBeenCalled();
+    await waitFor(() => expect(onRequestClose).toHaveBeenCalledTimes(1));
+    await expect(commitRef.current!()).resolves.toBe(true);
+  });
+
+  it('commits through commitRef and resolves true for a changed valid value', async () => {
+    const user = userEvent.setup();
+    const commitRef: MutableRefObject<(() => Promise<boolean>) | null> = { current: null };
+    const { onCommit } = renderPopover({ commitRef });
+
+    await typeScore(user, '85');
+    await expect(commitRef.current!()).resolves.toBe(true);
+
+    expect(onCommit).toHaveBeenCalledWith({ op: 'gte', value: 0.85, scale: 'percent' });
+  });
+
+  it('resolves true through commitRef without committing when nothing changed', async () => {
+    const commitRef: MutableRefObject<(() => Promise<boolean>) | null> = { current: null };
+    const { onCommit } = renderPopover({ commitRef });
+
+    await expect(commitRef.current!()).resolves.toBe(true);
+
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  it('clears commitRef on unmount', () => {
+    const commitRef: MutableRefObject<(() => Promise<boolean>) | null> = { current: null };
+    const onCommit = jest.fn();
+    const { unmount } = render(
+      <ScoreSettingsPopover
+        rulePayload={gte70}
+        onCommit={onCommit}
+        onRequestClose={jest.fn()}
+        initialFocus="input"
+        commitRef={commitRef}
+      />,
+    );
+    expect(commitRef.current).not.toBeNull();
+
+    unmount();
+
+    expect(commitRef.current).toBeNull();
+  });
+
+  it('describes the input by the validation message', async () => {
+    const user = userEvent.setup();
+    renderPopover({ hint: 'Pick another.' });
+
+    await typeScore(user, '150');
+    await user.keyboard('{Enter}');
+
+    expect(screen.getByRole('textbox')).toHaveAccessibleDescription('Enter a whole number from 0 to 100.');
   });
 
   it('describes the input by the hint', () => {
@@ -235,7 +304,7 @@ describe('<ScoreSettingsPopover />', () => {
     const user = userEvent.setup();
     renderPopover({ rulePayload: { ...gte70, op: 'eq' } });
 
-    const toggle = screen.getByRole('button', { name: 'Comparison' });
+    const toggle = screen.getByRole('button', { name: 'Comparison, equal to' });
     expect(toggle).toHaveTextContent('=');
     await user.click(toggle);
 

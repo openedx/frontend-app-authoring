@@ -169,8 +169,15 @@ const messages = defineMessages({
   },
   comparisonOperatorAccessibleLabel: {
     id: 'course-authoring.competency-management.criteria-groups.comparison-operator-accessible-label',
-    defaultMessage: 'Comparison',
-    description: 'Accessible name of the menu button that picks how a score is compared, such as ">=" or "<=".',
+    defaultMessage: 'Comparison, {operator}',
+    description: 'Accessible name of the menu button that picks how a score is compared. "{operator}" is the '
+      + 'current comparison in words, such as "or higher".',
+  },
+  comparisonEqLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.comparison-eq-label',
+    defaultMessage: 'equal to',
+    description: 'The comparison in words for a rule that matches an exact score, used in the accessible name '
+      + 'of the comparison menu button.',
   },
   comparisonGteLabel: {
     id: 'course-authoring.competency-management.criteria-groups.comparison-gte-label',
