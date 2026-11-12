@@ -272,11 +272,15 @@
     margin-bottom: .5rem;
   }
 
-  // `display: block` from `Form.Control` would stretch this input across the whole row.
-  .score-settings__input {
-    display: inline-block;
+  // Paragon puts `className` on the decorator-group wrapper, which grows in the row, so the wrapper is sized,
+  // not the input.
+  .score-settings .score-settings__input {
+    flex: 0 0 auto;
     width: 3.5em;
-    text-align: center;
+
+    .form-control {
+      text-align: center;
+    }
   }
 
   // The invalid variant keeps Paragon's own feedback color.
