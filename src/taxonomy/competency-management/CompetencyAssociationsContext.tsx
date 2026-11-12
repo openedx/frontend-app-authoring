@@ -94,7 +94,7 @@ export interface CompetencyAssociationsContextBase {
   /** Counts rejections, so a repeat rejection while `placeholderDuplicateRejected` is already true is still
    * observable. Resets only when the competency changes.
    */
-  placeholderRejectionCount: number;
+  placeholderDuplicateRejectionCount: number;
   /** Drops the placeholder by clearing `focus`. */
   discardPlaceholder: () => void;
   /** Focuses a group and its last rule box. A no-op when `groupId` is already
@@ -242,7 +242,7 @@ export interface ProviderState {
   focus: CriteriaFocus | null;
   placeholder: CriteriaPlaceholder;
   placeholderDuplicateRejected: boolean;
-  placeholderRejectionCount: number;
+  placeholderDuplicateRejectionCount: number;
   /** A course expanded before the groups and default profile loaded. */
   pendingCourseId: string | null;
   initialFocusDone: boolean;
@@ -273,7 +273,7 @@ function reduceProviderState(state: ProviderState, action: ProviderAction): Prov
         focus: null,
         placeholder: initialPlaceholder,
         placeholderDuplicateRejected: false,
-        placeholderRejectionCount: 0,
+        placeholderDuplicateRejectionCount: 0,
         pendingCourseId: null,
         initialFocusDone: false,
         settled: false,
@@ -321,7 +321,7 @@ function providerReducer(state: ProviderState, action: ProviderAction): Provider
     return {
       ...state,
       placeholderDuplicateRejected: true,
-      placeholderRejectionCount: state.placeholderRejectionCount + 1,
+      placeholderDuplicateRejectionCount: state.placeholderDuplicateRejectionCount + 1,
     };
   }
   const next = reduceProviderState(state, action);
@@ -350,7 +350,7 @@ export const CompetencyAssociationsProvider = ({
     focus: null,
     placeholder: initialPlaceholder,
     placeholderDuplicateRejected: false,
-    placeholderRejectionCount: 0,
+    placeholderDuplicateRejectionCount: 0,
     pendingCourseId: null,
     initialFocusDone: false,
     settled: false,
@@ -359,7 +359,7 @@ export const CompetencyAssociationsProvider = ({
     focus,
     placeholder,
     placeholderDuplicateRejected,
-    placeholderRejectionCount,
+    placeholderDuplicateRejectionCount,
     generation,
     pendingCourseId,
     initialFocusDone,
@@ -644,7 +644,7 @@ export const CompetencyAssociationsProvider = ({
       setPlaceholderRulePayload,
       discardPlaceholder,
       placeholderDuplicateRejected,
-      placeholderRejectionCount,
+      placeholderDuplicateRejectionCount,
       focusGroup,
       focusRuleBox,
       notifyCourseExpanded,
@@ -675,7 +675,7 @@ export const CompetencyAssociationsProvider = ({
     setPlaceholderRulePayload,
     discardPlaceholder,
     placeholderDuplicateRejected,
-    placeholderRejectionCount,
+    placeholderDuplicateRejectionCount,
     focusGroup,
     focusRuleBox,
     notifyCourseExpanded,

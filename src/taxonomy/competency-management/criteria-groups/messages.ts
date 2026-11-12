@@ -152,9 +152,9 @@ const messages = defineMessages({
   },
   addControlSavingTooltip: {
     id: 'course-authoring.competency-management.criteria-groups.add-control-saving-tooltip',
-    defaultMessage: 'Saving the new rule. Wait for it to finish before adding another.',
-    description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while a newly associated rule is '
-      + 'still being saved.',
+    defaultMessage: 'Wait for the save to finish before adding another.',
+    description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while a create request is '
+      + 'still in flight.',
   },
   placeholderRuleBoxHint: {
     id: 'course-authoring.competency-management.criteria-groups.placeholder-rule-box-hint',

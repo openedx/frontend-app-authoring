@@ -203,13 +203,14 @@ describe('competency associations over the real provider', () => {
     renderPanel();
     await screen.findByText('Homework 1');
     const addButtons = screen.getAllByRole('button', { name: 'Add Rule Group' });
-    const scoreInputsBefore = screen.getAllByLabelText('Score threshold percentage').length;
+    const scoreInputsBefore = screen.getAllByLabelText('Score threshold percentage');
 
     await user.click(addButtons[addButtons.length - 1]);
 
     const scoreInputs = screen.getAllByLabelText('Score threshold percentage');
-    expect(scoreInputs).toHaveLength(scoreInputsBefore + 1);
-    expect(scoreInputs).toContain(document.activeElement);
+    expect(scoreInputs).toHaveLength(scoreInputsBefore.length + 1);
+    const newInput = scoreInputs.find((input) => !scoreInputsBefore.includes(input));
+    expect(newInput).toHaveFocus();
   });
 
   it('collapsing a course discards its placeholder group, so expanding it again shows one group card', async () => {

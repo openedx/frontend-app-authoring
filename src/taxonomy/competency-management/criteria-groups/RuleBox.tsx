@@ -26,7 +26,7 @@ export interface RuleBoxProps {
   /** Placeholder only: focus the score input on mount. */
   autoFocusSelect?: boolean;
   /** Placeholder only: what a duplicate rejection focuses. Defaults to the score input. */
-  rejectionFocusRef?: RefObject<HTMLElement>;
+  duplicateRejectionFocusRef?: RefObject<HTMLElement>;
 }
 
 /** One rule box: its score threshold, which focuses the box, and its criterion chips, or a hint when it is the placeholder. */
@@ -40,7 +40,7 @@ const RuleBox = ({
   getInlineValidationMessage,
   hint,
   autoFocusSelect = false,
-  rejectionFocusRef,
+  duplicateRejectionFocusRef,
 }: RuleBoxProps) => {
   const intl = useIntl();
   const {
@@ -49,7 +49,7 @@ const RuleBox = ({
     updateRuleScore,
     setPlaceholderRulePayload,
     placeholderDuplicateRejected,
-    placeholderRejectionCount,
+    placeholderDuplicateRejectionCount,
   } = useCompetencyAssociations();
   const isFocused = focus?.groupId === groupId && focus?.ruleKey === ruleKey;
   const isPlaceholder = ruleKey === null;
@@ -61,14 +61,14 @@ const RuleBox = ({
     }
   }, [isFocused]);
 
-  const isRejected = isPlaceholder && !!hint && placeholderDuplicateRejected;
+  const isDuplicateRejected = isPlaceholder && !!hint && placeholderDuplicateRejected;
 
   useEffect(() => {
-    if (isRejected) {
-      (rejectionFocusRef?.current ?? ref.current?.querySelector('input'))?.focus();
+    if (isDuplicateRejected) {
+      (duplicateRejectionFocusRef?.current ?? ref.current?.querySelector('input'))?.focus();
     }
     // The count changes on a repeat rejection, when the flag is already set.
-  }, [isRejected, placeholderRejectionCount, rejectionFocusRef]);
+  }, [isDuplicateRejected, placeholderDuplicateRejectionCount, duplicateRejectionFocusRef]);
 
   const handleScoreChange = (rulePayload: GradeRulePayload): Promise<void> => {
     // With no criteria yet, the score stays in the context until content is picked.
@@ -111,7 +111,7 @@ const RuleBox = ({
               getInlineValidationMessage={getInlineValidationMessage}
               autoFocusSelect={autoFocusSelect}
               hint={hint}
-              hintIsError={isRejected}
+              hintIsError={isDuplicateRejected}
             />
           </>
         )

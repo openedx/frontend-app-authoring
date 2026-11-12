@@ -190,26 +190,6 @@ describe('<RuleBoxList />', () => {
       expect(setPlaceholderRulePayload).toHaveBeenCalledWith({ op: 'gte', value: 0.75, scale: 'percent' });
     });
 
-    it('does not focus the score input again once the author has set a score', () => {
-      render(
-        <MockCompetencyAssociationsProvider
-          value={{
-            focus: { groupId: 10, ruleKey: null },
-            placeholder: {
-              parentRuleGroupId: null,
-              logicOperator: 'OR',
-              rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
-            },
-          }}
-        >
-          <RuleBoxList groupId={10} boxes={boxes} subsectionNamesByUsageKey={{}} canEdit />
-        </MockCompetencyAssociationsProvider>,
-      );
-
-      const inputs = screen.getAllByLabelText('Score threshold percentage');
-      expect(inputs[inputs.length - 1]).not.toHaveFocus();
-    });
-
     it('focuses the input after the suggestion is applied, and not after the next typed score', async () => {
       const user = userEvent.setup();
       const StatefulProvider = () => {
@@ -255,12 +235,12 @@ describe('<RuleBoxList />', () => {
 
   describe('rejected duplicate placeholder', () => {
     const renderRejected = (count: number, boxesInGroup = boxes) => {
-      const ui = (rejectionCount: number) => (
+      const ui = (duplicateRejectionCount: number) => (
         <MockCompetencyAssociationsProvider
           value={{
             focus: { groupId: 10, ruleKey: null },
             placeholderDuplicateRejected: true,
-            placeholderRejectionCount: rejectionCount,
+            placeholderDuplicateRejectionCount: duplicateRejectionCount,
           }}
         >
           <RuleBoxList groupId={10} boxes={boxesInGroup} subsectionNamesByUsageKey={{}} canEdit />

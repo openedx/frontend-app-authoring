@@ -36,6 +36,8 @@ const AddControl = ({
   const disabled = disabledReason !== null;
   const isTooltipOpen = disabled && show;
   let describedBy: string | undefined;
+  // While the tooltip is open the popper appends its id with a comma, which breaks an id list,
+  // so the button points at the tooltip alone, which carries the same text.
   if (disabled) {
     describedBy = isTooltipOpen ? tooltipId : descriptionId;
   }
@@ -59,8 +61,6 @@ const AddControl = ({
           iconBefore={Add}
           aria-label={accessibleLabel}
           aria-disabled={disabled}
-          // While the tooltip is open the popper appends its id with a comma, which breaks an id list,
-          // so the button points at the tooltip alone, which carries the same text.
           aria-describedby={describedBy}
           onClick={disabled ? undefined : onClick}
         >

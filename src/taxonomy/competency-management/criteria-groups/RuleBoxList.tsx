@@ -117,7 +117,7 @@ const RuleBoxList = ({
           })}
           hint={placeholderHint || undefined}
           autoFocusSelect={placeholder.rulePayload === null || focusAfterSuggestion}
-          rejectionFocusRef={suggestedScore ? suggestionLinkRef : undefined}
+          duplicateRejectionFocusRef={suggestedScore ? suggestionLinkRef : undefined}
         />
       )}
     </Stack>

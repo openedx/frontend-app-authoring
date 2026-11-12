@@ -122,7 +122,7 @@ const TestConsumer = () => {
       <p>Status: {ctx.status}</p>
       <p>Has placeholder: {String(ctx.hasPlaceholder)}</p>
       <p>Duplicate rejected: {String(ctx.placeholderDuplicateRejected)}</p>
-      <p>Rejection count: {ctx.placeholderRejectionCount}</p>
+      <p>Duplicate rejection count: {ctx.placeholderDuplicateRejectionCount}</p>
       <p>Placeholder: {JSON.stringify(ctx.placeholder)}</p>
       <p>Error: {ctx.error?.message ?? 'none'}</p>
       <p>Associating: {String(ctx.isAssociating)}</p>
@@ -976,10 +976,10 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Add placeholder rule box in group 10');
 
       await click('Associate in course A');
-      expect(screen.getByText('Rejection count: 1')).toBeInTheDocument();
+      expect(screen.getByText('Duplicate rejection count: 1')).toBeInTheDocument();
       await click('Associate in course A');
 
-      expect(screen.getByText('Rejection count: 2')).toBeInTheDocument();
+      expect(screen.getByText('Duplicate rejection count: 2')).toBeInTheDocument();
       expect(screen.getByText('Duplicate rejected: true')).toBeInTheDocument();
     });
 
@@ -988,11 +988,11 @@ describe('CompetencyAssociationsProvider', () => {
       const view = await renderLoaded();
       await click('Add placeholder rule box in group 10');
       await click('Associate in course A');
-      expect(screen.getByText('Rejection count: 1')).toBeInTheDocument();
+      expect(screen.getByText('Duplicate rejection count: 1')).toBeInTheDocument();
 
       view.rerender(providerFor(otherTagId));
 
-      await waitFor(() => expect(screen.getByText('Rejection count: 0')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText('Duplicate rejection count: 0')).toBeInTheDocument());
     });
 
     describe('when a groups refetch removes what the placeholder belongs to', () => {
