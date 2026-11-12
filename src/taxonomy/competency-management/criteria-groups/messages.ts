@@ -162,6 +162,26 @@ const messages = defineMessages({
     description: 'Hint text shown in place of chips on a not-yet-saved placeholder rule box, which has no '
       + 'content associated with it yet.',
   },
+  scoreSettingsHeading: {
+    id: 'course-authoring.competency-management.criteria-groups.score-settings-heading',
+    defaultMessage: 'Competency Completion Rule',
+    description: 'Heading of the popover where a rule box\'s comparison and score are edited.',
+  },
+  comparisonOperatorAccessibleLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.comparison-operator-accessible-label',
+    defaultMessage: 'Comparison',
+    description: 'Accessible name of the menu button that picks how a score is compared, such as ">=" or "<=".',
+  },
+  comparisonGteLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.comparison-gte-label',
+    defaultMessage: 'or higher',
+    description: 'Accessible name of the ">=" menu item, which sets the rule to match a score or higher.',
+  },
+  comparisonLteLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.comparison-lte-label',
+    defaultMessage: 'or lower',
+    description: 'Accessible name of the "<=" menu item, which sets the rule to match a score or lower.',
+  },
 });
 
 export default messages;
