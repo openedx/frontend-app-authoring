@@ -85,6 +85,15 @@ const ConfigureModal = ({
   const category = _category ?? '';
   // A staff-locked subsection with a prerequisite reports visibilityState "gated", not "staff_only".
   const isVisibleToStaffOnly = visibilityState === VisibilityTypes.STAFF_ONLY || !!hasExplicitStaffLock;
+  // A unit or component inside a hidden section/subsection is staff-only too, but its own setting can't
+  // override that. Its "Hide from learners" value reflects only its own lock, so unticking isn't a silent
+  // no-op and saving other settings doesn't add a lock that would keep it hidden after the parent is shown.
+  const isHiddenByParent = !!ancestorHasStaffLock;
+  const isStaffLockOnlyInherited = isHiddenByParent && !hasExplicitStaffLock;
+  const isSectionOrSubsection = [
+    COURSE_BLOCK_NAMES.chapter.id,
+    COURSE_BLOCK_NAMES.sequential.id,
+  ].includes(category);
 
   const getSelectedGroups = () => {
     if ((userPartitionInfo?.selectedPartitionIndex || 0) >= 0) {
@@ -106,7 +115,9 @@ const ConfigureModal = ({
 
   const initialValues = {
     releaseDate: sectionStartDate,
-    isVisibleToStaffOnly,
+    isVisibleToStaffOnly: isSectionOrSubsection
+      ? isVisibleToStaffOnly
+      : isVisibleToStaffOnly && !isStaffLockOnlyInherited,
     graderType: format == null ? 'notgraded' : format,
     dueDate: due == null ? '' : due,
     isTimeLimited,
@@ -281,6 +292,7 @@ const ConfigureModal = ({
         values={values}
         setFieldValue={setFieldValue}
         showWarning={visibilityState === VisibilityTypes.STAFF_ONLY && !ancestorHasStaffLock}
+        isHiddenByParent={isHiddenByParent}
         userPartitionInfo={userPartitionInfo}
       />
     ),

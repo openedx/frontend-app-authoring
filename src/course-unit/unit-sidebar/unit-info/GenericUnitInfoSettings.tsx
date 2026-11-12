@@ -2,7 +2,11 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Button, ButtonGroup, useToggle } from '@openedx/paragon';
 import { PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from '@src/course-unit/constants';
 import { UserPartitionInfoTypes } from '@src/data/types';
-import { AccessEditComponent, DiscussionEditComponent } from '@src/generic/configure-modal/UnitTab';
+import {
+  AccessEditComponent,
+  DiscussionEditComponent,
+  UnitHiddenByParentAlert,
+} from '@src/generic/configure-modal/UnitTab';
 import { SidebarContent, SidebarSection } from '@src/generic/sidebar';
 import { Form, Formik } from 'formik';
 import { useMemo } from 'react';
@@ -17,6 +21,8 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 interface UnitInfoSettingsProps {
   id: string;
   visibilityState: string;
+  ancestorHasStaffLock?: boolean;
+  hasExplicitStaffLock?: boolean;
   discussionEnabled?: boolean;
   userPartitionInfo?: UserPartitionInfoTypes;
   updateCallback?: () => void;
@@ -35,6 +41,8 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
   const {
     id,
     visibilityState,
+    ancestorHasStaffLock,
+    hasExplicitStaffLock,
     discussionEnabled,
     userPartitionInfo,
     sectionId,
@@ -42,7 +50,10 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
     configureHook = useConfigureUnit,
   } = props;
 
-  const visibleToStaffOnly = visibilityState === UNIT_VISIBILITY_STATES.staffOnly;
+  // A unit inside a hidden section/subsection is staff-only too, but its own setting can't override that.
+  // Reflect only the unit's own lock, so saving other settings doesn't silently add one.
+  const isStaffLockOnlyInherited = !!ancestorHasStaffLock && !hasExplicitStaffLock;
+  const visibleToStaffOnly = visibilityState === UNIT_VISIBILITY_STATES.staffOnly && !isStaffLockOnlyInherited;
   const mutateFn = configureHook();
   const [isVisibleModalOpen, openVisibleModal, closeVisibleModal] = useToggle(false);
   const { canEditCourseContent } = useCourseAuthoringContext();
@@ -138,6 +149,7 @@ export const GenericUnitInfoSettings = (props: UnitInfoSettingsProps) => {
               <FormattedMessage {...messages.sidebarInfoVisibilityStaffLabel} />
             </Button>
           </ButtonGroup>
+          {ancestorHasStaffLock && <UnitHiddenByParentAlert />}
         </SidebarSection>
         <SidebarSection
           title={intl.formatMessage(messages.sidebarInfoAccessTitle)}
