@@ -28,6 +28,7 @@ import DraggableList, { SortableItem } from '@src/generic/DraggableList';
 import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { RequestStatus } from '@src/data/constants';
 import getPageHeadTitle from '@src/generic/utils';
+import ViewOnlyPermissionsAlert from '@src/generic/ViewOnlyPermissionsAlert';
 import { getPagePath } from '@src/utils';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getPagesAndResourcesPermissions } from '@src/authz/permissionHelpers';
@@ -46,6 +47,32 @@ import previewLmsStaticPages from './data/images/previewLmsStaticPages.png';
 import CustomPageCard from './CustomPageCard';
 import messages from './messages';
 import EditModal from './EditModal';
+
+interface CustomPageEditorRouteProps {
+  courseId: string;
+  pageId?: string;
+  isEditable: boolean;
+  onClose: () => (content: any) => void;
+}
+
+const CustomPageEditorRoute = ({
+  courseId,
+  pageId,
+  isEditable,
+  onClose,
+}: CustomPageEditorRouteProps) => {
+  if (!isEditable) {
+    return <Navigate to={`/course/${courseId}/custom-pages`} replace />;
+  }
+  if (!pageId) {
+    return null;
+  }
+  return (
+    <PageWrap>
+      <EditModal courseId={courseId} pageId={pageId} onClose={onClose} />
+    </PageWrap>
+  );
+};
 
 const CustomPages = () => {
   const intl = useIntl();
@@ -145,14 +172,15 @@ const CustomPages = () => {
           <FormattedMessage {...messages.heading} />
         </div>
         <ActionRow.Spacer />
-        <Button
-          iconBefore={Add}
-          onClick={handleAddPage}
-          disabled={!isEditable}
-          data-testid="header-add-button"
-        >
-          <FormattedMessage {...messages.addPageHeaderLabel} />
-        </Button>
+        {isEditable && (
+          <Button
+            iconBefore={Add}
+            onClick={handleAddPage}
+            data-testid="header-add-button"
+          >
+            <FormattedMessage {...messages.addPageHeaderLabel} />
+          </Button>
+        )}
         <Hyperlink
           destination={learningCourseURL}
           target="_blank"
@@ -165,6 +193,7 @@ const CustomPages = () => {
           </Button>
         </Hyperlink>
       </ActionRow>
+      {!isEditable && <ViewOnlyPermissionsAlert className="mt-3 mb-0" />}
       <hr />
       <Layout
         lg={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
@@ -223,13 +252,14 @@ const CustomPages = () => {
               />
             ))}
           </DraggableList>
-          <StatefulButton
-            data-testid="body-add-button"
-            onClick={handleAddPage}
-            disabled={!isEditable}
-            state={addPageMutation.isPending ? RequestStatus.PENDING : 'default'}
-            {...addPageStateProps}
-          />
+          {isEditable && (
+            <StatefulButton
+              data-testid="body-add-button"
+              onClick={handleAddPage}
+              state={addPageMutation.isPending ? RequestStatus.PENDING : 'default'}
+              {...addPageStateProps}
+            />
+          )}
         </Layout.Element>
         <Layout.Element>
           <div className="h4">
@@ -285,19 +315,14 @@ const CustomPages = () => {
       <Routes>
         <Route
           path="/editor"
-          element={isEditable ?
-            (
-              currentPage && (
-                <PageWrap>
-                  <EditModal
-                    courseId={courseId}
-                    pageId={currentPage}
-                    onClose={handleEditClose}
-                  />
-                </PageWrap>
-              )
-            ) :
-            <Navigate to={`/course/${courseId}/custom-pages`} replace />}
+          element={
+            <CustomPageEditorRoute
+              courseId={courseId}
+              pageId={currentPage}
+              isEditable={isEditable}
+              onClose={handleEditClose}
+            />
+          }
         />
       </Routes>
     </Container>

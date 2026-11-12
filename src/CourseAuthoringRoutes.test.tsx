@@ -36,23 +36,23 @@ jest.mock('./editors/sharedComponents/TinyMceWidget', () => ({
 
 jest.mock('./pages-and-resources/PagesAndResources', () => (props: object) => {
   mockComponentFn(props);
-  return 'Pages And Resources';
+  return pagesAndResourcesMockText;
 });
 jest.mock('./editors/EditorContainer', () => (props: object) => {
   mockComponentFn(props);
-  return 'Editor Container';
+  return editorContainerMockText;
 });
 jest.mock('./selectors/VideoSelectorContainer', () => (props: object) => {
   mockComponentFn(props);
-  return 'Video Selector Container';
+  return videoSelectorContainerMockText;
 });
 jest.mock('./custom-pages/CustomPages', () => (props: object) => {
   mockComponentFn(props);
-  return 'Custom Pages';
+  return customPagesMockText;
 });
 jest.mock('./textbooks/Textbooks', () => (props: object) => {
   mockComponentFn(props);
-  return 'Textbooks';
+  return textbooksMockText;
 });
 
 let validateUserPermissionsMock: ReturnType<typeof initializeMocks>['validateUserPermissionsMock'];

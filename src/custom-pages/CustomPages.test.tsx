@@ -308,30 +308,26 @@ describe('CustomPages', () => {
       ]);
     });
 
-    it('lets view-only users consult pages with management actions disabled', async () => {
+    it('shows view-only users the read-only alert instead of management actions', async () => {
       mockPermissions(false);
       const user = userEvent.setup();
       renderRoute('');
 
       expect(await screen.findByText('Page 1')).toBeVisible();
-      const actions = [
-        screen.getByRole('button', { name: messages.addPageHeaderLabel.defaultMessage }),
-        screen.getByRole('button', { name: messages.addPageBodyLabel.defaultMessage }),
-        ...screen.getAllByRole('button', { name: messages.editTooltipContent.defaultMessage }),
-        ...screen.getAllByRole('button', { name: messages.deleteTooltipContent.defaultMessage }),
-        ...screen.getAllByRole('button', { name: messages.visibilityTooltipContent.defaultMessage }),
-      ];
-      expect(actions).toHaveLength(8);
-      for (const action of actions) {
-        expect(action).toBeDisabled();
-        await user.click(action);
+      expect(screen.getByRole('alert')).toHaveTextContent(/You have view-only access to this page/);
+      for (
+        const name of [
+          messages.addPageHeaderLabel.defaultMessage,
+          messages.addPageBodyLabel.defaultMessage,
+          messages.editTooltipContent.defaultMessage,
+          messages.deleteTooltipContent.defaultMessage,
+          messages.visibilityTooltipContent.defaultMessage,
+          // Without drag handles there is no pointer or keyboard entry point for reordering.
+          'Drag to reorder',
+        ]
+      ) {
+        expect(screen.queryByRole('button', { name })).not.toBeInTheDocument();
       }
-      // Without drag handles there is no pointer or keyboard entry point for reordering.
-      expect(screen.queryByRole('button', { name: 'Drag to reorder' })).not.toBeInTheDocument();
-      expect(screen.queryByTestId('edit-modal-mock')).not.toBeInTheDocument();
-      expect(axiosMock.history.put).toHaveLength(0);
-      expect(axiosMock.history.post).toHaveLength(0);
-      expect(axiosMock.history.delete).toHaveLength(0);
 
       expect(screen.getByRole('link', { name: messages.viewLiveLabel.defaultMessage })).toBeVisible();
       await user.click(screen.getByRole('button', { name: messages.studentViewExampleButton.defaultMessage }));
@@ -354,6 +350,7 @@ describe('CustomPages', () => {
       renderRoute('');
 
       expect(await screen.findByText('Page 1')).toBeVisible();
+      expect(screen.queryByText(/You have view-only access to this page/)).not.toBeInTheDocument();
       expect(screen.getByRole('button', { name: messages.addPageHeaderLabel.defaultMessage })).toBeEnabled();
       expect(screen.getByRole('button', { name: messages.addPageBodyLabel.defaultMessage })).toBeEnabled();
       for (

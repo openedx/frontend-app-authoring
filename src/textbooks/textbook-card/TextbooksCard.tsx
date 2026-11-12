@@ -83,24 +83,26 @@ const TextbookCard = ({
                       alt={intl.formatMessage(messages.buttonView)}
                       onClick={onPreviewTextbookClick}
                     />
-                    <IconButtonWithTooltip
-                      tooltipContent={intl.formatMessage(messages.buttonEdit)}
-                      src={EditIcon}
-                      iconAs={Icon}
-                      data-testid="textbook-edit-button"
-                      alt={intl.formatMessage(messages.buttonEdit)}
-                      onClick={openTextbookForm}
-                      disabled={!isEditable}
-                    />
-                    <IconButtonWithTooltip
-                      tooltipContent={intl.formatMessage(messages.buttonDelete)}
-                      src={DeleteIcon}
-                      iconAs={Icon}
-                      data-testid="textbook-delete-button"
-                      alt={intl.formatMessage(messages.buttonDelete)}
-                      onClick={openDeleteModal}
-                      disabled={!isEditable}
-                    />
+                    {isEditable && (
+                      <>
+                        <IconButtonWithTooltip
+                          tooltipContent={intl.formatMessage(messages.buttonEdit)}
+                          src={EditIcon}
+                          iconAs={Icon}
+                          data-testid="textbook-edit-button"
+                          alt={intl.formatMessage(messages.buttonEdit)}
+                          onClick={openTextbookForm}
+                        />
+                        <IconButtonWithTooltip
+                          tooltipContent={intl.formatMessage(messages.buttonDelete)}
+                          src={DeleteIcon}
+                          iconAs={Icon}
+                          data-testid="textbook-delete-button"
+                          alt={intl.formatMessage(messages.buttonDelete)}
+                          onClick={openDeleteModal}
+                        />
+                      </>
+                    )}
                   </ActionRow>
                 }
               />
