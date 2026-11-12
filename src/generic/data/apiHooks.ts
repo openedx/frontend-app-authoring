@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { contentTagsQueryKeys } from '../../content-tags-drawer/data/apiHooks';
 import { getOrganizations, getTagsCount } from './api';
 
 /**
@@ -25,9 +26,9 @@ export const useContentTagsCount = (contentId?: string) => {
     contentPattern = contentId.replace(/\+type@.*$/, '*');
   }
   return useQuery({
-    queryKey: ['contentTagsCount', contentPattern],
+    queryKey: contentTagsQueryKeys.contentTagsCount(contentPattern),
     queryFn: () => getTagsCount(contentPattern),
-    select: (data) => (contentId ? (data[contentId] || 0) : 0), // Return the tags count of the specific contentId
+    select: (data) => (contentId ? (data[contentId] || 0) : 0),
     enabled: !!contentId,
   });
 };
