@@ -116,6 +116,41 @@ describe('<ScoreThresholdField />', () => {
       expect(pill()).toHaveFocus();
     });
 
+    it('discards a typed change on Escape with focus on the operator toggle', async () => {
+      const user = userEvent.setup();
+      const onChange = jest.fn().mockResolvedValue(undefined);
+      render(<ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />);
+
+      await user.click(pill());
+      await typeScore(user, '90');
+      await user.tab({ shift: true });
+      expect(screen.getByRole('button', { name: 'Comparison, or higher' })).toHaveFocus();
+      await user.keyboard('{Escape}');
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      expect(onChange).not.toHaveBeenCalled();
+      expect(pill()).toHaveTextContent('70% or higher');
+    });
+
+    it('stays open with the persisted value when a click outside commits a change that is rejected', async () => {
+      const user = userEvent.setup();
+      const onChange = jest.fn().mockRejectedValue(new Error('save failed'));
+      render(
+        <>
+          <ScoreThresholdField rulePayload={rulePayload70Percent} onChange={onChange} />
+          <button type="button">elsewhere</button>
+        </>,
+      );
+
+      await user.click(pill());
+      const input = await typeScore(user, '90');
+      await user.click(screen.getByText('elsewhere'));
+
+      await waitFor(() => expect(input).toHaveValue('70'));
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+
     it('commits a changed valid value and closes on a click outside', async () => {
       const user = userEvent.setup();
       const onChange = jest.fn().mockResolvedValue(undefined);

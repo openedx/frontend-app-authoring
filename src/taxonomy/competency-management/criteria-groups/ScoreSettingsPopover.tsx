@@ -71,6 +71,8 @@ const ScoreSettingsPopover = ({
   // A ref, so a second commit in the same tick sees it before React re-renders and cannot race the first.
   const commitInFlight = useRef(false);
   const [isSaving, setIsSaving] = useState(false);
+  // While the operator menu is open, Escape only closes the menu.
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const revertToLastPersisted = () => {
     setInputValue(percentOf(rulePayload));
@@ -141,15 +143,21 @@ const ScoreSettingsPopover = ({
       if (await commit()) {
         onRequestClose();
       }
-    } else if (event.key === 'Escape') {
-      // Keeps the owner's own Escape handler from committing the input this keypress is reverting.
-      event.stopPropagation();
-      if (commitInFlight.current) {
-        return;
-      }
-      revertToLastPersisted();
-      onRequestClose();
     }
+  };
+
+  // On the root, so Escape discards the edit from any focused element, not only the input.
+  const handleDialogKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key !== 'Escape' || isMenuOpen) {
+      return;
+    }
+    // Keeps the owner's own Escape handler from committing the edit this keypress is discarding.
+    event.stopPropagation();
+    if (commitInFlight.current) {
+      return;
+    }
+    revertToLastPersisted();
+    onRequestClose();
   };
 
   // The commit-time message wins over the hint when both would show.
@@ -157,13 +165,18 @@ const ScoreSettingsPopover = ({
   const focusSuggestion = initialFocus === 'suggestion' && !!suggestion;
 
   return (
-    <div role="dialog" aria-labelledby={headingId} className="score-settings">
+    <div
+      role="dialog"
+      aria-labelledby={headingId}
+      className="score-settings"
+      onKeyDown={handleDialogKeyDown}
+    >
       <p id={headingId} className="score-settings__heading">
         {intl.formatMessage(messages.scoreSettingsHeading)}
       </p>
       <Form.Group controlId={inputId}>
         <div className="score-settings__row">
-          <Dropdown>
+          <Dropdown onToggle={setIsMenuOpen}>
             <Dropdown.Toggle
               id={toggleId}
               variant="outline-primary"

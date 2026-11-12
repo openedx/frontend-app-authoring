@@ -165,6 +165,43 @@ describe('<ScoreSettingsPopover />', () => {
     await waitFor(() => expect(screen.getByRole('textbox')).not.toHaveAttribute('readonly'));
   });
 
+  it.each([
+    ['the operator toggle', 'Comparison, or higher', false],
+    ['the suggestion link', 'Use 75% or higher', true],
+  ])('discards a typed change on Escape with focus on %s', async (_label, buttonName, withSuggestion) => {
+    const user = userEvent.setup();
+    const suggestion = withSuggestion
+      ? { rulePayload: { ...gte70, value: 0.75 }, onApply: jest.fn() }
+      : undefined;
+    const { onCommit, onRequestClose } = renderPopover({ suggestion });
+
+    const input = await typeScore(user, '90');
+    screen.getByRole('button', { name: buttonName }).focus();
+    await user.keyboard('{Escape}');
+
+    expect(onCommit).not.toHaveBeenCalled();
+    expect(input).toHaveValue('70');
+    expect(onRequestClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('closes only the operator menu on Escape while it is open', async () => {
+    const user = userEvent.setup();
+    const { onCommit, onRequestClose } = renderPopover();
+
+    await user.click(screen.getByRole('button', { name: 'Comparison, or higher' }));
+    expect(screen.getByRole('button', { name: 'or lower' })).toBeVisible();
+    await user.keyboard('{Escape}');
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Comparison, or higher' })).toHaveAttribute(
+        'aria-expanded',
+        'false',
+      )
+    );
+    expect(onRequestClose).not.toHaveBeenCalled();
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
   it('ignores Escape while a commit is in flight', async () => {
     const user = userEvent.setup();
     let resolveCommit: () => void;

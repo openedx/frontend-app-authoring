@@ -115,8 +115,9 @@ const messages = defineMessages({
   defaultScoreTakenHint: {
     id: 'course-authoring.competency-management.criteria-groups.default-score-taken-hint',
     defaultMessage: 'Another rule in this group already uses {score}. Choose a different score.',
-    description: 'Guidance under a new, empty rule box whose score is already used by another rule in the same '
-      + 'group. "{score}" is the score as shown in the field, such as "75% or higher".',
+    description: 'Guidance shown inside the rule box\'s score settings popover when the displayed score is '
+      + 'already used by another box in the same group. "{score}" is the score as shown in the field, such as '
+      + '"75% or higher".',
   },
   useSuggestedScoreLink: {
     id: 'course-authoring.competency-management.criteria-groups.use-suggested-score-link',
