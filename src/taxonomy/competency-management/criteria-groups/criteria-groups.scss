@@ -321,6 +321,11 @@
     background-color: var(--pgn-color-gray-200);
   }
 
+  .add-control {
+    max-width: 400px;
+    margin-inline: auto;
+  }
+
   .group-connector {
     &__label {
       font-size: var(--pgn-typography-font-size-sm);
