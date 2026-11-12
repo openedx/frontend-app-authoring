@@ -12,7 +12,6 @@ import messages from './messages';
 const GradingTypeAndDueDate = ({
   isSelfPaced,
   isInstructorPaced,
-  isCustomRelativeDatesActive,
   isTimeLimited,
   isProctoredExam,
   isOnboardingExam,
@@ -23,7 +22,7 @@ const GradingTypeAndDueDate = ({
   relativeWeeksDue,
 }) => {
   const intl = useIntl();
-  const showRelativeWeeks = isSelfPaced && isCustomRelativeDatesActive && relativeWeeksDue;
+  const showRelativeWeeks = isSelfPaced && relativeWeeksDue;
 
   let examValue = '';
   if (isProctoredExam) {
@@ -108,7 +107,6 @@ const GradingTypeAndDueDate = ({
 };
 
 GradingTypeAndDueDate.defaultProps = {
-  isCustomRelativeDatesActive: false,
   isTimeLimited: false,
   isProctoredExam: false,
   isOnboardingExam: false,
@@ -122,7 +120,6 @@ GradingTypeAndDueDate.defaultProps = {
 GradingTypeAndDueDate.propTypes = {
   isInstructorPaced: PropTypes.bool.isRequired,
   isSelfPaced: PropTypes.bool.isRequired,
-  isCustomRelativeDatesActive: PropTypes.bool,
   isTimeLimited: PropTypes.bool,
   isProctoredExam: PropTypes.bool,
   isOnboardingExam: PropTypes.bool,

@@ -66,7 +66,6 @@ const CourseOutline = () => {
     courseActions,
     savingStatus,
     statusBarData,
-    isCustomRelativeDatesActive,
     isLoading,
     isLoadingDenied,
     courseName,
@@ -296,7 +295,6 @@ const CourseOutline = () => {
                     courseActions={courseActions}
                     courseUsageKey={courseUsageKey}
                     hasOutlineIndexError={!!errors?.outlineIndexApi}
-                    isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                     isSectionsExpanded={isSectionsExpanded}
                     isSelfPaced={statusBarData.isSelfPaced}
                     discussionsSettings={discussionsSettings}

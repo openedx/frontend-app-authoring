@@ -47,7 +47,6 @@ type CourseOutlineContextData = {
   loadingStatus: OutlineLoadingStatus;
   isLoading: boolean;
   isLoadingDenied: boolean;
-  isCustomRelativeDatesActive: boolean;
   enableProctoredExams?: boolean;
   enableTimedExams?: boolean;
   createdOn?: string;
@@ -103,7 +102,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     effectiveLoadingStatus,
     rawErrors,
     courseActions,
-    isCustomRelativeDatesActive,
     enableProctoredExams,
     enableTimedExams,
     createdOn,
@@ -243,7 +241,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     loadingStatus: mergedLoadingStatus,
     isLoading: mergedLoadingStatus.outlineIndexIsLoading,
     isLoadingDenied: mergedLoadingStatus.outlineIndexIsDenied,
-    isCustomRelativeDatesActive,
     enableProctoredExams,
     enableTimedExams,
     createdOn,
@@ -277,7 +274,6 @@ export const CourseOutlineProvider = ({ children }: { children?: React.ReactNode
     savingStatus,
     mergedErrors,
     mergedLoadingStatus,
-    isCustomRelativeDatesActive,
     enableProctoredExams,
     enableTimedExams,
     createdOn,

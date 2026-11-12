@@ -66,7 +66,6 @@ const sampleOutlineIndexData = {
       children: [{ id: 'A', displayName: 'Section A' }],
     },
   },
-  isCustomRelativeDatesActive: true,
   createdOn: '2025-01-15T00:00:00Z',
 };
 
@@ -304,7 +303,6 @@ describe('useOutlineStatusState', () => {
       expect(result.current.courseActions).toEqual(
         expect.objectContaining({ deletable: true, draggable: true }),
       );
-      expect(result.current.isCustomRelativeDatesActive).toBe(true);
       expect(result.current.createdOn).toBe('2025-01-15T00:00:00Z');
     });
 
@@ -321,7 +319,6 @@ describe('useOutlineStatusState', () => {
       expect(result.current.courseActions).toEqual(
         expect.objectContaining({ deletable: true, childAddable: true }),
       );
-      expect(result.current.isCustomRelativeDatesActive).toBe(false);
       expect(result.current.createdOn).toBeUndefined();
     });
   });

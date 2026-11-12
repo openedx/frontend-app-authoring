@@ -47,7 +47,6 @@ export interface UseOutlineStatusStateOutput {
   };
   rawErrors: Record<string, any>;
   courseActions: XBlockActions;
-  isCustomRelativeDatesActive: boolean;
   enableProctoredExams?: boolean;
   enableTimedExams?: boolean;
   createdOn?: string;
@@ -104,7 +103,6 @@ export function useOutlineStatusState({
   const isSelfPaced = launchQuery.data?.isSelfPaced ?? false;
 
   const courseActions = effectiveOutlineIndexData?.courseStructure?.actions || DEFAULT_COURSE_ACTIONS;
-  const isCustomRelativeDatesActive = effectiveOutlineIndexData?.isCustomRelativeDatesActive ?? false;
   const enableProctoredExams = effectiveOutlineIndexData?.courseStructure?.enableProctoredExams;
   const enableTimedExams = effectiveOutlineIndexData?.courseStructure?.enableTimedExams;
   const createdOn = effectiveOutlineIndexData?.createdOn;
@@ -150,7 +148,6 @@ export function useOutlineStatusState({
     effectiveLoadingStatus,
     rawErrors,
     courseActions,
-    isCustomRelativeDatesActive,
     enableProctoredExams,
     enableTimedExams,
     createdOn,

@@ -52,7 +52,6 @@ const renderComponent = (props) =>
       <IntlProvider locale="en">
         <XBlockStatus
           isSelfPaced={false}
-          isCustomRelativeDatesActive={false}
           {...props}
         />
       </IntlProvider>,
@@ -112,7 +111,7 @@ describe('<XBlockStatus /> for Instructor paced Section', () => {
       `${messages.dueLabel.defaultMessage} ${section.dueDate}`,
     );
     // self paced weeks should not be visible as
-    // isSelfPaced is false as well as isCustomRelativeDatesActive is false
+    // isSelfPaced is false
     expect(queryByTestId('self-paced-relative-due-weeks-div')).not.toBeInTheDocument();
 
     // check hide after due date message
@@ -143,7 +142,6 @@ describe('<XBlockStatus /> for self paced Section', () => {
   it('renders XBlockStatus with grading type, due weeks etc.', () => {
     const { queryByTestId } = renderComponent({
       isSelfPaced: true,
-      isCustomRelativeDatesActive: true,
       blockData: {
         ...section,
         relativeWeeksDue: 2,
@@ -270,7 +268,7 @@ describe('<XBlockStatus /> for Instructor paced Subsection', () => {
       `${messages.dueLabel.defaultMessage} ${subsection.dueDate}`,
     );
     // self paced weeks should not be visible as
-    // isSelfPaced is false as well as isCustomRelativeDatesActive is false
+    // isSelfPaced is false
     expect(queryByTestId('self-paced-relative-due-weeks-div')).not.toBeInTheDocument();
 
     // check hide after due date message
@@ -361,7 +359,7 @@ describe('<XBlockStatus /> for Instructor paced Subsection', () => {
       `${messages.dueLabel.defaultMessage} ${subsection.dueDate}`,
     );
     // self paced weeks should not be visible as
-    // isSelfPaced is false as well as isCustomRelativeDatesActive is false
+    // isSelfPaced is false
     expect(queryByTestId('self-paced-relative-due-weeks-div')).not.toBeInTheDocument();
   });
 });
@@ -383,7 +381,6 @@ describe('<XBlockStatus /> for self paced Subsection', () => {
   it('renders XBlockStatus with grading type, due weeks etc.', () => {
     const { queryByTestId } = renderComponent({
       isSelfPaced: true,
-      isCustomRelativeDatesActive: true,
       blockData: {
         ...subsection,
         relativeWeeksDue: 2,
