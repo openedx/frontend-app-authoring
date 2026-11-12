@@ -22,8 +22,6 @@ export const FlashcardsImageSettingsModal = ({ imageSettings, onClose }: Flashca
   const { setFieldValue } = useFormikContext<FlashcardsState>();
   const [altText, setAltText] = useState(imageSettings?.altText || '');
 
-  console.debug('XXX imageSettings in FlashcardsImageSettingsModal', imageSettings);
-
   return (
     <BaseModal
       close={onClose}

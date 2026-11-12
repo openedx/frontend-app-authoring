@@ -60,7 +60,6 @@ const CardField = ({
           index={index}
           imageType={field}
           onOpenSettings={() => {
-            console.debug('XXX setting image settings');
             onOpenSettings({
               index,
               cardSide: field,
