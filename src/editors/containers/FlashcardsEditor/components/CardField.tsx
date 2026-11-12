@@ -4,11 +4,11 @@ import { Form } from '@openedx/paragon';
 
 import { default as uploadWidgetMessages } from '@src/editors/sharedComponents/UploadWidget/messages';
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import { CardSideType, FlashcardsState, ImageSettings } from '../types';
+import { CardSideType, FlashcardsState, ImageSettings } from '@src/editors/containers/FlashcardsEditor/types';
 import { useFormikContext } from 'formik';
 import { CardImage } from './CardImage';
 import { UploadWidget } from '@src/editors/sharedComponents/UploadWidget';
-import { FlashcardsEditorContext } from '../context';
+import { FlashcardsEditorContext } from '@src/editors/containers/FlashcardsEditor/context';
 
 const ACCEPTED_IMAGES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
 

@@ -4,7 +4,7 @@ import Button from '@src/editors/sharedComponents/Button';
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
 import { Card } from '@openedx/paragon';
 import { useFormikContext } from 'formik';
-import { FlashcardsState } from '../types';
+import { FlashcardsState } from '@src/editors/containers/FlashcardsEditor/types';
 
 const SettingsSidebar = () => {
   const intl = useIntl();

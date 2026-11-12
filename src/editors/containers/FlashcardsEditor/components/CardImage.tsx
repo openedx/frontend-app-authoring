@@ -3,7 +3,7 @@ import { Button, Icon, IconButton, OverlayTrigger, Tooltip } from '@openedx/para
 import { DeleteOutline } from '@openedx/paragon/icons';
 
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import { CardSideType } from '../types';
+import { CardSideType } from '@src/editors/containers/FlashcardsEditor/types';
 
 interface CardImageProps {
   url: string;

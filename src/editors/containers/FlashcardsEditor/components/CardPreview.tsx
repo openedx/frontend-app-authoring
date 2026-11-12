@@ -3,7 +3,7 @@ import { Icon, OverlayTrigger, Tooltip } from '@openedx/paragon';
 
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
 import { useId } from 'react';
-import { Card } from '../types';
+import { Card } from '@src/editors/containers/FlashcardsEditor/types';
 import PictureIcon from './PictureIcon';
 
 interface PreviewSideProps {
