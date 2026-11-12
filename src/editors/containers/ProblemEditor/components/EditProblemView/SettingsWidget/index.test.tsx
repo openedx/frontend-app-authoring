@@ -47,7 +47,6 @@ describe('SettingsWidget', () => {
     answers: [],
     correctAnswerCount: 0,
     groupFeedbackList: [],
-    showMarkdownEditorButton: false,
   };
 
   const editorRef = { current: null };
@@ -140,7 +139,30 @@ describe('SettingsWidget', () => {
         },
       };
       const { container } = renderSettingsWidget({}, { initialState: modifiedInitialState });
-      expect(container.querySelectorAll('switcheditorcard')).toHaveLength(1);
+      const cards = container.querySelectorAll('switcheditorcard');
+      expect(cards).toHaveLength(1);
+      expect(cards[0].getAttribute('editortype')).toBe('advanced');
+    });
+
+    test('shows only the advanced SwitchEditorCard when the problem has no markdown', () => {
+      const showAdvancedSettingsCardsProps = {
+        ...showAdvancedSettingsCardsBaseProps,
+        isAdvancedCardsVisible: true,
+      };
+      jest.spyOn(hooks, 'showAdvancedSettingsCards').mockReturnValue(showAdvancedSettingsCardsProps);
+      const modifiedInitialState: PartialEditorState = {
+        problem: {
+          problemType: null,
+          isMarkdownEditorEnabled: false,
+          rawOLX: '<problem></problem>',
+          rawMarkdown: '', // e.g. authored in the visual or advanced editor, so no markdown to switch to
+          isDirty: false,
+        },
+      };
+      const { container } = renderSettingsWidget({}, { initialState: modifiedInitialState });
+      const cards = container.querySelectorAll('switcheditorcard');
+      expect(cards).toHaveLength(1);
+      expect(cards[0].getAttribute('editortype')).toBe('advanced');
     });
   });
 

@@ -237,6 +237,23 @@ describe('header utils', () => {
         expect(result.current.map((item) => item.title)).not.toContain('Pages & Resources');
       });
     });
+    it('when user cannot edit course content should not include optimizer option', () => {
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
+        isLoading: false,
+        isAuthzEnabled: false,
+        canEditCourseContent: false,
+        canViewChecklists: true,
+        canImportCourse: true,
+        canExportCourse: true,
+        canExportTags: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
+      const optimizerItem = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result
+        .current.find(
+          item => item.href === '/course/course-123/optimizer',
+        );
+      expect(optimizerItem).toBeUndefined();
+    });
+
     it('when authz enabled and user has no permissions should return an empty menu', () => {
       mockWaffleFlags({
         enableAuthzCourseAuthoring: true,
@@ -539,13 +556,14 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
       });
-      const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result
-        .current.map((item) => item.title);
-      expect(actualItemsTitle).toEqual([
-        'Import',
-        'Export Course',
-        'Export Tags',
-        'Checklists',
+      const actualItemsHref = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result
+        .current.map((item) => item.href);
+      expect(actualItemsHref).toEqual([
+        '/course/course-123/import',
+        '/course/course-123/export',
+        `${getConfig().STUDIO_BASE_URL}/course/course-123#export-tags`,
+        '/course/course-123/checklists',
+        '/course/course-123/optimizer',
       ]);
     });
     it('when tags disabled should not include export tags option', () => {
@@ -553,19 +571,17 @@ describe('header utils', () => {
         ...getConfig(),
         ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
       });
-      const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result
-        .current.map((item) => item.title);
-      expect(actualItemsTitle).toEqual([
-        'Import',
-        'Export Course',
-        'Checklists',
+      const actualItemsHref = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result
+        .current.map((item) => item.href);
+      expect(actualItemsHref).toEqual([
+        '/course/course-123/import',
+        '/course/course-123/export',
+        '/course/course-123/checklists',
+        '/course/course-123/optimizer',
       ]);
     });
 
-    it('when course optimizer enabled should include optimizer option', () => {
-      mockWaffleFlags({
-        enableCourseOptimizer: true,
-      });
+    it('when user can edit course content should include optimizer option', () => {
       const optimizerItem = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result
         .current.find(
           item => item.href === '/course/course-123/optimizer',
@@ -573,19 +589,9 @@ describe('header utils', () => {
       expect(optimizerItem).toBeDefined();
     });
 
-    it('when course optimizer disabled should not include optimizer option', () => {
-      mockWaffleFlags({
-        enableCourseOptimizer: false,
-      });
-      const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123'), { wrapper: createWrapper() }).result
-        .current.map((item) => item.title);
-      expect(actualItemsTitle).not.toContain(messages['header.links.optimizer'].defaultMessage);
-    });
-
     it('when authz enabled and user has no permissions should return an empty menu', () => {
       mockWaffleFlags({
         enableAuthzCourseAuthoring: true,
-        enableCourseOptimizer: true,
       });
       setConfig({
         ...getConfig(),
