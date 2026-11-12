@@ -11,7 +11,7 @@ const testObj = {};
 
 const defaultAssignments = {
   type: 'Test type',
-  minCount: 1,
+  minCount: 2,
   dropCount: 1,
   shortLabel: 'TT',
   weight: 100,
@@ -35,6 +35,14 @@ const RootWrapper = (props = {}) => (
     />
   </IntlProvider>
 );
+
+const StatefulRootWrapper = (props = {}) => {
+  const [gradingData, setGradingDataState] = React.useState({ graders: [defaultAssignments] });
+  return <RootWrapper graders={gradingData.graders} setGradingData={setGradingDataState} {...props} />;
+};
+
+const dropCountTooHighErrorMessage = messages.numberOfDroppableSecondErrorMessage.defaultMessage
+  .replace('{type}', defaultAssignments.type);
 
 describe('<AssignmentSection />', () => {
   it('checking the correct display of titles, labels, descriptions', async () => {
@@ -74,7 +82,7 @@ describe('<AssignmentSection />', () => {
     const { getByTestId } = render(<RootWrapper setGradingData={setGradingData} />);
     await waitFor(() => {
       const assignmentTotalNumberInput = getByTestId('assignment-minCount-input');
-      expect(assignmentTotalNumberInput.value).toBe('1');
+      expect(assignmentTotalNumberInput.value).toBe('2');
       fireEvent.change(assignmentTotalNumberInput, { target: { value: '123' } });
       expect(testObj.graders[0].minCount).toBe(123);
     });
@@ -99,11 +107,44 @@ describe('<AssignmentSection />', () => {
       expect(getByText(messages.numberOfDroppableErrorMessage.defaultMessage)).toBeInTheDocument();
     });
   });
+  it('checking correct error msg if dropCount is not less than minCount', () => {
+    const setShowSavePrompt = jest.fn();
+    const { getByText, getByTestId } = render(<StatefulRootWrapper setShowSavePrompt={setShowSavePrompt} />);
+    const assignmentNumberOfDroppableInput = getByTestId('assignment-dropCount-input');
+    fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '2' } });
+    expect(getByText(dropCountTooHighErrorMessage)).toBeInTheDocument();
+    expect(assignmentNumberOfDroppableInput).toHaveClass('is-invalid');
+    expect(setShowSavePrompt).toHaveBeenLastCalledWith(false);
+  });
+  it('checking dropCount error appears when minCount is lowered and clears once fixed', () => {
+    const { getByTestId, queryByText } = render(<StatefulRootWrapper />);
+    const assignmentNumberOfDroppableInput = getByTestId('assignment-dropCount-input');
+    fireEvent.change(getByTestId('assignment-minCount-input'), { target: { value: '1' } });
+    expect(queryByText(dropCountTooHighErrorMessage)).toBeInTheDocument();
+    expect(assignmentNumberOfDroppableInput).toHaveClass('is-invalid');
+    fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '0' } });
+    expect(queryByText(dropCountTooHighErrorMessage)).not.toBeInTheDocument();
+    expect(assignmentNumberOfDroppableInput).not.toHaveClass('is-invalid');
+  });
+  it('checking only the minCount error is shown when minCount is not greater than 0', () => {
+    const { getByTestId, getByText, queryByText } = render(<StatefulRootWrapper />);
+    fireEvent.change(getByTestId('assignment-minCount-input'), { target: { value: '0' } });
+    expect(getByText(messages.totalNumberErrorMessage.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(dropCountTooHighErrorMessage)).not.toBeInTheDocument();
+    expect(getByTestId('assignment-dropCount-input')).not.toHaveClass('is-invalid');
+  });
+  it('checking correct error msg if assignment type name contains only spaces', () => {
+    const setShowSavePrompt = jest.fn();
+    const { getByText, getByTestId } = render(<RootWrapper setShowSavePrompt={setShowSavePrompt} />);
+    fireEvent.change(getByTestId('assignment-type-name-input'), { target: { value: '   ' } });
+    expect(getByText(messages.assignmentTypeNameErrorMessage1.defaultMessage)).toBeInTheDocument();
+    expect(setShowSavePrompt).toHaveBeenLastCalledWith(false);
+  });
   it('checking correct error msg if minCount have negative number or empty string', async () => {
     const { getByText, getByTestId } = render(<RootWrapper />);
     await waitFor(() => {
       const assignmentMinCountInput = getByTestId('assignment-minCount-input');
-      expect(assignmentMinCountInput.value).toBe('1');
+      expect(assignmentMinCountInput.value).toBe('2');
       fireEvent.change(assignmentMinCountInput, { target: { value: '-2' } });
       expect(getByText(messages.totalNumberErrorMessage.defaultMessage)).toBeInTheDocument();
       fireEvent.change(assignmentMinCountInput, { target: { value: '' } });
@@ -165,5 +206,12 @@ describe('<AssignmentSection />', () => {
       fireEvent.change(assignmentWeightInput, { target: { value: '-100' } });
       expect(getByText(messages.weightOfTotalGradeErrorMessage.defaultMessage)).toBeInTheDocument();
     });
+  });
+  it('checking correct error msg if total weight is empty', () => {
+    const setShowSavePrompt = jest.fn();
+    const { getByText, getByTestId } = render(<RootWrapper setShowSavePrompt={setShowSavePrompt} />);
+    fireEvent.change(getByTestId('assignment-weight-input'), { target: { value: '' } });
+    expect(getByText(messages.weightOfTotalGradeErrorMessage.defaultMessage)).toBeInTheDocument();
+    expect(setShowSavePrompt).toHaveBeenLastCalledWith(false);
   });
 });
