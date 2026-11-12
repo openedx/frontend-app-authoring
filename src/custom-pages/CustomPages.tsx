@@ -4,6 +4,7 @@ import {
   Route,
   useNavigate,
   Link,
+  Navigate,
 } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
@@ -284,15 +285,19 @@ const CustomPages = () => {
       <Routes>
         <Route
           path="/editor"
-          element={currentPage && (
-            <PageWrap>
-              <EditModal
-                courseId={courseId}
-                pageId={currentPage}
-                onClose={handleEditClose}
-              />
-            </PageWrap>
-          )}
+          element={isEditable ?
+            (
+              currentPage && (
+                <PageWrap>
+                  <EditModal
+                    courseId={courseId}
+                    pageId={currentPage}
+                    onClose={handleEditClose}
+                  />
+                </PageWrap>
+              )
+            ) :
+            <Navigate to={`/course/${courseId}/custom-pages`} replace />}
         />
       </Routes>
     </Container>

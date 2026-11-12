@@ -213,6 +213,31 @@ describe('Pages & Resources route permissions', () => {
       .toBe(true);
   });
 
+  it.each(['custom-pages', 'custom-pages/editor'])(
+    'shows the view-only Custom Pages listing with the Studio header after visiting %s',
+    async route => {
+      const matchMedia = jest.mocked(window.matchMedia);
+      const originalMatchMedia = matchMedia.getMockImplementation()!;
+      matchMedia.mockImplementation(query =>
+        Object.assign(originalMatchMedia(query), {
+          matches: query.includes('min-width'),
+        })
+      );
+      try {
+        setPermissions(true, false);
+        renderRoute(route);
+
+        expect(await screen.findByText('Course policies')).toBeVisible();
+        expect(await screen.findByRole('banner')).toBeVisible();
+        expect(screen.getByLabelText('Current location').textContent).toBe(`${coursePath}/custom-pages`);
+        expect(screen.getByRole('button', { name: 'Edit' })).toBeDisabled();
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      } finally {
+        matchMedia.mockImplementation(originalMatchMedia);
+      }
+    },
+  );
+
   it('lets view-only users consult Textbooks with disabled management actions', async () => {
     setPermissions(true, false);
     const user = userEvent.setup();
@@ -333,7 +358,31 @@ describe('Pages & Resources route permissions', () => {
     expect(screen.getByLabelText('Current location').textContent).toBe(`${coursePath}/custom-pages`);
   });
 
-  it.each(['custom-pages', 'textbooks', 'pages-and-resources/ora_settings/settings'])(
+  it('replaces the view-only Custom Pages editor history entry', async () => {
+    setPermissions(true, false);
+    const user = userEvent.setup();
+    renderRoute('custom-pages/editor', 'textbooks');
+
+    await waitFor(() =>
+      expect(screen.getByLabelText('Current location').textContent)
+        .toBe(`${coursePath}/custom-pages`)
+    );
+    expect(mockShowToast).not.toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: 'Go back' }));
+    expect(await screen.findByText('Course textbook')).toBeVisible();
+    expect(screen.getByLabelText('Current location').textContent).toBe(`${coursePath}/textbooks`);
+  });
+
+  it.each([false, true])('preserves manager access to the Custom Pages editor with view=%s', async view => {
+    setPermissions(view, true);
+    renderRoute('custom-pages/editor');
+
+    expect(await screen.findByText('Course policies')).toBeVisible();
+    expect(screen.getByLabelText('Current location').textContent).toBe(`${coursePath}/custom-pages/editor`);
+    expect(screen.getByRole('button', { name: 'Edit' })).toBeEnabled();
+  });
+
+  it.each(['custom-pages', 'custom-pages/editor', 'textbooks', 'pages-and-resources/ora_settings/settings'])(
     'withholds %s while permission validation is pending',
     async route => {
       let finishValidation!: () => void;
@@ -357,7 +406,7 @@ describe('Pages & Resources route permissions', () => {
       await act(async () => {
         finishValidation();
       });
-      if (route === 'custom-pages') {
+      if (route.startsWith('custom-pages')) {
         expect(await screen.findByText('Course policies')).toBeVisible();
       } else if (route === 'textbooks') {
         expect(await screen.findByText('Course textbook')).toBeVisible();
@@ -388,12 +437,12 @@ describe('Pages & Resources route permissions', () => {
     },
   );
 
-  it.each(['custom-pages', 'textbooks', 'pages-and-resources/calculator/settings'])(
+  it.each(['custom-pages', 'custom-pages/editor', 'textbooks', 'pages-and-resources/calculator/settings'])(
     'preserves legacy access to %s with AuthZ disabled',
     async route => {
       axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(200, { enableAuthzCourseAuthoring: false });
       renderRoute(route);
-      if (route === 'custom-pages') {
+      if (route.startsWith('custom-pages')) {
         expect(await screen.findByText('Course policies')).toBeVisible();
         expect(screen.getByRole('button', { name: 'New page' })).toBeEnabled();
       } else if (route === 'textbooks') {
