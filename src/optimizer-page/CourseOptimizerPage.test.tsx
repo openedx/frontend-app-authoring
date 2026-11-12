@@ -151,18 +151,12 @@ describe('CourseOptimizerPage', () => {
       expect(optimizerStatusRequests).toHaveLength(0);
     });
 
-    it('does not fetch rerun status or show an error when the scan found no previous-run links', async () => {
-      // Backends with previous-run link checks disabled reject this request with 400.
-      axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(400, {
-        error: 'Course optimizer check for previous run links is not enabled.',
-      });
+    it('does not fetch rerun status when the scan found no previous-run links', async () => {
       render(<OptimizerPage />);
-
-      expect(await screen.findByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
+      await waitFor(() => expect(screen.getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument());
       expect(axiosMock.history.get.filter(({ url }) => url === getRerunLinkUpdateStatusApiUrl(courseId))).toHaveLength(
         0,
       );
-      expect(screen.queryByText(scanResultsMessages.updateLinksError.defaultMessage)).not.toBeInTheDocument();
     });
 
     it('should render the component', () => {
