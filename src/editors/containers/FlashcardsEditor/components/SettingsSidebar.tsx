@@ -8,7 +8,7 @@ import { FlashcardsState } from '../types';
 
 const SettingsSidebar = () => {
   const intl = useIntl();
-  const { values, setValues } = useFormikContext<FlashcardsState>();
+  const { values, setFieldValue } = useFormikContext<FlashcardsState>();
 
   return (
     <div className="w-25">
@@ -24,14 +24,14 @@ const SettingsSidebar = () => {
             <div className="pb-3 mb-2 text-gray-600">{intl.formatMessage(messages.shuffleSettingsDescription)}</div>
             <div className="d-flex flex-row gap-0 w-100">
               <Button
-                onClick={() => setValues({ ...values, isShuffled: false })}
+                onClick={() => setFieldValue('isShuffled', false)}
                 variant={!values.isShuffled ? 'primary' : 'outline-primary'}
                 className="flex-grow-1 rounded-0"
               >
                 {intl.formatMessage(messages.offLabel)}
               </Button>
               <Button
-                onClick={() => setValues({ ...values, isShuffled: true })}
+                onClick={() => setFieldValue('isShuffled', true)}
                 variant={values.isShuffled ? 'primary' : 'outline-primary'}
                 className="flex-grow-1 rounded-0"
               >

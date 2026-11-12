@@ -4,7 +4,6 @@ import { Icon, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
 import { useId } from 'react';
 import { Card } from '../types';
-import { imageDisplayUrl } from '../utils';
 import PictureIcon from './PictureIcon';
 
 interface PreviewSideProps {
@@ -61,14 +60,14 @@ const CardPreview = ({ card }: { card: Card; }) => {
   return (
     <div className="w-100 mr-2">
       <PreviewSide
-        text={card.term}
-        imageUrl={imageDisplayUrl(card.termImage)}
-        imageAlt={card.termImageAlt || card.term}
+        text={card.term.text}
+        imageUrl={card.term.image.url}
+        imageAlt={card.term.image.alt || card.term.text}
       />
       <PreviewSide
-        text={card.definition}
-        imageUrl={imageDisplayUrl(card.definitionImage)}
-        imageAlt={card.definitionImageAlt || card.definition}
+        text={card.definition.text}
+        imageUrl={card.definition.image.url}
+        imageAlt={card.definition.image.alt || card.definition.text}
       />
     </div>
   );

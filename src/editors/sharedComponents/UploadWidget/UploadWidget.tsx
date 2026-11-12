@@ -116,7 +116,7 @@ const UploadWidget = ({
 
   return (
     <Form.Group as={Col} controlId={id}>
-      {manualMode && <TextField label={intl.formatMessage(messages.urlFieldLabel)} id={id} name="url" />}
+      {manualMode && <TextField label={intl.formatMessage(messages.urlFieldLabel)} id={id} name={urlFieldName} />}
       {!manualMode && (
         <>
           <Form.Label htmlFor={id}>{label}</Form.Label>

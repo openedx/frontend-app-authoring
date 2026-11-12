@@ -1,25 +1,31 @@
 import { v4 as uuidv4 } from 'uuid';
 
-export type CardSide = 'term' | 'definition';
+export type CardSideType = 'term' | 'definition';
 
 // represents info about an image for the image alt text editor modal
 export interface ImageData {
   index: number;
-  cardSide: CardSide;
+  cardSide: CardSideType;
   altText: string;
   url: string;
 }
 
+export interface Image {
+  url: string;
+  alt: string;
+}
+
+export interface CardSide {
+  text: string;
+  image: Image;
+}
+
 export interface Card {
   cardKey: string;
-  term: string;
-  termImage: string;
-  termImagePath: string;
-  termImageAlt: string;
-  definition: string;
-  definitionImage: string;
-  definitionImagePath: string;
-  definitionImageAlt: string;
+  term: CardSide;
+  definition: CardSide;
+
+  // used locally by the editor, not by the student view
   editorOpen: boolean;
 }
 
@@ -31,14 +37,20 @@ export interface FlashcardsState {
 
 export const emptyCard = (): Card => ({
   cardKey: uuidv4(),
-  term: '',
-  termImage: '',
-  termImagePath: '',
-  termImageAlt: '',
-  definition: '',
-  definitionImage: '',
-  definitionImagePath: '',
-  definitionImageAlt: '',
+  term: {
+    text: '',
+    image: {
+      url: '',
+      alt: '',
+    },
+  },
+  definition: {
+    text: '',
+    image: {
+      url: '',
+      alt: '',
+    },
+  },
   editorOpen: true,
 });
 

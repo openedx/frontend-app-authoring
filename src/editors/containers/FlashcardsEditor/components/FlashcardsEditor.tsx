@@ -53,9 +53,13 @@ export const FlashcardsEditorComponent: React.FC<EditorComponent> = (props) => {
   const isDirty = () => isEqual(originalState, values);
 
   const getContent = () => {
-    const settings = { ...values };
-    // TODO: strip out empty cards
-    return settings;
+    return {
+      ...values,
+      // filter out empty cards
+      cards: values.cards.filter(card =>
+        card.term.text || card.term.image.url || card.definition.text || card.definition.image.url
+      ),
+    };
   };
 
   const [imageSettings, setImageSettings] = useState<ImageData | null>(null);
@@ -85,14 +89,19 @@ export const FlashcardsEditorComponent: React.FC<EditorComponent> = (props) => {
                 {(arrayHelpers) => (
                   <>
                     <DraggableList
-                      itemList={fields.cards.map((card) => ({ id: card.cardKey, ...card }))}
-                      setState={() => {/* TODO */}}
-                      updateOrder={() => () => undefined}
+                      itemList={values.cards.map((card) => ({ id: card.cardKey, ...card }))}
+                      setState={() => {/* unused; persisted in updateOrder instead */}}
+                      updateOrder={() => (cards) => setFieldValue('cards', cards)}
                     >
-                      {fields.cards.map((card, index) => (
+                      {values.cards.map((card, index) => (
                         <FlashcardsCard
                           key={card.cardKey}
                           index={index}
+                          onDelete={() => arrayHelpers.remove(index)}
+                          onMoveUp={index > 0 ? () => arrayHelpers.swap(index - 1, index) : null}
+                          onMoveDown={values.cards.length > index + 1
+                            ? () => arrayHelpers.swap(index, index + 1)
+                            : null}
                         />
                       ))}
                     </DraggableList>
@@ -116,7 +125,7 @@ export const FlashcardsEditorComponent: React.FC<EditorComponent> = (props) => {
             imageData={imageSettings}
             onCancel={() => setImageSettings(null)}
             onSave={(altText) =>
-              setFieldValue(`cards.${imageSettings.index}.${imageSettings.cardSide}ImageAlt`, altText)}
+              setFieldValue(`cards.${imageSettings.index}.${imageSettings.cardSide}.image.alt`, altText)}
           />
         )}
       </EditorWrapper>

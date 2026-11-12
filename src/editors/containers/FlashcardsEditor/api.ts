@@ -18,7 +18,7 @@ export const immediate = <T>(val: T) =>
     resolve(val);
   });
 
-// Unique ID required due to intractable race conditions. See ./contexts.tsx file.
+// Unique ID required due to intractable race conditions. See ./context.tsx file.
 export const useBlockHandlerData = <T>({
   blockId,
   uniqueId,

@@ -1,6 +1,16 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  courseFileHint: {
+    id: 'FlashcardsEditor.courseFileHint',
+    defaultMessage: 'Files are immediately uploaded to course assets (Files).',
+    description: 'Hint for file upload when in a course.',
+  },
+  libraryFileHint: {
+    id: 'FlashcardsEditor.libraryFileHint',
+    defaultMessage: 'Files are immediately uploaded to library assets.',
+    description: 'Hint for file upload when in a library.',
+  },
   loadingSpinner: {
     id: 'FlashcardsEditor.loadingSpinner',
     defaultMessage: 'Loading Spinner',
