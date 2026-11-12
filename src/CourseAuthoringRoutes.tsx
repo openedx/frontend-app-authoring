@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
-import { Textbooks } from './textbooks';
+import { Textbooks } from '@src/textbooks';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources, PagesAndResourcesAccess } from '@src/pages-and-resources';
 import EditorContainer from './editors/EditorContainer';
@@ -110,8 +110,8 @@ const CourseAuthoringRoutes = () => {
               />
             )}
             {
-              /* Custom Pages has a separate entry point but uses the Pages & Resources
-                permission set, so both routes share this access guard. */
+              /* Custom Pages and Textbooks have separate entry points but use the Pages & Resources
+                permission set, so all three routes share this access guard. */
             }
             <Route element={<PagesAndResourcesAccess />}>
               <Route
@@ -121,6 +121,10 @@ const CourseAuthoringRoutes = () => {
               <Route
                 path="custom-pages/*"
                 element={<CustomPages />}
+              />
+              <Route
+                path="textbooks"
+                element={<Textbooks />}
               />
             </Route>
             <Route
@@ -200,10 +204,6 @@ const CourseAuthoringRoutes = () => {
                 }
               />
             )}
-            <Route
-              path="textbooks"
-              element={<Textbooks />}
-            />
           </Route>
           {/* Routes without PageWrap */}
           <Route

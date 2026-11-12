@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+import { getApiWaffleFlagsUrl } from '@src/data/api';
 import {
   initializeMocks,
   render,
@@ -27,6 +28,7 @@ describe('<Textbooks />', () => {
     const mocks = initializeMocks();
 
     axiosMock = mocks.axiosMock;
+    axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(200, {});
     axiosMock
       .onGet(getTextbooksApiUrl(courseId))
       .reply(200, textbooksMock);
