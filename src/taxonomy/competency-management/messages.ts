@@ -55,6 +55,16 @@ const messages = defineMessages({
     description: 'Toast shown in place of the generic create-criterion failure when the backend rejects the '
       + 'new criterion because an ancestor or descendant competency already has criteria in the same course.',
   },
+  updateGroupOperatorFailedToastMessage: {
+    id: 'course-authoring.competency-management.update-group-operator-failed-toast-message',
+    defaultMessage: 'There was a problem updating this group\'s logic. Please try again.',
+    description: 'Toast shown when changing a bottom-tier group\'s any/all combining logic fails.',
+  },
+  updateRuleScoreFailedToastMessage: {
+    id: 'course-authoring.competency-management.update-rule-score-failed-toast-message',
+    defaultMessage: 'There was a problem updating this rule\'s score. Please try again.',
+    description: 'Toast shown when changing a rule box\'s score threshold fails.',
+  },
 });
 
 export default messages;

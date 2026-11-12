@@ -114,3 +114,22 @@ export interface CreateCompetencyCriterionPayload {
  * linking the content object to the competency.
  */
 export type CreateCompetencyCriterionResponse = Omit<CompetencyCriterion, 'objectId'> & { objectTagId: number; };
+
+/** Request body for updating a bottom-tier group's any/all combining logic (`#760`): just
+ * `logic_operator`, under its own wire key. */
+export interface UpdateCompetencyCriteriaGroupPayload {
+  logic_operator: CompetencyGroupLogicOperator;
+}
+
+/** Request body for updating a rule box's score threshold (`#759`), batched
+ * across every criterion that currently shares the box. Always carries
+ * explicit override values, never a `competency_rule_profile_id` - the
+ * backend reassigns a criterion back to its default profile itself when
+ * the submitted value matches it, so "reset to default" needs no special
+ * payload here.
+ */
+export interface UpdateCompetencyCriteriaRulePayload {
+  criterion_ids: number[];
+  rule_type_override: string;
+  rule_payload_override: GradeRulePayload;
+}

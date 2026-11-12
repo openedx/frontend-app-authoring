@@ -11,6 +11,8 @@ import messages from './messages';
 export interface CriteriaGroupBoxProps {
   group: BottomTierCompetencyCriteriaGroup;
   subsectionNamesByUsageKey: Record<string, string>;
+  /** Whether the author can edit this group's any/all logic and its rule boxes' scores. */
+  canEdit: boolean;
 }
 
 /** One bottom-tier group's "By completing any/all of the following"
@@ -21,9 +23,16 @@ export interface CriteriaGroupBoxProps {
  * rule box scrolls itself, and the group scrolls only when none of its boxes
  * matches the focused rule key.
  */
-const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBoxProps) => {
+const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: CriteriaGroupBoxProps) => {
   const intl = useIntl();
-  const { focus, focusGroup, status, groupsIndex, systemDefaultProfile } = useCompetencyAssociations();
+  const {
+    focus,
+    focusGroup,
+    status,
+    groupsIndex,
+    systemDefaultProfile,
+    updateGroupOperator,
+  } = useCompetencyAssociations();
   const ref = useRef<HTMLDivElement>(null);
 
   const isFocused = focus?.groupId === group.id;
@@ -36,37 +45,63 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey }: CriteriaGroupBox
     }
   }, [isFocused, hasFocusedBox]);
 
+  const sentenceLabel = intl.formatMessage(messages.criteriaGroupBoxLabel, {
+    operator: group.logicOperator === 'AND'
+      ? intl.formatMessage(messages.logicOperatorAllLabel)
+      : intl.formatMessage(messages.logicOperatorAnyLabel),
+  });
+  const sentence = intl.formatMessage(messages.criteriaGroupBoxLabel, {
+    operator: (
+      <LogicOperatorSelect
+        key="operator"
+        className="criteria-group-box__header-operator"
+        value={group.logicOperator}
+        labels={{
+          and: intl.formatMessage(messages.logicOperatorAllLabel),
+          or: intl.formatMessage(messages.logicOperatorAnyLabel),
+        }}
+        onChange={canEdit ? (logicOperator) => updateGroupOperator(group.id, logicOperator) : undefined}
+      />
+    ),
+  });
+
   return (
     <div
       ref={ref}
       className={classNames('criteria-group-box', { 'criteria-group-box--focused': isFocused })}
     >
-      <button
-        type="button"
-        className="criteria-group-box__header"
-        aria-current={isFocused}
-        onClick={() => focusGroup(group.id)}
-      >
-        {intl.formatMessage(messages.criteriaGroupBoxLabel, {
-          operator: (
-            <LogicOperatorSelect
-              key="operator"
-              className="criteria-group-box__header-operator"
-              value={group.logicOperator}
-              labels={{
-                and: intl.formatMessage(messages.logicOperatorAllLabel),
-                or: intl.formatMessage(messages.logicOperatorAnyLabel),
-              }}
-            />
-          ),
-        })}
-      </button>
+      {canEdit
+        ? (
+          // The operator dropdown is a button, so the select control is a sibling laid over the band.
+          <div className="criteria-group-box__header">
+            <button
+              type="button"
+              className="criteria-group-box__select-button"
+              aria-current={isFocused}
+              onClick={() => focusGroup(group.id)}
+            >
+              <span className="sr-only">{sentenceLabel}</span>
+            </button>
+            {sentence}
+          </div>
+        )
+        : (
+          <button
+            type="button"
+            className="criteria-group-box__header"
+            aria-current={isFocused}
+            onClick={() => focusGroup(group.id)}
+          >
+            {sentence}
+          </button>
+        )}
       {status === 'success' && (
         <div className="criteria-group-box__rules">
           <RuleBoxList
             groupId={group.id}
             boxes={boxes}
             subsectionNamesByUsageKey={subsectionNamesByUsageKey}
+            canEdit={canEdit}
           />
         </div>
       )}

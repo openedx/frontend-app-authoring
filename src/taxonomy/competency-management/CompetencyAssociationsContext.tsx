@@ -24,8 +24,11 @@ import {
   useCourseTaggingPermissions,
   useCreateCompetencyCriterion,
   useDefaultCompetencyRuleProfile,
+  useUpdateCompetencyCriteriaGroupOperator,
+  useUpdateCompetencyCriteriaRule,
 } from './data/apiHooks';
 import type {
+  CompetencyGroupLogicOperator,
   CompetencyRuleProfile,
   CourseCompetencyCriteriaGroup,
   CreateCompetencyCriterionPayload,
@@ -37,6 +40,7 @@ import {
   associatedObjectIds,
   bottomTierGroupsForCourse,
   buildCompetencyCriteriaGroupsIndex,
+  effectiveRuleOf,
   lastBottomTierGroupForCourse,
   lastRuleKeyIn,
   ruleBoxesForGroup,
@@ -74,6 +78,12 @@ export interface CompetencyAssociationsContextBase {
    * associated or the groups tree or default profile has not loaded.
    */
   associateSubsection: (objectId: string, courseId: string) => void;
+  /** Updates a bottom-tier group's any/all combining logic. A rejected save only shows a failure toast. */
+  updateGroupOperator: (groupId: number, logicOperator: CompetencyGroupLogicOperator) => void;
+  /** Updates a rule box's score threshold across `criterionIds`, keeping the box's current rule type.
+   * Rejects on failure so `ScoreThresholdField` can revert its local input.
+   */
+  updateRuleScore: (groupId: number, criterionIds: number[], rulePayload: GradeRulePayload) => Promise<void>;
   isAssociating: boolean;
   /** How many times each course row has been expanded, so a card can reopen on an
    * expansion that leaves focus where it already was.
@@ -306,6 +316,8 @@ export const CompetencyAssociationsProvider = ({
   const profileQuery = useDefaultCompetencyRuleProfile();
   const { mutateAsync: createCriterion, isPending: isCreatePending, variables } = useCreateCompetencyCriterion();
   const isAssociating = isCreatePending && variables?.tagId === tagId;
+  const { mutate: updateGroupOperatorMutate } = useUpdateCompetencyCriteriaGroupOperator();
+  const { mutateAsync: updateRuleScoreMutateAsync } = useUpdateCompetencyCriteriaRule();
 
   const groupsIndex = useMemo(
     () => (groupsQuery.data ? buildCompetencyCriteriaGroupsIndex(groupsQuery.data) : undefined),
@@ -509,6 +521,51 @@ export const CompetencyAssociationsProvider = ({
     intl,
   ]);
 
+  const updateGroupOperator = useCallback((groupId: number, logicOperator: CompetencyGroupLogicOperator) => {
+    updateGroupOperatorMutate({ tagId, groupId, logicOperator }, {
+      // `LogicOperatorSelect` renders from `group.logicOperator`, which a rejected mutation never touches.
+      onError: () => {
+        showToast(intl.formatMessage(messages.updateGroupOperatorFailedToastMessage), undefined, undefined, ErrorIcon);
+      },
+    });
+  }, [tagId, updateGroupOperatorMutate, showToast, intl]);
+
+  const updateRuleScore = useCallback((
+    groupId: number,
+    criterionIds: number[],
+    rulePayload: GradeRulePayload,
+  ): Promise<void> => {
+    if (!groupsIndex || !systemDefaultProfile) {
+      // A rule box is only editable once both queries have resolved, so this is a narrowing guard.
+      throw new Error('updateRuleScore called before the groups index and system default profile were loaded.');
+    }
+    // Every criterion in a rule box shares its effective rule, so any one of them gives the rule type.
+    const anchorCriterion = (groupsIndex.criteriaByGroupId.get(groupId) ?? [])
+      .find((criterion) => criterionIds.includes(criterion.id));
+    if (!anchorCriterion) {
+      // Defensive guard, not an expected runtime path: `criterionIds` always comes from this
+      // same group's own rendered rule box.
+      throw new Error(`updateRuleScore: no criterion in group ${groupId} matched the given criterionIds.`);
+    }
+    const { ruleType } = effectiveRuleOf(anchorCriterion, systemDefaultProfile);
+
+    return updateRuleScoreMutateAsync({ tagId, groupId, criterionIds, ruleType, rulePayload })
+      .then((updatedCriteria) => {
+        // Keyed from the response: a "reset to default" edit can echo back a shared profile reference.
+        const [updatedCriterion] = updatedCriteria;
+        if (updatedCriterion) {
+          dispatch({
+            type: 'setFocus',
+            focus: { groupId, ruleKey: ruleKeyOf(updatedCriterion, systemDefaultProfile) },
+          });
+        }
+      })
+      .catch((updateError) => {
+        showToast(intl.formatMessage(messages.updateRuleScoreFailedToastMessage), undefined, undefined, ErrorIcon);
+        throw updateError;
+      });
+  }, [groupsIndex, systemDefaultProfile, tagId, updateRuleScoreMutateAsync, showToast, intl]);
+
   const contextValue = useMemo<CompetencyAssociationsContextValue>(() => {
     const shared: CompetencyAssociationsContextBase = {
       error,
@@ -517,6 +574,8 @@ export const CompetencyAssociationsProvider = ({
       focusRuleBox,
       notifyCourseExpanded,
       associateSubsection,
+      updateGroupOperator,
+      updateRuleScore,
       isAssociating,
       expansionCountByCourseId,
       hasPermissionsError,
@@ -537,6 +596,8 @@ export const CompetencyAssociationsProvider = ({
     focusRuleBox,
     notifyCourseExpanded,
     associateSubsection,
+    updateGroupOperator,
+    updateRuleScore,
     isAssociating,
     expansionCountByCourseId,
     hasPermissionsError,

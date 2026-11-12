@@ -16,6 +16,8 @@ import {
   useCourseTaggingPermissions,
   useCreateCompetencyCriterion,
   useDefaultCompetencyRuleProfile,
+  useUpdateCompetencyCriteriaGroupOperator,
+  useUpdateCompetencyCriteriaRule,
 } from './apiHooks';
 
 jest.mock('@src/authz/data/apiHooks', () => ({
@@ -145,6 +147,65 @@ describe('useCreateCompetencyCriterion', () => {
 
     const state = queryClient.getQueryState(competencyQueryKeys.competencyCriteriaGroups(otherTagId));
     expect(state?.isInvalidated).toBe(false);
+  });
+});
+
+describe('useUpdateCompetencyCriteriaGroupOperator', () => {
+  it('invalidates that tagId\'s groups query on success', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onPatch(apiUrls.updateCompetencyCriteriaGroup(tagId, 10)).reply(200, {
+      id: 10,
+      parent_id: 1,
+      tag_id: tagId,
+      course_key: null,
+      name: 'leaf',
+      ordering: 0,
+      logic_operator: 'OR',
+      archived: false,
+    });
+    queryClient.setQueryData(competencyQueryKeys.competencyCriteriaGroups(tagId), { groups: [], criteria: [] });
+
+    const { result } = renderHook(() => useUpdateCompetencyCriteriaGroupOperator(), { wrapper: makeWrapper() });
+
+    await act(async () => {
+      await result.current.mutateAsync({ tagId, groupId: 10, logicOperator: 'OR' });
+    });
+
+    const state = queryClient.getQueryState(competencyQueryKeys.competencyCriteriaGroups(tagId));
+    expect(state?.isInvalidated).toBe(true);
+  });
+});
+
+describe('useUpdateCompetencyCriteriaRule', () => {
+  it('invalidates that tagId\'s groups query on success', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    const groupId = 10;
+    axiosMock.onPatch(apiUrls.updateCompetencyCriteriaRule(groupId)).reply(200, [
+      {
+        id: 101,
+        object_id: 'block-a',
+        group_id: groupId,
+        rule_profile_id: null,
+        rule_type_override: 'grade',
+        rule_payload_override: { op: 'gte', value: 0.8, scale: 'percent' },
+      },
+    ]);
+    queryClient.setQueryData(competencyQueryKeys.competencyCriteriaGroups(tagId), { groups: [], criteria: [] });
+
+    const { result } = renderHook(() => useUpdateCompetencyCriteriaRule(), { wrapper: makeWrapper() });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        tagId,
+        groupId,
+        criterionIds: [101],
+        ruleType: 'grade',
+        rulePayload: { op: 'gte', value: 0.8, scale: 'percent' },
+      });
+    });
+
+    const state = queryClient.getQueryState(competencyQueryKeys.competencyCriteriaGroups(tagId));
+    expect(state?.isInvalidated).toBe(true);
   });
 });
 

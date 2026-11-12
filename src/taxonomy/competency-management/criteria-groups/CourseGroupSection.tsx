@@ -23,6 +23,7 @@ export interface CourseGroupSectionProps {
 const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   const intl = useIntl();
   const {
+    canEditCourse,
     expansionCountByCourseId,
     focus,
     groupsIndex,
@@ -94,6 +95,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
                 <CriteriaGroupBox
                   group={group}
                   subsectionNamesByUsageKey={subsectionNamesByUsageKey}
+                  canEdit={canEditCourse(courseGroup.courseKey)}
                 />
               </Fragment>
             ))}

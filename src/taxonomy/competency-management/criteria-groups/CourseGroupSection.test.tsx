@@ -67,7 +67,7 @@ const renderSection = (
   section: CourseCompetencyCriteriaGroup = courseGroup,
 ) => (
   render(
-    <MockCompetencyAssociationsProvider value={{ groupsIndex: index, ...contextOverrides }}>
+    <MockCompetencyAssociationsProvider value={{ groupsIndex: index, canEditCourse: () => false, ...contextOverrides }}>
       <CourseGroupSection courseGroup={section} />
     </MockCompetencyAssociationsProvider>,
   )

@@ -7,6 +7,7 @@ import {
   screen,
   userEvent,
   waitFor,
+  within,
 } from '@src/testUtils';
 import {
   courseA,
@@ -66,7 +67,18 @@ const renderPanel = (rows: Course[] = [courseBRow]) =>
     </CompetencyAssociationsProvider>,
   );
 
-const groupHeaders = () => screen.getAllByRole('button', { name: 'By completing any of the following' });
+// The author can edit these courses, so each header and rule box has an empty select button beside its editable control.
+const groupHeaders = () => Array.from(document.querySelectorAll<HTMLElement>('.criteria-group-box__select-button'));
+const ruleBoxControls = () => Array.from(document.querySelectorAll<HTMLElement>('.rule-box__select-button'));
+const ruleBoxWithScore = (percent: string) => {
+  const control = ruleBoxControls().find((candidate) => (
+    within(candidate.closest<HTMLElement>('.rule-box')!).queryByDisplayValue(percent)
+  ));
+  if (!control) {
+    throw new Error(`No rule box with a score of ${percent}`);
+  }
+  return control;
+};
 const currentStates = (elements: HTMLElement[]) => elements.map((element) => element.getAttribute('aria-current'));
 
 describe('competency associations over the real provider', () => {
@@ -89,7 +101,8 @@ describe('competency associations over the real provider', () => {
     );
     renderPanel();
     // Focus starts on course A's group, with the course B card collapsed.
-    await user.click((await screen.findAllByRole('button', { name: 'By completing any of the following' }))[0]);
+    await screen.findAllByText(/^By completing/);
+    await user.click(groupHeaders()[0]);
     expect(groupHeaders()[0]).toHaveAttribute('aria-current', 'true');
     await user.click(await screen.findByRole('button', { name: 'Collapse Course B' }));
     expect(screen.queryByText('Homework 1')).not.toBeInTheDocument();
@@ -99,12 +112,9 @@ describe('competency associations over the real provider', () => {
     // Course B's groups are 20 (ordering 0) and 21 (ordering 1). Group 21's last box is the `eq` override.
     const headers = groupHeaders();
     expect(currentStates(headers)).toEqual(['false', 'false', 'true']);
-    const lastRuleBox = screen.getByRole('button', { name: 'With a score of 100%' });
+    const lastRuleBox = ruleBoxWithScore('100');
     expect(lastRuleBox).toHaveAttribute('aria-current', 'true');
-    expect(screen.getByRole('button', { name: 'With a score of 70% or higher' })).toHaveAttribute(
-      'aria-current',
-      'false',
-    );
+    expect(ruleBoxWithScore('70')).toHaveAttribute('aria-current', 'false');
     expect(screen.getByRole('button', { name: 'Collapse Course B' })).toBeInTheDocument();
     expect(scrollIntoView.mock.contexts.at(-1)).toBe(lastRuleBox.parentElement);
   });
@@ -148,7 +158,7 @@ describe('competency associations over the real provider', () => {
     expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({ object_id: 'b-sub-1' });
     const headers = groupHeaders();
     expect(currentStates(headers)).toEqual(['false', 'true']);
-    const ruleBoxes = screen.getAllByRole('button', { name: 'With a score of 70% or higher' });
+    const ruleBoxes = ruleBoxControls();
     expect(currentStates(ruleBoxes)).toEqual(['false', 'true']);
     expect(scrollIntoView.mock.contexts).toContain(ruleBoxes[1].parentElement);
   });
@@ -196,12 +206,12 @@ describe('competency associations over the real provider', () => {
     await user.click(groupHeaders()[1]);
 
     expect(currentStates(groupHeaders())).toEqual(['false', 'true', 'false']);
-    expect(currentStates(screen.getAllByRole('button', { name: /^With a score of/ }))).toEqual(['false', 'false']);
+    expect(currentStates(ruleBoxControls())).toEqual(['false', 'false']);
 
-    await user.click(screen.getByRole('button', { name: 'With a score of 100%' }));
+    await user.click(ruleBoxWithScore('100'));
 
     expect(currentStates(groupHeaders())).toEqual(['false', 'false', 'true']);
-    expect(currentStates(screen.getAllByRole('button', { name: /^With a score of/ }))).toEqual(['false', 'true']);
+    expect(currentStates(ruleBoxControls())).toEqual(['false', 'true']);
   });
 
   it('shows the empty state when every course outline is refused with 403', async () => {
@@ -212,7 +222,7 @@ describe('competency associations over the real provider', () => {
 
     expect(await screen.findByText('No content associated.')).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: /^From within Course/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'By completing any of the following' })).not.toBeInTheDocument();
+    expect(screen.queryByText(/^By completing/)).not.toBeInTheDocument();
   });
 
   it('shows the failure toast and adds no chip when the create request fails', async () => {
