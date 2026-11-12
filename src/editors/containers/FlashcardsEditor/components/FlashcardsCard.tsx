@@ -4,7 +4,7 @@ import { ExpandLess, ExpandMore, MoreHoriz } from '@openedx/paragon/icons';
 
 import { SortableItem } from '@src/generic/DraggableList';
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import type { FlashcardsState } from '@src/editors/containers/FlashcardsEditor/types';
+import type { FlashcardsState, ImageSettings } from '@src/editors/containers/FlashcardsEditor/types';
 import CardField from './CardField';
 import CardPreview from './CardPreview';
 import { useFormikContext } from 'formik';
@@ -14,6 +14,7 @@ interface FlashcardsCardProps {
   onDelete: () => void;
   onMoveUp: (() => void) | null;
   onMoveDown: (() => void) | null;
+  onOpenSettings: (settings: ImageSettings) => void;
 }
 
 /** One card of the game: a collapsible, draggable term and definition pair. */
@@ -22,6 +23,7 @@ const FlashcardsCard = ({
   onDelete,
   onMoveUp,
   onMoveDown,
+  onOpenSettings,
 }: FlashcardsCardProps) => {
   const intl = useIntl();
   const { values, setFieldValue } = useFormikContext<FlashcardsState>();
@@ -112,11 +114,13 @@ const FlashcardsCard = ({
             <CardField
               field="term"
               index={index}
+              onOpenSettings={onOpenSettings}
             />
             <hr className="m-0" />
             <CardField
               field="definition"
               index={index}
+              onOpenSettings={onOpenSettings}
             />
           </Collapsible.Body>
         </div>

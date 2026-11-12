@@ -2,13 +2,13 @@ import { Button, Form, Image } from '@openedx/paragon';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import BaseModal from '@src/editors/sharedComponents/BaseModal';
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import { ImageData } from '@src/editors/containers/FlashcardsEditor/types';
+import { FlashcardsState, ImageSettings } from '@src/editors/containers/FlashcardsEditor/types';
 import { useState } from 'react';
+import { useFormikContext } from 'formik';
 
-interface Props {
-  imageData: ImageData;
-  onCancel: () => void;
-  onSave: (altText: string) => void;
+interface FlashcardsImageSettingsModalProps {
+  imageSettings: ImageSettings;
+  onClose: () => void;
 }
 
 /**
@@ -17,21 +17,23 @@ interface Props {
  *
  * NOTE: alt text is optional here, because the image alt text defaults to the term or definition text.
  */
-export const FlashcardsImageSettingsModal = ({
-  onCancel,
-  imageData,
-  onSave,
-}: Props) => {
+export const FlashcardsImageSettingsModal = ({ imageSettings, onClose }: FlashcardsImageSettingsModalProps) => {
   const intl = useIntl();
-  const [altText, setAltText] = useState(imageData.altText);
+  const { setFieldValue } = useFormikContext<FlashcardsState>();
+  const [altText, setAltText] = useState(imageSettings?.altText || '');
+
+  console.debug('XXX imageSettings in FlashcardsImageSettingsModal', imageSettings);
 
   return (
     <BaseModal
-      close={onCancel}
+      close={onClose}
       confirmAction={
         <Button
           variant="primary"
-          onClick={() => onSave(altText)}
+          onClick={async () => {
+            await setFieldValue(`cards.${imageSettings.index}.${imageSettings.cardSide}.image.alt`, altText);
+            onClose();
+          }}
         >
           <FormattedMessage {...messages.saveButtonLabel} />
         </Button>
@@ -43,7 +45,7 @@ export const FlashcardsImageSettingsModal = ({
         <div className="d-flex align-items-center justify-content-center" style={{ width: '250px' }}>
           <Image
             style={{ maxWidth: '250px', maxHeight: '250px', objectFit: 'contain' }}
-            src={imageData.url}
+            src={imageSettings.url}
           />
         </div>
         <div className="flex-grow-1 ml-3" style={{ minWidth: '375px' }}>

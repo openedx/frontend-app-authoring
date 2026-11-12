@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 export type CardSideType = 'term' | 'definition';
 
 // represents info about an image for the image alt text editor modal
-export interface ImageData {
+export interface ImageSettings {
   index: number;
   cardSide: CardSideType;
   altText: string;

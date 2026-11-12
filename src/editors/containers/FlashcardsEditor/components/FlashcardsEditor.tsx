@@ -7,7 +7,7 @@ import { isEqual } from 'lodash';
 import { PropsWithChildren, useContext, useEffect, useRef, useState } from 'react';
 import { FlashcardsEditorContext } from '../context';
 import messages from '../messages';
-import { emptyCard, FlashcardsState, ImageData } from '../types';
+import { emptyCard, FlashcardsState, ImageSettings } from '../types';
 import { InfoOutline, Plus } from '@openedx/paragon/icons';
 import DraggableList from '@src/generic/DraggableList';
 import FlashcardsCard from './FlashcardsCard';
@@ -52,6 +52,9 @@ export const FlashcardsEditorComponent: React.FC<EditorComponent> = (props) => {
 
   const isDirty = () => isEqual(originalState, values);
 
+  // Controls the image settings modal. The modal is hidden when the value is null.
+  const [imageSettings, setImageSettings] = useState<ImageSettings | null>(null);
+
   const getContent = () => {
     return {
       ...values,
@@ -61,8 +64,6 @@ export const FlashcardsEditorComponent: React.FC<EditorComponent> = (props) => {
       ),
     };
   };
-
-  const [imageSettings, setImageSettings] = useState<ImageData | null>(null);
 
   return (
     <EditorContainer {...props} isDirty={isDirty} getContent={getContent}>
@@ -102,6 +103,7 @@ export const FlashcardsEditorComponent: React.FC<EditorComponent> = (props) => {
                           onMoveDown={values.cards.length > index + 1
                             ? () => arrayHelpers.swap(index, index + 1)
                             : null}
+                          onOpenSettings={setImageSettings}
                         />
                       ))}
                     </DraggableList>
@@ -120,14 +122,8 @@ export const FlashcardsEditorComponent: React.FC<EditorComponent> = (props) => {
             <SettingsSidebar />
           </div>
         </div>
-        {imageSettings !== null && (
-          <FlashcardsImageSettingsModal
-            imageData={imageSettings}
-            onCancel={() => setImageSettings(null)}
-            onSave={(altText) =>
-              setFieldValue(`cards.${imageSettings.index}.${imageSettings.cardSide}.image.alt`, altText)}
-          />
-        )}
+        {imageSettings !== null &&
+          <FlashcardsImageSettingsModal imageSettings={imageSettings} onClose={() => setImageSettings(null)} />}
       </EditorWrapper>
     </EditorContainer>
   );

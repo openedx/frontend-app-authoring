@@ -4,7 +4,7 @@ import { useBlockHandlerData } from './api';
 import { useSelector } from 'react-redux';
 import { selectors } from '@src/editors/data/redux';
 import { useQueryClient } from '@tanstack/react-query';
-import { FlashcardsState, initialFlashcardsState } from './types';
+import { FlashcardsState, ImageSettings, initialFlashcardsState } from './types';
 
 interface FlashcardsEditorContextInterface {
   fields: FlashcardsState;
