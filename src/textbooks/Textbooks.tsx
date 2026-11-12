@@ -17,6 +17,7 @@ import { useCourseUserPermissions } from '@src/authz/hooks';
 import { getPagesAndResourcesPermissions } from '@src/authz/permissionHelpers';
 
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
+import ViewOnlyPermissionsAlert from '@src/generic/ViewOnlyPermissionsAlert';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import TextbookCard from './textbook-card/TextbooksCard';
 import TextbookSidebar from './textbook-sidebar/TextbookSidebar';
@@ -83,15 +84,18 @@ const Textbooks = () => {
                 links={breadcrumbs}
               />
             }
-            headerActions={
-              <Button
-                iconBefore={AddIcon}
-                onClick={openTextbookForm}
-                disabled={!isEditable || isTextbookFormOpen}
-              >
-                {intl.formatMessage(messages.newTextbookButton)}
-              </Button>
-            }
+            headerActions={isEditable ?
+              (
+                <Button
+                  iconBefore={AddIcon}
+                  onClick={openTextbookForm}
+                  disabled={isTextbookFormOpen}
+                >
+                  {intl.formatMessage(messages.newTextbookButton)}
+                </Button>
+              ) :
+              null}
+            banner={isEditable ? null : <ViewOnlyPermissionsAlert className="mb-3" />}
           />
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}

@@ -15,9 +15,11 @@ const EmptyPlaceholder = ({ onCreateNewTextbook, isEditable }: EmptyPlaceholderP
   return (
     <div className="textbooks-empty-placeholder bg-white" data-testid="textbooks-empty-placeholder">
       <p className="mb-0 small text-gray-700">{intl.formatMessage(messages.title)}</p>
-      <Button iconBefore={IconAdd} onClick={onCreateNewTextbook} disabled={!isEditable}>
-        {intl.formatMessage(messages.button)}
-      </Button>
+      {isEditable && (
+        <Button iconBefore={IconAdd} onClick={onCreateNewTextbook}>
+          {intl.formatMessage(messages.button)}
+        </Button>
+      )}
     </div>
   );
 };

@@ -82,38 +82,26 @@ describe('<Textbooks />', () => {
       validateUserPermissionsMock.mockResolvedValue({ canViewPagesAndResources: true, canManagePagesAndResources });
     };
 
-    it('lets view-only users consult textbooks with management actions disabled', async () => {
+    it('shows view-only users the read-only alert instead of management actions', async () => {
       mockPermissions(false);
-      const user = userEvent.setup();
       renderComponent();
 
       expect(await screen.findAllByTestId('textbook-card')).toHaveLength(2);
-      const actions = [
-        screen.getByRole('button', { name: messages.newTextbookButton.defaultMessage }),
-        ...screen.getAllByRole('button', { name: 'Edit' }),
-        ...screen.getAllByRole('button', { name: 'Delete' }),
-      ];
-      expect(actions).toHaveLength(5);
-      for (const action of actions) {
-        expect(action).toBeDisabled();
-        await user.click(action);
+      expect(screen.getByRole('alert')).toHaveTextContent(/You have view-only access to this page/);
+      for (const name of [messages.newTextbookButton.defaultMessage, 'Edit', 'Delete']) {
+        expect(screen.queryByRole('button', { name })).not.toBeInTheDocument();
       }
-      expect(screen.queryByTestId('textbook-form')).not.toBeInTheDocument();
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       screen.getAllByRole('button', { name: 'View the PDF live' }).forEach(button => expect(button).toBeEnabled());
     });
 
-    it('disables both creation entry points when a view-only list is empty', async () => {
+    it('hides both creation entry points when a view-only list is empty', async () => {
       mockPermissions(false);
       axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(200, emptyTextbooksMock);
-      const user = userEvent.setup();
       renderComponent();
 
-      const addFirst = await screen.findByRole('button', { name: 'Add your first textbook' });
-      expect(addFirst).toBeDisabled();
-      expect(screen.getByRole('button', { name: messages.newTextbookButton.defaultMessage })).toBeDisabled();
-      await user.click(addFirst);
-      expect(screen.queryByTestId('textbook-form')).not.toBeInTheDocument();
+      expect(await screen.findByTestId('textbooks-empty-placeholder')).toBeVisible();
+      expect(screen.queryByRole('button', { name: 'Add your first textbook' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: messages.newTextbookButton.defaultMessage })).not.toBeInTheDocument();
     });
 
     it('keeps management actions available to managers', async () => {
@@ -122,6 +110,7 @@ describe('<Textbooks />', () => {
       renderComponent();
 
       expect(await screen.findAllByTestId('textbook-card')).toHaveLength(2);
+      expect(screen.queryByText(/You have view-only access to this page/)).not.toBeInTheDocument();
       [...screen.getAllByRole('button', { name: 'Edit' }), ...screen.getAllByRole('button', { name: 'Delete' })]
         .forEach(button => expect(button).toBeEnabled());
       await user.click(screen.getByRole('button', { name: messages.newTextbookButton.defaultMessage }));
