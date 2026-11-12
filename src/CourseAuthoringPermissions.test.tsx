@@ -11,6 +11,7 @@ import {
   screen,
   userEvent,
   waitFor,
+  within,
 } from '@src/testUtils';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
@@ -18,6 +19,7 @@ const coursePath = `/course/${courseId}`;
 // Backend contracts are local fixtures so this cross-feature suite does not import feature internals.
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 const getTabHandlerUrl = (id: string) => `${getApiBaseUrl()}/api/contentstore/v0/tabs/${id}`;
+const getTextbooksApiUrl = (id: string) => `${getApiBaseUrl()}/api/contentstore/v1/textbooks/${id}`;
 const getCourseAppsApiUrl = () => `${getApiBaseUrl()}/api/course_apps/v1/apps`;
 const getCourseAdvancedSettingsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v0/advanced_settings`;
 const getDiscussionsProvidersUrl = (id: string) => `${getApiBaseUrl()}/api/discussions/v0/course/${id}/providers`;
@@ -119,6 +121,9 @@ describe('Pages & Resources route permissions', () => {
       start: '2027-01-01T00:00:00Z',
     });
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, {});
+    axiosMock.onGet(`${getApiBaseUrl()}/api/contentstore/v1/help_urls`).reply(200, {
+      textbooks: 'https://example.com/textbook-help',
+    });
     axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(200, [
       { id: 'calculator', name: 'Calculator', description: 'Course calculator', enabled: true },
       { id: 'ora_settings', name: 'ORA', description: 'Open response assessments', enabled: true },
@@ -127,12 +132,25 @@ describe('Pages & Resources route permissions', () => {
       force_on_flexible_peer_openassessments: { value: false },
     });
     axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, [{ id: 'page-1', name: 'Course policies' }]);
+    axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(200, {
+      textbooks: [{
+        id: '1book',
+        tab_title: 'Course textbook',
+        chapters: [{ title: 'Introduction', url: 'https://example.com/introduction.pdf' }],
+      }],
+    });
     axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, discussionProviders);
     axiosMock.onGet(getDiscussionsSettingsUrl(courseId)).reply(200, discussionSettings);
     setPermissions(false, false);
   });
 
-  it.each(['custom-pages', 'custom-pages/editor', 'pages-and-resources', 'pages-and-resources/ora_settings/settings'])(
+  it.each([
+    'custom-pages',
+    'custom-pages/editor',
+    'textbooks',
+    'pages-and-resources',
+    'pages-and-resources/ora_settings/settings',
+  ])(
     'denies a %s deep link without either permission before loading its content',
     async route => {
       renderRoute(route);
@@ -141,6 +159,7 @@ describe('Pages & Resources route permissions', () => {
       expect(screen.queryByText('Course policies')).not.toBeInTheDocument();
       expect(axiosMock.history.get.some(request => request.url === getTabHandlerUrl(courseId))).toBe(false);
       expect(axiosMock.history.get.some(request => request.url === `${getCourseAppsApiUrl()}/${courseId}`)).toBe(false);
+      expect(axiosMock.history.get.some(request => request.url === getTextbooksApiUrl(courseId))).toBe(false);
     },
   );
 
@@ -190,6 +209,49 @@ describe('Pages & Resources route permissions', () => {
     expect(await screen.findByRole('dialog', { name: 'Pages in Your Course' })).toBeVisible();
     expect(axiosMock.history.put).toHaveLength(0);
     expect(axiosMock.history.delete).toHaveLength(0);
+    expect(axiosMock.history.post.every(request => request.url === getAuthzApiUrl('v1/permissions/validate/me')))
+      .toBe(true);
+  });
+
+  it('lets view-only users consult Textbooks with disabled management actions', async () => {
+    setPermissions(true, false);
+    const user = userEvent.setup();
+    const openPreview = jest.spyOn(window, 'open').mockImplementation(() => null);
+    renderRoute('textbooks');
+
+    expect(await screen.findByText('Course textbook')).toBeVisible();
+    for (const name of ['New textbook', 'Edit', 'Delete']) {
+      const action = screen.getByRole('button', { name });
+      expect(action).toBeDisabled();
+      await user.click(action);
+    }
+    await user.click(screen.getByRole('button', { name: '1 PDF chapters' }));
+    expect(screen.getByText('Introduction')).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'View the PDF live' }));
+    expect(openPreview).toHaveBeenCalledWith(
+      `${getConfig().LMS_BASE_URL}/courses/${courseId}/pdfbook/0/`,
+      '_blank',
+    );
+    expect(screen.queryByPlaceholderText('Introduction to Cookie Baking')).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(axiosMock.history.put).toHaveLength(0);
+    expect(axiosMock.history.delete).toHaveLength(0);
+    expect(axiosMock.history.post.every(request => request.url === getAuthzApiUrl('v1/permissions/validate/me')))
+      .toBe(true);
+    openPreview.mockRestore();
+  });
+
+  it('disables both creation entry points when a view-only Textbooks list is empty', async () => {
+    setPermissions(true, false);
+    axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(200, { textbooks: [] });
+    const user = userEvent.setup();
+    renderRoute('textbooks');
+
+    const firstTextbook = await screen.findByRole('button', { name: 'Add your first textbook' });
+    expect(firstTextbook).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'New textbook' })).toBeDisabled();
+    await user.click(firstTextbook);
+    expect(screen.queryByPlaceholderText('Introduction to Cookie Baking')).not.toBeInTheDocument();
     expect(axiosMock.history.post.every(request => request.url === getAuthzApiUrl('v1/permissions/validate/me')))
       .toBe(true);
   });
@@ -271,7 +333,7 @@ describe('Pages & Resources route permissions', () => {
     expect(screen.getByLabelText('Current location').textContent).toBe(`${coursePath}/custom-pages`);
   });
 
-  it.each(['custom-pages', 'pages-and-resources/ora_settings/settings'])(
+  it.each(['custom-pages', 'textbooks', 'pages-and-resources/ora_settings/settings'])(
     'withholds %s while permission validation is pending',
     async route => {
       let finishValidation!: () => void;
@@ -290,19 +352,22 @@ describe('Pages & Resources route permissions', () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       expect(axiosMock.history.get.some(request => request.url === getTabHandlerUrl(courseId))).toBe(false);
       expect(axiosMock.history.get.some(request => request.url === `${getCourseAppsApiUrl()}/${courseId}`)).toBe(false);
+      expect(axiosMock.history.get.some(request => request.url === getTextbooksApiUrl(courseId))).toBe(false);
 
       await act(async () => {
         finishValidation();
       });
       if (route === 'custom-pages') {
         expect(await screen.findByText('Course policies')).toBeVisible();
+      } else if (route === 'textbooks') {
+        expect(await screen.findByText('Course textbook')).toBeVisible();
       } else {
         expect(await screen.findByRole('dialog', { name: 'Configure Flexible Peer Grading' })).toBeVisible();
       }
     },
   );
 
-  it.each(['custom-pages', 'pages-and-resources'])(
+  it.each(['custom-pages', 'textbooks', 'pages-and-resources'])(
     'fails closed on %s when permission validation fails',
     async route => {
       axiosMock.onPost(getAuthzApiUrl('v1/permissions/validate/me')).reply(500);
@@ -310,10 +375,11 @@ describe('Pages & Resources route permissions', () => {
       expect(await screen.findByText(/You are not authorized to view this page/)).toBeVisible();
       expect(axiosMock.history.get.some(request => request.url === getTabHandlerUrl(courseId))).toBe(false);
       expect(axiosMock.history.get.some(request => request.url === `${getCourseAppsApiUrl()}/${courseId}`)).toBe(false);
+      expect(axiosMock.history.get.some(request => request.url === getTextbooksApiUrl(courseId))).toBe(false);
     },
   );
 
-  it.each(['custom-pages', 'pages-and-resources'])(
+  it.each(['custom-pages', 'textbooks', 'pages-and-resources'])(
     'fails closed on %s when permissions are missing',
     async route => {
       axiosMock.onPost(getAuthzApiUrl('v1/permissions/validate/me')).reply(200, []);
@@ -322,7 +388,7 @@ describe('Pages & Resources route permissions', () => {
     },
   );
 
-  it.each(['custom-pages', 'pages-and-resources/calculator/settings'])(
+  it.each(['custom-pages', 'textbooks', 'pages-and-resources/calculator/settings'])(
     'preserves legacy access to %s with AuthZ disabled',
     async route => {
       axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(200, { enableAuthzCourseAuthoring: false });
@@ -330,6 +396,11 @@ describe('Pages & Resources route permissions', () => {
       if (route === 'custom-pages') {
         expect(await screen.findByText('Course policies')).toBeVisible();
         expect(screen.getByRole('button', { name: 'New page' })).toBeEnabled();
+      } else if (route === 'textbooks') {
+        expect(await screen.findByText('Course textbook')).toBeVisible();
+        expect(screen.getByRole('button', { name: 'New textbook' })).toBeEnabled();
+        expect(screen.getByRole('button', { name: 'Edit' })).toBeEnabled();
+        expect(screen.getByRole('button', { name: 'Delete' })).toBeEnabled();
       } else {
         expect(await screen.findByRole('dialog', { name: 'Configure calculator' })).toBeVisible();
         expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled();
@@ -353,6 +424,57 @@ describe('Pages & Resources route permissions', () => {
     expect(await screen.findByText('New course page')).toBeVisible();
     expect(axiosMock.history.put).toHaveLength(1);
   });
+
+  it.each([[false, true], [true, true]])(
+    'lets Textbooks managers create, edit, and delete with view=%s and manage=%s',
+    async (view, manage) => {
+      setPermissions(view, manage);
+      let textbooks: { id: string; tab_title: string; chapters: { title: string; url: string; }[]; }[] = [];
+      axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(() => [200, { textbooks }]);
+      axiosMock.onPost(`${getApiBaseUrl()}/textbooks/${courseId}`).reply(({ data }) => {
+        const textbook = { ...JSON.parse(data), id: '1book' };
+        textbooks = [textbook];
+        return [201, textbook];
+      });
+      axiosMock.onPut(`${getApiBaseUrl()}/textbooks/${courseId}/1book`).reply(({ data }) => {
+        const textbook = { ...JSON.parse(data), id: '1book' };
+        textbooks = [textbook];
+        return [201, textbook];
+      });
+      axiosMock.onDelete(`${getApiBaseUrl()}/textbooks/${courseId}/1book`).reply(() => {
+        textbooks = [];
+        return [204];
+      });
+      const user = userEvent.setup();
+      renderRoute('textbooks');
+
+      await user.click(await screen.findByRole('button', { name: 'Add your first textbook' }));
+      expect(screen.getByRole('button', { name: 'New textbook' })).toBeDisabled();
+      await user.type(screen.getByPlaceholderText('Introduction to Cookie Baking'), 'New course book');
+      await user.type(screen.getByPlaceholderText('Chapter 1'), 'First chapter');
+      await user.type(
+        screen.getByPlaceholderText('path/to/introductionToCookieBaking-CH1.pdf'),
+        'https://example.com/chapter.pdf',
+      );
+      await user.click(screen.getByRole('button', { name: 'Save' }));
+      expect(await screen.findByText('New course book')).toBeVisible();
+
+      await user.click(screen.getByRole('button', { name: 'Edit' }));
+      const name = screen.getByPlaceholderText('Introduction to Cookie Baking');
+      await user.clear(name);
+      await user.type(name, 'Revised course book');
+      await user.click(screen.getByRole('button', { name: 'Save' }));
+      expect(await screen.findByText('Revised course book')).toBeVisible();
+
+      await user.click(screen.getByRole('button', { name: 'Delete' }));
+      const confirmation = await screen.findByRole('dialog', { name: 'Delete “Revised course book”?' });
+      await user.click(within(confirmation).getByRole('button', { name: 'Delete' }));
+      expect(await screen.findByRole('button', { name: 'Add your first textbook' })).toBeEnabled();
+      expect(screen.queryByText('Revised course book')).not.toBeInTheDocument();
+      expect(axiosMock.history.put).toHaveLength(1);
+      expect(axiosMock.history.delete).toHaveLength(1);
+    },
+  );
 
   it('keeps pending Add Page actions unavailable to managers', async () => {
     setPermissions(true, true);

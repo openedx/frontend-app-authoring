@@ -13,6 +13,8 @@ import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import { SavingErrorAlert } from '@src/generic/saving-error-alert';
 import { LoadingSpinner } from '@src/generic/Loading';
 import SubHeader from '@src/generic/sub-header/SubHeader';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getPagesAndResourcesPermissions } from '@src/authz/permissionHelpers';
 
 import ConnectionErrorAlert from '@src/generic/ConnectionErrorAlert';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
@@ -25,7 +27,12 @@ import messages from './messages';
 
 const Textbooks = () => {
   const intl = useIntl();
-  const { courseDetails } = useCourseAuthoringContext();
+  const { courseId, courseDetails } = useCourseAuthoringContext();
+  const {
+    isLoading: isLoadingUserPermissions,
+    canManagePagesAndResources,
+  } = useCourseUserPermissions(courseId, getPagesAndResourcesPermissions(courseId));
+  const isEditable = !isLoadingUserPermissions && canManagePagesAndResources;
 
   const {
     textbooks,
@@ -50,7 +57,7 @@ const Textbooks = () => {
     );
   }
 
-  if (isLoading) {
+  if (isLoading || isLoadingUserPermissions) {
     return (
       <Row className="m-0 mt-4 justify-content-center">
         <LoadingSpinner />
@@ -80,7 +87,7 @@ const Textbooks = () => {
               <Button
                 iconBefore={AddIcon}
                 onClick={openTextbookForm}
-                disabled={isTextbookFormOpen}
+                disabled={!isEditable || isTextbookFormOpen}
               >
                 {intl.formatMessage(messages.newTextbookButton)}
               </Button>
@@ -105,10 +112,13 @@ const Textbooks = () => {
                           onEditSubmit={handleTextbookEditFormSubmit}
                           onDeleteSubmit={handleTextbookDeleteSubmit}
                           textbookIndex={index}
+                          isEditable={isEditable}
                         />
                       )) :
                       (
-                        !isTextbookFormOpen && <EmptyPlaceholder onCreateNewTextbook={openTextbookForm} />
+                        !isTextbookFormOpen && (
+                          <EmptyPlaceholder onCreateNewTextbook={openTextbookForm} isEditable={isEditable} />
+                        )
                       )}
                     {isTextbookFormOpen && (
                       <TextbookForm

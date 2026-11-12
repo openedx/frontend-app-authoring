@@ -6,15 +6,16 @@ import messages from './messages';
 
 export interface EmptyPlaceholderProps {
   onCreateNewTextbook: () => void;
+  isEditable?: boolean;
 }
 
-const EmptyPlaceholder = ({ onCreateNewTextbook }: EmptyPlaceholderProps) => {
+const EmptyPlaceholder = ({ onCreateNewTextbook, isEditable = true }: EmptyPlaceholderProps) => {
   const intl = useIntl();
 
   return (
     <div className="textbooks-empty-placeholder bg-white" data-testid="textbooks-empty-placeholder">
       <p className="mb-0 small text-gray-700">{intl.formatMessage(messages.title)}</p>
-      <Button iconBefore={IconAdd} onClick={onCreateNewTextbook}>
+      <Button iconBefore={IconAdd} onClick={onCreateNewTextbook} disabled={!isEditable}>
         {intl.formatMessage(messages.button)}
       </Button>
     </div>

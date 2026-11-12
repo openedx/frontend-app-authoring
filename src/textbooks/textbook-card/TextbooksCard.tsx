@@ -26,6 +26,7 @@ export interface TextbookCardProps {
   onEditSubmit: (fromValues: Textbook, onSuccess: () => void) => void;
   onDeleteSubmit: (id: string) => void;
   textbookIndex: number;
+  isEditable?: boolean;
 }
 
 const TextbookCard = ({
@@ -33,6 +34,7 @@ const TextbookCard = ({
   onEditSubmit,
   onDeleteSubmit,
   textbookIndex,
+  isEditable = true,
 }: TextbookCardProps) => {
   const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();
@@ -88,6 +90,7 @@ const TextbookCard = ({
                       data-testid="textbook-edit-button"
                       alt={intl.formatMessage(messages.buttonEdit)}
                       onClick={openTextbookForm}
+                      disabled={!isEditable}
                     />
                     <IconButtonWithTooltip
                       tooltipContent={intl.formatMessage(messages.buttonDelete)}
@@ -96,6 +99,7 @@ const TextbookCard = ({
                       data-testid="textbook-delete-button"
                       alt={intl.formatMessage(messages.buttonDelete)}
                       onClick={openDeleteModal}
+                      disabled={!isEditable}
                     />
                   </ActionRow>
                 }
