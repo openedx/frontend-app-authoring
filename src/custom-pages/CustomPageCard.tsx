@@ -27,6 +27,7 @@ interface CustomPageCardProps {
   setCurrentPage: (id: string) => void;
   onDelete: (blockId: string, onSettled?: () => void) => void;
   isDeleting: boolean;
+  isEditable?: boolean;
   onToggleVisibility: (blockId: string, courseStaffOnly: boolean) => void;
 }
 
@@ -36,6 +37,7 @@ const CustomPageCard = ({
   setCurrentPage,
   onDelete,
   isDeleting,
+  isEditable = true,
   onToggleVisibility,
 }: CustomPageCardProps) => {
   const intl = useIntl();
@@ -70,6 +72,7 @@ const CustomPageCard = ({
           iconAs={Icon}
           alt={intl.formatMessage(messages.editTooltipContent)}
           onClick={handleEditOpen}
+          disabled={!isEditable}
           data-testid="edit-modal-icon"
         />
         <IconButtonWithTooltip
@@ -80,6 +83,7 @@ const CustomPageCard = ({
           iconAs={Icon}
           alt={intl.formatMessage(messages.visibilityTooltipContent)}
           onClick={toggleVisibility}
+          disabled={!isEditable}
           data-testid="visibility-toggle-icon"
         />
         <IconButtonWithTooltip
@@ -90,6 +94,7 @@ const CustomPageCard = ({
           iconAs={Icon}
           alt={intl.formatMessage(messages.deleteTooltipContent)}
           onClick={openDeleteConfirmation}
+          disabled={!isEditable}
           data-testid="delete-modal-icon"
         />
       </ActionRow>
@@ -104,6 +109,7 @@ const CustomPageCard = ({
             </Button>
             <StatefulButton
               onClick={handleDelete}
+              disabled={!isEditable}
               state={isDeleting ? RequestStatus.PENDING : 'default'}
               labels={{
                 default: intl.formatMessage(messages.deletePageLabel),

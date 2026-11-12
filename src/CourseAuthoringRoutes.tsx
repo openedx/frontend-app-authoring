@@ -9,7 +9,7 @@ import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
 import { Textbooks } from './textbooks';
 import CourseAuthoringPage from './CourseAuthoringPage';
-import { PagesAndResources } from './pages-and-resources';
+import { PagesAndResources, PagesAndResourcesAccess } from '@src/pages-and-resources';
 import EditorContainer from './editors/EditorContainer';
 import VideoSelectorContainer from './selectors/VideoSelectorContainer';
 import CustomPages from './custom-pages';
@@ -109,14 +109,20 @@ const CourseAuthoringRoutes = () => {
                 element={<VideosPage />}
               />
             )}
-            <Route
-              path="pages-and-resources/*"
-              element={<PagesAndResources />}
-            />
-            <Route
-              path="custom-pages/*"
-              element={<CustomPages />}
-            />
+            {
+              /* Custom Pages has a separate entry point but uses the Pages & Resources
+                permission set, so both routes share this access guard. */
+            }
+            <Route element={<PagesAndResourcesAccess />}>
+              <Route
+                path="pages-and-resources/*"
+                element={<PagesAndResources />}
+              />
+              <Route
+                path="custom-pages/*"
+                element={<CustomPages />}
+              />
+            </Route>
             <Route
               path="/subsection/:subsectionId"
               element={<SubsectionUnitRedirect />}

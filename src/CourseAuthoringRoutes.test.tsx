@@ -1,11 +1,11 @@
-import CourseAuthoringRoutes from './CourseAuthoringRoutes';
-import { getApiWaffleFlagsUrl } from './data/api';
+import CourseAuthoringRoutes from '@src/CourseAuthoringRoutes';
+import { getApiWaffleFlagsUrl, getCourseDetailsUrl } from '@src/data/api';
 import {
   screen,
   initializeMocks,
   render,
   waitFor,
-} from './testUtils';
+} from '@src/testUtils';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const pagesAndResourcesMockText = 'Pages And Resources';
@@ -59,6 +59,10 @@ describe('<CourseAuthoringRoutes>', () => {
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
       .reply(200, {});
+    axiosMock.onGet(getCourseDetailsUrl(courseId, user.username)).reply(200, {
+      course_id: courseId,
+      name: 'Test course',
+    });
   });
 
   it('renders the PagesAndResources component when the pages and resources route is active', async () => {

@@ -29,6 +29,8 @@ import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { RequestStatus } from '@src/data/constants';
 import getPageHeadTitle from '@src/generic/utils';
 import { getPagePath } from '@src/utils';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getPagesAndResourcesPermissions } from '@src/authz/permissionHelpers';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import {
@@ -52,6 +54,11 @@ const CustomPages = () => {
   const [currentPage, setCurrentPage] = useState<string | undefined>();
   const [isOpen, open, close] = useToggle(false);
   const { courseId, courseDetails } = useCourseAuthoringContext();
+  const {
+    isLoading: isLoadingUserPermissions,
+    canManagePagesAndResources,
+  } = useCourseUserPermissions(courseId, getPagesAndResourcesPermissions(courseId));
+  const isEditable = !isLoadingUserPermissions && canManagePagesAndResources;
 
   const config = getConfig();
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
@@ -102,7 +109,7 @@ const CustomPages = () => {
     disabledStates: ['pending'],
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingUserPermissions) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
@@ -142,6 +149,7 @@ const CustomPages = () => {
         <Button
           iconBefore={Add}
           onClick={handleAddPage}
+          disabled={!isEditable}
           data-testid="header-add-button"
         >
           <FormattedMessage {...messages.addPageHeaderLabel} />
@@ -190,6 +198,7 @@ const CustomPages = () => {
               <SortableItem
                 id={page.id}
                 key={page.id}
+                disabled={!isEditable}
                 componentStyle={{
                   background: 'white',
                   borderRadius: '6px',
@@ -204,6 +213,7 @@ const CustomPages = () => {
                     setCurrentPage={setCurrentPage}
                     onDelete={(blockId, onSettled) => deleteMutation.mutate(blockId, { onSettled })}
                     isDeleting={deleteMutation.isPending}
+                    isEditable={isEditable}
                     onToggleVisibility={(blockId, courseStaffOnly) =>
                       visibilityMutation.mutate({
                         blockId,
@@ -217,6 +227,7 @@ const CustomPages = () => {
           <StatefulButton
             data-testid="body-add-button"
             onClick={handleAddPage}
+            disabled={!isEditable}
             state={addPageMutation.isPending ? RequestStatus.PENDING : 'default'}
             {...addPageStateProps}
           />
