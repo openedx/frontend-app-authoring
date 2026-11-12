@@ -211,14 +211,9 @@
     }
   }
 
-  // A `Form.Group`: drop Paragon's form-group bottom margin, and hug the text instead of stretching when
-  // the editable variant places it directly in the rule box's column. The score sentence is the bordered
-  // pill and any hint stacks below it.
+  // Hugs the text instead of stretching when the editable variant sits directly in the rule box's column.
   .score-threshold-field {
-    display: flex;
-    flex-direction: column;
     align-self: flex-start;
-    margin-bottom: 0;
   }
 
   .score-threshold-field__sentence {
@@ -239,14 +234,64 @@
     color: var(--pgn-color-info-600);
   }
 
-  // `display: block` from `Form.Control` would stretch this input across the whole rule box.
-  .score-threshold-field__input {
+  // The pill is a button when editable. It layers above `.rule-box__select-button` so clicks land here.
+  .score-threshold-field__toggle {
+    position: relative;
+    z-index: 1;
+    font: inherit;
+    cursor: pointer;
+
+    .pgn__icon {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  .score-threshold-field__panel {
+    border-radius: var(--pgn-size-border-radius-base);
+  }
+
+  .score-settings {
+    width: 338px;
+    padding: .75rem 1rem 1rem;
+    background-color: var(--pgn-color-white);
+    border-radius: var(--pgn-size-border-radius-base);
+  }
+
+  .score-settings__heading {
+    margin-bottom: .75rem;
+    font-size: var(--pgn-typography-font-size-sm);
+    line-height: 1.5556;
+    color: var(--pgn-color-gray-500);
+  }
+
+  .score-settings__row {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .5rem;
+  }
+
+  // `display: block` from `Form.Control` would stretch this input across the whole row.
+  .score-settings__input {
     display: inline-block;
     width: 3.5em;
     text-align: center;
-    // Layers above `.rule-box__select-button` so clicks land here.
-    position: relative;
-    z-index: 1;
+  }
+
+  // The invalid variant keeps Paragon's own feedback color.
+  .score-settings .pgn__form-text {
+    font-size: var(--pgn-typography-font-size-sm);
+  }
+
+  .score-settings .pgn__form-text-default {
+    color: var(--pgn-color-gray-700);
+  }
+
+  .score-settings__suggestion {
+    margin-top: .25rem;
+    font-size: var(--pgn-typography-font-size-sm);
+    text-decoration: underline;
   }
 
   // `max-width` makes Paragon's own label truncation apply.

@@ -30,7 +30,10 @@ const renderRuleBox = (
   )
 );
 
+const scorePill = () => screen.getByRole('button', { name: 'With a score of 70% or higher' });
+
 const typeScore = async (user: ReturnType<typeof userEvent.setup>, score: string) => {
+  await user.click(scorePill());
   const input = screen.getByRole('textbox');
   await user.clear(input);
   await user.type(input, score);
@@ -47,10 +50,10 @@ describe('<RuleBox /> editing (#794)', () => {
     user = userEvent.setup();
   });
 
-  it('renders the score as plain text, not an input, when canEdit is omitted', () => {
+  it('renders the score as plain text, not a score settings button, when canEdit is omitted', () => {
     renderRuleBox();
 
-    expect(screen.getByRole('button', { name: 'With a score of 70% or higher' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'With a score of 70% or higher' })).not.toHaveAttribute('aria-haspopup');
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
 
@@ -93,14 +96,16 @@ describe('<RuleBox /> editing (#794)', () => {
 
     expect(updateRuleScore).toHaveBeenCalledWith(10, [1], { op: 'gte', value: 0.85, scale: 'percent' });
     await waitFor(() => expect(input).toHaveValue('70'));
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
-  it('focuses the rule box when its select button is clicked, not when the score input is', async () => {
+  it('focuses the rule box when its select button is clicked, not when the score pill is', async () => {
     const focusRuleBox = jest.fn();
     renderRuleBox({ focusRuleBox }, { canEdit: true });
 
-    await user.click(screen.getByRole('textbox'));
+    await user.click(scorePill());
     expect(focusRuleBox).not.toHaveBeenCalled();
+    await user.keyboard('{Escape}');
 
     await user.click(screen.getByRole('button', { name: 'Select this rule' }));
     expect(focusRuleBox).toHaveBeenCalledWith(10, 'grade:gte:0.7:percent');

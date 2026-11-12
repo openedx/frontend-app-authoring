@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import type { ReactNode, RefObject } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Stack } from '@openedx/paragon';
 import classNames from 'classnames';
@@ -20,16 +19,16 @@ export interface RuleBoxProps {
   /** Whether the author can edit the score threshold. */
   canEdit?: boolean;
   /** Duplicate-score check for this box, used only when `canEdit`. */
-  getInlineValidationMessage?: (value: string) => string;
+  getInlineValidationMessage?: (candidate: GradeRulePayload) => string;
   /** Placeholder only: guidance under the score, such as "this score is taken". */
-  hint?: ReactNode;
-  /** Placeholder only: focus the score input on mount. */
-  autoFocusSelect?: boolean;
-  /** Placeholder only: what a duplicate rejection focuses. Defaults to the score input. */
-  duplicateRejectionFocusRef?: RefObject<HTMLElement>;
+  hint?: string;
+  /** Placeholder only: a "Use {score}" link in the score popover, for a taken score. */
+  suggestion?: { rulePayload: GradeRulePayload; onApply: () => void; };
+  /** Placeholder only: open the score popover on mount. */
+  autoOpen?: boolean;
 }
 
-/** One rule box: its score threshold, which focuses the box, and its criterion chips, or a hint when it is the placeholder. */
+/** One rule box: its score threshold, whose pill opens the box's settings popover, and its criterion chips, or a hint when it is the placeholder. */
 const RuleBox = ({
   groupId,
   ruleKey,
@@ -39,8 +38,8 @@ const RuleBox = ({
   canEdit = false,
   getInlineValidationMessage,
   hint,
-  autoFocusSelect = false,
-  duplicateRejectionFocusRef,
+  suggestion,
+  autoOpen = false,
 }: RuleBoxProps) => {
   const intl = useIntl();
   const {
@@ -62,13 +61,6 @@ const RuleBox = ({
   }, [isFocused]);
 
   const isDuplicateRejected = isPlaceholder && !!hint && placeholderDuplicateRejected;
-
-  useEffect(() => {
-    if (isDuplicateRejected) {
-      (duplicateRejectionFocusRef?.current ?? ref.current?.querySelector('input'))?.focus();
-    }
-    // The count changes on a repeat rejection, when the flag is already set.
-  }, [isDuplicateRejected, placeholderDuplicateRejectionCount, duplicateRejectionFocusRef]);
 
   const handleScoreChange = (rulePayload: GradeRulePayload): Promise<void> => {
     // With no criteria yet, the score stays in the context until content is picked.
@@ -94,7 +86,7 @@ const RuleBox = ({
       {canEdit
         ? (
           <>
-            {/* The score input is a control, so the select button is a sibling laid under it. */}
+            {/* The score pill is a control, so the select button is a sibling laid under it. */}
             {!isPlaceholder && (
               <button
                 type="button"
@@ -109,9 +101,11 @@ const RuleBox = ({
               rulePayload={rule.rulePayload}
               onChange={handleScoreChange}
               getInlineValidationMessage={getInlineValidationMessage}
-              autoFocusSelect={autoFocusSelect}
+              autoOpen={autoOpen}
               hint={hint}
               hintIsError={isDuplicateRejected}
+              rejectionCount={placeholderDuplicateRejectionCount}
+              suggestion={suggestion}
             />
           </>
         )

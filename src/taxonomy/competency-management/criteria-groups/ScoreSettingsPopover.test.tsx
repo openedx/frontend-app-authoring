@@ -162,7 +162,28 @@ describe('<ScoreSettingsPopover />', () => {
     expect(onCommit).toHaveBeenCalledTimes(1);
     expect(onRequestClose).not.toHaveBeenCalled();
     resolveCommit!();
-    await waitFor(() => expect(screen.getByRole('textbox')).not.toBeDisabled());
+    await waitFor(() => expect(screen.getByRole('textbox')).not.toHaveAttribute('readonly'));
+  });
+
+  it('ignores Escape while a commit is in flight', async () => {
+    const user = userEvent.setup();
+    let resolveCommit: () => void;
+    const onCommit = jest.fn().mockImplementation(() =>
+      new Promise<void>((resolve) => {
+        resolveCommit = resolve;
+      })
+    );
+    const { onRequestClose } = renderPopover({ onCommit });
+
+    const input = await typeScore(user, '85');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveAttribute('readonly');
+    await user.keyboard('{Escape}');
+
+    expect(input).toHaveValue('85');
+    expect(onRequestClose).not.toHaveBeenCalled();
+    resolveCommit!();
+    await waitFor(() => expect(onRequestClose).toHaveBeenCalledTimes(1));
   });
 
   it.each(['', 'abc'])('reverts on Enter and closes without committing for the input "%s"', async (typed) => {

@@ -4,6 +4,7 @@ import {
   render,
   screen,
   userEvent,
+  waitFor,
   within,
 } from '@src/testUtils';
 import {
@@ -142,7 +143,8 @@ describe('<RuleBoxList />', () => {
 
     const typeInFirstBox = async (score: string) => {
       const user = userEvent.setup();
-      const [firstBoxInput] = screen.getAllByRole('textbox');
+      await user.click(screen.getAllByRole('button', { name: /With a score of/ })[0]);
+      const firstBoxInput = screen.getByRole('textbox');
       await user.clear(firstBoxInput);
       await user.type(firstBoxInput, score);
       await user.keyboard('{Enter}');
@@ -184,7 +186,7 @@ describe('<RuleBoxList />', () => {
       const setPlaceholderRulePayload = jest.fn();
       renderTakenPlaceholder(setPlaceholderRulePayload);
 
-      expect(screen.getByText(/Another rule in this group already uses 70% or higher/)).toBeInTheDocument();
+      expect(screen.getByRole('dialog')).toHaveTextContent(/Another rule in this group already uses 70% or higher/);
       await user.click(screen.getByRole('button', { name: 'Use 75% or higher' }));
 
       expect(setPlaceholderRulePayload).toHaveBeenCalledWith({ op: 'gte', value: 0.75, scale: 'percent' });
@@ -208,28 +210,25 @@ describe('<RuleBoxList />', () => {
         );
       };
       render(<StatefulProvider />);
-      const lastInput = () => {
-        const inputs = screen.getAllByLabelText('Score threshold percentage');
-        return inputs[inputs.length - 1];
-      };
+      const input = () => screen.getByRole('textbox');
 
       await user.click(screen.getByRole('button', { name: 'Use 75% or higher' }));
-      expect(lastInput()).toHaveValue('75');
-      expect(lastInput()).toHaveFocus();
+      await waitFor(() => expect(input()).toHaveValue('75'));
+      await waitFor(() => expect(input()).toHaveFocus());
 
-      await user.clear(lastInput());
-      await user.type(lastInput(), '80');
+      await user.clear(input());
+      await user.type(input(), '80');
       await user.keyboard('{Enter}');
 
-      expect(lastInput()).toHaveValue('80');
-      expect(lastInput()).not.toHaveFocus();
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      expect(screen.getByText('80% or higher')).toBeInTheDocument();
     });
 
-    it('focuses the placeholder\'s score input when it appears', () => {
+    it('opens the placeholder\'s score popover with the input focused when it appears', async () => {
       renderTakenPlaceholder();
 
-      const inputs = screen.getAllByLabelText('Score threshold percentage');
-      expect(inputs[inputs.length - 1]).toHaveFocus();
+      expect(screen.getByRole('dialog', { name: 'Competency Completion Rule' })).toBeInTheDocument();
+      await waitFor(() => expect(screen.getByRole('textbox')).toHaveFocus());
     });
   });
 
@@ -249,26 +248,27 @@ describe('<RuleBoxList />', () => {
       return { ...render(ui(count)), ui };
     };
 
-    const scoreInputs = () => screen.getAllByLabelText('Score threshold percentage');
-
-    it('focuses the suggestion link and marks the score input invalid', () => {
+    it('opens the dialog with the suggestion link focused and the score input invalid', async () => {
       renderRejected(1);
 
-      expect(screen.getByRole('button', { name: 'Use 75% or higher' })).toHaveFocus();
-      expect(scoreInputs()[scoreInputs().length - 1]).toHaveAttribute('aria-invalid', 'true');
+      expect(screen.getByRole('dialog', { name: 'Competency Completion Rule' })).toBeInTheDocument();
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Use 75% or higher' })).toHaveFocus());
+      expect(screen.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
     });
 
-    it('moves focus back to the link on each further rejection', () => {
+    it('moves focus back to the link on each further rejection', async () => {
       const { rerender, ui } = renderRejected(1);
-      scoreInputs()[0].focus();
-      expect(screen.getByRole('button', { name: 'Use 75% or higher' })).not.toHaveFocus();
+      const link = () => screen.getByRole('button', { name: 'Use 75% or higher' });
+      await waitFor(() => expect(link()).toHaveFocus());
+      screen.getByRole('textbox').focus();
+      expect(link()).not.toHaveFocus();
 
       rerender(ui(2));
 
-      expect(screen.getByRole('button', { name: 'Use 75% or higher' })).toHaveFocus();
+      await waitFor(() => expect(link()).toHaveFocus());
     });
 
-    it('shows the hint without a link and focuses the score input when no score is free', () => {
+    it('shows the hint without a link and focuses the score input when no score is free', async () => {
       const takenScores = [70, 75, 80, 85, 90, 95, 100];
       const fullBoxes = ruleBoxesForGroup(
         10,
@@ -289,9 +289,9 @@ describe('<RuleBoxList />', () => {
 
       renderRejected(1, fullBoxes);
 
-      expect(screen.getByText(/already uses/)).toBeInTheDocument();
+      expect(screen.getByRole('dialog')).toHaveTextContent(/already uses/);
       expect(screen.queryByRole('button', { name: /^Use / })).not.toBeInTheDocument();
-      expect(scoreInputs()[scoreInputs().length - 1]).toHaveFocus();
+      await waitFor(() => expect(screen.getByRole('textbox')).toHaveFocus());
     });
   });
 
@@ -349,8 +349,7 @@ describe('<RuleBoxList />', () => {
       const updateRuleScore = jest.fn();
       renderWithPlaceholder({ setPlaceholderRulePayload, updateRuleScore });
 
-      const inputs = screen.getAllByLabelText('Score threshold percentage');
-      const placeholderInput = inputs[inputs.length - 1];
+      const placeholderInput = screen.getByRole('textbox');
       await user.clear(placeholderInput);
       await user.type(placeholderInput, '80');
       await user.keyboard('{Enter}');
@@ -364,8 +363,7 @@ describe('<RuleBoxList />', () => {
       const setPlaceholderRulePayload = jest.fn();
       renderWithPlaceholder({ setPlaceholderRulePayload });
 
-      const inputs = screen.getAllByLabelText('Score threshold percentage');
-      const placeholderInput = inputs[inputs.length - 1];
+      const placeholderInput = screen.getByRole('textbox');
       await user.clear(placeholderInput);
       await user.type(placeholderInput, '75');
       await user.keyboard('{Enter}');

@@ -1,30 +1,35 @@
 import {
   useEffect,
-  useId,
   useRef,
   useState,
 } from 'react';
-import type { KeyboardEvent, ReactNode } from 'react';
+import type { MutableRefObject } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Form } from '@openedx/paragon';
+import { Icon, ModalPopup } from '@openedx/paragon';
+import { ExpandMore } from '@openedx/paragon/icons';
 import type { IntlShape } from 'react-intl';
 import type { GradeRulePayload } from '../data/types';
+import ScoreSettingsPopover from './ScoreSettingsPopover';
 import messages from './messages';
 
 export interface ScoreThresholdFieldProps {
   rulePayload: GradeRulePayload;
-  /** When given, the percentage renders as an editable input. Returns a `Promise` so a rejected save
-   * reverts the input; the mutation itself lives in `CompetencyAssociationsContext`.
+  /** When given, the sentence is a button that opens the score settings popover. Returns a `Promise` so a
+   * rejected save reverts the popover's form; the mutation itself lives in `CompetencyAssociationsContext`.
    */
   onChange?: (rulePayload: GradeRulePayload) => Promise<void>;
-  /** Called when saving. A non-empty result blocks the save and is shown inline. */
-  getInlineValidationMessage?: (value: string) => string;
-  /** Focuses and selects the input on mount. */
-  autoFocusSelect?: boolean;
-  /** Guidance under the field. */
-  hint?: ReactNode;
-  /** Renders `hint` as an error and marks the input invalid. */
+  /** Called with the payload about to be saved. A non-empty result blocks the save and is shown in the popover. */
+  getInlineValidationMessage?: (candidate: GradeRulePayload) => string;
+  /** Opens the popover on mount, with focus in the percentage input. */
+  autoOpen?: boolean;
+  /** Guidance in the popover. */
+  hint?: string;
+  /** Renders `hint` as an error, and opens the popover with focus on the suggestion link, or the input. */
   hintIsError?: boolean;
+  /** Changes on every repeat rejection, so the popover reopens and refocuses each time. */
+  rejectionCount?: number;
+  /** Shown in the popover as a "Use {score}" link. */
+  suggestion?: { rulePayload: GradeRulePayload; onApply: () => void; };
 }
 
 /** A score as text, such as "75% or higher", for messages that name a score. */
@@ -35,139 +40,102 @@ export const formatScoreSummary = (intl: IntlShape, rulePayload: GradeRulePayloa
   })
 );
 
-/** `rulePayload.value` is a 0.0-1.0 fraction (openedx-core ADR 0002), not a 0-100 percentage. */
-const percentOf = (rulePayload: GradeRulePayload): string => String(Math.round(rulePayload.value * 100));
-
 /** Label stating a rule box's score threshold, for example "With a score of 70% or higher".
- * The percentage is editable when `onChange` is given.
+ * With `onChange`, the label is a button that opens a popover to edit the comparison and the percentage.
  */
 const ScoreThresholdField = ({
   rulePayload,
   onChange,
   getInlineValidationMessage,
-  autoFocusSelect = false,
+  autoOpen = false,
   hint,
   hintIsError = false,
+  rejectionCount,
+  suggestion,
 }: ScoreThresholdFieldProps) => {
   const intl = useIntl();
-  const inputId = useId();
-
-  // Not resynced from `rulePayload` while mounted: a successful edit changes the rule key, which
-  // remounts the box via `RuleBoxList`'s `key`. A rejected edit keeps the key, so it reverts explicitly.
-  const [inputValue, setInputValue] = useState(() => percentOf(rulePayload));
-  const [validationMessage, setValidationMessage] = useState('');
-  // A ref, so a blur fired by the same Enter keypress sees it before React re-renders. Keeps a second save
-  // from racing the first, whose response could otherwise land out of order.
-  const saveInFlight = useRef(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [isOpen, setIsOpen] = useState(autoOpen || hintIsError);
+  // State, not a ref object, because `ModalPopup` needs the element itself and renders open on first mount.
+  const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const commitRef: MutableRefObject<(() => Promise<boolean>) | null> = useRef(null);
+  const initialFocus = hintIsError && suggestion ? 'suggestion' : 'input';
 
   useEffect(() => {
-    if (autoFocusSelect) {
-      inputRef.current?.focus();
-      inputRef.current?.select();
+    if (!hintIsError) {
+      return;
     }
-  }, [autoFocusSelect]);
+    // The focus lock only focuses on activation, so a repeat rejection while open moves focus itself.
+    const target = panelRef.current?.querySelector<HTMLElement>('[data-autofocus]');
+    if (target) {
+      target.focus();
+    } else {
+      setIsOpen(true);
+    }
+  }, [hintIsError, rejectionCount]);
 
-  const revertToLastPersisted = () => {
-    setInputValue(percentOf(rulePayload));
-    setValidationMessage('');
-  };
-
-  const saveScoreIfChanged = async () => {
-    if (!onChange || saveInFlight.current) {
+  const handleCloseRequest = async () => {
+    if (!isOpen) {
       return;
     }
-    const trimmedInput = inputValue.trim();
-    const numericPercent = Number(trimmedInput);
-    if (trimmedInput === '' || !Number.isFinite(numericPercent)) {
-      revertToLastPersisted();
-      return;
-    }
-    if (!Number.isInteger(numericPercent) || numericPercent < 0 || numericPercent > 100) {
-      setValidationMessage(intl.formatMessage(messages.scoreThresholdRangeValidationMessage));
-      return;
-    }
-    if (numericPercent === Math.round(rulePayload.value * 100)) {
-      // Skipped so a blur with no edit does not re-send the rounded display value over the stored fraction.
-      setValidationMessage('');
-      return;
-    }
-    const message = getInlineValidationMessage ? getInlineValidationMessage(inputValue) : '';
-    if (message) {
-      setValidationMessage(message);
-      return;
-    }
-    setValidationMessage('');
-    saveInFlight.current = true;
-    setIsSaving(true);
-    try {
-      await onChange({ ...rulePayload, value: numericPercent / 100 });
-    } catch {
-      revertToLastPersisted();
-    } finally {
-      saveInFlight.current = false;
-      setIsSaving(false);
+    const mayClose = await commitRef.current?.() ?? true;
+    if (mayClose) {
+      setIsOpen(false);
     }
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      void saveScoreIfChanged();
-    } else if (event.key === 'Escape') {
-      revertToLastPersisted();
-    }
-  };
+  const sentence = (value: string) => (
+    intl.formatMessage(messages.scoreThresholdLabel, {
+      score: intl.formatMessage(messages.scoreThresholdPhrase, { op: rulePayload.op, value }),
+      threshold: (chunks: React.ReactNode[]) => (
+        <span key="threshold" className="score-threshold-field__value">{chunks}</span>
+      ),
+    })
+  );
+  const percent = intl.formatNumber(rulePayload.value, { style: 'percent', maximumFractionDigits: 0 });
 
-  // The save-time message wins over the hint when both would show.
-  const showAsInvalid = !!validationMessage || (!!hint && hintIsError);
-
-  const value = onChange
-    ? (
-      <>
-        <Form.Control
-          ref={inputRef}
-          type="text"
-          inputMode="numeric"
-          size="sm"
-          className="score-threshold-field__input"
-          value={inputValue}
-          aria-label={intl.formatMessage(messages.scoreThresholdInputAccessibleLabel)}
-          aria-invalid={showAsInvalid}
-          isInvalid={showAsInvalid}
-          disabled={isSaving}
-          onChange={(event) => setInputValue(event.target.value)}
-          onKeyDown={handleKeyDown}
-          onBlur={() => {
-            void saveScoreIfChanged();
-          }}
-        />
-        %
-      </>
-    )
-    : intl.formatNumber(rulePayload.value, { style: 'percent', maximumFractionDigits: 0 });
+  if (!onChange) {
+    return (
+      <span className="score-threshold-field">
+        <span className="score-threshold-field__sentence">{sentence(percent)}</span>
+      </span>
+    );
+  }
 
   return (
-    <Form.Group as="span" controlId={inputId} className="score-threshold-field">
-      <span className="score-threshold-field__sentence">
-        {intl.formatMessage(messages.scoreThresholdLabel, {
-          score: intl.formatMessage(messages.scoreThresholdPhrase, { op: rulePayload.op, value }),
-          threshold: (chunks: React.ReactNode[]) => (
-            <span key="threshold" className="score-threshold-field__value">{chunks}</span>
-          ),
-        })}
-      </span>
-      {validationMessage && (
-        <Form.Control.Feedback type="invalid" hasIcon={false}>
-          {validationMessage}
-        </Form.Control.Feedback>
-      )}
-      {!validationMessage && hint && (
-        <Form.Control.Feedback type={hintIsError ? 'invalid' : 'default'} hasIcon={false}>
-          {hint}
-        </Form.Control.Feedback>
-      )}
-    </Form.Group>
+    <span className="score-threshold-field">
+      <button
+        ref={setAnchor}
+        type="button"
+        className="score-threshold-field__sentence score-threshold-field__toggle"
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen((open) => !open)}
+      >
+        {sentence(percent)}
+        <Icon src={ExpandMore} size="xs" />
+      </button>
+      <ModalPopup
+        isOpen={isOpen}
+        positionRef={anchor}
+        onClose={handleCloseRequest}
+        placement="bottom-start"
+      >
+        <div ref={panelRef} className="score-threshold-field__panel shadow">
+          <ScoreSettingsPopover
+            rulePayload={rulePayload}
+            onCommit={onChange}
+            onRequestClose={() => setIsOpen(false)}
+            getInlineValidationMessage={getInlineValidationMessage}
+            hint={hint}
+            hintIsError={hintIsError}
+            suggestion={suggestion}
+            initialFocus={initialFocus}
+            commitRef={commitRef}
+          />
+        </div>
+      </ModalPopup>
+    </span>
   );
 };
 

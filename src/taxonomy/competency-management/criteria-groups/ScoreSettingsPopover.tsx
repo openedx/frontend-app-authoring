@@ -142,6 +142,11 @@ const ScoreSettingsPopover = ({
         onRequestClose();
       }
     } else if (event.key === 'Escape') {
+      // Keeps the owner's own Escape handler from committing the input this keypress is reverting.
+      event.stopPropagation();
+      if (commitInFlight.current) {
+        return;
+      }
       revertToLastPersisted();
       onRequestClose();
     }

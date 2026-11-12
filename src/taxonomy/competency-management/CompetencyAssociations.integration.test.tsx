@@ -73,12 +73,17 @@ const groupCards = () => Array.from(document.querySelectorAll<HTMLElement>('.cri
 const ruleBoxControls = () => Array.from(document.querySelectorAll<HTMLElement>('.rule-box__select-button'));
 const ruleBoxWithScore = (percent: string) => {
   const control = ruleBoxControls().find((candidate) => (
-    within(candidate.closest<HTMLElement>('.rule-box')!).queryByDisplayValue(percent)
+    within(candidate.closest<HTMLElement>('.rule-box')!).queryByText(new RegExp(`^${percent}%`))
   ));
   if (!control) {
     throw new Error(`No rule box with a score of ${percent}`);
   }
   return control;
+};
+// A placeholder's score popover opens by itself and hides the rest of the page from role queries until it closes.
+const closeScorePopover = async (user: ReturnType<typeof userEvent.setup>) => {
+  await user.keyboard('{Escape}');
+  await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
 };
 const currentStates = (elements: HTMLElement[]) => elements.map((element) => element.getAttribute('aria-current'));
 
@@ -105,6 +110,7 @@ describe('competency associations over the real provider', () => {
     await screen.findAllByText(/^By completing/);
     await user.click(groupHeaders()[0]);
     expect(groupHeaders()[0]).toHaveAttribute('aria-current', 'true');
+    await closeScorePopover(user);
     await user.click(await screen.findByRole('button', { name: 'Collapse Course B' }));
     expect(screen.queryByText('Homework 1')).not.toBeInTheDocument();
 
@@ -183,6 +189,7 @@ describe('competency associations over the real provider', () => {
     await screen.findAllByRole('heading', { name: /^From within Course/ });
     // Expanding course A and then course B leaves the focus on course B's last group.
     await user.click(screen.getAllByRole('button', { name: 'Expand' })[0]);
+    await closeScorePopover(user);
     await user.click(screen.getAllByRole('button', { name: 'Expand' })[1]);
     expect(currentStates(groupHeaders())).toEqual(['false', 'false', 'true']);
     await user.click(screen.getAllByRole('button', { name: 'Expand' })[0]);
@@ -193,7 +200,7 @@ describe('competency associations over the real provider', () => {
     expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({ object_id: 'a-sub-1', group_id: 10 });
   });
 
-  it('moves focus to the new placeholder group\'s score input after "Add Rule Group" is activated', async () => {
+  it('opens the new placeholder group\'s score popover on its input after "Add Rule Group" is activated', async () => {
     axiosMock.onGet(groupsUrl).reply(200, courseBGroupsResponse);
     axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
     axiosMock.onGet(getCourseOutlineIndexApiUrl(courseB)).reply(
@@ -203,14 +210,14 @@ describe('competency associations over the real provider', () => {
     renderPanel();
     await screen.findByText('Homework 1');
     const addButtons = screen.getAllByRole('button', { name: 'Add Rule Group' });
-    const scoreInputsBefore = screen.getAllByLabelText('Score threshold percentage');
+    const pillsBefore = screen.getAllByRole('button', { name: /With a score of/ });
 
     await user.click(addButtons[addButtons.length - 1]);
 
-    const scoreInputs = screen.getAllByLabelText('Score threshold percentage');
-    expect(scoreInputs).toHaveLength(scoreInputsBefore.length + 1);
-    const newInput = scoreInputs.find((input) => !scoreInputsBefore.includes(input));
-    expect(newInput).toHaveFocus();
+    expect(screen.getByRole('dialog', { name: 'Competency Completion Rule' })).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('textbox')).toHaveFocus());
+    await closeScorePopover(user);
+    expect(screen.getAllByRole('button', { name: /With a score of/ })).toHaveLength(pillsBefore.length + 1);
   });
 
   it('collapsing a course discards its placeholder group, so expanding it again shows one group card', async () => {
@@ -225,6 +232,7 @@ describe('competency associations over the real provider', () => {
 
     await user.click(screen.getByRole('button', { name: 'Add Rule Group' }));
     expect(groupCards()).toHaveLength(2);
+    await closeScorePopover(user);
 
     await user.click(screen.getByRole('button', { name: 'Collapse Course A' }));
     await user.click(await screen.findByRole('button', { name: 'Expand Course A' }));
@@ -250,15 +258,24 @@ describe('competency associations over the real provider', () => {
     renderPanel([courseARow]);
     await screen.findByRole('heading', { name: 'From within Course A ...' });
     await user.click(screen.getByRole('button', { name: 'Add Rule' }));
-    await user.click(await screen.findByRole('button', { name: 'Expand' }));
-    await user.click(await screen.findByRole('button', { name: 'Expand' }));
+    expect(screen.getByRole('dialog')).toHaveTextContent(/Another rule in this group already uses 70% or higher/);
     expect(screen.getByRole('button', { name: 'Use 75% or higher' })).toBeInTheDocument();
+    await closeScorePopover(user);
+    await user.click(await screen.findByRole('button', { name: 'Expand' }));
+    await user.click(await screen.findByRole('button', { name: 'Expand' }));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
     await user.click(await screen.findByRole('button', { name: 'Associate CCRS-1.3 with Homework A' }));
 
     expect(axiosMock.history.post).toHaveLength(0);
-    expect(screen.getByRole('button', { name: 'Use 75% or higher' })).toHaveFocus();
-    await user.click(screen.getByRole('button', { name: 'Use 75% or higher' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Competency Completion Rule' });
+    expect(within(dialog).getByRole('textbox')).toBeInvalid();
+    const link = within(dialog).getByRole('button', { name: 'Use 75% or higher' });
+    await waitFor(() => expect(link).toHaveFocus());
+    await user.click(link);
+    await waitFor(() => expect(within(screen.getByRole('dialog')).getByRole('textbox')).toHaveFocus());
+    expect(within(screen.getByRole('dialog')).getByRole('textbox')).toHaveValue('75');
+    await closeScorePopover(user);
     await user.click(screen.getByRole('button', { name: 'Associate CCRS-1.3 with Homework A' }));
 
     await waitFor(() => expect(axiosMock.history.post).toHaveLength(1));

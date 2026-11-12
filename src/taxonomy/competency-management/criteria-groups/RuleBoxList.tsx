@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Stack } from '@openedx/paragon';
+import { Stack } from '@openedx/paragon';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
-import type { EffectiveRule, RuleBox as RuleBoxData } from '../data/types';
+import type { EffectiveRule, GradeRulePayload, RuleBox as RuleBoxData } from '../data/types';
 import { isRuleTakenInGroup, nextUnusedScore } from '../utils';
 import RuleBox from './RuleBox';
 import { formatScoreSummary } from './ScoreThresholdField';
@@ -31,7 +31,7 @@ const RuleBoxList = ({
     systemDefaultProfile,
     setPlaceholderRulePayload,
   } = useCompetencyAssociations();
-  // The placeholder remounts on every score change (see the key below), so its score field is focused only on
+  // The placeholder remounts on every score change (see the key below), so its score popover opens only on
   // first mount and right after the "Use {score}" link is clicked, which this state marks.
   const [focusAfterSuggestion, setFocusAfterSuggestion] = useState(false);
   useEffect(() => {
@@ -39,13 +39,9 @@ const RuleBoxList = ({
       setFocusAfterSuggestion(false);
     }
   }, [focusAfterSuggestion]);
-  const suggestionLinkRef = useRef<HTMLButtonElement>(null);
 
-  const getInlineValidationMessage = (candidateBox: RuleBoxData) => (value: string): string => {
-    const candidate: EffectiveRule = {
-      ruleType: candidateBox.rule.ruleType,
-      rulePayload: { ...candidateBox.rule.rulePayload, value: Math.round(Number(value)) / 100 },
-    };
+  const getInlineValidationMessage = (candidateBox: RuleBoxData) => (candidatePayload: GradeRulePayload): string => {
+    const candidate: EffectiveRule = { ruleType: candidateBox.rule.ruleType, rulePayload: candidatePayload };
     return isRuleTakenInGroup(candidate, boxes, candidateBox.key)
       ? intl.formatMessage(messages.duplicateScoreValidationMessage)
       : '';
@@ -62,29 +58,20 @@ const RuleBoxList = ({
   // An untouched default that another box already uses would merge into that box on save.
   const isPlaceholderScoreTaken = canEdit && !!placeholderRule && isRuleTakenInGroup(placeholderRule, boxes);
   const suggestedScore = isPlaceholderScoreTaken ? nextUnusedScore(placeholderRule, boxes) : null;
-  const placeholderHint = isPlaceholderScoreTaken && (
-    <>
-      {intl.formatMessage(messages.defaultScoreTakenHint, {
-        score: formatScoreSummary(intl, placeholderRule.rulePayload),
-      })}
-      {suggestedScore && (
-        <>
-          {' '}
-          <Button
-            ref={suggestionLinkRef}
-            variant="link"
-            size="inline"
-            onClick={() => {
-              setFocusAfterSuggestion(true);
-              setPlaceholderRulePayload(suggestedScore);
-            }}
-          >
-            {intl.formatMessage(messages.useSuggestedScoreLink, { score: formatScoreSummary(intl, suggestedScore) })}
-          </Button>
-        </>
-      )}
-    </>
-  );
+  const placeholderHint = isPlaceholderScoreTaken
+    ? intl.formatMessage(messages.defaultScoreTakenHint, {
+      score: formatScoreSummary(intl, placeholderRule.rulePayload),
+    })
+    : undefined;
+  const placeholderSuggestion = suggestedScore
+    ? {
+      rulePayload: suggestedScore,
+      onApply: () => {
+        setFocusAfterSuggestion(true);
+        setPlaceholderRulePayload(suggestedScore);
+      },
+    }
+    : undefined;
 
   return (
     <Stack gap={2} className="rule-box-list">
@@ -115,9 +102,9 @@ const RuleBoxList = ({
             rule: placeholderRule,
             criteria: [],
           })}
-          hint={placeholderHint || undefined}
-          autoFocusSelect={placeholder.rulePayload === null || focusAfterSuggestion}
-          duplicateRejectionFocusRef={suggestedScore ? suggestionLinkRef : undefined}
+          hint={placeholderHint}
+          suggestion={placeholderSuggestion}
+          autoOpen={placeholder.rulePayload === null || focusAfterSuggestion}
         />
       )}
     </Stack>
