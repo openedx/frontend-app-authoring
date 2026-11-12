@@ -87,6 +87,13 @@ describe('<ScoreThresholdField />', () => {
       await waitFor(() => expect(screen.getByRole('textbox')).toHaveFocus());
     });
 
+    it('focuses the pill on mount, with the popover closed, when focusPillOnMount is set', async () => {
+      render(<ScoreThresholdField rulePayload={rulePayload70Percent} onChange={jest.fn()} focusPillOnMount />);
+
+      await waitFor(() => expect(pill()).toHaveFocus());
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
     it('commits the typed percent, as a fraction, on Enter, closes, and refocuses the pill', async () => {
       const user = userEvent.setup();
       const onChange = jest.fn().mockResolvedValue(undefined);

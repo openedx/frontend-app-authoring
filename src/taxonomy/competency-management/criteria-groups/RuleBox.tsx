@@ -26,6 +26,12 @@ export interface RuleBoxProps {
   suggestion?: { rulePayload: GradeRulePayload; onApply: () => void; };
   /** Placeholder only: open the score popover on mount. */
   autoOpen?: boolean;
+  /** Focus the score pill on mount, for a box that remounted because its score changed. */
+  focusPillOnMount?: boolean;
+  /** Called with the payload and the pending save as soon as the popover commits a score, before the save
+   * settles, so the owner can prepare for the remount a changed score causes.
+   */
+  onScoreSave?: (rulePayload: GradeRulePayload, save: Promise<void>) => void;
 }
 
 /** One rule box: its score threshold, whose pill opens the box's settings popover, and its criterion chips, or a hint when it is the placeholder. */
@@ -40,6 +46,8 @@ const RuleBox = ({
   hint,
   suggestion,
   autoOpen = false,
+  focusPillOnMount = false,
+  onScoreSave,
 }: RuleBoxProps) => {
   const intl = useIntl();
   const {
@@ -64,11 +72,15 @@ const RuleBox = ({
 
   const handleScoreChange = (rulePayload: GradeRulePayload): Promise<void> => {
     // With no criteria yet, the score stays in the context until content is picked.
+    let save: Promise<void>;
     if (isPlaceholder || groupId === null) {
       setPlaceholderRulePayload(rulePayload);
-      return Promise.resolve();
+      save = Promise.resolve();
+    } else {
+      save = updateRuleScore(groupId, criteria.map((criterion) => criterion.id), rulePayload);
     }
-    return updateRuleScore(groupId, criteria.map((criterion) => criterion.id), rulePayload);
+    onScoreSave?.(rulePayload, save);
+    return save;
   };
 
   const selectRuleBox = () => {
@@ -102,6 +114,7 @@ const RuleBox = ({
               onChange={handleScoreChange}
               getInlineValidationMessage={getInlineValidationMessage}
               autoOpen={autoOpen}
+              focusPillOnMount={focusPillOnMount}
               hint={hint}
               hintIsError={isDuplicateRejected}
               rejectionCount={placeholderDuplicateRejectionCount}

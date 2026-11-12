@@ -140,6 +140,8 @@ const ScoreSettingsPopover = ({
 
   const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
+      // A committed score can move focus to a pill mid-keypress, and Enter would then click that pill.
+      event.preventDefault();
       if (await commit()) {
         onRequestClose();
       }

@@ -3,10 +3,18 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Stack } from '@openedx/paragon';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import type { EffectiveRule, GradeRulePayload, RuleBox as RuleBoxData } from '../data/types';
-import { isRuleTakenInGroup, nextUnusedScore } from '../utils';
+import { isRuleTakenInGroup, nextUnusedScore, ruleKeyOf } from '../utils';
 import RuleBox from './RuleBox';
 import { formatScoreSummary } from './ScoreThresholdField';
 import messages from './messages';
+
+const placeholderKeyOf = (rulePayload: GradeRulePayload) => `placeholder-${Math.round(rulePayload.value * 100)}`;
+
+/** What a box does once it mounts under `key`, after a score change remounted it. */
+interface AfterRemount {
+  key: string;
+  action: 'open' | 'focusPill';
+}
 
 export interface RuleBoxListProps {
   /** `null` for the placeholder group, which has no saved rule boxes. */
@@ -31,14 +39,9 @@ const RuleBoxList = ({
     systemDefaultProfile,
     setPlaceholderRulePayload,
   } = useCompetencyAssociations();
-  // The placeholder remounts on every score change (see the key below), so its popover opens by itself only
-  // after an add action (`opensScoreSettings`) and right after the "Use {score}" link, which this state marks.
-  const [focusAfterSuggestion, setFocusAfterSuggestion] = useState(false);
-  useEffect(() => {
-    if (focusAfterSuggestion) {
-      setFocusAfterSuggestion(false);
-    }
-  }, [focusAfterSuggestion]);
+  // A box remounts on every score change (see the keys below), so a request that must survive the remount waits
+  // here until the box under `key` mounts and consumes it.
+  const [afterRemount, setAfterRemount] = useState<AfterRemount | null>(null);
 
   const getInlineValidationMessage = (candidateBox: RuleBoxData) => (candidatePayload: GradeRulePayload): string => {
     const candidate: EffectiveRule = { ruleType: candidateBox.rule.ruleType, rulePayload: candidatePayload };
@@ -55,6 +58,31 @@ const RuleBoxList = ({
   };
   const showPlaceholder = !!placeholderRule && focus?.groupId === groupId && focus.ruleKey === null;
 
+  const placeholderKey = placeholderRule && placeholderKeyOf(placeholderRule.rulePayload);
+  const renderedKeys = [...boxes.map((box) => box.key), ...(showPlaceholder && placeholderKey ? [placeholderKey] : [])];
+  // Cleared once the awaited box has mounted, which is after its mount effects have run.
+  useEffect(() => {
+    if (afterRemount && renderedKeys.includes(afterRemount.key)) {
+      setAfterRemount(null);
+    }
+  });
+
+  const isAwaited = (key: string | undefined, action: AfterRemount['action']) => (
+    afterRemount !== null && afterRemount.key === key && afterRemount.action === action
+  );
+
+  const requestPillFocusAfterSave = (box: RuleBoxData) => (rulePayload: GradeRulePayload, save: Promise<void>) => {
+    if (!systemDefaultProfile) {
+      return;
+    }
+    const newKey = ruleKeyOf(
+      { ruleTypeOverride: box.rule.ruleType, rulePayloadOverride: rulePayload },
+      systemDefaultProfile,
+    );
+    setAfterRemount({ key: newKey, action: 'focusPill' });
+    save.catch(() => setAfterRemount(null));
+  };
+
   // An untouched default that another box already uses would merge into that box on save.
   const isPlaceholderScoreTaken = canEdit && !!placeholderRule && isRuleTakenInGroup(placeholderRule, boxes);
   const suggestedScore = isPlaceholderScoreTaken ? nextUnusedScore(placeholderRule, boxes) : null;
@@ -67,7 +95,7 @@ const RuleBoxList = ({
     ? {
       rulePayload: suggestedScore,
       onApply: () => {
-        setFocusAfterSuggestion(true);
+        setAfterRemount({ key: placeholderKeyOf(suggestedScore), action: 'open' });
         setPlaceholderRulePayload(suggestedScore);
       },
     }
@@ -85,12 +113,14 @@ const RuleBoxList = ({
           subsectionNamesByUsageKey={subsectionNamesByUsageKey}
           canEdit={canEdit}
           getInlineValidationMessage={getInlineValidationMessage(box)}
+          focusPillOnMount={isAwaited(box.key, 'focusPill')}
+          onScoreSave={requestPillFocusAfterSave(box)}
         />
       ))}
       {showPlaceholder && (
         <RuleBox
           // Remounts when the displayed score changes, since the field never resyncs from props.
-          key={`placeholder-${Math.round(placeholderRule.rulePayload.value * 100)}`}
+          key={placeholderKey}
           groupId={groupId}
           ruleKey={null}
           rule={placeholderRule}
@@ -104,7 +134,12 @@ const RuleBoxList = ({
           })}
           hint={placeholderHint}
           suggestion={placeholderSuggestion}
-          autoOpen={placeholder.opensScoreSettings || focusAfterSuggestion}
+          autoOpen={placeholder.opensScoreSettings || isAwaited(placeholderKey, 'open')}
+          focusPillOnMount={isAwaited(placeholderKey, 'focusPill')}
+          onScoreSave={(rulePayload, save) => {
+            setAfterRemount({ key: placeholderKeyOf(rulePayload), action: 'focusPill' });
+            save.catch(() => setAfterRemount(null));
+          }}
         />
       )}
     </Stack>

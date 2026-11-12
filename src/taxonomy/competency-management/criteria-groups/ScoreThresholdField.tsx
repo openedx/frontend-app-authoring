@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -28,6 +29,8 @@ export interface ScoreThresholdFieldProps {
    * when there is no link.
    */
   hintIsError?: boolean;
+  /** Focuses the sentence button on mount, for a field that remounted while its popover was committing. */
+  focusPillOnMount?: boolean;
   /** Changes on every repeat rejection, so the popover reopens and refocuses each time. */
   rejectionCount?: number;
   /** Shown in the popover as a "Use {score}" link. */
@@ -50,6 +53,7 @@ const ScoreThresholdField = ({
   onChange,
   getInlineValidationMessage,
   autoOpen = false,
+  focusPillOnMount = false,
   hint,
   hintIsError = false,
   rejectionCount,
@@ -60,9 +64,21 @@ const ScoreThresholdField = ({
   // Held in state rather than a ref, because `ModalPopup` needs the anchor element on the first render when
   // `autoOpen` is set, and a ref object is still null then.
   const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
+  const pillRef = useRef<HTMLButtonElement | null>(null);
+  const attachPill = useCallback((node: HTMLButtonElement | null) => {
+    pillRef.current = node;
+    setAnchor(node);
+  }, []);
   const panelRef = useRef<HTMLDivElement>(null);
   const commitRef: MutableRefObject<(() => Promise<boolean>) | null> = useRef(null);
   const initialFocus = hintIsError && suggestion ? 'suggestion' : 'input';
+
+  useEffect(() => {
+    if (focusPillOnMount) {
+      // Deferred, because the focus lock of the popover that just unmounted returns focus to its trigger later.
+      requestAnimationFrame(() => pillRef.current?.focus());
+    }
+  }, [focusPillOnMount]);
 
   useEffect(() => {
     if (!hintIsError) {
@@ -108,7 +124,7 @@ const ScoreThresholdField = ({
   return (
     <span className="score-threshold-field">
       <button
-        ref={setAnchor}
+        ref={attachPill}
         type="button"
         className="score-threshold-field__sentence score-threshold-field__toggle"
         aria-haspopup="dialog"

@@ -31,6 +31,7 @@ let axiosMock: ReturnType<typeof initializeMocks>['axiosMock'];
 const groupsUrl = apiUrls.competencyCriteriaGroups(tagId);
 const profileUrl = apiUrls.defaultCompetencyRuleProfile();
 const createUrl = apiUrls.createCompetencyCriterion(tagId);
+const ruleUpdateUrl = apiUrls.updateCompetencyCriteriaRule(10);
 
 const courseRow = (courseKey: string, displayName: string): Course => ({
   courseKey,
@@ -326,6 +327,72 @@ describe('competency associations over the real provider', () => {
     expect(currentStates(groupHeaders())).toEqual(['true', 'false']);
     expect(screen.getAllByRole('button', { name: /With a score of/ })).toHaveLength(1);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  describe('focus after a committed score', () => {
+    const scorePill = (percent: number) =>
+      screen.getByRole('button', { name: new RegExp(`With a score of ${percent}%`) });
+
+    const commitScore = async (percent: string) => {
+      const input = within(screen.getByRole('dialog')).getByRole('textbox');
+      await user.clear(input);
+      await user.type(input, percent);
+      await user.keyboard('{Enter}');
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    };
+
+    it('moves focus to the pill showing the new score after a saved box is edited', async () => {
+      let groupsReply = singleGroupResponse;
+      axiosMock.onGet(groupsUrl).reply(() => [200, groupsReply]);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+      axiosMock.onPatch(ruleUpdateUrl).reply(() => {
+        const updated = criterion(900, 'existing-sub', 10, {
+          ruleProfileId: null,
+          ruleTypeOverride: 'grade',
+          rulePayloadOverride: { op: 'gte', value: 0.85, scale: 'percent' },
+        });
+        groupsReply = { ...singleGroupResponse, criteria: [updated] };
+        return [200, [updated]];
+      });
+      renderPanel([courseARow]);
+      await user.click(await screen.findByRole('button', { name: /With a score of 70%/ }));
+
+      await commitScore('85');
+
+      await waitFor(() => expect(scorePill(85)).toHaveFocus());
+    });
+
+    it('moves focus to the placeholder pill, with its dialog closed, after the placeholder score is committed', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+      renderPanel([courseARow]);
+      await user.click(await screen.findByRole('button', { name: 'Add Rule' }));
+      await waitFor(() => expect(screen.getByRole('textbox')).toHaveFocus());
+
+      await commitScore('80');
+
+      await waitFor(() => expect(scorePill(80)).toHaveFocus());
+      expect(scorePill(80)).toHaveAttribute('aria-expanded', 'false');
+      expect(axiosMock.history.patch).toHaveLength(0);
+    });
+
+    it('keeps focus on the same pill when a saved score is rejected and the popover is then dismissed', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+      axiosMock.onPatch(ruleUpdateUrl).reply(500);
+      renderPanel([courseARow]);
+      await user.click(await screen.findByRole('button', { name: /With a score of 70%/ }));
+      const input = within(screen.getByRole('dialog')).getByRole('textbox');
+      await user.clear(input);
+      await user.type(input, '85');
+      await user.keyboard('{Enter}');
+      await waitFor(() => expect(axiosMock.history.patch).toHaveLength(1));
+      await waitFor(() => expect(input).toHaveValue('70'));
+
+      await closeScorePopover(user);
+
+      expect(scorePill(70)).toHaveFocus();
+    });
   });
 
   it('shows the empty state when every course outline is refused with 403', async () => {
