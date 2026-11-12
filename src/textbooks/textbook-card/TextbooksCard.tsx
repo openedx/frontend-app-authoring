@@ -26,7 +26,7 @@ export interface TextbookCardProps {
   onEditSubmit: (fromValues: Textbook, onSuccess: () => void) => void;
   onDeleteSubmit: (id: string) => void;
   textbookIndex: number;
-  isEditable?: boolean;
+  isEditable: boolean;
 }
 
 const TextbookCard = ({
@@ -34,7 +34,7 @@ const TextbookCard = ({
   onEditSubmit,
   onDeleteSubmit,
   textbookIndex,
-  isEditable = true,
+  isEditable,
 }: TextbookCardProps) => {
   const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();

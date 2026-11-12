@@ -7,7 +7,7 @@ const onCreateNewTextbookMock = jest.fn();
 
 const renderComponent = () =>
   render(
-    <EmptyPlaceholder onCreateNewTextbook={onCreateNewTextbookMock} />,
+    <EmptyPlaceholder onCreateNewTextbook={onCreateNewTextbookMock} isEditable />,
   );
 
 describe('<EmptyPlaceholder />', () => {

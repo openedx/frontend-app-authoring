@@ -27,7 +27,7 @@ interface CustomPageCardProps {
   setCurrentPage: (id: string) => void;
   onDelete: (blockId: string, onSettled?: () => void) => void;
   isDeleting: boolean;
-  isEditable?: boolean;
+  isEditable: boolean;
   onToggleVisibility: (blockId: string, courseStaffOnly: boolean) => void;
 }
 
@@ -37,7 +37,7 @@ const CustomPageCard = ({
   setCurrentPage,
   onDelete,
   isDeleting,
-  isEditable = true,
+  isEditable,
   onToggleVisibility,
 }: CustomPageCardProps) => {
   const intl = useIntl();

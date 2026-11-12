@@ -1,7 +1,7 @@
 import userEvent from '@testing-library/user-event';
 
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { getApiWaffleFlagsUrl } from '@src/data/api';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import {
   initializeMocks,
   render,
@@ -13,6 +13,7 @@ import { Textbooks } from '.';
 import messages from './messages';
 
 let axiosMock;
+let validateUserPermissionsMock;
 const courseId = 'course-v1:org+101+101';
 const emptyTextbooksMock = { textbooks: [] };
 
@@ -28,7 +29,8 @@ describe('<Textbooks />', () => {
     const mocks = initializeMocks();
 
     axiosMock = mocks.axiosMock;
-    axiosMock.onGet(getApiWaffleFlagsUrl(courseId)).reply(200, {});
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    mockWaffleFlags();
     axiosMock
       .onGet(getTextbooksApiUrl(courseId))
       .reply(200, textbooksMock);
@@ -72,5 +74,58 @@ describe('<Textbooks />', () => {
     renderComponent();
 
     expect(await screen.findByTestId('connectionErrorAlert')).toBeInTheDocument();
+  });
+
+  describe('with AuthZ enabled', () => {
+    const mockPermissions = (canManagePagesAndResources: boolean) => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      validateUserPermissionsMock.mockResolvedValue({ canViewPagesAndResources: true, canManagePagesAndResources });
+    };
+
+    it('lets view-only users consult textbooks with management actions disabled', async () => {
+      mockPermissions(false);
+      const user = userEvent.setup();
+      renderComponent();
+
+      expect(await screen.findAllByTestId('textbook-card')).toHaveLength(2);
+      const actions = [
+        screen.getByRole('button', { name: messages.newTextbookButton.defaultMessage }),
+        ...screen.getAllByRole('button', { name: 'Edit' }),
+        ...screen.getAllByRole('button', { name: 'Delete' }),
+      ];
+      expect(actions).toHaveLength(5);
+      for (const action of actions) {
+        expect(action).toBeDisabled();
+        await user.click(action);
+      }
+      expect(screen.queryByTestId('textbook-form')).not.toBeInTheDocument();
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      screen.getAllByRole('button', { name: 'View the PDF live' }).forEach(button => expect(button).toBeEnabled());
+    });
+
+    it('disables both creation entry points when a view-only list is empty', async () => {
+      mockPermissions(false);
+      axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(200, emptyTextbooksMock);
+      const user = userEvent.setup();
+      renderComponent();
+
+      const addFirst = await screen.findByRole('button', { name: 'Add your first textbook' });
+      expect(addFirst).toBeDisabled();
+      expect(screen.getByRole('button', { name: messages.newTextbookButton.defaultMessage })).toBeDisabled();
+      await user.click(addFirst);
+      expect(screen.queryByTestId('textbook-form')).not.toBeInTheDocument();
+    });
+
+    it('keeps management actions available to managers', async () => {
+      mockPermissions(true);
+      const user = userEvent.setup();
+      renderComponent();
+
+      expect(await screen.findAllByTestId('textbook-card')).toHaveLength(2);
+      [...screen.getAllByRole('button', { name: 'Edit' }), ...screen.getAllByRole('button', { name: 'Delete' })]
+        .forEach(button => expect(button).toBeEnabled());
+      await user.click(screen.getByRole('button', { name: messages.newTextbookButton.defaultMessage }));
+      expect(screen.getByTestId('textbook-form')).toBeInTheDocument();
+    });
   });
 });
