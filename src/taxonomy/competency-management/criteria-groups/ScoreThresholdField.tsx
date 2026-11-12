@@ -24,7 +24,9 @@ export interface ScoreThresholdFieldProps {
   autoOpen?: boolean;
   /** Guidance in the popover. */
   hint?: string;
-  /** Renders `hint` as an error, and opens the popover with focus on the suggestion link, or the input. */
+  /** Renders `hint` as an error and opens the popover with focus on the suggestion link, or on the input
+   * when there is no link.
+   */
   hintIsError?: boolean;
   /** Changes on every repeat rejection, so the popover reopens and refocuses each time. */
   rejectionCount?: number;
@@ -55,7 +57,8 @@ const ScoreThresholdField = ({
 }: ScoreThresholdFieldProps) => {
   const intl = useIntl();
   const [isOpen, setIsOpen] = useState(autoOpen || hintIsError);
-  // State, not a ref object, because `ModalPopup` needs the element itself and renders open on first mount.
+  // Held in state rather than a ref, because `ModalPopup` needs the anchor element on the first render when
+  // `autoOpen` is set, and a ref object is still null then.
   const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const commitRef: MutableRefObject<(() => Promise<boolean>) | null> = useRef(null);
