@@ -37,6 +37,7 @@ import type {
 import { courseKeyOfFocus, resolveCreateTarget } from './criterionTarget';
 import messages from './messages';
 import {
+  clearStaleScoreSettingsOpen,
   initialPlaceholder,
   isPlaceholderOrphaned,
   PLACEHOLDER_REJECTION_CLEARING_ACTIONS,
@@ -324,7 +325,7 @@ function providerReducer(state: ProviderState, action: ProviderAction): Provider
       placeholderDuplicateRejectionCount: state.placeholderDuplicateRejectionCount + 1,
     };
   }
-  const next = reduceProviderState(state, action);
+  const next = clearStaleScoreSettingsOpen(state, reduceProviderState(state, action));
   const clears = PLACEHOLDER_REJECTION_CLEARING_ACTIONS.has(action.type)
     || (action.type === 'pendingCourseResolved' && action.focus !== null);
   return clears && next.placeholderDuplicateRejected ? { ...next, placeholderDuplicateRejected: false } : next;

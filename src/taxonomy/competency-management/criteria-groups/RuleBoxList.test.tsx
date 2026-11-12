@@ -175,7 +175,11 @@ describe('<RuleBoxList />', () => {
     const renderTakenPlaceholder = (setPlaceholderRulePayload = jest.fn()) =>
       render(
         <MockCompetencyAssociationsProvider
-          value={{ focus: { groupId: 10, ruleKey: null }, setPlaceholderRulePayload }}
+          value={{
+            focus: { groupId: 10, ruleKey: null },
+            placeholder: { parentRuleGroupId: null, logicOperator: 'OR', rulePayload: null, opensScoreSettings: true },
+            setPlaceholderRulePayload,
+          }}
         >
           <RuleBoxList groupId={10} boxes={boxes} subsectionNamesByUsageKey={{}} canEdit />
         </MockCompetencyAssociationsProvider>,
@@ -200,7 +204,12 @@ describe('<RuleBoxList />', () => {
           <MockCompetencyAssociationsProvider
             value={{
               focus: { groupId: 10, ruleKey: null },
-              placeholder: { parentRuleGroupId: null, logicOperator: 'OR', rulePayload },
+              placeholder: {
+                parentRuleGroupId: null,
+                logicOperator: 'OR',
+                rulePayload,
+                opensScoreSettings: rulePayload === null,
+              },
               placeholderDuplicateRejected: false,
               setPlaceholderRulePayload: setRulePayload,
             }}
@@ -336,18 +345,35 @@ describe('<RuleBoxList />', () => {
       expect(boxes[1]).toHaveTextContent('Select content below to add it here.');
     });
 
+    it('keeps the score settings closed when the placeholder was not just added', () => {
+      renderWithPlaceholder();
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /With a score of 70% or higher/ })).toHaveAttribute(
+        'aria-expanded',
+        'false',
+      );
+    });
+
     it('is absent when another rule box in the group is focused', () => {
       const { container } = renderWithPlaceholder({ focus: { groupId: 10, ruleKey: placeholderBoxes[0].key } });
 
       expect(container.querySelectorAll('.rule-box')).toHaveLength(1);
     });
 
+    const afterAddPlaceholder = {
+      parentRuleGroupId: null,
+      logicOperator: 'OR' as const,
+      rulePayload: null,
+      opensScoreSettings: true,
+    };
+
     // A placeholder has no saved criteria, so its score lives in context until content is picked.
     it('writes a score change to setPlaceholderRulePayload, not updateRuleScore', async () => {
       const user = userEvent.setup();
       const setPlaceholderRulePayload = jest.fn();
       const updateRuleScore = jest.fn();
-      renderWithPlaceholder({ setPlaceholderRulePayload, updateRuleScore });
+      renderWithPlaceholder({ placeholder: afterAddPlaceholder, setPlaceholderRulePayload, updateRuleScore });
 
       const placeholderInput = screen.getByRole('textbox');
       await user.clear(placeholderInput);
@@ -361,7 +387,7 @@ describe('<RuleBoxList />', () => {
     it('refuses a score that duplicates the real box\'s rule', async () => {
       const user = userEvent.setup();
       const setPlaceholderRulePayload = jest.fn();
-      renderWithPlaceholder({ setPlaceholderRulePayload });
+      renderWithPlaceholder({ placeholder: afterAddPlaceholder, setPlaceholderRulePayload });
 
       const placeholderInput = screen.getByRole('textbox');
       await user.clear(placeholderInput);

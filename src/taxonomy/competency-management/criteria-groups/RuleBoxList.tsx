@@ -31,8 +31,8 @@ const RuleBoxList = ({
     systemDefaultProfile,
     setPlaceholderRulePayload,
   } = useCompetencyAssociations();
-  // The placeholder remounts on every score change (see the key below), so its score popover opens only on
-  // first mount and right after the "Use {score}" link is clicked, which this state marks.
+  // The placeholder remounts on every score change (see the key below), so its popover opens by itself only
+  // after an add action (`opensScoreSettings`) and right after the "Use {score}" link, which this state marks.
   const [focusAfterSuggestion, setFocusAfterSuggestion] = useState(false);
   useEffect(() => {
     if (focusAfterSuggestion) {
@@ -104,7 +104,7 @@ const RuleBoxList = ({
           })}
           hint={placeholderHint}
           suggestion={placeholderSuggestion}
-          autoOpen={placeholder.rulePayload === null || focusAfterSuggestion}
+          autoOpen={placeholder.opensScoreSettings || focusAfterSuggestion}
         />
       )}
     </Stack>

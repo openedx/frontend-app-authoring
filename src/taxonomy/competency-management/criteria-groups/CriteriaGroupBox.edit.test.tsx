@@ -131,7 +131,7 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
         <MockCompetencyAssociationsProvider
           value={{
             focus: { groupId: null, ruleKey: null },
-            placeholder: { parentRuleGroupId: 1, logicOperator: current, rulePayload: null },
+            placeholder: { parentRuleGroupId: 1, logicOperator: current, rulePayload: null, opensScoreSettings: false },
             setPlaceholderLogicOperator,
             updateGroupOperator,
           }}
@@ -140,8 +140,6 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
         </MockCompetencyAssociationsProvider>,
       );
 
-      // The new placeholder's score popover opens by itself and hides the rest of the page from role queries.
-      await user.keyboard('{Escape}');
       await user.click(screen.getByRole('button', { name: currentLabel }));
       await user.click(screen.getByText(pickedLabel));
 

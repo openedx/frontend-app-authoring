@@ -229,7 +229,12 @@ describe('<CourseGroupSection />', () => {
       const { container } = renderSection({
         focus: { groupId: null, ruleKey: null },
         canEditCourse: () => true,
-        placeholder: { parentRuleGroupId: courseGroup.id, logicOperator: 'OR', rulePayload: null },
+        placeholder: {
+          parentRuleGroupId: courseGroup.id,
+          logicOperator: 'OR',
+          rulePayload: null,
+          opensScoreSettings: false,
+        },
       });
 
       await screen.findByText('Demo Course');
@@ -242,7 +247,7 @@ describe('<CourseGroupSection />', () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
     const { container } = renderSection({
       focus: { groupId: null, ruleKey: null },
-      placeholder: { parentRuleGroupId: 999, logicOperator: 'OR', rulePayload: null },
+      placeholder: { parentRuleGroupId: 999, logicOperator: 'OR', rulePayload: null, opensScoreSettings: false },
     });
 
     await screen.findByText('Demo Course');
@@ -317,7 +322,12 @@ describe('<CourseGroupSection />', () => {
   it.each([
     ['a placeholder group under it', {
       focus: { groupId: null, ruleKey: null },
-      placeholder: { parentRuleGroupId: courseGroup.id, logicOperator: 'OR' as const, rulePayload: null },
+      placeholder: {
+        parentRuleGroupId: courseGroup.id,
+        logicOperator: 'OR' as const,
+        rulePayload: null,
+        opensScoreSettings: false,
+      },
     }],
     ['a placeholder rule box in one of its groups', { focus: { groupId: 10, ruleKey: null } }],
   ])('discards the placeholder when collapsing a section holding %s', async (_label, overrides) => {
@@ -336,7 +346,7 @@ describe('<CourseGroupSection />', () => {
     const discardPlaceholder = jest.fn();
     renderSection({
       focus: { groupId: null, ruleKey: null },
-      placeholder: { parentRuleGroupId: 999, logicOperator: 'OR', rulePayload: null },
+      placeholder: { parentRuleGroupId: 999, logicOperator: 'OR', rulePayload: null, opensScoreSettings: false },
       discardPlaceholder,
     });
 
@@ -362,7 +372,12 @@ describe('<CourseGroupSection />', () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
     const { container, unmount } = renderSection({
       focus: { groupId: null, ruleKey: null },
-      placeholder: { parentRuleGroupId: courseGroup.id, logicOperator: 'OR', rulePayload: null },
+      placeholder: {
+        parentRuleGroupId: courseGroup.id,
+        logicOperator: 'OR',
+        rulePayload: null,
+        opensScoreSettings: false,
+      },
     });
 
     await screen.findByText('Demo Course');
@@ -371,7 +386,7 @@ describe('<CourseGroupSection />', () => {
     unmount();
     const { container: other } = renderSection({
       focus: { groupId: null, ruleKey: null },
-      placeholder: { parentRuleGroupId: 999, logicOperator: 'OR', rulePayload: null },
+      placeholder: { parentRuleGroupId: 999, logicOperator: 'OR', rulePayload: null, opensScoreSettings: false },
     });
     await screen.findByText('Demo Course');
     expect(other.querySelector('.course-group-section')).not.toHaveClass('course-group-section--focused');

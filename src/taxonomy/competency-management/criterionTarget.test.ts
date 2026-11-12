@@ -54,7 +54,12 @@ const response: CompetencyCriteriaGroupsResponse = {
 };
 
 const index = buildCompetencyCriteriaGroupsIndex(response);
-const untouched: CriteriaPlaceholder = { parentRuleGroupId: null, logicOperator: 'OR', rulePayload: null };
+const untouched: CriteriaPlaceholder = {
+  parentRuleGroupId: null,
+  logicOperator: 'OR',
+  rulePayload: null,
+  opensScoreSettings: false,
+};
 const changed = { op: 'gte', value: 0.85, scale: 'percent' } as const;
 const defaultBoxKey = 'grade:gte:0.7:percent';
 const defaultBoxPayload = { op: 'gte', value: 0.7, scale: 'percent' } as const;

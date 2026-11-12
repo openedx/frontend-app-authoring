@@ -19,6 +19,7 @@ import {
   singleGroupResponse,
   tagId,
   twoCoursesResponse,
+  twoGroupsResponse,
 } from './__mocks__';
 import { CompetencyAssociationsProvider } from './CompetencyAssociationsContext';
 import CourseRow from './course-search/CourseRow';
@@ -80,7 +81,7 @@ const ruleBoxWithScore = (percent: string) => {
   }
   return control;
 };
-// A placeholder's score popover opens by itself and hides the rest of the page from role queries until it closes.
+// After "Add Rule", "Add Rule Group" or "Use …" the score popover opens by itself and hides the rest of the page from role queries until it closes.
 const closeScorePopover = async (user: ReturnType<typeof userEvent.setup>) => {
   await user.keyboard('{Escape}');
   await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
@@ -110,7 +111,6 @@ describe('competency associations over the real provider', () => {
     await screen.findAllByText(/^By completing/);
     await user.click(groupHeaders()[0]);
     expect(groupHeaders()[0]).toHaveAttribute('aria-current', 'true');
-    await closeScorePopover(user);
     await user.click(await screen.findByRole('button', { name: 'Collapse Course B' }));
     expect(screen.queryByText('Homework 1')).not.toBeInTheDocument();
 
@@ -189,7 +189,6 @@ describe('competency associations over the real provider', () => {
     await screen.findAllByRole('heading', { name: /^From within Course/ });
     // Expanding course A and then course B leaves the focus on course B's last group.
     await user.click(screen.getAllByRole('button', { name: 'Expand' })[0]);
-    await closeScorePopover(user);
     await user.click(screen.getAllByRole('button', { name: 'Expand' })[1]);
     expect(currentStates(groupHeaders())).toEqual(['false', 'false', 'true']);
     await user.click(screen.getAllByRole('button', { name: 'Expand' })[0]);
@@ -307,6 +306,26 @@ describe('competency associations over the real provider', () => {
 
     expect(currentStates(groupHeaders())).toEqual(['false', 'false', 'true']);
     expect(currentStates(ruleBoxControls())).toEqual(['false', 'true']);
+  });
+
+  it('shows an empty saved group\'s placeholder box without opening its score settings when the group is focused', async () => {
+    axiosMock.onGet(groupsUrl).reply(200, twoGroupsResponse);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+    renderPanel([courseARow]);
+    await screen.findAllByText(/^By completing/);
+    expect(screen.queryByRole('button', { name: /With a score of/ })).not.toBeInTheDocument();
+
+    await user.click(groupHeaders()[1]);
+
+    expect(currentStates(groupHeaders())).toEqual(['false', 'true']);
+    expect(screen.getAllByRole('button', { name: /With a score of/ })).toHaveLength(1);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    await user.click(groupHeaders()[0]);
+
+    expect(currentStates(groupHeaders())).toEqual(['true', 'false']);
+    expect(screen.getAllByRole('button', { name: /With a score of/ })).toHaveLength(1);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('shows the empty state when every course outline is refused with 403', async () => {

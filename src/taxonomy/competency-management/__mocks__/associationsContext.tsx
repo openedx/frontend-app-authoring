@@ -26,7 +26,7 @@ export const buildMockCompetencyAssociationsContextValue = (
   const shared: CompetencyAssociationsContextBase = {
     error: null,
     focus: null,
-    placeholder: { parentRuleGroupId: null, logicOperator: 'OR', rulePayload: null },
+    placeholder: { parentRuleGroupId: null, logicOperator: 'OR', rulePayload: null, opensScoreSettings: false },
     hasPlaceholder: false,
     addPlaceholderRuleBox: jest.fn(),
     addPlaceholderGroup: jest.fn(),
