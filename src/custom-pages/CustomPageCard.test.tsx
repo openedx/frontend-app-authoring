@@ -20,6 +20,7 @@ const defaultProps = {
   onDelete: jest.fn(),
   isDeleting: false,
   onToggleVisibility: jest.fn(),
+  isEditable: true,
 };
 
 const renderComponent = (courseStaffOnly = false) => {

@@ -27,6 +27,7 @@ interface CustomPageCardProps {
   setCurrentPage: (id: string) => void;
   onDelete: (blockId: string, onSettled?: () => void) => void;
   isDeleting: boolean;
+  isEditable: boolean;
   onToggleVisibility: (blockId: string, courseStaffOnly: boolean) => void;
 }
 
@@ -36,6 +37,7 @@ const CustomPageCard = ({
   setCurrentPage,
   onDelete,
   isDeleting,
+  isEditable,
   onToggleVisibility,
 }: CustomPageCardProps) => {
   const intl = useIntl();
@@ -62,36 +64,40 @@ const CustomPageCard = ({
           {page?.name || intl.formatMessage(messages.newPageTitle)}
         </div>
         <ActionRow.Spacer />
-        <IconButtonWithTooltip
-          key={intl.formatMessage(messages.editTooltipContent)}
-          tooltipPlacement="top"
-          tooltipContent={intl.formatMessage(messages.editTooltipContent)}
-          src={EditOutline}
-          iconAs={Icon}
-          alt={intl.formatMessage(messages.editTooltipContent)}
-          onClick={handleEditOpen}
-          data-testid="edit-modal-icon"
-        />
-        <IconButtonWithTooltip
-          key={intl.formatMessage(messages.visibilityTooltipContent)}
-          tooltipPlacement="top"
-          tooltipContent={intl.formatMessage(messages.visibilityTooltipContent)}
-          src={page.courseStaffOnly ? VisibilityOff : Visibility}
-          iconAs={Icon}
-          alt={intl.formatMessage(messages.visibilityTooltipContent)}
-          onClick={toggleVisibility}
-          data-testid="visibility-toggle-icon"
-        />
-        <IconButtonWithTooltip
-          key={intl.formatMessage(messages.deleteTooltipContent)}
-          tooltipPlacement="top"
-          tooltipContent={intl.formatMessage(messages.deleteTooltipContent)}
-          src={DeleteOutline}
-          iconAs={Icon}
-          alt={intl.formatMessage(messages.deleteTooltipContent)}
-          onClick={openDeleteConfirmation}
-          data-testid="delete-modal-icon"
-        />
+        {isEditable && (
+          <>
+            <IconButtonWithTooltip
+              key={intl.formatMessage(messages.editTooltipContent)}
+              tooltipPlacement="top"
+              tooltipContent={intl.formatMessage(messages.editTooltipContent)}
+              src={EditOutline}
+              iconAs={Icon}
+              alt={intl.formatMessage(messages.editTooltipContent)}
+              onClick={handleEditOpen}
+              data-testid="edit-modal-icon"
+            />
+            <IconButtonWithTooltip
+              key={intl.formatMessage(messages.visibilityTooltipContent)}
+              tooltipPlacement="top"
+              tooltipContent={intl.formatMessage(messages.visibilityTooltipContent)}
+              src={page.courseStaffOnly ? VisibilityOff : Visibility}
+              iconAs={Icon}
+              alt={intl.formatMessage(messages.visibilityTooltipContent)}
+              onClick={toggleVisibility}
+              data-testid="visibility-toggle-icon"
+            />
+            <IconButtonWithTooltip
+              key={intl.formatMessage(messages.deleteTooltipContent)}
+              tooltipPlacement="top"
+              tooltipContent={intl.formatMessage(messages.deleteTooltipContent)}
+              src={DeleteOutline}
+              iconAs={Icon}
+              alt={intl.formatMessage(messages.deleteTooltipContent)}
+              onClick={openDeleteConfirmation}
+              data-testid="delete-modal-icon"
+            />
+          </>
+        )}
       </ActionRow>
       <AlertModal
         title={intl.formatMessage(messages.deleteConfirmationTitle)}

@@ -1,5 +1,10 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getConfig } from '@edx/frontend-platform';
@@ -33,7 +38,6 @@ const PagesAndResources = () => {
   const {
     isLoading: isLoadingUserPermissions,
     isAuthzEnabled,
-    canViewPagesAndResources,
     canManagePagesAndResources,
   } = useCourseUserPermissions(courseId, getPagesAndResourcesPermissions(courseId));
 
@@ -70,11 +74,8 @@ const PagesAndResources = () => {
     return <></>;
   }
 
-  // Gate: if user has neither VIEW nor MANAGE permission, show permission denied
-  const hasNoAccess = (!isAuthzEnabled && courseAppsApiStatus === RequestStatus.DENIED)
-    || (isAuthzEnabled && !canViewPagesAndResources && !canManagePagesAndResources);
-
-  if (hasNoAccess) {
+  // Granular read access is guarded by the router; retain the legacy backend denial here.
+  if (!isAuthzEnabled && courseAppsApiStatus === RequestStatus.DENIED) {
     return <PermissionDeniedAlert />;
   }
 
@@ -97,38 +98,40 @@ const PagesAndResources = () => {
           </Hyperlink>
         </div>
         <Routes>
-          <Route
-            path="discussion/configure/:appId"
-            element={
-              <PageWrap>
-                <DiscussionsSettings />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="discussion"
-            element={
-              <PageWrap>
-                <DiscussionsSettings />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="discussion/settings"
-            element={
-              <PageWrap>
-                <DiscussionsSettings />
-              </PageWrap>
-            }
-          />
-          <Route
-            path=":appId/settings"
-            element={
-              <PageWrap>
-                <SettingsComponent url={redirectUrl} />
-              </PageWrap>
-            }
-          />
+          <Route element={isEditable ? <Outlet /> : <Navigate to={redirectUrl} replace />}>
+            <Route
+              path="discussion/configure/:appId"
+              element={
+                <PageWrap>
+                  <DiscussionsSettings />
+                </PageWrap>
+              }
+            />
+            <Route
+              path="discussion"
+              element={
+                <PageWrap>
+                  <DiscussionsSettings />
+                </PageWrap>
+              }
+            />
+            <Route
+              path="discussion/settings"
+              element={
+                <PageWrap>
+                  <DiscussionsSettings />
+                </PageWrap>
+              }
+            />
+            <Route
+              path=":appId/settings"
+              element={
+                <PageWrap>
+                  <SettingsComponent url={redirectUrl} />
+                </PageWrap>
+              }
+            />
+          </Route>
         </Routes>
 
         <PageGrid

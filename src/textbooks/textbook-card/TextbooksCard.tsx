@@ -26,6 +26,7 @@ export interface TextbookCardProps {
   onEditSubmit: (fromValues: Textbook, onSuccess: () => void) => void;
   onDeleteSubmit: (id: string) => void;
   textbookIndex: number;
+  isEditable: boolean;
 }
 
 const TextbookCard = ({
@@ -33,6 +34,7 @@ const TextbookCard = ({
   onEditSubmit,
   onDeleteSubmit,
   textbookIndex,
+  isEditable,
 }: TextbookCardProps) => {
   const intl = useIntl();
   const { courseId } = useCourseAuthoringContext();
@@ -81,22 +83,26 @@ const TextbookCard = ({
                       alt={intl.formatMessage(messages.buttonView)}
                       onClick={onPreviewTextbookClick}
                     />
-                    <IconButtonWithTooltip
-                      tooltipContent={intl.formatMessage(messages.buttonEdit)}
-                      src={EditIcon}
-                      iconAs={Icon}
-                      data-testid="textbook-edit-button"
-                      alt={intl.formatMessage(messages.buttonEdit)}
-                      onClick={openTextbookForm}
-                    />
-                    <IconButtonWithTooltip
-                      tooltipContent={intl.formatMessage(messages.buttonDelete)}
-                      src={DeleteIcon}
-                      iconAs={Icon}
-                      data-testid="textbook-delete-button"
-                      alt={intl.formatMessage(messages.buttonDelete)}
-                      onClick={openDeleteModal}
-                    />
+                    {isEditable && (
+                      <>
+                        <IconButtonWithTooltip
+                          tooltipContent={intl.formatMessage(messages.buttonEdit)}
+                          src={EditIcon}
+                          iconAs={Icon}
+                          data-testid="textbook-edit-button"
+                          alt={intl.formatMessage(messages.buttonEdit)}
+                          onClick={openTextbookForm}
+                        />
+                        <IconButtonWithTooltip
+                          tooltipContent={intl.formatMessage(messages.buttonDelete)}
+                          src={DeleteIcon}
+                          iconAs={Icon}
+                          data-testid="textbook-delete-button"
+                          alt={intl.formatMessage(messages.buttonDelete)}
+                          onClick={openDeleteModal}
+                        />
+                      </>
+                    )}
                   </ActionRow>
                 }
               />

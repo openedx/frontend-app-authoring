@@ -26,6 +26,7 @@ const renderComponent = () =>
         onEditSubmit={onEditSubmitMock}
         onDeleteSubmit={onDeleteSubmitMock}
         textbookIndex={1}
+        isEditable
       />,
     </CourseAuthoringProvider>,
   );

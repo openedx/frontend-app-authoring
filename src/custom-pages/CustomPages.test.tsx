@@ -1,4 +1,10 @@
 import ReactDOM from 'react-dom';
+import {
+  Route,
+  Routes,
+  useLocation,
+  useNavigationType,
+} from 'react-router-dom';
 
 import {
   initializeMocks,
@@ -7,9 +13,10 @@ import {
   waitFor,
   render,
   act,
+  userEvent,
 } from '@src/testUtils';
-import { getApiWaffleFlagsUrl } from '@src/data/api';
-import { useCourseDetails } from '@src/data/apiHooks';
+import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import { getCourseDetailsUrl } from '@src/data/api';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import CustomPages from './CustomPages';
 import { getApiBaseUrl, getTabHandlerUrl } from './data/api';
@@ -37,6 +44,7 @@ jest.mock('./EditModal', () => ({
 
 let axiosMock;
 let queryClient;
+let validateUserPermissionsMock;
 // @ts-ignore
 ReactDOM.createPortal = jest.fn(node => node);
 
@@ -60,11 +68,6 @@ const generateNewPageApiResponse = () => ({
   courseKey: courseId,
 });
 
-jest.mock('@src/data/apiHooks', () => ({
-  ...jest.requireActual('@src/data/apiHooks'),
-  useCourseDetails: jest.fn(),
-}));
-
 const mockCourseDetails = {
   name: 'Test Course',
   start: '2024-01-01T00:00:00Z',
@@ -83,13 +86,9 @@ describe('CustomPages', () => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
     queryClient = mocks.queryClient;
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(courseId))
-      .reply(200, {});
-    (useCourseDetails as jest.Mock).mockReturnValue({
-      data: mockCourseDetails,
-      status: 'successful',
-    });
+    validateUserPermissionsMock = mocks.validateUserPermissionsMock;
+    mockWaffleFlags();
+    axiosMock.onGet(getCourseDetailsUrl(courseId, 'abc123')).reply(200, mockCourseDetails);
     capturedOnClose = undefined;
     mockNavigate.mockClear();
   });
@@ -275,6 +274,121 @@ describe('CustomPages', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Unable to save page. Please try again.')).toBeVisible();
+    });
+  });
+
+  describe('with AuthZ enabled', () => {
+    const customPagesPath = `/course/${courseId}/custom-pages`;
+
+    const mockPermissions = (canManagePagesAndResources: boolean) => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      validateUserPermissionsMock.mockResolvedValue({ canViewPagesAndResources: true, canManagePagesAndResources });
+    };
+
+    const Location = () => {
+      const { pathname } = useLocation();
+      return <output aria-label="Current location">{`${useNavigationType()} ${pathname}`}</output>;
+    };
+
+    const renderRoute = (route: string) =>
+      render(
+        <CourseAuthoringProvider courseId={courseId}>
+          <Location />
+          <Routes>
+            <Route path="/course/:courseId/custom-pages/*" element={<CustomPages />} />
+          </Routes>
+        </CourseAuthoringProvider>,
+        { routerProps: { initialEntries: [`${customPagesPath}${route}`] } },
+      );
+
+    beforeEach(() => {
+      axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, [
+        { ...generateFetchPageApiResponse()[0], id: 'mOckID1', name: 'Page 1' },
+        { ...generateFetchPageApiResponse()[0], id: 'mOckID2', name: 'Page 2', tab_id: 'static_tab_2' },
+      ]);
+    });
+
+    it('shows view-only users the read-only alert instead of management actions', async () => {
+      mockPermissions(false);
+      const user = userEvent.setup();
+      renderRoute('');
+
+      expect(await screen.findByText('Page 1')).toBeVisible();
+      expect(screen.getByRole('alert')).toHaveTextContent(/You have view-only access to this page/);
+      for (
+        const name of [
+          messages.addPageHeaderLabel.defaultMessage,
+          messages.addPageBodyLabel.defaultMessage,
+          messages.editTooltipContent.defaultMessage,
+          messages.deleteTooltipContent.defaultMessage,
+          messages.visibilityTooltipContent.defaultMessage,
+          // Without drag handles there is no pointer or keyboard entry point for reordering.
+          'Drag to reorder',
+        ]
+      ) {
+        expect(screen.queryByRole('button', { name })).not.toBeInTheDocument();
+      }
+
+      expect(screen.getByRole('link', { name: messages.viewLiveLabel.defaultMessage })).toBeVisible();
+      await user.click(screen.getByRole('button', { name: messages.studentViewExampleButton.defaultMessage }));
+      expect(await screen.findByRole('dialog', { name: messages.studentViewModalTitle.defaultMessage })).toBeVisible();
+    });
+
+    it('redirects view-only editor visits to the listing, replacing the history entry', async () => {
+      mockPermissions(false);
+      renderRoute('/editor');
+
+      expect(await screen.findByText('Page 1')).toBeVisible();
+      await waitFor(() =>
+        expect(screen.getByLabelText('Current location').textContent).toBe(`REPLACE ${customPagesPath}`)
+      );
+      expect(screen.queryByTestId('edit-modal-mock')).not.toBeInTheDocument();
+    });
+
+    it('keeps management actions available to managers', async () => {
+      mockPermissions(true);
+      renderRoute('');
+
+      expect(await screen.findByText('Page 1')).toBeVisible();
+      expect(screen.queryByText(/You have view-only access to this page/)).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: messages.addPageHeaderLabel.defaultMessage })).toBeEnabled();
+      expect(screen.getByRole('button', { name: messages.addPageBodyLabel.defaultMessage })).toBeEnabled();
+      for (
+        const name of [
+          messages.editTooltipContent.defaultMessage,
+          messages.deleteTooltipContent.defaultMessage,
+          messages.visibilityTooltipContent.defaultMessage,
+          'Drag to reorder',
+        ]
+      ) {
+        const buttons = screen.getAllByRole('button', { name });
+        expect(buttons).toHaveLength(2);
+        buttons.forEach(button => expect(button).toBeEnabled());
+      }
+    });
+
+    it('keeps the pending Add Page action unavailable to managers', async () => {
+      mockPermissions(true);
+      let finishAdding!: () => void;
+      const pending = new Promise<void>(resolve => {
+        finishAdding = resolve;
+      });
+      axiosMock.onPut(`${getApiBaseUrl()}/xblock/`).reply(async () => {
+        await pending;
+        return [200, generateNewPageApiResponse()];
+      });
+      const user = userEvent.setup();
+      renderRoute('');
+
+      await user.click(await screen.findByRole('button', { name: messages.addPageBodyLabel.defaultMessage }));
+      const pendingButton = await screen.findByRole('button', { name: messages.addingPageBodyLabel.defaultMessage });
+      expect(pendingButton).toHaveAttribute('aria-disabled', 'true');
+      await user.click(pendingButton);
+      expect(axiosMock.history.put).toHaveLength(1);
+      await act(async () => {
+        finishAdding();
+      });
+      expect(await screen.findByRole('button', { name: messages.addPageBodyLabel.defaultMessage })).toBeEnabled();
     });
   });
 });
