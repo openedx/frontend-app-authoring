@@ -369,6 +369,14 @@ export const apiMethods = {
         id: blockId,
         metadata: { ...snakeCaseKeys(content), display_name: title },
       };
+    } else if (blockType === 'openedx_flashcards') {
+      response = {
+        category: blockType,
+        courseKey: learningContextId,
+        has_changes: true,
+        id: blockId,
+        metadata: { ...snakeCaseKeys(content), display_name: title },
+      };
     } else {
       throw new TypeError(`No Block in V2 Editors named /"${blockType}/", Cannot Save Content.`);
     }
