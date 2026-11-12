@@ -8,7 +8,6 @@ import type { MutableRefObject } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, ModalPopup } from '@openedx/paragon';
 import { ExpandMore } from '@openedx/paragon/icons';
-import type { IntlShape } from 'react-intl';
 import type { GradeRulePayload } from '../data/types';
 import ScoreSettingsPopover from './ScoreSettingsPopover';
 import messages from './messages';
@@ -36,14 +35,6 @@ export interface ScoreThresholdFieldProps {
   /** Shown in the popover as a "Use {score}" link. */
   suggestion?: { rulePayload: GradeRulePayload; onApply: () => void; };
 }
-
-/** A score as text, such as "75% or higher", for messages that name a score. */
-export const formatScoreSummary = (intl: IntlShape, rulePayload: GradeRulePayload): string => (
-  intl.formatMessage(messages.scoreThresholdPhrase, {
-    op: rulePayload.op,
-    value: intl.formatNumber(rulePayload.value, { style: 'percent', maximumFractionDigits: 0 }),
-  })
-);
 
 /** Label stating a rule box's score threshold, for example "With a score of 70% or higher".
  * With `onChange`, the label is a button that opens a popover to edit the comparison and the percentage.

@@ -5,7 +5,7 @@ import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import type { EffectiveRule, GradeRulePayload, RuleBox as RuleBoxData } from '../data/types';
 import { isRuleTakenInGroup, nextUnusedScore, ruleKeyOf } from '../utils';
 import RuleBox from './RuleBox';
-import { formatScoreSummary } from './ScoreThresholdField';
+import { formatScoreSummary } from './formatScoreSummary';
 import messages from './messages';
 
 const placeholderKeyOf = (rulePayload: GradeRulePayload) => `placeholder-${Math.round(rulePayload.value * 100)}`;

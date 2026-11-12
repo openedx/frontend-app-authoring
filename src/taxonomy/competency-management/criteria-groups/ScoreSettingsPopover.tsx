@@ -9,7 +9,7 @@ import type { KeyboardEvent, MutableRefObject } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Dropdown, Form } from '@openedx/paragon';
 import type { GradeRulePayload } from '../data/types';
-import { formatScoreSummary } from './ScoreThresholdField';
+import { formatScoreSummary } from './formatScoreSummary';
 import messages from './messages';
 
 export interface ScoreSettingsPopoverProps {
