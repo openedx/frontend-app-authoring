@@ -26,7 +26,8 @@ const PreviewChangesEmbed = () => {
   }
   const [queryString] = useSearchParams();
   const oldVersion = parseInt(queryString.get('old') ?? '', 10) || 'published';
-  const { data: metadata } = useLibraryBlockMetadata(usageKey);
+  const downstreamBlockId = queryString.get('downstream_block_id') ?? undefined;
+  const { data: metadata } = useLibraryBlockMetadata(usageKey, downstreamBlockId);
 
   return (
     <>
@@ -39,7 +40,12 @@ const PreviewChangesEmbed = () => {
           {intl.formatMessage(messages.iframeTitlePrefix)} | {metadata?.displayName ?? ''} | {process.env.SITE_NAME}
         </title>
       </Helmet>
-      <CompareChangesWidget usageKey={usageKey} oldVersion={oldVersion} newVersion="published" />
+      <CompareChangesWidget
+        usageKey={usageKey}
+        oldVersion={oldVersion}
+        newVersion="published"
+        downstreamBlockId={downstreamBlockId}
+      />
     </>
   );
 };
