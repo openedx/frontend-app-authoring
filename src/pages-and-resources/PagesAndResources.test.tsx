@@ -10,7 +10,8 @@ import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-frame
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { useCourseUserPermissions } from '@src/authz/hooks';
-import { PagesAndResources } from '.';
+import { Route, Routes } from 'react-router-dom';
+import { PagesAndResources, PagesAndResourcesAccess } from '.';
 
 // Mock authz hooks
 jest.mock('@src/authz/hooks', () => ({
@@ -37,7 +38,11 @@ const courseId = 'course-v1:edX+TestX+Test_Course';
 const renderComponent = () =>
   render(
     <CourseAuthoringProvider courseId={courseId}>
-      <PagesAndResources />
+      <Routes>
+        <Route element={<PagesAndResourcesAccess />}>
+          <Route path="*" element={<PagesAndResources />} />
+        </Route>
+      </Routes>
     </CourseAuthoringProvider>,
   );
 
