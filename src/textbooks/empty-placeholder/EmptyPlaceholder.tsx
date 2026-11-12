@@ -6,10 +6,10 @@ import messages from './messages';
 
 export interface EmptyPlaceholderProps {
   onCreateNewTextbook: () => void;
-  isEditable?: boolean;
+  isEditable: boolean;
 }
 
-const EmptyPlaceholder = ({ onCreateNewTextbook, isEditable = true }: EmptyPlaceholderProps) => {
+const EmptyPlaceholder = ({ onCreateNewTextbook, isEditable }: EmptyPlaceholderProps) => {
   const intl = useIntl();
 
   return (
