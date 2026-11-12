@@ -89,10 +89,13 @@
     border-top: 1px solid $line-color;
     display: flex;
     flex-direction: column;
-    flex: 1;
-    min-height: 0;
     gap: 16px;
     padding: $container-padding-y $container-padding-x;
+
+    @media (--pgn-size-breakpoint-min-width-lg) {
+      flex: 1 1 0;
+      min-height: 0;
+    }
   }
 
   // Only the course rows scroll, so the label and the pagination stay visible.
@@ -147,33 +150,24 @@
     color: var(--pgn-color-info-900);
   }
 
-  // Wraps `&__associations-label` and the "Demonstrate Mastery For"/empty-state text under it.
   &__associations {
     padding: $container-padding-y $container-padding-x;
+
+    // Equal halves with `&__container`, each scrolling on its own.
+    @media (--pgn-size-breakpoint-min-width-lg) {
+      flex: 1 1 0;
+      min-height: 0;
+      overflow-y: auto;
+    }
   }
 
   // Figma gives regular weight for this text layer - only the interpolated
-  // competency name (its own `<strong>` in the JSX) is bold.
+  // competency name (its own bold `<span>` in the JSX) is bold.
   &__associations-mastery {
-    margin-top: 8px;
-    font-size: 15.8px;
-    line-height: 24.5px;
+    margin: var(--pgn-spacing-spacer-3) 0;
+    font-size: var(--pgn-typography-font-size-sm);
+    line-height: 25px;
     letter-spacing: normal;
-  }
-
-  // Always shown: there's no backend endpoint yet to list a competency's
-  // actual associations (see `CourseSearchBrowse.tsx`).
-  &__associations-empty-state {
-    // The empty state repeats the competency name, so a long one has to wrap here.
-    overflow-wrap: anywhere;
-    margin-top: 8px;
-    font-size: 15.8px;
-    line-height: 24.5px;
-    letter-spacing: normal;
-    background-color: var(--pgn-color-info-100);
-    border-radius: 12px; // approximate "border-radius/lg" token value - confirm later
-    text-align: center;
-    padding: 32px 16px; // approximate - not directly readable from the inspector screenshot, confirm later
   }
 
   // A node with children's own envelope, recursing to any depth - shared by
@@ -234,16 +228,9 @@
     flex-shrink: 0;
   }
 
-  // One level deeper than `&__group`, further indented, with the lightest
-  // border color continuing the darkest-to-lightest progression. Font-size/
-  // weight read off Figma, overriding the tertiary `Button`'s own 18px/
-  // normal default.
+  // One level deeper than `&__group`, further indented.
   &__subsection {
-    // This is a Paragon `<Button block>` (width: 100%); without the
-    // matching `width: calc(...)`, `margin-left` would push it past its
-    // parent's right edge.
     margin-left: $indent-step;
-    width: calc(100% - #{$indent-step});
     font-size: 14px;
     font-weight: 700;
     background-color: var(--pgn-color-white);
@@ -251,9 +238,51 @@
     border-radius: 5px;
     box-shadow: $block-shadow;
     padding: 10px 8px;
-    text-align: left;
-    // Paragon's `.btn` sets `inline-flex`/`justify-content: center`, which
-    // (not `text-align`) controls this button's text position.
-    justify-content: flex-start;
+  }
+
+  &__subsection-pill {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    height: 1.8125rem;
+    gap: 5px;
+    padding: 2px var(--pgn-spacing-spacer-2) 3px var(--pgn-spacing-spacer-1);
+    border: 1px solid var(--pgn-color-info-600);
+    border-radius: 4rem;
+    font-size: .75rem;
+    font-weight: 400;
+    line-height: 1.3125rem;
+
+    &--applied {
+      background-color: var(--pgn-color-info-600);
+      color: var(--pgn-color-white);
+    }
+
+    &--available {
+      border-style: dashed;
+
+      --pgn-btn-color: var(--pgn-color-info-600);
+      --pgn-btn-bg: var(--pgn-color-white);
+      --pgn-btn-border-color: var(--pgn-color-info-600);
+      --pgn-btn-hover-color: var(--pgn-color-info-600);
+      --pgn-btn-hover-bg: var(--pgn-color-info-100);
+      --pgn-btn-hover-border-color: var(--pgn-color-info-600);
+      --pgn-btn-disabled-color: var(--pgn-color-info-600);
+      --pgn-btn-disabled-bg: var(--pgn-color-white);
+      --pgn-btn-disabled-border-color: var(--pgn-color-info-600);
+    }
+  }
+
+  &__subsection-pill-id {
+    font-weight: 400;
+  }
+
+  // Stretches over the pill's padding so the divider spans its full height.
+  &__subsection-pill-divider {
+    align-self: stretch;
+    width: 1px;
+    margin: -2px 0 -3px;
+    background-color: currentcolor;
   }
 }

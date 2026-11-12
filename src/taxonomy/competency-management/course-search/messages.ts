@@ -68,6 +68,13 @@ const messages = defineMessages({
     description: 'Message shown in an expanded course row when the course outline contains no subsections '
       + 'marked as graded, in place of the section/subsection list.',
   },
+  permissionsErrorMessage: {
+    id: 'course-authoring.competency-management.course-search.permissions-error-message',
+    defaultMessage: 'There was a problem checking whether you can edit this course. Please try again.',
+    description: 'Inline error message shown above an expanded course\'s outline when the request that checks '
+      + 'the author\'s permission to manage competency associations fails. The "Associate" controls are hidden '
+      + 'until it succeeds.',
+  },
   dateRangeLabel: {
     id: 'course-authoring.competency-management.course-search.date-range-label',
     defaultMessage: 'Start Date',
@@ -84,32 +91,32 @@ const messages = defineMessages({
   associationsSectionLabel: {
     id: 'course-authoring.competency-management.course-search.associations-section-label',
     defaultMessage: 'Competency Criteria Associations',
-    description: 'Header label shown above the "Demonstrate Mastery For" line and the associations empty '
-      + 'state, once a competency is selected.',
+    description: 'Header label shown above the "Demonstrate Mastery For" line and the criteria groups, once a '
+      + 'competency is selected.',
   },
   demonstrateMasteryForLabel: {
     id: 'course-authoring.competency-management.course-search.demonstrate-mastery-for-label',
     defaultMessage: 'Demonstrate Mastery For {competencyName}',
     description: 'Line shown under the associations section label, naming the currently active competency.',
   },
-  noAssociationsMessage: {
-    id: 'course-authoring.competency-management.course-search.no-associations-message',
-    defaultMessage: 'No content associated with {competencyName} yet.',
-    description: 'First line of the static empty state shown in the associations block, since there is no '
-      + 'backend endpoint yet to list a competency\'s actual associations. {competencyName} names the currently '
+  associateSubsectionButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.associate-subsection.button-label',
+    defaultMessage: 'Associate {externalId} with {subsectionName}',
+    description: 'Accessible name of the pill button that associates the active competency with a subsection. '
+      + '{externalId} is the competency\'s short external id, for example "CCRS-1.3"; {subsectionName} is the '
+      + 'subsection\'s display name.',
+  },
+  associateSubsectionWithoutIdButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.associate-subsection-without-id.button-label',
+    defaultMessage: 'Associate this competency with {subsectionName}',
+    description: 'Accessible name of the pill button that associates the active competency with a subsection, '
+      + 'used when the competency has no external id. {subsectionName} is the subsection\'s display name.',
+  },
+  subsectionAssociatedLabel: {
+    id: 'course-authoring.competency-management.course-search.subsection-associated-label',
+    defaultMessage: 'Associated',
+    description: 'Screen-reader-only text inside the pill on a subsection that is already associated with the '
       + 'active competency.',
-  },
-  noAssociationsPromptMessage: {
-    id: 'course-authoring.competency-management.course-search.no-associations-prompt-message',
-    defaultMessage: 'Make content selections to create competency criteria associations.',
-    description: 'Second line of the static empty state shown in the associations block, prompting the user '
-      + 'to make content selections below.',
-  },
-  competencyIdAccessibleLabel: {
-    id: 'course-authoring.competency-management.course-search.competency-id.accessible-label',
-    defaultMessage: 'Competency ID: {externalId}',
-    description: 'Accessible name for the Competency ID badge shown next to the "Demonstrate Mastery For" line, '
-      + 'read by screen readers since the badge itself is aria-hidden.',
   },
 });
 

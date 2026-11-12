@@ -1,0 +1,213 @@
+// What Paragon has no prop for: the focus accent bars, the sentence layouts and the chip truncation.
+.course-group-list__empty-state {
+  margin-top: var(--pgn-spacing-spacer-2);
+  padding: var(--pgn-spacing-spacer-4-5) var(--pgn-spacing-spacer-3);
+  border-radius: 12px;
+  background-color: var(--pgn-color-info-100);
+  font-size: var(--pgn-typography-font-size-sm);
+  line-height: var(--pgn-typography-line-height-base);
+  letter-spacing: normal;
+  text-align: center;
+}
+
+.course-group-list {
+  // The accent bar is always a left border so a focus change recolors it
+  // instead of shifting the content.
+  .course-group-section {
+    --pgn-spacing-card-spacer-x: 0;
+
+    padding: 0 var(--pgn-spacing-spacer-2) var(--pgn-spacing-spacer-2);
+    border: 0;
+    border-left: 8px solid transparent;
+    border-radius: .5rem;
+    background-color: var(--pgn-color-white);
+    box-shadow: var(--pgn-elevation-box-shadow-centered-1);
+
+    &--focused {
+      border-left-color: var(--pgn-color-info-600);
+    }
+
+    .pgn__card-header .pgn__card-header-title-sm {
+      font-size: 1.25rem;
+      font-weight: 400;
+      line-height: 1.5625rem;
+      color: var(--pgn-color-primary-700);
+    }
+
+    .pgn__card-header {
+      padding: .375rem var(--pgn-spacing-spacer-2) .3125rem;
+    }
+
+    // Paragon gives the title its own top margin, which would push the
+    // header below the card's padding, and `overflow: auto`, which would
+    // clip the toggle's focus outline.
+    .pgn__card-header .pgn__card-header-content {
+      margin-top: 0;
+      overflow: visible;
+    }
+
+    &__title {
+      .btn-icon {
+        // Shrinks the button to the icon so the chevron sits flush with the text gap.
+        --pgn-size-icon-button-diameter-inline: var(--pgn-size-icon-xs);
+        // Drops Paragon's focus circle so the `:focus-visible` outline is the only indicator.
+        --btn-icon-box-shadow: none;
+        --btn-icon-hover-bg-color: var(--pgn-color-primary-100);
+        --btn-icon-hover-color: var(--pgn-color-primary-900);
+
+        flex-shrink: 0;
+        padding: 0;
+        color: var(--pgn-color-primary-900);
+
+        &:focus-visible {
+          outline: 2px solid var(--pgn-color-info-600);
+          outline-offset: 2px;
+        }
+      }
+
+      .btn-icon .pgn__icon {
+        width: var(--pgn-size-icon-xs);
+        height: var(--pgn-size-icon-xs);
+      }
+    }
+
+    &__heading {
+      margin: 0;
+      color: inherit;
+      font: inherit;
+    }
+
+    &__body {
+      margin-top: .1875rem;
+    }
+  }
+
+  .criteria-group-box {
+    margin: 0 var(--pgn-spacing-spacer-2);
+    padding: var(--pgn-spacing-spacer-1-5);
+    border-left: 8px solid transparent;
+    border-radius: .5rem;
+    // Alternates white, gray, white with the card and the rule box, as the competency tree does.
+    background-color: var(--pgn-color-light-200);
+    box-shadow: var(--pgn-elevation-box-shadow-centered-1);
+
+    &--focused {
+      border-left-color: var(--pgn-color-info-400);
+    }
+
+    &__header {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--pgn-color-gray-700);
+      font: inherit;
+      line-height: 1.75rem;
+      text-align: start;
+      cursor: pointer;
+
+      &:focus-visible {
+        outline: 2px solid var(--pgn-color-info-600);
+        outline-offset: 2px;
+      }
+    }
+
+    &__header-operator {
+      font-weight: 700;
+      line-height: 1.5rem;
+    }
+
+    &__rules {
+      margin-top: var(--pgn-spacing-spacer-2);
+    }
+  }
+
+  .rule-box {
+    padding: var(--pgn-spacing-spacer-1-5) var(--pgn-spacing-spacer-1-5) var(--pgn-spacing-spacer-1-5)
+      var(--pgn-spacing-spacer-2-5);
+    border: 1px solid var(--pgn-color-gray-300);
+    border-radius: var(--pgn-size-border-radius-base);
+    background-color: var(--pgn-color-white);
+
+    // The control carries `.stretched-link`, which makes the whole box clickable while the chips stay siblings of it.
+    &__control {
+      display: flex;
+      align-self: flex-start;
+      padding: 0;
+      border: 0;
+      background: none;
+      font: inherit;
+      text-align: start;
+      cursor: pointer;
+
+      &:focus-visible {
+        outline: 0;
+
+        &::after {
+          border-radius: var(--pgn-size-border-radius-base);
+          outline: 2px solid var(--pgn-color-info-600);
+          outline-offset: 2px;
+        }
+      }
+    }
+
+    &--focused {
+      padding-left: var(--pgn-spacing-spacer-1-5);
+      border-left: 6px solid var(--pgn-color-info-400);
+      background-color: var(--pgn-color-info-100);
+      box-shadow: var(--pgn-elevation-box-shadow-centered-2);
+    }
+  }
+
+  .score-threshold-field {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--pgn-spacing-spacer-1);
+    height: 1.9375rem;
+    padding: 3px 5px;
+    border: 1px solid var(--pgn-color-gray-200);
+    border-radius: 3px;
+    background-color: var(--pgn-color-white);
+    color: var(--pgn-color-gray-700);
+  }
+
+  .score-threshold-field__value {
+    color: var(--pgn-color-info-600);
+  }
+
+  // `max-width` makes Paragon's own label truncation apply.
+  .criterion-chip {
+    --pgn-color-chip-bg-dark: var(--pgn-color-primary-500);
+    --pgn-color-chip-border-base: var(--pgn-color-primary-500);
+    --pgn-spacing-chip-padding-y: 2px;
+
+    box-sizing: border-box;
+    max-width: 160px;
+    height: 1.75rem;
+
+    .pgn__chip__label {
+      font-weight: 400;
+    }
+  }
+
+  // Above the rule box's `.stretched-link::after` (z-index 1), so per-chip controls stay clickable.
+  .criterion-chip-list {
+    position: relative;
+    z-index: 2;
+  }
+
+  .group-connector {
+    &__line {
+      flex: 1;
+      height: 1px;
+      background-color: var(--pgn-color-gray-200);
+    }
+
+    &__label {
+      font-size: var(--pgn-typography-font-size-sm);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+  }
+}

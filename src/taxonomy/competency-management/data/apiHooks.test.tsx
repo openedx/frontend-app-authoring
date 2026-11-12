@@ -195,6 +195,25 @@ describe('useCourseTaggingPermissions', () => {
     expect(useUserPermissions).toHaveBeenCalledWith(expect.anything(), false);
   });
 
+  it('reports an error when the flag is on and the permissions call failed', () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+    jest.mocked(useUserPermissions).mockReturnValue({ isLoading: false, isError: true, data: undefined } as any);
+
+    const { result } = renderHook(() => useCourseTaggingPermissions(['course-a']), { wrapper: makeWrapper() });
+
+    expect(result.current.isError).toBe(true);
+    expect(result.current.permissionsByCourseId).toEqual({ 'course-a': false });
+  });
+
+  it('reports no error when the flag is off, whatever the unused permissions query says', () => {
+    mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+    jest.mocked(useUserPermissions).mockReturnValue({ isLoading: false, isError: true, data: undefined } as any);
+
+    const { result } = renderHook(() => useCourseTaggingPermissions(['course-a']), { wrapper: makeWrapper() });
+
+    expect(result.current.isError).toBe(false);
+  });
+
   it('resolves each course\'s own answer when the flag is on and the permissions call has resolved', async () => {
     mockWaffleFlags({ enableAuthzCourseAuthoring: true });
     jest.mocked(useUserPermissions).mockReturnValue({

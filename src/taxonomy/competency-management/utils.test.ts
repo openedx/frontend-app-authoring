@@ -1,7 +1,6 @@
 import type {
   CompetencyCriteriaGroupsResponse,
   CompetencyCriterion,
-  CompetencyRuleProfile,
   GradeRulePayload,
 } from './data/types';
 import {
@@ -15,14 +14,7 @@ import {
   ruleKeyOf,
   visibleCourseGroups,
 } from './utils';
-
-const systemDefaultProfile: CompetencyRuleProfile = {
-  id: 1,
-  scopeType: 'system_default',
-  ruleType: 'grade',
-  rulePayload: { op: 'gte', value: 0.7, scale: 'percent' },
-  archived: false,
-};
+import { systemDefaultProfile } from './__mocks__';
 
 const buildCriterion = (overrides: Partial<CompetencyCriterion> = {}): CompetencyCriterion => ({
   id: 1,
