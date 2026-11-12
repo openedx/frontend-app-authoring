@@ -28,11 +28,6 @@ jest.mock('react-router-dom', () => ({
   }],
 }));
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: () => ({}),
-}));
-
 // Always mock out the "fetch course images" endpoint:
 jest.spyOn(editorCmsApi, 'fetchCourseImages').mockImplementation(async () => ( // eslint-disable-next-line
   { data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }

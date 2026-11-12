@@ -258,7 +258,7 @@ describe('ScanResults', () => {
     expect(screen.getByText(messages.brokenLinksHeader.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.filterButtonLabel.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText('Introduction to Programming')).toBeInTheDocument();
-    expect(screen.getAllByText(messages.courseUpdatesHeader.defaultMessage).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(messages.courseUpdatesHeader.defaultMessage)).toHaveLength(2);
     expect(screen.getByText(messages.customPagesHeader.defaultMessage)).toBeInTheDocument();
   });
 

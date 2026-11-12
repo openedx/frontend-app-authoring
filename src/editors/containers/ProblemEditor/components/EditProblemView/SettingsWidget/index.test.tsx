@@ -47,7 +47,6 @@ describe('SettingsWidget', () => {
     answers: [],
     correctAnswerCount: 0,
     groupFeedbackList: [],
-    showMarkdownEditorButton: false,
   };
 
   const editorRef = { current: null };
