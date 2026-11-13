@@ -145,6 +145,10 @@
 
     &__rules {
       margin-top: var(--pgn-spacing-spacer-2);
+
+      .add-control {
+        margin-top: var(--pgn-spacing-spacer-2);
+      }
     }
   }
 
@@ -197,16 +201,27 @@
       background-color: var(--pgn-color-info-100);
       box-shadow: var(--pgn-elevation-box-shadow-centered-2);
     }
+
+    // Stands in for the chips on the not-yet-saved placeholder box.
+    &__placeholder-hint {
+      padding: var(--pgn-spacing-spacer-2);
+      border: 1px dashed var(--pgn-color-gray-300);
+      border-radius: var(--pgn-size-border-radius-base);
+      font-size: var(--pgn-typography-font-size-sm);
+    }
   }
 
+  // Hugs the text instead of stretching when the editable variant sits directly in the rule box's column.
   .score-threshold-field {
+    align-self: flex-start;
+  }
+
+  .score-threshold-field__sentence {
     display: inline-flex;
     align-items: center;
-    gap: var(--pgn-spacing-spacer-1);
-    // A `Form.Group`: drop Paragon's form-group bottom margin, and hug the text instead of stretching when
-    // the editable variant places it directly in the rule box's column.
     align-self: flex-start;
-    margin-bottom: 0;
+    gap: var(--pgn-spacing-spacer-1);
+    white-space: nowrap;
     height: 1.9375rem;
     padding: 3px 5px;
     border: 1px solid var(--pgn-color-gray-200);
@@ -219,14 +234,68 @@
     color: var(--pgn-color-info-600);
   }
 
-  // `display: block` from `Form.Control` would stretch this input across the whole rule box.
-  .score-threshold-field__input {
-    display: inline-block;
-    width: 3.5em;
-    text-align: center;
-    // Layers above `.rule-box__select-button` so clicks land here.
+  // The pill is a button when editable. It layers above `.rule-box__select-button` so clicks land here.
+  .score-threshold-field__toggle {
     position: relative;
     z-index: 1;
+    font: inherit;
+    cursor: pointer;
+
+    .pgn__icon {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  .score-threshold-field__panel {
+    border-radius: var(--pgn-size-border-radius-base);
+  }
+
+  .score-settings {
+    width: 338px;
+    padding: .75rem 1rem 1rem;
+    background-color: var(--pgn-color-white);
+    border-radius: var(--pgn-size-border-radius-base);
+  }
+
+  .score-settings__heading {
+    margin-bottom: .75rem;
+    font-size: var(--pgn-typography-font-size-sm);
+    line-height: 1.5556;
+    color: var(--pgn-color-gray-500);
+  }
+
+  .score-settings__row {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .5rem;
+  }
+
+  // Paragon puts `className` on the decorator-group wrapper, which grows in the row, so the wrapper is sized,
+  // not the input.
+  .score-settings .score-settings__input {
+    flex: 0 0 auto;
+    width: 3.5em;
+
+    .form-control {
+      text-align: center;
+    }
+  }
+
+  // The invalid variant keeps Paragon's own feedback color.
+  .score-settings .pgn__form-text {
+    font-size: var(--pgn-typography-font-size-sm);
+  }
+
+  .score-settings .pgn__form-text-default {
+    color: var(--pgn-color-gray-700);
+  }
+
+  .score-settings__suggestion {
+    margin-top: .25rem;
+    font-size: var(--pgn-typography-font-size-sm);
+    text-decoration: underline;
   }
 
   // `max-width` makes Paragon's own label truncation apply.
@@ -250,17 +319,39 @@
     z-index: 2;
   }
 
-  .group-connector {
-    &__line {
-      flex: 1;
-      height: 1px;
-      background-color: var(--pgn-color-gray-200);
-    }
+  .connector-line {
+    flex: 1;
+    height: 1px;
+    background-color: var(--pgn-color-gray-200);
+  }
 
+  .add-control {
+    width: 100%;
+    max-width: 400px;
+    margin-inline: auto;
+  }
+
+  .group-connector {
     &__label {
       font-size: var(--pgn-typography-font-size-sm);
       font-weight: 700;
       white-space: nowrap;
     }
+  }
+
+  // `aria-disabled` alone gets no disabled look from Paragon, and `.disabled` would drop the focus ring.
+  .add-control .btn[aria-disabled='true'] {
+    --pgn-btn-color: var(--pgn-btn-disabled-color);
+    --pgn-btn-bg: var(--pgn-btn-disabled-bg);
+    --pgn-btn-border-color: var(--pgn-btn-disabled-border-color);
+    --pgn-btn-hover-color: var(--pgn-btn-disabled-color);
+    --pgn-btn-hover-bg: var(--pgn-btn-disabled-bg);
+    --pgn-btn-hover-border-color: var(--pgn-btn-disabled-border-color);
+    --pgn-btn-active-color: var(--pgn-btn-disabled-color);
+    --pgn-btn-active-bg: var(--pgn-btn-disabled-bg);
+    --pgn-btn-active-border-color: var(--pgn-btn-disabled-border-color);
+
+    opacity: var(--pgn-other-btn-disabled-opacity);
+    cursor: default;
   }
 }

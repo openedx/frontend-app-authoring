@@ -9,6 +9,7 @@ import {
   waitFor,
 } from '@src/testUtils';
 import {
+  buildMockCompetencyAssociationsContextValue,
   courseA,
   courseOther,
   criterion,
@@ -19,6 +20,7 @@ import {
 } from '../__mocks__';
 import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
 import type { CourseCompetencyCriteriaGroup } from '../data/types';
+import { CompetencyAssociationsContext } from '../CompetencyAssociationsContext';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import CourseGroupSection from './CourseGroupSection';
 
@@ -218,5 +220,175 @@ describe('<CourseGroupSection />', () => {
     } else {
       expect(card).not.toHaveClass('course-group-section--focused');
     }
+  });
+
+  it(
+    'renders a placeholder group as a third card with its own connector, when it belongs to this course',
+    async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+      const { container } = renderSection({
+        focus: { groupId: null, ruleKey: null },
+        canEditCourse: () => true,
+        placeholder: {
+          parentRuleGroupId: courseGroup.id,
+          logicOperator: 'OR',
+          rulePayload: null,
+          opensScoreSettings: false,
+        },
+      });
+
+      await screen.findByText('Demo Course');
+      expect(container.querySelectorAll('.criteria-group-box')).toHaveLength(3);
+      expect(screen.getAllByText('Or')).toHaveLength(2);
+    },
+  );
+
+  it('does not render a placeholder group that belongs to a different course-level group', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const { container } = renderSection({
+      focus: { groupId: null, ruleKey: null },
+      placeholder: { parentRuleGroupId: 999, logicOperator: 'OR', rulePayload: null, opensScoreSettings: false },
+    });
+
+    await screen.findByText('Demo Course');
+    expect(container.querySelectorAll('.criteria-group-box')).toHaveLength(2);
+    expect(screen.getAllByText('Or')).toHaveLength(1);
+  });
+
+  it('renders exactly one "Add Rule Group" control, which starts a placeholder under this course-level group', async () => {
+    const user = userEvent.setup();
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const addPlaceholderGroup = jest.fn();
+    renderSection({ addPlaceholderGroup, canEditCourse: () => true });
+
+    await screen.findByText('Demo Course');
+    const addRuleGroupButtons = screen.getAllByRole('button', { name: 'Add Rule Group' });
+    expect(addRuleGroupButtons).toHaveLength(1);
+
+    await user.click(addRuleGroupButtons[0]);
+    expect(addPlaceholderGroup).toHaveBeenCalledWith(courseGroup.id);
+  });
+
+  it.each([
+    ['a placeholder already exists', { hasPlaceholder: true }, 'Fill in the empty box before adding another.'],
+    [
+      'a rule is being saved',
+      { isAssociating: true },
+      'Wait for the save to finish before adding another.',
+    ],
+    [
+      'a rule is being saved and a placeholder exists',
+      { isAssociating: true, hasPlaceholder: true },
+      'Wait for the save to finish before adding another.',
+    ],
+  ])('disables "Add Rule Group" and explains why while %s', async (_name, overrides, text) => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const addPlaceholderGroup = jest.fn();
+    renderSection({ ...overrides, addPlaceholderGroup, canEditCourse: () => true });
+
+    await screen.findByText('Demo Course');
+    const button = screen.getByRole('button', { name: 'Add Rule Group' });
+    expect(button).toHaveAttribute('aria-disabled', 'true');
+    expect(button).toHaveAccessibleDescription(text);
+
+    await user.click(button);
+    expect(addPlaceholderGroup).not.toHaveBeenCalled();
+  });
+
+  it('renders nothing when the panel failed, even with a loaded group index', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const loaded = buildMockCompetencyAssociationsContextValue({ groupsIndex: index, canEditCourse: () => true });
+    render(
+      <CompetencyAssociationsContext.Provider value={{ ...loaded, status: 'error', error: new Error('boom') }}>
+        <CourseGroupSection courseGroup={courseGroup} />
+      </CompetencyAssociationsContext.Provider>,
+    );
+
+    await waitFor(() => {
+      expect(queryClient.getQueryState(courseOutlineQueryKeys.index(courseKey))?.status).toBe('success');
+    });
+    expect(screen.queryByRole('button', { name: 'Add Rule Group' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+  });
+
+  it('hides "Add Rule Group" when the author cannot edit this course', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    renderSection({ canEditCourse: () => false });
+
+    await screen.findByText('Demo Course');
+    expect(screen.queryByRole('button', { name: 'Add Rule Group' })).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['a placeholder group under it', {
+      focus: { groupId: null, ruleKey: null },
+      placeholder: {
+        parentRuleGroupId: courseGroup.id,
+        logicOperator: 'OR' as const,
+        rulePayload: null,
+        opensScoreSettings: false,
+      },
+    }],
+    ['a placeholder rule box in one of its groups', { focus: { groupId: 10, ruleKey: null } }],
+  ])('discards the placeholder when collapsing a section holding %s', async (_label, overrides) => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const discardPlaceholder = jest.fn();
+    renderSection({ ...overrides, discardPlaceholder });
+
+    await screen.findByText('Demo Course');
+    await user.click(screen.getByRole('button', { name: 'Collapse Demo Course' }));
+
+    expect(discardPlaceholder).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not discard a placeholder whose parent group belongs to a different course section', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const discardPlaceholder = jest.fn();
+    renderSection({
+      focus: { groupId: null, ruleKey: null },
+      placeholder: { parentRuleGroupId: 999, logicOperator: 'OR', rulePayload: null, opensScoreSettings: false },
+      discardPlaceholder,
+    });
+
+    await screen.findByText('Demo Course');
+    await user.click(screen.getByRole('button', { name: 'Collapse Demo Course' }));
+
+    expect(discardPlaceholder).not.toHaveBeenCalled();
+  });
+
+  it('discards once on collapse and not again on expand', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const discardPlaceholder = jest.fn();
+    renderSection({ focus: { groupId: 10, ruleKey: null }, discardPlaceholder });
+
+    await screen.findByText('Demo Course');
+    await user.click(screen.getByRole('button', { name: 'Collapse Demo Course' }));
+    await user.click(screen.getByRole('button', { name: 'Expand Demo Course' }));
+
+    expect(discardPlaceholder).toHaveBeenCalledTimes(1);
+  });
+
+  it('marks itself focused when the focused placeholder group belongs to it', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const { container, unmount } = renderSection({
+      focus: { groupId: null, ruleKey: null },
+      placeholder: {
+        parentRuleGroupId: courseGroup.id,
+        logicOperator: 'OR',
+        rulePayload: null,
+        opensScoreSettings: false,
+      },
+    });
+
+    await screen.findByText('Demo Course');
+    expect(container.querySelector('.course-group-section')).toHaveClass('course-group-section--focused');
+
+    unmount();
+    const { container: other } = renderSection({
+      focus: { groupId: null, ruleKey: null },
+      placeholder: { parentRuleGroupId: 999, logicOperator: 'OR', rulePayload: null, opensScoreSettings: false },
+    });
+    await screen.findByText('Demo Course');
+    expect(other.querySelector('.course-group-section')).not.toHaveClass('course-group-section--focused');
   });
 });

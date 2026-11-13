@@ -34,7 +34,17 @@ import type {
   CreateCompetencyCriterionPayload,
   GradeRulePayload,
 } from './data/types';
+import { courseKeyOfFocus, resolveCreateTarget } from './criterionTarget';
 import messages from './messages';
+import {
+  clearStaleScoreSettingsOpen,
+  initialPlaceholder,
+  isPlaceholderOrphaned,
+  PLACEHOLDER_REJECTION_CLEARING_ACTIONS,
+  reducePlaceholderAction,
+  usePlaceholderActions,
+} from './placeholderState';
+import type { CriteriaPlaceholder, PlaceholderAction } from './placeholderState';
 import type { CompetencyCriteriaGroupsIndex } from './utils';
 import {
   associatedObjectIds,
@@ -48,11 +58,16 @@ import {
   visibleCourseGroups,
 } from './utils';
 
-/** `ruleKey` is `null` when the focused group has no rule box. A key that matches none of the
- * group's rule boxes is re-resolved to the group's last box.
+export type { CriteriaPlaceholder };
+
+/** The rule box or group the author is working in; `ruleKey` is a rule box's key within its group.
+ * `ruleKey === null` is an unsaved placeholder rule box in the group, and `groupId === null` is an unsaved
+ * placeholder group under `placeholder.parentRuleGroupId`. A non-null `ruleKey` that matches no box re-resolves
+ * to the group's last box, or to `null` for a saved group with no criteria, which then renders its placeholder
+ * rule box on purpose.
  */
 export interface CriteriaFocus {
-  groupId: number;
+  groupId: number | null;
   ruleKey: string | null;
 }
 
@@ -62,6 +77,27 @@ export interface CompetencyAssociationsContextBase {
    */
   error: Error | null;
   focus: CriteriaFocus | null;
+  placeholder: CriteriaPlaceholder;
+  /** Whether a placeholder rule box or group exists, which disables both add controls. Also true for a focused
+   * saved group with no criteria, which renders its placeholder rule box on purpose.
+   */
+  hasPlaceholder: boolean;
+  /** Starts a placeholder rule box in a bottom-tier group, replacing any other placeholder. */
+  addPlaceholderRuleBox: (groupId: number) => void;
+  /** Starts a placeholder bottom-tier group under a course-level group, replacing any other placeholder. */
+  addPlaceholderGroup: (parentRuleGroupId: number) => void;
+  setPlaceholderLogicOperator: (logicOperator: CompetencyGroupLogicOperator) => void;
+  setPlaceholderRulePayload: (rulePayload: GradeRulePayload) => void;
+  /** True after content was selected while the placeholder's score duplicated a box in its group.
+   * The request is not sent.
+   */
+  placeholderDuplicateRejected: boolean;
+  /** Counts rejections, so a repeat rejection while `placeholderDuplicateRejected` is already true is still
+   * observable. Resets only when the competency changes.
+   */
+  placeholderDuplicateRejectionCount: number;
+  /** Drops the placeholder by clearing `focus`. */
+  discardPlaceholder: () => void;
   /** Focuses a group and its last rule box. A no-op when `groupId` is already
    * focused, so re-clicking the group heading keeps the rule box the author
    * selected inside it.
@@ -161,26 +197,17 @@ function isInaccessibleCourseError(error: unknown): boolean {
   return isAxiosError(error) && (error.response?.status === 403 || error.response?.status === 404);
 }
 
-function isFocusInCourse(
-  courseId: string,
-  focus: CriteriaFocus | null,
-  index: CompetencyCriteriaGroupsIndex,
-): focus is CriteriaFocus {
-  const focusedGroup = focus ? index.groupsById.get(focus.groupId) : undefined;
-  const focusedCourseGroup = focusedGroup?.parentId != null ? index.groupsById.get(focusedGroup.parentId) : undefined;
-  return focusedCourseGroup?.courseKey === courseId;
-}
-
 /** The focus to move to when `courseId` is expanded, or `null` when focus
  * already sits on one of that course's groups or the course has no group.
  */
 function courseExpansionFocus(
   courseId: string,
   focus: CriteriaFocus | null,
+  placeholder: CriteriaPlaceholder,
   index: CompetencyCriteriaGroupsIndex,
   systemDefaultProfile: CompetencyRuleProfile,
 ): CriteriaFocus | null {
-  if (isFocusInCourse(courseId, focus, index)) {
+  if (courseKeyOfFocus(focus, placeholder, index) === courseId) {
     return null;
   }
   const target = lastBottomTierGroupForCourse(index, courseId);
@@ -193,7 +220,8 @@ function resolveStaleRuleKey(
   index: CompetencyCriteriaGroupsIndex,
   systemDefaultProfile: CompetencyRuleProfile,
 ): string | null | undefined {
-  if (!index.groupsById.has(focus.groupId)) {
+  // A `null` key is a placeholder rule box, which matches no real one by design.
+  if (focus.groupId === null || focus.ruleKey === null || !index.groupsById.has(focus.groupId)) {
     return undefined;
   }
   // A rule box is keyed by its rule, so a refetch or a default-profile change can leave the key stale.
@@ -206,13 +234,16 @@ function resolveStaleRuleKey(
   return resolved === focus.ruleKey ? undefined : resolved;
 }
 
-interface ProviderState {
+export interface ProviderState {
   tagId: number;
   /** Bumped on every competency change, so an in-flight create can tell the
    * author left and came back, which a `tagId` comparison cannot.
    */
   generation: number;
   focus: CriteriaFocus | null;
+  placeholder: CriteriaPlaceholder;
+  placeholderDuplicateRejected: boolean;
+  placeholderDuplicateRejectionCount: number;
   /** A course expanded before the groups and default profile loaded. */
   pendingCourseId: string | null;
   initialFocusDone: boolean;
@@ -220,11 +251,13 @@ interface ProviderState {
   settled: boolean;
 }
 
-type ProviderAction =
+export type ProviderAction =
   | { type: 'competencyChanged'; tagId: number; }
   | { type: 'focusGroup'; groupId: number; ruleKey: string | null; }
   | { type: 'focusRuleBox'; groupId: number; ruleKey: string; }
   | { type: 'setFocus'; focus: CriteriaFocus; }
+  | PlaceholderAction
+  | { type: 'placeholderDuplicateRejected'; }
   | { type: 'ruleKeyResolved'; groupId: number; staleRuleKey: string | null; resolvedRuleKey: string | null; }
   | { type: 'createSucceeded'; generation: number; focus: CriteriaFocus; }
   | { type: 'courseExpandedBeforeLoad'; courseId: string; }
@@ -232,13 +265,16 @@ type ProviderAction =
   | { type: 'initialFocusRan'; focus: CriteriaFocus | null; }
   | { type: 'settled'; };
 
-function providerReducer(state: ProviderState, action: ProviderAction): ProviderState {
+function reduceProviderState(state: ProviderState, action: ProviderAction): ProviderState {
   switch (action.type) {
     case 'competencyChanged':
       return {
         tagId: action.tagId,
         generation: state.generation + 1,
         focus: null,
+        placeholder: initialPlaceholder,
+        placeholderDuplicateRejected: false,
+        placeholderDuplicateRejectionCount: 0,
         pendingCourseId: null,
         initialFocusDone: false,
         settled: false,
@@ -252,6 +288,12 @@ function providerReducer(state: ProviderState, action: ProviderAction): Provider
       return { ...state, focus: { groupId: action.groupId, ruleKey: action.ruleKey }, pendingCourseId: null };
     case 'setFocus':
       return { ...state, focus: action.focus };
+    case 'addPlaceholderRuleBox':
+    case 'addPlaceholderGroup':
+    case 'setPlaceholderLogicOperator':
+    case 'discardPlaceholder':
+    case 'setPlaceholderRulePayload':
+      return reducePlaceholderAction(state, action);
     case 'ruleKeyResolved':
       // Guarded so an action computed from a stale focus cannot overwrite a focus dispatched after it.
       return state.focus?.groupId === action.groupId && state.focus.ruleKey === action.staleRuleKey
@@ -275,6 +317,20 @@ function providerReducer(state: ProviderState, action: ProviderAction): Provider
   }
 }
 
+function providerReducer(state: ProviderState, action: ProviderAction): ProviderState {
+  if (action.type === 'placeholderDuplicateRejected') {
+    return {
+      ...state,
+      placeholderDuplicateRejected: true,
+      placeholderDuplicateRejectionCount: state.placeholderDuplicateRejectionCount + 1,
+    };
+  }
+  const next = clearStaleScoreSettingsOpen(state, reduceProviderState(state, action));
+  const clears = PLACEHOLDER_REJECTION_CLEARING_ACTIONS.has(action.type)
+    || (action.type === 'pendingCourseResolved' && action.focus !== null);
+  return clears && next.placeholderDuplicateRejected ? { ...next, placeholderDuplicateRejected: false } : next;
+}
+
 /** Provides per-competency criteria-association state to the course panel.
  *
  * Not remounted per competency (no `key={tagId}`), so the content panel keeps
@@ -293,12 +349,18 @@ export const CompetencyAssociationsProvider = ({
     tagId,
     generation: 0,
     focus: null,
+    placeholder: initialPlaceholder,
+    placeholderDuplicateRejected: false,
+    placeholderDuplicateRejectionCount: 0,
     pendingCourseId: null,
     initialFocusDone: false,
     settled: false,
   });
   const {
     focus,
+    placeholder,
+    placeholderDuplicateRejected,
+    placeholderDuplicateRejectionCount,
     generation,
     pendingCourseId,
     initialFocusDone,
@@ -335,7 +397,7 @@ export const CompetencyAssociationsProvider = ({
   if (!competencyChanged && pendingCourseId !== null && groupsIndex && systemDefaultProfile) {
     dispatch({
       type: 'pendingCourseResolved',
-      focus: courseExpansionFocus(pendingCourseId, focus, groupsIndex, systemDefaultProfile),
+      focus: courseExpansionFocus(pendingCourseId, focus, placeholder, groupsIndex, systemDefaultProfile),
     });
   }
 
@@ -346,11 +408,11 @@ export const CompetencyAssociationsProvider = ({
       dispatch({ type: 'courseExpandedBeforeLoad', courseId });
       return;
     }
-    const next = courseExpansionFocus(courseId, focus, groupsIndex, systemDefaultProfile);
+    const next = courseExpansionFocus(courseId, focus, placeholder, groupsIndex, systemDefaultProfile);
     if (next) {
       dispatch({ type: 'setFocus', focus: next });
     }
-  }, [focus, groupsIndex, systemDefaultProfile]);
+  }, [focus, placeholder, groupsIndex, systemDefaultProfile]);
 
   const courseIdsWithGroups = useMemo(
     () => (groupsIndex ? groupsIndex.courseGroups.map((courseGroup) => courseGroup.courseKey) : []),
@@ -394,8 +456,12 @@ export const CompetencyAssociationsProvider = ({
   const resolvedRuleKey = !competencyChanged && focus && groupsIndex && systemDefaultProfile
     ? resolveStaleRuleKey(focus, groupsIndex, systemDefaultProfile)
     : undefined;
-  if (focus && resolvedRuleKey !== undefined) {
+  if (focus?.groupId != null && resolvedRuleKey !== undefined) {
     dispatch({ type: 'ruleKeyResolved', groupId: focus.groupId, staleRuleKey: focus.ruleKey, resolvedRuleKey });
+  }
+
+  if (!competencyChanged && groupsIndex && isPlaceholderOrphaned(focus, placeholder, groupsIndex)) {
+    dispatch({ type: 'discardPlaceholder' });
   }
 
   const focusGroup = useCallback((groupId: number) => {
@@ -408,6 +474,16 @@ export const CompetencyAssociationsProvider = ({
   const focusRuleBox = useCallback((groupId: number, ruleKey: string) => {
     dispatch({ type: 'focusRuleBox', groupId, ruleKey });
   }, []);
+
+  const {
+    addPlaceholderRuleBox,
+    addPlaceholderGroup,
+    setPlaceholderLogicOperator,
+    setPlaceholderRulePayload,
+    discardPlaceholder,
+  } = usePlaceholderActions(dispatch);
+
+  const hasPlaceholder = focus !== null && focus.ruleKey === null;
 
   // Runs once per competency, after groups, profile and every outline have
   // settled. An inaccessible course's group is not rendered, so it is never
@@ -453,32 +529,22 @@ export const CompetencyAssociationsProvider = ({
       return;
     }
 
-    let groupId: number | undefined;
-    let ruleTypeOverride: string | undefined;
-    let rulePayloadOverride: GradeRulePayload | undefined;
-
-    const target = isFocusInCourse(courseId, focus, groupsIndex)
+    // Focus in another course resolves to that course's last group, so the placeholder score does not apply there.
+    const isFocusInCourse = courseKeyOfFocus(focus, placeholder, groupsIndex) === courseId;
+    const target = isFocusInCourse
       ? focus
-      : courseExpansionFocus(courseId, focus, groupsIndex, systemDefaultProfile);
-    if (target) {
-      groupId = target.groupId;
-      const box = ruleBoxesForGroup(target.groupId, groupsIndex, systemDefaultProfile)
-        .find((candidate) => candidate.key === target.ruleKey);
-      if (box) {
-        ruleTypeOverride = box.rule.ruleType;
-        rulePayloadOverride = box.rule.rulePayload;
-      }
-      if (target !== focus) {
-        dispatch({ type: 'setFocus', focus: target });
-      }
+      : courseExpansionFocus(courseId, focus, placeholder, groupsIndex, systemDefaultProfile);
+    const targetPlaceholder = isFocusInCourse ? placeholder : { ...placeholder, rulePayload: null };
+    const resolved = resolveCreateTarget(courseId, target, targetPlaceholder, groupsIndex, systemDefaultProfile);
+    if (resolved.kind === 'duplicate') {
+      dispatch({ type: 'placeholderDuplicateRejected' });
+      return;
+    }
+    if (target && target !== focus) {
+      dispatch({ type: 'setFocus', focus: target });
     }
 
-    const payload: CreateCompetencyCriterionPayload = {
-      object_id: objectId,
-      ...(groupId !== undefined ? { group_id: groupId } : {}),
-      ...(ruleTypeOverride !== undefined ? { rule_type_override: ruleTypeOverride } : {}),
-      ...(rulePayloadOverride !== undefined ? { rule_payload_override: rulePayloadOverride } : {}),
-    };
+    const payload: CreateCompetencyCriterionPayload = { object_id: objectId, ...resolved.fields };
 
     createCriterion({ tagId, payload }).then(
       (criterion) => {
@@ -514,6 +580,7 @@ export const CompetencyAssociationsProvider = ({
     groupsIndex,
     systemDefaultProfile,
     focus,
+    placeholder,
     tagId,
     generation,
     createCriterion,
@@ -570,6 +637,15 @@ export const CompetencyAssociationsProvider = ({
     const shared: CompetencyAssociationsContextBase = {
       error,
       focus,
+      placeholder,
+      hasPlaceholder,
+      addPlaceholderRuleBox,
+      addPlaceholderGroup,
+      setPlaceholderLogicOperator,
+      setPlaceholderRulePayload,
+      discardPlaceholder,
+      placeholderDuplicateRejected,
+      placeholderDuplicateRejectionCount,
       focusGroup,
       focusRuleBox,
       notifyCourseExpanded,
@@ -592,6 +668,15 @@ export const CompetencyAssociationsProvider = ({
     status,
     error,
     focus,
+    placeholder,
+    hasPlaceholder,
+    addPlaceholderRuleBox,
+    addPlaceholderGroup,
+    setPlaceholderLogicOperator,
+    setPlaceholderRulePayload,
+    discardPlaceholder,
+    placeholderDuplicateRejected,
+    placeholderDuplicateRejectionCount,
     focusGroup,
     focusRuleBox,
     notifyCourseExpanded,

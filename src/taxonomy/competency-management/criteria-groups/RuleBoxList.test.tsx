@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import {
   initializeMocks,
   render,
   screen,
   userEvent,
+  waitFor,
   within,
 } from '@src/testUtils';
 import {
@@ -12,7 +14,8 @@ import {
   MockCompetencyAssociationsProvider,
   systemDefaultProfile,
 } from '../__mocks__';
-import type { CompetencyCriteriaGroupsResponse } from '../data/types';
+import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
+import type { CompetencyCriteriaGroupsResponse, GradeRulePayload } from '../data/types';
 import { buildCompetencyCriteriaGroupsIndex, ruleBoxesForGroup } from '../utils';
 import RuleBoxList from './RuleBoxList';
 
@@ -140,7 +143,8 @@ describe('<RuleBoxList />', () => {
 
     const typeInFirstBox = async (score: string) => {
       const user = userEvent.setup();
-      const [firstBoxInput] = screen.getAllByRole('textbox');
+      await user.click(screen.getAllByRole('button', { name: /With a score of/ })[0]);
+      const firstBoxInput = screen.getByRole('textbox');
       await user.clear(firstBoxInput);
       await user.type(firstBoxInput, score);
       await user.keyboard('{Enter}');
@@ -164,6 +168,234 @@ describe('<RuleBoxList />', () => {
 
       expect(updateRuleScore).not.toHaveBeenCalled();
       expect(screen.queryByText('Another rule box in this group already uses this score.')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('placeholder whose default score another box already uses', () => {
+    const renderTakenPlaceholder = (setPlaceholderRulePayload = jest.fn()) =>
+      render(
+        <MockCompetencyAssociationsProvider
+          value={{
+            focus: { groupId: 10, ruleKey: null },
+            placeholder: { parentRuleGroupId: null, logicOperator: 'OR', rulePayload: null, opensScoreSettings: true },
+            setPlaceholderRulePayload,
+          }}
+        >
+          <RuleBoxList groupId={10} boxes={boxes} subsectionNamesByUsageKey={{}} canEdit />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+    it('explains the clash and offers the nearest unused score', async () => {
+      const user = userEvent.setup();
+      const setPlaceholderRulePayload = jest.fn();
+      renderTakenPlaceholder(setPlaceholderRulePayload);
+
+      expect(screen.getByRole('dialog')).toHaveTextContent(/Another rule in this group already uses 70% or higher/);
+      await user.click(screen.getByRole('button', { name: 'Use 75% or higher' }));
+
+      expect(setPlaceholderRulePayload).toHaveBeenCalledWith({ op: 'gte', value: 0.75, scale: 'percent' });
+    });
+
+    it('focuses the input after the suggestion is applied, and not after the next typed score', async () => {
+      const user = userEvent.setup();
+      const StatefulProvider = () => {
+        const [rulePayload, setRulePayload] = useState<GradeRulePayload | null>(null);
+        return (
+          <MockCompetencyAssociationsProvider
+            value={{
+              focus: { groupId: 10, ruleKey: null },
+              placeholder: {
+                parentRuleGroupId: null,
+                logicOperator: 'OR',
+                rulePayload,
+                opensScoreSettings: rulePayload === null,
+              },
+              placeholderDuplicateRejected: false,
+              setPlaceholderRulePayload: setRulePayload,
+            }}
+          >
+            <RuleBoxList groupId={10} boxes={boxes} subsectionNamesByUsageKey={{}} canEdit />
+          </MockCompetencyAssociationsProvider>
+        );
+      };
+      render(<StatefulProvider />);
+      const input = () => screen.getByRole('textbox');
+
+      await user.click(screen.getByRole('button', { name: 'Use 75% or higher' }));
+      await waitFor(() => expect(input()).toHaveValue('75'));
+      await waitFor(() => expect(input()).toHaveFocus());
+
+      await user.clear(input());
+      await user.type(input(), '80');
+      await user.keyboard('{Enter}');
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      expect(screen.getByText('80% or higher')).toBeInTheDocument();
+    });
+
+    it('opens the placeholder\'s score popover with the input focused when it appears', async () => {
+      renderTakenPlaceholder();
+
+      expect(screen.getByRole('dialog', { name: 'Competency Completion Rule' })).toBeInTheDocument();
+      await waitFor(() => expect(screen.getByRole('textbox')).toHaveFocus());
+    });
+  });
+
+  describe('rejected duplicate placeholder', () => {
+    const renderRejected = (count: number, boxesInGroup = boxes) => {
+      const ui = (duplicateRejectionCount: number) => (
+        <MockCompetencyAssociationsProvider
+          value={{
+            focus: { groupId: 10, ruleKey: null },
+            placeholderDuplicateRejected: true,
+            placeholderDuplicateRejectionCount: duplicateRejectionCount,
+          }}
+        >
+          <RuleBoxList groupId={10} boxes={boxesInGroup} subsectionNamesByUsageKey={{}} canEdit />
+        </MockCompetencyAssociationsProvider>
+      );
+      return { ...render(ui(count)), ui };
+    };
+
+    it('opens the dialog with the suggestion link focused and the score input invalid', async () => {
+      renderRejected(1);
+
+      expect(screen.getByRole('dialog', { name: 'Competency Completion Rule' })).toBeInTheDocument();
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Use 75% or higher' })).toHaveFocus());
+      expect(screen.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
+    });
+
+    it('moves focus back to the link on each further rejection', async () => {
+      const { rerender, ui } = renderRejected(1);
+      const link = () => screen.getByRole('button', { name: 'Use 75% or higher' });
+      await waitFor(() => expect(link()).toHaveFocus());
+      screen.getByRole('textbox').focus();
+      expect(link()).not.toHaveFocus();
+
+      rerender(ui(2));
+
+      await waitFor(() => expect(link()).toHaveFocus());
+    });
+
+    it('shows the hint without a link and focuses the score input when no score is free', async () => {
+      const takenScores = [70, 75, 80, 85, 90, 95, 100];
+      const fullBoxes = ruleBoxesForGroup(
+        10,
+        buildCompetencyCriteriaGroupsIndex({
+          groups: [group(10, null, null, 0)],
+          criteria: takenScores.map((percent, i) => (
+            i === 0
+              ? criterion(300 + i, `block-${i}`, 10)
+              : criterion(300 + i, `block-${i}`, 10, {
+                ruleProfileId: null,
+                ruleTypeOverride: 'grade',
+                rulePayloadOverride: { op: 'gte', value: percent / 100, scale: 'percent' },
+              })
+          )),
+        }),
+        systemDefaultProfile,
+      );
+
+      renderRejected(1, fullBoxes);
+
+      expect(screen.getByRole('dialog')).toHaveTextContent(/already uses/);
+      expect(screen.queryByRole('button', { name: /^Use / })).not.toBeInTheDocument();
+      await waitFor(() => expect(screen.getByRole('textbox')).toHaveFocus());
+    });
+  });
+
+  describe('placeholder rule box', () => {
+    // One real box (gte 75%), distinct from the placeholder's default display of gte 70%.
+    const placeholderBoxes = ruleBoxesForGroup(
+      10,
+      buildCompetencyCriteriaGroupsIndex({
+        groups: [group(10, null, null, 0)],
+        criteria: [
+          criterion(201, 'block-x', 10, {
+            ruleProfileId: null,
+            ruleTypeOverride: 'grade',
+            rulePayloadOverride: { op: 'gte', value: 0.75, scale: 'percent' },
+          }),
+        ],
+      }),
+      systemDefaultProfile,
+    );
+
+    const renderWithPlaceholder = (
+      contextOverrides: MockCompetencyAssociationsOverrides = {},
+      canEdit = true,
+    ) =>
+      render(
+        <MockCompetencyAssociationsProvider value={{ focus: { groupId: 10, ruleKey: null }, ...contextOverrides }}>
+          <RuleBoxList
+            groupId={10}
+            boxes={placeholderBoxes}
+            subsectionNamesByUsageKey={{}}
+            canEdit={canEdit}
+          />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+    it('renders last, showing the system default rule while the author has not set a score', () => {
+      const { container } = renderWithPlaceholder({}, false);
+
+      const boxes = container.querySelectorAll('.rule-box');
+      expect(boxes).toHaveLength(2);
+      expect(boxes[1]).toHaveTextContent('With a score of 70% or higher');
+      expect(boxes[1]).toHaveTextContent('Select content below to add it here.');
+    });
+
+    it('keeps the score settings closed when the placeholder was not just added', () => {
+      renderWithPlaceholder();
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /With a score of 70% or higher/ })).toHaveAttribute(
+        'aria-expanded',
+        'false',
+      );
+    });
+
+    it('is absent when another rule box in the group is focused', () => {
+      const { container } = renderWithPlaceholder({ focus: { groupId: 10, ruleKey: placeholderBoxes[0].key } });
+
+      expect(container.querySelectorAll('.rule-box')).toHaveLength(1);
+    });
+
+    const afterAddPlaceholder = {
+      parentRuleGroupId: null,
+      logicOperator: 'OR' as const,
+      rulePayload: null,
+      opensScoreSettings: true,
+    };
+
+    // A placeholder has no saved criteria, so its score lives in context until content is picked.
+    it('writes a score change to setPlaceholderRulePayload, not updateRuleScore', async () => {
+      const user = userEvent.setup();
+      const setPlaceholderRulePayload = jest.fn();
+      const updateRuleScore = jest.fn();
+      renderWithPlaceholder({ placeholder: afterAddPlaceholder, setPlaceholderRulePayload, updateRuleScore });
+
+      const placeholderInput = screen.getByRole('textbox');
+      await user.clear(placeholderInput);
+      await user.type(placeholderInput, '80');
+      await user.keyboard('{Enter}');
+
+      expect(setPlaceholderRulePayload).toHaveBeenCalledWith({ op: 'gte', value: 0.8, scale: 'percent' });
+      expect(updateRuleScore).not.toHaveBeenCalled();
+    });
+
+    it('refuses a score that duplicates the real box\'s rule', async () => {
+      const user = userEvent.setup();
+      const setPlaceholderRulePayload = jest.fn();
+      renderWithPlaceholder({ placeholder: afterAddPlaceholder, setPlaceholderRulePayload });
+
+      const placeholderInput = screen.getByRole('textbox');
+      await user.clear(placeholderInput);
+      await user.type(placeholderInput, '75');
+      await user.keyboard('{Enter}');
+
+      expect(screen.getByText('Another rule box in this group already uses this score.')).toBeInTheDocument();
+      expect(setPlaceholderRulePayload).not.toHaveBeenCalled();
     });
   });
 });

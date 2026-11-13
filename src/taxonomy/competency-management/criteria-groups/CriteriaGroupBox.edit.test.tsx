@@ -5,9 +5,15 @@ import {
   userEvent,
   within,
 } from '@src/testUtils';
-import { mockScrollIntoView, MockCompetencyAssociationsProvider, singleGroupResponse } from '../__mocks__';
+import {
+  buildMockCompetencyAssociationsContextValue,
+  mockScrollIntoView,
+  MockCompetencyAssociationsProvider,
+  singleGroupResponse,
+} from '../__mocks__';
 import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
 import type { BottomTierCompetencyCriteriaGroup } from '../data/types';
+import { CompetencyAssociationsContext } from '../CompetencyAssociationsContext';
 import CriteriaGroupBox from './CriteriaGroupBox';
 
 const group = singleGroupResponse.groups.find(({ id }) => id === 10) as BottomTierCompetencyCriteriaGroup;
@@ -21,7 +27,7 @@ const renderBox = (contextOverrides: MockCompetencyAssociationsOverrides = {}, c
 );
 
 describe('<CriteriaGroupBox /> editing (#794)', () => {
-  mockScrollIntoView();
+  const scrollIntoView = mockScrollIntoView();
   let user: ReturnType<typeof userEvent.setup>;
 
   beforeEach(() => {
@@ -70,5 +76,94 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     screen.getAllByRole('button').forEach((button) => {
       expect(within(button).queryByRole('button')).not.toBeInTheDocument();
     });
+  });
+
+  it('"Add Rule" starts a placeholder rule box in the card\'s own group', async () => {
+    const addPlaceholderRuleBox = jest.fn();
+    renderBox({ addPlaceholderRuleBox });
+
+    await user.click(screen.getByRole('button', { name: 'Add Rule' }));
+
+    expect(addPlaceholderRuleBox).toHaveBeenCalledWith(10);
+  });
+
+  it.each([
+    ['a placeholder already exists', { hasPlaceholder: true }, 'Fill in the empty box before adding another.'],
+    [
+      'a rule is being saved',
+      { isAssociating: true },
+      'Wait for the save to finish before adding another.',
+    ],
+    [
+      'a rule is being saved and a placeholder exists',
+      { isAssociating: true, hasPlaceholder: true },
+      'Wait for the save to finish before adding another.',
+    ],
+  ])('disables "Add Rule" and explains why while %s', async (_name, overrides, text) => {
+    const addPlaceholderRuleBox = jest.fn();
+    renderBox({ ...overrides, addPlaceholderRuleBox });
+
+    const addRuleButton = screen.getByRole('button', { name: 'Add Rule' });
+    expect(addRuleButton).toHaveAttribute('aria-disabled', 'true');
+    expect(addRuleButton).toHaveAccessibleDescription(text);
+
+    await user.click(addRuleButton);
+    expect(addPlaceholderRuleBox).not.toHaveBeenCalled();
+  });
+
+  it('hides "Add Rule" when canEdit is false', () => {
+    renderBox({}, false);
+
+    expect(screen.queryByRole('button', { name: 'Add Rule' })).not.toBeInTheDocument();
+  });
+
+  it.each(
+    [
+      ['AND', 'all', 'any', 'OR'],
+      ['OR', 'any', 'all', 'AND'],
+    ] as const,
+  )(
+    'edits a placeholder card\'s operator from %s through setPlaceholderLogicOperator, not updateGroupOperator',
+    async (current, currentLabel, pickedLabel, expected) => {
+      const setPlaceholderLogicOperator = jest.fn();
+      const updateGroupOperator = jest.fn();
+      render(
+        <MockCompetencyAssociationsProvider
+          value={{
+            focus: { groupId: null, ruleKey: null },
+            placeholder: { parentRuleGroupId: 1, logicOperator: current, rulePayload: null, opensScoreSettings: false },
+            setPlaceholderLogicOperator,
+            updateGroupOperator,
+          }}
+        >
+          <CriteriaGroupBox subsectionNamesByUsageKey={{}} canEdit />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+      await user.click(screen.getByRole('button', { name: currentLabel }));
+      await user.click(screen.getByText(pickedLabel));
+
+      expect(setPlaceholderLogicOperator).toHaveBeenCalledWith(expected);
+      expect(updateGroupOperator).not.toHaveBeenCalled();
+    },
+  );
+
+  it('renders no add control and no rule boxes when the panel failed, even with a loaded group index', () => {
+    const loaded = buildMockCompetencyAssociationsContextValue();
+    render(
+      <CompetencyAssociationsContext.Provider value={{ ...loaded, status: 'error', error: new Error('boom') }}>
+        <CriteriaGroupBox group={group} subsectionNamesByUsageKey={{}} canEdit />
+      </CompetencyAssociationsContext.Provider>,
+    );
+
+    expect(screen.queryByRole('button', { name: 'Add Rule' })).not.toBeInTheDocument();
+    expect(document.querySelector('.rule-box')).not.toBeInTheDocument();
+  });
+
+  it('scrolls the placeholder rule box once, not the group', () => {
+    renderBox({ focus: { groupId: 10, ruleKey: null } });
+
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(scrollIntoView.mock.contexts[0]).toHaveClass('rule-box');
   });
 });
