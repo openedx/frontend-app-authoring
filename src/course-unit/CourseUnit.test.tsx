@@ -1,6 +1,7 @@
 import fetchMock from 'fetch-mock-jest';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
+import { Helmet } from 'react-helmet';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import {
   camelCaseObject,
@@ -213,6 +214,14 @@ describe('<CourseUnit />', () => {
       .toBeInTheDocument();
     expect(await screen.findByRole('button', { name: currentSectionName })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: currentSubSectionName })).toBeInTheDocument();
+  });
+
+  it('sets the page title through Helmet', async () => {
+    render(<RootWrapper />);
+    expect(await screen.findByTestId('unit-header-title')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(Helmet.peek().title).toEqual(`${unitDisplayName} | ${process.env.SITE_NAME}`);
+    });
   });
 
   it('renders the course unit iframe with correct attributes', async () => {

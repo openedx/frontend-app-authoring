@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react';
+import { Helmet } from 'react-helmet';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 import {
@@ -54,6 +55,12 @@ describe('<GroupConfigurations />', () => {
     renderComponent();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
     expect(screen.queryByText(messages.headingSubtitle.defaultMessage)).not.toBeInTheDocument();
+  });
+
+  it('sets the page title through Helmet', async () => {
+    renderComponent();
+    expect(await screen.findByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
+    expect(Helmet.peek().title).toContain(`${messages.headingTitle.defaultMessage} | `);
   });
 
   it('renders component correctly', async () => {

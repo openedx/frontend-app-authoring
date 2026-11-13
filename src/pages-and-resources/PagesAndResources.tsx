@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { Helmet } from 'react-helmet';
 
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -28,7 +29,6 @@ import SettingsComponent from './SettingsComponent';
 const PagesAndResources = () => {
   const intl = useIntl();
   const { courseId, courseDetails } = useCourseAuthoringContext();
-  document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
 
   const {
     isLoading: isLoadingUserPermissions,
@@ -84,6 +84,9 @@ const PagesAndResources = () => {
 
   return (
     <PagesAndResourcesProvider courseId={courseId} isEditable={isEditable}>
+      <Helmet>
+        <title>{getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading))}</title>
+      </Helmet>
       <main className="container container-mw-md px-3">
         <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
           <h3 className="m-0">{intl.formatMessage(messages.heading)}</h3>

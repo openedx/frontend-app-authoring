@@ -43,10 +43,6 @@ const GroupConfigurations = () => {
     canManageGroupConfigurations,
   } = useCourseUserPermissions(courseId, getGroupConfigurationsPermissions(courseId));
 
-  document.title = getPageHeadTitle(
-    courseDetails?.name ?? '',
-    formatMessage(messages.headingTitle),
-  );
   const {
     shouldShowEnrollmentTrack = false,
     shouldShowExperimentGroups = false,

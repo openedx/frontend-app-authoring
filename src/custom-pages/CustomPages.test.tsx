@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom';
+import { Helmet } from 'react-helmet';
 
 import {
   initializeMocks,
@@ -92,6 +93,17 @@ describe('CustomPages', () => {
     });
     capturedOnClose = undefined;
     mockNavigate.mockClear();
+  });
+
+  it('sets the page title through Helmet', async () => {
+    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
+    renderComponent();
+
+    await waitFor(() => {
+      expect(Helmet.peek().title).toEqual(
+        `${messages.heading.defaultMessage} | ${mockCourseDetails.name} | ${process.env.SITE_NAME}`,
+      );
+    });
   });
 
   it('should render placeholder on 403', async () => {
