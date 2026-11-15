@@ -4,6 +4,8 @@ import { DeleteOutline } from '@openedx/paragon/icons';
 
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
 import { CardSideType } from '@src/editors/containers/FlashcardsEditor/types';
+import { useContext } from 'react';
+import { FlashcardsEditorContext } from '@src/editors/containers/FlashcardsEditor/context';
 
 interface CardImageProps {
   url: string;
@@ -24,6 +26,7 @@ export const CardImage = ({
   onRemove,
 }: CardImageProps) => {
   const intl = useIntl();
+  const { staticRootUrl } = useContext(FlashcardsEditorContext);
 
   return (
     <div className="d-flex align-items-center justify-content-center align-self-stretch px-4 pb-2">
@@ -45,7 +48,7 @@ export const CardImage = ({
         >
           <img
             style={{ maxHeight: '200px' }}
-            src={url}
+            src={staticRootUrl + url}
             alt={altText}
           />
         </Button>

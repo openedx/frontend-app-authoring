@@ -2,8 +2,9 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, OverlayTrigger, Tooltip } from '@openedx/paragon';
 
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import { useId } from 'react';
+import { useContext, useId } from 'react';
 import { Card } from '@src/editors/containers/FlashcardsEditor/types';
+import { FlashcardsEditorContext } from '@src/editors/containers/FlashcardsEditor/context';
 import PictureIcon from './PictureIcon';
 
 interface PreviewSideProps {
@@ -16,6 +17,8 @@ interface PreviewSideProps {
 const PreviewSide = ({ text, imageUrl, imageAlt }: PreviewSideProps) => {
   const intl = useIntl();
   const id = useId();
+  const { staticRootUrl } = useContext(FlashcardsEditorContext);
+
   return (
     <span className="d-inline-flex align-items-center text-truncate w-50 px-2">
       <span
@@ -30,7 +33,7 @@ const PreviewSide = ({ text, imageUrl, imageAlt }: PreviewSideProps) => {
           ? (
             <img
               className="img-preview"
-              src={imageUrl}
+              src={staticRootUrl + imageUrl}
               alt={imageAlt}
               style={{ maxWidth: '2rem', maxHeight: '2rem', objectFit: 'cover' }}
             />

@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { selectors } from '@src/editors/data/redux';
 import { useQueryClient } from '@tanstack/react-query';
 import { FlashcardsState, initialFlashcardsState } from './types';
+import { getConfig } from '@edx/frontend-platform';
 
 interface FlashcardsEditorContextInterface {
   fields: FlashcardsState;
@@ -12,6 +13,7 @@ interface FlashcardsEditorContextInterface {
   isPending: boolean;
   blockId: string;
   isLibrary: boolean;
+  staticRootUrl: string;
 }
 
 export const FlashcardsEditorContext = createContext<FlashcardsEditorContextInterface>({
@@ -20,6 +22,7 @@ export const FlashcardsEditorContext = createContext<FlashcardsEditorContextInte
   isPending: true,
   blockId: '',
   isLibrary: false,
+  staticRootUrl: '',
 });
 
 export const FlashcardsEditorContextProvider: React.FC<{ blockId: string; children: React.ReactNode; }> = (
@@ -34,6 +37,10 @@ export const FlashcardsEditorContextProvider: React.FC<{ blockId: string; childr
     defaultData,
   });
   const isLibrary = useSelector(selectors.app.isLibrary);
+  let staticRootUrl = '';
+  if (isLibrary) {
+    staticRootUrl = `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}`;
+  }
 
   const queryClient = useQueryClient();
   // Drop state on unmount so that when we open again we have revised state.
@@ -53,6 +60,7 @@ export const FlashcardsEditorContextProvider: React.FC<{ blockId: string; childr
     isPending,
     blockId,
     isLibrary,
+    staticRootUrl,
   }), [data, error, isPending]);
 
   return <FlashcardsEditorContext.Provider value={value}>{children}</FlashcardsEditorContext.Provider>;

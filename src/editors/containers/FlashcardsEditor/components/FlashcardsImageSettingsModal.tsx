@@ -3,8 +3,9 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import BaseModal from '@src/editors/sharedComponents/BaseModal';
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
 import { FlashcardsState, ImageSettings } from '@src/editors/containers/FlashcardsEditor/types';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useFormikContext } from 'formik';
+import { FlashcardsEditorContext } from '@src/editors/containers/FlashcardsEditor/context';
 
 interface FlashcardsImageSettingsModalProps {
   imageSettings: ImageSettings;
@@ -20,6 +21,7 @@ interface FlashcardsImageSettingsModalProps {
 export const FlashcardsImageSettingsModal = ({ imageSettings, onClose }: FlashcardsImageSettingsModalProps) => {
   const intl = useIntl();
   const { setFieldValue } = useFormikContext<FlashcardsState>();
+  const { staticRootUrl } = useContext(FlashcardsEditorContext);
   const [altText, setAltText] = useState(imageSettings?.altText || '');
 
   return (
@@ -43,7 +45,7 @@ export const FlashcardsImageSettingsModal = ({ imageSettings, onClose }: Flashca
         <div className="d-flex align-items-center justify-content-center" style={{ width: '250px' }}>
           <Image
             style={{ maxWidth: '250px', maxHeight: '250px', objectFit: 'contain' }}
-            src={imageSettings.url}
+            src={staticRootUrl + imageSettings.url}
           />
         </div>
         <div className="flex-grow-1 ml-3" style={{ minWidth: '375px' }}>
