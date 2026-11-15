@@ -39,20 +39,10 @@ export const FlashcardsEditorContextProvider: React.FC<{ blockId: string; childr
   // Drop state on unmount so that when we open again we have revised state.
   useEffect(() => () => {
     // We use a unique ID because a component higher up in the chain remounts quickly on
-    // startup, and cancelling or invalidating that transaction immediately results in
+    // startup (possibly related to React strict mode),
+    // and cancelling or invalidating that transaction immediately results in
     // the query key being recreated immediately, and then being populated with the result
     // of being canceled.
-    //
-    // If we've encountered this block before, invalidating will result in the user seeing
-    // the form with stale data before it's refetched, should we have encountered this block
-    // before. Additionally, the stale flag won't get properly cleared due to the race
-    // conditions for the remount.
-    //
-    // We can't invalidate on mutation because the rest of the saving code still relies on
-    // thunks. That means the code that would invalidate this is squirreled away somewhere
-    // arcane where we can't pull the QueryClient from the context hook.
-    //
-    // Forcing a unique ID appears to be the most practical workaround.
     const queryKey = ['blockHandlerData', blockId, uniqueId, 'load_flashcards'];
     queryClient.removeQueries({ queryKey });
   }, []);
