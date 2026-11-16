@@ -1,12 +1,13 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { omit } from 'lodash';
+import { getAllPages } from '@src/generic/data/paginatedList';
 
 const API_PATH_PATTERN = 'textbooks';
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getTextbooksApiUrl = (courseId: string) =>
-  `${getStudioBaseUrl()}/api/contentstore/v1/${API_PATH_PATTERN}/${courseId}`;
+  `${getStudioBaseUrl()}/api/authoring/v2/courses/${courseId}/${API_PATH_PATTERN}/`;
 export const getUpdateTextbooksApiUrl = (courseId: string) => `${getStudioBaseUrl()}/${API_PATH_PATTERN}/${courseId}`;
 export const getEditTextbooksApiUrl = (courseId: string, textbookId: string) =>
   `${getStudioBaseUrl()}/${API_PATH_PATTERN}/${courseId}/${textbookId}`;
@@ -31,10 +32,9 @@ export interface Textbook extends BaseTextbook {
  * Get textbooks for course.
  */
 export async function getTextbooks(courseId: string): Promise<TextbookResponse> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getTextbooksApiUrl(courseId));
+  const textbooks = await getAllPages<Textbook>(getTextbooksApiUrl(courseId));
 
-  return camelCaseObject(data);
+  return { textbooks: camelCaseObject(textbooks) };
 }
 
 /**
