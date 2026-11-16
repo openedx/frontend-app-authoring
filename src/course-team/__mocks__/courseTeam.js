@@ -1,24 +1,29 @@
 module.exports = {
-  showTransferOwnershipHint: true,
-  users: [
+  members: [
     {
-      email: 'staff@example.com',
-      id: '2',
-      role: 'staff',
-      username: 'Staff_Name',
-    },
-    {
-      email: 'audit@example.com',
-      id: '3',
-      role: 'staff',
-      username: 'Audit_Name',
-    },
-    {
-      email: 'vladislav.keblysh@raccoongang.com',
-      id: '1',
-      role: 'instructor',
+      id: 1,
       username: 'Vladislav_Keblysh',
+      email: 'vladislav.keblysh@raccoongang.com',
+      role: 'instructor',
+    },
+    {
+      id: 3,
+      username: 'Audit_Name',
+      email: 'audit@example.com',
+      role: 'staff',
+    },
+    {
+      id: 2,
+      username: 'Staff_Name',
+      email: 'staff@example.com',
+      role: 'staff',
     },
   ],
-  allowActions: true,
+  me: {
+    username: 'Vladislav_Keblysh',
+    email: 'vladislav.keblysh@raccoongang.com',
+    role: 'instructor',
+    can_manage_team: true,
+    is_only_instructor: true,
+  },
 };
