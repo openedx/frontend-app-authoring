@@ -6,8 +6,11 @@ import classNames from 'classnames';
 
 import { useCourseOutlineIndex } from '@src/course-outline/data';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
+import { courseKeyOfFocus } from '../criterionTarget';
 import type { CourseCompetencyCriteriaGroup } from '../data/types';
 import { bottomTierGroupsForCourse } from '../utils';
+import AddControl from './AddControl';
+import type { AddControlProps } from './AddControl';
 import CriteriaGroupBox from './CriteriaGroupBox';
 import GroupConnector from './GroupConnector';
 import messages from './messages';
@@ -28,6 +31,11 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     focus,
     groupsIndex,
     status,
+    placeholder,
+    addPlaceholderGroup,
+    discardPlaceholder,
+    hasPlaceholder,
+    isAssociating,
   } = useCompetencyAssociations();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { data } = useCourseOutlineIndex(courseGroup.courseKey, { refetchOnMount: false });
@@ -42,8 +50,21 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     return names;
   }, [data]);
 
-  const containsFocus = status === 'success' && !!focus
-    && groupsIndex.groupsById.get(focus.groupId)?.parentId === courseGroup.id;
+  // A placeholder group (`focus.groupId === null`) is shown as one more card after the real ones.
+  const showPlaceholderGroup = focus?.groupId === null && placeholder.parentRuleGroupId === courseGroup.id;
+  const containsFocus = status === 'success' &&
+    courseKeyOfFocus(focus, placeholder, groupsIndex) === courseGroup.courseKey;
+  const holdsPlaceholderRuleBox = focus?.ruleKey === null
+    && focus.groupId !== null
+    && groupsIndex?.groupsById.get(focus.groupId)?.parentId === courseGroup.id;
+
+  const handleToggleCollapsed = () => {
+    // A collapsed section hides its placeholder, so it is dropped instead of lingering unseen.
+    if (!isCollapsed && (showPlaceholderGroup || holdsPlaceholderRuleBox)) {
+      discardPlaceholder();
+    }
+    setIsCollapsed((prev) => !prev);
+  };
 
   const expansionCount = expansionCountByCourseId[courseGroup.courseKey] ?? 0;
 
@@ -59,10 +80,19 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   }
 
   const courseName = data.courseStructure.displayName;
+  const canEdit = canEditCourse(courseGroup.courseKey);
+  const bottomTierGroups = bottomTierGroupsForCourse(groupsIndex, courseGroup.courseKey);
   const toggleLabel = intl.formatMessage(
     isCollapsed ? messages.expandCourseGroupButtonLabel : messages.collapseCourseGroupButtonLabel,
     { courseName },
   );
+
+  let disabledReason: AddControlProps['disabledReason'] = null;
+  if (isAssociating) {
+    disabledReason = 'saving';
+  } else if (hasPlaceholder) {
+    disabledReason = 'placeholder';
+  }
 
   return (
     <Card className={classNames('course-group-section', { 'course-group-section--focused': containsFocus })}>
@@ -76,7 +106,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
               aria-label={toggleLabel}
               aria-expanded={!isCollapsed}
               size="inline"
-              onClick={() => setIsCollapsed((prev) => !prev)}
+              onClick={handleToggleCollapsed}
             />
             <h3 className="course-group-section__heading">
               {intl.formatMessage(messages.fromWithinCourseLabel, {
@@ -89,16 +119,30 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
       {!isCollapsed && (
         <Card.Body className="course-group-section__body">
           <Stack gap={2}>
-            {bottomTierGroupsForCourse(groupsIndex, courseGroup.courseKey).map((group, groupIndex) => (
+            {bottomTierGroups.map((group, groupIndex) => (
               <Fragment key={group.id}>
                 {groupIndex > 0 && <GroupConnector logicOperator={courseGroup.logicOperator} />}
                 <CriteriaGroupBox
                   group={group}
                   subsectionNamesByUsageKey={subsectionNamesByUsageKey}
-                  canEdit={canEditCourse(courseGroup.courseKey)}
+                  canEdit={canEdit}
                 />
               </Fragment>
             ))}
+            {showPlaceholderGroup && (
+              <Fragment key="placeholder">
+                {bottomTierGroups.length > 0 && <GroupConnector logicOperator={courseGroup.logicOperator} />}
+                <CriteriaGroupBox subsectionNamesByUsageKey={subsectionNamesByUsageKey} canEdit={canEdit} />
+              </Fragment>
+            )}
+            {canEdit && (
+              <AddControl
+                label={intl.formatMessage(messages.addRuleGroupButtonLabel)}
+                accessibleLabel={intl.formatMessage(messages.addRuleGroupAccessibleLabel)}
+                disabledReason={disabledReason}
+                onClick={() => addPlaceholderGroup(courseGroup.id)}
+              />
+            )}
           </Stack>
         </Card.Body>
       )}

@@ -20,7 +20,7 @@ const GroupConnector = ({ logicOperator }: GroupConnectorProps) => {
 
   return (
     <Stack direction="horizontal" gap={2} className="group-connector">
-      <span className="group-connector__line" aria-hidden="true" />
+      <span className="connector-line" aria-hidden="true" />
       <LogicOperatorSelect
         className="group-connector__label"
         value={logicOperator}
@@ -29,7 +29,7 @@ const GroupConnector = ({ logicOperator }: GroupConnectorProps) => {
           or: intl.formatMessage(messages.logicOperatorOrLabel),
         }}
       />
-      <span className="group-connector__line" aria-hidden="true" />
+      <span className="connector-line" aria-hidden="true" />
     </Stack>
   );
 };

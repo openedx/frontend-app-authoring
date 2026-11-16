@@ -28,7 +28,8 @@ const renderBox = (
 );
 
 const headerButton = () => screen.getByRole('button', { name: 'By completing any of the following' });
-const ruleBoxButton = () => screen.getByRole('button', { name: /^With a score of/ });
+// The first match is the saved box; a placeholder box, when shown, comes after it.
+const ruleBoxButton = () => screen.getAllByRole('button', { name: /^With a score of/ })[0];
 
 describe('<CriteriaGroupBox />', () => {
   const scrollIntoView = mockScrollIntoView();
@@ -107,7 +108,7 @@ describe('<CriteriaGroupBox />', () => {
     {
       name: 'the group is focused without a rule key',
       focus: { groupId: 10, ruleKey: null },
-      scrolledElement: 'group',
+      scrolledElement: 'placeholder rule box',
     },
     { name: 'the focused rule key matches no box', focus: { groupId: 10, ruleKey: 'stale' }, scrolledElement: 'group' },
     { name: 'a rule box in the group is focused', focus: { groupId: 10, ruleKey }, scrolledElement: 'rule box' },
@@ -119,9 +120,12 @@ describe('<CriteriaGroupBox />', () => {
       return;
     }
     expect(scrollIntoView).toHaveBeenCalledTimes(1);
-    const expectedElement = scrolledElement === 'group'
-      ? container.querySelector('.criteria-group-box')
-      : ruleBoxButton().closest('.rule-box');
+    const expectedElements = {
+      group: container.querySelector('.criteria-group-box'),
+      'rule box': ruleBoxButton().closest('.rule-box'),
+      'placeholder rule box': container.querySelectorAll('.rule-box')[1],
+    };
+    const expectedElement = expectedElements[scrolledElement as keyof typeof expectedElements];
     expect(scrollIntoView.mock.contexts[0]).toBe(expectedElement);
   });
 });

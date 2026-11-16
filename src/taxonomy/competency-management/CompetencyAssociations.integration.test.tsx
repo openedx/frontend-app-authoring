@@ -19,6 +19,7 @@ import {
   singleGroupResponse,
   tagId,
   twoCoursesResponse,
+  twoGroupsResponse,
 } from './__mocks__';
 import { CompetencyAssociationsProvider } from './CompetencyAssociationsContext';
 import CourseRow from './course-search/CourseRow';
@@ -30,6 +31,7 @@ let axiosMock: ReturnType<typeof initializeMocks>['axiosMock'];
 const groupsUrl = apiUrls.competencyCriteriaGroups(tagId);
 const profileUrl = apiUrls.defaultCompetencyRuleProfile();
 const createUrl = apiUrls.createCompetencyCriterion(tagId);
+const ruleUpdateUrl = apiUrls.updateCompetencyCriteriaRule(10);
 
 const courseRow = (courseKey: string, displayName: string): Course => ({
   courseKey,
@@ -69,15 +71,30 @@ const renderPanel = (rows: Course[] = [courseBRow]) =>
 
 // The author can edit these courses, so each header and rule box has an empty select button beside its editable control.
 const groupHeaders = () => Array.from(document.querySelectorAll<HTMLElement>('.criteria-group-box__select-button'));
+const groupCards = () => Array.from(document.querySelectorAll<HTMLElement>('.criteria-group-box'));
 const ruleBoxControls = () => Array.from(document.querySelectorAll<HTMLElement>('.rule-box__select-button'));
 const ruleBoxWithScore = (percent: string) => {
   const control = ruleBoxControls().find((candidate) => (
-    within(candidate.closest<HTMLElement>('.rule-box')!).queryByDisplayValue(percent)
+    within(candidate.closest<HTMLElement>('.rule-box')!).queryByText((text) => text.startsWith(`${percent}%`))
   ));
   if (!control) {
     throw new Error(`No rule box with a score of ${percent}`);
   }
   return control;
+};
+// After "Add Rule" on a group that already uses the default score, the score popover opens by itself and hides the rest of the page from role queries until it closes.
+const closeScorePopover = async (user: ReturnType<typeof userEvent.setup>) => {
+  await user.keyboard('{Escape}');
+  await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+};
+// Group 10's only box scores 90%, so the default 70% is free for a new box.
+const freeDefaultResponse = {
+  ...singleGroupResponse,
+  criteria: [criterion(900, 'existing-sub', 10, {
+    ruleProfileId: null,
+    ruleTypeOverride: 'grade',
+    rulePayloadOverride: { op: 'gte', value: 0.9, scale: 'percent' },
+  })],
 };
 const currentStates = (elements: HTMLElement[]) => elements.map((element) => element.getAttribute('aria-current'));
 
@@ -192,6 +209,147 @@ describe('competency associations over the real provider', () => {
     expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({ object_id: 'a-sub-1', group_id: 10 });
   });
 
+  it('focuses the new placeholder group\'s score settings button, with the popover closed, after "Add Rule Group"', async () => {
+    axiosMock.onGet(groupsUrl).reply(200, courseBGroupsResponse);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseB)).reply(
+      200,
+      outlineOf('Course B', { 'b-sub-1': 'Homework 1', 'b-sub-2': 'Homework 2' }),
+    );
+    renderPanel();
+    await screen.findByText('Homework 1');
+    const addButtons = screen.getAllByRole('button', { name: 'Add Rule Group' });
+    const scoreSettingsButtonsBefore = screen.getAllByRole('button', { name: /With a score of/ });
+
+    await user.click(addButtons[addButtons.length - 1]);
+
+    const scoreSettingsButtonsAfter = screen.getAllByRole('button', { name: /With a score of/ });
+    expect(scoreSettingsButtonsAfter).toHaveLength(scoreSettingsButtonsBefore.length + 1);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    await waitFor(() => expect(scoreSettingsButtonsAfter.at(-1)).toHaveFocus());
+  });
+
+  it('collapsing a course discards its placeholder group, so expanding it again shows one group card', async () => {
+    axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(
+      200,
+      outlineOf('Course A', { 'a-sub-1': 'Homework A' }),
+    );
+    renderPanel([]);
+    await screen.findByRole('heading', { name: 'From within Course A ...' });
+    expect(groupCards()).toHaveLength(1);
+
+    await user.click(screen.getByRole('button', { name: 'Add Rule Group' }));
+    expect(groupCards()).toHaveLength(2);
+
+    await user.click(screen.getByRole('button', { name: 'Collapse Course A' }));
+    await user.click(await screen.findByRole('button', { name: 'Expand Course A' }));
+
+    await screen.findByRole('heading', { name: 'From within Course A ...' });
+    expect(groupCards()).toHaveLength(1);
+  });
+
+  it('+ Rule on a group whose default score is taken opens the new box\'s score settings with the percentage selected', async () => {
+    axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+    renderPanel([courseARow]);
+
+    await user.click(await screen.findByRole('button', { name: 'Add Rule' }));
+
+    const input = within(screen.getByRole('dialog', { name: 'Competency Completion Rule' }))
+      .getByRole('textbox') as HTMLInputElement;
+    await waitFor(() => expect(input).toHaveFocus());
+    expect(input.selectionStart).toBe(0);
+    expect(input.selectionEnd).toBe(input.value.length);
+
+    await user.keyboard('{Escape}');
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    const buttons = screen.getAllByRole('button', { name: /With a score of/ });
+    await waitFor(() => expect(document.activeElement).toBe(buttons.at(-1)));
+  });
+
+  it('taking the suggested score keeps the dialog open, then Escape returns focus to the score settings button', async () => {
+    axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+    renderPanel([courseARow]);
+    await user.click(await screen.findByRole('button', { name: 'Add Rule' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Competency Completion Rule' });
+    const scoreSettingsButton = document.querySelector(
+      '.score-threshold-field__score-settings-button[aria-expanded="true"]',
+    );
+    expect(scoreSettingsButton).toBeInstanceOf(HTMLButtonElement);
+
+    await user.click(within(dialog).getByRole('button', { name: 'Use 75% or higher' }));
+
+    const input = within(screen.getByRole('dialog')).getByRole('textbox');
+    await waitFor(() => expect(input).toHaveFocus());
+    expect(input).toHaveValue('75');
+    expect(screen.getByRole('dialog')).not.toHaveTextContent(/Another rule in this group already uses/);
+
+    await user.keyboard('{Escape}');
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    await waitFor(() => expect(document.activeElement).toBe(scoreSettingsButton));
+  });
+
+  it('+ Rule on a group whose default score is free focuses the new box\'s score settings button without opening the popover', async () => {
+    axiosMock.onGet(groupsUrl).reply(200, freeDefaultResponse);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+    renderPanel([courseARow]);
+
+    await user.click(await screen.findByRole('button', { name: 'Add Rule' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('button', { name: /With a score of 70%/ })).toHaveFocus());
+  });
+
+  it('creates the criterion once the author takes the suggested score after a taken default is rejected', async () => {
+    axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(
+      200,
+      outlineOf('Course A', { 'a-sub-1': 'Homework A' }),
+    );
+    axiosMock.onPost(createUrl).reply(201, {
+      id: 903,
+      group_id: 10,
+      rule_profile_id: null,
+      rule_type_override: 'grade',
+      rule_payload_override: { op: 'gte', value: 0.75, scale: 'percent' },
+      object_tag_id: tagId,
+    });
+    renderPanel([courseARow]);
+    await screen.findByRole('heading', { name: 'From within Course A ...' });
+    await user.click(screen.getByRole('button', { name: 'Add Rule' }));
+    expect(screen.getByRole('dialog')).toHaveTextContent(/Another rule in this group already uses 70% or higher/);
+    expect(screen.getByRole('button', { name: 'Use 75% or higher' })).toBeInTheDocument();
+    await closeScorePopover(user);
+    await user.click(await screen.findByRole('button', { name: 'Expand' }));
+    await user.click(await screen.findByRole('button', { name: 'Expand' }));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    await user.click(await screen.findByRole('button', { name: 'Associate CCRS-1.3 with Homework A' }));
+
+    expect(axiosMock.history.post).toHaveLength(0);
+    const dialog = await screen.findByRole('dialog', { name: 'Competency Completion Rule' });
+    expect(within(dialog).getByRole('textbox')).toBeInvalid();
+    const scoreSuggestionLink = within(dialog).getByRole('button', { name: 'Use 75% or higher' });
+    await waitFor(() => expect(scoreSuggestionLink).toHaveFocus());
+    await user.click(scoreSuggestionLink);
+    await waitFor(() => expect(within(screen.getByRole('dialog')).getByRole('textbox')).toHaveFocus());
+    expect(within(screen.getByRole('dialog')).getByRole('textbox')).toHaveValue('75');
+    await closeScorePopover(user);
+    await user.click(screen.getByRole('button', { name: 'Associate CCRS-1.3 with Homework A' }));
+
+    await waitFor(() => expect(axiosMock.history.post).toHaveLength(1));
+    expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
+      object_id: 'a-sub-1',
+      group_id: 10,
+      rule_type_override: 'grade',
+      rule_payload_override: { op: 'gte', value: 0.75, scale: 'percent' },
+    });
+  });
+
   it('moves the focus when a second group header and then a second rule box are clicked', async () => {
     axiosMock.onGet(groupsUrl).reply(200, courseBGroupsResponse);
     axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
@@ -212,6 +370,102 @@ describe('competency associations over the real provider', () => {
 
     expect(currentStates(groupHeaders())).toEqual(['false', 'false', 'true']);
     expect(currentStates(ruleBoxControls())).toEqual(['false', 'true']);
+  });
+
+  it('shows an empty saved group\'s placeholder box without opening its score settings when the group is focused', async () => {
+    axiosMock.onGet(groupsUrl).reply(200, twoGroupsResponse);
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+    renderPanel([courseARow]);
+    await screen.findAllByText(/^By completing/);
+    expect(screen.queryByRole('button', { name: /With a score of/ })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Add Rule Group' }));
+
+    await user.click(groupHeaders()[1]);
+
+    expect(currentStates(groupHeaders())).toEqual(['false', 'true']);
+    const placeholderButtons = screen.getAllByRole('button', { name: /With a score of/ });
+    expect(placeholderButtons).toHaveLength(1);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    // A stale just-added flag would focus this button when the placeholder mounts.
+    expect(placeholderButtons[0]).not.toHaveFocus();
+
+    await user.click(groupHeaders()[0]);
+
+    expect(currentStates(groupHeaders())).toEqual(['true', 'false']);
+    expect(screen.getAllByRole('button', { name: /With a score of/ })).toHaveLength(1);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  describe('focus after a committed score', () => {
+    const scoreSettingsButton = (percent: number) =>
+      screen.getByRole('button', { name: new RegExp(`With a score of ${percent}%`) });
+
+    const commitScore = async (percent: string) => {
+      const input = within(screen.getByRole('dialog')).getByRole('textbox');
+      await user.clear(input);
+      await user.type(input, percent);
+      await user.keyboard('{Enter}');
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    };
+
+    it('keeps focus on the same score settings button after a saved score is committed', async () => {
+      let groupsReply = singleGroupResponse;
+      axiosMock.onGet(groupsUrl).reply(() => [200, groupsReply]);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+      axiosMock.onPatch(ruleUpdateUrl).reply(() => {
+        const updated = criterion(900, 'existing-sub', 10, {
+          ruleProfileId: null,
+          ruleTypeOverride: 'grade',
+          rulePayloadOverride: { op: 'gte', value: 0.85, scale: 'percent' },
+        });
+        groupsReply = { ...singleGroupResponse, criteria: [updated] };
+        return [200, [updated]];
+      });
+      renderPanel([courseARow]);
+      const buttonBefore = await screen.findByRole('button', { name: /With a score of 70%/ });
+      await user.click(buttonBefore);
+
+      await commitScore('85');
+
+      await waitFor(() => expect(buttonBefore).toHaveTextContent('85%'));
+      await waitFor(() => expect(document.activeElement).toBe(buttonBefore));
+      expect(ruleBoxWithScore('85')).toHaveAttribute('aria-current', 'true');
+    });
+
+    it('keeps focus on the same placeholder score settings button, with its dialog closed, after the placeholder score is committed', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, freeDefaultResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+      renderPanel([courseARow]);
+      await user.click(await screen.findByRole('button', { name: 'Add Rule' }));
+      const buttonBefore = screen.getAllByRole('button', { name: /With a score of 70%/ }).at(-1)!;
+      await waitFor(() => expect(buttonBefore).toHaveFocus());
+      await user.click(buttonBefore);
+
+      await commitScore('80');
+
+      await waitFor(() => expect(buttonBefore).toHaveTextContent('80%'));
+      await waitFor(() => expect(document.activeElement).toBe(buttonBefore));
+      expect(buttonBefore).toHaveAttribute('aria-expanded', 'false');
+      expect(axiosMock.history.patch).toHaveLength(0);
+    });
+
+    it('keeps focus on the same score settings button when a saved score is rejected and the popover is then dismissed', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+      axiosMock.onPatch(ruleUpdateUrl).reply(500);
+      renderPanel([courseARow]);
+      await user.click(await screen.findByRole('button', { name: /With a score of 70%/ }));
+      const input = within(screen.getByRole('dialog')).getByRole('textbox');
+      await user.clear(input);
+      await user.type(input, '85');
+      await user.keyboard('{Enter}');
+      await waitFor(() => expect(axiosMock.history.patch).toHaveLength(1));
+      await waitFor(() => expect(input).toHaveValue('70'));
+
+      await closeScorePopover(user);
+
+      expect(scoreSettingsButton(70)).toHaveFocus();
+    });
   });
 
   it('shows the empty state when every course outline is refused with 403', async () => {
