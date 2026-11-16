@@ -31,12 +31,19 @@ const messages = defineMessages({
     description: 'Header sentence on a bottom-tier group\'s bracket, naming how its rule boxes combine. '
       + '"{operator}" is replaced by the word "any" or "all".',
   },
+  scoreThresholdPhrase: {
+    id: 'course-authoring.competency-management.criteria-groups.score-threshold-phrase',
+    defaultMessage: '{op, select, gte {{value} or higher} lte {{value} or lower} other {{value}}}',
+    description: 'A rule\'s score threshold, for example "75% or higher". '
+      + '"{op}" is the comparison: gte (at least), lte (at most) or any other value for an exact match. '
+      + '"{value}" is the already formatted percentage.',
+  },
   scoreThresholdLabel: {
     id: 'course-authoring.competency-management.criteria-groups.score-threshold-label',
-    defaultMessage: 'With a score of <threshold>{op, select, gte {{value} or higher} lte {{value} or lower} other {{value}}}</threshold>',
+    defaultMessage: 'With a score of <threshold>{score}</threshold>',
     description: 'Label stating a rule box\'s score threshold, for example "With a score of 75% or higher". '
-      + '"{op}" is the comparison: gte (at least), lte (at most) or any other value for an exact match. '
-      + '"{value}" is the already formatted percentage. "<threshold>" wraps the part shown in the highlighted box.',
+      + '"{score}" is the threshold phrase, such as "75% or higher". '
+      + '"<threshold>" wraps the part shown in the highlighted box.',
   },
   unknownSubsectionLabel: {
     id: 'course-authoring.competency-management.criteria-groups.unknown-subsection-label',
@@ -83,8 +90,8 @@ const messages = defineMessages({
   scoreThresholdInputAccessibleLabel: {
     id: 'course-authoring.competency-management.criteria-groups.score-threshold-input-accessible-label',
     defaultMessage: 'Score threshold percentage',
-    description: 'Accessible name for the editable score-threshold input, which otherwise relies on the '
-      + 'surrounding sentence ("With a score of ___% or higher") for sighted users only.',
+    description: 'Accessible name for the percentage input in the score settings popover, whose only visible '
+      + 'neighbors are the comparison menu and a "%" sign.',
   },
   duplicateScoreValidationMessage: {
     id: 'course-authoring.competency-management.criteria-groups.duplicate-score-validation-message',
@@ -104,6 +111,74 @@ const messages = defineMessages({
     defaultMessage: 'Select this rule',
     description: 'Visually hidden accessible label for the button that selects a rule box, stretched to cover '
       + 'the whole box - the box has no single short visible phrase of its own to reuse as this label.',
+  },
+  defaultScoreTakenHint: {
+    id: 'course-authoring.competency-management.criteria-groups.default-score-taken-hint',
+    defaultMessage: 'Another rule in this group already uses {score}. Choose a different score.',
+    description: 'Guidance shown inside the rule box\'s score settings popover when the displayed score is '
+      + 'already used by another box in the same group. "{score}" is the score as shown in the field, such as '
+      + '"75% or higher".',
+  },
+  useSuggestedScoreLink: {
+    id: 'course-authoring.competency-management.criteria-groups.use-suggested-score-link',
+    defaultMessage: 'Use {score}',
+    description: 'Link under the "score already used" guidance that applies the nearest unused score. '
+      + '"{score}" is that score as shown in the field, such as "80% or higher".',
+  },
+  addRuleButtonLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.add-rule-button-label',
+    defaultMessage: 'Rule',
+    description: 'Label for the button that adds a new, not-yet-saved rule box to a bottom-tier group.',
+  },
+  addRuleGroupButtonLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.add-rule-group-button-label',
+    defaultMessage: 'Rule Group',
+    description: 'Label for the button that adds a new, not-yet-saved bottom-tier group to a course-level group.',
+  },
+  addRuleAccessibleLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.add-rule-accessible-label',
+    defaultMessage: 'Add Rule',
+    description: 'Accessible name of the button that adds a new rule box, whose visible label is just "Rule".',
+  },
+  addRuleGroupAccessibleLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.add-rule-group-accessible-label',
+    defaultMessage: 'Add Rule Group',
+    description: 'Accessible name of the button that adds a new rule group, whose visible label is just "Rule Group".',
+  },
+  addControlDisabledTooltip: {
+    id: 'course-authoring.competency-management.criteria-groups.add-control-disabled-tooltip',
+    defaultMessage: 'Fill in the empty box before adding another.',
+    description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while a not-yet-saved placeholder '
+      + 'already exists elsewhere in the tree.',
+  },
+  addControlSavingTooltip: {
+    id: 'course-authoring.competency-management.criteria-groups.add-control-saving-tooltip',
+    defaultMessage: 'Wait for the save to finish before adding another.',
+    description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while a create request is '
+      + 'still in flight.',
+  },
+  placeholderRuleBoxHint: {
+    id: 'course-authoring.competency-management.criteria-groups.placeholder-rule-box-hint',
+    defaultMessage: 'Select content below to add it here.',
+    description: 'Hint text shown in place of chips on a not-yet-saved placeholder rule box, which has no '
+      + 'content associated with it yet.',
+  },
+  scoreSettingsHeading: {
+    id: 'course-authoring.competency-management.criteria-groups.score-settings-heading',
+    defaultMessage: 'Competency Completion Rule',
+    description: 'Heading of the popover where a rule box\'s comparison and score are edited.',
+  },
+  comparisonOperatorAccessibleLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.comparison-operator-accessible-label',
+    defaultMessage: '{op, select, gte {Comparison, or higher} lte {Comparison, or lower} other {Comparison, equal to}}',
+    description: 'Accessible name of the menu button that picks how a score is compared. '
+      + '"{op}" is the current comparison: gte (at least), lte (at most) or any other value for an exact match.',
+  },
+  comparisonOptionLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.comparison-option-label',
+    defaultMessage: '{op, select, gte {>= or higher} lte {<= or lower} other {= equal to}}',
+    description: 'Text of one item in the comparison menu: the symbol followed by its meaning in words. '
+      + '"{op}" is the comparison: gte (at least), lte (at most) or any other value for an exact match.',
   },
 });
 
