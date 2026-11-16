@@ -20,9 +20,10 @@ describe('course optimizer api hooks', () => {
   it('normalizes link-check status data and polls while in progress', async () => {
     const { axiosMock, queryClient } = initializeMocks();
     axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, {
-      LinkCheckStatus: 'In Progress',
-      LinkCheckOutput: null,
-      LinkCheckCreatedAt: null,
+      status: 'In Progress',
+      created_at: '2024-12-14T00:26:50.838350Z',
+      error: null,
+      output: null,
     });
 
     const { result } = renderHook(() => useLinkCheckStatus(courseId), {
@@ -33,7 +34,7 @@ describe('course optimizer api hooks', () => {
     expect(result.current.data).toEqual({
       linkCheckStatus: 'In Progress',
       linkCheckOutput: null,
-      linkCheckCreatedAt: null,
+      linkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
     });
     const query = queryClient.getQueryCache().find({
       queryKey: courseOptimizerQueryKeys.linkCheckStatus(courseId),
@@ -55,7 +56,12 @@ describe('course optimizer api hooks', () => {
     jest.useFakeTimers();
     try {
       const { axiosMock, queryClient } = initializeMocks();
-      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).replyOnce(200, { LinkCheckStatus: 'Pending' });
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).replyOnce(200, {
+        status: 'Pending',
+        created_at: '2024-12-14T00:26:50.838350Z',
+        error: null,
+        output: null,
+      });
       axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(statusCode);
 
       const { result } = renderHook(() => useLinkCheckStatus(courseId), {
@@ -83,7 +89,14 @@ describe('course optimizer api hooks', () => {
     const { axiosMock, queryClient } = initializeMocks();
     axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, {
       status: 'Succeeded',
-      Results: [{ id: 'block-1', success: true, original_url: 'https://old.example.com', type: 'html' }],
+      results: [{
+        id: 'block-1',
+        type: 'html',
+        original_url: 'https://old.example.com',
+        new_url: 'https://new.example.com',
+        success: true,
+        error_message: null,
+      }],
     });
 
     const { result } = renderHook(() => useRerunLinkUpdateStatus(courseId), {
@@ -96,7 +109,7 @@ describe('course optimizer api hooks', () => {
       results: [{
         id: 'block-1',
         success: true,
-        newUrl: null,
+        newUrl: 'https://new.example.com',
         originalUrl: 'https://old.example.com',
         type: 'html',
       }],
@@ -158,7 +171,7 @@ describe('course optimizer api hooks', () => {
 
   it('optimistically resets terminal link-check data when starting a scan', async () => {
     const { axiosMock, queryClient } = initializeMocks();
-    axiosMock.onPost(postLinkCheckCourseApiUrl(courseId)).reply(200, { LinkCheckStatus: 'Pending' });
+    axiosMock.onPost(postLinkCheckCourseApiUrl(courseId)).reply(202, { status: 'Pending' });
 
     queryClient.setQueryData(courseOptimizerQueryKeys.linkCheckStatus(courseId), {
       linkCheckStatus: 'Succeeded',
@@ -199,7 +212,7 @@ describe('course optimizer api hooks', () => {
     const queryKey = courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId);
     const invalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
     axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, { status: 'Pending', results: [] });
-    axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(200, { status: 'Pending' });
+    axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(202, { status: 'Pending' });
 
     const { result } = renderHook(() => ({
       status: useRerunLinkUpdateStatus(courseId),
@@ -279,7 +292,7 @@ describe('course optimizer api hooks', () => {
     const queryKey = courseOptimizerQueryKeys.rerunLinkUpdateStatus(courseId);
     const invalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
     axiosMock.onGet(getRerunLinkUpdateStatusApiUrl(courseId)).reply(200, { status: 'Pending', results: [] });
-    axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(200, { status: 'Pending' });
+    axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(202, { status: 'Pending' });
 
     const { result } = renderHook(() => ({
       status: useRerunLinkUpdateStatus(courseId),
