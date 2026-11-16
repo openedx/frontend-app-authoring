@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-
+import { useEffect, useRef } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Stack } from '@openedx/paragon';
 
@@ -9,11 +9,6 @@ import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import CourseGroupSection from './CourseGroupSection';
 import messages from './messages';
 import './criteria-groups.scss';
-
-export interface CourseGroupListProps {
-  /** The selected competency's name, shown in bold in the empty state. */
-  competencyName: string;
-}
 
 /** The associations tree for the selected competency: loading, failed, empty, or the
  * accessible course-level groups. A course whose outline returns 403 or 404 is hidden,
@@ -31,14 +26,28 @@ export interface CourseGroupListProps {
  * While the course list reloads, the previous groups stay on screen and the
  * empty states give way to a spinner: both would describe the previous list.
  */
-const CourseGroupList = ({ competencyName }: CourseGroupListProps) => {
+const CourseGroupList = () => {
   const intl = useIntl();
   const {
     status,
     accessibleCourseGroups,
     criteriaCounts,
     courseList,
+    competencyName,
+    keyboardFocusRequest,
+    consumeKeyboardFocusRequest,
   } = useCompetencyAssociations();
+  const emptyStateRef = useRef<HTMLDivElement>(null);
+  const takesKeyboardFocus = keyboardFocusRequest?.kind === 'empty';
+
+  // Reruns when the list length changes, so it takes the request whichever lands first: the request or the empty
+  // state it names.
+  useEffect(() => {
+    if (takesKeyboardFocus && emptyStateRef.current) {
+      emptyStateRef.current.focus({ preventScroll: true });
+      consumeKeyboardFocusRequest();
+    }
+  }, [takesKeyboardFocus, accessibleCourseGroups.length, consumeKeyboardFocusRequest]);
 
   if (status === 'pending') {
     return <CenteredSpinner />;
@@ -81,7 +90,7 @@ const CourseGroupList = ({ competencyName }: CourseGroupListProps) => {
       });
     }
     return (
-      <div className="course-group-list__empty-state">
+      <div ref={emptyStateRef} tabIndex={-1} className="course-group-list__empty-state">
         <p className="mb-0">{firstLine}</p>
         <p className="mb-0">{intl.formatMessage(messages.noAssociationsPromptMessage)}</p>
       </div>

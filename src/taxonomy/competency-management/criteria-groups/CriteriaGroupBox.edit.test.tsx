@@ -21,7 +21,13 @@ const group = singleGroupResponse.groups.find(({ id }) => id === 10) as BottomTi
 const renderBox = (contextOverrides: MockCompetencyAssociationsOverrides = {}, canEdit: boolean = true) => (
   render(
     <MockCompetencyAssociationsProvider value={contextOverrides}>
-      <CriteriaGroupBox group={group} subsectionNamesByUsageKey={{}} canEdit={canEdit} />
+      <CriteriaGroupBox
+        group={group}
+        subsectionNamesByUsageKey={{}}
+        canEdit={canEdit}
+        position={2}
+        courseName="Demo Course"
+      />
     </MockCompetencyAssociationsProvider>,
   )
 );
@@ -33,6 +39,10 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
   beforeEach(() => {
     initializeMocks();
     user = userEvent.setup();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('renders the any/all label as plain text with no dropdown when canEdit is false', () => {
@@ -52,22 +62,22 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     expect(updateGroupOperator).toHaveBeenCalledWith(10, 'AND');
   });
 
-  it('focuses the group when its select button is clicked', async () => {
-    const focusGroup = jest.fn();
-    renderBox({ focusGroup });
+  it('selects the group when its select button is clicked', async () => {
+    const selectGroup = jest.fn();
+    renderBox({ selectGroup });
 
     await user.click(screen.getByRole('button', { name: 'By completing any of the following' }));
 
-    expect(focusGroup).toHaveBeenCalledWith(10);
+    expect(selectGroup).toHaveBeenCalledWith(10);
   });
 
-  it('does not focus the group when the operator dropdown is used', async () => {
-    const focusGroup = jest.fn();
-    renderBox({ focusGroup });
+  it('does not select the group when the operator dropdown is used', async () => {
+    const selectGroup = jest.fn();
+    renderBox({ selectGroup });
 
     await user.click(screen.getByRole('button', { name: 'any' }));
 
-    expect(focusGroup).not.toHaveBeenCalled();
+    expect(selectGroup).not.toHaveBeenCalled();
   });
 
   it('never nests a button inside another', () => {
@@ -93,6 +103,11 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
       'a rule is being saved',
       { isAssociating: true },
       'Wait for the save to finish before adding another.',
+    ],
+    [
+      'a group is being removed',
+      { isDeletingGroup: true },
+      'Wait for the removal to finish before adding another.',
     ],
     [
       'a rule is being saved and a placeholder exists',
@@ -130,13 +145,13 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
       render(
         <MockCompetencyAssociationsProvider
           value={{
-            focus: { groupId: null, ruleKey: null },
+            selection: { groupId: null, ruleKey: null },
             placeholder: { parentRuleGroupId: 1, logicOperator: current, rulePayload: null, justAdded: false },
             setPlaceholderLogicOperator,
             updateGroupOperator,
           }}
         >
-          <CriteriaGroupBox subsectionNamesByUsageKey={{}} canEdit />
+          <CriteriaGroupBox subsectionNamesByUsageKey={{}} canEdit position={3} courseName="Demo Course" />
         </MockCompetencyAssociationsProvider>,
       );
 
@@ -152,7 +167,7 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     const loaded = buildMockCompetencyAssociationsContextValue();
     render(
       <CompetencyAssociationsContext.Provider value={{ ...loaded, status: 'error', error: new Error('boom') }}>
-        <CriteriaGroupBox group={group} subsectionNamesByUsageKey={{}} canEdit />
+        <CriteriaGroupBox group={group} subsectionNamesByUsageKey={{}} canEdit position={2} courseName="Demo Course" />
       </CompetencyAssociationsContext.Provider>,
     );
 
@@ -161,9 +176,126 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
   });
 
   it('scrolls the placeholder rule box once, not the group', () => {
-    renderBox({ focus: { groupId: 10, ruleKey: null } });
+    renderBox({ selection: { groupId: 10, ruleKey: null } });
 
     expect(scrollIntoView).toHaveBeenCalledTimes(1);
     expect(scrollIntoView.mock.contexts[0]).toHaveClass('rule-box');
+  });
+
+  describe('delete control', () => {
+    const openMenu = (name = 'More actions for rule group 2 in Demo Course') => (
+      user.click(screen.getByRole('button', { name }))
+    );
+
+    it('calls deleteGroup with its own id, without selecting the group, when Remove group is chosen', async () => {
+      const deleteGroup = jest.fn();
+      const selectGroup = jest.fn();
+      renderBox({ deleteGroup, selectGroup });
+
+      await openMenu();
+      await user.click(screen.getByRole('button', { name: 'Remove group' }));
+
+      expect(deleteGroup).toHaveBeenCalledWith(10);
+      expect(selectGroup).not.toHaveBeenCalled();
+    });
+
+    it('renders no menu when canEdit is false', () => {
+      renderBox({}, false);
+
+      expect(screen.queryByRole('button', { name: 'More actions for rule group 2 in Demo Course' })).not
+        .toBeInTheDocument();
+    });
+
+    it.each([
+      ['a delete', { isDeletingGroup: true }],
+      ['a create', { isAssociating: true }],
+    ])('disables the menu button while %s is in flight', (_name, overrides) => {
+      renderBox(overrides);
+
+      expect(screen.getByRole('button', { name: 'More actions for rule group 2 in Demo Course' })).toBeDisabled();
+    });
+
+    it('lets the placeholder group\'s menu discard it without calling deleteGroup', async () => {
+      const deleteGroup = jest.fn();
+      const discardPlaceholderGroup = jest.fn();
+      render(
+        <MockCompetencyAssociationsProvider
+          value={{ selection: { groupId: null, ruleKey: null }, deleteGroup, discardPlaceholderGroup }}
+        >
+          <CriteriaGroupBox subsectionNamesByUsageKey={{}} canEdit position={3} courseName="Demo Course" />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+      await openMenu('More actions for the new rule group in Demo Course');
+      await user.click(screen.getByRole('button', { name: 'Remove group' }));
+
+      expect(discardPlaceholderGroup).toHaveBeenCalledTimes(1);
+      expect(deleteGroup).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['editable', true],
+      ['read-only', false],
+    ])(
+      'takes keyboard focus on its header button when a request names it, then consumes the request (%s)',
+      (_name, canEdit) => {
+        const consumeKeyboardFocusRequest = jest.fn();
+        renderBox(
+          { keyboardFocusRequest: { kind: 'group', groupId: 10, selectionMoved: true }, consumeKeyboardFocusRequest },
+          canEdit,
+        );
+
+        expect(screen.getByRole('button', { name: 'By completing any of the following' })).toHaveFocus();
+        expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
+      },
+    );
+
+    it.each([true, false])(
+      'focuses the select button, scrolling only when selection did not move (selectionMoved: %s)',
+      (selectionMoved) => {
+        const focus = jest.spyOn(HTMLButtonElement.prototype, 'focus');
+        renderBox({ keyboardFocusRequest: { kind: 'group', groupId: 10, selectionMoved } });
+
+        expect(focus).toHaveBeenCalledWith({ preventScroll: selectionMoved });
+      },
+    );
+
+    it('takes keyboard focus on its menu button when a menu request names it, then consumes the request', () => {
+      const consumeKeyboardFocusRequest = jest.fn();
+      renderBox({ keyboardFocusRequest: { kind: 'menu', groupId: 10 }, consumeKeyboardFocusRequest });
+
+      expect(screen.getByRole('button', { name: 'More actions for rule group 2 in Demo Course' })).toHaveFocus();
+      expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
+    });
+
+    it('leaves a menu request pending while the menu button is still disabled', () => {
+      const consumeKeyboardFocusRequest = jest.fn();
+      renderBox({
+        keyboardFocusRequest: { kind: 'menu', groupId: 10 },
+        consumeKeyboardFocusRequest,
+        isDeletingGroup: true,
+      });
+
+      expect(consumeKeyboardFocusRequest).not.toHaveBeenCalled();
+    });
+
+    it('ignores a menu request that names another group', () => {
+      const consumeKeyboardFocusRequest = jest.fn();
+      renderBox({ keyboardFocusRequest: { kind: 'menu', groupId: 99 }, consumeKeyboardFocusRequest });
+
+      expect(screen.getByRole('button', { name: 'More actions for rule group 2 in Demo Course' })).not.toHaveFocus();
+      expect(consumeKeyboardFocusRequest).not.toHaveBeenCalled();
+    });
+
+    it('ignores a keyboard focus request that names another group', () => {
+      const consumeKeyboardFocusRequest = jest.fn();
+      renderBox({
+        keyboardFocusRequest: { kind: 'group', groupId: 99, selectionMoved: true },
+        consumeKeyboardFocusRequest,
+      });
+
+      expect(screen.getByRole('button', { name: 'By completing any of the following' })).not.toHaveFocus();
+      expect(consumeKeyboardFocusRequest).not.toHaveBeenCalled();
+    });
   });
 });

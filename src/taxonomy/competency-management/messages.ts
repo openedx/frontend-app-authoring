@@ -55,6 +55,11 @@ const messages = defineMessages({
     description: 'Toast shown in place of the generic create-criterion failure when the backend rejects the '
       + 'new criterion because an ancestor or descendant competency already has criteria in the same course.',
   },
+  deleteGroupFailedToastMessage: {
+    id: 'course-authoring.competency-management.delete-group-failed-toast-message',
+    defaultMessage: 'There was a problem removing this group. Please try again.',
+    description: 'Toast shown when removing a course group or rule group fails.',
+  },
   updateGroupOperatorFailedToastMessage: {
     id: 'course-authoring.competency-management.update-group-operator-failed-toast-message',
     defaultMessage: 'There was a problem updating this group\'s logic. Please try again.',

@@ -1,6 +1,36 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  ruleGroupMoreActionsLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.rule-group-more-actions-label',
+    defaultMessage: 'More actions for rule group {position} in {courseName}',
+    description: 'Accessible label for the ⋮ button that opens a saved rule group\'s actions menu. '
+      + '{position} is the group\'s 1-based position among the rule groups of its course group, '
+      + 'and {courseName} is the name of the course the group belongs to.',
+  },
+  placeholderRuleGroupMoreActionsLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.placeholder-rule-group-more-actions-label',
+    defaultMessage: 'More actions for the new rule group in {courseName}',
+    description: 'Accessible label for the ⋮ button on the unsaved new rule group, which has no position yet. '
+      + '{courseName} is the name of the course the group belongs to.',
+  },
+  removeRuleGroupMenuItem: {
+    id: 'course-authoring.competency-management.criteria-groups.remove-rule-group-menu-item',
+    defaultMessage: 'Remove group',
+    description: 'Menu item that removes a rule group, or discards the unsaved one, with its rule boxes.',
+  },
+  courseGroupMoreActionsLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.course-group-more-actions-label',
+    defaultMessage: 'More actions for {courseName}',
+    description: 'Accessible label for the ⋮ button that opens a course group\'s actions menu. '
+      + '{courseName} is the name of the course the group belongs to.',
+  },
+  removeFromCompetencyMenuItem: {
+    id: 'course-authoring.competency-management.criteria-groups.remove-from-competency-menu-item',
+    defaultMessage: 'Remove from {competencyName}',
+    description: 'Menu item that removes a course group, with all its rule groups, from the active competency. '
+      + '{competencyName} is the name of that competency.',
+  },
   logicOperatorAnyLabel: {
     id: 'course-authoring.competency-management.criteria-groups.logic-operator-any-label',
     defaultMessage: 'any',
@@ -192,6 +222,12 @@ const messages = defineMessages({
     defaultMessage: 'Wait for the course list to finish loading before adding another.',
     description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while the course list below is '
       + 'reloading and the listed courses may change.',
+  },
+  addControlDeletingTooltip: {
+    id: 'course-authoring.competency-management.criteria-groups.add-control-deleting-tooltip',
+    defaultMessage: 'Wait for the removal to finish before adding another.',
+    description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while a request to remove a group is '
+      + 'still in flight.',
   },
   placeholderRuleBoxHint: {
     id: 'course-authoring.competency-management.criteria-groups.placeholder-rule-box-hint',

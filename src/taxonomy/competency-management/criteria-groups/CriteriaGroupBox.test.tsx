@@ -22,7 +22,13 @@ const renderBox = (
 ) => (
   render(
     <MockCompetencyAssociationsProvider value={contextOverrides}>
-      <CriteriaGroupBox group={group} subsectionNamesByUsageKey={subsectionNamesByUsageKey} canEdit={canEdit} />
+      <CriteriaGroupBox
+        group={group}
+        subsectionNamesByUsageKey={subsectionNamesByUsageKey}
+        canEdit={canEdit}
+        position={1}
+        courseName="Demo Course"
+      />
     </MockCompetencyAssociationsProvider>,
   )
 );
@@ -47,37 +53,37 @@ describe('<CriteriaGroupBox />', () => {
     expect(screen.getByText('Subsection A')).toBeInTheDocument();
   });
 
-  it('calls focusGroup with its own id when the header is clicked', async () => {
-    const focusGroup = jest.fn();
-    renderBox({ focusGroup });
+  it('calls selectGroup with its own id when the header is clicked', async () => {
+    const selectGroup = jest.fn();
+    renderBox({ selectGroup });
 
     await user.click(headerButton());
-    expect(focusGroup).toHaveBeenCalledWith(10);
+    expect(selectGroup).toHaveBeenCalledWith(10);
   });
 
-  it.each(['{Enter}', ' '])('calls focusGroup once when the header is activated with %j', async (key) => {
-    const focusGroup = jest.fn();
-    renderBox({ focusGroup });
+  it.each(['{Enter}', ' '])('calls selectGroup once when the header is activated with %j', async (key) => {
+    const selectGroup = jest.fn();
+    renderBox({ selectGroup });
 
     await user.tab();
     expect(headerButton()).toHaveFocus();
     await user.keyboard(key);
-    expect(focusGroup).toHaveBeenCalledTimes(1);
-    expect(focusGroup).toHaveBeenCalledWith(10);
+    expect(selectGroup).toHaveBeenCalledTimes(1);
+    expect(selectGroup).toHaveBeenCalledWith(10);
   });
 
   it.each([
-    { name: 'nothing is focused', focus: null, header: 'false', ruleBox: 'false' },
-    { name: 'another group is focused', focus: { groupId: 11, ruleKey }, header: 'false', ruleBox: 'false' },
+    { name: 'nothing is selected', selection: null, header: 'false', ruleBox: 'false' },
+    { name: 'another group is selected', selection: { groupId: 11, ruleKey }, header: 'false', ruleBox: 'false' },
     {
-      name: 'the group is focused without a rule key',
-      focus: { groupId: 10, ruleKey: null },
+      name: 'the group is selected without a rule key',
+      selection: { groupId: 10, ruleKey: null },
       header: 'true',
       ruleBox: 'false',
     },
-    { name: 'the group\'s rule box is focused', focus: { groupId: 10, ruleKey }, header: 'true', ruleBox: 'true' },
-  ])('marks the header and rule box current when $name', ({ focus, header, ruleBox }) => {
-    renderBox({ focus });
+    { name: 'the group\'s rule box is selected', selection: { groupId: 10, ruleKey }, header: 'true', ruleBox: 'true' },
+  ])('marks the header and rule box current when $name', ({ selection, header, ruleBox }) => {
+    renderBox({ selection });
 
     expect(headerButton()).toHaveAttribute('aria-current', header);
     expect(ruleBoxButton()).toHaveAttribute('aria-current', ruleBox);
@@ -91,29 +97,33 @@ describe('<CriteriaGroupBox />', () => {
     });
   });
 
-  it('clicking a rule box focuses only the rule box, not also the group', async () => {
-    const focusGroup = jest.fn();
-    const focusRuleBox = jest.fn();
-    renderBox({ focusGroup, focusRuleBox });
+  it('clicking a rule box selects only the rule box, not also the group', async () => {
+    const selectGroup = jest.fn();
+    const selectRuleBox = jest.fn();
+    renderBox({ selectGroup, selectRuleBox });
 
     await user.click(ruleBoxButton());
 
-    expect(focusRuleBox).toHaveBeenCalledTimes(1);
-    expect(focusGroup).not.toHaveBeenCalled();
+    expect(selectRuleBox).toHaveBeenCalledTimes(1);
+    expect(selectGroup).not.toHaveBeenCalled();
   });
 
   it.each([
-    { name: 'nothing is focused', focus: null, scrolledElement: null },
-    { name: 'another group is focused', focus: { groupId: 11, ruleKey }, scrolledElement: null },
+    { name: 'nothing is selected', selection: null, scrolledElement: null },
+    { name: 'another group is selected', selection: { groupId: 11, ruleKey }, scrolledElement: null },
     {
-      name: 'the group is focused without a rule key',
-      focus: { groupId: 10, ruleKey: null },
+      name: 'the group is selected without a rule key',
+      selection: { groupId: 10, ruleKey: null },
       scrolledElement: 'placeholder rule box',
     },
-    { name: 'the focused rule key matches no box', focus: { groupId: 10, ruleKey: 'stale' }, scrolledElement: 'group' },
-    { name: 'a rule box in the group is focused', focus: { groupId: 10, ruleKey }, scrolledElement: 'rule box' },
-  ])('scrolls once, and only the right element, when $name: $scrolledElement', ({ focus, scrolledElement }) => {
-    const { container } = renderBox({ focus });
+    {
+      name: 'the selected rule key matches no box',
+      selection: { groupId: 10, ruleKey: 'stale' },
+      scrolledElement: 'group',
+    },
+    { name: 'a rule box in the group is selected', selection: { groupId: 10, ruleKey }, scrolledElement: 'rule box' },
+  ])('scrolls once, and only the right element, when $name: $scrolledElement', ({ selection, scrolledElement }) => {
+    const { container } = renderBox({ selection });
 
     if (scrolledElement === null) {
       expect(scrollIntoView).not.toHaveBeenCalled();

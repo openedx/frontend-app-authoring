@@ -16,7 +16,7 @@ export type MockCompetencyAssociationsOverrides = Partial<CompetencyAssociations
 };
 
 /** A full context value with only the fields a test cares about overridden, so
- * component tests can control focus and data without the real provider's HTTP requests.
+ * component tests can control selection and data without the real provider's HTTP requests.
  * The default is a loaded context over `singleGroupResponse` and the system default profile;
  * `groupsIndex` and `systemDefaultProfile` are dropped unless `status` is `'success'`.
  */
@@ -25,7 +25,7 @@ export const buildMockCompetencyAssociationsContextValue = (
 ): CompetencyAssociationsContextValue => {
   const shared: CompetencyAssociationsContextBase = {
     error: null,
-    focus: null,
+    selection: null,
     placeholder: { parentRuleGroupId: null, logicOperator: 'OR', rulePayload: null, justAdded: false },
     hasPlaceholder: false,
     addPlaceholderRuleBox: jest.fn(),
@@ -35,12 +35,17 @@ export const buildMockCompetencyAssociationsContextValue = (
     discardPlaceholder: jest.fn(),
     placeholderDuplicateRejected: false,
     placeholderDuplicateRejectionCount: 0,
-    focusGroup: jest.fn(),
-    focusRuleBox: jest.fn(),
+    selectGroup: jest.fn(),
+    selectRuleBox: jest.fn(),
     notifyCourseExpanded: jest.fn(),
     associateSubsection: jest.fn(),
     updateGroupOperator: jest.fn(),
     updateRuleScore: jest.fn().mockResolvedValue(undefined),
+    deleteGroup: jest.fn(),
+    isDeletingGroup: false,
+    discardPlaceholderGroup: jest.fn(),
+    keyboardFocusRequest: null,
+    consumeKeyboardFocusRequest: jest.fn(),
     isAssociating: false,
     hasPermissionsError: false,
     expansionCountByCourseId: {},
@@ -63,6 +68,7 @@ export const buildMockCompetencyAssociationsContextValue = (
     setCourseSearch: jest.fn(),
     setCourseDateRange: jest.fn(),
     criteriaCounts: { criteriaCount: 0, totalCriteriaCount: 0 },
+    competencyName: 'Competency',
     ...overrides,
   };
   if (overrides.status === 'pending' || overrides.status === 'error') {

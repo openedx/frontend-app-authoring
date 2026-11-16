@@ -1,4 +1,4 @@
-// What Paragon has no prop for: the focus accent bars, the sentence layouts and the chip truncation.
+// What Paragon has no prop for: the selection accent bars, the sentence layouts and the chip truncation.
 .course-group-list__empty-state {
   display: flex;
   flex-direction: column;
@@ -19,7 +19,7 @@
   // Lets the score settings popover cap its width to the list, so it fits the associations panel at narrow widths.
   container-type: inline-size;
 
-  // The accent bar is always a left border so a focus change recolors it
+  // The accent bar is always a left border so a selection change recolors it
   // instead of shifting the content.
   .course-group-section {
     --pgn-spacing-card-spacer-x: 0;
@@ -31,7 +31,7 @@
     background-color: var(--pgn-color-white);
     box-shadow: var(--pgn-elevation-box-shadow-centered-1);
 
-    &--focused {
+    &--selected {
       border-left-color: var(--pgn-color-info-600);
     }
 
@@ -52,6 +52,12 @@
     .pgn__card-header .pgn__card-header-content {
       margin-top: 0;
       overflow: visible;
+    }
+
+    // Paragon's actions keep their own top margin, which drops the ⋮ toggle below the title.
+    .pgn__card-header .pgn__card-header-actions {
+      margin-top: 0;
+      align-self: center;
     }
 
     &__title {
@@ -90,6 +96,13 @@
     }
   }
 
+  // Figma draws both ⋮ toggles at 24×24; Paragon's inline size pads them to 2em.
+  .group-actions-menu .btn-icon-inline {
+    --pgn-size-icon-button-diameter-inline: var(--pgn-size-icon-md);
+
+    padding: 0;
+  }
+
   .criteria-group-box {
     margin: 0 var(--pgn-spacing-spacer-2);
     padding: var(--pgn-spacing-spacer-1-5);
@@ -99,7 +112,7 @@
     background-color: var(--pgn-color-light-200);
     box-shadow: var(--pgn-elevation-box-shadow-centered-1);
 
-    &--focused {
+    &--selected {
       border-left-color: var(--pgn-color-info-400);
     }
 
@@ -208,7 +221,7 @@
       }
     }
 
-    &--focused {
+    &--selected {
       padding-left: var(--pgn-spacing-spacer-1-5);
       border-left: 6px solid var(--pgn-color-info-400);
       background-color: var(--pgn-color-info-100);

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import type { Dispatch } from 'react';
 
 import type { CompetencyGroupLogicOperator, GradeRulePayload } from './data/types';
-import type { CriteriaFocus, ProviderAction, ProviderState } from './CompetencyAssociationsContext';
+import type { CriteriaSelection, ProviderAction, ProviderState } from './CompetencyAssociationsContext';
 import type { CompetencyCriteriaGroupsIndex } from './utils';
 
 /** The author's choices on the placeholder group or rule box. The rule payload is shared by both shapes, since only
@@ -13,7 +13,7 @@ export interface CriteriaPlaceholder {
   logicOperator: CompetencyGroupLogicOperator;
   rulePayload: GradeRulePayload | null;
   /**
-   * True from an add action until the placeholder's score is set or the focus moves. `RuleBoxList` uses it to open
+   * True from an add action until the placeholder's score is set or the selection moves. `RuleBoxList` uses it to open
    * the score settings or focus their button once, on the box the author just added.
    */
   justAdded: boolean;
@@ -38,21 +38,21 @@ export function reducePlaceholderAction(state: ProviderState, action: Placeholde
     case 'addPlaceholderRuleBox':
       return {
         ...state,
-        focus: { groupId: action.groupId, ruleKey: null },
+        selection: { groupId: action.groupId, ruleKey: null },
         placeholder: { ...state.placeholder, rulePayload: null, justAdded: true },
         pendingCourseId: null,
       };
     case 'addPlaceholderGroup':
       return {
         ...state,
-        focus: { groupId: null, ruleKey: null },
+        selection: { groupId: null, ruleKey: null },
         placeholder: { ...initialPlaceholder, parentRuleGroupId: action.parentRuleGroupId, justAdded: true },
         pendingCourseId: null,
       };
     case 'setPlaceholderLogicOperator':
       return { ...state, placeholder: { ...state.placeholder, logicOperator: action.logicOperator } };
     case 'discardPlaceholder':
-      return { ...state, focus: null, placeholder: { ...state.placeholder, justAdded: false } };
+      return { ...state, selection: null, placeholder: { ...state.placeholder, justAdded: false } };
     case 'setPlaceholderRulePayload':
       return {
         ...state,
@@ -64,37 +64,37 @@ export function reducePlaceholderAction(state: ProviderState, action: Placeholde
 }
 
 /**
- * Clears `justAdded` when an action moved the focus but kept the same placeholder object. An add action replaces
- * the placeholder object, so only a focus move onto an existing placeholder (such as clicking an empty saved group)
+ * Clears `justAdded` when an action moved the selection but kept the same placeholder object. An add action replaces
+ * the placeholder object, so only a selection move onto an existing placeholder (such as clicking an empty saved group)
  * is cleared here.
  */
-export function clearJustAddedOnFocusMove(previous: ProviderState, next: ProviderState): ProviderState {
-  const focusMoved = next.focus !== previous.focus;
-  if (!focusMoved || next.placeholder !== previous.placeholder || !next.placeholder.justAdded) {
+export function clearJustAddedOnSelectionMove(previous: ProviderState, next: ProviderState): ProviderState {
+  const selectionMoved = next.selection !== previous.selection;
+  if (!selectionMoved || next.placeholder !== previous.placeholder || !next.placeholder.justAdded) {
     return next;
   }
   return { ...next, placeholder: { ...next.placeholder, justAdded: false } };
 }
 
-/** Whether the focused placeholder's real group, or its parent for a placeholder group, left the groups tree. */
+/** Whether the selected placeholder's real group, or its parent for a placeholder group, left the groups tree. */
 export function isPlaceholderOrphaned(
-  focus: CriteriaFocus | null,
+  selection: CriteriaSelection | null,
   placeholder: CriteriaPlaceholder,
   groupsIndex: CompetencyCriteriaGroupsIndex,
 ): boolean {
-  if (focus === null || focus.ruleKey !== null) {
+  if (selection === null || selection.ruleKey !== null) {
     return false;
   }
-  const anchorId = focus.groupId ?? placeholder.parentRuleGroupId;
+  const anchorId = selection.groupId ?? placeholder.parentRuleGroupId;
   return anchorId !== null && !groupsIndex.groupsById.has(anchorId);
 }
 
 /** Actions that change what the author sees in the placeholder, so a rejection no longer applies. */
 export const PLACEHOLDER_REJECTION_CLEARING_ACTIONS: ReadonlySet<ProviderAction['type']> = new Set([
   'competencyChanged',
-  'focusGroup',
-  'focusRuleBox',
-  'setFocus',
+  'selectGroup',
+  'selectRuleBox',
+  'setSelection',
   'addPlaceholderRuleBox',
   'addPlaceholderGroup',
   'setPlaceholderRulePayload',

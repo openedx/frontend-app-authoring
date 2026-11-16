@@ -1,7 +1,7 @@
 import { singleGroupResponse } from './__mocks__';
 import type { ProviderState } from './CompetencyAssociationsContext';
 import {
-  clearJustAddedOnFocusMove,
+  clearJustAddedOnSelectionMove,
   initialPlaceholder,
   isPlaceholderOrphaned,
   reducePlaceholderAction,
@@ -12,8 +12,8 @@ describe('isPlaceholderOrphaned', () => {
   const index = buildCompetencyCriteriaGroupsIndex(singleGroupResponse);
 
   it.each([
-    ['no focus', null, initialPlaceholder, false],
-    ['a real rule box focus', { groupId: 99, ruleKey: 'k' }, initialPlaceholder, false],
+    ['no selection', null, initialPlaceholder, false],
+    ['a real rule box selection', { groupId: 99, ruleKey: 'k' }, initialPlaceholder, false],
     ['a placeholder rule box in a group that exists', { groupId: 10, ruleKey: null }, initialPlaceholder, false],
     ['a placeholder rule box in a missing group', { groupId: 99, ruleKey: null }, initialPlaceholder, true],
     [
@@ -28,8 +28,8 @@ describe('isPlaceholderOrphaned', () => {
       { ...initialPlaceholder, parentRuleGroupId: 99 },
       true,
     ],
-  ])('for %s returns %s', (_label, focus, placeholder, expected) => {
-    expect(isPlaceholderOrphaned(focus, placeholder, index)).toBe(expected);
+  ])('for %s returns %s', (_label, selection, placeholder, expected) => {
+    expect(isPlaceholderOrphaned(selection, placeholder, index)).toBe(expected);
   });
 });
 
@@ -37,12 +37,14 @@ describe('justAdded', () => {
   const baseState: ProviderState = {
     tagId: 1,
     generation: 0,
-    focus: null,
+    selection: null,
     placeholder: initialPlaceholder,
     placeholderDuplicateRejected: false,
     placeholderDuplicateRejectionCount: 0,
+    keyboardFocusRequest: null,
     pendingCourseId: null,
-    initialFocusDone: true,
+    pendingNewCourseSnapshot: null,
+    initialSelectionDone: true,
     settled: true,
     scopeCourseKeys: undefined,
   };
@@ -82,21 +84,21 @@ describe('justAdded', () => {
     expect(next.placeholder.justAdded).toBe(false);
   });
 
-  describe('clearJustAddedOnFocusMove', () => {
-    it('clears the flag when focus moves without a new placeholder', () => {
-      const moved = { ...afterAdd, focus: { groupId: 11, ruleKey: null } };
+  describe('clearJustAddedOnSelectionMove', () => {
+    it('clears the flag when selection moves without a new placeholder', () => {
+      const moved = { ...afterAdd, selection: { groupId: 11, ruleKey: null } };
 
-      expect(clearJustAddedOnFocusMove(afterAdd, moved).placeholder.justAdded).toBe(false);
+      expect(clearJustAddedOnSelectionMove(afterAdd, moved).placeholder.justAdded).toBe(false);
     });
 
-    it('keeps the flag when an add action changed the placeholder along with the focus', () => {
-      expect(clearJustAddedOnFocusMove(baseState, afterAdd).placeholder.justAdded).toBe(true);
+    it('keeps the flag when an add action changed the placeholder along with the selection', () => {
+      expect(clearJustAddedOnSelectionMove(baseState, afterAdd).placeholder.justAdded).toBe(true);
     });
 
-    it('keeps the flag when focus is unchanged', () => {
+    it('keeps the flag when selection is unchanged', () => {
       const same = { ...afterAdd, tagId: 2 };
 
-      expect(clearJustAddedOnFocusMove(afterAdd, same).placeholder.justAdded).toBe(true);
+      expect(clearJustAddedOnSelectionMove(afterAdd, same).placeholder.justAdded).toBe(true);
     });
   });
 });

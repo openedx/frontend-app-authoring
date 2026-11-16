@@ -33,6 +33,7 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
     canEditCourse,
     competencyExternalId,
     isAssociating,
+    isDeletingGroup,
     status,
   } = useCompetencyAssociations();
   // The `course_index` response populates `.id`, never `.usageKey`.
@@ -76,7 +77,7 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
             subsectionName,
           })
           : intl.formatMessage(messages.associateSubsectionWithoutIdButtonLabel, { subsectionName })}
-        disabled={isAssociating}
+        disabled={isAssociating || isDeletingGroup}
         onClick={() => associateSubsection(subsection.id, courseId)}
       >
         {pillContent}

@@ -4,17 +4,20 @@ import type {
   GradeRulePayload,
   RuleBox,
 } from './data/types';
+import type { CompetencyCriteriaGroupsIndex, PageOrderSnapshot } from './utils';
 import {
   associatedObjectIds,
   bottomTierGroupsForCourse,
   buildCompetencyCriteriaGroupsIndex,
   effectiveRuleOf,
+  selectionTargetAfterRemoval,
   isRuleTakenInGroup,
   lastBottomTierGroupForCourse,
   lastRuleKeyIn,
   nextUnusedScore,
   ruleBoxesForGroup,
   ruleKeyOf,
+  snapshotPageOrder,
   visibleCourseGroups,
 } from './utils';
 import { systemDefaultProfile } from './__mocks__';
@@ -383,5 +386,191 @@ describe('isRuleTakenInGroup / nextUnusedScore', () => {
 
   it('returns null for an eq rule', () => {
     expect(nextUnusedScore(ruleOf('eq', 50), [boxOf('eq', 50)])).toBeNull();
+  });
+});
+
+/** A tree of course-level groups (ids 1, 2, 3...), each with the given leaf group ids, in order. */
+const buildTree = (courses: Array<{ id: number; ruleGroupIds: number[]; }>) => {
+  const response: CompetencyCriteriaTree = {
+    groups: [
+      {
+        id: 500,
+        parentId: null,
+        tagId: 42,
+        courseKey: null,
+        name: 'root',
+        ordering: 0,
+        logicOperator: 'AND',
+      },
+      ...courses.flatMap((course, courseOrdering) => [
+        {
+          id: course.id,
+          parentId: 500,
+          tagId: 42,
+          courseKey: `course-v1:Org+C${course.id}+2024`,
+          name: 'course',
+          ordering: courseOrdering,
+          logicOperator: 'AND' as const,
+        },
+        ...course.ruleGroupIds.map((ruleGroupId, ordering) => ({
+          id: ruleGroupId,
+          parentId: course.id,
+          tagId: 42,
+          courseKey: null,
+          name: 'leaf',
+          ordering,
+          logicOperator: 'AND' as const,
+        })),
+      ]),
+    ],
+    criteria: [],
+  };
+  return buildCompetencyCriteriaGroupsIndex(response);
+};
+
+describe('snapshotPageOrder', () => {
+  it('lists accessible course groups in their given order, each with its rule groups in ordering order', () => {
+    const index = buildTree([{ id: 1, ruleGroupIds: [11, 10] }, { id: 2, ruleGroupIds: [20] }, {
+      id: 3,
+      ruleGroupIds: [30],
+    }]);
+    // `buildTree` assigns `ordering` by array position, so `[11, 10]` sorts 11 first. `accessible` is passed in reverse
+    // on purpose, to show the snapshot keeps the given order.
+    // Course group 3 is not accessible, so it is left out of what is rendered.
+    const accessible = [index.courseGroups[1], index.courseGroups[0]];
+
+    expect(snapshotPageOrder(index, accessible)).toEqual({
+      entries: [
+        { courseGroupId: 2, ruleGroupIds: [20] },
+        { courseGroupId: 1, ruleGroupIds: [11, 10] },
+      ],
+      knownCourseGroupIds: [1, 2, 3],
+    });
+  });
+});
+
+const courseKeysOf = (index: CompetencyCriteriaGroupsIndex) =>
+  new Set(index.courseGroups.map((item) => item.courseKey));
+
+/** Treats every course group in `fresh` as accessible unless `accessibleCourseKeys` says otherwise. */
+const targetAfterRemoval = (
+  snapshot: PageOrderSnapshot,
+  fresh: CompetencyCriteriaGroupsIndex,
+  selection: Parameters<typeof selectionTargetAfterRemoval>[2],
+  placeholderParentId: number | null,
+  accessibleCourseKeys: ReadonlySet<string> = courseKeysOf(fresh),
+) => selectionTargetAfterRemoval(snapshot, fresh, selection, placeholderParentId, accessibleCourseKeys);
+
+describe('selectionTargetAfterRemoval', () => {
+  // Course groups 1 (rule groups 10, 11, 12), 2 (20), 3 (30, 31), as rendered before a delete.
+  const before = buildTree([
+    { id: 1, ruleGroupIds: [10, 11, 12] },
+    { id: 2, ruleGroupIds: [20] },
+    { id: 3, ruleGroupIds: [30, 31] },
+  ]);
+  const snapshot = snapshotPageOrder(before, before.courseGroups);
+
+  it('is unchanged when nothing was selected', () => {
+    const fresh = buildTree([{ id: 1, ruleGroupIds: [10, 12] }]);
+    expect(targetAfterRemoval(snapshot, fresh, null, null)).toBe('keep-current');
+  });
+
+  it.each([
+    ['rule group', 'k'],
+    ['placeholder rule box in a rule group', null],
+  ])('is unchanged when the selected %s still exists', (_label, ruleKey) => {
+    const fresh = buildTree([{ id: 1, ruleGroupIds: [10, 12] }, { id: 2, ruleGroupIds: [20] }, {
+      id: 3,
+      ruleGroupIds: [30, 31],
+    }]);
+    expect(targetAfterRemoval(snapshot, fresh, { groupId: 12, ruleKey }, null)).toBe('keep-current');
+  });
+
+  it('is unchanged for the placeholder rule group while its course group still exists', () => {
+    const fresh = buildTree([{ id: 1, ruleGroupIds: [10, 11, 12] }]);
+    expect(targetAfterRemoval(snapshot, fresh, { groupId: null, ruleKey: null }, 1)).toBe('keep-current');
+  });
+
+  it.each([
+    ['a rule group', 'k'],
+    ['a placeholder rule box in the rule group', null],
+  ])('picks the nearest surviving rule group above when selection on %s was deleted', (_label, ruleKey) => {
+    const fresh = buildTree([{ id: 1, ruleGroupIds: [10, 12] }, { id: 2, ruleGroupIds: [20] }, {
+      id: 3,
+      ruleGroupIds: [30, 31],
+    }]);
+    expect(targetAfterRemoval(snapshot, fresh, { groupId: 11, ruleKey }, null)).toBe(10);
+  });
+
+  it('skips an above neighbor that was also removed', () => {
+    const fresh = buildTree([{ id: 1, ruleGroupIds: [10] }, { id: 2, ruleGroupIds: [20] }, {
+      id: 3,
+      ruleGroupIds: [30, 31],
+    }]);
+    expect(targetAfterRemoval(snapshot, fresh, { groupId: 12, ruleKey: 'k' }, null)).toBe(10);
+  });
+
+  it('picks the nearest surviving rule group below when the first one was deleted', () => {
+    const fresh = buildTree([{ id: 1, ruleGroupIds: [11, 12] }, { id: 2, ruleGroupIds: [20] }, {
+      id: 3,
+      ruleGroupIds: [30, 31],
+    }]);
+    expect(targetAfterRemoval(snapshot, fresh, { groupId: 10, ruleKey: 'k' }, null)).toBe(11);
+  });
+
+  it('picks the last rule group of the surviving course group above when the course group cascaded away', () => {
+    const fresh = buildTree([{ id: 1, ruleGroupIds: [10, 11, 12] }, { id: 3, ruleGroupIds: [30, 31] }]);
+    expect(targetAfterRemoval(snapshot, fresh, { groupId: 20, ruleKey: 'k' }, null)).toBe(12);
+  });
+
+  it('picks the first rule group of the surviving course group below when none survives above', () => {
+    const fresh = buildTree([{ id: 2, ruleGroupIds: [20] }, { id: 3, ruleGroupIds: [30, 31] }]);
+    expect(targetAfterRemoval(snapshot, fresh, { groupId: 10, ruleKey: 'k' }, null)).toBe(20);
+  });
+
+  it('finds the nearest surviving course group when the placeholder rule group\'s own course group was deleted', () => {
+    const fresh = buildTree([{ id: 1, ruleGroupIds: [10, 11, 12] }, { id: 3, ruleGroupIds: [30, 31] }]);
+    expect(targetAfterRemoval(snapshot, fresh, { groupId: null, ruleKey: null }, 2)).toBe(12);
+  });
+
+  it('falls back to the first rule group of the first course group in the fresh data (another author\'s)', () => {
+    const fresh = buildTree([{ id: 8, ruleGroupIds: [81, 80] }]);
+    expect(targetAfterRemoval(snapshot, fresh, { groupId: 10, ruleKey: 'k' }, null)).toBe(81);
+  });
+
+  it('skips a course group that existed but was not rendered, since the author cannot see it', () => {
+    const withHidden = buildTree([{ id: 1, ruleGroupIds: [10] }, { id: 4, ruleGroupIds: [40] }]);
+    // Course group 4 existed but was not rendered.
+    const hiddenSnapshot = snapshotPageOrder(withHidden, [withHidden.courseGroups[0]]);
+    const fresh = buildTree([{ id: 4, ruleGroupIds: [40] }]);
+
+    expect(targetAfterRemoval(hiddenSnapshot, fresh, { groupId: 10, ruleKey: 'k' }, null)).toBeNull();
+  });
+
+  it('picks a new course group past a hidden one that existed before', () => {
+    const withHidden = buildTree([{ id: 1, ruleGroupIds: [10] }, { id: 4, ruleGroupIds: [40] }]);
+    // Course group 4 existed but was not rendered.
+    const hiddenSnapshot = snapshotPageOrder(withHidden, [withHidden.courseGroups[0]]);
+    const fresh = buildTree([{ id: 4, ruleGroupIds: [40] }, { id: 8, ruleGroupIds: [80] }]);
+
+    expect(targetAfterRemoval(hiddenSnapshot, fresh, { groupId: 10, ruleKey: 'k' }, null)).toBe(80);
+  });
+
+  it('skips a new course group whose course the author cannot access', () => {
+    const fresh = buildTree([{ id: 8, ruleGroupIds: [80] }, { id: 9, ruleGroupIds: [90] }]);
+    const accessibleCourseKeys = new Set([fresh.courseGroups[1].courseKey]);
+
+    expect(targetAfterRemoval(snapshot, fresh, { groupId: 10, ruleKey: 'k' }, null, accessibleCourseKeys)).toBe(90);
+  });
+
+  it('is null when the only new course group is one the author cannot access', () => {
+    const fresh = buildTree([{ id: 8, ruleGroupIds: [80] }]);
+
+    expect(targetAfterRemoval(snapshot, fresh, { groupId: 10, ruleKey: 'k' }, null, new Set())).toBeNull();
+  });
+
+  it('is null when no course group with a rule group is left', () => {
+    const fresh = buildTree([]);
+    expect(targetAfterRemoval(snapshot, fresh, { groupId: 10, ruleKey: 'k' }, null)).toBeNull();
   });
 });
