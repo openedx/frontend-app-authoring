@@ -119,7 +119,9 @@ const ScoreThresholdField = ({
   if (!onChange) {
     return (
       <span className="score-threshold-field">
-        <span className="score-threshold-field__sentence">{scoreThresholdLabel}</span>
+        <span className="score-threshold-field__sentence">
+          <span className="score-threshold-field__label">{scoreThresholdLabel}</span>
+        </span>
       </span>
     );
   }
@@ -134,30 +136,36 @@ const ScoreThresholdField = ({
         aria-expanded={isOpen}
         onClick={() => setIsOpen((open) => !open)}
       >
-        {scoreThresholdLabel}
+        <span className="score-threshold-field__label">{scoreThresholdLabel}</span>
         <Icon src={ExpandMore} size="xs" />
       </button>
-      <ModalPopup
-        isOpen={isOpen}
-        positionRef={anchor}
-        onClose={handleCloseRequest}
-        placement="bottom-start"
-      >
-        <div ref={panelRef} className="score-threshold-field__panel shadow">
-          <ScoreSettingsPopover
-            key={`${rulePayload.op}:${rulePayload.value}`}
-            rulePayload={rulePayload}
-            onCommit={onChange}
-            onRequestClose={() => setIsOpen(false)}
-            getInlineValidationMessage={getInlineValidationMessage}
-            scoreTakenHint={scoreTakenHint}
-            hintIsError={hintIsError}
-            scoreSuggestion={scoreSuggestion}
-            initialFocus={initialFocus}
-            ref={popoverRef}
-          />
-        </div>
-      </ModalPopup>
+      {
+        /* `PopperElement` measures the popover when it mounts and doesn't update when the content appears, so it
+          mounts only while open. */
+      }
+      {isOpen && (
+        <ModalPopup
+          isOpen
+          positionRef={anchor}
+          onClose={handleCloseRequest}
+          placement="bottom-start"
+        >
+          <div ref={panelRef} className="score-threshold-field__panel shadow">
+            <ScoreSettingsPopover
+              key={`${rulePayload.op}:${rulePayload.value}`}
+              rulePayload={rulePayload}
+              onCommit={onChange}
+              onRequestClose={() => setIsOpen(false)}
+              getInlineValidationMessage={getInlineValidationMessage}
+              scoreTakenHint={scoreTakenHint}
+              hintIsError={hintIsError}
+              scoreSuggestion={scoreSuggestion}
+              initialFocus={initialFocus}
+              ref={popoverRef}
+            />
+          </div>
+        </ModalPopup>
+      )}
     </span>
   );
 };

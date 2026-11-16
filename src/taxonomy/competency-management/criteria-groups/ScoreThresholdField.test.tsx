@@ -21,6 +21,14 @@ describe('<ScoreThresholdField />', () => {
     expect(container.querySelector('input, select, textarea, button')).toBeNull();
   });
 
+  it('puts the read-only sentence in the label element the stylesheet targets', () => {
+    render(<ScoreThresholdField rulePayload={{ op: 'gte', value: 0.7, scale: 'percent' }} />);
+
+    const label = screen.getByText('70% or higher').closest('.score-threshold-field__label')!;
+    expect(label).toHaveTextContent('With a score of 70% or higher');
+    expect(label.parentElement).toHaveClass('score-threshold-field__sentence');
+  });
+
   it('renders "or lower" for a lte rule', () => {
     render(<ScoreThresholdField rulePayload={{ op: 'lte', value: 0.5, scale: 'percent' }} />);
     expect(screen.getByText('50% or lower')).toBeInTheDocument();
@@ -62,6 +70,16 @@ describe('<ScoreThresholdField />', () => {
       expect(scoreSettingsButton()).toHaveAttribute('aria-haspopup', 'dialog');
       expect(scoreSettingsButton()).toHaveAttribute('aria-expanded', 'false');
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(scoreSettingsButton().nextElementSibling).toBeNull();
+    });
+
+    it('puts the button sentence in the label element the stylesheet targets', () => {
+      render(<ScoreThresholdField rulePayload={rulePayload70Percent} onChange={jest.fn()} />);
+
+      const label = scoreSettingsButton().querySelector('.score-threshold-field__label')!;
+      expect(label).toHaveTextContent('With a score of 70% or higher');
+      expect(label.parentElement).toBe(scoreSettingsButton());
+      expect(label).not.toContainElement(scoreSettingsButton().querySelector('svg'));
     });
 
     it('opens the dialog on click, with the input focused and its value selected', async () => {
