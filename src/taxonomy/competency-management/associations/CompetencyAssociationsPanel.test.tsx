@@ -210,6 +210,40 @@ describe('<CompetencyAssociationsPanel />', () => {
     expect(container.querySelector('.resizable-handle')).not.toBeInTheDocument();
   });
 
+  it('stops the divider where the course column would drop below its minimum width, however wide the window', async () => {
+    // Regression test for openedx/openedx-core#910: the tree's box lives inside a
+    // width-capped `Container`, so a limit derived from the window (the box's own
+    // default) lets the tree outgrow the whole panel on a wide monitor and squeeze
+    // the course column to nothing. The limit has to come from the panel's own
+    // width instead. `clientWidth` is always 0 under JSDOM, so it is stubbed to a
+    // panel as wide as Paragon's `xl` container; the window is left at JSDOM's
+    // default, narrower than that, to prove the window is not what bounds the drag.
+    const clientWidthSpy = jest.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(1440);
+    try {
+      const { container } = render(
+        <ResponsiveContext.Provider value={{ width: breakpoints.large.minWidth }}>
+          <CompetencyAssociationsPanel taxonomyId={taxonomyId} taxonomyName={taxonomyName} />
+        </ResponsiveContext.Provider>,
+      );
+      await screen.findByText(taxonomyName);
+      fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+      const leafRow = (await screen.findByText('Leaf A1a')).closest('.competency-row') as HTMLElement;
+      fireEvent.click(leafRow);
+      await screen.findByRole('searchbox'); // right panel now mounted
+
+      const handle = container.querySelector('.resizable-handle') as HTMLElement;
+      fireEvent.mouseDown(handle, { clientX: 500 });
+      fireEvent.mouseMove(document, { clientX: 500 + 5000 }); // far past the panel's right edge
+      fireEvent.mouseUp(document);
+
+      // 1440px panel - 20px column gap - 440px course column minimum.
+      const resizableBox = container.querySelector('.resizable') as HTMLElement;
+      expect(resizableBox.style.width).toBe('980px');
+    } finally {
+      clientWidthSpy.mockRestore();
+    }
+  });
+
   it('keeps the tree\'s own expand/collapse state when selecting a competency mounts the right panel', async () => {
     // Regression test: remounting `CompetencyTree` would reset its local
     // `expandedIds` state. Expands one branch by hand (not "Expand All",
