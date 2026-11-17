@@ -6,8 +6,9 @@ import {
   makeWrapper,
 } from '@src/testUtils';
 
-import { getContentStoreApiUrl, getLegacyApiUrl } from './data/api';
-import { groupConfigurationResponseMock } from './__mocks__';
+import { paginatedListPage } from '@src/generic/data/paginatedList';
+import { getCourseSettingsApiUrl, getGroupConfigurationsApiUrl, getLegacyApiUrl } from './data/api';
+import { courseSettingsMock, groupConfigurationsListMock } from './__mocks__';
 import { useGroupConfigurations } from './hooks';
 import { AvailableGroup } from './types';
 
@@ -31,7 +32,10 @@ describe('useGroupConfigurations', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
-    axiosMock.onGet(getContentStoreApiUrl(courseId)).reply(200, groupConfigurationResponseMock);
+    axiosMock
+      .onGet(getGroupConfigurationsApiUrl(courseId))
+      .reply(200, paginatedListPage(groupConfigurationsListMock()));
+    axiosMock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, courseSettingsMock);
   });
 
   describe('contentGroupActions', () => {
