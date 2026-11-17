@@ -77,15 +77,45 @@ const messages = defineMessages({
   },
   noAssociationsMessage: {
     id: 'course-authoring.competency-management.criteria-groups.no-associations-message',
-    defaultMessage: 'No content associated.',
+    defaultMessage: 'No content associated with {competencyName} yet.',
     description: 'First line of the empty state shown in the associations block when the selected competency '
-      + 'has no course content associated with it yet.',
+      + 'has no criteria associations in any course. {competencyName} is the selected competency\'s name, '
+      + 'shown in bold.',
+  },
+  noAssociationsInListedCoursesMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.no-associations-in-listed-courses-message',
+    defaultMessage: 'No content associated with {competencyName} in the courses listed here. '
+      + '{count, plural, one {# association is} other {# associations are}} in courses that are not listed.',
+    description: 'First line of the empty state shown in the associations block when the selected competency has '
+      + 'criteria associations, but none in the courses currently listed in the course list below that the user '
+      + 'can view. {competencyName} is the selected competency\'s name, shown in bold. {count} is the number of '
+      + 'the competency\'s criteria associations in courses that are not currently listed.',
+  },
+  noAccessibleAssociationsInListedCoursesMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.no-accessible-associations-in-listed-courses-message',
+    defaultMessage: 'No content associated with {competencyName} that you can open in the courses listed here. '
+      + '{count, plural, one {# association is} other {# associations are}} in listed courses you can\'t open.',
+    description: 'First line of the empty state shown in the associations block when every one of the selected '
+      + 'competency\'s criteria associations is in a course currently listed in the course list below, but the user '
+      + 'cannot open any of those courses. {competencyName} is the selected competency\'s name, shown in bold. '
+      + '{count} is the number of the competency\'s criteria associations in those courses.',
+  },
+  someInaccessibleAssociationsInListedCoursesMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.some-inaccessible-associations-in-listed-courses-message',
+    defaultMessage: 'No content associated with {competencyName} that you can open in the courses listed here. '
+      + '{inaccessibleCount, plural, one {# association is} other {# associations are}} in listed courses you '
+      + 'can\'t open, and {outOfViewCount, plural, one {# is} other {# are}} in courses that are not listed.',
+    description: 'First line of the empty state shown in the associations block when some of the selected '
+      + 'competency\'s criteria associations are in courses currently listed in the course list below that the '
+      + 'user cannot open, and the rest are in courses that are not currently listed. {competencyName} is the '
+      + 'selected competency\'s name, shown in bold. {inaccessibleCount} is the number of associations in listed '
+      + 'courses the user cannot open. {outOfViewCount} is the number in courses that are not currently listed.',
   },
   noAssociationsPromptMessage: {
     id: 'course-authoring.competency-management.criteria-groups.no-associations-prompt-message',
-    defaultMessage: 'Make content selections to associate this competency with course content.',
+    defaultMessage: 'Make content selections to create competency criteria associations.',
     description: 'Second line of the empty state shown in the associations block, prompting the user '
-      + 'to make content selections below.',
+      + 'to make content selections in the course list below.',
   },
   scoreThresholdInputAccessibleLabel: {
     id: 'course-authoring.competency-management.criteria-groups.score-threshold-input-accessible-label',
@@ -156,6 +186,12 @@ const messages = defineMessages({
     defaultMessage: 'Wait for the save to finish before adding another.',
     description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while a create request is '
       + 'still in flight.',
+  },
+  addControlLoadingTooltip: {
+    id: 'course-authoring.competency-management.criteria-groups.add-control-loading-tooltip',
+    defaultMessage: 'Wait for the course list to finish loading before adding another.',
+    description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while the course list below is '
+      + 'reloading and the listed courses may change.',
   },
   placeholderRuleBoxHint: {
     id: 'course-authoring.competency-management.criteria-groups.placeholder-rule-box-hint',

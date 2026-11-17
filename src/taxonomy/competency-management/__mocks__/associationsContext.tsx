@@ -48,6 +48,21 @@ export const buildMockCompetencyAssociationsContextValue = (
     associatedObjectIds: new Set(),
     accessibleCourseGroups: [],
     competencyExternalId: null,
+    courseList: {
+      courses: [],
+      numPages: 0,
+      isLoading: false,
+      isPlaceholderData: false,
+      isError: false,
+      isSuccess: true,
+    },
+    coursePage: 1,
+    courseSearch: '',
+    courseDateRange: [null, null],
+    setCoursePage: jest.fn(),
+    setCourseSearch: jest.fn(),
+    setCourseDateRange: jest.fn(),
+    criteriaCounts: { criteriaCount: 0, totalCriteriaCount: 0 },
     ...overrides,
   };
   if (overrides.status === 'pending' || overrides.status === 'error') {

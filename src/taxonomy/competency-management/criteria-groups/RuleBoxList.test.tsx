@@ -15,13 +15,13 @@ import {
   systemDefaultProfile,
 } from '../__mocks__';
 import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
-import type { CompetencyCriteriaGroupsResponse, GradeRulePayload } from '../data/types';
+import type { CompetencyCriteriaTree, GradeRulePayload } from '../data/types';
 import { buildCompetencyCriteriaGroupsIndex, ruleBoxesForGroup } from '../utils';
 import RuleBoxList from './RuleBoxList';
 
 // Group 10 holds two criteria sharing the default profile's rule (101, 102)
 // and one with a different override (103).
-const response: CompetencyCriteriaGroupsResponse = {
+const response: CompetencyCriteriaTree = {
   groups: [group(10, null, null, 0)],
   criteria: [
     criterion(101, 'block-a', 10),
@@ -113,7 +113,7 @@ describe('<RuleBoxList />', () => {
 
   describe('duplicate-score validation', () => {
     // Boxes: gte 60 (criteria 201) and gte 80 (criteria 202).
-    const duplicateCheckResponse: CompetencyCriteriaGroupsResponse = {
+    const duplicateCheckResponse: CompetencyCriteriaTree = {
       groups: [group(10, null, null, 0)],
       criteria: [
         criterion(201, 'block-x', 10, {

@@ -25,21 +25,94 @@ jest.mock('@src/authz/data/apiHooks', () => ({
 }));
 
 const tagId = 42;
+const courseKeys = ['course-v1:OrgX+CS101+2024', 'course-v1:OrgX+CS102+2024'];
+
+/** The criteria-groups wire body for no groups, and what the hook hands back for it once camel-cased. */
+const emptyGroupsBody = { groups: [], criteria: [], criteria_count: 0, total_criteria_count: 0 };
+const emptyGroupsData = { groups: [], criteria: [], criteriaCount: 0, totalCriteriaCount: 0 };
+
+// Any criteria-groups request, whatever its tag id.
+const criteriaGroupsRequests = (axiosMock: ReturnType<typeof initializeMocks>['axiosMock']) => (
+  axiosMock.history.get.filter((req) => req.url?.includes('/criteria-groups/'))
+);
+
+/** Mounts the active groups query for `tagId` beside a mutation hook, and waits for the query's first load. */
+const renderMutationWithActiveGroupsQuery = async <TMutation,>(useMutationHook: () => TMutation) => {
+  const { result } = renderHook(
+    () => ({ query: useCompetencyCriteriaGroups(tagId, courseKeys), mutation: useMutationHook() }),
+    { wrapper: makeWrapper() },
+  );
+  await waitFor(() => expect(result.current.query.isSuccess).toBe(true));
+  return result;
+};
 
 afterEach(() => {
   jest.restoreAllMocks();
 });
 
 describe('useCompetencyCriteriaGroups', () => {
-  it('exposes the criteria groups fetched for the given tagId', async () => {
+  it('fetches a competency\'s criteria groups, scoped to the given course keys', async () => {
     const { axiosMock } = initializeMocks();
-    const mockResponse = { groups: [], criteria: [] };
-    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, mockResponse);
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, emptyGroupsBody);
 
-    const { result } = renderHook(() => useCompetencyCriteriaGroups(tagId), { wrapper: makeWrapper() });
+    const { result } = renderHook(() => useCompetencyCriteriaGroups(tagId, courseKeys), { wrapper: makeWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(mockResponse);
+    expect(result.current.data).toEqual(emptyGroupsData);
+    expect(criteriaGroupsRequests(axiosMock)).toHaveLength(1);
+    expect(criteriaGroupsRequests(axiosMock)[0].params).toEqual({ course_keys: courseKeys.join(',') });
+  });
+
+  it('issues no request, and stays pending rather than loading, until course keys are reported', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, emptyGroupsBody);
+    const { result, rerender } = renderHook(
+      ({ keys }: { keys: string[] | undefined; }) => useCompetencyCriteriaGroups(tagId, keys),
+      { wrapper: makeWrapper(), initialProps: { keys: undefined } },
+    );
+
+    expect(result.current.isPending).toBe(true);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.fetchStatus).toEqual('idle');
+    expect(criteriaGroupsRequests(axiosMock)).toHaveLength(0);
+
+    rerender({ keys: [] });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(criteriaGroupsRequests(axiosMock)).toHaveLength(1);
+    expect(criteriaGroupsRequests(axiosMock)[0].params).toEqual({ course_keys: '' });
+  });
+
+  it('does not hand back the previous course keys\' data while new keys are fetching', async () => {
+    const { axiosMock } = initializeMocks();
+    const firstPageGroups = [{ id: 1 }];
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).replyOnce(200, {
+      ...emptyGroupsBody,
+      groups: firstPageGroups,
+    });
+    let releaseSecondPage: () => void = () => {};
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).replyOnce(() => (
+      new Promise((resolve) => {
+        releaseSecondPage = () => resolve([200, emptyGroupsBody]);
+      })
+    ));
+    const { result, rerender } = renderHook(
+      ({ keys }: { keys: string[]; }) => useCompetencyCriteriaGroups(tagId, keys),
+      { wrapper: makeWrapper(), initialProps: { keys: [courseKeys[0]] } },
+    );
+    await waitFor(() => expect(result.current.data).toEqual({ ...emptyGroupsData, groups: firstPageGroups }));
+
+    rerender({ keys: [courseKeys[1]] });
+
+    await waitFor(() => expect(criteriaGroupsRequests(axiosMock)).toHaveLength(2));
+    expect(criteriaGroupsRequests(axiosMock)[1].params).toEqual({ course_keys: courseKeys[1] });
+    expect(result.current.isPending).toBe(true);
+    expect(result.current.data).toBeUndefined();
+
+    await act(async () => {
+      releaseSecondPage();
+    });
+    await waitFor(() => expect(result.current.data).toEqual(emptyGroupsData));
   });
 });
 
@@ -67,8 +140,9 @@ describe('useDefaultCompetencyRuleProfile', () => {
 });
 
 describe('useCreateCompetencyCriterion', () => {
-  it('invalidates that tagId\'s groups query on success', async () => {
-    const { axiosMock, queryClient } = initializeMocks();
+  it('refetches that tagId\'s active groups query on success', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, emptyGroupsBody);
     axiosMock.onPost(apiUrls.createCompetencyCriterion(tagId)).reply(201, {
       id: 999,
       group_id: 10,
@@ -77,16 +151,42 @@ describe('useCreateCompetencyCriterion', () => {
       rule_payload_override: null,
       object_tag_id: tagId,
     });
-    queryClient.setQueryData(competencyQueryKeys.competencyCriteriaGroups(tagId), { groups: [], criteria: [] });
-
-    const { result } = renderHook(() => useCreateCompetencyCriterion(), { wrapper: makeWrapper() });
+    const result = await renderMutationWithActiveGroupsQuery(useCreateCompetencyCriterion);
 
     await act(async () => {
-      await result.current.mutateAsync({ tagId, payload: { object_id: 'block-a', group_id: 10 } });
+      await result.current.mutation.mutateAsync({ tagId, payload: { object_id: 'block-a', group_id: 10 } });
     });
 
-    const state = queryClient.getQueryState(competencyQueryKeys.competencyCriteriaGroups(tagId));
-    expect(state?.isInvalidated).toBe(true);
+    // A second GET is the signal that a refetch was actually requested, not
+    // suppressed - `useCreateCompetencyCriterion` must not pass
+    // `refetchType: 'none'` (or similar) to `invalidateQueries`.
+    await waitFor(() => expect(criteriaGroupsRequests(axiosMock)).toHaveLength(2));
+  });
+
+  it('drops an inactive scoped page from the cache and refetches the active one on success', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    const otherPageKey = competencyQueryKeys.competencyCriteriaGroups(tagId, ['course-v1:OrgX+CS201+2024']);
+    queryClient.setQueryData(otherPageKey, { ...emptyGroupsData, totalCriteriaCount: 3 });
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId))
+      .replyOnce(200, { ...emptyGroupsBody, total_criteria_count: 3 });
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId))
+      .reply(200, { ...emptyGroupsBody, total_criteria_count: 4 });
+    axiosMock.onPost(apiUrls.createCompetencyCriterion(tagId)).reply(201, {
+      id: 999,
+      group_id: 10,
+      rule_profile_id: 1,
+      rule_type_override: null,
+      rule_payload_override: null,
+      object_tag_id: tagId,
+    });
+    const result = await renderMutationWithActiveGroupsQuery(useCreateCompetencyCriterion);
+
+    await act(async () => {
+      await result.current.mutation.mutateAsync({ tagId, payload: { object_id: 'block-a', group_id: 10 } });
+    });
+
+    await waitFor(() => expect(result.current.query.data?.totalCriteriaCount).toBe(4));
+    expect(queryClient.getQueryState(otherPageKey)).toBeUndefined();
   });
 
   it('stays pending until the groups refetch completes', async () => {
@@ -108,7 +208,7 @@ describe('useCreateCompetencyCriterion', () => {
     });
 
     const { result } = renderHook(
-      () => ({ groups: useCompetencyCriteriaGroups(tagId), create: useCreateCompetencyCriterion() }),
+      () => ({ groups: useCompetencyCriteriaGroups(tagId, courseKeys), create: useCreateCompetencyCriterion() }),
       { wrapper: makeWrapper() },
     );
     await waitFor(() => expect(result.current.groups.isSuccess).toBe(true));
@@ -151,8 +251,9 @@ describe('useCreateCompetencyCriterion', () => {
 });
 
 describe('useUpdateCompetencyCriteriaGroupOperator', () => {
-  it('invalidates that tagId\'s groups query on success', async () => {
-    const { axiosMock, queryClient } = initializeMocks();
+  it('refetches that tagId\'s active groups query on success', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, emptyGroupsBody);
     axiosMock.onPatch(apiUrls.updateCompetencyCriteriaGroup(tagId, 10)).reply(200, {
       id: 10,
       parent_id: 1,
@@ -163,23 +264,21 @@ describe('useUpdateCompetencyCriteriaGroupOperator', () => {
       logic_operator: 'OR',
       archived: false,
     });
-    queryClient.setQueryData(competencyQueryKeys.competencyCriteriaGroups(tagId), { groups: [], criteria: [] });
-
-    const { result } = renderHook(() => useUpdateCompetencyCriteriaGroupOperator(), { wrapper: makeWrapper() });
+    const result = await renderMutationWithActiveGroupsQuery(useUpdateCompetencyCriteriaGroupOperator);
 
     await act(async () => {
-      await result.current.mutateAsync({ tagId, groupId: 10, logicOperator: 'OR' });
+      await result.current.mutation.mutateAsync({ tagId, groupId: 10, logicOperator: 'OR' });
     });
 
-    const state = queryClient.getQueryState(competencyQueryKeys.competencyCriteriaGroups(tagId));
-    expect(state?.isInvalidated).toBe(true);
+    await waitFor(() => expect(criteriaGroupsRequests(axiosMock)).toHaveLength(2));
   });
 });
 
 describe('useUpdateCompetencyCriteriaRule', () => {
-  it('invalidates that tagId\'s groups query on success', async () => {
-    const { axiosMock, queryClient } = initializeMocks();
+  it('refetches that tagId\'s active groups query on success', async () => {
+    const { axiosMock } = initializeMocks();
     const groupId = 10;
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, emptyGroupsBody);
     axiosMock.onPatch(apiUrls.updateCompetencyCriteriaRule(groupId)).reply(200, [
       {
         id: 101,
@@ -190,12 +289,10 @@ describe('useUpdateCompetencyCriteriaRule', () => {
         rule_payload_override: { op: 'gte', value: 0.8, scale: 'percent' },
       },
     ]);
-    queryClient.setQueryData(competencyQueryKeys.competencyCriteriaGroups(tagId), { groups: [], criteria: [] });
-
-    const { result } = renderHook(() => useUpdateCompetencyCriteriaRule(), { wrapper: makeWrapper() });
+    const result = await renderMutationWithActiveGroupsQuery(useUpdateCompetencyCriteriaRule);
 
     await act(async () => {
-      await result.current.mutateAsync({
+      await result.current.mutation.mutateAsync({
         tagId,
         groupId,
         criterionIds: [101],
@@ -204,8 +301,7 @@ describe('useUpdateCompetencyCriteriaRule', () => {
       });
     });
 
-    const state = queryClient.getQueryState(competencyQueryKeys.competencyCriteriaGroups(tagId));
-    expect(state?.isInvalidated).toBe(true);
+    await waitFor(() => expect(criteriaGroupsRequests(axiosMock)).toHaveLength(2));
   });
 });
 

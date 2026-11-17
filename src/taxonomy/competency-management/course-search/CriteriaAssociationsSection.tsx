@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Badge } from '@openedx/paragon';
 
+import { useCompetencyAssociations } from '@src/taxonomy/competency-management/CompetencyAssociationsContext';
 import type { CompetencyTreeNode } from '../CompetencyTree';
 import { CompetencyTooltip, useCompetencyTooltip } from '../competency-tooltip';
 import { CourseGroupList } from '../criteria-groups';
@@ -15,6 +16,7 @@ export interface CriteriaAssociationsSectionProps {
 
 const CriteriaAssociationsSection = ({ competency }: CriteriaAssociationsSectionProps) => {
   const intl = useIntl();
+  const { courseList } = useCompetencyAssociations();
 
   const headingRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLSpanElement>(null);
@@ -81,7 +83,8 @@ const CriteriaAssociationsSection = ({ competency }: CriteriaAssociationsSection
           {...tooltip.tooltipProps}
         />
       </div>
-      <CourseGroupList />
+      {/* The course list shows its own error, and the groups are not shown. */}
+      {!courseList.isError && <CourseGroupList competencyName={competency.value} />}
     </div>
   );
 };

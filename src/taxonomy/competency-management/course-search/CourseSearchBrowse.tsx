@@ -19,14 +19,15 @@ import {
 } from '@openedx/paragon';
 import { Calendar, Close } from '@openedx/paragon/icons';
 import { debounce } from 'lodash';
-import moment from 'moment';
 import DatePicker from 'react-datepicker';
 
 import AlertMessage from '@src/generic/alert-message';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { DATE_FORMAT } from '@src/constants';
 import { useStudioHomeCoursesV2 } from '@src/studio-home/data/apiHooks';
-import type { CompetencyTreeNode } from '../CompetencyTree';
+import { useCompetencyAssociations } from '@src/taxonomy/competency-management/CompetencyAssociationsContext';
+import type { CompetencyTreeNode } from '@src/taxonomy/competency-management/CompetencyTree';
+import CourseListSummary from './CourseListSummary';
 import CourseRow from './CourseRow';
 import CriteriaAssociationsSection from './CriteriaAssociationsSection';
 import messages from './messages';
@@ -42,24 +43,11 @@ export interface CourseSearchBrowseProps {
   activeCompetency: CompetencyTreeNode;
 }
 
-const PAGE_SIZE = 10;
-
-// Sends the local calendar day's own start/end instant (in the browser's own
-// UTC offset), not a bare date: a bare `YYYY-MM-DD` is inherently ambiguous
-// across time zones, since the backend has no way to know which time zone's
-// midnight-to-midnight it should mean (see #834 for the day-boundary bug
-// this caused). The backend requires an explicit UTC offset (or `Z`) and
-// compares this value directly against a course's own start instant, so the
-// selected day here always matches the day Studio itself shows for that
-// course, regardless of the user's time zone. `SSS` keeps the "end" boundary
-// at the day's last millisecond rather than its last whole second - `moment`
-// can't go finer than that (it wraps the browser's own `Date`, which is
-// itself only millisecond-precise), but that's still within a millisecond
-// of the backend's own microsecond-precision end-of-day example.
-const formatLocalDayBoundary = (date: Date, boundary: 'start' | 'end') =>
-  (
-    boundary === 'start' ? moment(date).startOf('day') : moment(date).endOf('day')
-  ).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+// The summary line's "of N Courses" total: the list's own endpoint with no
+// search or date parameter, so the response's `count` is every course the
+// author can access, and the smallest page it serves, since only `count` is
+// read. Keep the filters out of it, or the total would follow them.
+const ACCESSIBLE_COURSES_COUNT_PARAMS = { pageSize: 1 };
 
 // A stable no-op for `SearchField`'s required `onSubmit` prop. Paragon's
 // `SearchFieldAdvanced` re-invokes its own `onChange` handler whenever that
@@ -126,25 +114,23 @@ DateRangeTrigger.displayName = 'DateRangeTrigger';
  */
 const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
   const intl = useIntl();
-  // `inputValue` is the raw, immediate field value (so typing feels
-  // responsive); `search` is the debounced value that actually drives the
-  // query below.
+  const {
+    courseList,
+    coursePage: page,
+    courseSearch: search,
+    courseDateRange: dateRange,
+    setCoursePage,
+    setCourseSearch,
+    setCourseDateRange,
+    criteriaCounts,
+  } = useCompetencyAssociations();
+  // `inputValue` is the raw field value, so typing feels responsive; the context's `search` is the debounced
+  // value that drives the course list query.
   const [inputValue, setInputValue] = useState('');
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
 
-  // Any real change to the debounced search value starts the results over
-  // at page 1. Both `search` and `page` are set together, in the same
-  // state-update batch, so a render never sees the old page number paired
-  // with the new search value (which would fire a wasted, possibly
-  // out-of-range request before the page-1 correction caught up).
   const debouncedUpdateSearch = useMemo(
-    () =>
-      debounce((value: string) => {
-        setSearch(value);
-        setPage(1);
-      }, 400),
-    [],
+    () => debounce((value: string) => setCourseSearch(value), 400),
+    [setCourseSearch],
   );
   useEffect(() => () => debouncedUpdateSearch.cancel(), [debouncedUpdateSearch]);
 
@@ -162,40 +148,23 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
   const handleClearSearch = useCallback(() => {
     debouncedUpdateSearch.cancel();
     setInputValue('');
-    setSearch('');
-    setPage(1);
-  }, [debouncedUpdateSearch]);
+    setCourseSearch('');
+  }, [debouncedUpdateSearch, setCourseSearch]);
 
-  // Course start-date range filter. The handler sets the whole range and
-  // resets `page` back to 1 in the same function body - both in the same
-  // state-update batch - for the same reason `debouncedUpdateSearch` above
-  // does: a separate effect keyed on the changing range would let a render
-  // fire with the new range paired with the old (possibly out-of-range) page
-  // before the page-1 correction caught up.
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+  const handleClearDateRange = () => setCourseDateRange([null, null]);
 
-  const handleDateRangeChange = (range: [Date | null, Date | null]) => {
-    setDateRange(range);
-    setPage(1);
-  };
+  const { courses, numPages, isLoading, isPlaceholderData, isError, isSuccess } = courseList;
+  const accessibleCourseCount = useStudioHomeCoursesV2(ACCESSIBLE_COURSES_COUNT_PARAMS).data?.count;
 
-  const handleClearDateRange = () => handleDateRangeChange([null, null]);
-
-  const { data, isLoading, isError } = useStudioHomeCoursesV2({
-    page,
-    pageSize: PAGE_SIZE,
-    search,
-    order: 'display_name',
-    startDateOnOrAfter: dateRange[0] ? formatLocalDayBoundary(dateRange[0], 'start') : undefined,
-    startDateOnOrBefore: dateRange[1] ? formatLocalDayBoundary(dateRange[1], 'end') : undefined,
-  });
-
-  const courses = data?.results.courses ?? [];
-  const numPages = data?.numPages ?? 0;
+  // While a new page or filter loads, `courses` still holds the previous one, so the list shows its spinner
+  // and the summary waits: its counts would describe the previous page.
+  const isListReloading = isLoading || isPlaceholderData;
+  const showSummary = isSuccess && !isListReloading && accessibleCourseCount !== undefined
+    && criteriaCounts !== undefined;
 
   let body: ReactNode;
   let hasPagination = false;
-  if (isLoading) {
+  if (isListReloading) {
     body = (
       <Row className="m-0 mt-2 justify-content-center">
         <LoadingSpinner />
@@ -250,7 +219,7 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
               selectsRange
               startDate={dateRange[0]}
               endDate={dateRange[1]}
-              onChange={handleDateRangeChange}
+              onChange={setCourseDateRange}
               dateFormat={DATE_FORMAT}
               className="datepicker-custom-control"
               autoComplete="off"
@@ -273,6 +242,23 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
             )}
           </div>
         </Stack>
+        {
+          /* Always rendered: a live region only announces changes to content it
+            held before them (WCAG 2.2, 4.1.3), and its reserved line keeps the
+            panel below from shifting while the summary's inputs reload. */
+        }
+        <div role="status" className="course-search-browse__summary small mt-2">
+          {showSummary && (
+            <CourseListSummary
+              listedCount={courses.length}
+              totalCount={accessibleCourseCount}
+              search={search}
+              dateRange={dateRange}
+              listedAssociationCount={criteriaCounts.criteriaCount}
+              totalAssociationCount={criteriaCounts.totalCriteriaCount}
+            />
+          )}
+        </div>
       </div>
       <div className="course-search-browse__panel">
         <CriteriaAssociationsSection competency={activeCompetency} />
@@ -287,7 +273,7 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
             <Pagination
               pageCount={numPages}
               currentPage={page}
-              onPageSelect={setPage}
+              onPageSelect={setCoursePage}
               paginationLabel="pagination navigation"
               size="small"
               className="course-search-browse__pagination d-flex justify-content-center w-100"

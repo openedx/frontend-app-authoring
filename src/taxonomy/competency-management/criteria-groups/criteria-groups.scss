@@ -1,9 +1,14 @@
 // What Paragon has no prop for: the focus accent bars, the sentence layouts and the chip truncation.
 .course-group-list__empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 13rem;
   margin-top: var(--pgn-spacing-spacer-2);
   padding: var(--pgn-spacing-spacer-4-5) var(--pgn-spacing-spacer-3);
-  border-radius: 12px;
+  border-radius: var(--pgn-size-border-radius-base);
   background-color: var(--pgn-color-info-100);
+  box-shadow: var(--pgn-elevation-box-shadow-centered-1);
   font-size: var(--pgn-typography-font-size-sm);
   line-height: var(--pgn-typography-line-height-base);
   letter-spacing: normal;

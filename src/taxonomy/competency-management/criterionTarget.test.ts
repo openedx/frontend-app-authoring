@@ -51,6 +51,8 @@ const response: CompetencyCriteriaGroupsResponse = {
       rulePayloadOverride: { op: 'lte', value: 0.5, scale: 'percent' },
     }),
   ],
+  criteriaCount: 2,
+  totalCriteriaCount: 2,
 };
 
 const index = buildCompetencyCriteriaGroupsIndex(response);

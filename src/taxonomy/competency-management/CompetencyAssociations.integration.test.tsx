@@ -10,9 +10,12 @@ import {
   within,
 } from '@src/testUtils';
 import {
+  buildCourseListResponse,
+  byTextContent,
   courseA,
   courseB,
   courseBGroupsResponse,
+  courseListUrl,
   criterion,
   defaultProfileResponse,
   mockScrollIntoView,
@@ -61,13 +64,16 @@ const outlineOf = (courseName: string, subsections: Record<string, string>) =>
     overrides: { courseStructure: { displayName: courseName } },
   });
 
-const renderPanel = (rows: Course[] = [courseBRow]) =>
-  render(
+/** The provider lists `rows` itself, as `CourseSearchBrowse` would show them, and scopes the groups to them. */
+const renderPanel = (rows: Course[] = [courseBRow]) => {
+  axiosMock.onGet(courseListUrl()).reply(200, buildCourseListResponse(rows.map((row) => row.courseKey)));
+  return render(
     <CompetencyAssociationsProvider tagId={tagId} competencyExternalId="CCRS-1.3">
-      <CourseGroupList />
+      <CourseGroupList competencyName="Test Competency" />
       {rows.map((row) => <CourseRow key={row.courseKey} course={row} />)}
     </CompetencyAssociationsProvider>,
   );
+};
 
 // The author can edit these courses, so each header and rule box has an empty select button beside its editable control.
 const groupHeaders = () => Array.from(document.querySelectorAll<HTMLElement>('.criteria-group-box__select-button'));
@@ -474,7 +480,14 @@ describe('competency associations over the real provider', () => {
     axiosMock.onGet(getCourseOutlineIndexApiUrl(courseB)).reply(403);
     renderPanel();
 
-    expect(await screen.findByText('No content associated.')).toBeInTheDocument();
+    // Course B's criteria are in a listed course, but the author can open none of the listed courses.
+    expect(
+      await screen.findByText(byTextContent(
+        'No content associated with Test Competency that you can open in the courses listed here. '
+          + '2 associations are in listed courses you can\'t open.',
+      )),
+    )
+      .toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: /^From within Course/ })).not.toBeInTheDocument();
     expect(screen.queryByText(/^By completing/)).not.toBeInTheDocument();
   });

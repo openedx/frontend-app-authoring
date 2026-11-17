@@ -1,6 +1,7 @@
 import type {
   CompetencyCriteriaGroup,
   CompetencyCriteriaGroupsResponse,
+  CompetencyCriteriaTree,
   CompetencyCriterion,
   CompetencyRuleProfile,
   GradeRulePayload,
@@ -72,34 +73,41 @@ export const systemDefaultProfile: CompetencyRuleProfile = {
   archived: false,
 };
 
+/** A response for an unscoped fetch, where every criterion is in the listed courses. */
+const withCounts = (tree: CompetencyCriteriaTree): CompetencyCriteriaGroupsResponse => ({
+  ...tree,
+  criteriaCount: tree.criteria.length,
+  totalCriteriaCount: tree.criteria.length,
+});
+
 const rootGroup = group(500, null, null, 0);
 const courseAGroup = group(1, 500, courseA, 0);
 const courseBGroup = group(2, 500, courseB, 1);
 
 /** Course A with its only leaf group (10) holding one criterion. */
-export const singleGroupResponse: CompetencyCriteriaGroupsResponse = {
+export const singleGroupResponse: CompetencyCriteriaGroupsResponse = withCounts({
   groups: [rootGroup, courseAGroup, group(10, 1, null, 0)],
   criteria: [criterion(900, 'existing-sub', 10)],
-};
+});
 
 /** Course A with two leaf groups (10 and 11). */
-export const twoGroupsResponse: CompetencyCriteriaGroupsResponse = {
+export const twoGroupsResponse: CompetencyCriteriaGroupsResponse = withCounts({
   groups: [rootGroup, courseAGroup, group(10, 1, null, 0), group(11, 1, null, 1)],
   criteria: [],
-};
+});
 
-export const noGroupsResponse: CompetencyCriteriaGroupsResponse = { groups: [], criteria: [] };
+export const noGroupsResponse: CompetencyCriteriaGroupsResponse = withCounts({ groups: [], criteria: [] });
 
 /** Course A (leaf 10) and course B (leaf 20). */
-export const twoCoursesResponse: CompetencyCriteriaGroupsResponse = {
+export const twoCoursesResponse: CompetencyCriteriaGroupsResponse = withCounts({
   groups: [rootGroup, courseAGroup, group(10, 1, null, 0), courseBGroup, group(20, 2, null, 0)],
   criteria: [],
-};
+});
 
 /** Course A (leaf 10) and course B with leaves 21 (ordering 1) and 20 (ordering 0), listed
  * out of order. Group 21 is course B's last group and its last rule box is the `eq` override.
  */
-export const courseBGroupsResponse: CompetencyCriteriaGroupsResponse = {
+export const courseBGroupsResponse: CompetencyCriteriaGroupsResponse = withCounts({
   groups: [
     rootGroup,
     courseAGroup,
@@ -116,12 +124,12 @@ export const courseBGroupsResponse: CompetencyCriteriaGroupsResponse = {
       rulePayloadOverride: eqRule,
     }),
   ],
-};
+});
 
 /** `singleGroupResponse` with its leaf renamed to 30, so switching between the
  * two competencies changes which group is auto-focused.
  */
-export const otherSingleGroupResponse: CompetencyCriteriaGroupsResponse = {
+export const otherSingleGroupResponse: CompetencyCriteriaGroupsResponse = withCounts({
   groups: singleGroupResponse.groups.map((item) => (item.id === 10 ? { ...item, id: 30 } : item)),
   criteria: [],
-};
+});

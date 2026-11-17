@@ -41,6 +41,7 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
     setPlaceholderLogicOperator,
     hasPlaceholder,
     isAssociating,
+    courseList,
   } = useCompetencyAssociations();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -86,6 +87,9 @@ const CriteriaGroupBox = ({ group, subsectionNamesByUsageKey, canEdit }: Criteri
   let disabledReason: AddControlProps['disabledReason'] = null;
   if (isAssociating) {
     disabledReason = 'saving';
+  } else if (courseList.isPlaceholderData) {
+    // A reload can list other courses, which would discard an unsaved box started now.
+    disabledReason = 'loading';
   } else if (hasPlaceholder) {
     disabledReason = 'placeholder';
   }

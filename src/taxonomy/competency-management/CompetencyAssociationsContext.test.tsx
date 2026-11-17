@@ -16,9 +16,11 @@ import {
   waitFor,
 } from '@src/testUtils';
 import {
+  buildCourseListResponse,
   courseA,
   courseB,
   courseBGroupsResponse,
+  courseListUrl,
   courseOther,
   criterion,
   defaultProfileResponse as profileResponse,
@@ -95,6 +97,10 @@ const TestConsumer = () => {
     ['Associate in course B', () => ctx.associateSubsection('new-sub', courseB)],
     ['Associate in another course', () => ctx.associateSubsection('new-sub', courseOther)],
     ['Associate duplicate', () => ctx.associateSubsection('existing-sub', courseA)],
+    ['Search for course B', () => ctx.setCourseSearch('b')],
+    ['Search for another course', () => ctx.setCourseSearch('other')],
+    ['Search for the same courses', () => ctx.setCourseSearch('same')],
+    ['Go to page 2', () => ctx.setCoursePage(2)],
     ['Discard placeholder', () => ctx.discardPlaceholder()],
     ['Add placeholder rule box in group 10', () => ctx.addPlaceholderRuleBox(10)],
     ['Add placeholder group under course A', () => ctx.addPlaceholderGroup(1)],
@@ -128,6 +134,12 @@ const TestConsumer = () => {
       <p>Associating: {String(ctx.isAssociating)}</p>
       <p>Course A expansions: {ctx.expansionCountByCourseId[courseA] ?? 0}</p>
       <p>Groups index: {ctx.groupsIndex ? 'loaded' : 'missing'}</p>
+      <p>Listed course keys: {JSON.stringify(ctx.courseList.courses.map((course) => course.courseKey))}</p>
+      <p>Course list: {ctx.courseList.isError ? 'error' : ctx.courseList.isLoading ? 'loading' : 'loaded'}</p>
+      <p>Course list reloading: {String(ctx.courseList.isPlaceholderData)}</p>
+      <p>Course page: {ctx.coursePage}</p>
+      <p>Course search: {JSON.stringify(ctx.courseSearch)}</p>
+      <p>Criteria counts: {JSON.stringify(ctx.criteriaCounts ?? null)}</p>
       <p>Competency: {String(ctx.competencyExternalId)}</p>
       <p>Can edit course B: {String(ctx.canEditCourse(courseB))}</p>
       <p>Can edit another course: {String(ctx.canEditCourse(courseOther))}</p>
@@ -140,6 +152,19 @@ const TestConsumer = () => {
       {actions.map(([label, onClick]) => <button key={label} type="button" onClick={onClick}>{label}</button>)}
     </div>
   );
+};
+
+/** The courses the list endpoint returns by default: every course the fixtures use. */
+const defaultListedCourseKeys = [courseA, courseB];
+
+/** Answers the list request by its `search` parameter, so a test changes the listed courses through
+ * `setCourseSearch`: 'b' (or page 2) lists course B, 'other' a course outside the fixtures, anything else the default pair.
+ */
+const listedCoursesFor = ({ search, page }: { search?: string; page?: number; }) => {
+  if (search === 'b' || page === 2) {
+    return [courseB];
+  }
+  return search === 'other' ? [courseOther] : defaultListedCourseKeys;
 };
 
 const providerFor = (id: number, children: ReactNode = <TestConsumer />) => (
@@ -179,6 +204,7 @@ describe('CompetencyAssociationsProvider', () => {
   beforeEach(() => {
     ({ axiosMock, mockShowToast, queryClient } = initializeMocks());
     user = userEvent.setup();
+    axiosMock.onGet(courseListUrl()).reply((config) => [200, buildCourseListResponse(listedCoursesFor(config.params))]);
   });
 
   afterEach(() => {
@@ -855,6 +881,205 @@ describe('CompetencyAssociationsProvider', () => {
       rerender(providerFor(tagId));
 
       expect(await screen.findByText(focusOnGroup(10))).toBeInTheDocument();
+    });
+  });
+
+  describe('listed course changes (#683)', () => {
+    const groupsRequests = () => axiosMock.history.get.filter((req) => req.url === groupsUrl);
+
+    beforeEach(() => {
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+    });
+
+    it('stays pending and sends no groups request until the course list has loaded', async () => {
+      const listGate = deferred();
+      axiosMock.onGet(courseListUrl()).reply(() =>
+        listGate.released.then(() => [200, buildCourseListResponse([courseA])])
+      );
+      renderProvider();
+      await waitFor(() => expect(axiosMock.history.get.some((req) => req.url === profileUrl)).toBe(true));
+      await flushEffects();
+
+      expect(screen.getByText('Status: pending')).toBeInTheDocument();
+      expect(screen.getByText('Course list: loading')).toBeInTheDocument();
+      expect(groupsRequests()).toHaveLength(0);
+
+      await act(async () => {
+        listGate.release();
+      });
+      await waitForSuccess();
+      expect(groupsRequests()).toHaveLength(1);
+    });
+
+    it('scopes the groups request to the listed course keys and exposes the response counts', async () => {
+      renderProvider();
+      await waitForSuccess();
+
+      expect(groupsRequests()).toHaveLength(1);
+      expect(groupsRequests()[0].params).toEqual({ course_keys: defaultListedCourseKeys.join(',') });
+      expect(screen.getByText(`Listed course keys: ${JSON.stringify(defaultListedCourseKeys)}`)).toBeInTheDocument();
+      expect(screen.getByText('Criteria counts: {"criteriaCount":1,"totalCriteriaCount":1}')).toBeInTheDocument();
+    });
+
+    it('requests the list with the page and search, returning to page 1 when the search changes', async () => {
+      renderProvider();
+      await waitForSuccess();
+      await click('Go to page 2');
+      await screen.findByText('Course page: 2');
+
+      await click('Search for the same courses');
+
+      await screen.findByText('Course search: "same"');
+      expect(screen.getByText('Course page: 1')).toBeInTheDocument();
+      const listRequests = axiosMock.history.get.filter((req) => req.url === courseListUrl());
+      // No render paired the new search with the old page.
+      expect(listRequests.map((req) => [req.params.page, req.params.search])).toEqual([[1, ''], [2, ''], [1, 'same']]);
+    });
+
+    it('keeps the previous scope, with no groups request for other keys, while the next page loads', async () => {
+      const page2Gate = deferred();
+      axiosMock.onGet(courseListUrl()).reply((config) => (
+        config.params.page === 2
+          ? page2Gate.released.then(() => [200, buildCourseListResponse([courseB])])
+          : [200, buildCourseListResponse(defaultListedCourseKeys)]
+      ));
+      axiosMock.onGet(groupsUrl).reply((config) => [
+        200,
+        config.params.course_keys === courseB ? courseBGroupsResponse : singleGroupResponse,
+      ]);
+      axiosMock.onGet(courseBOutlineUrl).reply(200, outlineFixture);
+      renderProvider();
+      await waitForSuccess();
+
+      await click('Go to page 2');
+      await screen.findByText('Course list reloading: true');
+      await flushEffects();
+
+      // The previous page is still the listed one, so the groups keep their scope and stay settled.
+      expect(screen.getByText(`Listed course keys: ${JSON.stringify(defaultListedCourseKeys)}`)).toBeInTheDocument();
+      expect(screen.getByText('Status: success')).toBeInTheDocument();
+      expect(groupsRequests()).toHaveLength(1);
+
+      await act(async () => {
+        page2Gate.release();
+      });
+      await screen.findByText(`Listed course keys: ${JSON.stringify([courseB])}`);
+      await waitForSuccess();
+      expect(groupsRequests().map((req) => req.params.course_keys)).toEqual([
+        defaultListedCourseKeys.join(','),
+        courseB,
+      ]);
+    });
+
+    it('is pending again until a newly listed course\'s outline loads', async () => {
+      const courseBOutlineGate = deferred();
+      axiosMock.onGet(groupsUrl).reply((config) => [
+        200,
+        config.params.course_keys === courseB ? twoCoursesResponse : singleGroupResponse,
+      ]);
+      axiosMock.onGet(courseBOutlineUrl).reply(() => courseBOutlineGate.released.then(() => [200, outlineFixture]));
+      renderProvider();
+      await waitForSuccess();
+
+      await click('Search for course B');
+      await screen.findByText('Groups index: loaded');
+      await screen.findByText(`Listed course keys: ${JSON.stringify([courseB])}`);
+      await flushEffects();
+      expect(screen.getByText('Status: pending')).toBeInTheDocument();
+
+      await act(async () => {
+        courseBOutlineGate.release();
+      });
+      await waitForSuccess();
+    });
+
+    it.each([
+      ['rule box', 'Add placeholder rule box in group 10'],
+      ['group', 'Add placeholder group under course A'],
+    ])(
+      'discards a placeholder %s, and goes pending, when a search lists different courses',
+      async (_label, addButton) => {
+        const groupsGate = deferred();
+        axiosMock.onGet(groupsUrl).reply((config) => (
+          config.params.course_keys === courseOther
+            ? groupsGate.released.then(() => [200, noGroupsResponse])
+            : [200, singleGroupResponse]
+        ));
+        renderProvider();
+        await waitForSuccess();
+        await click(addButton);
+        expect(screen.getByText('Has placeholder: true')).toBeInTheDocument();
+
+        await click('Search for another course');
+
+        await screen.findByText('Status: pending');
+        expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
+        expect(noFocus()).toBeInTheDocument();
+
+        await act(async () => {
+          groupsGate.release();
+        });
+        await waitForSuccess();
+      },
+    );
+
+    it('keeps a placeholder, with no groups refetch, when a search lists the same courses', async () => {
+      renderProvider();
+      await waitForSuccess();
+      await click('Add placeholder rule box in group 10');
+
+      await click('Search for the same courses');
+      await screen.findByText('Course search: "same"');
+      await waitFor(() => expect(screen.getByText('Course list reloading: false')).toBeInTheDocument());
+      await flushEffects();
+
+      expect(screen.getByText('Has placeholder: true')).toBeInTheDocument();
+      expect(screen.getByText(focusOn(10, null))).toBeInTheDocument();
+      expect(screen.getByText('Status: success')).toBeInTheDocument();
+      expect(groupsRequests()).toHaveLength(1);
+    });
+
+    it('keeps a focused saved rule box when a search lists different courses', async () => {
+      renderProvider();
+      await waitForSuccess();
+      await click('Focus rule box 10 gte');
+
+      await click('Search for another course');
+      await flushEffects();
+
+      expect(screen.getByText(focusOn(10, gteKey))).toBeInTheDocument();
+    });
+
+    it('reports an error, and sends no groups request, when the course list fails', async () => {
+      axiosMock.onGet(courseListUrl()).reply(500);
+      renderProvider();
+
+      await screen.findByText('Status: error');
+      expect(screen.getByText('Course list: error')).toBeInTheDocument();
+      expect(screen.getByText(/^Error: .*500/)).toBeInTheDocument();
+      expect(groupsRequests()).toHaveLength(0);
+    });
+
+    it('ignores a kept focus whose group is out of scope: a create in a listed course sends no group fields', async () => {
+      axiosMock.onGet(groupsUrl).reply((config) => [
+        200,
+        config.params.course_keys === courseOther ? noGroupsResponse : singleGroupResponse,
+      ]);
+      axiosMock.onPost(createUrl).reply(201, createdCriterion(30));
+      renderProvider();
+      await waitForSuccess();
+      await click('Focus rule box 10 gte'); // group 10 belongs to course A
+
+      await click('Search for another course');
+      await screen.findByText('Status: pending');
+      await waitForSuccess();
+      expect(screen.getByText(focusOn(10, gteKey))).toBeInTheDocument();
+
+      await click('Associate in another course');
+
+      await expectSinglePost({ object_id: 'new-sub' });
     });
   });
 

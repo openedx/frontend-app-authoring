@@ -1,5 +1,5 @@
 import type {
-  CompetencyCriteriaGroupsResponse,
+  CompetencyCriteriaTree,
   CompetencyCriterion,
   GradeRulePayload,
   RuleBox,
@@ -37,7 +37,7 @@ const buildCriterion = (overrides: Partial<CompetencyCriterion> = {}): Competenc
 // 103). Group ids and array order are deliberately out of numeric/array
 // order so tests can't pass by accident from iterating in id or array
 // order instead of by the fields the derivation actually sorts on.
-const fixtureResponse: CompetencyCriteriaGroupsResponse = {
+const fixtureResponse: CompetencyCriteriaTree = {
   groups: [
     {
       id: 100,
@@ -193,7 +193,7 @@ describe('lastRuleKeyIn', () => {
 });
 
 // The group with the higher id has the lower `ordering`, so sorting by `id` instead of `ordering` fails.
-const reversedIdsResponse: CompetencyCriteriaGroupsResponse = {
+const reversedIdsResponse: CompetencyCriteriaTree = {
   groups: [
     {
       id: 1,
@@ -254,7 +254,7 @@ describe('lastBottomTierGroupForCourse', () => {
   });
 
   it('breaks a tie in ordering by the higher id', () => {
-    const tieResponse: CompetencyCriteriaGroupsResponse = {
+    const tieResponse: CompetencyCriteriaTree = {
       groups: [
         {
           id: 1,
@@ -297,7 +297,7 @@ describe('lastBottomTierGroupForCourse', () => {
   });
 
   it('returns null when the course-level group has no bottom-tier children yet', () => {
-    const noChildrenResponse: CompetencyCriteriaGroupsResponse = {
+    const noChildrenResponse: CompetencyCriteriaTree = {
       groups: [
         {
           id: 1,

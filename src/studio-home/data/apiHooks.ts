@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { getStudioHomeLibraries, getStudioHomeCoursesV2, type StudioHomeCoursesV2Response } from './api';
 
 export interface StudioHomeCoursesV2Params {
@@ -35,11 +35,16 @@ export const useLibrariesV1Data = (enabled: boolean = true) => (
  */
 export const useStudioHomeCoursesV2 = (
   params: StudioHomeCoursesV2Params,
-  options?: { enabled?: boolean; },
+  options?: {
+    enabled?: boolean;
+    /** Keep the previous parameters' page as `data` (with `isPlaceholderData` set) while a new page loads. */
+    keepPreviousData?: boolean;
+  },
 ) => (
   useQuery({
     queryKey: studioHomeQueryKeys.coursesV2(params),
     queryFn: () => getStudioHomeCoursesV2('', params) as Promise<StudioHomeCoursesV2Response>,
     enabled: options?.enabled ?? true,
+    placeholderData: options?.keepPreviousData ? keepPreviousData : undefined,
   })
 );

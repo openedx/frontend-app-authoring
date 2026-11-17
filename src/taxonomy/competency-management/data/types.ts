@@ -54,12 +54,25 @@ export interface CompetencyCriterion {
   rulePayloadOverride: GradeRulePayload | null;
 }
 
-/** A flat `groups` array (root, course-level, and leaf rows mixed) plus a
- * flat `criteria` array, each criterion pointing at its leaf group by id.
+/** The flat groups-plus-criteria tree `#681`'s endpoint returns: a flat
+ * `groups` array (root, course-level, and leaf rows mixed - see
+ * `CompetencyCriteriaGroup`) plus a flat `criteria` array, each criterion
+ * pointing at its leaf group by id. See `buildCompetencyCriteriaGroupsIndex`
+ * in `../utils` for the tree this gets indexed into.
  */
-export interface CompetencyCriteriaGroupsResponse {
+export interface CompetencyCriteriaTree {
   groups: CompetencyCriteriaGroup[];
   criteria: CompetencyCriterion[];
+}
+
+/** `#681`'s response: the `CompetencyCriteriaTree`, scoped to the requested
+ * `course_keys`, plus the two counts `#682` adds.
+ */
+export interface CompetencyCriteriaGroupsResponse extends CompetencyCriteriaTree {
+  /** The number of criteria in this response, i.e. after scoping to `course_keys` (`#682`). */
+  criteriaCount: number;
+  /** The competency's non-archived criteria across the whole instance, ignoring `course_keys` (`#682`). */
+  totalCriteriaCount: number;
 }
 
 export interface CompetencyRuleProfile {

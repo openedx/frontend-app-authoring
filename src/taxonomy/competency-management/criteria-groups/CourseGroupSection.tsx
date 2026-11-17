@@ -36,6 +36,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     discardPlaceholder,
     hasPlaceholder,
     isAssociating,
+    courseList,
   } = useCompetencyAssociations();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { data } = useCourseOutlineIndex(courseGroup.courseKey, { refetchOnMount: false });
@@ -90,6 +91,9 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   let disabledReason: AddControlProps['disabledReason'] = null;
   if (isAssociating) {
     disabledReason = 'saving';
+  } else if (courseList.isPlaceholderData) {
+    // A reload can list other courses, which would discard an unsaved box started now.
+    disabledReason = 'loading';
   } else if (hasPlaceholder) {
     disabledReason = 'placeholder';
   }
