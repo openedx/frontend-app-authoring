@@ -11,6 +11,9 @@
 }
 
 .course-group-list {
+  // Lets the score settings popover cap its width to the list, so it fits the associations panel at narrow widths.
+  container-type: inline-size;
+
   // The accent bar is always a left border so a focus change recolors it
   // instead of shifting the content.
   .course-group-section {
@@ -136,7 +139,12 @@
       display: inline-block;
 
       .dropdown-toggle {
+        // `.btn-link` reads its color from these tokens.
+        --pgn-color-link-base: var(--pgn-color-gray-700);
+        --pgn-color-link-hover: var(--pgn-color-gray-900);
+
         vertical-align: baseline;
+        font-weight: inherit;
         // Layers above `&__select-button` so clicks land here.
         position: relative;
         z-index: 1;
@@ -221,13 +229,19 @@
     align-items: center;
     align-self: flex-start;
     gap: var(--pgn-spacing-spacer-1);
-    white-space: nowrap;
-    height: 1.9375rem;
+    min-height: 1.9375rem;
     padding: 3px 5px;
     border: 1px solid var(--pgn-color-gray-200);
     border-radius: 3px;
     background-color: var(--pgn-color-white);
     color: var(--pgn-color-gray-700);
+    text-align: start;
+  }
+
+  // The line height fits one line in the sentence's `min-height`. It's set here because the button's `font: inherit`
+  // would reset it on the sentence.
+  .score-threshold-field__label {
+    line-height: 1.4375rem;
   }
 
   .score-threshold-field__value {
@@ -248,6 +262,7 @@
 
   .score-settings {
     width: 338px;
+    max-width: 100cqi;
     padding: .75rem 1rem 1rem;
     background-color: var(--pgn-color-white);
     border-radius: var(--pgn-size-border-radius-base);
