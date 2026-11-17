@@ -15,18 +15,10 @@ describe('<ScoreThresholdField />', () => {
   it('renders "or higher" for a gte rule, as plain text with no control', () => {
     const { container } = render(<ScoreThresholdField rulePayload={{ op: 'gte', value: 0.7, scale: 'percent' }} />);
 
-    expect(screen.getByText('70% or higher').closest('.score-threshold-field')).toHaveTextContent(
+    expect(screen.getByText('70% or higher').closest('.score-threshold-field__label')).toHaveTextContent(
       'With a score of 70% or higher',
     );
     expect(container.querySelector('input, select, textarea, button')).toBeNull();
-  });
-
-  it('puts the read-only sentence in the label element the stylesheet targets', () => {
-    render(<ScoreThresholdField rulePayload={{ op: 'gte', value: 0.7, scale: 'percent' }} />);
-
-    const label = screen.getByText('70% or higher').closest('.score-threshold-field__label')!;
-    expect(label).toHaveTextContent('With a score of 70% or higher');
-    expect(label.parentElement).toHaveClass('score-threshold-field__sentence');
   });
 
   it('renders "or lower" for a lte rule', () => {

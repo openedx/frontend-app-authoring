@@ -97,9 +97,6 @@ const ScoreThresholdField = ({
   }, [hintIsError, rejectionCount]);
 
   const handleCloseRequest = async () => {
-    if (!isOpen) {
-      return;
-    }
     const mayClose = await popoverRef.current?.commit() ?? true;
     if (mayClose) {
       setIsOpen(false);
