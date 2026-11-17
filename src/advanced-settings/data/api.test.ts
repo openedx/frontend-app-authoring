@@ -1,5 +1,6 @@
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import {
+  getAdvancedSettingsErrors,
   getCourseAdvancedSettings,
   updateCourseAdvancedSettings,
   getProctoringExamErrors,
@@ -86,7 +87,7 @@ describe('courseSettings API', () => {
 
       const result = await getCourseAdvancedSettings('course-v1:Test+T101+2024');
       expect(mockHttpClient.get).toHaveBeenCalledWith(
-        `${process.env.STUDIO_BASE_URL}/api/contentstore/v0/advanced_settings/course-v1:Test+T101+2024?fetch_all=0`,
+        `${process.env.STUDIO_BASE_URL}/api/authoring/v1/courses/course-v1:Test+T101+2024/advanced_settings/`,
       );
       expect(result).toEqual(expected);
     });
@@ -157,10 +158,54 @@ describe('courseSettings API', () => {
 
       const result = await updateCourseAdvancedSettings('course-v1:Test+T101+2024', {});
       expect(mockHttpClient.patch).toHaveBeenCalledWith(
-        `${process.env.STUDIO_BASE_URL}/api/contentstore/v0/advanced_settings/course-v1:Test+T101+2024`,
+        `${process.env.STUDIO_BASE_URL}/api/authoring/v1/courses/course-v1:Test+T101+2024/advanced_settings/`,
         {},
       );
       expect(result).toEqual(expected);
+    });
+  });
+
+  describe('getAdvancedSettingsErrors', () => {
+    const validationError = (data) => ({ response: { status: 400, data } });
+
+    it('lists each refused setting with its messages', () => {
+      const error = validationError({
+        type: 'https://docs.openedx.org/errors/validation',
+        title: 'Validation error',
+        status: 400,
+        detail: 'The request is not valid.',
+        instance: '/api/authoring/v1/courses/course-v1:Test+T101+2024/advanced_settings/',
+        errors: {
+          days_early_for_beta: ['The value is not valid for this setting.'],
+          teams_configuration: [
+            'max_team_size must be greater than zero',
+            'duplicate ids: alpha',
+          ],
+        },
+      });
+      expect(getAdvancedSettingsErrors(error)).toEqual([
+        { key: 'days_early_for_beta', message: 'The value is not valid for this setting.' },
+        { key: 'teams_configuration', message: 'max_team_size must be greater than zero duplicate ids: alpha' },
+      ]);
+    });
+
+    it('keeps an error that names no setting', () => {
+      const error = validationError({
+        status: 400,
+        errors: { non_field_errors: ['The settings could not be saved. No setting was changed.'] },
+      });
+      expect(getAdvancedSettingsErrors(error)).toEqual([
+        { key: 'non_field_errors', message: 'The settings could not be saved. No setting was changed.' },
+      ]);
+    });
+
+    it.each([
+      ['a body without errors', validationError({ status: 400, detail: 'Malformed request.' })],
+      ['no body', { response: { status: 500 } }],
+      ['no response', new Error('Network Error')],
+      ['nothing', undefined],
+    ])('gives an empty list for %s', (_, error) => {
+      expect(getAdvancedSettingsErrors(error)).toEqual([]);
     });
   });
 

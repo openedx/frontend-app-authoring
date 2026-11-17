@@ -31,4 +31,16 @@ describe('<ModalErrorListItem />', () => {
     const { getByRole } = render(<RootWrapper />);
     expect(getByRole('alert')).toHaveClass('alert-danger');
   });
+  it('renders only the message for an error that names no setting', () => {
+    const { getByText, queryByRole } = render(
+      <IntlProvider locale="en">
+        <ModalErrorListItem
+          settingName={{ key: 'non_field_errors', message: 'The settings could not be saved.' }}
+          settingsData={settingsData}
+        />
+      </IntlProvider>,
+    );
+    expect(getByText('The settings could not be saved.')).toBeInTheDocument();
+    expect(queryByRole('heading')).toBeNull();
+  });
 });

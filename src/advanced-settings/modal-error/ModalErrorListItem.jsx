@@ -7,14 +7,17 @@ import { capitalize } from 'lodash';
 import { transformKeysToCamelCase } from '../../utils';
 
 const ModalErrorListItem = ({ settingName, settingsData }) => {
-  const { displayName } = settingsData[transformKeysToCamelCase(settingName)];
+  // An error that is not about one setting (the save as a whole failed) has no setting to name.
+  const displayName = settingsData[transformKeysToCamelCase(settingName)]?.displayName;
   return (
     <li className="modal-error-item">
       <Alert variant="danger">
-        <h4 className="modal-error-item-title">
-          <Icon src={Error} />
-          {capitalize(displayName)}:
-        </h4>
+        {displayName && (
+          <h4 className="modal-error-item-title">
+            <Icon src={Error} />
+            {capitalize(displayName)}:
+          </h4>
+        )}
         <p className="m-0">{settingName.message}</p>
       </Alert>
     </li>

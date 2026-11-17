@@ -9,7 +9,9 @@ ensureConfig([
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getCourseAppsApiUrl = () => `${getApiBaseUrl()}/api/course_apps/v1/apps`;
-export const getCourseAdvancedSettingsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v0/advanced_settings`;
+export const getCourseAdvancedSettingsApiUrl = (courseId) => (
+  `${getApiBaseUrl()}/api/authoring/v1/courses/${courseId}/advanced_settings/`
+);
 
 /**
  * Fetches the course apps installed for provided course
@@ -47,7 +49,10 @@ export async function updateCourseApp(courseId, appId, state) {
  */
 export async function getCourseAdvancedSettings(courseId, settings) {
   const { data } = await getAuthenticatedHttpClient()
-    .get(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`, { filter_fields: settings.map(snakeCase).join(',') });
+    .get(getCourseAdvancedSettingsApiUrl(courseId), {
+      // `view: 'full'` so that any setting of the course can be read, not only those listed on Advanced Settings.
+      params: { view: 'full', fields: settings.map(snakeCase).join(',') },
+    });
   return camelCaseObject(data);
 }
 
@@ -60,6 +65,6 @@ export async function getCourseAdvancedSettings(courseId, settings) {
  */
 export async function updateCourseAdvancedSettings(courseId, setting, value) {
   const { data } = await getAuthenticatedHttpClient()
-    .patch(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`, { [snakeCase(setting)]: { value } });
+    .patch(getCourseAdvancedSettingsApiUrl(courseId), { [snakeCase(setting)]: { value } });
   return camelCaseObject(data);
 }

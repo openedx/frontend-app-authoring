@@ -189,7 +189,7 @@ describe('cms url methods', () => {
   describe('courseAdvanceSettings', () => {
     it('returns url with studioEndpointUrl and learningContextId', () => {
       expect(courseAdvanceSettings({ studioEndpointUrl, learningContextId }))
-        .toEqual(`${studioEndpointUrl}/api/contentstore/v0/advanced_settings/${learningContextId}`);
+        .toEqual(`${studioEndpointUrl}/api/authoring/v1/courses/${learningContextId}/advanced_settings/`);
     });
   });
   describe('videoFeatures', () => {
