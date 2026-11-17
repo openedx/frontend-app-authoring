@@ -12,6 +12,7 @@ import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { apiUrls } from './api';
 import {
   competencyQueryKeys,
+  useCompetencyBlockedCourses,
   useCompetencyCriteriaGroups,
   useCourseTaggingPermissions,
   useCreateCompetencyCriterion,
@@ -114,6 +115,78 @@ describe('useCompetencyCriteriaGroups', () => {
       releaseSecondPage();
     });
     await waitFor(() => expect(result.current.data).toEqual(emptyGroupsData));
+  });
+});
+
+describe('useCompetencyBlockedCourses', () => {
+  const blockedCoursesBody = {
+    count: 1,
+    next: null,
+    previous: null,
+    results: [{ course_key: courseKeys[0], conflicting_tag_id: 7, conflicting_tag_value: 'Inference' }],
+  };
+  const blockedCoursesRequests = (axiosMock: ReturnType<typeof initializeMocks>['axiosMock']) => (
+    axiosMock.history.get.filter((req) => req.url === apiUrls.competencyBlockedCourses(tagId))
+  );
+
+  it('fetches the blocked courses', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.competencyBlockedCourses(tagId)).reply(200, blockedCoursesBody);
+
+    const { result } = renderHook(() => useCompetencyBlockedCourses(tagId, courseKeys), { wrapper: makeWrapper() });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual([
+      { courseKey: courseKeys[0], conflictingTagId: 7, conflictingTagValue: 'Inference' },
+    ]);
+  });
+
+  it.each([
+    ['course keys are not reported yet', undefined],
+    ['no courses are listed', []],
+  ])('issues no request while %s', (_case, hookCourseKeys) => {
+    const { axiosMock } = initializeMocks();
+
+    const { result } = renderHook(
+      () => useCompetencyBlockedCourses(tagId, hookCourseKeys),
+      { wrapper: makeWrapper() },
+    );
+
+    expect(result.current.fetchStatus).toEqual('idle');
+    expect(axiosMock.history.get).toHaveLength(0);
+  });
+
+  it('does not hand back the previous course keys\' data while new keys are fetching', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.competencyBlockedCourses(tagId)).replyOnce(200, blockedCoursesBody);
+    axiosMock.onGet(apiUrls.competencyBlockedCourses(tagId)).replyOnce(() => new Promise(() => {}));
+    const { result, rerender } = renderHook(
+      ({ keys }: { keys: string[]; }) => useCompetencyBlockedCourses(tagId, keys),
+      { wrapper: makeWrapper(), initialProps: { keys: [courseKeys[0]] } },
+    );
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    rerender({ keys: [courseKeys[1]] });
+
+    await waitFor(() => expect(blockedCoursesRequests(axiosMock)).toHaveLength(2));
+    expect(blockedCoursesRequests(axiosMock)[1].params).toEqual({ course_keys: courseKeys[1] });
+    expect(result.current.data).toBeUndefined();
+  });
+
+  it('drops its cached answer once nothing observes it, so a revisit fetches fresh', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(apiUrls.competencyBlockedCourses(tagId)).reply(200, blockedCoursesBody);
+    const { result, unmount } = renderHook(
+      () => useCompetencyBlockedCourses(tagId, courseKeys),
+      { wrapper: makeWrapper() },
+    );
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    unmount();
+
+    await waitFor(() => (
+      expect(queryClient.getQueryData(competencyQueryKeys.competencyBlockedCourses(tagId, courseKeys))).toBeUndefined()
+    ));
   });
 });
 
