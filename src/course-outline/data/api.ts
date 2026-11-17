@@ -17,7 +17,7 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getCourseOutlineIndexApiUrl = (
   courseId: string,
-) => `${getApiBaseUrl()}/api/contentstore/v1/course_index/${courseId}`;
+) => `${getApiBaseUrl()}/api/authoring/v2/courses/${courseId}/outline/`;
 
 export const getCourseDetailsApiUrl = (courseId) =>
   `${getApiBaseUrl()}/api/contentstore/v3/course_details/${courseId}/`;
@@ -69,8 +69,9 @@ export const courseLegacyLibraryContentTaskStatus = (courseId: string, taskId: s
  * @returns {Promise<CourseOutline>}
  */
 export async function getCourseOutlineIndex(courseId: string): Promise<CourseOutline> {
+  // The default view is a thin tree of names; the outline page needs every block's settings and the page data.
   const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseOutlineIndexApiUrl(courseId));
+    .get(getCourseOutlineIndexApiUrl(courseId), { params: { view: 'full' } });
 
   return camelCaseObject(data);
 }
