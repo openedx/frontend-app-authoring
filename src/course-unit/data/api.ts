@@ -8,7 +8,7 @@ const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getXBlockBaseApiUrl = (itemId: string) => `${getStudioBaseUrl()}/xblock/${itemId}`;
 export const getCourseSectionVerticalApiUrl = (itemId: string) =>
-  `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
+  `${getStudioBaseUrl()}/api/authoring/v2/containers/${itemId}/`;
 export const getCourseVerticalChildrenApiUrl = (itemId: string, getUpstreamInfo: boolean = false) =>
   `${getStudioBaseUrl()}/api/contentstore/v1/container/${itemId}/children?get_upstream_info=${getUpstreamInfo}`;
 export const getCourseOutlineInfoUrl = (courseId: string) => `${getStudioBaseUrl()}/course/${courseId}?format=concise`;
@@ -31,11 +31,12 @@ export async function editUnitDisplayName(unitId: string, displayName: string): 
 }
 
 /**
- * Fetch vertical block data from the container_handler endpoint.
+ * Fetch the unit page data of a unit, or of a container inside a unit.
+ * The default view of a container holds only its name and place in the course.
  */
 export async function getVerticalData(unitId: string): Promise<object> {
   const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseSectionVerticalApiUrl(unitId));
+    .get(getCourseSectionVerticalApiUrl(unitId), { params: { view: 'full' } });
 
   const courseSectionVerticalData = normalizeCourseSectionVerticalData(data);
   courseSectionVerticalData.xblockInfo.readOnly = isUnitImportedFromLib(courseSectionVerticalData.xblockInfo);

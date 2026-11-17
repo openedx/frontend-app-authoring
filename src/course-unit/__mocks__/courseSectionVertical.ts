@@ -1,6 +1,5 @@
 export default {
   language_code: 'en',
-  action: 'view',
   xblock: {
     display_name: 'Getting Started',
     display_type: 'Unit',
@@ -1491,14 +1490,9 @@ export default {
   published_preview_link:
     '//localhost:18000/courses/course-v1:edX+DemoX+Demo_Course/jump_to/block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
   show_unit_tags: false,
-  user_clipboard: {
-    content: null,
-    source_usage_key: '',
-    source_context_title: '',
-    source_edit_url: '',
-  },
   is_fullwidth_content: false,
   assets_url: '/assets/course-v1:edX+DemoX+Demo_Course/',
   unit_block_id: '867dddb6f55d410caaa9c1eb9c6743ec',
   subsection_location: 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5',
+  library_content_picker_url: null,
 };
