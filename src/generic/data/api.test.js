@@ -44,20 +44,28 @@ describe('generic api calls', () => {
   });
 
   it('should get course rerun', async () => {
-    const courseId = 'course-mock-id';
-    const courseRerunData = {
+    const courseId = 'course-v1:edX+DemoX+Demo_Course';
+    const courseRerunUrl = `${getApiBaseUrl()}/api/authoring/v2/courses/${courseId}/rerun_defaults/`;
+    axiosMock.onGet(courseRerunUrl).reply(200, {
+      allow_unicode_course_id: false,
+      course_creator_status: 'granted',
+      display_name: 'Demonstration Course',
+      number: 'DemoX',
+      org: 'edX',
+      run: 'Demo_Course',
+    });
+    const result = await getCourseRerun(courseId);
+
+    expect(getCourseRerunUrl(courseId)).toEqual(courseRerunUrl);
+    expect(axiosMock.history.get[0].url).toEqual(courseRerunUrl);
+    expect(result).toEqual({
       allowUnicodeCourseId: false,
       courseCreatorStatus: 'granted',
       displayName: 'Demonstration Course',
       number: 'DemoX',
       org: 'edX',
       run: 'Demo_Course',
-    };
-    axiosMock.onGet(getCourseRerunUrl(courseId)).reply(200, courseRerunData);
-    const result = await getCourseRerun(courseId);
-
-    expect(axiosMock.history.get[0].url).toEqual(getCourseRerunUrl(courseId));
-    expect(result).toEqual(courseRerunData);
+    });
   });
 
   it('should post create or rerun course', async () => {

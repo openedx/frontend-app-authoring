@@ -51,7 +51,7 @@ export const getPreviewModulestoreMigrationUrl = () =>
   `${getStudioBaseUrl()}/api/modulestore_migrator/v1/migration_preview/`;
 
 export const getCourseSettingsApiUrl = (courseId: string) =>
-  `${getStudioBaseUrl()}/api/contentstore/v1/course_settings/${courseId}`;
+  `${getStudioBaseUrl()}/api/authoring/v2/courses/${courseId}/settings/`;
 
 export const getApiWaffleFlagsUrl = (courseId?: string): string => {
   const baseUrl = getStudioBaseUrl();
@@ -227,6 +227,7 @@ export async function getUserAgreement(agreementType: string) {
 export interface CourseSettingsData {
   aboutPageEditable: boolean;
   canShowCertificateAvailableDateField: boolean;
+  contentExperimentsEnabled: boolean;
   courseDisplayName: string;
   courseDisplayNameWithDefault: string;
   creditEligibilityEnabled: boolean;
@@ -258,9 +259,20 @@ export interface CourseSettingsData {
 }
 
 /**
+ * Only `full` returns `languageOptions`, `possiblePreRequisiteCourses` and `creditRequirements`.
+ * The prerequisite list holds every course the user may view, so ask for `full` only where they are read.
+ */
+export type CourseSettingsView = 'minimal' | 'full';
+
+/**
  * Get course settings.
  */
-export async function getCourseSettings(courseId: string): Promise<CourseSettingsData> {
-  const { data } = await getAuthenticatedHttpClient().get(getCourseSettingsApiUrl(courseId));
+export async function getCourseSettings(
+  courseId: string,
+  view: CourseSettingsView = 'minimal',
+): Promise<CourseSettingsData> {
+  const { data } = await getAuthenticatedHttpClient().get(getCourseSettingsApiUrl(courseId), {
+    params: view === 'full' ? { view } : undefined,
+  });
   return camelCaseObject(data);
 }

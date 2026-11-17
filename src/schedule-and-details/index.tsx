@@ -57,7 +57,7 @@ const ScheduleAndDetails = () => {
     isPending: isPendingCourseSettings,
     failureReason: courseSettingsError,
     isError: isErrorCourseSettins,
-  } = useCourseSettings(courseId);
+  } = useCourseSettings(courseId, 'full');
 
   const showLoadFailedAlert = isErrorCourseDetails || isErrorCourseSettins;
 
