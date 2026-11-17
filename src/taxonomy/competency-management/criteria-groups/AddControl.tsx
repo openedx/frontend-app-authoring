@@ -16,7 +16,7 @@ export interface AddControlProps {
   accessibleLabel: string;
   onClick: React.MouseEventHandler;
   /** Why the control is disabled, or `null` when it is enabled. */
-  disabledReason: 'placeholder' | 'saving' | null;
+  disabledReason: 'placeholder' | 'saving' | 'loading' | null;
 }
 
 /** The "+ Rule" and "+ Rule Group" control, centered between two connector lines.
@@ -41,9 +41,12 @@ const AddControl = ({
   if (disabled) {
     describedBy = isTooltipOpen ? tooltipId : descriptionId;
   }
-  const reasonText = intl.formatMessage(
-    disabledReason === 'saving' ? messages.addControlSavingTooltip : messages.addControlDisabledTooltip,
-  );
+  const reasonMessages = {
+    saving: messages.addControlSavingTooltip,
+    loading: messages.addControlLoadingTooltip,
+    placeholder: messages.addControlDisabledTooltip,
+  };
+  const reasonText = intl.formatMessage(reasonMessages[disabledReason ?? 'placeholder']);
 
   return (
     <Stack direction="horizontal" gap={2} className="add-control">

@@ -1,7 +1,7 @@
 import type {
   BottomTierCompetencyCriteriaGroup,
   CompetencyCriteriaGroup,
-  CompetencyCriteriaGroupsResponse,
+  CompetencyCriteriaTree,
   CompetencyCriterion,
   CompetencyRuleProfile,
   CourseCompetencyCriteriaGroup,
@@ -23,7 +23,7 @@ export interface CompetencyCriteriaGroupsIndex {
 }
 
 export function buildCompetencyCriteriaGroupsIndex(
-  response: CompetencyCriteriaGroupsResponse,
+  response: CompetencyCriteriaTree,
 ): CompetencyCriteriaGroupsIndex {
   const groupsById = new Map<number, CompetencyCriteriaGroup>();
   const childGroupsByParentId = new Map<number, CompetencyCriteriaGroup[]>();
@@ -189,6 +189,6 @@ export function visibleCourseGroups(
   return index.courseGroups.filter((courseGroup) => accessibleCourseIds.has(courseGroup.courseKey));
 }
 
-export function associatedObjectIds(response: CompetencyCriteriaGroupsResponse): Set<string> {
+export function associatedObjectIds(response: CompetencyCriteriaTree): Set<string> {
   return new Set(response.criteria.map((criterion) => criterion.objectId));
 }

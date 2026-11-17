@@ -14,10 +14,14 @@ import { useQueries } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import type { AxiosError } from 'axios';
+import { isEqual } from 'lodash';
+import moment from 'moment';
 
 import { getCourseOutlineIndex } from '@src/course-outline/data';
 import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import { useToastContext } from '@src/generic/toast-context';
+import type { Course } from '@src/studio-home/data/api';
+import { useStudioHomeCoursesV2 } from '@src/studio-home/data/apiHooks';
 
 import {
   useCompetencyCriteriaGroups,
@@ -28,6 +32,7 @@ import {
   useUpdateCompetencyCriteriaRule,
 } from './data/apiHooks';
 import type {
+  CompetencyCriteriaGroupsResponse,
   CompetencyGroupLogicOperator,
   CompetencyRuleProfile,
   CourseCompetencyCriteriaGroup,
@@ -71,8 +76,52 @@ export interface CriteriaFocus {
   ruleKey: string | null;
 }
 
+export type CourseDateRange = [Date | null, Date | null];
+
+/** The course list query, as the course browser needs it. */
+export interface CourseList {
+  /** The listed page. While a new page or filter loads (`isPlaceholderData`) this is still the previous
+   * one, so the groups keep their scope until the listed courses really change.
+   */
+  courses: Course[];
+  numPages: number;
+  /** The first page is loading. A later page or filter loading shows as `isPlaceholderData` instead. */
+  isLoading: boolean;
+  /** `courses` is the previous parameters' page, and the requested one is still loading. */
+  isPlaceholderData: boolean;
+  isError: boolean;
+  isSuccess: boolean;
+}
+
+const PAGE_SIZE = 10;
+
+// Sends the local calendar day's own start/end instant (in the browser's own
+// UTC offset), not a bare date: a bare `YYYY-MM-DD` is inherently ambiguous
+// across time zones, since the backend has no way to know which time zone's
+// midnight-to-midnight it should mean (see #834 for the day-boundary bug
+// this caused). The backend requires an explicit UTC offset (or `Z`) and
+// compares this value directly against a course's own start instant, so the
+// selected day here always matches the day Studio itself shows for that
+// course, regardless of the user's time zone. `SSS` keeps the "end" boundary
+// at the day's last millisecond rather than its last whole second - `moment`
+// can't go finer than that (it wraps the browser's own `Date`, which is
+// itself only millisecond-precise), but that's still within a millisecond
+// of the backend's own microsecond-precision end-of-day example.
+const formatLocalDayBoundary = (date: Date, boundary: 'start' | 'end') =>
+  (
+    boundary === 'start' ? moment(date).startOf('day') : moment(date).endOf('day')
+  ).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+
+interface CourseListParams {
+  page: number;
+  search: string;
+  dateRange: CourseDateRange;
+}
+
+const initialCourseListParams: CourseListParams = { page: 1, search: '', dateRange: [null, null] };
+
 export interface CompetencyAssociationsContextBase {
-  /** The groups or profile failure, or the first course-outline failure other
+  /** The course list, groups or profile failure, or the first course-outline failure other
    * than a 403 or 404, behind `status === 'error'`.
    */
   error: Error | null;
@@ -133,8 +182,9 @@ export interface CompetencyAssociationsContextBase {
    * (`courses.manage_tags`).
    */
   canEditCourse: (courseId: string) => boolean;
-  /** The `objectId` of every criterion in the tree, for the duplicate guard
-   * and the content panel's "already associated" marking.
+  /** The `objectId` of every criterion in the listed courses, for the duplicate guard
+   * and the content panel's "already associated" marking. Content can only be picked
+   * from a listed course, so the guard needs nothing outside them.
    */
   associatedObjectIds: Set<string>;
   /** Course-level groups whose course outline loaded. A course added by a later
@@ -143,17 +193,35 @@ export interface CompetencyAssociationsContextBase {
   accessibleCourseGroups: CourseCompetencyCriteriaGroup[];
   /** The active competency's short external id (e.g. "CCRS-1.3"), or `null`. */
   competencyExternalId: string | null;
+  /** The course list the groups are scoped to. */
+  courseList: CourseList;
+  /** The course list's 1-based page number. */
+  coursePage: number;
+  /** The course list's debounced search text. */
+  courseSearch: string;
+  /** The course list's start-date range filter. */
+  courseDateRange: CourseDateRange;
+  setCoursePage: (page: number) => void;
+  /** Sets the search text and returns the list to page 1. */
+  setCourseSearch: (search: string) => void;
+  /** Sets the date range and returns the list to page 1. */
+  setCourseDateRange: (dateRange: CourseDateRange) => void;
+  /** The groups response's association counts: `criteriaCount` in the listed
+   * courses and `totalCriteriaCount` across the instance. `undefined` while the
+   * groups for the current scope are loading, and while the groups query is in error.
+   */
+  criteriaCounts: Pick<CompetencyCriteriaGroupsResponse, 'criteriaCount' | 'totalCriteriaCount'> | undefined;
 }
 
 /** Discriminated on `status`. `groupsIndex` and `systemDefaultProfile` are
  * always defined when `status` is `'success'`, and may be missing otherwise.
  *
- * `'pending'` until the groups, the default rule profile and every course
- * outline have settled, then `'success'` for the rest of that competency, even
- * when a later groups refetch adds a course whose outline has not loaded yet.
- * `'error'` if the groups, the profile or any course outline failed, including
- * a failure after `'success'`. An outline that fails with a 403 or 404 only
- * hides its course and does not affect `status`.
+ * `'pending'` until the course list, the groups, the default rule profile and
+ * every course outline have settled, then `'success'` until the competency or the set of
+ * listed courses changes, even when a later groups refetch adds a course whose
+ * outline has not loaded yet. `'error'` if the course list, the groups, the profile
+ * or any course outline failed, including a failure after `'success'`. An outline that
+ * fails with a 403 or 404 only hides its course and does not affect `status`.
  */
 export type CompetencyAssociationsContextValue =
   & CompetencyAssociationsContextBase
@@ -247,12 +315,19 @@ export interface ProviderState {
   /** A course expanded before the groups and default profile loaded. */
   pendingCourseId: string | null;
   initialFocusDone: boolean;
-  /** Latches once `status` first reaches `'success'` for the competency. */
+  /** Latches once `status` first reaches `'success'` for the competency, and
+   * again for each new set of listed courses.
+   */
   settled: boolean;
+  /** The listed course keys the groups scope was last reset for; `undefined` until the course list's first page
+   * has loaded. Kept across competencies.
+   */
+  scopeCourseKeys: string[] | undefined;
 }
 
 export type ProviderAction =
   | { type: 'competencyChanged'; tagId: number; }
+  | { type: 'scopeChanged'; courseKeys: string[]; }
   | { type: 'focusGroup'; groupId: number; ruleKey: string | null; }
   | { type: 'focusRuleBox'; groupId: number; ruleKey: string; }
   | { type: 'setFocus'; focus: CriteriaFocus; }
@@ -278,7 +353,31 @@ function reduceProviderState(state: ProviderState, action: ProviderAction): Prov
         pendingCourseId: null,
         initialFocusDone: false,
         settled: false,
+        scopeCourseKeys: state.scopeCourseKeys,
       };
+    case 'scopeChanged': {
+      if (isEqual(state.scopeCourseKeys, action.courseKeys)) {
+        return state;
+      }
+      const next = { ...state, scopeCourseKeys: action.courseKeys };
+      if (state.scopeCourseKeys === undefined) {
+        return next;
+      }
+      // A new scope is a fresh load: `status` waits for its groups and for the
+      // outline of every listed course that has a group, so an empty list never
+      // shows while the outlines that decide access are still loading.
+      next.settled = false;
+      // Drops an unsaved placeholder even when its course stays listed (#683
+      // leaves that open). Its course is only known through the previous
+      // scope's index, and the new response can differ from it, so the
+      // placeholder would need re-validating either way; a discard is the
+      // predictable outcome. A saved focus is kept: `courseKeyOfFocus` finds no
+      // course for a group outside the scope, and it shows again once its page is listed.
+      const hasPlaceholderFocus = state.focus !== null && state.focus.ruleKey === null;
+      return hasPlaceholderFocus
+        ? reducePlaceholderAction({ ...next, placeholderDuplicateRejected: false }, { type: 'discardPlaceholder' })
+        : next;
+    }
     case 'focusGroup':
       if (state.focus?.groupId === action.groupId) {
         return state.pendingCourseId === null ? state : { ...state, pendingCourseId: null };
@@ -336,6 +435,9 @@ function providerReducer(state: ProviderState, action: ProviderAction): Provider
  * Not remounted per competency (no `key={tagId}`), so the content panel keeps
  * its own state; a `tagId` change instead resets focus during render. Expanded
  * courses persist across competencies.
+ *
+ * Owns the course list: its query and its page, search and date-range state,
+ * which persist across competencies. The groups are scoped to the listed courses.
  */
 export const CompetencyAssociationsProvider = ({
   tagId,
@@ -355,6 +457,7 @@ export const CompetencyAssociationsProvider = ({
     pendingCourseId: null,
     initialFocusDone: false,
     settled: false,
+    scopeCourseKeys: undefined,
   });
   const {
     focus,
@@ -369,12 +472,67 @@ export const CompetencyAssociationsProvider = ({
   const [expandedCourseIds, setExpandedCourseIds] = useState<Set<string>>(new Set());
   const [expansionCountByCourseId, setExpansionCountByCourseId] = useState<Record<string, number>>({});
 
+  // The page, search and date range are one state object so a render never pairs a new filter with the old page.
+  const [courseListParams, setCourseListParams] = useState(initialCourseListParams);
+  const { page: coursePage, search: courseSearch, dateRange: courseDateRange } = courseListParams;
+  const setCoursePage = useCallback((page: number) => {
+    setCourseListParams((prev) => ({ ...prev, page }));
+  }, []);
+  const setCourseSearch = useCallback((search: string) => {
+    setCourseListParams((prev) => ({ ...prev, search, page: 1 }));
+  }, []);
+  const setCourseDateRange = useCallback((dateRange: CourseDateRange) => {
+    setCourseListParams((prev) => ({ ...prev, dateRange, page: 1 }));
+  }, []);
+
+  // `keepPreviousData` keeps the previous page as `data` while new parameters load, so a reload that lists the
+  // same courses leaves the keys, and with them the groups query key, untouched: the groups never go pending and
+  // the course cards keep their local state.
+  const courseListQuery = useStudioHomeCoursesV2({
+    page: coursePage,
+    pageSize: PAGE_SIZE,
+    search: courseSearch,
+    order: 'display_name',
+    startDateOnOrAfter: courseDateRange[0] ? formatLocalDayBoundary(courseDateRange[0], 'start') : undefined,
+    startDateOnOrBefore: courseDateRange[1] ? formatLocalDayBoundary(courseDateRange[1], 'end') : undefined,
+  }, { keepPreviousData: true });
+  const courseListData = courseListQuery.data;
+  const courses = useMemo(() => courseListData?.results.courses ?? [], [courseListData]);
+  const listedCourseKeys = useMemo(
+    () => (courseListData ? courses.map((course) => course.courseKey) : undefined),
+    [courseListData, courses],
+  );
+  const courseList = useMemo<CourseList>(() => ({
+    courses,
+    numPages: courseListData?.numPages ?? 0,
+    isLoading: courseListQuery.isLoading,
+    isPlaceholderData: courseListQuery.isPlaceholderData,
+    isError: courseListQuery.isError,
+    isSuccess: courseListQuery.isSuccess,
+  }), [
+    courses,
+    courseListData,
+    courseListQuery.isLoading,
+    courseListQuery.isPlaceholderData,
+    courseListQuery.isError,
+    courseListQuery.isSuccess,
+  ]);
+
+  // Both changes are applied during render, so the render that first sees the new data still has consistent
+  // state: a competency change resets focus, a change of the listed courses starts a new scope.
   const competencyChanged = tagId !== state.tagId;
   if (competencyChanged) {
     dispatch({ type: 'competencyChanged', tagId });
   }
+  const scopeChanged = listedCourseKeys !== undefined && !isEqual(listedCourseKeys, state.scopeCourseKeys);
+  if (scopeChanged) {
+    dispatch({ type: 'scopeChanged', courseKeys: listedCourseKeys });
+  }
+  // The rest of this render reads state that is about to be replaced, so the effects-in-render below skip it; the
+  // immediate re-render runs them.
+  const isStateOutdated = competencyChanged || scopeChanged;
 
-  const groupsQuery = useCompetencyCriteriaGroups(tagId);
+  const groupsQuery = useCompetencyCriteriaGroups(tagId, listedCourseKeys);
   const profileQuery = useDefaultCompetencyRuleProfile();
   const { mutateAsync: createCriterion, isPending: isCreatePending, variables } = useCreateCompetencyCriterion();
   const isAssociating = isCreatePending && variables?.tagId === tagId;
@@ -390,11 +548,22 @@ export const CompetencyAssociationsProvider = ({
     () => (groupsQuery.data ? associatedObjectIds(groupsQuery.data) : new Set<string>()),
     [groupsQuery.data],
   );
+  // `data` outlives a failed refetch under the same key, so after a write
+  // whose refetch failed it holds the pre-write counts beside the panel's error.
+  const countsData = groupsQuery.isError ? undefined : groupsQuery.data;
+  const criteriaCount = countsData?.criteriaCount;
+  const totalCriteriaCount = countsData?.totalCriteriaCount;
+  const criteriaCounts = useMemo(
+    () => (criteriaCount !== undefined && totalCriteriaCount !== undefined
+      ? { criteriaCount, totalCriteriaCount }
+      : undefined),
+    [criteriaCount, totalCriteriaCount],
+  );
 
   // Applied during render so the initial-focus effect below already sees it.
-  // Skipped on the render that changes competency: the pending course belongs
+  // Skipped on a render that changes competency or scope: the pending course belongs
   // to the previous one, but `groupsIndex` may already be the new one's cached tree.
-  if (!competencyChanged && pendingCourseId !== null && groupsIndex && systemDefaultProfile) {
+  if (!isStateOutdated && pendingCourseId !== null && groupsIndex && systemDefaultProfile) {
     dispatch({
       type: 'pendingCourseResolved',
       focus: courseExpansionFocus(pendingCourseId, focus, placeholder, groupsIndex, systemDefaultProfile),
@@ -441,26 +610,28 @@ export const CompetencyAssociationsProvider = ({
     [groupsIndex, outlines.accessibleCourseIds],
   );
 
-  const error = groupsQuery.error ?? profileQuery.error ?? outlines.error;
+  // A failed list hides the panel, and `status` follows it. A list that failed with no data leaves
+  // `listedCourseKeys` undefined and the groups query skipped, which would otherwise read as `'pending'` for good.
+  const error = courseListQuery.error ?? groupsQuery.error ?? profileQuery.error ?? outlines.error;
   let status: 'pending' | 'error' | 'success' = 'success';
   if (error) {
     status = 'error';
   } else if (!groupsIndex || !systemDefaultProfile || (!settled && outlines.isPending)) {
     status = 'pending';
   }
-  // Skipped on the render that changes competency, whose data belongs to the previous one.
-  if (!competencyChanged && !settled && status === 'success') {
+  // Skipped on a render that changes competency or scope, whose `settled` still belongs to the previous one.
+  if (!isStateOutdated && !settled && status === 'success') {
     dispatch({ type: 'settled' });
   }
 
-  const resolvedRuleKey = !competencyChanged && focus && groupsIndex && systemDefaultProfile
+  const resolvedRuleKey = !isStateOutdated && focus && groupsIndex && systemDefaultProfile
     ? resolveStaleRuleKey(focus, groupsIndex, systemDefaultProfile)
     : undefined;
   if (focus?.groupId != null && resolvedRuleKey !== undefined) {
     dispatch({ type: 'ruleKeyResolved', groupId: focus.groupId, staleRuleKey: focus.ruleKey, resolvedRuleKey });
   }
 
-  if (!competencyChanged && groupsIndex && isPlaceholderOrphaned(focus, placeholder, groupsIndex)) {
+  if (!isStateOutdated && groupsIndex && isPlaceholderOrphaned(focus, placeholder, groupsIndex)) {
     dispatch({ type: 'discardPlaceholder' });
   }
 
@@ -659,6 +830,14 @@ export const CompetencyAssociationsProvider = ({
       associatedObjectIds: associatedIds,
       accessibleCourseGroups,
       competencyExternalId,
+      courseList,
+      coursePage,
+      courseSearch,
+      courseDateRange,
+      setCoursePage,
+      setCourseSearch,
+      setCourseDateRange,
+      criteriaCounts,
     };
     if (status === 'success' && groupsIndex && systemDefaultProfile) {
       return { ...shared, status, groupsIndex, systemDefaultProfile };
@@ -692,6 +871,14 @@ export const CompetencyAssociationsProvider = ({
     associatedIds,
     accessibleCourseGroups,
     competencyExternalId,
+    courseList,
+    coursePage,
+    courseSearch,
+    courseDateRange,
+    setCoursePage,
+    setCourseSearch,
+    setCourseDateRange,
+    criteriaCounts,
   ]);
 
   return (

@@ -44,6 +44,7 @@ describe('justAdded', () => {
     pendingCourseId: null,
     initialFocusDone: true,
     settled: true,
+    scopeCourseKeys: undefined,
   };
   const afterAdd = reducePlaceholderAction(baseState, { type: 'addPlaceholderRuleBox', groupId: 10 });
 

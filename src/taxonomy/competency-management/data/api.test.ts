@@ -1,3 +1,4 @@
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { initializeMocks } from '@src/testUtils';
 import {
   apiUrls,
@@ -10,17 +11,59 @@ import {
 import type { CompetencyCriteriaGroupsResponse } from './types';
 
 const tagId = 42;
+const emptyGroupsBody = { groups: [], criteria: [], criteria_count: 0, total_criteria_count: 0 };
+
+/** The `course_keys` value as it appears in the serialized request URL, or `null` when the param is absent. */
+const sentCourseKeysParam = (request: Parameters<ReturnType<typeof getAuthenticatedHttpClient>['getUri']>[0]) => (
+  new URL(getAuthenticatedHttpClient().getUri(request)).searchParams.get('course_keys')
+);
 
 describe('competency-management api calls', () => {
   it('gets a competency\'s criteria groups', async () => {
     const { axiosMock } = initializeMocks();
-    const mockResponse: CompetencyCriteriaGroupsResponse = { groups: [], criteria: [] };
-    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, mockResponse);
+    // Distinct, nonzero counts, so a missed or swapped camel-casing of either one fails the test.
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, {
+      groups: [],
+      criteria: [],
+      criteria_count: 2,
+      total_criteria_count: 5,
+    });
+    const expected: CompetencyCriteriaGroupsResponse = {
+      groups: [],
+      criteria: [],
+      criteriaCount: 2,
+      totalCriteriaCount: 5,
+    };
 
-    const result = await getCompetencyCriteriaGroups(tagId);
+    const result = await getCompetencyCriteriaGroups(tagId, ['course-v1:OrgX+CS101+2024']);
 
     expect(axiosMock.history.get[0].url).toEqual(apiUrls.competencyCriteriaGroups(tagId));
-    expect(result).toEqual(mockResponse);
+    expect(result).toEqual(expected);
+  });
+
+  it('sends the course keys as one comma-separated course_keys param, in the order given', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, emptyGroupsBody);
+    // Deliberately not sorted, so a sort anywhere on the way out would show.
+    const courseKeys = ['course-v1:OrgX+CS301+2024', 'course-v1:OrgX+CS101+2024', 'course-v1:OrgX+CS201+2024'];
+
+    await getCompetencyCriteriaGroups(tagId, courseKeys);
+
+    const request = axiosMock.history.get[0];
+    expect(request.params).toEqual({ course_keys: courseKeys.join(',') });
+    expect(sentCourseKeysParam(request)).toEqual(courseKeys.join(','));
+  });
+
+  it('still sends course_keys, as an empty value, for an empty list', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, emptyGroupsBody);
+
+    await getCompetencyCriteriaGroups(tagId, []);
+
+    const request = axiosMock.history.get[0];
+    expect(request.params).toEqual({ course_keys: '' });
+    // Omitting the param would mean "unscoped" to the backend; an empty value means "no listed courses".
+    expect(sentCourseKeysParam(request)).toEqual('');
   });
 
   it('gets the default competency rule profile out of the paginated list response, camelCased', async () => {

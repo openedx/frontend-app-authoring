@@ -120,9 +120,10 @@ describe('<CompetencyAssociationsPanel />', () => {
 
     // A group row is now selectable just like a leaf row (see
     // CompetencyTreeItem.tsx), so selecting one also mounts the right panel
-    // and fires the course-list query.
+    // and fires the course-list query (`order` excludes the separate
+    // accessible-course-count request to the same URL).
     expect(await screen.findByRole('searchbox')).toBeInTheDocument();
-    expect(axiosMock.history.get.filter((req) => req.url === coursesApiUrl)).toHaveLength(1);
+    expect(axiosMock.history.get.filter((req) => req.url === coursesApiUrl && req.params?.order)).toHaveLength(1);
   });
 
   it('preserves the right panel\'s own state when switching from one leaf competency to a different one', async () => {

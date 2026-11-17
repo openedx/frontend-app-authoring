@@ -70,6 +70,11 @@
     --pgn-size-search-field-border-radius: var(--pgn-size-border-radius-base);
   }
 
+  &__summary {
+    overflow-wrap: anywhere;
+    min-height: 1.5em;
+  }
+
   // Shared white envelope for `&__associations` and `&__container`;
   // `flex: 1` fills the root's fixed height.
   &__panel {

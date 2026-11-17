@@ -36,8 +36,18 @@ export const apiUrls = {
   updateCompetencyCriteriaRule: (groupId: number) => makeCbeV1Url(`criteria-groups/${groupId}/criteria/bulk-update/`),
 } satisfies Record<string, (...args: any[]) => string>;
 
-export async function getCompetencyCriteriaGroups(tagId: number): Promise<CompetencyCriteriaGroupsResponse> {
-  const { data } = await getAuthenticatedHttpClient().get(apiUrls.competencyCriteriaGroups(tagId));
+/**
+ * Get one competency's existing criteria groups and criteria.
+ * @param tagId The id of the competency (tag) to load associations for.
+ * @param courseKeys The listed courses' keys, always sent (empty means instance-wide only).
+ */
+export async function getCompetencyCriteriaGroups(
+  tagId: number,
+  courseKeys: string[],
+): Promise<CompetencyCriteriaGroupsResponse> {
+  const { data } = await getAuthenticatedHttpClient().get(apiUrls.competencyCriteriaGroups(tagId), {
+    params: { course_keys: courseKeys.join(',') },
+  });
   return camelCaseObject(data);
 }
 
