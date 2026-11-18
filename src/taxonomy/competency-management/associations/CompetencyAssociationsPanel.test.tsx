@@ -3,6 +3,7 @@ import { Context as ResponsiveContext } from 'react-responsive';
 import { breakpoints } from '@openedx/paragon';
 
 import {
+  act,
   fireEvent,
   initializeMocks,
   render,
@@ -210,38 +211,70 @@ describe('<CompetencyAssociationsPanel />', () => {
     expect(container.querySelector('.resizable-handle')).not.toBeInTheDocument();
   });
 
-  it('stops the divider where the course column would drop below its minimum width, however wide the window', async () => {
-    // Regression test for openedx/openedx-core#910: the tree's box lives inside a
-    // width-capped `Container`, so a limit derived from the window (the box's own
-    // default) lets the tree outgrow the whole panel on a wide monitor and squeeze
-    // the course column to nothing. The limit has to come from the panel's own
-    // width instead. `clientWidth` is always 0 under JSDOM, so it is stubbed to a
-    // panel as wide as Paragon's `xl` container; the window is left at JSDOM's
-    // default, narrower than that, to prove the window is not what bounds the drag.
-    const clientWidthSpy = jest.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(1440);
-    try {
+  describe('bounding the tree by the panel\'s own width', () => {
+    // `clientWidth` is 0 under JSDOM, so stub it to an `xl`-wide panel (1440px). The
+    // window stays narrower than that, so only the panel's own width can be what
+    // stops the drag.
+    let clientWidthSpy: jest.SpyInstance;
+    const OriginalResizeObserver = window.ResizeObserver;
+    // Keyed by observed element: the course panel installs observers of its own.
+    const resizeCallbacks = new Map<Element, ResizeObserverCallback>();
+
+    beforeEach(() => {
+      clientWidthSpy = jest.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(1440);
+      resizeCallbacks.clear();
+      window.ResizeObserver = class {
+        constructor(private readonly callback: ResizeObserverCallback) {}
+
+        observe(target: Element) {
+          resizeCallbacks.set(target, this.callback);
+        }
+
+        unobserve() {}
+
+        disconnect() {}
+      };
+    });
+
+    afterEach(() => {
+      clientWidthSpy.mockRestore();
+      window.ResizeObserver = OriginalResizeObserver;
+    });
+
+    const renderAndDragDividerFarRight = async () => {
       const { container } = render(
         <ResponsiveContext.Provider value={{ width: breakpoints.large.minWidth }}>
           <CompetencyAssociationsPanel taxonomyId={taxonomyId} taxonomyName={taxonomyName} />
         </ResponsiveContext.Provider>,
       );
-      await screen.findByText(taxonomyName);
-      fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
-      const leafRow = (await screen.findByText('Leaf A1a')).closest('.competency-row') as HTMLElement;
-      fireEvent.click(leafRow);
-      await screen.findByRole('searchbox'); // right panel now mounted
+      const rootRow = (await screen.findByText('Root B')).closest('.competency-row') as HTMLElement;
+      fireEvent.click(rootRow);
 
       const handle = container.querySelector('.resizable-handle') as HTMLElement;
       fireEvent.mouseDown(handle, { clientX: 500 });
       fireEvent.mouseMove(document, { clientX: 500 + 5000 }); // far past the panel's right edge
       fireEvent.mouseUp(document);
+      return container.querySelector('.resizable') as HTMLElement;
+    };
+
+    it('stops the divider where the course column would drop below its minimum width, however wide the window', async () => {
+      const resizableBox = await renderAndDragDividerFarRight();
 
       // 1440px panel - 20px column gap - 440px course column minimum.
-      const resizableBox = container.querySelector('.resizable') as HTMLElement;
       expect(resizableBox.style.width).toBe('980px');
-    } finally {
-      clientWidthSpy.mockRestore();
-    }
+    });
+
+    it('re-measures the panel when it is resized, shrinking a tree dragged wide', async () => {
+      const resizableBox = await renderAndDragDividerFarRight();
+      expect(resizableBox.style.width).toBe('980px');
+
+      clientWidthSpy.mockReturnValue(1000);
+      const panel = resizableBox.closest('.competency-associations-panel') as Element;
+      act(() => resizeCallbacks.get(panel)!([], {} as ResizeObserver));
+
+      // 1000px panel - 20px column gap - 440px course column minimum.
+      expect(resizableBox.style.width).toBe('540px');
+    });
   });
 
   it('keeps the tree\'s own expand/collapse state when selecting a competency mounts the right panel', async () => {

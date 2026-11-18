@@ -13,9 +13,9 @@ import './CompetencyAssociationsPanel.scss';
 
 // `ResizableBox` caps the tree at a share of the window width by default, but this panel sits
 // in a width-capped `Container`: on a wide window that cap exceeds the panel and the course
-// column collapses to nothing. The cap below comes from the panel's own measured width.
+// column collapses to nothing.
 const COURSE_COLUMN_MIN_WIDTH = 440; // px, same floor as the tree's `MIN_WIDTH`
-const COLUMN_GAP = 20; // px, matches `gap={3.5}` on the desktop `Stack`
+const COLUMN_GAP = 20; // px: `gap={3.5}` on the desktop `Stack` is 1.25rem, 20px at a 16px root font size
 
 export interface CompetencyAssociationsPanelProps {
   taxonomyId: number;
@@ -37,8 +37,7 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
 
   const panelRef = useRef<HTMLDivElement>(null);
   const [panelWidth, setPanelWidth] = useState<number | null>(null);
-  // The `Stack` carrying `panelRef` only exists in the desktop branch, so the
-  // measurement restarts whenever `isDesktop` flips.
+  // The ref's `Stack` exists only on desktop, so re-measure when `isDesktop` flips.
   useEffect(() => {
     const panel = panelRef.current;
     if (!panel) { return undefined; }
