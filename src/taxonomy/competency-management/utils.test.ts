@@ -651,31 +651,55 @@ describe('summarizeRemoval', () => {
   const summarize = (target: RemovalTarget, names = subsectionNames) => (
     summarizeRemoval(target, index, systemDefaultProfile, courseNames, names)
   );
-  // Group 11 and its criterion are gone, so group 10 is the course's only group.
+  // Group 11 and its criterion are gone, so the course holds only group 10's three criteria (101, 102, 104).
   const onlyGroupIndex = buildCompetencyCriteriaGroupsIndex({
     groups: fixtureResponse.groups.filter((group) => group.id !== 11),
     criteria: fixtureResponse.criteria.filter((criterion) => criterion.groupId !== 11),
   });
+  // Group 10's criteria are gone, so the course holds only criterion 103, in group 11.
+  const onlyCriterion103Index = buildCompetencyCriteriaGroupsIndex({
+    groups: fixtureResponse.groups,
+    criteria: fixtureResponse.criteria.filter((criterion) => criterion.groupId === 11),
+  });
+  const summarizeIn = (target: RemovalTarget, from: typeof index) => (
+    summarizeRemoval(target, from, systemDefaultProfile, courseNames, subsectionNames)
+  );
 
-  const targetsWithACourse: RemovalTarget[] = [
-    { kind: RemovalTargetKind.RuleGroup, groupId: 10 },
-    { kind: RemovalTargetKind.CourseGroup, groupId: 1 },
-    { kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [101] },
-  ];
-  it.each(targetsWithACourse)('falls back to the course key for a $kind when the outline gave no name', (target) => {
-    expect(summarizeRemoval(target, index, systemDefaultProfile, new Map(), subsectionNames))
-      .toMatchObject({ courseName: courseKey });
+  it('falls back to the course key for a course group when the outline gave no name', () => {
+    expect(summarizeRemoval(
+      { kind: RemovalTargetKind.CourseGroup, groupId: 1 },
+      index,
+      systemDefaultProfile,
+      new Map(),
+      subsectionNames,
+    )).toMatchObject({ courseName: courseKey });
   });
 
   describe('association', () => {
     it('names the content from the subsection names', () => {
       expect(summarize({ kind: RemovalTargetKind.Association, criterionId: 101, returnFocusTo: 'group' }))
-        .toEqual({ kind: RemovalTargetKind.Association, contentName: 'Quiz A' });
+        .toEqual({
+          kind: RemovalTargetKind.Association,
+          contentName: 'Quiz A',
+          leavesCourseWithoutAssociations: false,
+        });
     });
 
     it('has a null name for a subsection the outline no longer lists', () => {
       expect(summarize({ kind: RemovalTargetKind.Association, criterionId: 103, returnFocusTo: 'subsection' }))
-        .toEqual({ kind: RemovalTargetKind.Association, contentName: null });
+        .toEqual({ kind: RemovalTargetKind.Association, contentName: null, leavesCourseWithoutAssociations: false });
+    });
+
+    it('leaves the course without associations when it is the course\'s only criterion', () => {
+      expect(summarizeIn(
+        { kind: RemovalTargetKind.Association, criterionId: 103, returnFocusTo: 'group' },
+        onlyCriterion103Index,
+      )).toMatchObject({ leavesCourseWithoutAssociations: true });
+    });
+
+    it('keeps the course\'s associations when another group in the course holds some', () => {
+      expect(summarize({ kind: RemovalTargetKind.Association, criterionId: 103, returnFocusTo: 'group' }))
+        .toMatchObject({ leavesCourseWithoutAssociations: false });
     });
 
     it('is null for a criterion the data does not have', () => {
@@ -684,27 +708,19 @@ describe('summarizeRemoval', () => {
   });
 
   describe('ruleGroup', () => {
-    it('counts the group\'s associations and names its course', () => {
+    it('counts the group\'s associations', () => {
       expect(summarize({ kind: RemovalTargetKind.RuleGroup, groupId: 10 })).toEqual({
         kind: RemovalTargetKind.RuleGroup,
         associationCount: 3,
-        courseName: 'Intro to CS',
-        isOnlyGroupInCourse: false,
+        leavesCourseWithoutAssociations: false,
       });
     });
 
-    it('flags the only group in its course', () => {
-      expect(summarizeRemoval(
-        { kind: RemovalTargetKind.RuleGroup, groupId: 10 },
-        onlyGroupIndex,
-        systemDefaultProfile,
-        courseNames,
-        subsectionNames,
-      )).toEqual({
+    it('leaves the course without associations when the group holds all of them', () => {
+      expect(summarizeIn({ kind: RemovalTargetKind.RuleGroup, groupId: 10 }, onlyGroupIndex)).toEqual({
         kind: RemovalTargetKind.RuleGroup,
         associationCount: 3,
-        courseName: 'Intro to CS',
-        isOnlyGroupInCourse: true,
+        leavesCourseWithoutAssociations: true,
       });
     });
 
@@ -735,8 +751,7 @@ describe('summarizeRemoval', () => {
         kind: RemovalTargetKind.RuleBox,
         contentNames: ['Quiz A', 'Quiz B'],
         otherRuleCount: 1,
-        courseName: 'Intro to CS',
-        isOnlyGroupInCourse: false,
+        leavesCourseWithoutAssociations: false,
       });
     });
 
@@ -761,14 +776,21 @@ describe('summarizeRemoval', () => {
       });
     });
 
-    it('flags the only group in its course', () => {
-      expect(summarizeRemoval(
-        { kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [104] },
+    it('leaves the course without associations when the box holds all of them', () => {
+      expect(summarizeIn(
+        { kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [101, 102, 104] },
         onlyGroupIndex,
-        systemDefaultProfile,
-        courseNames,
-        subsectionNames,
-      )).toMatchObject({ contentNames: ['Quiz D'], otherRuleCount: 1, isOnlyGroupInCourse: true });
+      )).toMatchObject({ otherRuleCount: 0, leavesCourseWithoutAssociations: true });
+    });
+
+    it('keeps the course\'s associations when the box holds only some of them', () => {
+      expect(summarizeIn({ kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [104] }, onlyGroupIndex))
+        .toMatchObject({ otherRuleCount: 1, leavesCourseWithoutAssociations: false });
+    });
+
+    it('counts associations in the course\'s other groups as kept', () => {
+      expect(summarize({ kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [101, 102, 104] }))
+        .toMatchObject({ leavesCourseWithoutAssociations: false });
     });
 
     it('is null when none of the ids is left in the group', () => {

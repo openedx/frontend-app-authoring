@@ -6,6 +6,11 @@ const messages = defineMessages({
     defaultMessage: 'Remove',
     description: 'Label of the confirm button in the dialog that asks the author to confirm a removal on the Competency Management page.',
   },
+  lastAssociationWarningMessage: {
+    id: 'course-authoring.competency-management.removal-confirmation.last-association-warning-message',
+    defaultMessage: 'After this removal, no content in this course is associated with {competencyName}. If learners already have a mastery status for {competencyName} from this course, {competencyName} can\'t be associated with content in this course again.',
+    description: 'Warning in a removal confirmation dialog when the removal leaves the course with no content associated with the competency. {competencyName} is the name of the active competency.',
+  },
   removalCannotBeUndoneMessage: {
     id: 'course-authoring.competency-management.removal-confirmation.removal-cannot-be-undone-message',
     defaultMessage: 'This can\'t be undone from this screen. Learners keep any mastery status they already have.',
@@ -15,6 +20,11 @@ const messages = defineMessages({
     id: 'course-authoring.competency-management.removal-confirmation.remove-association-dialog-title',
     defaultMessage: 'Remove {contentName} from {competencyName}?',
     description: 'Title of the confirmation dialog for removing one content association. {contentName} is the name of the course content, and {competencyName} is the name of the active competency.',
+  },
+  removeUnavailableAssociationDialogTitle: {
+    id: 'course-authoring.competency-management.removal-confirmation.remove-unavailable-association-dialog-title',
+    defaultMessage: 'Remove this unavailable content from {competencyName}?',
+    description: 'Title of the confirmation dialog for removing one content association whose course content is no longer in the course outline. {competencyName} is the name of the active competency.',
   },
   removeRuleGroupDialogTitle: {
     id: 'course-authoring.competency-management.removal-confirmation.remove-rule-group-dialog-title',
@@ -34,17 +44,7 @@ const messages = defineMessages({
   removeRuleGroupDialogBody: {
     id: 'course-authoring.competency-management.removal-confirmation.remove-rule-group-dialog-body',
     defaultMessage: 'This also removes its <b>{count, plural, one {# content association} other {# content associations}}</b>.',
-    description: 'Body of the dialog for removing a rule group. {count} is how many content associations the group holds. <b> marks the part shown in bold.',
-  },
-  removeOnlyRuleGroupDialogBody: {
-    id: 'course-authoring.competency-management.removal-confirmation.remove-only-rule-group-dialog-body',
-    defaultMessage: 'This also removes its <b>{count, plural, one {# content association} other {# content associations}}</b>. It\'s the only group for {courseName}, so that course will no longer count toward <b>{competencyName}</b>.',
-    description: 'Body of the dialog for removing a rule group that is the only one for its course. {count} is how many content associations the group holds, {courseName} is the course\'s name, and {competencyName} is the active competency\'s name. <b> marks the part shown in bold.',
-  },
-  removeCourseGroupDialogBody: {
-    id: 'course-authoring.competency-management.removal-confirmation.remove-course-group-dialog-body',
-    defaultMessage: 'This also removes its <b>{count, plural, one {# content association} other {# content associations}}</b>, so {courseName} will no longer count toward <b>{competencyName}</b>.',
-    description: 'Body of the dialog for removing a whole course from a competency. {count} is how many content associations the course holds, {courseName} is the course\'s name, and {competencyName} is the active competency\'s name. <b> marks the part shown in bold.',
+    description: 'Body of the dialog for removing a rule group or a whole course from a competency. {count} is how many content associations the group or course holds. <b> marks the part shown in bold.',
   },
   removeRuleBoxDialogBody: {
     id: 'course-authoring.competency-management.removal-confirmation.remove-rule-box-dialog-body',
@@ -55,11 +55,6 @@ const messages = defineMessages({
     id: 'course-authoring.competency-management.removal-confirmation.remove-only-rule-in-group-dialog-body',
     defaultMessage: 'This removes its <b>{count, plural, one {# content association} other {# content associations}}</b>, {contentNames}. It\'s the group\'s only rule, so the group is removed too.',
     description: 'Body of the dialog for removing a rule box that is the only rule in its group. {count} is how many content associations the rule holds, and {contentNames} is a list of their names such as "Quiz 1 and Quiz 2". <b> marks the part shown in bold.',
-  },
-  removeOnlyRuleInCourseDialogBody: {
-    id: 'course-authoring.competency-management.removal-confirmation.remove-only-rule-in-course-dialog-body',
-    defaultMessage: 'This removes its <b>{count, plural, one {# content association} other {# content associations}}</b>, {contentNames}. It\'s the only rule for {courseName}, so that course will no longer count toward <b>{competencyName}</b>.',
-    description: 'Body of the dialog for removing a rule box that is the only rule for its course. {count} is how many content associations the rule holds, {contentNames} is a list of their names such as "Quiz 1 and Quiz 2", {courseName} is the course\'s name, and {competencyName} is the active competency\'s name. <b> marks the part shown in bold.',
   },
   removeAssociationFailedTitle: {
     id: 'course-authoring.competency-management.removal-confirmation.remove-association-failed-title',

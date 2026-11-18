@@ -229,18 +229,18 @@ export type RemovalTarget =
   | { kind: RemovalTargetKind.RuleBox; groupId: number; criterionIds: number[]; };
 
 /** What the confirmation dialog says about a removal. A `null` name is a subsection that its course outline no longer
- * lists, and the dialog shows a fallback label for it.
+ * lists, and the dialog shows a fallback label for it. `leavesCourseWithoutAssociations` is true when no saved
+ * association is left in the course's competency group after the removal.
  */
 export type RemovalSummary =
-  | { kind: RemovalTargetKind.Association; contentName: string | null; }
-  | { kind: RemovalTargetKind.RuleGroup; associationCount: number; courseName: string; isOnlyGroupInCourse: boolean; }
+  | { kind: RemovalTargetKind.Association; contentName: string | null; leavesCourseWithoutAssociations: boolean; }
+  | { kind: RemovalTargetKind.RuleGroup; associationCount: number; leavesCourseWithoutAssociations: boolean; }
   | { kind: RemovalTargetKind.CourseGroup; associationCount: number; courseName: string; }
   | {
     kind: RemovalTargetKind.RuleBox;
     contentNames: (string | null)[];
     otherRuleCount: number;
-    courseName: string;
-    isOnlyGroupInCourse: boolean;
+    leavesCourseWithoutAssociations: boolean;
   };
 
 /** Describes `target` for the confirmation dialog from the loaded data, or returns `null` when the data no longer has
@@ -253,10 +253,17 @@ export function summarizeRemoval(
   courseNamesByKey: Map<string, string>,
   subsectionNamesByUsageKey: Record<string, string>,
 ): RemovalSummary | null {
-  const courseOf = (groupId: number): { courseKey: string; courseName: string; } | null => {
+  const courseKeyOf = (groupId: number): string | null => {
     const parentId = index.groupsById.get(groupId)?.parentId;
-    const courseKey = parentId == null ? null : index.groupsById.get(parentId)?.courseKey;
-    return courseKey ? { courseKey, courseName: courseNamesByKey.get(courseKey) ?? courseKey } : null;
+    return (parentId == null ? null : index.groupsById.get(parentId)?.courseKey) ?? null;
+  };
+  // Saved criteria only: a placeholder has none.
+  const associationCountInCourse = (courseKey: string) =>
+    bottomTierGroupsForCourse(index, courseKey)
+      .reduce((total, group) => total + (index.criteriaByGroupId.get(group.id) ?? []).length, 0);
+  const wouldEmptyCourse = (groupId: number, removedCount: number) => {
+    const courseKey = courseKeyOf(groupId);
+    return courseKey !== null && associationCountInCourse(courseKey) === removedCount;
   };
 
   switch (target.kind) {
@@ -264,17 +271,20 @@ export function summarizeRemoval(
       const criterion = Array.from(index.criteriaByGroupId.values()).flat()
         .find((candidate) => candidate.id === target.criterionId);
       return criterion
-        ? { kind: RemovalTargetKind.Association, contentName: subsectionNamesByUsageKey[criterion.objectId] ?? null }
+        ? {
+          kind: RemovalTargetKind.Association,
+          contentName: subsectionNamesByUsageKey[criterion.objectId] ?? null,
+          leavesCourseWithoutAssociations: wouldEmptyCourse(criterion.groupId, 1),
+        }
         : null;
     }
     case RemovalTargetKind.RuleGroup: {
-      const course = courseOf(target.groupId);
-      return course
+      const associationCount = (index.criteriaByGroupId.get(target.groupId) ?? []).length;
+      return courseKeyOf(target.groupId) !== null
         ? {
           kind: RemovalTargetKind.RuleGroup,
-          associationCount: (index.criteriaByGroupId.get(target.groupId) ?? []).length,
-          courseName: course.courseName,
-          isOnlyGroupInCourse: bottomTierGroupsForCourse(index, course.courseKey).length === 1,
+          associationCount,
+          leavesCourseWithoutAssociations: wouldEmptyCourse(target.groupId, associationCount),
         }
         : null;
     }
@@ -285,8 +295,7 @@ export function summarizeRemoval(
       }
       return {
         kind: RemovalTargetKind.CourseGroup,
-        associationCount: bottomTierGroupsForCourse(index, courseKey)
-          .reduce((total, group) => total + (index.criteriaByGroupId.get(group.id) ?? []).length, 0),
+        associationCount: associationCountInCourse(courseKey),
         courseName: courseNamesByKey.get(courseKey) ?? courseKey,
       };
     }
@@ -296,14 +305,12 @@ export function summarizeRemoval(
         removedIds.has(criterion.id)
       );
       const boxes = ruleBoxesForGroup(target.groupId, index, systemDefaultProfile);
-      const course = courseOf(target.groupId);
-      return removed.length > 0 && course
+      return removed.length > 0 && courseKeyOf(target.groupId) !== null
         ? {
           kind: RemovalTargetKind.RuleBox,
           contentNames: removed.map((criterion) => subsectionNamesByUsageKey[criterion.objectId] ?? null),
           otherRuleCount: boxes.filter((box) => !box.criteria.some((criterion) => removedIds.has(criterion.id))).length,
-          courseName: course.courseName,
-          isOnlyGroupInCourse: bottomTierGroupsForCourse(index, course.courseKey).length === 1,
+          leavesCourseWithoutAssociations: wouldEmptyCourse(target.groupId, removed.length),
         }
         : null;
     }

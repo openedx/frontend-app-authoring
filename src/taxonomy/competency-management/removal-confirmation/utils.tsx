@@ -21,28 +21,35 @@ export const describeRemoval = (
   const bold = { b: (chunks: ReactNode) => <strong>{chunks}</strong> };
   const nameOf = (name: string | null) => name ?? intl.formatMessage(criteriaGroupsMessages.unknownSubsectionLabel);
 
+  const warning = (leavesCourseWithoutAssociations: boolean) => (
+    leavesCourseWithoutAssociations
+      ? intl.formatMessage(messages.lastAssociationWarningMessage, { competencyName })
+      : null
+  );
+  // The warning follows the body's other sentences.
+  const withWarning = (body: ReactNode, leavesCourseWithoutAssociations: boolean): ReactNode => (
+    leavesCourseWithoutAssociations ? <>{body} {warning(true)}</> : body
+  );
+
   switch (summary.kind) {
     case RemovalTargetKind.Association:
       return {
-        title: intl.formatMessage(messages.removeAssociationDialogTitle, {
-          contentName: nameOf(summary.contentName),
-          competencyName,
-        }),
+        title: summary.contentName === null
+          ? intl.formatMessage(messages.removeUnavailableAssociationDialogTitle, { competencyName })
+          : intl.formatMessage(messages.removeAssociationDialogTitle, {
+            contentName: summary.contentName,
+            competencyName,
+          }),
         failedTitle: intl.formatMessage(messages.removeAssociationFailedTitle),
-        details: null,
+        details: warning(summary.leavesCourseWithoutAssociations),
       };
     case RemovalTargetKind.RuleGroup:
       return {
         title: intl.formatMessage(messages.removeRuleGroupDialogTitle),
         failedTitle: intl.formatMessage(messages.removeRuleGroupFailedTitle),
-        details: intl.formatMessage(
-          summary.isOnlyGroupInCourse ? messages.removeOnlyRuleGroupDialogBody : messages.removeRuleGroupDialogBody,
-          {
-            ...bold,
-            count: summary.associationCount,
-            courseName: summary.courseName,
-            competencyName,
-          },
+        details: withWarning(
+          intl.formatMessage(messages.removeRuleGroupDialogBody, { ...bold, count: summary.associationCount }),
+          summary.leavesCourseWithoutAssociations,
         ),
       };
     case RemovalTargetKind.CourseGroup:
@@ -52,32 +59,28 @@ export const describeRemoval = (
           competencyName,
         }),
         failedTitle: intl.formatMessage(messages.removeCourseGroupFailedTitle),
-        details: intl.formatMessage(messages.removeCourseGroupDialogBody, {
-          ...bold,
-          count: summary.associationCount,
-          courseName: summary.courseName,
-          competencyName,
-        }),
+        // Removing a course always leaves it without associations.
+        details: withWarning(
+          intl.formatMessage(messages.removeRuleGroupDialogBody, { ...bold, count: summary.associationCount }),
+          true,
+        ),
       };
-    case RemovalTargetKind.RuleBox: {
-      let body = messages.removeOnlyRuleInGroupDialogBody;
-      if (summary.otherRuleCount > 0) {
-        body = messages.removeRuleBoxDialogBody;
-      } else if (summary.isOnlyGroupInCourse) {
-        body = messages.removeOnlyRuleInCourseDialogBody;
-      }
+    case RemovalTargetKind.RuleBox:
       return {
         title: intl.formatMessage(messages.removeRuleBoxDialogTitle, { competencyName }),
         failedTitle: intl.formatMessage(messages.removeRuleBoxFailedTitle),
-        details: intl.formatMessage(body, {
-          ...bold,
-          count: summary.contentNames.length,
-          contentNames: intl.formatList(summary.contentNames.map(nameOf), { type: 'conjunction' }),
-          otherRuleCount: summary.otherRuleCount,
-          courseName: summary.courseName,
-          competencyName,
-        }),
+        details: withWarning(
+          intl.formatMessage(
+            summary.otherRuleCount > 0 ? messages.removeRuleBoxDialogBody : messages.removeOnlyRuleInGroupDialogBody,
+            {
+              ...bold,
+              count: summary.contentNames.length,
+              contentNames: intl.formatList(summary.contentNames.map(nameOf), { type: 'conjunction' }),
+              otherRuleCount: summary.otherRuleCount,
+            },
+          ),
+          summary.leavesCourseWithoutAssociations,
+        ),
       };
-    }
   }
 };

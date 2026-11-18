@@ -498,7 +498,7 @@ describe('<CriteriaAssociationsSection />', () => {
         .not.toBeInTheDocument();
     });
 
-    it('opens the group dialog from "Remove group" with the count and the only-group sentence', async () => {
+    it('opens the group dialog from "Remove group" with the count and the last-association warning', async () => {
       const user = userEvent.setup();
       mockServerRepliesForRuleBoxDelete(group10With70And80PercentRuleBoxesResponse, noGroupsOrCriteriaResponse, 200, namedOutline);
       renderSection();
@@ -508,10 +508,97 @@ describe('<CriteriaAssociationsSection />', () => {
 
       const dialog = await screen.findByRole('dialog', { name: 'Remove this group?' });
       expect(dialog).toHaveTextContent(
-        'This also removes its 2 content associations. It\'s the only group for Demo Course, so that course will '
-          + 'no longer count toward Data Literacy.',
+        'This also removes its 2 content associations. After this removal, no content in this course is associated '
+          + 'with Data Literacy.',
       );
       expect(axiosMock.history.delete).toHaveLength(0);
+    });
+
+    describe('last-association warning', () => {
+      const warning = 'After this removal, no content in this course is associated with Data Literacy.';
+      const secondLeaf = { ...group, id: 11, parentId: 1, courseKey: null, name: 'leaf2' };
+      const otherGroupCriterion = { ...defaultRuleCriterion, id: 905, objectId: 'sub-d', groupId: 11 };
+      const withOtherGroup: CompetencyCriteriaGroupsResponse = {
+        groups: [...hierarchy, secondLeaf],
+        criteria: [defaultRuleCriterion, otherGroupCriterion],
+        criteriaCount: 2,
+        totalCriteriaCount: 2,
+      };
+
+      const openChipDialog = async (user: ReturnType<typeof userEvent.setup>) => {
+        await user.click(await screen.findByRole('button', { name: chipRemoveName }));
+        return screen.findByRole('dialog', { name: dialogName });
+      };
+
+      it('is the body of the association dialog when the association is the only one in the course', async () => {
+        const user = userEvent.setup();
+        mockServerRepliesForRuleBoxDelete(group10With70PercentRuleBoxResponse, noGroupsOrCriteriaResponse, 200, namedOutline);
+        renderSection();
+
+        const dialog = await openChipDialog(user);
+
+        expect(dialog).toHaveTextContent(warning);
+      });
+
+      it('is not shown for an association while the course keeps other associations', async () => {
+        const user = userEvent.setup();
+        mockServerRepliesForRuleBoxDelete(group10With70And80PercentRuleBoxesResponse, without901, 200, namedOutline);
+        renderSection();
+
+        const dialog = await openChipDialog(user);
+
+        expect(dialog).not.toHaveTextContent(warning);
+      });
+
+      it('is shown for a rule box that holds all of the course\'s associations', async () => {
+        const user = userEvent.setup();
+        mockServerRepliesForRuleBoxDelete(group10With70PercentRuleBoxResponse, noGroupsOrCriteriaResponse, 200, namedOutline);
+        renderSection();
+
+        await user.click(await screen.findByRole('button', { name: seventyPercentRuleBoxMenuName }));
+        await user.click(screen.getByRole('button', { name: 'Remove rule' }));
+
+        expect(await screen.findByRole('dialog', { name: 'Remove this rule from Data Literacy?' }))
+          .toHaveTextContent(warning);
+      });
+
+      it('is not shown for a rule box while another rule box in the course keeps associations', async () => {
+        const user = userEvent.setup();
+        mockServerRepliesForRuleBoxDelete(group10With70And80PercentRuleBoxesResponse, without901, 200, namedOutline);
+        renderSection();
+
+        await user.click(await screen.findByRole('button', { name: seventyPercentRuleBoxMenuName }));
+        await user.click(screen.getByRole('button', { name: 'Remove rule' }));
+
+        expect(await screen.findByRole('dialog', { name: 'Remove this rule from Data Literacy?' }))
+          .not.toHaveTextContent(warning);
+      });
+
+      it('is not shown for a rule group while another group in the course keeps associations', async () => {
+        const user = userEvent.setup();
+        mockServerRepliesForRuleBoxDelete(withOtherGroup, noGroupsOrCriteriaResponse, 200, namedOutline);
+        renderSection();
+
+        const toggles = await screen.findAllByRole('button', {
+          name: /^More actions for rule group \d+ in Demo Course$/,
+        });
+        await user.click(toggles[0]);
+        await user.click(screen.getByRole('button', { name: 'Remove group' }));
+
+        expect(await screen.findByRole('dialog', { name: 'Remove this group?' })).not.toHaveTextContent(warning);
+      });
+
+      it('is shown for a course group even when it holds one association', async () => {
+        const user = userEvent.setup();
+        mockServerRepliesForRuleBoxDelete(group10With70PercentRuleBoxResponse, noGroupsOrCriteriaResponse, 200, namedOutline);
+        renderSection();
+
+        await user.click(await screen.findByRole('button', { name: 'More actions for Demo Course' }));
+        await user.click(screen.getByRole('button', { name: 'Remove from Data Literacy' }));
+
+        expect(await screen.findByRole('dialog', { name: 'Remove Demo Course from Data Literacy?' }))
+          .toHaveTextContent(warning);
+      });
     });
 
     it('opens the course dialog from "Remove from Data Literacy" with the course-group body', async () => {
@@ -524,7 +611,8 @@ describe('<CriteriaAssociationsSection />', () => {
 
       const dialog = await screen.findByRole('dialog', { name: 'Remove Demo Course from Data Literacy?' });
       expect(dialog).toHaveTextContent(
-        'This also removes its 2 content associations, so Demo Course will no longer count toward Data Literacy.',
+        'This also removes its 2 content associations. After this removal, no content in this course is associated '
+          + 'with Data Literacy.',
       );
       expect(axiosMock.history.delete).toHaveLength(0);
     });

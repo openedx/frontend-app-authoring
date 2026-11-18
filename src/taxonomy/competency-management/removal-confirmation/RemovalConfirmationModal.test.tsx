@@ -26,15 +26,22 @@ const renderModal = (
     </MockCompetencyAssociationsProvider>,
   );
 
-const associationRemoval = (contentName: string | null = '5 Whys + Fishbone Deep Dive'): PendingRemoval => ({
+const warningLine = 'After this removal, no content in this course is associated with Inference. If learners already '
+  + 'have a mastery status for Inference from this course, Inference can\'t be associated with content in this '
+  + 'course again.';
+
+const associationRemoval = (
+  contentName: string | null = '5 Whys + Fishbone Deep Dive',
+  leavesCourseWithoutAssociations = false,
+): PendingRemoval => ({
   target: { kind: RemovalTargetKind.Association, criterionId: 1, returnFocusTo: 'group' },
-  summary: { kind: RemovalTargetKind.Association, contentName },
+  summary: { kind: RemovalTargetKind.Association, contentName, leavesCourseWithoutAssociations },
   failure: null,
 });
 
-const ruleGroupRemoval = (isOnlyGroupInCourse: boolean): PendingRemoval => ({
+const ruleGroupRemoval = (leavesCourseWithoutAssociations: boolean): PendingRemoval => ({
   target: { kind: RemovalTargetKind.RuleGroup, groupId: 10 },
-  summary: { kind: RemovalTargetKind.RuleGroup, associationCount: 2, courseName: 'Demo Course', isOnlyGroupInCourse },
+  summary: { kind: RemovalTargetKind.RuleGroup, associationCount: 2, leavesCourseWithoutAssociations },
   failure: null,
 });
 
@@ -53,8 +60,7 @@ const ruleBoxRemoval = (
     kind: RemovalTargetKind.RuleBox,
     contentNames: ['Quiz A', 'Quiz B'],
     otherRuleCount: 1,
-    courseName: 'Demo Course',
-    isOnlyGroupInCourse: false,
+    leavesCourseWithoutAssociations: false,
     ...overrides,
   },
   failure,
@@ -99,7 +105,18 @@ describe('RemovalConfirmationModal', () => {
     it('shows the fallback label for content its course outline no longer lists', () => {
       renderModal(associationRemoval(null));
 
-      expect(screen.getByRole('dialog', { name: 'Remove Content unavailable from Inference?' })).toBeInTheDocument();
+      expect(screen.getByRole('dialog', { name: 'Remove this unavailable content from Inference?' }))
+        .toBeInTheDocument();
+    });
+
+    it('makes the warning its body when the removal leaves the course without associations', () => {
+      renderModal(associationRemoval('Final Project', true));
+
+      const dialog = screen.getByRole('dialog', { name: 'Remove Final Project from Inference?' });
+      expect(within(dialog).getByText(warningLine).tagName).toBe('P');
+      expect(within(dialog).getAllByRole('paragraph')).toHaveLength(2);
+      expect(within(dialog).queryByRole('strong')).not.toBeInTheDocument();
+      expect(bodyOf().textContent).toBe(`${warningLine}${closingLine}`);
     });
   });
 
@@ -113,29 +130,25 @@ describe('RemovalConfirmationModal', () => {
       expect(bodyOf()).not.toHaveTextContent('only group');
     });
 
-    it('adds the only-group sentence naming the course and the competency in bold', () => {
+    it('adds the warning after the body and before the closing line when the course is left without associations', () => {
       renderModal(ruleGroupRemoval(true));
 
-      expect(screen.getByText(
-        (_content, element) =>
-          element?.tagName === 'P'
-          && element.textContent
-            === 'This also removes its 2 content associations. It\'s the only group for Demo Course, so that course '
-              + 'will no longer count toward Inference.',
-      )).toBeInTheDocument();
-      expect(within(screen.getByRole('dialog')).getByText('Inference').tagName).toBe('STRONG');
+      expect(bodyOf().textContent).toBe(`This also removes its 2 content associations. ${warningLine}${closingLine}`);
+    });
+
+    it('shows no warning while the course keeps other associations', () => {
+      renderModal(ruleGroupRemoval(false));
+
+      expect(screen.queryByText(/no content in this course is associated/)).not.toBeInTheDocument();
     });
   });
 
-  it('names the course and counts its associations for a course group', () => {
+  it('names the course and counts its associations for a course group, and always warns', () => {
     renderModal(courseGroupRemoval());
 
     const dialog = screen.getByRole('dialog', { name: 'Remove Demo Course from Inference?' });
     expect(within(dialog).getByText('3 content associations').tagName).toBe('STRONG');
-    expect(within(dialog).getByText('Inference').tagName).toBe('STRONG');
-    expect(bodyOf()).toHaveTextContent(
-      'This also removes its 3 content associations, so Demo Course will no longer count toward Inference.',
-    );
+    expect(bodyOf().textContent).toBe(`This also removes its 3 content associations. ${warningLine}${closingLine}`);
   });
 
   describe('rule box', () => {
@@ -159,15 +172,25 @@ describe('RemovalConfirmationModal', () => {
         { otherRuleCount: 0 },
         'It\'s the group\'s only rule, so the group is removed too.',
       ],
-      [
-        'says the course stops counting when it is the course\'s only rule',
-        { otherRuleCount: 0, isOnlyGroupInCourse: true },
-        'It\'s the only rule for Demo Course, so that course will no longer count toward Inference.',
-      ],
     ])('%s', (_name, summary, sentence) => {
       renderModal(ruleBoxRemoval(summary));
 
       expect(bodyOf()).toHaveTextContent(sentence);
+    });
+
+    it('adds the warning after the only-rule sentence when the course is left without associations', () => {
+      renderModal(ruleBoxRemoval({ otherRuleCount: 0, leavesCourseWithoutAssociations: true }));
+
+      expect(bodyOf().textContent).toBe(
+        'This removes its 2 content associations, Quiz A and Quiz B. It\'s the group\'s only rule, so the group is '
+          + `removed too. ${warningLine}${closingLine}`,
+      );
+    });
+
+    it('shows no warning while the course keeps other associations', () => {
+      renderModal(ruleBoxRemoval());
+
+      expect(screen.queryByText(/no content in this course is associated/)).not.toBeInTheDocument();
     });
 
     it('uses the singular for a rule holding one content association', () => {
