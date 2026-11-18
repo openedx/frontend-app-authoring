@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -35,6 +35,17 @@ const AddControl = ({
   const [show, setShow] = useState(false);
   const disabled = disabledReason !== null;
   const isTooltipOpen = disabled && show;
+  // Lets Escape dismiss the tooltip without moving focus (WCAG 1.4.13). Listening on `document` covers a
+  // tooltip opened by hover while focus is elsewhere, and the capture phase keeps the listener working when
+  // focus is inside an element that stops the key press.
+  useEffect(() => {
+    if (!isTooltipOpen) { return undefined; }
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { setShow(false); }
+    };
+    document.addEventListener('keydown', closeOnEscape, true);
+    return () => document.removeEventListener('keydown', closeOnEscape, true);
+  }, [isTooltipOpen]);
   let describedBy: string | undefined;
   // While the tooltip is open the popper appends its id with a comma, which breaks an id list,
   // so the button points at the tooltip alone, which carries the same text.
