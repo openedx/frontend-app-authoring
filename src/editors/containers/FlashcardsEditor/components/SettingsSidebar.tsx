@@ -1,8 +1,7 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import Button from '@src/editors/sharedComponents/Button';
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import { Card } from '@openedx/paragon';
+import { Card, Form } from '@openedx/paragon';
 import { useFormikContext } from 'formik';
 import { FlashcardsState } from '@src/editors/containers/FlashcardsEditor/types';
 
@@ -17,28 +16,13 @@ const SettingsSidebar = () => {
       </div>
       <Card className="d-flex flex-column align-self-stretch border">
         <Card.Section>
-          <span className="flex-grow-1 text-primary-500 x-small">{intl.formatMessage(messages.shuffleLabel)}</span>
-        </Card.Section>
-        <Card.Section className="pt-0">
-          <div className="text-primary-500 x-small">
-            <div className="pb-3 mb-2 text-gray-600">{intl.formatMessage(messages.shuffleSettingsDescription)}</div>
-            <div className="d-flex flex-row gap-0 w-100">
-              <Button
-                onClick={() => setFieldValue('isShuffled', false)}
-                variant={!values.isShuffled ? 'primary' : 'outline-primary'}
-                className="flex-grow-1 rounded-0"
-              >
-                {intl.formatMessage(messages.offLabel)}
-              </Button>
-              <Button
-                onClick={() => setFieldValue('isShuffled', true)}
-                variant={values.isShuffled ? 'primary' : 'outline-primary'}
-                className="flex-grow-1 rounded-0"
-              >
-                {intl.formatMessage(messages.onLabel)}
-              </Button>
-            </div>
-          </div>
+          <Form.Switch
+            checked={values.isShuffled}
+            onChange={(e) => setFieldValue('isShuffled', e.target.checked)}
+            helperText={intl.formatMessage(messages.shuffleSettingsDescription)}
+          >
+            {intl.formatMessage(messages.shuffleLabel)}
+          </Form.Switch>
         </Card.Section>
       </Card>
     </div>
