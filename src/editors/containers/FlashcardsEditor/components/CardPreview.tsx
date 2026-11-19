@@ -1,5 +1,5 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, OverlayTrigger, Tooltip } from '@openedx/paragon';
+import { Col, Icon, OverlayTrigger, Row, Tooltip } from '@openedx/paragon';
 
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
 import { useContext, useId } from 'react';
@@ -20,7 +20,7 @@ const PreviewSide = ({ text, imageUrl, imageAlt }: PreviewSideProps) => {
   const { staticRootUrl } = useContext(FlashcardsEditorContext);
 
   return (
-    <span className="d-inline-flex align-items-center text-truncate w-50 px-2">
+    <Col className="d-inline-flex align-items-center text-truncate">
       <span
         className="d-flex align-items-center justify-content-center overflow-hidden rounded-sm border border-gray-500 mr-2"
         style={{
@@ -54,14 +54,14 @@ const PreviewSide = ({ text, imageUrl, imageAlt }: PreviewSideProps) => {
       {text !== ''
         ? text
         : <span className="text-gray">{intl.formatMessage(messages.noTextLabel)}</span>}
-    </span>
+    </Col>
   );
 };
 
 /** The one-line summary a collapsed card shows in its heading. */
 const CardPreview = ({ card }: { card: Card; }) => {
   return (
-    <div className="w-100 mr-2">
+    <Row className="w-100 mr-2">
       <PreviewSide
         text={card.front.text}
         imageUrl={card.front.image.url}
@@ -72,7 +72,7 @@ const CardPreview = ({ card }: { card: Card; }) => {
         imageUrl={card.back.image.url}
         imageAlt={card.back.image.alt || card.back.text}
       />
-    </div>
+    </Row>
   );
 };
 

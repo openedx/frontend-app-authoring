@@ -39,8 +39,8 @@ const FlashcardsCard = ({
       actions={null}
       actionStyle={{
         position: 'absolute',
-        top: '12px',
-        left: '12px',
+        top: 'calc(var(--pgn-spacing-spacer-base) * 0.55)',
+        left: 'calc(var(--pgn-spacing-spacer-base) * 0.25)',
         zIndex: 2,
       }}
       componentStyle={{
@@ -58,8 +58,8 @@ const FlashcardsCard = ({
         open={card.editorOpen}
         onToggle={onToggle}
       >
-        <div className="d-flex align-items-center w-100 pr-4">
-          <Collapsible.Trigger className="d-flex align-items-center flex-grow-1 py-2.5 pl-4">
+        <div className="d-flex align-items-center w-100 p-2">
+          <Collapsible.Trigger className="d-flex align-items-center flex-grow-1 pl-2">
             <div className="d-flex align-items-center align-self-stretch w-100 ml-4">
               <div className="mx-2.5 text-primary-500 font-weight-bold">
                 {index + 1}
