@@ -63,14 +63,14 @@ const CardPreview = ({ card }: { card: Card; }) => {
   return (
     <div className="w-100 mr-2">
       <PreviewSide
-        text={card.term.text}
-        imageUrl={card.term.image.url}
-        imageAlt={card.term.image.alt || card.term.text}
+        text={card.front.text}
+        imageUrl={card.front.image.url}
+        imageAlt={card.front.image.alt || card.front.text}
       />
       <PreviewSide
-        text={card.definition.text}
-        imageUrl={card.definition.image.url}
-        imageAlt={card.definition.image.alt || card.definition.text}
+        text={card.back.text}
+        imageUrl={card.back.image.url}
+        imageAlt={card.back.image.alt || card.back.text}
       />
     </div>
   );

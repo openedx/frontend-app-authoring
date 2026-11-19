@@ -27,6 +27,7 @@ export interface UploadWidgetProps {
   messages?: typeof defaultMessages;
   blockId: string;
   isLibrary: boolean;
+  className?: string; // class name overrides for the main component; does not apply to error states
 }
 
 type LibraryAsset = { path: string; };
@@ -43,6 +44,7 @@ const UploadWidget = ({
   messages = defaultMessages,
   blockId,
   isLibrary,
+  className = '',
 }: UploadWidgetProps) => {
   const intl = useIntl();
   const [manualMode, setManualMode] = useState(false);
@@ -115,7 +117,7 @@ const UploadWidget = ({
   const fileHint = isLibrary ? messages.libraryFileHint : messages.courseFileHint;
 
   return (
-    <Form.Group as={Col} controlId={id}>
+    <Form.Group className={className} as={Col} controlId={id}>
       {manualMode && <TextField label={intl.formatMessage(messages.urlFieldLabel)} id={id} name={urlFieldName} />}
       {!manualMode && (
         <>

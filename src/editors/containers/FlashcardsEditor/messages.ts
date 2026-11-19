@@ -3,12 +3,12 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   courseFileHint: {
     id: 'FlashcardsEditor.courseFileHint',
-    defaultMessage: 'Files are immediately uploaded to course assets (Files).',
+    defaultMessage: 'Images are automatically added to course assets (Files).',
     description: 'Hint for file upload when in a course.',
   },
   libraryFileHint: {
     id: 'FlashcardsEditor.libraryFileHint',
-    defaultMessage: 'Files are immediately uploaded to library assets.',
+    defaultMessage: 'Images are automatically added to library assets.',
     description: 'Hint for file upload when in a library.',
   },
   loadingSpinner: {
@@ -18,48 +18,33 @@ const messages = defineMessages({
   },
   descriptionHeaderFlashcard: {
     id: 'FlashcardsEditor.DescriptionHeaderFlashcard',
-    defaultMessage: 'Flashcard terms',
-    description: 'Flashcard Description Header',
+    defaultMessage: 'Flashcards',
+    description: 'Header for the area where flashcards are added in the editor.',
   },
-  descriptionFlashcard: {
-    id: 'FlashcardsEditor.DescriptionFlashcard',
-    defaultMessage: 'Enter your terms and definitions below. Learners will review each card by viewing the term, then flipping to reveal the definition.',
-    description: 'Flashcard Description',
-  },
-  enterYourTerm: {
-    id: 'FlashcardsEditor.enterYourTerm',
-    defaultMessage: 'Enter your term',
-    description: 'Placeholder text for entering a term in the flashcards editor.',
-  },
-  enterYourDefinition: {
-    id: 'FlashcardsEditor.enterYourDefinition',
-    defaultMessage: 'Enter your definition',
-    description: 'Placeholder text for entering a definition in the flashcards editor.',
+  startTypingHere: {
+    id: 'FlashcardsEditor.startTypingHere',
+    defaultMessage: 'Start typing here...',
+    description: 'Placeholder text for entering text for the front or back of the flashcards editor.',
   },
   shuffleSettingsDescription: {
     id: 'FlashcardsEditor.shuffleSettingsDescription',
-    defaultMessage: 'Shuffle the order of terms shown to learners when reviewing.',
+    defaultMessage: 'Shuffle the order of cards shown to learners when reviewing.',
     description: 'Shuffle Settings Description',
   },
-  termLabel: {
-    id: 'FlashcardsEditor.termLabel',
-    defaultMessage: 'Term',
-    description: 'Label for term input field',
+  textFieldLabel: {
+    id: 'FlashcardsEditor.textFieldLabel',
+    defaultMessage: 'Text',
+    description: 'Label for the text input field of cards (front or back)',
   },
-  definitionLabel: {
-    id: 'FlashcardsEditor.definitionLabel',
-    defaultMessage: 'Definition',
-    description: 'Label for definition input field',
+  frontOfCardLabel: {
+    id: 'FlashcardsEditor.frontOfCardLabel',
+    defaultMessage: 'Front of card',
+    description: 'Label for front input form',
   },
-  termValidationError: {
-    id: 'FlashcardsEditor.termValidationError',
-    defaultMessage: 'Enter a term',
-    description: 'Error message when term field is empty but definition is filled',
-  },
-  definitionValidationError: {
-    id: 'FlashcardsEditor.definitionValidationError',
-    defaultMessage: 'Enter a definition',
-    description: 'Error message when definition field is empty but term is filled',
+  backOfCardLabel: {
+    id: 'FlashcardsEditor.backOfCardLabel',
+    defaultMessage: 'Back of card',
+    description: 'Label for back input form',
   },
   imageWithoutTextError: {
     id: 'FlashcardsEditor.imageWithoutTextError',
@@ -131,11 +116,6 @@ const messages = defineMessages({
     defaultMessage: 'On',
     description: 'Label for on toggle button.',
   },
-  imageSettingsTooltip: {
-    id: 'FlashcardsEditor.imageSettingsTooltip',
-    defaultMessage: 'Image settings',
-    description: 'Tooltip for image settings button.',
-  },
   imageSettingsTitle: {
     id: 'FlashcardsEditor.imageSettingsTitle',
     defaultMessage: 'Image Settings',
@@ -151,20 +131,25 @@ const messages = defineMessages({
     defaultMessage: 'Alt text',
     description: 'Label for the image alt-text field.',
   },
+  altTextPlaceholder: {
+    id: 'FlashcardsEditor.altTextPlaceholder',
+    defaultMessage: 'Describe the image for someone who can’t see it. Leave blank if the image is purely decorative.',
+    description: 'Placeholder for the image alt-text field.',
+  },
   loadErrorHeading: {
     id: 'FlashcardsEditor.loadErrorHeading',
     defaultMessage: 'The flashcards settings could not be loaded.',
     description: 'Heading shown when fetching the block settings fails.',
   },
-  addImageLabel: {
-    id: 'FlashcardsEditor.addImageLabel',
-    defaultMessage: 'Add image',
-    description: 'Accessible label for the button that opens the file picker to add an image to a card side.',
+  imageFieldLabel: {
+    id: 'FlashcardsEditor.imageFieldLabel',
+    defaultMessage: 'Image',
+    description: 'Header label for the file picker widget to upload an image to a card side.',
   },
   removeImageLabel: {
     id: 'FlashcardsEditor.removeImageLabel',
     defaultMessage: 'Remove image',
-    description: 'Accessible label for the button that removes the image from a card side.',
+    description: 'Label for the button that removes the image from a card side.',
   },
   expandCardLabel: {
     id: 'FlashcardsEditor.expandCardLabel',

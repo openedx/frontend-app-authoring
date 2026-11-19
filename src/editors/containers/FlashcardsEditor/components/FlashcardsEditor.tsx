@@ -1,18 +1,17 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Icon, OverlayTrigger, Spinner, Tooltip } from '@openedx/paragon';
+import { Button, Spinner } from '@openedx/paragon';
 import { EditorComponent } from '@src/editors/EditorComponent';
 import EditorContainer from '@src/editors/containers/EditorContainer';
 import { FieldArray, useFormikContext } from 'formik';
 import { isEqual } from 'lodash';
-import { PropsWithChildren, useContext, useEffect, useRef, useState } from 'react';
+import { PropsWithChildren, useContext, useEffect, useRef } from 'react';
 import { FlashcardsEditorContext } from '@src/editors/containers/FlashcardsEditor/context';
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import { emptyCard, FlashcardsState, ImageSettings } from '@src/editors/containers/FlashcardsEditor/types';
-import { InfoOutline, Plus } from '@openedx/paragon/icons';
+import { emptyCard, FlashcardsState } from '@src/editors/containers/FlashcardsEditor/types';
+import { Plus } from '@openedx/paragon/icons';
 import DraggableList from '@src/generic/DraggableList';
 import FlashcardsCard from './FlashcardsCard';
 import SettingsSidebar from './SettingsSidebar';
-import { FlashcardsImageSettingsModal } from './FlashcardsImageSettingsModal';
 
 const EditorWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const intl = useIntl();
@@ -52,15 +51,12 @@ export const FlashcardsEditorComponent: React.FC<EditorComponent> = (props) => {
 
   const isDirty = () => isEqual(originalState, values);
 
-  // Controls the image settings modal. The modal is hidden when the value is null.
-  const [imageSettings, setImageSettings] = useState<ImageSettings | null>(null);
-
   const getContent = () => {
     return {
       ...values,
       // filter out empty cards
       cards: values.cards.filter(card =>
-        card.term.text || card.term.image.url || card.definition.text || card.definition.image.url
+        card.front.text || card.front.image.url || card.back.text || card.back.image.url
       ),
     };
   };
@@ -69,22 +65,12 @@ export const FlashcardsEditorComponent: React.FC<EditorComponent> = (props) => {
     <EditorContainer {...props} isDirty={isDirty} getContent={getContent}>
       <EditorWrapper>
         <div className="h-75 overflow-auto">
-          <div className="d-flex w-100 py-2">
+          <div className="d-flex w-100 p-2">
             <div className="flex-grow-1 mr-3">
               <div className="w-100 mb-3 d-flex align-items-center">
                 <div className="text-primary-500 font-weight-bold mr-1">
                   {intl.formatMessage(messages.descriptionHeaderFlashcard)}
                 </div>
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={
-                    <Tooltip id="description-tooltip">
-                      {intl.formatMessage(messages.descriptionFlashcard)}
-                    </Tooltip>
-                  }
-                >
-                  <Icon src={InfoOutline} />
-                </OverlayTrigger>
               </div>
               <FieldArray name="cards">
                 {(arrayHelpers) => (
@@ -103,15 +89,14 @@ export const FlashcardsEditorComponent: React.FC<EditorComponent> = (props) => {
                           onMoveDown={values.cards.length > index + 1
                             ? () => arrayHelpers.swap(index, index + 1)
                             : null}
-                          onOpenSettings={setImageSettings}
                         />
                       ))}
                     </DraggableList>
                     <Button
-                      className="text-primary-500 pl-3"
+                      className="text-primary-500"
                       onClick={() => arrayHelpers.push(emptyCard())}
                       iconBefore={Plus}
-                      variant="tertiary"
+                      variant="link"
                     >
                       {intl.formatMessage(messages.addLabel)}
                     </Button>
@@ -122,8 +107,6 @@ export const FlashcardsEditorComponent: React.FC<EditorComponent> = (props) => {
             <SettingsSidebar />
           </div>
         </div>
-        {imageSettings !== null &&
-          <FlashcardsImageSettingsModal imageSettings={imageSettings} onClose={() => setImageSettings(null)} />}
       </EditorWrapper>
     </EditorContainer>
   );

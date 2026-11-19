@@ -1,65 +1,61 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Icon, IconButton, OverlayTrigger, Tooltip } from '@openedx/paragon';
+import { Button, Row, Col, Form } from '@openedx/paragon';
 import { DeleteOutline } from '@openedx/paragon/icons';
 
 import messages from '@src/editors/containers/FlashcardsEditor/messages';
-import { CardSideType } from '@src/editors/containers/FlashcardsEditor/types';
+import { CardSideType, FlashcardsState } from '@src/editors/containers/FlashcardsEditor/types';
 import { useContext } from 'react';
 import { FlashcardsEditorContext } from '@src/editors/containers/FlashcardsEditor/context';
+import { useFormikContext } from 'formik';
 
 interface CardImageProps {
   url: string;
-  altText: string;
   index: number;
-  imageType: CardSideType;
-  onOpenSettings: () => void;
+  field: CardSideType;
   onRemove: () => void;
 }
 
 /** A card's image, which opens its settings when activated, and its Remove button. */
 export const CardImage = ({
   url,
-  altText,
   index,
-  imageType,
-  onOpenSettings,
+  field,
   onRemove,
 }: CardImageProps) => {
   const intl = useIntl();
   const { staticRootUrl } = useContext(FlashcardsEditorContext);
+  const { values, setFieldValue } = useFormikContext<FlashcardsState>();
 
   return (
-    <div className="d-flex align-items-center justify-content-center align-self-stretch px-4 pb-2">
-      <OverlayTrigger
-        placement="bottom"
-        overlay={
-          <Tooltip id={`image-settings-tooltip-${imageType}-${index}`}>
-            {intl.formatMessage(messages.imageSettingsTooltip)}
-          </Tooltip>
-        }
-      >
-        <Button
-          variant="link"
-          className="p-0 border-0 rounded-0"
-          // Named here, not by the image inside: a decorative image has an
-          // empty alt, which would leave this button with no name.
-          aria-label={intl.formatMessage(messages.imageSettingsTooltip)}
-          onClick={onOpenSettings}
-        >
-          <img
-            style={{ maxHeight: '200px' }}
-            src={staticRootUrl + url}
-            alt={altText}
+    <Row>
+      <Col xs={12} sm={4} className="d-flex justify-content-center align-items-center">
+        <img
+          className="py-4"
+          style={{ maxHeight: '200px', maxWidth: '100%' }}
+          src={staticRootUrl + url}
+          alt={values.cards[index][field].image.alt}
+        />
+      </Col>
+      <Col xs={12} sm={8}>
+        <Form.Group>
+          <Form.Label>{intl.formatMessage(messages.altTextLabel)}</Form.Label>
+          <Form.Control
+            placeholder={intl.formatMessage(messages.altTextPlaceholder)}
+            as="textarea"
+            autoResize={true}
+            value={values.cards[index][field].image.alt}
+            onChange={(e) => setFieldValue(`cards.${index}.${field}.image.alt`, e.target.value)}
           />
+        </Form.Group>
+        <Button
+          className="p-0"
+          iconBefore={DeleteOutline}
+          onClick={onRemove}
+          variant="link"
+        >
+          {intl.formatMessage(messages.removeImageLabel)}
         </Button>
-      </OverlayTrigger>
-      <IconButton
-        src={DeleteOutline}
-        iconAs={Icon}
-        alt={intl.formatMessage(messages.removeImageLabel)}
-        variant="primary"
-        onClick={onRemove}
-      />
-    </div>
+      </Col>
+    </Row>
   );
 };
