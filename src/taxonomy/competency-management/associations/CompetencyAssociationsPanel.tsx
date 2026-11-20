@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { Col, Row, Stack } from '@openedx/paragon';
 import classNames from 'classnames';
@@ -25,6 +26,7 @@ export interface CompetencyAssociationsPanelProps {
  */
 const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAssociationsPanelProps) => {
   const [selectedCompetency, setSelectedCompetency] = useState<CompetencyTreeNode | null>(null);
+  const [courseColumn, setCourseColumn] = useState<HTMLElement | null>(null);
   const isDesktop = useIsDesktop();
 
   // Rendered once and reused, bare, in both branches below: `CompetencyTree`
@@ -40,8 +42,8 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
     />
   );
 
-  if (isDesktop) {
-    return (
+  const layout = isDesktop
+    ? (
       // `gap={3.5}` is Paragon's exact spacing-scale value for the 20px gap
       // (0 before selection, with no second column to gap against).
       // `align-items-stretch` overrides `.pgn__hstack`'s default `center` so
@@ -57,35 +59,34 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
           {tree}
         </ResizableBox>
         {selectedCompetency && (
-          <div className="flex-grow-1 competency-associations__course-column">
-            <CompetencyAssociationsProvider
-              tagId={Number(selectedCompetency.id)}
-              competencyExternalId={selectedCompetency.externalId ?? null}
-            >
-              <CourseSearchBrowse activeCompetency={selectedCompetency} />
-            </CompetencyAssociationsProvider>
-          </div>
+          <div ref={setCourseColumn} className="flex-grow-1 competency-associations__course-column" />
         )}
       </Stack>
-    );
-  }
-
-  return (
-    <Row>
-      <Col xs={12} lg={selectedCompetency ? 4 : 12}>
-        {tree}
-      </Col>
-      {selectedCompetency && (
-        <Col xs={12} lg={8}>
-          <CompetencyAssociationsProvider
-            tagId={Number(selectedCompetency.id)}
-            competencyExternalId={selectedCompetency.externalId ?? null}
-          >
-            <CourseSearchBrowse activeCompetency={selectedCompetency} />
-          </CompetencyAssociationsProvider>
+    )
+    : (
+      <Row>
+        <Col xs={12} lg={selectedCompetency ? 4 : 12}>
+          {tree}
         </Col>
+        {selectedCompetency && <Col ref={setCourseColumn} xs={12} lg={8} />}
+      </Row>
+    );
+
+  // One provider outside both layouts keeps its state across a breakpoint change. The portal fills whichever
+  // layout's course column is mounted.
+  return (
+    <>
+      {layout}
+      {selectedCompetency && (
+        <CompetencyAssociationsProvider
+          tagId={Number(selectedCompetency.id)}
+          competencyName={selectedCompetency.value}
+          competencyExternalId={selectedCompetency.externalId ?? null}
+        >
+          {courseColumn && createPortal(<CourseSearchBrowse activeCompetency={selectedCompetency} />, courseColumn)}
+        </CompetencyAssociationsProvider>
       )}
-    </Row>
+    </>
   );
 };
 

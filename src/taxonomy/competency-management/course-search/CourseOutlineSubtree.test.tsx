@@ -350,5 +350,14 @@ describe('<CourseOutlineSubtree />', () => {
       expect(addButton).toBeDisabled();
       expect(associateSubsection).not.toHaveBeenCalled();
     });
+
+    it('disables the add button while a group delete is in flight', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({ isDeletingGroup: true, competencyExternalId: 'EXT-042' });
+      await expandFirstSection();
+
+      expect(await screen.findByRole('button', { name: 'Associate EXT-042 with Subsection 1A (graded)' }))
+        .toBeDisabled();
+    });
   });
 });

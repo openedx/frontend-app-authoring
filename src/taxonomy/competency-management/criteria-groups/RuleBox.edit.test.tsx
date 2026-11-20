@@ -99,15 +99,15 @@ describe('<RuleBox /> editing (#794)', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
-  it('focuses the rule box when its select button is clicked, not when the score settings button is', async () => {
-    const focusRuleBox = jest.fn();
-    renderRuleBox({ focusRuleBox }, { canEdit: true });
+  it('selects the rule box when its select button is clicked, not when the score settings button is', async () => {
+    const selectRuleBox = jest.fn();
+    renderRuleBox({ selectRuleBox }, { canEdit: true });
 
     await user.click(scoreSettingsButton());
-    expect(focusRuleBox).not.toHaveBeenCalled();
+    expect(selectRuleBox).not.toHaveBeenCalled();
     await user.keyboard('{Escape}');
 
     await user.click(screen.getByRole('button', { name: 'Select this rule' }));
-    expect(focusRuleBox).toHaveBeenCalledWith(10, 'grade:gte:0.7:percent');
+    expect(selectRuleBox).toHaveBeenCalledWith(10, 'grade:gte:0.7:percent');
   });
 });

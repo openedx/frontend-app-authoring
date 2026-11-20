@@ -80,6 +80,7 @@ const deferredReply = () => {
 const courseSearchBrowseTree = (competency: CompetencyTreeNode = activeCompetency) => (
   <CompetencyAssociationsProvider
     tagId={Number(competency.id)}
+    competencyName={competency.value}
     competencyExternalId={competency.externalId ?? null}
   >
     <CourseSearchBrowse activeCompetency={competency} />
@@ -91,7 +92,11 @@ const renderCourseSearchBrowse = (competency: CompetencyTreeNode = activeCompete
 
 const renderCourseRow = (course: Course) =>
   render(
-    <CompetencyAssociationsProvider tagId={Number(activeCompetency.id)} competencyExternalId={null}>
+    <CompetencyAssociationsProvider
+      tagId={Number(activeCompetency.id)}
+      competencyName={activeCompetency.value}
+      competencyExternalId={null}
+    >
       <CourseRow course={course} />
     </CompetencyAssociationsProvider>,
   );
@@ -1059,7 +1064,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
     const originalScrollIntoView = Element.prototype.scrollIntoView;
     beforeEach(() => {
-      // jsdom has no layout; a sole group gets auto-focused, and its rule box scrolls itself into view.
+      // jsdom has no layout; a sole group gets auto-selected, and its rule box scrolls itself into view.
       Element.prototype.scrollIntoView = jest.fn();
     });
     afterEach(() => {

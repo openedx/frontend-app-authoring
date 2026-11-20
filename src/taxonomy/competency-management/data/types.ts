@@ -107,7 +107,7 @@ export interface EffectiveRule {
  */
 export interface RuleBox {
   /** The effective rule serialized as `ruleType:op:value:scale`, for example
-   * `grade:gte:0.7:percent`. It is what `focus.ruleKey` points at.
+   * `grade:gte:0.7:percent`. It is what `selection.ruleKey` points at.
    */
   key: string;
   rule: EffectiveRule;

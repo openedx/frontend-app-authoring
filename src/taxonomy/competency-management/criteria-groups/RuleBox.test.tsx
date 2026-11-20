@@ -58,37 +58,37 @@ describe('<RuleBox />', () => {
     expect(screen.getByRole('button')).not.toContainElement(screen.getByText('Subsection A'));
   });
 
-  it('calls focusRuleBox with its own groupId and ruleKey when clicked', async () => {
-    const focusRuleBox = jest.fn();
-    renderRuleBox({ focusRuleBox });
+  it('calls selectRuleBox with its own groupId and ruleKey when clicked', async () => {
+    const selectRuleBox = jest.fn();
+    renderRuleBox({ selectRuleBox });
 
     await user.click(screen.getByRole('button'));
-    expect(focusRuleBox).toHaveBeenCalledWith(10, ruleKey);
+    expect(selectRuleBox).toHaveBeenCalledWith(10, ruleKey);
   });
 
-  it.each(['{Enter}', ' '])('calls focusRuleBox once when its control is activated with %j', async (key) => {
-    const focusRuleBox = jest.fn();
-    renderRuleBox({ focusRuleBox });
+  it.each(['{Enter}', ' '])('calls selectRuleBox once when its control is activated with %j', async (key) => {
+    const selectRuleBox = jest.fn();
+    renderRuleBox({ selectRuleBox });
 
     await user.tab();
     await user.keyboard(key);
-    expect(focusRuleBox).toHaveBeenCalledTimes(1);
-    expect(focusRuleBox).toHaveBeenCalledWith(10, ruleKey);
+    expect(selectRuleBox).toHaveBeenCalledTimes(1);
+    expect(selectRuleBox).toHaveBeenCalledWith(10, ruleKey);
   });
 
   it.each([
-    { name: 'no focus', focus: null, isFocused: false },
+    { name: 'no selection', selection: null, isSelected: false },
     {
       name: 'a different box in its group',
-      focus: { groupId: 10, ruleKey: 'grade:lte:0.5:percent' },
-      isFocused: false,
+      selection: { groupId: 10, ruleKey: 'grade:lte:0.5:percent' },
+      isSelected: false,
     },
-    { name: 'the same rule key in a different group', focus: { groupId: 11, ruleKey }, isFocused: false },
-    { name: 'this box', focus: { groupId: 10, ruleKey }, isFocused: true },
-  ])('marks itself current and scrolls into view only for $name: $isFocused', ({ focus, isFocused }) => {
-    renderRuleBox({ focus });
+    { name: 'the same rule key in a different group', selection: { groupId: 11, ruleKey }, isSelected: false },
+    { name: 'this box', selection: { groupId: 10, ruleKey }, isSelected: true },
+  ])('marks itself current and scrolls into view only for $name: $isSelected', ({ selection, isSelected }) => {
+    renderRuleBox({ selection });
 
-    expect(screen.getByRole('button')).toHaveAttribute('aria-current', String(isFocused));
-    expect(scrollIntoView).toHaveBeenCalledTimes(isFocused ? 1 : 0);
+    expect(screen.getByRole('button')).toHaveAttribute('aria-current', String(isSelected));
+    expect(scrollIntoView).toHaveBeenCalledTimes(isSelected ? 1 : 0);
   });
 });

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Context as ResponsiveContext } from 'react-responsive';
 import { breakpoints } from '@openedx/paragon';
 
@@ -9,7 +10,25 @@ import {
 } from '@src/testUtils';
 import { apiUrls } from '@src/taxonomy/data/api';
 import { getApiBaseUrl, type Course } from '@src/studio-home/data/api';
+import type { CompetencyAssociationsProviderProps } from '../CompetencyAssociationsContext';
 import CompetencyAssociationsPanel from './CompetencyAssociationsPanel';
+
+const mockProviderMounted = jest.fn();
+
+jest.mock('../CompetencyAssociationsContext', () => {
+  const actual = jest.requireActual<typeof import('../CompetencyAssociationsContext')>(
+    '../CompetencyAssociationsContext',
+  );
+  return {
+    ...actual,
+    CompetencyAssociationsProvider: (props: CompetencyAssociationsProviderProps) => {
+      useEffect(() => {
+        mockProviderMounted();
+      }, []);
+      return <actual.CompetencyAssociationsProvider {...props} />;
+    },
+  };
+});
 
 let axiosMock;
 
@@ -88,6 +107,7 @@ const renderPanel = () =>
 
 describe('<CompetencyAssociationsPanel />', () => {
   beforeEach(() => {
+    mockProviderMounted.mockClear();
     ({ axiosMock } = initializeMocks());
     axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
     axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([buildCourse()]));
@@ -222,5 +242,23 @@ describe('<CompetencyAssociationsPanel />', () => {
     // label, since the right panel's associations empty state now also
     // names the competency (in a `<strong>`, not this class).
     expect(screen.getByText('Leaf A1a', { selector: '.competency-row__label' })).toBeInTheDocument();
+  });
+
+  it('keeps one provider instance when the viewport crosses the desktop breakpoint', async () => {
+    const panel = (width: number | undefined) => (
+      <ResponsiveContext.Provider value={{ width }}>
+        <CompetencyAssociationsPanel taxonomyId={taxonomyId} taxonomyName={taxonomyName} />
+      </ResponsiveContext.Provider>
+    );
+    const { rerender } = render(panel(breakpoints.large.minWidth));
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    fireEvent.click((await screen.findByText('Leaf A1a')).closest('.competency-row') as HTMLElement);
+    await screen.findByRole('searchbox');
+
+    rerender(panel(breakpoints.small.minWidth));
+
+    expect(await screen.findByRole('searchbox')).toBeInTheDocument();
+    expect(mockProviderMounted).toHaveBeenCalledTimes(1);
   });
 });

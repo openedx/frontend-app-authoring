@@ -30,8 +30,10 @@ export const apiUrls = {
   defaultCompetencyRuleProfile: () => makeCbeV1Url('rule_profiles/'),
   /** POST: create a new criterion under this competency (tag). */
   createCompetencyCriterion: (tagId: number) => makeUrl(`${tagId}/criteria/`),
-  /** PATCH: update a bottom-tier group's any/all combining logic. Backs `#760`. */
-  updateCompetencyCriteriaGroup: (tagId: number, groupId: number) => makeUrl(`${tagId}/criteria-groups/${groupId}/`),
+  /** One criteria group of a competency (tag). PATCH updates a bottom-tier group's any/all combining logic (`#760`),
+   * and DELETE removes a group and cascades to its descendants (`#709`).
+   */
+  competencyCriteriaGroup: (tagId: number, groupId: number) => makeUrl(`${tagId}/criteria-groups/${groupId}/`),
   /** PATCH: batch-update a rule box's score across every criterion sharing it. Backs `#759`. */
   updateCompetencyCriteriaRule: (groupId: number) => makeCbeV1Url(`criteria-groups/${groupId}/criteria/bulk-update/`),
 } satisfies Record<string, (...args: any[]) => string>;
@@ -96,10 +98,19 @@ export async function updateCompetencyCriteriaGroupOperator(
 ): Promise<CompetencyCriteriaGroup> {
   const payload: UpdateCompetencyCriteriaGroupPayload = { logic_operator: logicOperator };
   const { data } = await getAuthenticatedHttpClient().patch(
-    apiUrls.updateCompetencyCriteriaGroup(tagId, groupId),
+    apiUrls.competencyCriteriaGroup(tagId, groupId),
     payload,
   );
   return camelCaseObject(data);
+}
+
+/**
+ * Delete a group (`#709`). The delete can cascade to the parent, so callers refetch the groups.
+ * @param tagId The competency (tag) the group belongs to.
+ * @param groupId The group to delete.
+ */
+export async function deleteCompetencyCriteriaGroup(tagId: number, groupId: number): Promise<void> {
+  await getAuthenticatedHttpClient().delete(apiUrls.competencyCriteriaGroup(tagId, groupId));
 }
 
 /**

@@ -25,8 +25,8 @@ const noAccessibleFirstSentence =
 
 const renderList = (contextOverrides: Parameters<typeof buildMockCompetencyAssociationsContextValue>[0] = {}) => (
   render(
-    <MockCompetencyAssociationsProvider value={contextOverrides}>
-      <CourseGroupList competencyName="Test Competency" />
+    <MockCompetencyAssociationsProvider value={{ competencyName: 'Test Competency', ...contextOverrides }}>
+      <CourseGroupList />
     </MockCompetencyAssociationsProvider>,
   )
 );
@@ -197,5 +197,23 @@ describe('<CourseGroupList />', () => {
         .toBeInTheDocument();
       expect(screen.queryByText(noAssociationsPromptMessage)).not.toBeInTheDocument();
     });
+  });
+
+  it('takes keyboard focus on the empty state when a request asks for it, then consumes the request', () => {
+    const consumeKeyboardFocusRequest = jest.fn();
+    renderList({
+      accessibleCourseGroups: [],
+      keyboardFocusRequest: { kind: 'empty' },
+      consumeKeyboardFocusRequest,
+    });
+
+    expect(screen.getByText(byTextContent(noAssociationsMessage)).parentElement).toHaveFocus();
+    expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves the empty state unfocused without a request', () => {
+    renderList({ accessibleCourseGroups: [] });
+
+    expect(screen.getByText(byTextContent(noAssociationsMessage)).parentElement).not.toHaveFocus();
   });
 });

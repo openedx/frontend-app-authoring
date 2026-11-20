@@ -1,4 +1,4 @@
-import type { CriteriaFocus, CriteriaPlaceholder } from './CompetencyAssociationsContext';
+import type { CriteriaSelection, CriteriaPlaceholder } from './CompetencyAssociationsContext';
 import type {
   CompetencyRuleProfile,
   CreateCompetencyCriterionPayload,
@@ -10,19 +10,19 @@ import type { CompetencyCriteriaGroupsIndex } from './utils';
 export type CreateCriterionFields = Omit<CreateCompetencyCriterionPayload, 'object_id'>;
 export type CreateTarget = { kind: 'create'; fields: CreateCriterionFields; } | { kind: 'duplicate'; };
 
-/** The course key of the focused group, or `undefined` when there is no focus or the group is unknown. */
-export function courseKeyOfFocus(
-  focus: CriteriaFocus | null,
+/** The course key of the selected group, or `undefined` when there is no selection or the group is unknown. */
+export function courseKeyOfSelection(
+  selection: CriteriaSelection | null,
   placeholder: CriteriaPlaceholder,
   index: CompetencyCriteriaGroupsIndex,
 ): string | undefined {
-  if (!focus) {
+  if (!selection) {
     return undefined;
   }
   // A placeholder group has no real id, so its course comes from its parent group.
-  const courseGroupId = focus.groupId === null
+  const courseGroupId = selection.groupId === null
     ? placeholder.parentRuleGroupId
-    : index.groupsById.get(focus.groupId)?.parentId;
+    : index.groupsById.get(selection.groupId)?.parentId;
   if (courseGroupId == null) {
     return undefined;
   }
@@ -77,25 +77,25 @@ function fieldsForPlaceholderGroup(
 }
 
 /**
- * Decides how a new criterion is placed given the focus: the fields to send
+ * Decides how a new criterion is placed given the selection: the fields to send
  * with the create request, or `duplicate` when the placeholder rule box would
- * repeat an existing rule. Focus in another course than `courseId` is ignored.
+ * repeat an existing rule. Selection in another course than `courseId` is ignored.
  */
 export function resolveCreateTarget(
   courseId: string,
-  focus: CriteriaFocus | null,
+  selection: CriteriaSelection | null,
   placeholder: CriteriaPlaceholder,
   index: CompetencyCriteriaGroupsIndex,
   profile: CompetencyRuleProfile,
 ): CreateTarget {
-  if (!focus || courseKeyOfFocus(focus, placeholder, index) !== courseId) {
+  if (!selection || courseKeyOfSelection(selection, placeholder, index) !== courseId) {
     return { kind: 'create', fields: {} };
   }
-  if (focus.groupId === null) {
+  if (selection.groupId === null) {
     return { kind: 'create', fields: fieldsForPlaceholderGroup(placeholder, profile) };
   }
-  if (focus.ruleKey === null) {
-    return targetForPlaceholderRuleBox(focus.groupId, placeholder, index, profile);
+  if (selection.ruleKey === null) {
+    return targetForPlaceholderRuleBox(selection.groupId, placeholder, index, profile);
   }
-  return { kind: 'create', fields: fieldsForRealRuleBox(focus.groupId, focus.ruleKey, index, profile) };
+  return { kind: 'create', fields: fieldsForRealRuleBox(selection.groupId, selection.ruleKey, index, profile) };
 }

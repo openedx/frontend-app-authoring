@@ -127,7 +127,7 @@ export const courseBGroupsResponse: CompetencyCriteriaGroupsResponse = withCount
 });
 
 /** `singleGroupResponse` with its leaf renamed to 30, so switching between the
- * two competencies changes which group is auto-focused.
+ * two competencies changes which group is auto-selected.
  */
 export const otherSingleGroupResponse: CompetencyCriteriaGroupsResponse = withCounts({
   groups: singleGroupResponse.groups.map((item) => (item.id === 10 ? { ...item, id: 30 } : item)),

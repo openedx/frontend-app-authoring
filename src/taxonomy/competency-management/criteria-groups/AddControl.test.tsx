@@ -10,6 +10,7 @@ import AddControl from './AddControl';
 const placeholderText = 'Fill in the empty box before adding another.';
 const loadingText = 'Wait for the course list to finish loading before adding another.';
 const savingText = 'Wait for the save to finish before adding another.';
+const deletingText = 'Wait for the removal to finish before adding another.';
 
 describe('<AddControl />', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -38,6 +39,7 @@ describe('<AddControl />', () => {
     ['placeholder' as const, placeholderText],
     ['saving' as const, savingText],
     ['loading' as const, loadingText],
+    ['deleting' as const, deletingText],
   ])('when disabled for "%s"', (disabledReason, text) => {
     let onClick: jest.Mock;
     let button: HTMLElement;

@@ -3,6 +3,7 @@ import { initializeMocks } from '@src/testUtils';
 import {
   apiUrls,
   createCompetencyCriterion,
+  deleteCompetencyCriteriaGroup,
   getCompetencyCriteriaGroups,
   getDefaultCompetencyRuleProfile,
   updateCompetencyCriteriaGroupOperator,
@@ -195,7 +196,7 @@ describe('competency-management api calls', () => {
 
   it('updates a group\'s operator at its URL, sending a snake_case body and camelCasing the response', async () => {
     const { axiosMock } = initializeMocks();
-    axiosMock.onPatch(apiUrls.updateCompetencyCriteriaGroup(tagId, 10)).reply(200, {
+    axiosMock.onPatch(apiUrls.competencyCriteriaGroup(tagId, 10)).reply(200, {
       id: 10,
       parent_id: 1,
       tag_id: tagId,
@@ -208,7 +209,7 @@ describe('competency-management api calls', () => {
 
     const result = await updateCompetencyCriteriaGroupOperator(tagId, 10, 'OR');
 
-    expect(axiosMock.history.patch[0].url).toEqual(apiUrls.updateCompetencyCriteriaGroup(tagId, 10));
+    expect(axiosMock.history.patch[0].url).toEqual(apiUrls.competencyCriteriaGroup(tagId, 10));
     expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({ logic_operator: 'OR' });
     expect(result).toEqual({
       id: 10,
@@ -220,6 +221,16 @@ describe('competency-management api calls', () => {
       logicOperator: 'OR',
       archived: false,
     });
+  });
+
+  it('sends a DELETE request to the criteria group URL', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10)).reply(200, {});
+
+    await expect(deleteCompetencyCriteriaGroup(tagId, 10)).resolves.toBeUndefined();
+
+    expect(axiosMock.history.delete).toHaveLength(1);
+    expect(axiosMock.history.delete[0].url).toEqual(apiUrls.competencyCriteriaGroup(tagId, 10));
   });
 
   it('batch-updates a rule box\'s score at its URL, sending a snake_case payload and camelCasing the response', async () => {

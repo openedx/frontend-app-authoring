@@ -24,7 +24,7 @@ const ProfileLoadedProbe = () => {
 
 const renderSection = () => (
   render(
-    <CompetencyAssociationsProvider tagId={tagId} competencyExternalId="CCRS-1.3">
+    <CompetencyAssociationsProvider tagId={tagId} competencyName={competency.value} competencyExternalId="CCRS-1.3">
       <ProfileLoadedProbe />
       <CriteriaAssociationsSection competency={competency} />
     </CompetencyAssociationsProvider>,

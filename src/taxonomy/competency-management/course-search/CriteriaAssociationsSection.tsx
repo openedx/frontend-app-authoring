@@ -84,7 +84,7 @@ const CriteriaAssociationsSection = ({ competency }: CriteriaAssociationsSection
         />
       </div>
       {/* The course list shows its own error, and the groups are not shown. */}
-      {!courseList.isError && <CourseGroupList competencyName={competency.value} />}
+      {!courseList.isError && <CourseGroupList />}
     </div>
   );
 };
