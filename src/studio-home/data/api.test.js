@@ -69,7 +69,7 @@ describe('studio-home api calls', () => {
   });
 
   it('should get studio v1 libraries data', async () => {
-    const apiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/libraries`;
+    const apiLink = `${getApiBaseUrl()}/api/contentstore/v3/home/libraries/`;
     axiosMock.onGet(apiLink).reply(200, generateGetStudioHomeLibrariesApiResponse());
     const result = await getStudioHomeLibraries();
     const expected = generateGetStudioHomeLibrariesApiResponse();
