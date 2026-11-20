@@ -106,6 +106,11 @@ const messages = defineMessages({
     defaultMessage: 'Close',
     description: 'Alt text of close button',
   },
+  sidebarResizeHandleLabel: {
+    id: 'course-authoring.library-authoring.sidebar.resize-handle.label',
+    defaultMessage: 'Resize sidebar',
+    description: 'Accessible name of the draggable handle on the left edge of the library sidebar.',
+  },
   libraryInfoButton: {
     id: 'course-authoring.library-authoring.buttons.library-info.text',
     defaultMessage: 'Library Info',

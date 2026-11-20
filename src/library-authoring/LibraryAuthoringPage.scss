@@ -31,12 +31,27 @@
 
 .library-authoring-sidebar {
   z-index: 1000; // same as header
-  flex: 530px 0 0;
+  // The width is set by the ResizableBox inside; this wrapper only positions the sidebar.
+  flex: 0 0 auto;
+  // `InplaceTextEditor` sets `width: 100%` on every ancestor of a focused title input (see
+  // `generic/inplace-text-editor/InplaceTextEditor.scss`). Capping this wrapper at its content
+  // width keeps the sidebar at the width of the ResizableBox while a title is being edited.
+  max-width: max-content;
   position: sticky;
   top: 0;
   right: 0;
   height: 100vh;
-  overflow-y: auto;
+
+  .resizable {
+    height: 100%;
+  }
+
+  .library-authoring-sidebar-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    overflow-y: auto;
+  }
 }
 
 .dropdown-menu {
