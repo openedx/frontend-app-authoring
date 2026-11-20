@@ -28,6 +28,7 @@ import {
   waffleFlagDefaults,
   getCourseSettings,
   CourseSettingsData,
+  CourseSettingsView,
 } from './api';
 import { RequestStatus, RequestStatusType } from './constants';
 
@@ -236,9 +237,9 @@ export const useUserAgreement = (agreementType: string) => (
 /**
  * Get the course settings
  */
-export const useCourseSettings = (courseId: string) => (
+export const useCourseSettings = (courseId: string, view: CourseSettingsView = 'minimal') => (
   useQuery<CourseSettingsData, AxiosError>({
-    queryKey: ['courseSettings', courseId],
-    queryFn: () => getCourseSettings(courseId),
+    queryKey: ['courseSettings', courseId, view],
+    queryFn: () => getCourseSettings(courseId, view),
   })
 );

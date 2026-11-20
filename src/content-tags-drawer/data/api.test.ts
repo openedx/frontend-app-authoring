@@ -15,6 +15,7 @@ import {
   getContentTaxonomyTagsApiUrl,
   getXBlockContentDataApiURL,
   getLibraryContentDataApiUrl,
+  getCourseContentDataApiURL,
   getTaxonomyTagsData,
   getContentTaxonomyTagsData,
   getContentData,
@@ -115,6 +116,22 @@ describe('content tags drawer api calls', () => {
 
     expect(axiosMock.history.get[0].url).toEqual(getXBlockContentDataApiURL(contentId));
     expect(result).toEqual(contentDataMock);
+  });
+
+  it('should get content data for a course from its settings', async () => {
+    const contentId = 'course-v1:SampleTaxonomyOrg1+STC1+2023_1';
+    const url = getCourseContentDataApiURL(contentId);
+    expect(url).toEqual(`http://localhost:18010/api/authoring/v2/courses/${contentId}/settings/`);
+    axiosMock.onGet(url).reply(200, {
+      course_display_name: 'Sample Course',
+      course_display_name_with_default: 'Sample Course',
+      platform_name: 'Example Site',
+    });
+    const result = await getContentData(contentId);
+
+    expect(axiosMock.history.get[0].url).toEqual(url);
+    expect(axiosMock.history.get[0].params).toBeUndefined();
+    expect(result).toEqual(expect.objectContaining({ courseDisplayNameWithDefault: 'Sample Course' }));
   });
 
   it('should get content data for V2 library component', async () => {

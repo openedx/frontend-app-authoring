@@ -40,7 +40,7 @@ export const getContentTaxonomyTagsApiUrl = (contentId: string) =>
 export const getXBlockContentDataApiURL = (contentId: string) =>
   new URL(`/xblock/outline/${contentId}`, getApiBaseUrl()).href;
 export const getCourseContentDataApiURL = (contentId: string) =>
-  new URL(`/api/contentstore/v1/course_settings/${contentId}`, getApiBaseUrl()).href;
+  new URL(`/api/authoring/v2/courses/${contentId}/settings/`, getApiBaseUrl()).href;
 export const getLibraryContentDataApiUrl = (contentId: string) =>
   new URL(`/api/libraries/v2/blocks/${contentId}/`, getApiBaseUrl()).href;
 export const getContentTaxonomyTagsCountApiUrl = (contentId: string) =>
