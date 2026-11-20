@@ -14,13 +14,13 @@ export const sanitizeShare = (value: unknown): number => (
 );
 
 /**
- * Keeps both panels at least `minPanelHeight` tall. Returns `share` unchanged while the
- * container is unmeasured (`availableHeight <= 0`), and an even split when both
+ * Keeps both panels at least `minPanelHeight` tall. Bounds `share` to 0..1 while the
+ * container is unmeasured (`availableHeight <= 0`), and returns an even split when both
  * minimums cannot fit.
  */
 export const clampShare = (share: number, availableHeight: number, minPanelHeight: number): number => {
   if (availableHeight <= 0) {
-    return share;
+    return Math.min(Math.max(share, 0), 1);
   }
   if (2 * minPanelHeight >= availableHeight) {
     return DEFAULT_SHARE;
@@ -62,6 +62,8 @@ export const ResizableSplit = ({
   const isDraggingRef = useRef(false);
   const dragStartYRef = useRef(0);
   const dragStartShareRef = useRef(DEFAULT_SHARE);
+  // Latest share set by a drag or key since the last commit, or null when nothing changed.
+  const pendingShareRef = useRef<number | null>(null);
   const displayedShare = clampShare(share, availableHeight, minPanelHeight);
 
   useEffect(() => {
@@ -75,6 +77,13 @@ export const ResizableSplit = ({
     observer.observe(root);
     return () => observer.disconnect();
   }, []);
+
+  const updateShare = (next: number) => {
+    if (pendingShareRef.current !== null || next !== displayedShare) {
+      pendingShareRef.current = next;
+    }
+    setShare(next);
+  };
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) {
@@ -91,13 +100,24 @@ export const ResizableSplit = ({
       return;
     }
     const delta = (event.clientY - dragStartYRef.current) / availableHeight;
-    setShare(clampShare(dragStartShareRef.current + delta, availableHeight, minPanelHeight));
+    updateShare(clampShare(dragStartShareRef.current + delta, availableHeight, minPanelHeight));
   };
 
-  // Written on release only, so a drag does not hit localStorage on every move.
-  const commit = () => setStoredShare(displayedShare);
+  // Written on release only, so a drag does not hit localStorage on every move. A release
+  // without a change leaves the stored preference alone, since the displayed share may be a
+  // clamped version of it.
+  const commit = () => {
+    if (pendingShareRef.current === null) {
+      return;
+    }
+    setStoredShare(pendingShareRef.current);
+    pendingShareRef.current = null;
+  };
 
   const handlePointerEnd = () => {
+    if (!isDraggingRef.current) {
+      return;
+    }
     isDraggingRef.current = false;
     commit();
   };
@@ -108,7 +128,7 @@ export const ResizableSplit = ({
     }
     event.preventDefault();
     const delta = event.key === 'ArrowUp' ? -step : step;
-    setShare(clampShare(displayedShare + delta, availableHeight, minPanelHeight));
+    updateShare(clampShare((pendingShareRef.current ?? displayedShare) + delta, availableHeight, minPanelHeight));
   };
 
   const handleKeyUp = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -138,6 +158,7 @@ export const ResizableSplit = ({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerEnd}
         onPointerCancel={handlePointerEnd}
+        onLostPointerCapture={handlePointerEnd}
       >
         <Icon src={DragHandle} size="xs" />
       </div>

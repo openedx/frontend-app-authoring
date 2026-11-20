@@ -65,6 +65,8 @@ describe('sanitizeShare', () => {
 describe('clampShare', () => {
   it('returns the share unchanged before the container is measured', () => {
     expect(clampShare(0.9, 0, 120)).toBe(0.9);
+    expect(clampShare(1.3, 0, 120)).toBe(1);
+    expect(clampShare(-0.2, 0, 120)).toBe(0);
   });
   it('clamps to the minimum panel height on both ends', () => {
     expect(clampShare(0.05, 600, 120)).toBe(0.2);
@@ -199,6 +201,12 @@ describe('<ResizableSplit />', () => {
     expect(Number(topPane.style.flexGrow)).toBeCloseTo(0.5);
   });
 
+  it('prevents the default action of the arrow keys', () => {
+    const { bar } = renderSplit();
+    expect(fireEvent.keyDown(bar, { key: 'ArrowDown' })).toBe(false);
+    expect(fireEvent.keyDown(bar, { key: 'Enter' })).toBe(true);
+  });
+
   describe('remembering the split', () => {
     it('starts from the stored share', () => {
       window.localStorage.setItem('split-key', '0.7');
@@ -229,6 +237,52 @@ describe('<ResizableSplit />', () => {
       bar.focus();
       await user.keyboard('{ArrowDown}');
       expect(window.localStorage.getItem('split-key')).toBe('0.55');
+    });
+
+    describe('with a stored share clamped on render', () => {
+      beforeEach(() => {
+        window.localStorage.setItem('split-key', '0.9');
+        clientHeightSpy.mockReturnValue(400); // max becomes 0.7
+      });
+
+      it('does not rewrite the stored share on a click without a drag', () => {
+        const { container, topPane, bar } = renderSplit();
+        measure(container);
+        expect(Number(topPane.style.flexGrow)).toBeCloseTo(0.7);
+        fireEvent.pointerDown(bar, { clientY: 100, pointerId: 1, button: 0 });
+        fireEvent.pointerUp(bar, { pointerId: 1 });
+        expect(window.localStorage.getItem('split-key')).toBe('0.9');
+      });
+
+      it('does not rewrite the stored share when a secondary button is released', () => {
+        const { container, topPane, bar } = renderSplit();
+        measure(container);
+        expect(Number(topPane.style.flexGrow)).toBeCloseTo(0.7);
+        fireEvent.pointerDown(bar, { clientY: 100, pointerId: 1, button: 2 });
+        fireEvent.pointerMove(bar, { clientY: 160, pointerId: 1 });
+        fireEvent.pointerUp(bar, { pointerId: 1 });
+        expect(window.localStorage.getItem('split-key')).toBe('0.9');
+      });
+
+      it('does not rewrite the stored share when an arrow key hits the limit', async () => {
+        const user = userEvent.setup();
+        const { container, bar } = renderSplit();
+        measure(container);
+        bar.focus();
+        await user.keyboard('{ArrowDown}');
+        expect(bar).toHaveAttribute('aria-valuenow', '70');
+        expect(window.localStorage.getItem('split-key')).toBe('0.9');
+      });
+
+      it('stores the moved share when the key did change it', async () => {
+        const user = userEvent.setup();
+        const { container, bar } = renderSplit();
+        measure(container);
+        bar.focus();
+        await user.keyboard('{ArrowUp}');
+        expect(bar).toHaveAttribute('aria-valuenow', '65');
+        expect(Number(window.localStorage.getItem('split-key'))).toBeCloseTo(0.65);
+      });
     });
 
     it('still renders and resizes when storage throws', () => {
