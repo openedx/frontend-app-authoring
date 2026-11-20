@@ -204,15 +204,24 @@ export function useStickyState<T>(
   key: string,
 ): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [value, setValue] = useState<T>(() => {
-    const stickyValue = window.localStorage.getItem(key);
+    // A blocked store or a corrupt value must not break the first render.
+    try {
+      const stickyValue = window.localStorage.getItem(key);
 
-    return stickyValue !== null
-      ? JSON.parse(stickyValue)
-      : defaultValue;
+      return stickyValue !== null
+        ? JSON.parse(stickyValue)
+        : defaultValue;
+    } catch {
+      return defaultValue;
+    }
   });
 
   useEffect(() => {
-    window.localStorage.setItem(key, JSON.stringify(value));
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // Persistence is best effort; the in-memory value still works.
+    }
   }, [key, value]);
 
   return [value, setValue];
