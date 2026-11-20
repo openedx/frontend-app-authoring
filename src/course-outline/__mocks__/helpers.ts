@@ -44,7 +44,6 @@ export interface TestCourseOutline {
   deprecatedBlocksInfo: Record<string, unknown>;
   discussionsIncontextLearnmoreUrl: string;
   initialState: Record<string, unknown>;
-  initialUserClipboard: Record<string, unknown>;
   languageCode: string;
   lmsLink: string;
   mfeProctoredExamSettingsUrl: string;
@@ -208,7 +207,6 @@ export function buildTestOutline(
     deprecatedBlocksInfo: { deprecatedEnabledBlockTypes: [], blocks: [] },
     discussionsIncontextLearnmoreUrl: '',
     initialState: { expandedLocators: [], locatorToShow: '' },
-    initialUserClipboard: {},
     languageCode: 'en',
     lmsLink: '',
     mfeProctoredExamSettingsUrl: '',

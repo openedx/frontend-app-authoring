@@ -135,7 +135,6 @@ describe('buildOutlineIndex', () => {
     expect(outline.deprecatedBlocksInfo).toBeDefined();
     expect(outline.discussionsIncontextLearnmoreUrl).toBe('');
     expect(outline.initialState).toBeDefined();
-    expect(outline.initialUserClipboard).toBeDefined();
     expect(outline.languageCode).toBe('en');
     expect(outline.lmsLink).toBe('');
     expect(outline.mfeProctoredExamSettingsUrl).toBe('');
