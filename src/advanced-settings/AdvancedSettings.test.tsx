@@ -45,7 +45,7 @@ describe('<AdvancedSettings />', () => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
     axiosMock
-      .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
+      .onGet(getCourseAdvancedSettingsApiUrl(courseId))
       .reply(200, advancedSettingsMock);
 
     mockWaffleFlags({ enableAuthzCourseAuthoring: false });
@@ -60,7 +60,7 @@ describe('<AdvancedSettings />', () => {
 
   it('should render placeholder when settings fetch returns 403', async () => {
     axiosMock
-      .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
+      .onGet(getCourseAdvancedSettingsApiUrl(courseId))
       .reply(403);
     render();
     expect(await screen.findByText(/Under Construction/i)).toBeInTheDocument();
@@ -148,7 +148,7 @@ describe('<AdvancedSettings />', () => {
     fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
     expect(textarea).toHaveValue('[3, 2, 1]');
     axiosMock
-      .onPatch(`${getCourseAdvancedSettingsApiUrl(courseId)}`)
+      .onPatch(getCourseAdvancedSettingsApiUrl(courseId))
       .reply(200, {
         ...advancedSettingsMock,
         advancedModules: {
@@ -166,10 +166,36 @@ describe('<AdvancedSettings />', () => {
     const textarea = await screen.findByLabelText(/Advanced Module List/i);
     fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
     axiosMock
-      .onPatch(`${getCourseAdvancedSettingsApiUrl(courseId)}`)
+      .onPatch(getCourseAdvancedSettingsApiUrl(courseId))
       .reply(500);
     await user.click(screen.getByText('Save changes'));
     expect(await screen.findByText('Validation error while saving')).toBeInTheDocument();
+  });
+
+  it('should list the settings the server refused in the error modal', async () => {
+    const user = userEvent.setup();
+    render();
+    const textarea = await screen.findByLabelText(/Advanced Module List/i);
+    fireEvent.change(textarea, { target: { value: '[3, 2, 1]' } });
+    axiosMock
+      .onPatch(getCourseAdvancedSettingsApiUrl(courseId))
+      .reply(400, {
+        type: 'https://docs.openedx.org/errors/validation',
+        title: 'Validation error',
+        status: 400,
+        detail: 'The request is not valid.',
+        instance: `/api/authoring/v1/courses/${courseId}/advanced_settings/`,
+        errors: {
+          advanced_modules: ['The value is not valid for this setting.'],
+          non_field_errors: ['The settings could not be saved. No setting was changed.'],
+        },
+      });
+    await user.click(screen.getByText('Save changes'));
+    expect(await screen.findByText('Validation error while saving')).toBeInTheDocument();
+    expect(screen.getByText(/2 validation error/i)).toBeInTheDocument();
+    expect(screen.getByText('Advanced module list:')).toBeInTheDocument();
+    expect(screen.getByText('The value is not valid for this setting.')).toBeInTheDocument();
+    expect(screen.getByText('The settings could not be saved. No setting was changed.')).toBeInTheDocument();
   });
 
   it('should render without errors when authz.enable_course_authoring flag is enabled and the user is authorized', async () => {
@@ -209,7 +235,7 @@ describe('<AdvancedSettings />', () => {
       canViewAdvancedSettings: false,
     } as ReturnType<typeof useCourseUserPermissions>);
     axiosMock
-      .onGet(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`)
+      .onGet(getCourseAdvancedSettingsApiUrl(courseId))
       .reply(403);
     render();
     expect(await screen.findByTestId('permissionDeniedAlert')).toBeInTheDocument();
