@@ -91,6 +91,11 @@ const messages = defineMessages({
     defaultMessage: 'This will keep the locally edited course content. If the component is published again in its library, you can choose to update to published library content',
     description: 'Body of the modal to keep the content of a course component',
   },
+  readOnlyTooltip: {
+    id: 'course-authoring.generic.read-only-tooltip',
+    defaultMessage: 'Your role doesn\'t include permission to do this. Contact your org admin to request access',
+    description: 'Tooltip message shown on actions a user cannot perform because their role is read-only.',
+  },
 });
 
 export default messages;

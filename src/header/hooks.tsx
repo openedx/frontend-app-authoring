@@ -38,7 +38,7 @@ export const useContentMenuItems = (courseId: string) => {
         title: intl.formatMessage(messages['header.links.outline']),
       }]
       : []),
-    ...(librariesV2Enabled && perms.canManageLibraryUpdates
+    ...(librariesV2Enabled && perms.canViewLibraryUpdates
       ? [{
         href: `/course/${courseId}/libraries`,
         title: intl.formatMessage(messages['header.links.libraries']),
