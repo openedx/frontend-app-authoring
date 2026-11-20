@@ -4,6 +4,7 @@ import {
   Layout,
   StatefulButton,
 } from '@openedx/paragon';
+import { Helmet } from 'react-helmet';
 import {
   CheckCircle as CheckCircleIcon,
   ErrorOutline as ErrorOutlineIcon,
@@ -60,8 +61,6 @@ const ScheduleAndDetails = () => {
   } = useCourseSettings(courseId);
 
   const showLoadFailedAlert = isErrorCourseDetails || isErrorCourseSettins;
-
-  document.title = getPageHeadTitle(course?.name || '', intl.formatMessage(messages.headingTitle));
 
   const {
     isLoading: isLoadingUserPermissions,
@@ -195,6 +194,9 @@ const ScheduleAndDetails = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{getPageHeadTitle(course?.name || '', intl.formatMessage(messages.headingTitle))}</title>
+      </Helmet>
       <Container size="xl" className="schedule-and-details px-4">
         <div className="mt-5">
           <AlertMessage

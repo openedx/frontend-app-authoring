@@ -2,6 +2,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Container } from '@openedx/paragon';
 import React, { useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
@@ -27,7 +28,6 @@ const FilesPage = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const { courseId, courseDetails } = useCourseAuthoringContext();
-  document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
   const {
     loadingStatus,
     addingStatus: addAssetStatus,
@@ -65,6 +65,9 @@ const FilesPage = () => {
 
   return (
     <FilesPageProvider courseId={courseId}>
+      <Helmet>
+        <title>{getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading))}</title>
+      </Helmet>
       <Container size="xl" className="p-4 pt-4.5">
         <EditFileErrors
           resetErrors={handleErrorReset}
