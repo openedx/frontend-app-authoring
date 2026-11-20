@@ -4,6 +4,7 @@ import VideoEditor from './containers/VideoEditor';
 import ProblemEditor from './containers/ProblemEditor';
 import VideoUploadEditor from './containers/VideoUploadEditor';
 import GamesEditor from '@src/editors/containers/GamesEditor';
+import FlashcardsEditor from '@src/editors/containers/FlashcardsEditor';
 
 // ADDED_EDITOR_IMPORTS GO HERE
 
@@ -17,6 +18,7 @@ const supportedEditors = {
   [blockTypes.pdf]: PdfEditor,
   // ADDED_EDITORS GO BELOW
   [blockTypes.games]: GamesEditor,
+  [blockTypes.flashcards]: FlashcardsEditor,
 } as const;
 
 export default supportedEditors;

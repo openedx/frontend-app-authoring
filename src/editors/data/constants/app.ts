@@ -8,6 +8,7 @@ export const blockTypes = StrictDict({
   video_upload: 'video_upload',
   games: 'games',
   pdf: 'pdf',
+  flashcards: 'openedx_flashcards',
 });
 
 /**
