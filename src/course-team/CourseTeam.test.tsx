@@ -9,12 +9,14 @@ import {
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { USER_ROLES } from '@src/constants';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
+import { paginatedListPage } from '@src/generic/data/paginatedList';
 
 import { courseTeamMock, courseTeamWithOneUser, courseTeamWithoutUsers } from './__mocks__';
-import { getCourseTeamApiUrl, updateCourseTeamUserApiUrl } from './data/api';
+import { getCourseTeamApiUrl, getCourseTeamCallerApiUrl, updateCourseTeamUserApiUrl } from './data/api';
 import CourseTeam from './CourseTeam';
 import messages from './messages';
 import addUserFormMessages from './add-user-form/messages';
+import sidebarMessages from './course-team-sidebar/messages';
 
 let axiosMock;
 let validateUserPermissionsMock;
@@ -29,6 +31,22 @@ const render = () =>
     </CourseAuthoringProvider>,
     { path: mockPathname },
   );
+
+const mockCourseTeam = ({ members, me }) => {
+  axiosMock
+    .onGet(getCourseTeamApiUrl(courseId))
+    .reply(200, paginatedListPage(members))
+    .onGet(getCourseTeamCallerApiUrl(courseId))
+    .reply(200, me);
+};
+
+const mockCourseTeamDenied = () => {
+  axiosMock
+    .onGet(getCourseTeamApiUrl(courseId))
+    .reply(403)
+    .onGet(getCourseTeamCallerApiUrl(courseId))
+    .reply(403);
+};
 
 describe('<CourseTeam />', () => {
   const originalLocation = window.location;
@@ -56,9 +74,7 @@ describe('<CourseTeam />', () => {
   });
 
   it('render CourseTeam component with 3 team members correctly', async () => {
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamMock);
+    mockCourseTeam(courseTeamMock);
 
     render();
 
@@ -70,9 +86,7 @@ describe('<CourseTeam />', () => {
   });
 
   it('render CourseTeam component with 1 team member correctly', async () => {
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamWithOneUser);
+    mockCourseTeam(courseTeamWithOneUser);
 
     render();
 
@@ -84,9 +98,7 @@ describe('<CourseTeam />', () => {
   });
 
   it('render CourseTeam component without team member correctly', async () => {
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamWithoutUsers);
+    mockCourseTeam(courseTeamWithoutUsers);
 
     render();
 
@@ -98,9 +110,7 @@ describe('<CourseTeam />', () => {
   });
 
   it('render CourseTeam component with initial sidebar correctly', async () => {
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamWithoutUsers);
+    mockCourseTeam(courseTeamWithoutUsers);
 
     render();
 
@@ -109,9 +119,7 @@ describe('<CourseTeam />', () => {
   });
 
   it('render CourseTeam component without initial sidebar correctly', async () => {
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamMock);
+    mockCourseTeam(courseTeamMock);
 
     render();
 
@@ -121,9 +129,7 @@ describe('<CourseTeam />', () => {
 
   it('displays AddUserForm when clicking the "Add New Member" button', async () => {
     const user = userEvent.setup();
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamWithOneUser);
+    mockCourseTeam(courseTeamWithOneUser);
 
     render();
 
@@ -137,9 +143,7 @@ describe('<CourseTeam />', () => {
 
   it('displays AddUserForm when clicking the "Add a New Team member" button', async () => {
     const user = userEvent.setup();
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamWithOneUser);
+    mockCourseTeam(courseTeamWithOneUser);
 
     render();
 
@@ -152,12 +156,10 @@ describe('<CourseTeam />', () => {
   });
 
   it('not displays "Add New Member" and AddTeamMember component when isAllowActions is false', async () => {
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, {
-        ...courseTeamWithOneUser,
-        allowActions: false,
-      });
+    mockCourseTeam({
+      ...courseTeamWithOneUser,
+      me: { ...courseTeamWithOneUser.me, can_manage_team: false },
+    });
 
     render();
 
@@ -166,12 +168,27 @@ describe('<CourseTeam />', () => {
     expect(screen.queryByTestId('add-team-member')).not.toBeInTheDocument();
   });
 
+  it('shows the ownership hint when the user is the only instructor', async () => {
+    mockCourseTeam(courseTeamMock);
+
+    render();
+
+    expect(await screen.findByText(sidebarMessages.ownershipTitle.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('does not show the ownership hint when the user is not the only instructor', async () => {
+    mockCourseTeam(courseTeamWithOneUser);
+
+    render();
+
+    await screen.findByTestId('course-team-sidebar');
+    expect(screen.queryByText(sidebarMessages.ownershipTitle.defaultMessage)).not.toBeInTheDocument();
+  });
+
   it('should delete user', async () => {
     const user = userEvent.setup();
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamMock);
-    const deleteUrl = updateCourseTeamUserApiUrl(courseId, 'staff@example.com');
+    mockCourseTeam(courseTeamMock);
+    const deleteUrl = updateCourseTeamUserApiUrl(courseId, 'audit@example.com');
 
     axiosMock
       .onDelete(deleteUrl)
@@ -196,11 +213,9 @@ describe('<CourseTeam />', () => {
 
   it('should change role user', async () => {
     const user = userEvent.setup();
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamMock);
+    mockCourseTeam(courseTeamMock);
 
-    const updateUrl = updateCourseTeamUserApiUrl(courseId, 'staff@example.com');
+    const updateUrl = updateCourseTeamUserApiUrl(courseId, 'audit@example.com');
 
     axiosMock
       .onPut(updateUrl)
@@ -220,9 +235,7 @@ describe('<CourseTeam />', () => {
 
   it('should show warning modal when submitting an already existing user email', async () => {
     const user = userEvent.setup();
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamWithOneUser);
+    mockCourseTeam(courseTeamWithOneUser);
 
     render();
 
@@ -236,9 +249,7 @@ describe('<CourseTeam />', () => {
   it('should hide the form after successfully adding a new user', async () => {
     const user = userEvent.setup();
     const newEmail = 'newuser@example.com';
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamWithOneUser);
+    mockCourseTeam(courseTeamWithOneUser);
     axiosMock
       .onPost(updateCourseTeamUserApiUrl(courseId, newEmail))
       .reply(200);
@@ -255,9 +266,7 @@ describe('<CourseTeam />', () => {
   });
 
   it('displays an alert and sets status to DENIED when API responds with 403', async () => {
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(403);
+    mockCourseTeamDenied();
 
     render();
 
@@ -268,9 +277,7 @@ describe('<CourseTeam />', () => {
     beforeEach(() => {
       setConfig({ ...getConfig(), ADMIN_CONSOLE_URL: adminConsoleUrl });
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
-      axiosMock
-        .onGet(getCourseTeamApiUrl(courseId))
-        .reply(200, courseTeamMock);
+      mockCourseTeam(courseTeamMock);
     });
 
     it('redirects to the admin console instead of rendering the course team page', async () => {
@@ -288,9 +295,7 @@ describe('<CourseTeam />', () => {
 
     it('denies access without redirecting when the user cannot view the course team', async () => {
       // The CMS denies the legacy API too, so the permission check must win over the 403 alert.
-      axiosMock
-        .onGet(getCourseTeamApiUrl(courseId))
-        .reply(403);
+      mockCourseTeamDenied();
       validateUserPermissionsMock.mockResolvedValue({ canViewCourseTeam: false });
 
       render();
@@ -302,9 +307,7 @@ describe('<CourseTeam />', () => {
 
   it('renders the course team page when authz is disabled', async () => {
     setConfig({ ...getConfig(), ADMIN_CONSOLE_URL: adminConsoleUrl });
-    axiosMock
-      .onGet(getCourseTeamApiUrl(courseId))
-      .reply(200, courseTeamMock);
+    mockCourseTeam(courseTeamMock);
 
     render();
 
