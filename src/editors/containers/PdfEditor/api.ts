@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { selectors } from '@src/editors/data/redux';
 import { camelizeKeys } from '@src/editors/utils';
@@ -45,6 +45,27 @@ export const useBlockHandlerData = <T>({
         }),
         { cancelSource: signal },
       ).then((res: AxiosResponse<unknown>) => camelizeKeys(res.data) as T);
+    },
+  });
+};
+
+// Instructs the backend to convert a given document URL to PDF. Returns the resulting PDF URL.
+export const usePdfConversion = (blockId: string) => {
+  const studioEndpointUrl = useSelector(selectors.app.studioEndpointUrl)!;
+  const isLibrary = useSelector(selectors.app.isLibrary);
+  const client = getAuthenticatedHttpClient();
+  return useMutation({
+    mutationFn: async (url: string) => {
+      const result = await client.post(
+        await resolveHandlerUrl({
+          blockId,
+          studioEndpointUrl,
+          handlerName: 'convert_pdf',
+          isLibrary,
+        }),
+        { url },
+      );
+      return result.data.url as string;
     },
   });
 };
