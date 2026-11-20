@@ -118,6 +118,7 @@ export const useSettingMenuItems = (courseId: string) => {
           ? {
             href: getAdminConsoleScopeUrl(courseId),
             title: intl.formatMessage(messages['header.links.roles.permissions']),
+            target: '_blank',
           }
           : {
             href: `/course/${courseId}/course_team`,
