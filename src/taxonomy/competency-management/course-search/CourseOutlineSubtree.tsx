@@ -1,7 +1,14 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useId, useState } from 'react';
 
+import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Icon, IconButton } from '@openedx/paragon';
+import {
+  Button,
+  Icon,
+  IconButton,
+  OverlayTrigger,
+  Tooltip,
+} from '@openedx/paragon';
 import { AddCircle, ExpandLess, ExpandMore } from '@openedx/paragon/icons';
 
 import { useCourseOutlineIndex } from '@src/course-outline/data';
@@ -16,6 +23,93 @@ export interface CourseOutlineSubtreeProps {
   courseId: string;
 }
 
+interface AddSubsectionPillProps {
+  subsectionName: string;
+  competencyExternalId: string | null;
+  /** The name of the competency that blocks this course, or `undefined` when nothing does. */
+  conflictingCompetency: string | undefined;
+  /** True while an association is created or a group is deleted; the pill is disabled meanwhile. */
+  isBusy: boolean;
+  onAssociate: () => void;
+  /** The pill's icon and external ID, shared with the applied pill. */
+  children: ReactNode;
+}
+
+/**
+ * The pill that associates a subsection with the competency being edited. In a blocked course the
+ * same button stays, so keyboard focus survives the lookup's answer arriving. It keeps
+ * `aria-disabled` instead of `disabled`, so it stays focusable and the tooltip opens on focus as
+ * well as hover.
+ */
+const AddSubsectionPill = ({
+  subsectionName,
+  competencyExternalId,
+  conflictingCompetency,
+  isBusy,
+  onAssociate,
+  children,
+}: AddSubsectionPillProps) => {
+  const intl = useIntl();
+  const tooltipId = useId();
+  const descriptionId = useId();
+  const [show, setShow] = useState(false);
+  const isBlocked = conflictingCompetency !== undefined;
+  const isTooltipOpen = isBlocked && show;
+  const tooltipText = isBlocked
+    ? intl.formatMessage(messages.hierarchyConflictTooltip, { competencyName: conflictingCompetency })
+    : '';
+  let describedBy: string | undefined;
+  // While the tooltip is open the popper appends its id with a comma, which breaks an id list,
+  // so the button points at the tooltip alone, which carries the same text.
+  if (isBlocked) {
+    describedBy = isTooltipOpen ? tooltipId : descriptionId;
+  }
+
+  return (
+    <>
+      <OverlayTrigger
+        placement="top"
+        trigger={['hover', 'focus']}
+        show={isTooltipOpen}
+        onToggle={setShow}
+        overlay={
+          <Tooltip id={tooltipId} variant="light" className="course-search-browse-blocked-tooltip">
+            {tooltipText}
+          </Tooltip>
+        }
+      >
+        <Button
+          variant="tertiary"
+          type="button"
+          className={classNames(
+            'course-search-browse__subsection-pill course-search-browse__subsection-pill--available',
+            { 'course-search-browse__subsection-pill--blocked': isBlocked },
+          )}
+          aria-label={competencyExternalId
+            ? intl.formatMessage(messages.associateSubsectionButtonLabel, {
+              externalId: competencyExternalId,
+              subsectionName,
+            })
+            : intl.formatMessage(messages.associateSubsectionWithoutIdButtonLabel, { subsectionName })}
+          aria-disabled={isBlocked}
+          aria-describedby={describedBy}
+          disabled={isBlocked ? undefined : isBusy}
+          onClick={isBlocked ? undefined : onAssociate}
+        >
+          {children}
+          {!isBlocked && (
+            <>
+              <span className="course-search-browse__subsection-pill-divider" aria-hidden="true" />
+              <Icon src={AddCircle} size="xs" aria-hidden="true" />
+            </>
+          )}
+        </Button>
+      </OverlayTrigger>
+      <span id={descriptionId} className="sr-only">{tooltipText}</span>
+    </>
+  );
+};
+
 interface SubsectionRowProps {
   subsection: XBlock;
   courseId: string;
@@ -24,6 +118,10 @@ interface SubsectionRowProps {
 /**
  * One graded subsection: its name plus the competency pill. The applied pill
  * shows regardless of `canEditCourse`.
+ *
+ * A course is blocked for the competency being edited when one of its ancestors or descendants
+ * already has associations there. A blocked row's associate button is disabled, grey, and has a
+ * tooltip naming that competency.
  */
 const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
   const intl = useIntl();
@@ -32,6 +130,7 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
     associateSubsection,
     canEditCourse,
     competencyExternalId,
+    conflictingCompetencyName,
     isAssociating,
     isDeletingGroup,
     status,
@@ -65,25 +164,16 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
       </span>
     );
   } else if (canAssociate) {
-    const subsectionName = subsection.displayName;
     pill = (
-      <Button
-        variant="tertiary"
-        type="button"
-        className="course-search-browse__subsection-pill course-search-browse__subsection-pill--available"
-        aria-label={competencyExternalId
-          ? intl.formatMessage(messages.associateSubsectionButtonLabel, {
-            externalId: competencyExternalId,
-            subsectionName,
-          })
-          : intl.formatMessage(messages.associateSubsectionWithoutIdButtonLabel, { subsectionName })}
-        disabled={isAssociating || isDeletingGroup}
-        onClick={() => associateSubsection(subsection.id, courseId)}
+      <AddSubsectionPill
+        subsectionName={subsection.displayName}
+        competencyExternalId={competencyExternalId}
+        conflictingCompetency={conflictingCompetencyName(courseId)}
+        isBusy={isAssociating || isDeletingGroup}
+        onAssociate={() => associateSubsection(subsection.id, courseId)}
       >
         {pillContent}
-        <span className="course-search-browse__subsection-pill-divider" aria-hidden="true" />
-        <Icon src={AddCircle} size="xs" aria-hidden="true" />
-      </Button>
+      </AddSubsectionPill>
     );
   }
 

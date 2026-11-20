@@ -148,3 +148,12 @@ export interface UpdateCompetencyCriteriaRulePayload {
   rule_type_override: string;
   rule_payload_override: GradeRulePayload;
 }
+
+/** One row of the blocked-courses response: a course that an ancestor or
+ * descendant competency (`conflictingTag*`) blocks by already having criteria there.
+ */
+export interface CompetencyBlockedCourse {
+  courseKey: string;
+  conflictingTagId: number;
+  conflictingTagValue: string;
+}

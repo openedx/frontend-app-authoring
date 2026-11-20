@@ -277,6 +277,30 @@
       --pgn-btn-disabled-bg: var(--pgn-color-white);
       --pgn-btn-disabled-border-color: var(--pgn-color-info-600);
     }
+
+    // In a course another competency blocks: the dashed pill in grey. The
+    // button stays focusable, so hover, active and focus keep the resting
+    // colors and only the focus ring (`--pgn-btn-focus-outline-color`) shows.
+    &--blocked {
+      --pgn-btn-color: var(--pgn-color-gray-500);
+      --pgn-btn-border-color: var(--pgn-color-gray-500);
+      --pgn-btn-hover-color: var(--pgn-color-gray-500);
+      --pgn-btn-hover-bg: var(--pgn-color-white);
+      --pgn-btn-hover-border-color: var(--pgn-color-gray-500);
+      --pgn-btn-active-color: var(--pgn-color-gray-500);
+      --pgn-btn-active-bg: var(--pgn-color-white);
+      --pgn-btn-active-border-color: var(--pgn-color-gray-500);
+      --pgn-btn-focus-color: var(--pgn-color-gray-500);
+      --pgn-btn-focus-bg: var(--pgn-color-white);
+      --pgn-btn-focus-border-color: var(--pgn-color-gray-500);
+
+      // Paragon's `.btn:not(:disabled):not(.disabled)` sets `cursor: pointer`
+      // at three-class specificity, so these need the same weight to apply.
+      &.btn[aria-disabled='true'] {
+        border-color: var(--pgn-color-gray-500);
+        cursor: default;
+      }
+    }
   }
 
   &__subsection-pill-id {
@@ -290,4 +314,10 @@
     margin: -2px 0 -3px;
     background-color: currentcolor;
   }
+}
+
+// Top-level because the tooltip renders in a portal outside the panel. The
+// viewport cap keeps it on screen at phone widths.
+.course-search-browse-blocked-tooltip {
+  --pgn-size-tooltip-max-width: min(400px, calc(100vw - 1rem));
 }

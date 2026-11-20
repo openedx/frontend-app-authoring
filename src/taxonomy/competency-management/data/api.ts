@@ -1,6 +1,7 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import type {
+  CompetencyBlockedCourse,
   CompetencyCriteriaGroup,
   CompetencyCriteriaGroupsResponse,
   CompetencyCriterion,
@@ -26,6 +27,8 @@ const makeCbeV1Url = (path: string): string => new URL(path, getCbeV1Endpoint())
 export const apiUrls = {
   /** GET: the course-level and bottom-tier criteria groups, plus criteria, for one competency (tag). */
   competencyCriteriaGroups: (tagId: number) => makeUrl(`${tagId}/criteria-groups/`),
+  /** GET: the paginated list of courses where an ancestor or descendant competency blocks this one. */
+  competencyBlockedCourses: (tagId: number) => makeUrl(`${tagId}/blocked-courses/`),
   /** GET: the paginated list of competency rule profiles (see `scopeType` on `CompetencyRuleProfile`). */
   defaultCompetencyRuleProfile: () => makeCbeV1Url('rule_profiles/'),
   /** POST: create a new criterion under this competency (tag). */
@@ -51,6 +54,23 @@ export async function getCompetencyCriteriaGroups(
     params: { course_keys: courseKeys.join(',') },
   });
   return camelCaseObject(data);
+}
+
+/**
+ * Get which of the given courses are blocked for a competency, because an ancestor or descendant of it already has associations there.
+ *
+ * Reads only the first page. The backend returns at most one row per requested
+ * course and pins its page size to 100, while `courseKeys` holds one page of the
+ * course list (`PAGE_SIZE`, 10). Follow `next` if either number changes.
+ */
+export async function getCompetencyBlockedCourses(
+  tagId: number,
+  courseKeys: string[],
+): Promise<CompetencyBlockedCourse[]> {
+  const { data } = await getAuthenticatedHttpClient().get(apiUrls.competencyBlockedCourses(tagId), {
+    params: { course_keys: courseKeys.join(',') },
+  });
+  return camelCaseObject(data.results);
 }
 
 /**

@@ -26,6 +26,7 @@ import { useStudioHomeCoursesV2 } from '@src/studio-home/data/apiHooks';
 
 import {
   competencyQueryKeys,
+  useCompetencyBlockedCourses,
   useCompetencyCriteriaGroups,
   useCourseTaggingPermissions,
   useCreateCompetencyCriterion,
@@ -212,6 +213,11 @@ export interface CompetencyAssociationsContextBase {
    * (`courses.manage_tags`).
    */
   canEditCourse: (courseId: string) => boolean;
+  /** The ancestor or descendant competency that blocks the given listed course, or
+   * `undefined` when the course is not blocked or the lookup is still
+   * loading or failed, so selection fails open (the backend still rejects).
+   */
+  conflictingCompetencyName: (courseId: string) => string | undefined;
   /** The `objectId` of every criterion in the listed courses, for the duplicate guard
    * and the content panel's "already associated" marking. Content can only be picked
    * from a listed course, so the guard needs nothing outside them.
@@ -643,6 +649,7 @@ export const CompetencyAssociationsProvider = ({
   children,
 }: CompetencyAssociationsProviderProps) => {
   const intl = useIntl();
+  const queryClient = useQueryClient();
   const { showToast } = useToastContext();
 
   const [state, dispatch] = useReducer(providerReducer, {
@@ -735,6 +742,7 @@ export const CompetencyAssociationsProvider = ({
   const isStateOutdated = competencyChanged || scopeChanged;
 
   const groupsQuery = useCompetencyCriteriaGroups(tagId, listedCourseKeys);
+  const blockedCoursesQuery = useCompetencyBlockedCourses(tagId, listedCourseKeys);
   const profileQuery = useDefaultCompetencyRuleProfile();
   const { mutateAsync: createCriterion, isPending: isCreatePending, variables } = useCreateCompetencyCriterion();
   const isAssociating = isCreatePending && variables?.tagId === tagId;
@@ -746,7 +754,6 @@ export const CompetencyAssociationsProvider = ({
     variables: deleteVariables,
   } = useDeleteCompetencyCriteriaGroup();
   const isDeletingGroup = isDeletePending && deleteVariables?.tagId === tagId;
-  const queryClient = useQueryClient();
   // Closes the gap between a click and the render that disables the delete menus. Holds the generation that started
   // the delete, so a delete still pending for the previous competency does not block this one.
   const deleteInFlightGenerationRef = useRef<number | null>(null);
@@ -917,6 +924,11 @@ export const CompetencyAssociationsProvider = ({
     [permissionsByCourseId],
   );
 
+  const conflictingCompetencyName = useCallback(
+    (courseId: string) => blockedCoursesQuery.data?.find((row) => row.courseKey === courseId)?.conflictingTagValue,
+    [blockedCoursesQuery.data],
+  );
+
   const associateSubsection = useCallback((objectId: string, courseId: string) => {
     if (associatedIds.has(objectId)) {
       showToast(intl.formatMessage(messages.alreadyAssociatedToastMessage), undefined, undefined, InfoOutline);
@@ -955,12 +967,16 @@ export const CompetencyAssociationsProvider = ({
         });
       },
       (createError: AxiosError) => {
-        // A 400 with a `tag_id` field error is the backend's hierarchy
-        // dominance check: an ancestor or descendant competency already has
-        // criteria in this course.
+        // A 400 with a `tag_id` field error is the backend's hierarchy check:
+        // an ancestor or descendant competency already has criteria in this course.
         const { response } = createError;
         const isHierarchyConflict = response?.status === 400
           && typeof response.data === 'object' && response.data !== null && 'tag_id' in response.data;
+        if (isHierarchyConflict) {
+          // The lookup missed this block (it failed, or the association was added after it loaded),
+          // so ask again to disable the course's associate buttons.
+          queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyBlockedCourses(tagId) });
+        }
         showToast(
           intl.formatMessage(
             isHierarchyConflict
@@ -982,6 +998,7 @@ export const CompetencyAssociationsProvider = ({
     tagId,
     generation,
     createCriterion,
+    queryClient,
     showToast,
     intl,
   ]);
@@ -1154,6 +1171,7 @@ export const CompetencyAssociationsProvider = ({
       expansionCountByCourseId,
       hasPermissionsError,
       canEditCourse,
+      conflictingCompetencyName,
       associatedObjectIds: associatedIds,
       accessibleCourseGroups,
       competencyExternalId,
@@ -1199,6 +1217,7 @@ export const CompetencyAssociationsProvider = ({
     expansionCountByCourseId,
     hasPermissionsError,
     canEditCourse,
+    conflictingCompetencyName,
     groupsIndex,
     systemDefaultProfile,
     associatedIds,
