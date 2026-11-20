@@ -10,7 +10,6 @@
 @use "@openedx/paragon/styles/css/core/custom-media-breakpoints.css";
 
 .course-search-browse {
-  $line-color: rgb(0 0 0 / .08);
   $shadow-color: rgb(0 0 0 / .12);
   $border-radius: 8px;
   $container-padding-y: 12px;
@@ -87,11 +86,9 @@
     min-height: 0;
   }
 
-  // Holds the "Courses & Content" label, `&__list` and the pagination;
-  // `border-top` is the divider from `&__associations` above it. Fills
-  // whatever height `&__panel` leaves after `&__associations`.
+  // Holds the "Courses & Content" label, `&__list` and the pagination.
+  // Fills whatever height `&__panel` leaves after `&__associations`.
   &__container {
-    border-top: 1px solid $line-color;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -158,11 +155,13 @@
   &__associations {
     padding: $container-padding-y $container-padding-x;
 
-    // Equal halves with `&__container`, each scrolling on its own.
+    // Fills its `ResizableSplit` pane, which sets the height shared with
+    // `&__container`; each scrolls on its own.
     @media (--pgn-size-breakpoint-min-width-lg) {
       flex: 1 1 0;
       min-height: 0;
       overflow-y: auto;
+      padding-bottom: 8px;
     }
   }
 
