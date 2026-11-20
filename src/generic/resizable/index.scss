@@ -63,6 +63,11 @@
   background-color: var(--pgn-color-light-300);
   color: var(--pgn-color-gray-500);
 
+  .pgn__icon {
+    width: 14px;
+    height: 14px;
+  }
+
   &:hover {
     background-color: var(--pgn-color-light-500);
   }
