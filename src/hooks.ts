@@ -197,22 +197,31 @@ export function useStateWithUrlSearchParam<Type>(
 
 /**
  * Creates a custom React hook that manages the state of a given value persistently across sessions.
- * The stored value is kept in `window.localStorage`.
+ * The stored value is kept in `window.localStorage`. A blocked store or an unparsable stored
+ * value yields `defaultValue`, and a failed write is ignored.
  */
 export function useStickyState<T>(
   defaultValue: T,
   key: string,
 ): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [value, setValue] = useState<T>(() => {
-    const stickyValue = window.localStorage.getItem(key);
+    try {
+      const stickyValue = window.localStorage.getItem(key);
 
-    return stickyValue !== null
-      ? JSON.parse(stickyValue)
-      : defaultValue;
+      return stickyValue !== null
+        ? JSON.parse(stickyValue)
+        : defaultValue;
+    } catch {
+      return defaultValue;
+    }
   });
 
   useEffect(() => {
-    window.localStorage.setItem(key, JSON.stringify(value));
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // Persistence is best effort; the in-memory value still works.
+    }
   }, [key, value]);
 
   return [value, setValue];

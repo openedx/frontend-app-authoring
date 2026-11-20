@@ -1,8 +1,8 @@
-import { fireEvent, renderHook } from '@testing-library/react';
+import { act, fireEvent, renderHook } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
 import { history } from '@edx/frontend-platform';
 
-import { useScrollToHashElement, useEscapeClick, useLoadOnScroll } from './hooks';
+import { useScrollToHashElement, useEscapeClick, useLoadOnScroll, useStickyState } from './hooks';
 
 jest.mock('react-router-dom', () => ({
   useLocation: jest.fn(),
@@ -115,6 +115,42 @@ describe('Custom Hooks', () => {
       fireEvent.scroll(window);
 
       expect(fetchNextPage).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('useStickyState', () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+      window.localStorage.clear();
+    });
+
+    it('returns the stored value when it parses', () => {
+      window.localStorage.setItem('k', '0.7');
+      const { result } = renderHook(() => useStickyState(0.5, 'k'));
+      expect(result.current[0]).toBe(0.7);
+    });
+
+    it('returns the default when the stored value is not JSON', () => {
+      window.localStorage.setItem('k', 'not json');
+      const { result } = renderHook(() => useStickyState(0.5, 'k'));
+      expect(result.current[0]).toBe(0.5);
+    });
+
+    it('returns the default when reading storage throws', () => {
+      jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        throw new Error('blocked');
+      });
+      const { result } = renderHook(() => useStickyState(0.5, 'k'));
+      expect(result.current[0]).toBe(0.5);
+    });
+
+    it('keeps the in-memory value when writing storage throws', () => {
+      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('blocked');
+      });
+      const { result } = renderHook(() => useStickyState(0.5, 'k'));
+      act(() => result.current[1](0.8));
+      expect(result.current[0]).toBe(0.8);
     });
   });
 });

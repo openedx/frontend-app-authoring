@@ -23,7 +23,9 @@ import DatePicker from 'react-datepicker';
 
 import AlertMessage from '@src/generic/alert-message';
 import { LoadingSpinner } from '@src/generic/Loading';
+import { ResizableSplit } from '@src/generic/resizable/ResizableSplit';
 import { DATE_FORMAT } from '@src/constants';
+import { useIsDesktop } from '@src/utils';
 import { useStudioHomeCoursesV2 } from '@src/studio-home/data/apiHooks';
 import { useCompetencyAssociations } from '@src/taxonomy/competency-management/CompetencyAssociationsContext';
 import type { CompetencyTreeNode } from '@src/taxonomy/competency-management/CompetencyTree';
@@ -114,6 +116,7 @@ DateRangeTrigger.displayName = 'DateRangeTrigger';
  */
 const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
   const intl = useIntl();
+  const isDesktop = useIsDesktop();
   const {
     courseList,
     coursePage: page,
@@ -202,6 +205,28 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
     hasPagination = numPages > 1;
   }
 
+  const associations = <CriteriaAssociationsSection competency={activeCompetency} />;
+  const content = (
+    <div className="course-search-browse__container">
+      <div className="course-search-browse__section-label">
+        {intl.formatMessage(messages.coursesAndContentLabel)}
+      </div>
+      <div className="course-search-browse__list">
+        {body}
+      </div>
+      {hasPagination && (
+        <Pagination
+          pageCount={numPages}
+          currentPage={page}
+          onPageSelect={setCoursePage}
+          paginationLabel="pagination navigation"
+          size="small"
+          className="course-search-browse__pagination d-flex justify-content-center w-100"
+        />
+      )}
+    </div>
+  );
+
   return (
     <div className="course-search-browse">
       <div className="course-search-browse__toolbar">
@@ -261,25 +286,21 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
         </div>
       </div>
       <div className="course-search-browse__panel">
-        <CriteriaAssociationsSection competency={activeCompetency} />
-        <div className="course-search-browse__container">
-          <div className="course-search-browse__section-label">
-            {intl.formatMessage(messages.coursesAndContentLabel)}
-          </div>
-          <div className="course-search-browse__list">
-            {body}
-          </div>
-          {hasPagination && (
-            <Pagination
-              pageCount={numPages}
-              currentPage={page}
-              onPageSelect={setCoursePage}
-              paginationLabel="pagination navigation"
-              size="small"
-              className="course-search-browse__pagination d-flex justify-content-center w-100"
+        {isDesktop
+          ? (
+            <ResizableSplit
+              top={associations}
+              bottom={content}
+              storageKey="competency-associations-panel-split"
+              ariaLabel={intl.formatMessage(messages.panelSplitLabel)}
             />
+          )
+          : (
+            <>
+              {associations}
+              {content}
+            </>
           )}
-        </div>
       </div>
     </div>
   );

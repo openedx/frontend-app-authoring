@@ -8,7 +8,9 @@ import {
   waitFor,
   within,
 } from '@src/testUtils';
+import { breakpoints } from '@openedx/paragon';
 import { isEqual, uniqBy } from 'lodash';
+import { Context as ResponsiveContext } from 'react-responsive';
 import { getApiBaseUrl, type Course } from '@src/studio-home/data/api';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
@@ -90,6 +92,13 @@ const courseSearchBrowseTree = (competency: CompetencyTreeNode = activeCompetenc
 const renderCourseSearchBrowse = (competency: CompetencyTreeNode = activeCompetency) =>
   render(courseSearchBrowseTree(competency));
 
+const renderDesktop = (competency: CompetencyTreeNode = activeCompetency) =>
+  render(
+    <ResponsiveContext.Provider value={{ width: breakpoints.large.minWidth }}>
+      {courseSearchBrowseTree(competency)}
+    </ResponsiveContext.Provider>,
+  );
+
 const renderCourseRow = (course: Course) =>
   render(
     <CompetencyAssociationsProvider
@@ -116,6 +125,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
   beforeEach(() => {
     ({ axiosMock } = initializeMocks());
+    window.localStorage.clear();
     // Registered before any test's own course-list handler, so it alone
     // answers the accessible-course-count request (handlers match in order).
     axiosMock.onGet(coursesApiUrl, { params: accessibleCoursesCountParams })
@@ -130,6 +140,39 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
   afterAll(() => {
     jest.useRealTimers();
+  });
+
+  describe('panel divider', () => {
+    const separatorName = 'Resize the associations and content panels';
+
+    it('renders a labelled separator between the two panels on desktop', async () => {
+      renderDesktop();
+      const separator = await screen.findByRole('separator', { name: separatorName });
+      expect(separator).toHaveAttribute('aria-orientation', 'horizontal');
+      expect(screen.getByText('Competency Criteria Associations')).toBeInTheDocument();
+      expect(screen.getByText('Courses & Content')).toBeInTheDocument();
+    });
+
+    it('renders no separator below the desktop breakpoint', async () => {
+      renderCourseSearchBrowse();
+      await screen.findByText('Courses & Content');
+      expect(screen.queryByRole('separator')).not.toBeInTheDocument();
+    });
+
+    it('keeps the chosen split when the competency changes', async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      const { rerender } = renderDesktop();
+      const separator = await screen.findByRole('separator', { name: separatorName });
+      separator.focus();
+      await user.keyboard('{ArrowDown}');
+      expect(separator).toHaveAttribute('aria-valuenow', '55');
+      rerender(
+        <ResponsiveContext.Provider value={{ width: breakpoints.large.minWidth }}>
+          {courseSearchBrowseTree({ id: 2, value: 'Other Competency' })}
+        </ResponsiveContext.Provider>,
+      );
+      expect(screen.getByRole('separator')).toHaveAttribute('aria-valuenow', '55');
+    });
   });
 
   describe('<CourseSearchBrowse />', () => {
