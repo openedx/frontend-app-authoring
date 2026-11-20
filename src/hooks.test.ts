@@ -2,7 +2,7 @@ import { fireEvent, renderHook } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
 import { history } from '@edx/frontend-platform';
 
-import { useScrollToHashElement, useEscapeClick, useLoadOnScroll } from './hooks';
+import { useScrollToHashElement, useEscapeClick, useLoadOnScroll } from '@src/hooks';
 
 jest.mock('react-router-dom', () => ({
   useLocation: jest.fn(),
@@ -71,29 +71,37 @@ describe('Custom Hooks', () => {
   describe('useLoadOnScroll', () => {
     const fetchNextPage = jest.fn();
 
+    beforeEach(() => {
+      jest.replaceProperty(window, 'innerHeight', 800);
+      jest.replaceProperty(window, 'scrollY', 0);
+      jest.spyOn(document.body, 'scrollHeight', 'get').mockReturnValue(2000);
+    });
+
     afterEach(() => {
-      jest.clearAllMocks();
+      jest.restoreAllMocks();
+      fetchNextPage.mockReset();
     });
 
     it('calls fetchNextPage when scrolled near the bottom', () => {
       renderHook(() => useLoadOnScroll(true, false, fetchNextPage, true));
 
-      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 1000 });
-      Object.defineProperty(document.body, 'scrollHeight', { writable: true, configurable: true, value: 1500 });
-      window.scrollY = 1200;
-
+      window.scrollY = 1000;
       fireEvent.scroll(window);
 
-      // Called on scroll once and then due to content being less than screen height
-      // and hasNextPage being true.
-      expect(fetchNextPage).toHaveBeenCalledTimes(2);
+      expect(fetchNextPage).toHaveBeenCalledTimes(1);
+    });
+
+    it('loads another page when the content does not fill the window', () => {
+      jest.spyOn(document.body, 'scrollHeight', 'get').mockReturnValue(800);
+
+      renderHook(() => useLoadOnScroll(true, false, fetchNextPage, true));
+
+      expect(fetchNextPage).toHaveBeenCalledTimes(1);
     });
 
     it('does not call fetchNextPage if not near the bottom', () => {
       renderHook(() => useLoadOnScroll(true, false, fetchNextPage, true));
 
-      Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: 1000 });
-      Object.defineProperty(document.body, 'scrollHeight', { writable: true, configurable: true, value: 2000 });
       window.scrollY = 500;
 
       fireEvent.scroll(window);
@@ -115,6 +123,97 @@ describe('Custom Hooks', () => {
       fireEvent.scroll(window);
 
       expect(fetchNextPage).not.toHaveBeenCalled();
+    });
+
+    describe('with a content ref', () => {
+      const originalGetComputedStyle = window.getComputedStyle;
+      let scrollContainer: HTMLDivElement;
+      let contentRef: { current: HTMLDivElement; };
+
+      beforeEach(() => {
+        scrollContainer = document.createElement('div');
+        scrollContainer.style.overflowY = 'auto';
+        window.getComputedStyle = jest.fn((element) =>
+          Object.assign({}, originalGetComputedStyle(element), {
+            overflowY: element === scrollContainer ? scrollContainer.style.overflowY : 'visible',
+          })
+        );
+        Object.defineProperties(scrollContainer, {
+          scrollHeight: { configurable: true, value: 2000 },
+          clientHeight: { configurable: true, value: 600 },
+        });
+        contentRef = { current: document.createElement('div') };
+        // The scrolling element need not be the content's immediate parent.
+        scrollContainer.appendChild(document.createElement('div')).appendChild(contentRef.current);
+        document.body.appendChild(scrollContainer);
+      });
+
+      afterEach(() => {
+        window.getComputedStyle = originalGetComputedStyle;
+        scrollContainer.remove();
+      });
+
+      it('loads near the container bottom and ignores window scrolling', () => {
+        renderHook(() => useLoadOnScroll(true, false, fetchNextPage, true, contentRef));
+
+        window.scrollY = 1200;
+        fireEvent.scroll(window);
+        fireEvent.scroll(scrollContainer);
+        expect(fetchNextPage).not.toHaveBeenCalled();
+
+        scrollContainer.scrollTop = 1200;
+        fireEvent.scroll(scrollContainer);
+        expect(fetchNextPage).toHaveBeenCalledTimes(1);
+      });
+
+      it.each([
+        { containerHeight: 500, pageHeight: 2000, expectedCalls: 1 },
+        { containerHeight: 2000, pageHeight: 500, expectedCalls: 0 },
+      ])('uses container height $containerHeight for initial loading', ({
+        containerHeight,
+        pageHeight,
+        expectedCalls,
+      }) => {
+        Object.defineProperty(scrollContainer, 'scrollHeight', { value: containerHeight });
+        jest.spyOn(document.body, 'scrollHeight', 'get').mockReturnValue(pageHeight);
+
+        renderHook(() => useLoadOnScroll(true, false, fetchNextPage, true, contentRef));
+
+        expect(fetchNextPage).toHaveBeenCalledTimes(expectedCalls);
+      });
+
+      it('falls back to window scrolling without a scrollable ancestor', () => {
+        scrollContainer.style.overflowY = 'visible';
+        renderHook(() => useLoadOnScroll(true, false, fetchNextPage, true, contentRef));
+
+        window.scrollY = 1000;
+        fireEvent.scroll(window);
+
+        expect(fetchNextPage).toHaveBeenCalledTimes(1);
+      });
+
+      it('starts and stops listening when enabled changes', () => {
+        const { rerender, unmount } = renderHook(
+          ({ enabled }) => useLoadOnScroll(true, false, fetchNextPage, enabled, contentRef),
+          { initialProps: { enabled: false } },
+        );
+        scrollContainer.scrollTop = 1200;
+        fireEvent.scroll(scrollContainer);
+        expect(fetchNextPage).not.toHaveBeenCalled();
+
+        rerender({ enabled: true });
+        fireEvent.scroll(scrollContainer);
+        expect(fetchNextPage).toHaveBeenCalledTimes(1);
+
+        rerender({ enabled: false });
+        fireEvent.scroll(scrollContainer);
+        expect(fetchNextPage).toHaveBeenCalledTimes(1);
+
+        rerender({ enabled: true });
+        unmount();
+        fireEvent.scroll(scrollContainer);
+        expect(fetchNextPage).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });

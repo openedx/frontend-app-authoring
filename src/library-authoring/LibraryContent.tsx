@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { LoadingSpinner } from '@src/generic/Loading';
 import { useGetContentHits, useSearchContext } from '@src/search-manager';
 import { useLoadOnScroll } from '@src/hooks';
@@ -32,6 +32,7 @@ export const LibraryItemCard = {
 };
 
 const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps) => {
+  const contentRef = useRef<HTMLDivElement>(null);
   const {
     hits,
     totalHits,
@@ -82,7 +83,8 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    true,
+    !isPending && totalHits > 0,
+    contentRef,
   );
 
   if (isPending) {
@@ -104,7 +106,7 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
   }
 
   return (
-    <div className="library-cards-grid">
+    <div className="library-cards-grid" ref={contentRef}>
       {hits.map((contentHit) => {
         const CardComponent = LibraryItemCard[contentHit.type] || ComponentCard;
 
