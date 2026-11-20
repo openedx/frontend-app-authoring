@@ -70,7 +70,9 @@ export function useOutlineNodeExpansion({
   }, [scrollState?.id, block.childInfo, depth]);
 
   return {
-    isExpanded,
+    // Expanded in the same render the node becomes the drop target: a dragged item left unmounted until the
+    // `activeId`/`overId` effect expands the node makes dnd-kit lose its data and jump-scroll the page.
+    isExpanded: isExpanded || (depth < 2 && overId === block.id),
     setIsExpanded,
   };
 }
