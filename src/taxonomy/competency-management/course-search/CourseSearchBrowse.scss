@@ -86,8 +86,9 @@
     min-height: 0;
   }
 
-  // Holds the "Courses & Content" label, `&__list` and the pagination.
-  // Fills whatever height `&__panel` leaves after `&__associations`.
+  // Holds the "Courses & Content" label, `&__list` and the pagination. At `lg` it
+  // fills its `ResizableSplit` pane and only `&__list` inside it scrolls; below `lg`
+  // it takes its content height.
   &__container {
     display: flex;
     flex-direction: column;
@@ -155,8 +156,8 @@
   &__associations {
     padding: $container-padding-y $container-padding-x;
 
-    // Fills its `ResizableSplit` pane, which sets the height shared with
-    // `&__container`; each scrolls on its own.
+    // Fills its `ResizableSplit` pane and scrolls on its own, as `&__container`'s
+    // list does. Its bottom padding here is Figma's 8px gap above the divider.
     @media (--pgn-size-breakpoint-min-width-lg) {
       flex: 1 1 0;
       min-height: 0;

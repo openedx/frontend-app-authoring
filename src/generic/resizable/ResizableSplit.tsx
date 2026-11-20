@@ -40,9 +40,10 @@ export interface ResizableSplitProps {
 }
 
 /**
- * Stacks `top` and `bottom` panels around a horizontal separator. The share is the
- * fraction of the height given to the top panel, from 0 to 1, and the separator is
- * operable with ArrowUp and ArrowDown.
+ * Stacks `top` and `bottom` around a horizontal separator that the user drags, or moves
+ * with ArrowUp and ArrowDown, to trade height between the two. The share is the fraction
+ * of the height given to the top panel, from 0 to 1, and is remembered in localStorage
+ * under `storageKey`.
  */
 export const ResizableSplit = ({
   top,
@@ -93,7 +94,7 @@ export const ResizableSplit = ({
     setShare(clampShare(dragStartShareRef.current + delta, availableHeight, minPanelHeight));
   };
 
-  // Writing only on release keeps localStorage out of the per-move path.
+  // Written on release only, so a drag does not hit localStorage on every move.
   const commit = () => setStoredShare(displayedShare);
 
   const handlePointerEnd = () => {
