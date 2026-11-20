@@ -1,7 +1,6 @@
 import { StrictMode } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
 import { act, initializeMocks, render, screen, userEvent, waitFor } from '@src/testUtils';
-import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import ScanResults from './ScanResults';
 import messages from './messages';
 import type { LinkCheckResult } from '../types';
@@ -232,7 +231,6 @@ describe('ScanResults', () => {
 
   beforeEach(() => {
     ({ queryClient } = initializeMocks());
-    mockWaffleFlags({ enableCourseOptimizerCheckPrevRunLinks: false });
     window.scrollTo = jest.fn();
     refetch = jest.fn().mockResolvedValue({ data: undefined });
     updateAllMutateAsync = jest.fn().mockResolvedValue({});
@@ -260,7 +258,7 @@ describe('ScanResults', () => {
     expect(screen.getByText(messages.brokenLinksHeader.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText(messages.filterButtonLabel.defaultMessage)).toBeInTheDocument();
     expect(screen.getByText('Introduction to Programming')).toBeInTheDocument();
-    expect(screen.getByText(messages.courseUpdatesHeader.defaultMessage)).toBeInTheDocument();
+    expect(screen.getAllByText(messages.courseUpdatesHeader.defaultMessage)).toHaveLength(2);
     expect(screen.getByText(messages.customPagesHeader.defaultMessage)).toBeInTheDocument();
   });
 
@@ -270,7 +268,7 @@ describe('ScanResults', () => {
   ])('renders the no-results state for %s', (_name, data) => {
     renderScanResults(data);
 
-    expect(screen.getByText(messages.noResultsFound.defaultMessage)).toBeInTheDocument();
+    expect(screen.getAllByText(messages.noResultsFound.defaultMessage)).toHaveLength(2);
   });
 
   it('opens the filter modal and applies and clears filters', async () => {
@@ -302,10 +300,6 @@ describe('ScanResults', () => {
   });
 
   describe('previous-run links', () => {
-    beforeEach(() => {
-      mockWaffleFlags({ enableCourseOptimizerCheckPrevRunLinks: true });
-    });
-
     it('renders the previous-run section and update-all control', () => {
       renderScanResults(previousRunOnlyData);
 
@@ -317,11 +311,15 @@ describe('ScanResults', () => {
       });
     });
 
-    it('does not render the previous-run section when the feature is disabled', () => {
-      mockWaffleFlags({ enableCourseOptimizerCheckPrevRunLinks: false });
-      renderScanResults(previousRunOnlyData);
+    it('does not enable the rerun status query when the scan found no previous-run links', () => {
+      renderScanResults({ ...mockData, courseUpdates: [] });
 
-      expect(screen.queryByText(messages.linkToPrevCourseRun.defaultMessage)).not.toBeInTheDocument();
+      expect(screen.getByText(messages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
+      expect(screen.queryByTestId('update-all-course')).not.toBeInTheDocument();
+      expect(mockedUseRerunLinkUpdateStatus).toHaveBeenCalledWith(courseId, {
+        enabled: false,
+        manualPolling: false,
+      });
     });
 
     it('disables update-all when every previous-run link is already updated', () => {
@@ -1068,7 +1066,7 @@ describe('ScanResults', () => {
 
     await user.click(screen.getByRole('button', { name: messages.filterButtonLabel.defaultMessage }));
     await user.click(screen.getByLabelText(messages.lockedLabel.defaultMessage));
-    expect(screen.getByText(messages.noResultsFound.defaultMessage)).toBeInTheDocument();
+    expect(screen.getAllByText(messages.noResultsFound.defaultMessage)).toHaveLength(2);
   });
 
   it('hides a filtered unit but keeps the section visible when other units remain', async () => {

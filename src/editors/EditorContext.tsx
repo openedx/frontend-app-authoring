@@ -1,5 +1,3 @@
-import { useWaffleFlags } from '@src/data/apiHooks';
-import { isCourseKey } from '@src/generic/key-utils';
 import React from 'react';
 
 /**
@@ -13,8 +11,6 @@ export interface EditorContext {
    * Use `isCourseKey()` from '@src/generic/key-utils' if you need to check what type it is.
    */
   learningContextId: string;
-  /** Is the so-called "Markdown" problem editor available in this learning context? */
-  isMarkdownEditorEnabledForContext: boolean;
 }
 
 export type EditorContextInit = {
@@ -37,16 +33,11 @@ export const EditorContextProvider: React.FC<{ children: React.ReactNode; } & Ed
   children,
   learningContextId,
 }) => {
-  const courseIdIfCourse = isCourseKey(learningContextId) ? learningContextId : undefined;
-  const isMarkdownEditorEnabledForContext = useWaffleFlags(courseIdIfCourse).useReactMarkdownEditor;
-
   const ctx: EditorContext = React.useMemo(() => ({
     learningContextId,
-    isMarkdownEditorEnabledForContext,
   }), [
     // Dependencies - make sure we update the context object if any of these values change:
     learningContextId,
-    isMarkdownEditorEnabledForContext,
   ]);
   return <context.Provider value={ctx}>{children}</context.Provider>;
 };

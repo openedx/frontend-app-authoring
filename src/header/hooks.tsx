@@ -150,7 +150,6 @@ export const useSettingMenuItems = (courseId: string) => {
 export const useToolsMenuItems = (courseId: string) => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
-  const waffleFlags = useWaffleFlags();
 
   const perms = useCourseUserPermissions(courseId, {
     ...permissionHelpers.getCourseOutlinePermissions(courseId),
@@ -183,7 +182,7 @@ export const useToolsMenuItems = (courseId: string) => {
         title: intl.formatMessage(messages['header.links.checklists']),
       }]
       : []),
-    ...(waffleFlags.enableCourseOptimizer && perms.canEditCourseContent ?
+    ...(perms.canEditCourseContent ?
       [{
         href: `/course/${courseId}/optimizer`,
         title: (

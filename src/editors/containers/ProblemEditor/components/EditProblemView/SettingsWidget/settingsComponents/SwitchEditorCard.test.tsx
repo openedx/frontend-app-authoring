@@ -2,7 +2,6 @@ import React from 'react';
 import { screen, initializeMocks, within } from '@src/testUtils';
 import userEvent from '@testing-library/user-event';
 import { editorRender } from '@src/editors/editorTestRender';
-import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { thunkActions } from '@src/editors/data/redux';
 import { ProblemEditorContextProvider } from '../../ProblemEditorContext';
 import SwitchEditorCard from './SwitchEditorCard';
@@ -28,8 +27,6 @@ describe('SwitchEditorCard - markdown', () => {
   });
 
   test('renders SwitchEditorCard', async () => {
-    // Markdown Editor support is on for this course:
-    mockWaffleFlags({ useReactMarkdownEditor: true });
     // The markdown editor is not currently active (default)
 
     renderSwitchEditorCard();
@@ -43,8 +40,6 @@ describe('SwitchEditorCard - markdown', () => {
   });
 
   test('calls switchEditor function when confirm button is clicked', async () => {
-    // Markdown Editor support is on for this course:
-    mockWaffleFlags({ useReactMarkdownEditor: true });
     // The markdown editor is not currently active (default)
 
     renderSwitchEditorCard();

@@ -37,7 +37,6 @@ import {
   isDataEmpty,
 } from '../utils';
 import FilterModal from './filterModal';
-import { useWaffleFlags } from '../../data/apiHooks';
 import {
   courseOptimizerQueryKeys,
   useRerunLinkUpdateStatus,
@@ -70,7 +69,6 @@ interface Props {
 const ScanResults: FC<Props> = ({ data, courseId }) => {
   const intl = useIntl();
   const queryClient = useQueryClient();
-  const waffleFlags = useWaffleFlags(courseId);
   const [isUpdateAllInProgress, setIsUpdateAllInProgress] = useState(false);
   const [isSingleLinkPolling, setIsSingleLinkPolling] = useState(false);
   const [singleLinkTimedOut, setSingleLinkTimedOut] = useState(false);
@@ -96,8 +94,34 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
       activeSinglePollersRef.current = 0;
     };
   }, []);
+  const { sections } = data || {};
+
+  // Turn course updates and custom pages into sections so all results use the same layout.
+  const renderableSections = useMemo(
+    () =>
+      buildSyntheticSections(
+        data?.courseUpdates,
+        data?.customPages,
+        {
+          courseUpdates: intl.formatMessage(messages.courseUpdatesHeader),
+          customPages: intl.formatMessage(messages.customPagesHeader),
+        },
+      ),
+    [data?.courseUpdates, data?.customPages, intl],
+  );
+
+  const allSections = useMemo(
+    () => [...renderableSections, ...(sections || [])],
+    [renderableSections, sections],
+  );
+
+  const hasPreviousRunLinksInSections = useMemo(
+    () => hasPreviousRunLinks(allSections),
+    [allSections],
+  );
+  // Only previous-run links need rerun link update status, so skip the request when the scan found none.
   const rerunLinkUpdateStatusQuery = useRerunLinkUpdateStatus(courseId, {
-    enabled: waffleFlags.enableCourseOptimizerCheckPrevRunLinks,
+    enabled: hasPreviousRunLinksInSections,
     manualPolling: isSingleLinkPolling || singleLinkTimedOut,
   });
   // Server status owns interval refetches; single-link updates own bounded manual GETs.
@@ -136,26 +160,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
   const [openStates, setOpenStates] = useState<boolean[]>([]);
   const [buttonRef, setButtonRef] = useState<HTMLButtonElement | null>(null);
   const [prevRunOpenStates, setPrevRunOpenStates] = useState<boolean[]>([]);
-  const { sections } = data || {};
-
-  // Turn course updates and custom pages into sections so all results use the same layout.
-  const renderableSections = useMemo(
-    () =>
-      buildSyntheticSections(
-        data?.courseUpdates,
-        data?.customPages,
-        {
-          courseUpdates: intl.formatMessage(messages.courseUpdatesHeader),
-          customPages: intl.formatMessage(messages.customPagesHeader),
-        },
-      ),
-    [data?.courseUpdates, data?.customPages, intl],
-  );
-
-  const allSections = useMemo(
-    () => [...renderableSections, ...(sections || [])],
-    [renderableSections, sections],
-  );
 
   const {
     brokenLinksCounts,
@@ -163,10 +167,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
     externalForbiddenLinksCounts,
   } = useMemo(() => countBrokenLinks({ sections: allSections }), [allSections]);
 
-  const hasPreviousRunLinksInSections = useMemo(
-    () => hasPreviousRunLinks(allSections),
-    [allSections],
-  );
   const previousRunLinksCounts = useMemo(
     () => countPreviousRunLinksBySection(allSections),
     [allSections],
@@ -664,18 +664,16 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
             <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
           </div>
         </div>
-        {waffleFlags.enableCourseOptimizerCheckPrevRunLinks && (
-          <div className="scan-results">
-            <div className="scan-header-second-title-container px-3">
-              <header className="sub-header-content">
-                <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
-              </header>
-            </div>
-            <div className="no-results-found-container">
-              <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
-            </div>
+        <div className="scan-results">
+          <div className="scan-header-second-title-container px-3">
+            <header className="sub-header-content">
+              <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
+            </header>
           </div>
-        )}
+          <div className="no-results-found-container">
+            <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
+          </div>
+        </div>
       </>
     );
   }
@@ -825,9 +823,8 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
           })}
       </div>
 
-      {/* Show previous-run links only when the feature is enabled and matching links exist. */}
-      {waffleFlags.enableCourseOptimizerCheckPrevRunLinks
-        && allSections.length > 0
+      {/* Show previous-run links only when matching links exist. */}
+      {allSections.length > 0
         && hasPreviousRunLinksInSections
         && previousRunSections.length > 0 && (
         <div className="scan-results">
@@ -892,8 +889,8 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
         </div>
       )}
 
-      {/* The feature can be enabled even when there are no previous-run links to display. */}
-      {waffleFlags.enableCourseOptimizerCheckPrevRunLinks && !hasPreviousRunLinksInSections && (
+      {/* Show an empty previous-run section when there are no previous-run links to display. */}
+      {!hasPreviousRunLinksInSections && (
         <div className="scan-results">
           <div className="scan-header-second-title-container px-3">
             <header className="sub-header-content">

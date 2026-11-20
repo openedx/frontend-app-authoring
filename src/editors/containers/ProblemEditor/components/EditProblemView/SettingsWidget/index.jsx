@@ -41,13 +41,9 @@ const SettingsWidget = ({
   images,
   isLibrary,
 }) => {
-  const {
-    learningContextId,
-    isMarkdownEditorEnabledForContext,
-  } = useEditorContext();
+  const { learningContextId } = useEditorContext();
   const rawMarkdown = useSelector(selectors.problem.rawMarkdown);
   const isMarkdownEditorEnabled = useSelector(selectors.problem.isMarkdownEditorEnabled);
-  const showMarkdownEditorButton = isMarkdownEditorEnabledForContext && rawMarkdown;
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
   const feedbackCard = () => {
     if ([ProblemTypeKeys.MULTISELECT].includes(problemType)) {
@@ -162,7 +158,7 @@ const SettingsWidget = ({
           <div className="my-3">
             <SwitchEditorCard problemType={problemType} editorType="advanced" />
           </div>
-          {(showMarkdownEditorButton && !isMarkdownEditorEnabled) // Only show button if not already in markdown editor
+          {(rawMarkdown && !isMarkdownEditorEnabled) // Only show button if not already in markdown editor
             && (
               <div className="my-3">
                 <SwitchEditorCard problemType={problemType} editorType="markdown" />

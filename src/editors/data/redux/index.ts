@@ -160,9 +160,6 @@ export interface EditorState {
     problemType: null | ProblemType | AdvancedProblemType;
     /**
      * Is the "markdown" editor currently active (as opposed to visual or advanced editors)
-     * This is confusingly named, and different from `isMarkdownEditorEnabledForContext`
-     * which is a waffle flag that determines whether the user is allowed to use the
-     * "markdown" editor at all in this course/library.
      */
     isMarkdownEditorEnabled: boolean;
     question: string;
