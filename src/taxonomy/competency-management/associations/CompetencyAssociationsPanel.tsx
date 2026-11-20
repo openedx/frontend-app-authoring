@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { Col, Row, Stack } from '@openedx/paragon';
@@ -10,6 +10,12 @@ import { CompetencyAssociationsProvider } from '../CompetencyAssociationsContext
 import CompetencyTree, { type CompetencyTreeNode } from '../CompetencyTree';
 import { CourseSearchBrowse } from '../course-search';
 import './CompetencyAssociationsPanel.scss';
+
+// `ResizableBox` caps the tree at a share of the window width by default, but this panel sits
+// in a width-capped `Container`: on a wide window that cap exceeds the panel and the course
+// column collapses to nothing.
+const COURSE_COLUMN_MIN_WIDTH = 440; // px, same floor as the tree's `MIN_WIDTH`
+const COLUMN_GAP = 20; // px: `gap={3.5}` on the desktop `Stack` is 1.25rem, 20px at a 16px root font size
 
 export interface CompetencyAssociationsPanelProps {
   taxonomyId: number;
@@ -28,6 +34,20 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
   const [selectedCompetency, setSelectedCompetency] = useState<CompetencyTreeNode | null>(null);
   const [courseColumn, setCourseColumn] = useState<HTMLElement | null>(null);
   const isDesktop = useIsDesktop();
+
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [panelWidth, setPanelWidth] = useState<number | null>(null);
+  // The ref's `Stack` exists only on desktop, so re-measure when `isDesktop` flips.
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel) { return undefined; }
+    const measure = () => setPanelWidth(panel.clientWidth);
+    measure();
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(panel);
+    return () => resizeObserver.disconnect();
+  }, [isDesktop]);
+  const maxTreeWidth = panelWidth === null ? undefined : panelWidth - COLUMN_GAP - COURSE_COLUMN_MIN_WIDTH;
 
   // Rendered once and reused, bare, in both branches below: `CompetencyTree`
   // keeps its own expand/collapse state locally, so moving it to a different
@@ -49,13 +69,14 @@ const CompetencyAssociationsPanel = ({ taxonomyId, taxonomyName }: CompetencyAss
       // `align-items-stretch` overrides `.pgn__hstack`'s default `center` so
       // columns start flush at the top instead of the shorter one centering.
       <Stack
+        ref={panelRef}
         direction="horizontal"
         gap={selectedCompetency ? 3.5 : 0}
         className={classNames('competency-associations-panel align-items-stretch', {
           'competency-associations-panel--with-courses': selectedCompetency,
         })}
       >
-        <ResizableBox handleSide="right" fullWidth={!selectedCompetency} stretchContent>
+        <ResizableBox handleSide="right" maxWidth={maxTreeWidth} fullWidth={!selectedCompetency} stretchContent>
           {tree}
         </ResizableBox>
         {selectedCompetency && (
