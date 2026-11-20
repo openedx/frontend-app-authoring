@@ -108,6 +108,7 @@ const StudioHome = () => {
     if (hasAbilityToCreateNewCourse) {
       headerButtons.push(
         <Button
+          className="studio-home-new-course-btn"
           variant="outline-primary"
           iconBefore={AddIcon}
           size="sm"
@@ -169,8 +170,8 @@ const StudioHome = () => {
       <Layout
         lg={[{ span: 9 }, { span: 3 }]}
         md={[{ span: 9 }, { span: 3 }]}
-        sm={[{ span: 9 }, { span: 3 }]}
-        xs={[{ span: 9 }, { span: 3 }]}
+        sm={[{ span: 12 }, { span: 12 }]}
+        xs={[{ span: 12 }, { span: 12 }]}
         xl={[{ span: 9 }, { span: 3 }]}
       >
         <Layout.Element>
