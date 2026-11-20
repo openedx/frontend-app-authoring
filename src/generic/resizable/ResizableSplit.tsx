@@ -1,5 +1,5 @@
-import type { KeyboardEvent, ReactNode } from 'react';
-import { useState } from 'react';
+import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Icon } from '@openedx/paragon';
 import { DragHandle } from '@openedx/paragon/icons';
@@ -52,8 +52,47 @@ export const ResizableSplit = ({
   className,
 }: ResizableSplitProps) => {
   const [share, setShare] = useState(DEFAULT_SHARE);
-  const availableHeight = 0;
+  const [availableHeight, setAvailableHeight] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
+  const dragStartYRef = useRef(0);
+  const dragStartShareRef = useRef(DEFAULT_SHARE);
   const displayedShare = clampShare(share, availableHeight, minPanelHeight);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) {
+      return undefined;
+    }
+    const measure = () => setAvailableHeight(root.clientHeight - (barRef.current?.offsetHeight ?? 0));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
+
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.button !== 0) {
+      return;
+    }
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragStartYRef.current = event.clientY;
+    dragStartShareRef.current = displayedShare;
+    isDraggingRef.current = true;
+  };
+
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingRef.current || availableHeight <= 0) {
+      return;
+    }
+    const delta = (event.clientY - dragStartYRef.current) / availableHeight;
+    setShare(clampShare(dragStartShareRef.current + delta, availableHeight, minPanelHeight));
+  };
+
+  const handlePointerEnd = () => {
+    isDraggingRef.current = false;
+  };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
@@ -65,11 +104,12 @@ export const ResizableSplit = ({
   };
 
   return (
-    <div className={classNames('resizable-split', className)}>
+    <div ref={rootRef} className={classNames('resizable-split', className)}>
       <div className="resizable-split__pane" style={{ flexGrow: displayedShare }}>
         {top}
       </div>
       <div
+        ref={barRef}
         className="resizable-split__bar"
         role="separator"
         aria-orientation="horizontal"
@@ -79,6 +119,10 @@ export const ResizableSplit = ({
         aria-valuenow={Math.round(displayedShare * 100)}
         tabIndex={0}
         onKeyDown={handleKeyDown}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerEnd}
+        onPointerCancel={handlePointerEnd}
       >
         <Icon src={DragHandle} size="xs" />
       </div>
