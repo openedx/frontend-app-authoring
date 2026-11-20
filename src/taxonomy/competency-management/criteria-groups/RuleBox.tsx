@@ -132,7 +132,13 @@ const RuleBox = ({
             {intl.formatMessage(messages.placeholderRuleBoxHint)}
           </div>
         )
-        : <CriterionChipList criteria={criteria} subsectionNamesByUsageKey={subsectionNamesByUsageKey} />}
+        : (
+          <CriterionChipList
+            criteria={criteria}
+            subsectionNamesByUsageKey={subsectionNamesByUsageKey}
+            canEdit={canEdit}
+          />
+        )}
     </Stack>
   );
 };

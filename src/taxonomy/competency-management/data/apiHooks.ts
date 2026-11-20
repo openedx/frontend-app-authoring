@@ -149,6 +149,18 @@ export const useDeleteCompetencyCriteriaGroup = () => {
   });
 };
 
+// Invalidates on settle, not success: a failed delete may still have changed server state.
+export const useDeleteCompetencyCriterion = () => {
+  const queryClient = useQueryClient();
+  return useMutation<void, AxiosError, { tagId: number; criterionId: number; }>({
+    mutationFn: ({ tagId, criterionId }) => api.deleteCompetencyCriterion(tagId, criterionId),
+    onSettled: (_data, _error, { tagId }) =>
+      queryClient.invalidateQueries({
+        queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId),
+      }),
+  });
+};
+
 export interface UseCourseTaggingPermissionsReturn {
   isLoading: boolean;
   isError: boolean;

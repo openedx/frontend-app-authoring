@@ -198,6 +198,12 @@ const messages = defineMessages({
     description: 'Screen-reader-only text inside the pill on a subsection that is already associated with the '
       + 'active competency.',
   },
+  removeAssociationButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.remove-association-button-label',
+    defaultMessage: 'Remove the association with {subsectionName}',
+    description: 'Accessible label for the icon button on an associated subsection row that removes its '
+      + 'association with the competency. {subsectionName} is the name of the subsection.',
+  },
 });
 
 export default messages;
