@@ -44,7 +44,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     courseList,
     competencyName,
     deleteGroup,
-    isDeletingGroup,
+    isDeleting,
     keyboardFocusRequest,
     consumeKeyboardFocusRequest,
   } = useCompetencyAssociations();
@@ -88,7 +88,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     }
   }, [holdsFocusRequestTarget, requestMovesSelection, isCollapsed, consumeKeyboardFocusRequest]);
 
-  const isMenuDisabled = isDeletingGroup || isAssociating;
+  const isMenuDisabled = isDeleting || isAssociating;
   const canEdit = canEditCourse(courseGroup.courseKey);
   const isRendered = status === 'success' && Boolean(data);
   // Waits for the toggle to render and be enabled again, since a disabled button cannot take focus.
@@ -137,7 +137,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   } else if (courseList.isPlaceholderData) {
     // A reload can list other courses, which would discard an unsaved box started now.
     disabledReason = 'loading';
-  } else if (isDeletingGroup) {
+  } else if (isDeleting) {
     disabledReason = 'deleting';
   } else if (hasPlaceholder) {
     disabledReason = 'placeholder';

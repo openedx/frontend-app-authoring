@@ -75,6 +75,12 @@ const messages = defineMessages({
       + '"{score}" is the threshold phrase, such as "75% or higher". '
       + '"<threshold>" wraps the part shown in the highlighted box.',
   },
+  removeCriterionButtonLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.remove-criterion-button-label',
+    defaultMessage: 'Remove the association with {subsectionName}',
+    description: 'Accessible label for the "x" icon on a rule box chip that removes the subsection\'s association '
+      + 'with the competency. {subsectionName} is the name of the subsection.',
+  },
   unknownSubsectionLabel: {
     id: 'course-authoring.competency-management.criteria-groups.unknown-subsection-label',
     defaultMessage: 'Content unavailable',

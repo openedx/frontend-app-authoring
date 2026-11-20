@@ -1,8 +1,18 @@
-import { type ReactNode, useState } from 'react';
+import {
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Icon, IconButton } from '@openedx/paragon';
-import { AddCircle, ExpandLess, ExpandMore } from '@openedx/paragon/icons';
+import {
+  AddCircle,
+  Cancel,
+  ExpandLess,
+  ExpandMore,
+} from '@openedx/paragon/icons';
 
 import { useCourseOutlineIndex } from '@src/course-outline/data';
 import type { XBlock } from '@src/data/types';
@@ -22,8 +32,9 @@ interface SubsectionRowProps {
 }
 
 /**
- * One graded subsection: its name plus the competency pill. The applied pill
- * shows regardless of `canEditCourse`.
+ * One graded subsection: its name plus the competency pill. The applied pill shows regardless of
+ * `canEditCourse`, and holds a remove button when the author can edit. Takes keyboard focus back after a remove
+ * started from this row.
  */
 const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
   const intl = useIntl();
@@ -33,12 +44,30 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
     canEditCourse,
     competencyExternalId,
     isAssociating,
-    isDeletingGroup,
+    groupsIndex,
+    isDeleting,
+    removeAssociation,
+    keyboardFocusRequest,
+    consumeKeyboardFocusRequest,
     status,
   } = useCompetencyAssociations();
   // The `course_index` response populates `.id`, never `.usageKey`.
   const isAssociated = associatedObjectIds.has(subsection.id);
   const canAssociate = status === 'success' && canEditCourse(courseId);
+
+  // An unassociated row holds the associate button and an associated one the remove button, so whichever is
+  // mounted takes a focus request.
+  const associateButtonRef = useRef<HTMLButtonElement>(null);
+  const removeButtonRef = useRef<HTMLButtonElement>(null);
+  const takesKeyboardFocus = keyboardFocusRequest?.kind === 'subsection'
+    && keyboardFocusRequest.objectId === subsection.id;
+  useEffect(() => {
+    const target = isAssociated ? removeButtonRef.current : associateButtonRef.current;
+    if (takesKeyboardFocus && target) {
+      target.focus();
+      consumeKeyboardFocusRequest();
+    }
+  }, [takesKeyboardFocus, consumeKeyboardFocusRequest, isAssociated, canAssociate]);
 
   const pillContent = (
     <>
@@ -62,12 +91,35 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
           </span>
         )}
         {pillContent}
+        {canAssociate && (
+          <>
+            <span className="course-search-browse__subsection-pill-divider" aria-hidden="true" />
+            <IconButton
+              ref={removeButtonRef}
+              src={Cancel}
+              size="inline"
+              invertColors
+              alt={intl.formatMessage(messages.removeAssociationButtonLabel, {
+                subsectionName: subsection.displayName,
+              })}
+              disabled={isDeleting}
+              onClick={() => {
+                const criterion = [...(groupsIndex?.criteriaByGroupId.values() ?? [])].flat()
+                  .find((candidate) => candidate.objectId === subsection.id);
+                if (criterion) {
+                  removeAssociation(criterion.id, 'subsection');
+                }
+              }}
+            />
+          </>
+        )}
       </span>
     );
   } else if (canAssociate) {
     const subsectionName = subsection.displayName;
     pill = (
       <Button
+        ref={associateButtonRef}
         variant="tertiary"
         type="button"
         className="course-search-browse__subsection-pill course-search-browse__subsection-pill--available"
@@ -77,7 +129,7 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
             subsectionName,
           })
           : intl.formatMessage(messages.associateSubsectionWithoutIdButtonLabel, { subsectionName })}
-        disabled={isAssociating || isDeletingGroup}
+        disabled={isAssociating || isDeleting}
         onClick={() => associateSubsection(subsection.id, courseId)}
       >
         {pillContent}

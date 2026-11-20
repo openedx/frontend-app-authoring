@@ -307,7 +307,7 @@ describe('<CourseGroupSection />', () => {
     ],
     [
       'a group is being removed',
-      { isDeletingGroup: true },
+      { isDeleting: true },
       'Wait for the removal to finish before adding another.',
     ],
     [
@@ -458,7 +458,7 @@ describe('<CourseGroupSection />', () => {
     });
 
     it.each([
-      ['a delete', { isDeletingGroup: true }],
+      ['a delete', { isDeleting: true }],
       ['a create', { isAssociating: true }],
     ])('disables the menu button while %s is in flight', async (_name, overrides) => {
       axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
