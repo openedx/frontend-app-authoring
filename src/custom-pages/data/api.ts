@@ -1,5 +1,6 @@
 import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { getAllPages } from '@src/generic/data/paginatedList';
 
 export interface CustomPage {
   id: string;
@@ -14,15 +15,17 @@ ensureConfig([
 ], 'Course Apps API service');
 
 export const getApiBaseUrl = (): string => getConfig().STUDIO_BASE_URL;
-export const getTabHandlerUrl = (courseId: string): string => `${getApiBaseUrl()}/api/contentstore/v0/tabs/${courseId}`;
+export const getCustomPagesApiUrl = (): string => `${getApiBaseUrl()}/api/authoring/v1/custom_pages/`;
+export const getCustomPageOrderApiUrl = (courseId: string): string =>
+  `${getApiBaseUrl()}/api/authoring/v1/courses/${courseId}/custom_page_order/`;
 
 /**
  * Fetches the course custom pages for provided course.
  */
 export async function getCustomPages(courseId: string): Promise<CustomPage[]> {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(`${getTabHandlerUrl(courseId)}`);
-  return camelCaseObject(data) as CustomPage[];
+  // The course key goes in params, not in the URL, so that its "+" is percent-encoded.
+  const pages = await getAllPages<Record<string, unknown>>(getCustomPagesApiUrl(), { course_key: courseId });
+  return camelCaseObject(pages) as CustomPage[];
 }
 
 /**
@@ -65,9 +68,9 @@ export async function updateCustomPage({ blockId, htmlString, metadata }: {
 }
 
 /**
- * Update order of custom pages.
+ * Update order of custom pages, given their ids (usage keys) in the new order.
  */
-export async function updateCustomPageOrder(courseId: string, tabs: Array<{ tab_locator: string; }>): Promise<void> {
+export async function updateCustomPageOrder(courseId: string, pageIds: string[]): Promise<void> {
   await getAuthenticatedHttpClient()
-    .post(`${getTabHandlerUrl(courseId)}/reorder`, tabs);
+    .put(getCustomPageOrderApiUrl(courseId), { custom_pages: pageIds });
 }
