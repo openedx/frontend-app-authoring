@@ -1,5 +1,7 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { omit } from 'lodash';
+import { getAllPages } from '@src/generic/data/paginatedList';
 import { AvailableGroup } from '../types';
 
 const API_PATH_PATTERN = 'group_configurations';
@@ -13,8 +15,19 @@ export interface GroupConfigurationResponse {
   shouldShowExperimentGroups: boolean;
 }
 
-export const getContentStoreApiUrl = (courseId: string) =>
-  `${getStudioBaseUrl()}/api/contentstore/v1/${API_PATH_PATTERN}/${courseId}`;
+interface GroupConfiguration extends AvailableGroup {
+  canManage: boolean;
+}
+
+interface CourseSettings {
+  contentExperimentsEnabled: boolean;
+  mfeProctoredExamSettingsUrl: string;
+}
+
+export const getGroupConfigurationsApiUrl = (courseId: string) =>
+  `${getStudioBaseUrl()}/api/authoring/v2/courses/${courseId}/${API_PATH_PATTERN}/`;
+export const getCourseSettingsApiUrl = (courseId: string) =>
+  `${getStudioBaseUrl()}/api/authoring/v2/courses/${courseId}/settings/`;
 export const getLegacyApiUrl = (courseId: string, parentGroupId?: number, groupId?: number) => {
   const parentUrlPath = `${getStudioBaseUrl()}/${API_PATH_PATTERN}/${courseId}`;
   const parentGroupPath = `${parentGroupId ? `/${parentGroupId}` : ''}`;
@@ -24,13 +37,31 @@ export const getLegacyApiUrl = (courseId: string, parentGroupId?: number, groupI
 
 /**
  * Get content groups and experimental group configurations for course.
+ *
+ * The server lists every configuration the page shows in one list; content
+ * experiments are the configurations with the 'random' scheme. Whether the
+ * course has content experiments turned on, and the proctored exam settings
+ * link, come from the course settings.
  */
 export async function getGroupConfigurations(courseId: string): Promise<GroupConfigurationResponse> {
-  const { data } = await getAuthenticatedHttpClient().get(
-    getContentStoreApiUrl(courseId),
-  );
+  const [configurations, { data: settingsData }] = await Promise.all([
+    // The page shows where each configuration and group is used, which only the full view returns.
+    getAllPages<object>(getGroupConfigurationsApiUrl(courseId), { view: 'full' }),
+    getAuthenticatedHttpClient().get(getCourseSettingsApiUrl(courseId)),
+  ]);
+  const groupConfigurations: AvailableGroup[] = (camelCaseObject(configurations) as GroupConfiguration[])
+    // The page asks the permissions API whether the user may manage them.
+    .map((configuration) => omit(configuration, ['canManage']));
+  const settings: CourseSettings = camelCaseObject(settingsData);
 
-  return camelCaseObject(data);
+  return {
+    allGroupConfigurations: groupConfigurations.filter(({ scheme }) => scheme !== 'random'),
+    experimentGroupConfigurations: groupConfigurations.filter(({ scheme }) => scheme === 'random'),
+    mfeProctoredExamSettingsUrl: settings.mfeProctoredExamSettingsUrl,
+    // The server lists the enrollment track configuration only when the page should show it.
+    shouldShowEnrollmentTrack: groupConfigurations.some(({ scheme }) => scheme === 'enrollment_track'),
+    shouldShowExperimentGroups: settings.contentExperimentsEnabled,
+  };
 }
 
 /**

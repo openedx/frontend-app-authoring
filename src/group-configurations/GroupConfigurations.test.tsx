@@ -6,8 +6,9 @@ import {
   render,
   within,
 } from '../testUtils';
-import { getContentStoreApiUrl } from './data/api';
-import { groupConfigurationResponseMock } from './__mocks__';
+import { paginatedListPage } from '@src/generic/data/paginatedList';
+import { getCourseSettingsApiUrl, getGroupConfigurationsApiUrl } from './data/api';
+import { courseSettingsMock, groupConfigurationResponseMock, groupConfigurationsListMock } from './__mocks__';
 import messages from './messages';
 import experimentMessages from './experiment-configurations-section/messages';
 import contentGroupsMessages from './content-groups-section/messages';
@@ -44,8 +45,11 @@ describe('<GroupConfigurations />', () => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
     axiosMock
-      .onGet(getContentStoreApiUrl(courseId))
-      .reply(200, groupConfigurationResponseMock);
+      .onGet(getGroupConfigurationsApiUrl(courseId))
+      .reply(200, paginatedListPage(groupConfigurationsListMock()));
+    axiosMock
+      .onGet(getCourseSettingsApiUrl(courseId))
+      .reply(200, courseSettingsMock);
     mockPermissions();
   });
 
@@ -100,13 +104,11 @@ describe('<GroupConfigurations />', () => {
   });
 
   it('does not render an empty section for enrollment track groups if it is empty', async () => {
-    const shouldNotShowEnrollmentTrackResponse = {
-      ...groupConfigurationResponseMock,
-      shouldShowEnrollmentTrack: false,
-    };
+    const withoutEnrollmentTrack = groupConfigurationsListMock()
+      .filter(({ scheme }) => scheme !== 'enrollment_track');
     axiosMock
-      .onGet(getContentStoreApiUrl(courseId))
-      .reply(200, shouldNotShowEnrollmentTrackResponse);
+      .onGet(getGroupConfigurationsApiUrl(courseId))
+      .reply(200, paginatedListPage(withoutEnrollmentTrack));
 
     renderComponent();
 
@@ -116,9 +118,23 @@ describe('<GroupConfigurations />', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('does not render experiment configurations when the course has content experiments turned off', async () => {
+    axiosMock
+      .onGet(getCourseSettingsApiUrl(courseId))
+      .reply(200, { ...courseSettingsMock, content_experiments_enabled: false });
+
+    renderComponent();
+
+    const mainContent = await screen.findByTestId('group-configurations-main-content-wrapper');
+    expect(within(mainContent).getByText(contentGroups.name)).toBeInTheDocument();
+    expect(
+      within(mainContent).queryByText(experimentMessages.title.defaultMessage),
+    ).not.toBeInTheDocument();
+  });
+
   it('does not show a connection error when the request fails with a non-403 status', async () => {
     axiosMock
-      .onGet(getContentStoreApiUrl(courseId))
+      .onGet(getGroupConfigurationsApiUrl(courseId))
       .reply(404);
 
     renderComponent();
@@ -129,7 +145,7 @@ describe('<GroupConfigurations />', () => {
 
   it('displays a connection error alert when API responds with 403', async () => {
     axiosMock
-      .onGet(getContentStoreApiUrl(courseId))
+      .onGet(getGroupConfigurationsApiUrl(courseId))
       .reply(403);
 
     renderComponent();
