@@ -13,7 +13,7 @@ import {
 
 describe('countBrokenLinks', () => {
   it('should return the count of broken links', () => {
-    const data = mockApiResponse.LinkCheckOutput;
+    const data = mockApiResponse.output;
     expect(countBrokenLinks(data)).toStrictEqual(
       {
         brokenLinksCounts: [1, 5],
@@ -133,7 +133,7 @@ describe('isDataEmpty', () => {
 });
 
 describe('previous run link helpers', () => {
-  const data = mockApiResponseWithPreviousRunLinks.LinkCheckOutput;
+  const data = mockApiResponseWithPreviousRunLinks.output;
   const sections = buildSyntheticSections(
     data.courseUpdates,
     data.customPages,
@@ -192,7 +192,7 @@ describe('previous run link helpers', () => {
       'block-1-1-1-5:https://example.com/old-course-run/content',
     ])).toBe(true);
     expect(areAllPreviousRunLinksUpdated(sections, [])).toBe(false);
-    expect(areAllPreviousRunLinksUpdated(mockApiResponse.LinkCheckOutput.sections, [])).toBe(false);
+    expect(areAllPreviousRunLinksUpdated(mockApiResponse.output.sections, [])).toBe(false);
   });
 });
 

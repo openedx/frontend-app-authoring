@@ -1,15 +1,19 @@
 import type { LinkCheckResult } from '../types';
 
+// A finished link check read with view=full. The report's members are given camel-cased, as the API layer
+// returns them, so tests can also use a report directly as page data.
 interface LinkCheckApiResponse {
-  LinkCheckStatus: string;
-  LinkCheckCreatedAt: string;
-  LinkCheckOutput: LinkCheckResult;
+  status: string;
+  created_at: string;
+  error: null;
+  output: LinkCheckResult;
 }
 
 export const mockApiResponse: LinkCheckApiResponse = {
-  LinkCheckStatus: 'Succeeded',
-  LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
-  LinkCheckOutput: {
+  status: 'Succeeded',
+  created_at: '2024-12-14T00:26:50.838350Z',
+  error: null,
+  output: {
     sections: [
       {
         id: 'section-1',
@@ -162,9 +166,10 @@ export const mockApiResponse: LinkCheckApiResponse = {
 };
 
 export const mockApiResponseForNoResultFound: LinkCheckApiResponse = {
-  LinkCheckStatus: 'Succeeded',
-  LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
-  LinkCheckOutput: {
+  status: 'Succeeded',
+  created_at: '2024-12-14T00:26:50.838350Z',
+  error: null,
+  output: {
     sections: [
       {
         id: 'section-1',
@@ -197,9 +202,10 @@ export const mockApiResponseForNoResultFound: LinkCheckApiResponse = {
 };
 
 export const mockApiResponseWithPreviousRunLinks: LinkCheckApiResponse = {
-  LinkCheckStatus: 'Succeeded',
-  LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
-  LinkCheckOutput: {
+  status: 'Succeeded',
+  created_at: '2024-12-14T00:26:50.838350Z',
+  error: null,
+  output: {
     sections: [
       {
         id: 'section-1',
@@ -269,9 +275,10 @@ export const mockApiResponseWithPreviousRunLinks: LinkCheckApiResponse = {
 };
 
 export const mockApiResponseEmpty: LinkCheckApiResponse = {
-  LinkCheckStatus: 'Succeeded',
-  LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
-  LinkCheckOutput: {
+  status: 'Succeeded',
+  created_at: '2024-12-14T00:26:50.838350Z',
+  error: null,
+  output: {
     sections: [],
     courseUpdates: [],
     customPages: [],
