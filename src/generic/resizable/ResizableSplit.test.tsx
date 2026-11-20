@@ -80,6 +80,7 @@ describe('<ResizableSplit />', () => {
   beforeEach(() => {
     initializeMocks();
     window.localStorage.clear();
+    (Element.prototype.setPointerCapture as jest.Mock).mockClear();
     resizeCallbacks.clear();
     window.ResizeObserver = class {
       private callback: ResizeObserverCallback;
@@ -100,7 +101,7 @@ describe('<ResizableSplit />', () => {
   });
 
   afterEach(() => {
-    clientHeightSpy.mockRestore();
+    jest.restoreAllMocks();
     window.ResizeObserver = originalResizeObserver;
   });
 
@@ -196,5 +197,62 @@ describe('<ResizableSplit />', () => {
     fireEvent.pointerMove(bar, { clientY: 160, pointerId: 1 });
     fireEvent.pointerUp(bar, { pointerId: 1 });
     expect(Number(topPane.style.flexGrow)).toBeCloseTo(0.5);
+  });
+
+  describe('remembering the split', () => {
+    it('starts from the stored share', () => {
+      window.localStorage.setItem('split-key', '0.7');
+      const { topPane, bar } = renderSplit();
+      expect(Number(topPane.style.flexGrow)).toBeCloseTo(0.7);
+      expect(bar).toHaveAttribute('aria-valuenow', '70');
+    });
+
+    it.each(['not json', '"0.7"', 'null', '1.5', '-0.1', '{}'])('falls back to 0.5 for stored %s', (stored) => {
+      window.localStorage.setItem('split-key', stored);
+      const { topPane } = renderSplit();
+      expect(Number(topPane.style.flexGrow)).toBeCloseTo(0.5);
+    });
+
+    it('writes the share on release, not on every move', () => {
+      const { container, bar } = renderSplit();
+      measure(container);
+      fireEvent.pointerDown(bar, { clientY: 100, pointerId: 1, button: 0 });
+      fireEvent.pointerMove(bar, { clientY: 160, pointerId: 1 });
+      expect(window.localStorage.getItem('split-key')).toBe('0.5');
+      fireEvent.pointerUp(bar, { pointerId: 1 });
+      expect(window.localStorage.getItem('split-key')).toBe('0.6');
+    });
+
+    it('writes the share when an arrow key is released', async () => {
+      const user = userEvent.setup();
+      const { bar } = renderSplit();
+      bar.focus();
+      await user.keyboard('{ArrowDown}');
+      expect(window.localStorage.getItem('split-key')).toBe('0.55');
+    });
+
+    it('still renders and resizes when storage throws', () => {
+      jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        throw new Error('blocked');
+      });
+      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('blocked');
+      });
+      const { container, topPane, bar } = renderSplit();
+      expect(Number(topPane.style.flexGrow)).toBeCloseTo(0.5);
+      measure(container);
+      drag(bar, 100, 160);
+      expect(Number(topPane.style.flexGrow)).toBeCloseTo(0.6);
+    });
+
+    it('keeps resizing when a write starts failing after mount', () => {
+      const { container, topPane, bar } = renderSplit();
+      measure(container);
+      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('quota');
+      });
+      drag(bar, 100, 160);
+      expect(Number(topPane.style.flexGrow)).toBeCloseTo(0.6);
+    });
   });
 });

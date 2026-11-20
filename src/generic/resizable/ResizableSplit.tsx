@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Icon } from '@openedx/paragon';
 import { DragHandle } from '@openedx/paragon/icons';
+import { useStickyState } from '@src/hooks';
 
 export const DEFAULT_SHARE = 0.5;
 const MIN_PANEL_HEIGHT = 120; // px
@@ -46,12 +47,14 @@ export interface ResizableSplitProps {
 export const ResizableSplit = ({
   top,
   bottom,
+  storageKey,
   ariaLabel,
   minPanelHeight = MIN_PANEL_HEIGHT,
   step = KEYBOARD_STEP,
   className,
 }: ResizableSplitProps) => {
-  const [share, setShare] = useState(DEFAULT_SHARE);
+  const [storedShare, setStoredShare] = useStickyState<unknown>(DEFAULT_SHARE, storageKey);
+  const [share, setShare] = useState(() => sanitizeShare(storedShare));
   const [availableHeight, setAvailableHeight] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
@@ -90,8 +93,12 @@ export const ResizableSplit = ({
     setShare(clampShare(dragStartShareRef.current + delta, availableHeight, minPanelHeight));
   };
 
+  // Writing only on release keeps localStorage out of the per-move path.
+  const commit = () => setStoredShare(displayedShare);
+
   const handlePointerEnd = () => {
     isDraggingRef.current = false;
+    commit();
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -101,6 +108,12 @@ export const ResizableSplit = ({
     event.preventDefault();
     const delta = event.key === 'ArrowUp' ? -step : step;
     setShare(clampShare(displayedShare + delta, availableHeight, minPanelHeight));
+  };
+
+  const handleKeyUp = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      commit();
+    }
   };
 
   return (
@@ -119,6 +132,7 @@ export const ResizableSplit = ({
         aria-valuenow={Math.round(displayedShare * 100)}
         tabIndex={0}
         onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerEnd}
