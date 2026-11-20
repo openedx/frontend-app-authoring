@@ -7,8 +7,12 @@ import {
   userEvent,
   within,
 } from '@src/testUtils';
-import { MockCompetencyAssociationsProvider } from '../__mocks__';
-import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
+import {
+  criterion,
+  MockCompetencyAssociationsProvider,
+  singleGroupResponse,
+} from '@src/taxonomy/competency-management/__mocks__';
+import type { MockCompetencyAssociationsOverrides } from '@src/taxonomy/competency-management/__mocks__';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import CourseOutlineSubtree from './CourseOutlineSubtree';
 
@@ -237,7 +241,7 @@ describe('<CourseOutlineSubtree />', () => {
 
       expect(screen.getAllByText('Associated')).toHaveLength(1);
       expect(screen.getByText('Competency ID: EXT-042')).toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /Subsection 1A/ })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /^Associate .* Subsection 1A/ })).not.toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Associate EXT-042 with Subsection 2A (graded)' }))
         .toBeInTheDocument();
     });
@@ -351,9 +355,103 @@ describe('<CourseOutlineSubtree />', () => {
       expect(associateSubsection).not.toHaveBeenCalled();
     });
 
-    it('disables the add button while a group delete is in flight', async () => {
+    it('renders an associated row on an editable course with a remove button in its pill', async () => {
+      const user = userEvent.setup();
+      const removeCriterion = jest.fn();
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      renderSubtreeWithAssociations({ isDeletingGroup: true, competencyExternalId: 'EXT-042' });
+      renderSubtreeWithAssociations({
+        associatedObjectIds: new Set(['sub-1a']),
+        groupsIndex: buildCompetencyCriteriaGroupsIndex({
+          groups: singleGroupResponse.groups,
+          criteria: [criterion(77, 'sub-1a', 10)],
+        }),
+        removeCriterion,
+      });
+      await expandFirstSection();
+
+      await user.click(
+        await screen.findByRole('button', { name: 'Remove the association with Subsection 1A (graded)' }),
+      );
+
+      expect(removeCriterion).toHaveBeenCalledWith(77, 'subsection');
+    });
+
+    it('renders no remove button when the course cannot be edited', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({ associatedObjectIds: new Set(['sub-1a']), canEditCourse: () => false });
+      await expandFirstSection();
+
+      expect(await screen.findByText('Associated')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Remove the association/ })).not.toBeInTheDocument();
+    });
+
+    it('disables the remove button while a delete is in flight', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({ associatedObjectIds: new Set(['sub-1a']), isDeletingGroupOrCriterion: true });
+      await expandFirstSection();
+
+      expect(await screen.findByRole('button', { name: 'Remove the association with Subsection 1A (graded)' }))
+        .toBeDisabled();
+    });
+
+    it('disables the remove button while an association is being created', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({ associatedObjectIds: new Set(['sub-1a']), isAssociating: true });
+      await expandFirstSection();
+
+      expect(await screen.findByRole('button', { name: 'Remove the association with Subsection 1A (graded)' }))
+        .toBeDisabled();
+    });
+
+    it('leaves a subsection keyboard request unconsumed while a delete is in flight', async () => {
+      const consumeKeyboardFocusRequest = jest.fn();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({
+        associatedObjectIds: new Set(['sub-1a']),
+        isDeletingGroupOrCriterion: true,
+        keyboardFocusRequest: { kind: 'subsection', objectId: 'sub-1a' },
+        consumeKeyboardFocusRequest,
+      });
+      await expandFirstSection();
+
+      expect(await screen.findByRole('button', { name: 'Remove the association with Subsection 1A (graded)' }))
+        .not.toHaveFocus();
+      expect(consumeKeyboardFocusRequest).not.toHaveBeenCalled();
+    });
+
+    it('focuses the remove button on a matching keyboard request while the row is still associated', async () => {
+      const consumeKeyboardFocusRequest = jest.fn();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({
+        associatedObjectIds: new Set(['sub-1a']),
+        keyboardFocusRequest: { kind: 'subsection', objectId: 'sub-1a' },
+        consumeKeyboardFocusRequest,
+      });
+      await expandFirstSection();
+
+      expect(await screen.findByRole('button', { name: 'Remove the association with Subsection 1A (graded)' }))
+        .toHaveFocus();
+      expect(consumeKeyboardFocusRequest).toHaveBeenCalled();
+    });
+
+    it('takes DOM focus on a matching subsection keyboard request, then consumes it', async () => {
+      const consumeKeyboardFocusRequest = jest.fn();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({
+        keyboardFocusRequest: { kind: 'subsection', objectId: 'sub-1a' },
+        consumeKeyboardFocusRequest,
+        competencyExternalId: 'EXT-042',
+      });
+      await expandFirstSection();
+
+      expect(await screen.findByRole('button', { name: 'Associate EXT-042 with Subsection 1A (graded)' }))
+        .toHaveFocus();
+      expect(consumeKeyboardFocusRequest).toHaveBeenCalled();
+    });
+
+    it('disables the add button while a delete is in flight', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({ isDeletingGroupOrCriterion: true, competencyExternalId: 'EXT-042' });
       await expandFirstSection();
 
       expect(await screen.findByRole('button', { name: 'Associate EXT-042 with Subsection 1A (graded)' }))

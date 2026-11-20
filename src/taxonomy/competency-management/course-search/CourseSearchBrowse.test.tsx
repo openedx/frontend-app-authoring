@@ -14,6 +14,7 @@ import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { CompetencyAssociationsProvider } from '../CompetencyAssociationsContext';
 import { byTextContent, defaultProfileResponse, MockCompetencyAssociationsProvider } from '../__mocks__';
+import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
 import { apiUrls as competencyManagementApiUrls } from '../data/api';
 import type { CompetencyTreeNode } from '../CompetencyTree';
 import CourseRow from './CourseRow';
@@ -1873,6 +1874,33 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
       await user.click(screen.getByRole('button', { name: 'Collapse' }));
       expect(notifyCourseExpanded).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('a subsection keyboard request that no row on the page can take', () => {
+    const renderWithRequest = (overrides: MockCompetencyAssociationsOverrides) => {
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([]));
+      return render(
+        <MockCompetencyAssociationsProvider
+          value={{ keyboardFocusRequest: { kind: 'subsection', objectId: 'sub-collapsed' }, ...overrides }}
+        >
+          <CourseSearchBrowse activeCompetency={activeCompetency} />
+        </MockCompetencyAssociationsProvider>,
+      );
+    };
+
+    it('is dropped, so it cannot take focus when the row is shown later', () => {
+      const consumeKeyboardFocusRequest = jest.fn();
+      renderWithRequest({ consumeKeyboardFocusRequest });
+
+      expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
+    });
+
+    it('is kept while a delete is in flight, since its row cannot take focus yet', () => {
+      const consumeKeyboardFocusRequest = jest.fn();
+      renderWithRequest({ consumeKeyboardFocusRequest, isDeletingGroupOrCriterion: true });
+
+      expect(consumeKeyboardFocusRequest).not.toHaveBeenCalled();
     });
   });
 });

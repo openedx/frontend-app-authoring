@@ -5,6 +5,7 @@ import {
   createCompetencyCriterion,
   deleteCompetencyCriteriaGroup,
   getCompetencyBlockedCourses,
+  deleteCompetencyCriterion,
   getCompetencyCriteriaGroups,
   getDefaultCompetencyRuleProfile,
   updateCompetencyCriteriaGroupOperator,
@@ -252,6 +253,16 @@ describe('competency-management api calls', () => {
 
     expect(axiosMock.history.delete).toHaveLength(1);
     expect(axiosMock.history.delete[0].url).toEqual(apiUrls.competencyCriteriaGroup(tagId, 10));
+  });
+
+  it('sends a DELETE request to the criterion URL', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onDelete(apiUrls.deleteCompetencyCriterion(tagId, 101)).reply(200, { id: 101, archived: false });
+
+    await expect(deleteCompetencyCriterion(tagId, 101)).resolves.toBeUndefined();
+
+    expect(axiosMock.history.delete).toHaveLength(1);
+    expect(axiosMock.history.delete[0].url).toMatch(new RegExp(`/competencies/${tagId}/criteria/101/$`));
   });
 
   it('batch-updates a rule box\'s score at its URL, sending a snake_case payload and camelCasing the response', async () => {

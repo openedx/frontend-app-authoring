@@ -1,4 +1,11 @@
-import { type ReactNode, useId, useState } from 'react';
+import {
+  type ReactNode,
+  type Ref,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 
 import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -9,7 +16,12 @@ import {
   OverlayTrigger,
   Tooltip,
 } from '@openedx/paragon';
-import { AddCircle, ExpandLess, ExpandMore } from '@openedx/paragon/icons';
+import {
+  AddCircle,
+  Cancel,
+  ExpandLess,
+  ExpandMore,
+} from '@openedx/paragon/icons';
 
 import { useCourseOutlineIndex } from '@src/course-outline/data';
 import type { XBlock } from '@src/data/types';
@@ -28,8 +40,9 @@ interface AddSubsectionPillProps {
   competencyExternalId: string | null;
   /** The name of the competency that blocks this course, or `undefined` when nothing does. */
   conflictingCompetency: string | undefined;
-  /** True while an association is created or a group is deleted; the pill is disabled meanwhile. */
+  /** True while an association is created or a group or criterion is deleted; the pill is disabled meanwhile. */
   isBusy: boolean;
+  buttonRef?: Ref<HTMLButtonElement>;
   onAssociate: () => void;
   /** The pill's icon and external ID, shared with the applied pill. */
   children: ReactNode;
@@ -46,6 +59,7 @@ const AddSubsectionPill = ({
   competencyExternalId,
   conflictingCompetency,
   isBusy,
+  buttonRef,
   onAssociate,
   children,
 }: AddSubsectionPillProps) => {
@@ -79,6 +93,7 @@ const AddSubsectionPill = ({
         }
       >
         <Button
+          ref={buttonRef}
           variant="tertiary"
           type="button"
           className={classNames(
@@ -116,8 +131,9 @@ interface SubsectionRowProps {
 }
 
 /**
- * One graded subsection: its name plus the competency pill. The applied pill
- * shows regardless of `canEditCourse`.
+ * One graded subsection: its name plus the competency pill. The applied pill shows regardless of
+ * `canEditCourse`, and holds a remove button when the author can edit, including in a blocked course.
+ * Takes keyboard focus back after a remove started from this row.
  *
  * A course is blocked for the competency being edited when one of its ancestors or descendants
  * already has associations there. A blocked row's associate button is disabled, grey, and has a
@@ -132,12 +148,33 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
     competencyExternalId,
     conflictingCompetencyName,
     isAssociating,
-    isDeletingGroup,
+    groupsIndex,
+    isDeletingGroupOrCriterion,
+    removeCriterion,
+    keyboardFocusRequest,
+    consumeKeyboardFocusRequest,
     status,
   } = useCompetencyAssociations();
   // The `course_index` response populates `.id`, never `.usageKey`.
   const isAssociated = associatedObjectIds.has(subsection.id);
   const canAssociate = status === 'success' && canEditCourse(courseId);
+
+  // An unassociated row holds the associate button and an associated one the remove button, so whichever is
+  // mounted takes a focus request.
+  const associateButtonRef = useRef<HTMLButtonElement>(null);
+  const removeButtonRef = useRef<HTMLButtonElement>(null);
+  const isPillButtonDisabled = isDeletingGroupOrCriterion || isAssociating;
+  // Waits for the button to be enabled again, since a disabled button cannot take focus.
+  const takesKeyboardFocus = keyboardFocusRequest?.kind === 'subsection'
+    && keyboardFocusRequest.objectId === subsection.id
+    && !isPillButtonDisabled;
+  useEffect(() => {
+    const target = isAssociated ? removeButtonRef.current : associateButtonRef.current;
+    if (takesKeyboardFocus && target) {
+      target.focus();
+      consumeKeyboardFocusRequest();
+    }
+  }, [takesKeyboardFocus, consumeKeyboardFocusRequest, isAssociated, canAssociate]);
 
   const pillContent = (
     <>
@@ -161,15 +198,38 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
           </span>
         )}
         {pillContent}
+        {canAssociate && (
+          <>
+            <span className="course-search-browse__subsection-pill-divider" aria-hidden="true" />
+            <IconButton
+              ref={removeButtonRef}
+              src={Cancel}
+              size="inline"
+              invertColors
+              alt={intl.formatMessage(rootMessages.removeCriterionButtonLabel, {
+                subsectionName: subsection.displayName,
+              })}
+              disabled={isPillButtonDisabled}
+              onClick={() => {
+                const criterion = [...(groupsIndex?.criteriaByGroupId.values() ?? [])].flat()
+                  .find((candidate) => candidate.objectId === subsection.id);
+                if (criterion) {
+                  removeCriterion(criterion.id, 'subsection');
+                }
+              }}
+            />
+          </>
+        )}
       </span>
     );
   } else if (canAssociate) {
     pill = (
       <AddSubsectionPill
+        buttonRef={associateButtonRef}
         subsectionName={subsection.displayName}
         competencyExternalId={competencyExternalId}
         conflictingCompetency={conflictingCompetencyName(courseId)}
-        isBusy={isAssociating || isDeletingGroup}
+        isBusy={isPillButtonDisabled}
         onAssociate={() => associateSubsection(subsection.id, courseId)}
       >
         {pillContent}

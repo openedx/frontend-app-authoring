@@ -170,6 +170,18 @@ export const useDeleteCompetencyCriteriaGroup = () => {
   });
 };
 
+/**
+ * Build the mutation to delete one criterion (`#674`). It refetches the groups on success and failure alike,
+ * and stays pending until that refetch lands.
+ */
+export const useDeleteCompetencyCriterion = () => {
+  const queryClient = useQueryClient();
+  return useMutation<void, AxiosError, { tagId: number; criterionId: number; }>({
+    mutationFn: ({ tagId, criterionId }) => api.deleteCompetencyCriterion(tagId, criterionId),
+    onSettled: (_data, _error, { tagId }) => refreshCompetencyCriteriaGroups(queryClient, tagId),
+  });
+};
+
 export interface UseCourseTaggingPermissionsReturn {
   isLoading: boolean;
   isError: boolean;

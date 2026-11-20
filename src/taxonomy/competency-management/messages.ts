@@ -60,6 +60,18 @@ const messages = defineMessages({
     defaultMessage: 'There was a problem removing this group. Please try again.',
     description: 'Toast shown when removing a course group or rule group fails.',
   },
+  removeCriterionButtonLabel: {
+    id: 'course-authoring.competency-management.remove-criterion-button-label',
+    defaultMessage: 'Remove the association with {subsectionName}',
+    description: 'Accessible label for the "x" icon button that removes a subsection\'s association with the '
+      + 'competency, on a rule box chip and on a subsection row in the course list. {subsectionName} is the name of '
+      + 'the subsection.',
+  },
+  removeAssociationFailedToastMessage: {
+    id: 'course-authoring.competency-management.remove-association-failed-toast-message',
+    defaultMessage: 'There was a problem removing this association. Please try again.',
+    description: 'Toast shown when removing one subsection\'s association with a competency fails.',
+  },
   updateGroupOperatorFailedToastMessage: {
     id: 'course-authoring.competency-management.update-group-operator-failed-toast-message',
     defaultMessage: 'There was a problem updating this group\'s logic. Please try again.',

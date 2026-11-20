@@ -32,6 +32,7 @@ import {
   useCreateCompetencyCriterion,
   useDefaultCompetencyRuleProfile,
   useDeleteCompetencyCriteriaGroup,
+  useDeleteCompetencyCriterion,
   useUpdateCompetencyCriteriaGroupOperator,
   useUpdateCompetencyCriteriaRule,
 } from './data/apiHooks';
@@ -126,9 +127,9 @@ interface CourseListParams {
 }
 
 const initialCourseListParams: CourseListParams = { page: 1, search: '', dateRange: [null, null] };
-/** A one-shot request for the browser's keyboard focus, left by a delete whose menu toggle is gone or disabled. `group`
- * names the bottom-tier card that takes it, `menu` the group whose menu toggle takes it after a failed delete, and
- * `empty` the "no associations" message.
+/** A one-shot request for the browser's keyboard focus, left by a delete whose control is gone or disabled. `group`
+ * names the bottom-tier card that takes it, `menu` the group whose menu toggle takes it after a failed delete, `empty`
+ * the "no associations" message, and `subsection` the content panel's row for `objectId`.
  *
  * `selectionMoved` on a `group` request is true when selection moved to the card, so the card does not scroll to itself
  * because its rule box does.
@@ -136,7 +137,8 @@ const initialCourseListParams: CourseListParams = { page: 1, search: '', dateRan
 export type KeyboardFocusRequest =
   | { kind: 'group'; groupId: number; selectionMoved: boolean; }
   | { kind: 'menu'; groupId: number; }
-  | { kind: 'empty'; };
+  | { kind: 'empty'; }
+  | { kind: 'subsection'; objectId: string; };
 
 export interface CompetencyAssociationsContextBase {
   /** The course list, groups or profile failure, or the first course-outline failure other
@@ -169,12 +171,17 @@ export interface CompetencyAssociationsContextBase {
    * lands. Dropped while another delete is in flight. A 404 counts as success; any other failure shows a toast.
    */
   deleteGroup: (groupId: number) => void;
-  /** True while a delete request or its refetch is in flight, which disables every delete control, the "+ Rule" and
-   * "+ Rule Group" controls, and the content panel's subsection pills.
+  /** True while a group or criterion is being deleted, or while the refetch after the delete is in flight. It disables
+   * every delete control, the "+ Rule" and "+ Rule Group" controls, and the content panel's subsection pills.
    */
-  isDeletingGroup: boolean;
+  isDeletingGroupOrCriterion: boolean;
   /** Discards the placeholder group without a request and selects the last saved group in its course group. */
   discardPlaceholderGroup: () => void;
+  /** Deletes the criterion with this id, and drops the call during another delete or a create. Keyboard focus returns
+   * to the group box or the subsection row, or goes to a neighbor group or the empty state when the group is removed
+   * with its last criterion. A 404 counts as success; any other failure shows a toast.
+   */
+  removeCriterion: (criterionId: number, returnFocusTo: 'group' | 'subsection') => void;
   keyboardFocusRequest: KeyboardFocusRequest | null;
   /** Clears `keyboardFocusRequest` once the component it names has taken it. */
   consumeKeyboardFocusRequest: () => void;
@@ -397,6 +404,7 @@ export type ProviderAction =
     keyboardFocusRequest: KeyboardFocusRequest | null;
   }
   | { type: 'keyboardFocusRequestConsumed'; }
+  | { type: 'keyboardFocusRequested'; generation: number; keyboardFocusRequest: KeyboardFocusRequest; }
   | { type: 'ruleKeyResolved'; groupId: number; staleRuleKey: string | null; resolvedRuleKey: string | null; }
   | { type: 'createSucceeded'; generation: number; selection: CriteriaSelection; }
   | { type: 'courseExpandedBeforeLoad'; courseId: string; }
@@ -567,6 +575,10 @@ function reduceProviderState(state: ProviderState, action: ProviderAction): Prov
       return moveSelection(state, action.selection, action.keyboardFocusRequest);
     case 'keyboardFocusRequestConsumed':
       return { ...state, keyboardFocusRequest: null };
+    case 'keyboardFocusRequested':
+      return action.generation === state.generation
+        ? { ...state, keyboardFocusRequest: action.keyboardFocusRequest }
+        : state;
     case 'addPlaceholderRuleBox':
     case 'addPlaceholderGroup':
     case 'setPlaceholderLogicOperator':
@@ -750,10 +762,17 @@ export const CompetencyAssociationsProvider = ({
   const { mutateAsync: updateRuleScoreMutateAsync } = useUpdateCompetencyCriteriaRule();
   const {
     mutate: mutateDeleteGroup,
-    isPending: isDeletePending,
-    variables: deleteVariables,
+    isPending: isGroupDeletePending,
+    variables: groupDeleteVariables,
   } = useDeleteCompetencyCriteriaGroup();
-  const isDeletingGroup = isDeletePending && deleteVariables?.tagId === tagId;
+  const {
+    mutate: mutateDeleteCriterion,
+    isPending: isCriterionDeletePending,
+    variables: criterionDeleteVariables,
+  } = useDeleteCompetencyCriterion();
+  const isDeletingGroupOrCriterion = (isGroupDeletePending && groupDeleteVariables?.tagId === tagId)
+    || (isCriterionDeletePending && criterionDeleteVariables?.tagId === tagId);
+  const queryClient = useQueryClient();
   // Closes the gap between a click and the render that disables the delete menus. Holds the generation that started
   // the delete, so a delete still pending for the previous competency does not block this one.
   const deleteInFlightGenerationRef = useRef<number | null>(null);
@@ -1126,6 +1145,75 @@ export const CompetencyAssociationsProvider = ({
     intl,
   ]);
 
+  const removeCriterion = useCallback((criterionId: number, returnFocusTo: 'group' | 'subsection') => {
+    const criterion = groupsQuery.data?.criteria.find((c) => c.id === criterionId);
+    if (
+      deleteInFlightGenerationRef.current === generation
+      || isAssociating
+      || !groupsIndex
+      || !systemDefaultProfile
+      || !criterion
+    ) {
+      return;
+    }
+    deleteInFlightGenerationRef.current = generation;
+    const snapshot = snapshotPageOrder(groupsIndex, accessibleCourseGroups);
+    const { groupId, objectId } = criterion;
+    mutateDeleteCriterion({ tagId, criterionId }, {
+      // 404: the criterion is already gone, which is what the author asked for.
+      onError: (deleteError) => {
+        if (deleteError.response?.status !== 404) {
+          showToast(intl.formatMessage(messages.removeAssociationFailedToastMessage), undefined, undefined, ErrorIcon);
+        }
+      },
+      onSettled: (_data, deleteError) => {
+        if (deleteInFlightGenerationRef.current === generation) {
+          deleteInFlightGenerationRef.current = null;
+        }
+        // `false`: a failed criterion delete has no group menu toggle to return focus to.
+        resolveSelectionAfterDelete(groupId, snapshot, false, systemDefaultProfile);
+        if (returnFocusTo === 'subsection') {
+          dispatch({
+            type: 'keyboardFocusRequested',
+            generation,
+            keyboardFocusRequest: { kind: 'subsection', objectId },
+          });
+          return;
+        }
+        const deleteFailed = deleteError !== null && deleteError.response?.status !== 404;
+        // Only where focus lands depends on this key, which was captured at click time. The toast does not.
+        const groupsQueryState = queryClient.getQueryState<CompetencyCriteriaGroupsResponse>(
+          competencyQueryKeys.competencyCriteriaGroups(tagId, listedCourseKeys),
+        );
+        if (
+          !deleteFailed
+          && groupsQueryState?.status === 'success'
+          && groupsQueryState.data?.groups.some((group) => group.id === groupId)
+        ) {
+          dispatch({
+            type: 'keyboardFocusRequested',
+            generation,
+            keyboardFocusRequest: { kind: 'group', groupId, selectionMoved: false },
+          });
+        }
+      },
+    });
+  }, [
+    groupsQuery.data,
+    isAssociating,
+    groupsIndex,
+    systemDefaultProfile,
+    accessibleCourseGroups,
+    tagId,
+    listedCourseKeys,
+    generation,
+    mutateDeleteCriterion,
+    resolveSelectionAfterDelete,
+    queryClient,
+    showToast,
+    intl,
+  ]);
+
   const discardPlaceholderGroup = useCallback(() => {
     const { parentRuleGroupId } = placeholder;
     const parentGroup = parentRuleGroupId !== null ? groupsIndex?.groupsById.get(parentRuleGroupId) : undefined;
@@ -1163,8 +1251,9 @@ export const CompetencyAssociationsProvider = ({
       updateGroupOperator,
       updateRuleScore,
       deleteGroup,
-      isDeletingGroup,
+      isDeletingGroupOrCriterion,
       discardPlaceholderGroup,
+      removeCriterion,
       keyboardFocusRequest,
       consumeKeyboardFocusRequest,
       isAssociating,
@@ -1209,8 +1298,9 @@ export const CompetencyAssociationsProvider = ({
     updateGroupOperator,
     updateRuleScore,
     deleteGroup,
-    isDeletingGroup,
+    isDeletingGroupOrCriterion,
     discardPlaceholderGroup,
+    removeCriterion,
     keyboardFocusRequest,
     consumeKeyboardFocusRequest,
     isAssociating,
