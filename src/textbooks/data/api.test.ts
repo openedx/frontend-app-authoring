@@ -1,4 +1,5 @@
 import { initializeMocks } from '@src/testUtils';
+import { paginatedListPage } from '@src/generic/data/paginatedList';
 
 import { textbooksMock } from 'CourseAuthoring/textbooks/__mocks__';
 import {
@@ -21,16 +22,39 @@ describe('getTextbooks', () => {
     axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getTextbooksApiUrl(courseId))
-      .reply(200, textbooksMock);
+      .reply(200, paginatedListPage(textbooksMock.textbooks));
   });
 
   it('should fetch textbooks for a course', async () => {
-    const textbooksData = [{ id: 1, title: 'Textbook 1' }, { id: 2, title: 'Textbook 2' }];
-    axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(200, textbooksData);
+    const result = await getTextbooks(courseId);
+
+    expect(result).toEqual(textbooksMock);
+    expect(axiosMock.history.get[0].url).toEqual(
+      'http://localhost:18010/api/authoring/v2/courses/course-v1:org+101+101/textbooks/',
+    );
+  });
+
+  it('should return the textbooks of every page, in order', async () => {
+    const [first, second] = textbooksMock.textbooks;
+    axiosMock
+      .onGet(getTextbooksApiUrl(courseId), { params: { page: 1, page_size: 100 } })
+      .reply(200, paginatedListPage([first], { page: 1, numPages: 2 }))
+      .onGet(getTextbooksApiUrl(courseId), { params: { page: 2, page_size: 100 } })
+      .reply(200, paginatedListPage([second], { page: 2, numPages: 2 }));
 
     const result = await getTextbooks(courseId);
 
-    expect(result).toEqual(textbooksData);
+    expect(result).toEqual({ textbooks: [first, second] });
+  });
+
+  it('should convert the server\'s snake_case keys', async () => {
+    axiosMock
+      .onGet(getTextbooksApiUrl(courseId))
+      .reply(200, paginatedListPage([{ id: '1', tab_title: 'Textbook', chapters: [] }]));
+
+    const result = await getTextbooks(courseId);
+
+    expect(result).toEqual({ textbooks: [{ id: '1', tabTitle: 'Textbook', chapters: [] }] });
   });
 });
 
