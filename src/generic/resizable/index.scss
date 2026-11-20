@@ -53,6 +53,8 @@
 }
 
 .resizable-split__bar {
+  --pgn-size-icon-xs: 14px;
+
   flex: 0 0 14px;
   display: flex;
   align-items: center;
@@ -62,11 +64,6 @@
   user-select: none;
   background-color: var(--pgn-color-light-300);
   color: var(--pgn-color-gray-500);
-
-  .pgn__icon {
-    width: 14px;
-    height: 14px;
-  }
 
   &:hover {
     background-color: var(--pgn-color-light-500);
