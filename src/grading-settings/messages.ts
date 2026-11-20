@@ -29,6 +29,11 @@ const messages = defineMessages({
     id: 'course-authoring.grading-settings.alert.success',
     defaultMessage: 'Your changes have been saved.',
   },
+  alertFail: {
+    id: 'course-authoring.grading-settings.alert.fail',
+    defaultMessage: 'We encountered an error when saving your changes.',
+    description: 'Alert shown at the top of the Grading page when saving the grading settings fails.',
+  },
   buttonSaveText: {
     id: 'course-authoring.grading-settings.alert.button.save',
     defaultMessage: 'Save changes',
