@@ -6,21 +6,36 @@ import { deepConvertingKeysToCamelCase, deepConvertingKeysToSnakeCase } from '..
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getGradingSettingsApiUrl = (courseId) =>
-  `${getApiBaseUrl()}/api/contentstore/v1/course_grading/${courseId}`;
-
-// v3 authoring_grading exposes only PATCH and has no GET, so the read stays on v1.
-export const getAuthoringGradingApiUrl = (courseId) =>
-  `${getApiBaseUrl()}/api/contentstore/v3/authoring_grading/${courseId}/`;
+  `${getApiBaseUrl()}/api/authoring/v3/courses/${courseId}/grading/`;
 
 /**
  * Get's grading setting for a course.
+ *
+ * The full view adds the graded subsections per assignment type and the default
+ * grade designations to the policy; the policy itself is returned as `courseDetails`,
+ * the object `sendGradingSettings` sends back.
  * @param {string} courseId
  * @returns {Promise<Object>}
  */
 export async function getGradingSettings(courseId) {
   const { data } = await getAuthenticatedHttpClient()
-    .get(getGradingSettingsApiUrl(courseId));
-  return deepConvertingKeysToCamelCase(data);
+    .get(getGradingSettingsApiUrl(courseId), { params: { view: 'full' } });
+  const {
+    graders,
+    gradeCutoffs,
+    gracePeriod,
+    minimumGradeCredit,
+    ...context
+  } = deepConvertingKeysToCamelCase(data);
+  return {
+    ...context,
+    courseDetails: {
+      graders,
+      gradeCutoffs,
+      gracePeriod,
+      minimumGradeCredit,
+    },
+  };
 }
 
 /**
@@ -31,6 +46,6 @@ export async function getGradingSettings(courseId) {
  */
 export async function sendGradingSettings(courseId, settings) {
   const { data } = await getAuthenticatedHttpClient()
-    .patch(getAuthoringGradingApiUrl(courseId), deepConvertingKeysToSnakeCase(settings));
+    .patch(getGradingSettingsApiUrl(courseId), deepConvertingKeysToSnakeCase(settings));
   return camelCaseObject(data);
 }
