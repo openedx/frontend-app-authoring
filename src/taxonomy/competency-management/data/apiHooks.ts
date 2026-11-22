@@ -35,6 +35,11 @@ export const competencyQueryKeys = {
     'criteriaGroups',
     ...(courseKeys ? [courseKeys] : []),
   ],
+  competencyBlockedCourses: (tagId: number, courseKeys?: string[]) => [
+    ...competencyQueryKeys.competency(tagId),
+    'blockedCourses',
+    ...(courseKeys ? [courseKeys] : []),
+  ],
   /** The studio-wide default rule profile. */
   defaultRuleProfile: () => [...competencyQueryKeys.all, 'defaultRuleProfile'],
 } satisfies Record<
@@ -52,6 +57,22 @@ export const useCompetencyCriteriaGroups = (tagId: number, courseKeys: string[] 
     queryFn: courseKeys !== undefined
       ? () => api.getCompetencyCriteriaGroups(tagId, courseKeys)
       : skipToken,
+  })
+);
+
+/**
+ * Load which of the listed courses an ancestor or descendant of the competency already blocks.
+ * Skipped until at least one course is listed.
+ */
+export const useCompetencyBlockedCourses = (tagId: number, courseKeys: string[] | undefined) => (
+  useQuery({
+    queryKey: competencyQueryKeys.competencyBlockedCourses(tagId, courseKeys),
+    queryFn: courseKeys?.length
+      ? () => api.getCompetencyBlockedCourses(tagId, courseKeys)
+      : skipToken,
+    // The app's one-hour `staleTime` would otherwise serve a cached answer on a revisit, and
+    // the answer changes through writes made under another competency, which nothing here invalidates.
+    gcTime: 0,
   })
 );
 

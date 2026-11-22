@@ -125,6 +125,8 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
     // tests that don't care about it aren't left in a loading state.
     axiosMock.onGet(competencyManagementApiUrls.competencyCriteriaGroups(Number(activeCompetency.id)))
       .reply(200, { groups: [], criteria: [], criteria_count: 0, total_criteria_count: 0 });
+    axiosMock.onGet(competencyManagementApiUrls.competencyBlockedCourses(Number(activeCompetency.id)))
+      .reply(200, { count: 0, next: null, previous: null, results: [] });
     axiosMock.onGet(competencyManagementApiUrls.defaultCompetencyRuleProfile()).reply(200, defaultProfileResponse);
   });
 
@@ -1682,6 +1684,132 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       await waitFor(() => {
         expect(screen.getByText(/^Showing/)).toHaveTextContent(/, and 1 of 1 Competency Criteria Association$/);
       });
+    });
+  });
+
+  describe('courses blocked by an ancestor or descendant competency', () => {
+    const blockedCoursesUrl = competencyManagementApiUrls.competencyBlockedCourses(Number(activeCompetency.id));
+    const courseA = buildCourse({ courseKey: 'course-v1:OrgX+CSA+2024', displayName: 'Course A' });
+    const courseB = buildCourse({ courseKey: 'course-v1:OrgX+CSB+2024', displayName: 'Course B' });
+    const conflictTooltip = 'Already associated with Critical Thinking in this course';
+
+    const blockedCoursesRequests = () => axiosMock.history.get.filter((req) => req.url === blockedCoursesUrl);
+    const blockedCoursesBody = (courses: Course[]) => ({
+      count: courses.length,
+      next: null,
+      previous: null,
+      results: courses.map((course) => ({
+        course_key: course.courseKey,
+        conflicting_tag_id: 7,
+        conflicting_tag_value: 'Critical Thinking',
+      })),
+    });
+    const mockOutline = (course: Course) => {
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(course.courseKey)).reply(
+        200,
+        buildOutlineIndex({
+          sections: [{
+            id: `section-${course.number}`,
+            displayName: 'Section 1',
+            children: [{ id: `sub-${course.number}`, displayName: 'Subsection 1', overrides: { graded: true } }],
+          }],
+        }),
+      );
+    };
+    /** Expands the sole listed course, then its sole section. */
+    const expandCourseAndSection = async (user: ReturnType<typeof userEvent.setup>) => {
+      await user.click(screen.getByRole('button', { name: 'Expand' }));
+      await user.click(await screen.findByRole('button', { name: 'Expand' }));
+    };
+    const addPill = () => screen.queryByRole('button', { name: /^Associate .* with Subsection 1$/ });
+
+    it('disables a blocked course\'s associate buttons, with a tooltip naming the conflicting competency', async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([courseA]));
+      axiosMock.onGet(blockedCoursesUrl).reply(200, blockedCoursesBody([courseA]));
+      mockOutline(courseA);
+      renderCourseSearchBrowse();
+
+      expect(await screen.findByText('Course A')).toBeInTheDocument();
+      await expandCourseAndSection(user);
+
+      await waitFor(() => expect(addPill()).toHaveAttribute('aria-disabled', 'true'));
+      expect(addPill()).toHaveAccessibleDescription(conflictTooltip);
+      await user.hover(addPill()!);
+      expect(await screen.findByRole('tooltip')).toHaveTextContent(conflictTooltip);
+    });
+
+    it('keeps subsections selectable while the blocked-courses request is in flight', async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      const blockedReply = deferredReply();
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([courseA]));
+      axiosMock.onGet(blockedCoursesUrl).reply(() => blockedReply.promise);
+      mockOutline(courseA);
+      renderCourseSearchBrowse();
+
+      expect(await screen.findByText('Course A')).toBeInTheDocument();
+      await expandCourseAndSection(user);
+
+      await waitFor(() => expect(addPill()).toBeEnabled());
+
+      await act(async () => {
+        blockedReply.settle([200, blockedCoursesBody([courseA])]);
+      });
+      await waitFor(() => expect(addPill()).toHaveAttribute('aria-disabled', 'true'));
+    });
+
+    it('keeps keyboard focus on the associate button when the blocked-courses answer arrives', async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      const blockedReply = deferredReply();
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([courseA]));
+      axiosMock.onGet(blockedCoursesUrl).reply(() => blockedReply.promise);
+      mockOutline(courseA);
+      renderCourseSearchBrowse();
+      expect(await screen.findByText('Course A')).toBeInTheDocument();
+      await expandCourseAndSection(user);
+      await waitFor(() => expect(addPill()).toBeEnabled());
+      const button = addPill()!;
+      act(() => button.focus());
+      expect(button).toHaveFocus();
+
+      await act(async () => {
+        blockedReply.settle([200, blockedCoursesBody([courseA])]);
+      });
+
+      await waitFor(() => expect(button).toHaveAttribute('aria-disabled', 'true'));
+      expect(addPill()).toBe(button);
+      expect(button).toHaveFocus();
+    });
+
+    it('leaves the associate buttons enabled when the blocked-courses request fails', async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([courseA]));
+      axiosMock.onGet(blockedCoursesUrl).reply(500);
+      mockOutline(courseA);
+      renderCourseSearchBrowse();
+
+      expect(await screen.findByText('Course A')).toBeInTheDocument();
+      await expandCourseAndSection(user);
+
+      await waitFor(() => expect(blockedCoursesRequests()).toHaveLength(1));
+      await waitFor(() => expect(addPill()).toBeEnabled());
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
+    it('scopes a new blocked-courses request to the next page\'s courses', async () => {
+      axiosMock.onGet(coursesApiUrl).reply((config) => [
+        200,
+        buildResponse(config.params.page === 2 ? [courseB] : [courseA], 2),
+      ]);
+      axiosMock.onGet(blockedCoursesUrl).reply(200, blockedCoursesBody([]));
+      renderCourseSearchBrowse();
+      await waitFor(() => expect(blockedCoursesRequests()).toHaveLength(1));
+      expect(blockedCoursesRequests()[0].params).toEqual({ course_keys: courseA.courseKey });
+
+      fireEvent.click(screen.getByRole('button', { name: 'Page 2' }));
+
+      await waitFor(() => expect(blockedCoursesRequests()).toHaveLength(2));
+      expect(blockedCoursesRequests()[1].params).toEqual({ course_keys: courseB.courseKey });
     });
   });
 

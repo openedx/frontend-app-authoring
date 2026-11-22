@@ -4,6 +4,7 @@ import {
   apiUrls,
   createCompetencyCriterion,
   deleteCompetencyCriteriaGroup,
+  getCompetencyBlockedCourses,
   getCompetencyCriteriaGroups,
   getDefaultCompetencyRuleProfile,
   updateCompetencyCriteriaGroupOperator,
@@ -65,6 +66,26 @@ describe('competency-management api calls', () => {
     expect(request.params).toEqual({ course_keys: '' });
     // Omitting the param would mean "unscoped" to the backend; an empty value means "no listed courses".
     expect(sentCourseKeysParam(request)).toEqual('');
+  });
+
+  it('gets the blocked courses for the given course keys, camelCasing the rows', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.competencyBlockedCourses(tagId)).reply(200, {
+      count: 1,
+      next: null,
+      previous: null,
+      results: [{ course_key: 'course-v1:OrgX+CS101+2024', conflicting_tag_id: 7, conflicting_tag_value: 'Inference' }],
+    });
+    const courseKeys = ['course-v1:OrgX+CS201+2024', 'course-v1:OrgX+CS101+2024'];
+
+    const result = await getCompetencyBlockedCourses(tagId, courseKeys);
+
+    expect(result).toEqual([
+      { courseKey: 'course-v1:OrgX+CS101+2024', conflictingTagId: 7, conflictingTagValue: 'Inference' },
+    ]);
+    const request = axiosMock.history.get[0];
+    expect(request.url).toEqual(apiUrls.competencyBlockedCourses(tagId));
+    expect(sentCourseKeysParam(request)).toEqual(courseKeys.join(','));
   });
 
   it('gets the default competency rule profile out of the paginated list response, camelCased', async () => {

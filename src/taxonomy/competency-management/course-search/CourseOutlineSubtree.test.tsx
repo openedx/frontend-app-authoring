@@ -360,4 +360,142 @@ describe('<CourseOutlineSubtree />', () => {
         .toBeDisabled();
     });
   });
+
+  describe('in a course blocked by an ancestor or descendant competency', () => {
+    const otherCourseId = 'course-v1:OrgX+CS999+2024';
+    const conflictTooltip = 'Already associated with Critical Thinking in this course';
+    const blockedIn = (blockedCourseId: string) => (id: string) => (
+      id === blockedCourseId ? 'Critical Thinking' : undefined
+    );
+    const associateLabel = (subsection: string, externalId = 'EXT-042') => (
+      `Associate ${externalId} with ${subsection}`
+    );
+    const expandBothSections = async () => {
+      const user = userEvent.setup();
+      const expandButtons = await screen.findAllByRole('button', { name: 'Expand' });
+      await user.click(expandButtons[0]);
+      await user.click(screen.getByRole('button', { name: 'Expand' }));
+      return user;
+    };
+
+    it('disables every associate button and names the conflicting competency in a tooltip', async () => {
+      const associateSubsection = jest.fn();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({
+        associateSubsection,
+        conflictingCompetencyName: blockedIn(courseId),
+        competencyExternalId: 'EXT-042',
+      });
+      const user = await expandBothSections();
+
+      const buttonA = screen.getByRole('button', { name: associateLabel('Subsection 1A (graded)') });
+      const buttonB = screen.getByRole('button', { name: associateLabel('Subsection 2A (graded)') });
+      expect(buttonA).toHaveAttribute('aria-disabled', 'true');
+      expect(buttonB).toHaveAttribute('aria-disabled', 'true');
+      expect(buttonA).toHaveAccessibleDescription(conflictTooltip);
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+
+      await user.click(buttonA);
+      expect(associateSubsection).not.toHaveBeenCalled();
+
+      await user.hover(buttonA);
+      const tooltip = await screen.findByRole('tooltip');
+      expect(tooltip).toHaveTextContent(conflictTooltip);
+      expect(buttonA).toHaveAccessibleDescription(conflictTooltip);
+    });
+
+    it('shows the tooltip when the associate button takes keyboard focus', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({
+        conflictingCompetencyName: blockedIn(courseId),
+        competencyExternalId: 'EXT-042',
+      });
+      await expandFirstSection();
+
+      // Focus is on the section's disclosure button, so the next stop is the first associate button.
+      await userEvent.setup().tab();
+
+      expect(screen.getByRole('button', { name: associateLabel('Subsection 1A (graded)') })).toHaveFocus();
+      expect(await screen.findByRole('tooltip')).toHaveTextContent(conflictTooltip);
+    });
+
+    it('shows the competency ID in the blocked button, without the divider or the action icon', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({
+        conflictingCompetencyName: blockedIn(courseId),
+        competencyExternalId: 'EXT-042',
+      });
+      await expandFirstSection();
+
+      const button = await screen.findByRole('button', { name: associateLabel('Subsection 1A (graded)') });
+      expect(within(button).getByText('EXT-042')).toHaveAttribute('aria-hidden', 'true');
+      expect(button.querySelector('.course-search-browse__subsection-pill-divider')).toBeNull();
+      expect(button.querySelector('svg:not([aria-hidden])')).toBeNull();
+      expect(button.querySelectorAll('svg')).toHaveLength(1);
+    });
+
+    it('keeps the normal applied pill on an associated row in a blocked course', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({
+        associatedObjectIds: new Set(['sub-1a']),
+        conflictingCompetencyName: blockedIn(courseId),
+        competencyExternalId: 'EXT-042',
+      });
+      await expandFirstSection();
+
+      expect(await screen.findByText('Subsection 1A (graded)')).toBeInTheDocument();
+      expect(screen.getByText('Associated')).toHaveClass('sr-only');
+      expect(screen.queryByRole('button', { name: /Associate/ })).not.toBeInTheDocument();
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('gives the blocked button its reason as a description when the competency has no external ID', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({ competencyExternalId: null, conflictingCompetencyName: blockedIn(courseId) });
+      await expandFirstSection();
+
+      const button = await screen.findByRole('button', {
+        name: 'Associate this competency with Subsection 1A (graded)',
+      });
+      expect(button).toHaveAttribute('aria-disabled', 'true');
+      expect(button).toHaveAccessibleDescription(conflictTooltip);
+    });
+
+    it('leaves the add pill in place, with no tooltip, when only a different course is blocked', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({
+        conflictingCompetencyName: blockedIn(otherCourseId),
+        competencyExternalId: 'EXT-042',
+      });
+      await expandFirstSection();
+
+      const button = await screen.findByRole('button', { name: 'Associate EXT-042 with Subsection 1A (graded)' });
+      expect(button).toBeEnabled();
+      expect(button).not.toHaveAttribute('aria-disabled', 'true');
+      expect(button).not.toHaveAccessibleDescription();
+    });
+
+    it('hides the control instead of marking it blocked when the course is not writable', async () => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({ canEditCourse: () => false, conflictingCompetencyName: blockedIn(courseId) });
+      await expandFirstSection();
+
+      expect(await screen.findByText('Subsection 1A (graded)')).toBeInTheDocument();
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Associate/ })).not.toBeInTheDocument();
+    });
+
+    it.each([
+      ['pending' as const],
+      ['error' as const],
+    ])('fails open, with no blocked marking, while the status is %s', async (status) => {
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({ status, conflictingCompetencyName: blockedIn(courseId) });
+      await expandFirstSection();
+
+      expect(await screen.findByText('Subsection 1A (graded)')).toBeInTheDocument();
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Associate/ })).not.toBeInTheDocument();
+    });
+  });
 });
