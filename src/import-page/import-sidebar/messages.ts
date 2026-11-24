@@ -35,7 +35,7 @@ const messages = defineMessages({
   },
   content5: {
     id: 'course-authoring.import.sidebar.content5',
-    defaultMessage: 'Settings on the advanced settings page, including MATLAB API keys and LTI passports',
+    defaultMessage: 'Settings on the advanced settings page, including LTI passports',
   },
   notImportedContent: {
     id: 'course-authoring.import.sidebar.notImportedContent',
