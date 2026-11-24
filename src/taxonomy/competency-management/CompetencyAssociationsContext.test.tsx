@@ -233,7 +233,21 @@ const TestConsumer = () => {
     ['Delete rule box 10 90', () => ctx.deleteRuleBox(10, rule90Key)],
     ['Delete rule box 11 70', () => ctx.deleteRuleBox(11, gteKey)],
     ['Delete rule box 20 70', () => ctx.deleteRuleBox(20, gteKey)],
-    ['Remove placeholder rule box', () => ctx.removePlaceholderRuleBox()],
+    [
+      'Delete rule box twice',
+      () => {
+        ctx.deleteRuleBox(10, gteKey);
+        ctx.deleteRuleBox(10, gteKey);
+      },
+    ],
+    [
+      'Delete rule box 10 70 then group 11',
+      () => {
+        ctx.deleteRuleBox(10, gteKey);
+        ctx.deleteGroup(11);
+      },
+    ],
+    ['Remove placeholder rule box', () => ctx.discardPlaceholderRuleBox()],
     ['Remove existing-sub chip', () => ctx.removeCriterion(900, 'group')],
     ['Remove sub-a chip', () => ctx.removeCriterion(901, 'group')],
     ['Remove criterion 902', () => ctx.removeCriterion(902, 'group')],
@@ -272,7 +286,7 @@ const TestConsumer = () => {
       </p>
       <p>Status: {ctx.status}</p>
       <p>Has placeholder: {String(ctx.hasPlaceholder)}</p>
-      <p>Deleting: {String(ctx.isDeletingGroupOrCriterion)}</p>
+      <p>Deleting: {String(ctx.isDeletingGroupOrRuleBoxOrCriterion)}</p>
       <p>
         Criterion ids: {JSON.stringify(
           ctx.groupsIndex?.criteriaByGroupId && [...ctx.groupsIndex.criteriaByGroupId.values()].flat().map((c) => c.id),
@@ -1465,18 +1479,13 @@ describe('CompetencyAssociationsProvider', () => {
       expect(screen.getByText(expectedSelection)).toBeInTheDocument();
     });
 
-    it('discarding the placeholder clears selection, and with it the placeholder and its choices', async () => {
+    it('discarding the placeholder clears selection', async () => {
       await renderLoaded();
       await click('Add placeholder group under course A');
-      await click('Set placeholder score');
 
       await click('Discard placeholder');
 
       expect(noSelection()).toBeInTheDocument();
-      expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
-      expect(screen.getByText(
-        'Placeholder: {"parentRuleGroupId":null,"logicOperator":"OR","rulePayload":null,"justAdded":false}',
-      )).toBeInTheDocument();
     });
 
     it('sends nothing and flags a rejection when the placeholder\'s default score duplicates a box', async () => {
@@ -2290,7 +2299,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905)]);
       expect(mockShowToast).toHaveBeenCalledTimes(1);
-      expectToast('Some of the rule\'s content couldn\'t be removed. The panel was refreshed.', ErrorIcon);
+      expectToast('Some of this rule\'s associations couldn\'t be removed. Please try again.', ErrorIcon);
       expect(screen.getByText('Criterion ids: [905,906,903]')).toBeInTheDocument();
       expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: false })))
@@ -2307,8 +2316,26 @@ describe('CompetencyAssociationsProvider', () => {
 
       expect(sentDeleteUrls()).toEqual([deleteUrlOf(901)]);
       expect(mockShowToast).toHaveBeenCalledTimes(1);
-      expectToast('Couldn\'t remove the rule. The panel was refreshed.', ErrorIcon);
+      expectToast('There was a problem removing this rule. Please try again.', ErrorIcon);
       expect(screen.getByText('Criterion ids: [901,905,906,903]')).toBeInTheDocument();
+    });
+
+    it('shows the partial-failure toast when the refetch after a partial failure fails too', async () => {
+      mockDeletes(901, 906, 903);
+      axiosMock.onDelete(deleteUrlOf(905)).reply(500);
+      axiosMock.onGet(groupsUrl).replyOnce(200, boxOfThreeResponse);
+      axiosMock.onGet(groupsUrl).reply(500);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      await renderLoaded();
+
+      await click('Delete rule box 10 70');
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905)]);
+      expect(mockShowToast).toHaveBeenCalledTimes(1);
+      expectToast('Some of this rule\'s associations couldn\'t be removed. Please try again.', ErrorIcon);
     });
 
     it('counts a 404 in the middle as removed: every criterion is tried, no toast, the box is gone', async () => {
@@ -2348,6 +2375,29 @@ describe('CompetencyAssociationsProvider', () => {
 
       expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(905), deleteUrlOf(906)]);
       expect(mockShowToast).toHaveBeenCalledTimes(1);
+    });
+
+    it('drops a second call made in the same tick as the first, so one run is sent', async () => {
+      mockDeletes(901, 905, 906, 903);
+      const reads = mockGroupsReads(boxOfThreeResponse, withoutCriteria(boxOfThreeResponse, [901, 905, 906]));
+      await renderLoaded();
+
+      await clickAndSettle('Delete rule box twice', reads);
+
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(906)]);
+      expect(groupsReads()).toHaveLength(2);
+    });
+
+    it('drops a group delete made in the same tick as a rule box delete, so only the rule box is deleted', async () => {
+      mockDeletes(901);
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 11)).reply(200, {});
+      const reads = mockGroupsReads(threeBoxesInGroupResponse, withoutCriteria(threeBoxesInGroupResponse, [901]));
+      await renderLoaded();
+
+      await clickAndSettle('Delete rule box 10 70 then group 11', reads);
+
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901)]);
+      expect(groupsReads()).toHaveLength(2);
     });
 
     it('drops a second call made while the first is still deleting, so one run is sent', async () => {
@@ -2698,6 +2748,34 @@ describe('CompetencyAssociationsProvider', () => {
       expect(screen.getByText('Keyboard request: null')).toBeInTheDocument();
       expect(mockShowToast).not.toHaveBeenCalled();
     });
+
+    it('shows no failure toast for a rule box delete that fails after the switch', async () => {
+      axiosMock.onDelete(apiUrls.deleteCompetencyCriterion(tagId, 901)).reply(500);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      axiosMock.onGet(courseBOutlineUrl).reply(200, outlineFixture);
+      const reads = mockHeldGroupsRefetch(
+        axiosMock,
+        tagId,
+        twoGroupsWithCriteriaResponse,
+        twoGroupsWithCriteriaResponse,
+      );
+      axiosMock.onGet(otherGroupsUrl).reply(200, courseBGroupsResponse);
+      const { rerender } = renderProvider();
+      await waitForSuccess();
+      await click('Delete rule box 10 70');
+      await waitFor(() => expect(axiosMock.history.get.filter((request) => request.url === groupsUrl)).toHaveLength(2));
+      expect(axiosMock.history.delete).toHaveLength(1);
+
+      rerender(providerFor(otherTagId));
+      await waitForSuccess();
+      await act(async () => {
+        reads.release();
+      });
+      await flushEffects();
+
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
   });
 
   describe('discardPlaceholderGroup', () => {
@@ -2741,7 +2819,7 @@ describe('CompetencyAssociationsProvider', () => {
     });
   });
 
-  describe('removePlaceholderRuleBox', () => {
+  describe('discardPlaceholderRuleBox', () => {
     const renderLoaded = async (response: CompetencyCriteriaGroupsResponse) => {
       axiosMock.onGet(groupsUrl).reply(200, response);
       axiosMock.onGet(profileUrl).reply(200, profileResponse);
@@ -2769,6 +2847,19 @@ describe('CompetencyAssociationsProvider', () => {
       expect(axiosMock.history.delete).toHaveLength(0);
       expect(axiosMock.history.patch).toHaveLength(0);
       expect(axiosMock.history.post).toHaveLength(0);
+    });
+
+    it('does not carry the discarded placeholder\'s chosen score into the next placeholder rule box', async () => {
+      await renderWithPlaceholderRuleBox(twoCriteriaInGroupResponse);
+      await click('Set placeholder score');
+      expect(screen.getByText(/"rulePayload":\{"op":"gte","value":0.85/)).toBeInTheDocument();
+
+      await click('Remove placeholder rule box');
+      await click('Add placeholder rule box in group 10');
+
+      expect(screen.getByText(
+        'Placeholder: {"parentRuleGroupId":null,"logicOperator":"OR","rulePayload":null,"justAdded":true}',
+      )).toBeInTheDocument();
     });
 
     it('clears a duplicate rejection along with the placeholder', async () => {

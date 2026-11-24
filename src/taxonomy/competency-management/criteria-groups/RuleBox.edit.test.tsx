@@ -148,32 +148,32 @@ describe('<RuleBox /> editing (#794)', () => {
     it('calls deleteRuleBox with its group and key, without focusing the box, when Remove rule is chosen', async () => {
       const user = userEvent.setup();
       const deleteRuleBox = jest.fn();
-      const removePlaceholderRuleBox = jest.fn();
+      const discardPlaceholderRuleBox = jest.fn();
       const selectRuleBox = jest.fn();
-      renderRuleBox({ deleteRuleBox, removePlaceholderRuleBox, selectRuleBox }, { canEdit: true });
+      renderRuleBox({ deleteRuleBox, discardPlaceholderRuleBox, selectRuleBox }, { canEdit: true });
 
       await user.click(screen.getByRole('button', { name: savedMenuName }));
       await user.click(screen.getByRole('button', { name: 'Remove rule' }));
 
       expect(deleteRuleBox).toHaveBeenCalledTimes(1);
       expect(deleteRuleBox).toHaveBeenCalledWith(10, 'grade:gte:0.7:percent');
-      expect(removePlaceholderRuleBox).not.toHaveBeenCalled();
+      expect(discardPlaceholderRuleBox).not.toHaveBeenCalled();
       expect(selectRuleBox).not.toHaveBeenCalled();
     });
 
     it('lets the placeholder rule box in a saved group discard itself without calling deleteRuleBox', async () => {
       const user = userEvent.setup();
       const deleteRuleBox = jest.fn();
-      const removePlaceholderRuleBox = jest.fn();
+      const discardPlaceholderRuleBox = jest.fn();
       renderRuleBox(
-        { deleteRuleBox, removePlaceholderRuleBox },
+        { deleteRuleBox, discardPlaceholderRuleBox },
         { canEdit: true, ruleKey: null, criteria: [] },
       );
 
       await user.click(screen.getByRole('button', { name: placeholderMenuName }));
       await user.click(screen.getByRole('button', { name: 'Remove rule' }));
 
-      expect(removePlaceholderRuleBox).toHaveBeenCalledTimes(1);
+      expect(discardPlaceholderRuleBox).toHaveBeenCalledTimes(1);
       expect(deleteRuleBox).not.toHaveBeenCalled();
     });
 

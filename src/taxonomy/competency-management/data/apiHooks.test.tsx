@@ -20,6 +20,7 @@ import {
   useDefaultCompetencyRuleProfile,
   useDeleteCompetencyCriteriaGroup,
   useDeleteCompetencyCriterion,
+  RuleBoxDeleteError,
   useDeleteCompetencyRuleBox,
   useUpdateCompetencyCriteriaGroupOperator,
   useUpdateCompetencyCriteriaRule,
@@ -445,7 +446,6 @@ describe('useDeleteCompetencyCriteriaGroup', () => {
 });
 
 describe('useDeleteCompetencyRuleBox', () => {
-  const groupsKey = competencyQueryKeys.competencyCriteriaGroups(tagId);
   const deleteUrl = (criterionId: number) => apiUrls.deleteCompetencyCriterion(tagId, criterionId);
   const sentDeleteUrls = (axiosMock: ReturnType<typeof initializeMocks>['axiosMock']) => (
     axiosMock.history.delete.map((request) => request.url)
@@ -508,6 +508,7 @@ describe('useDeleteCompetencyRuleBox', () => {
       failWith: 500,
       rejection: { response: { status: 500 } },
       sentIds: [101, 102],
+      removedCount: 1,
     },
     {
       name: 'a 500 on the first request',
@@ -515,6 +516,7 @@ describe('useDeleteCompetencyRuleBox', () => {
       failWith: 500,
       rejection: { response: { status: 500 } },
       sentIds: [101],
+      removedCount: 0,
     },
     {
       name: 'an error that is not from axios',
@@ -522,8 +524,9 @@ describe('useDeleteCompetencyRuleBox', () => {
       failWith: networkError,
       rejection: networkError,
       sentIds: [101, 102],
+      removedCount: 1,
     },
-  ])('stops at $name and rejects with it', async ({ failing, failWith, rejection, sentIds }) => {
+  ])('stops at $name and rejects with it', async ({ failing, failWith, rejection, sentIds, removedCount }) => {
     const { axiosMock } = initializeMocks();
     [101, 102, 103].forEach((id) => {
       axiosMock.onDelete(deleteUrl(id)).reply(() => {
@@ -544,24 +547,48 @@ describe('useDeleteCompetencyRuleBox', () => {
       }
     });
 
-    expect(caught).toMatchObject(rejection);
+    expect(caught).toBeInstanceOf(RuleBoxDeleteError);
+    expect((caught as RuleBoxDeleteError).cause).toMatchObject(rejection);
+    expect((caught as RuleBoxDeleteError).removedCount).toBe(removedCount);
     expect(sentDeleteUrls(axiosMock)).toEqual(sentIds.map(deleteUrl));
+  });
+
+  it('counts a 404 as removed in the count carried by a later failure', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onDelete(deleteUrl(101)).reply(404);
+    axiosMock.onDelete(deleteUrl(102)).reply(200, { id: 102, archived: false });
+    axiosMock.onDelete(deleteUrl(103)).reply(500);
+    axiosMock.onDelete(deleteUrl(104)).reply(200, { id: 104, archived: false });
+    const { result } = renderHook(() => useDeleteCompetencyRuleBox(), { wrapper: makeWrapper() });
+
+    let caught: unknown;
+    await act(async () => {
+      try {
+        await result.current.mutateAsync({ tagId, criterionIds: [101, 102, 103, 104] });
+      } catch (error) {
+        caught = error;
+      }
+    });
+
+    expect(caught).toBeInstanceOf(RuleBoxDeleteError);
+    expect((caught as RuleBoxDeleteError).removedCount).toBe(2);
+    expect(sentDeleteUrls(axiosMock)).toEqual([deleteUrl(101), deleteUrl(102), deleteUrl(103)]);
   });
 
   it.each([
     { outcome: 'success', status: 200 },
     { outcome: 'failure too', status: 403 },
-  ])('invalidates that tagId\'s groups query on $outcome', async ({ status }) => {
-    const { axiosMock, queryClient } = initializeMocks();
+  ])('refetches that tagId\'s active groups query on $outcome', async ({ status }) => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, emptyGroupsBody);
     axiosMock.onDelete(deleteUrl(101)).reply(status, { id: 101, archived: false });
-    queryClient.setQueryData(groupsKey, { groups: [], criteria: [] });
-    const { result } = renderHook(() => useDeleteCompetencyRuleBox(), { wrapper: makeWrapper() });
+    const result = await renderMutationWithActiveGroupsQuery(useDeleteCompetencyRuleBox);
 
     await act(async () => {
-      await result.current.mutateAsync({ tagId, criterionIds: [101] }).catch(() => {});
+      await result.current.mutation.mutateAsync({ tagId, criterionIds: [101] }).catch(() => {});
     });
 
-    expect(queryClient.getQueryState(groupsKey)?.isInvalidated).toBe(true);
+    await waitFor(() => expect(criteriaGroupsRequests(axiosMock)).toHaveLength(2));
   });
 
   it('refetches the groups once for the whole run and stays pending until that refetch has landed', async () => {

@@ -1986,7 +1986,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
     it('is kept while a delete is in flight, since its row cannot take focus yet', () => {
       const consumeKeyboardFocusRequest = jest.fn();
-      renderWithRequest({ consumeKeyboardFocusRequest, isDeletingGroupOrCriterion: true });
+      renderWithRequest({ consumeKeyboardFocusRequest, isDeletingGroupOrRuleBoxOrCriterion: true });
 
       expect(consumeKeyboardFocusRequest).not.toHaveBeenCalled();
     });

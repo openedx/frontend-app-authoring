@@ -106,7 +106,7 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     ],
     [
       'a group is being removed',
-      { isDeletingGroupOrCriterion: true },
+      { isDeletingGroupOrRuleBoxOrCriterion: true },
       'Wait for the removal to finish before adding another.',
     ],
     [
@@ -207,7 +207,7 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     });
 
     it.each([
-      ['a delete', { isDeletingGroupOrCriterion: true }],
+      ['a delete', { isDeletingGroupOrRuleBoxOrCriterion: true }],
       ['a create', { isAssociating: true }],
     ])('disables the menu button while %s is in flight', (_name, overrides) => {
       renderBox(overrides);
@@ -314,7 +314,7 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
       renderBox({
         keyboardFocusRequest: { kind: 'menu', groupId: 10 },
         consumeKeyboardFocusRequest,
-        isDeletingGroupOrCriterion: true,
+        isDeletingGroupOrRuleBoxOrCriterion: true,
       });
 
       expect(consumeKeyboardFocusRequest).not.toHaveBeenCalled();

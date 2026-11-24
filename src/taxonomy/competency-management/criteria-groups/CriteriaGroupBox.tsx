@@ -59,7 +59,7 @@ const CriteriaGroupBox = (
     isAssociating,
     courseList,
     deleteGroup,
-    isDeletingGroupOrCriterion,
+    isDeletingGroupOrRuleBoxOrCriterion,
     discardPlaceholderGroup,
     keyboardFocusRequest,
     consumeKeyboardFocusRequest,
@@ -103,7 +103,7 @@ const CriteriaGroupBox = (
   }, [takesKeyboardFocus, selectionMoved, consumeKeyboardFocusRequest]);
 
   const menuToggleRef = useRef<HTMLButtonElement>(null);
-  const isMenuDisabled = isDeletingGroupOrCriterion || isAssociating;
+  const isMenuDisabled = isDeletingGroupOrRuleBoxOrCriterion || isAssociating;
   // Waits for the toggle to be enabled again, since a disabled button cannot take focus.
   const takesMenuFocus = group !== undefined
     && keyboardFocusRequest?.kind === 'menu'
@@ -147,7 +147,7 @@ const CriteriaGroupBox = (
   } else if (courseList.isPlaceholderData) {
     // A reload can list other courses, which would discard an unsaved box started now.
     disabledReason = 'loading';
-  } else if (isDeletingGroupOrCriterion) {
+  } else if (isDeletingGroupOrRuleBoxOrCriterion) {
     disabledReason = 'deleting';
   } else if (hasPlaceholder) {
     disabledReason = 'placeholder';

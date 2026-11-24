@@ -65,8 +65,8 @@ const RuleBox = ({
     placeholderDuplicateRejected,
     placeholderDuplicateRejectionCount,
     deleteRuleBox,
-    removePlaceholderRuleBox,
-    isDeletingGroupOrCriterion,
+    discardPlaceholderRuleBox,
+    isDeletingGroupOrRuleBoxOrCriterion,
   } = useCompetencyAssociations();
   const isSelected = selection?.groupId === groupId && selection?.ruleKey === ruleKey;
   const isPlaceholder = ruleKey === null;
@@ -101,7 +101,7 @@ const RuleBox = ({
       return;
     }
     if (ruleKey === null) {
-      removePlaceholderRuleBox();
+      discardPlaceholderRuleBox();
     } else {
       deleteRuleBox(groupId, ruleKey);
     }
@@ -160,7 +160,7 @@ const RuleBox = ({
                       : intl.formatMessage(messages.ruleBoxMoreActionsLabel, {
                         score: formatScoreSummary(intl, rule.rulePayload),
                       })}
-                    disabled={isDeletingGroupOrCriterion}
+                    disabled={isDeletingGroupOrRuleBoxOrCriterion}
                   />
                   <Dropdown.Menu>
                     <Dropdown.Item onClick={handleRemoveClick}>

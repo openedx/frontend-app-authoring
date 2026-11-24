@@ -157,7 +157,7 @@ export function lastRuleKeyIn(
   return boxes.length ? boxes[boxes.length - 1].key : null;
 }
 
-/** The rule box to focus once the focused `vanishedKey` is gone from a surviving group: the nearest survivor above
+/** The rule box to select once the selected `vanishedKey` is gone from a surviving group: the nearest survivor above
  * it in `keysBefore`, else the nearest below, else the first of `keysAfter`, else `null`.
  */
 export function ruleKeyAfterRemoval(keysBefore: string[], vanishedKey: string, keysAfter: string[]): string | null {

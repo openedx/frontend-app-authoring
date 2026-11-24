@@ -184,30 +184,48 @@ export const useDeleteCompetencyCriterion = () => {
 };
 
 /**
- * Deletes a rule box's criteria, one request at a time: the backend removes a group only when a delete finds
- * it empty, so concurrent deletes would each see the others' criteria and leave an empty group stored.
- * Stops at the first failure; a 404 means the criterion is already gone, so it doesn't count as one.
+ * The failure of a rule box delete that stopped at its first non-404 error.
+ * `removedCount` is how many of the box's criteria were already gone by then, a 404 included, so a caller
+ * can tell "nothing was removed" from "part of the box was removed" without reading the refetched data,
+ * which is stale when that refetch fails too.
+ */
+export class RuleBoxDeleteError extends Error {
+  readonly removedCount: number;
+
+  constructor(removedCount: number, cause: unknown) {
+    super(cause instanceof Error ? cause.message : 'Rule box delete failed', { cause });
+    this.name = 'RuleBoxDeleteError';
+    this.removedCount = removedCount;
+  }
+}
+
+/**
+ * Deletes a rule box's criteria, one request at a time. The backend locks the competency's tag row during a
+ * criterion delete, so concurrent requests would not corrupt the group. Sequential requests are still right
+ * because a failed run has to stop at the first failure with a known number of criteria removed, which a
+ * parallel run cannot report.
+ * Stops at the first failure and throws a `RuleBoxDeleteError` carrying that number; a 404 means the criterion
+ * is already gone, so it counts as removed and doesn't stop the run.
  * `onSettled` returns the refetch promise, so `isPending` stays true until the panel is fresh: otherwise the
  * stale box would briefly show an enabled ⋮ whose next click re-sends ids that are already gone.
  */
 export const useDeleteCompetencyRuleBox = () => {
   const queryClient = useQueryClient();
-  return useMutation<void, AxiosError, { tagId: number; criterionIds: number[]; }>({
+  return useMutation<void, RuleBoxDeleteError, { tagId: number; criterionIds: number[]; }>({
     mutationFn: async ({ tagId, criterionIds }) => {
+      let removedCount = 0;
       for (const criterionId of criterionIds) {
         try {
           await api.deleteCompetencyCriterion(tagId, criterionId);
         } catch (error) {
           if (!isAxiosError(error) || error.response?.status !== 404) {
-            throw error;
+            throw new RuleBoxDeleteError(removedCount, error);
           }
         }
+        removedCount += 1;
       }
     },
-    onSettled: (_data, _error, { tagId }) =>
-      queryClient.invalidateQueries({
-        queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId),
-      }),
+    onSettled: (_data, _error, { tagId }) => refreshCompetencyCriteriaGroups(queryClient, tagId),
   });
 };
 

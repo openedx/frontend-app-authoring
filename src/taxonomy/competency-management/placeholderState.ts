@@ -31,7 +31,7 @@ export type PlaceholderAction =
   | { type: 'addPlaceholderGroup'; parentRuleGroupId: number; }
   | { type: 'setPlaceholderLogicOperator'; logicOperator: CompetencyGroupLogicOperator; }
   | { type: 'setPlaceholderRulePayload'; rulePayload: GradeRulePayload; }
-  | { type: 'discardPlaceholder'; selection?: CriteriaSelection | null; };
+  | { type: 'discardPlaceholder'; };
 
 export function reducePlaceholderAction(state: ProviderState, action: PlaceholderAction): ProviderState {
   switch (action.type) {
@@ -52,7 +52,7 @@ export function reducePlaceholderAction(state: ProviderState, action: Placeholde
     case 'setPlaceholderLogicOperator':
       return { ...state, placeholder: { ...state.placeholder, logicOperator: action.logicOperator } };
     case 'discardPlaceholder':
-      return { ...state, selection: action.selection ?? null, placeholder: initialPlaceholder };
+      return { ...state, selection: null, placeholder: { ...state.placeholder, justAdded: false } };
     case 'setPlaceholderRulePayload':
       return {
         ...state,
@@ -107,7 +107,7 @@ export interface PlaceholderActions {
   addPlaceholderGroup: (parentRuleGroupId: number) => void;
   setPlaceholderLogicOperator: (logicOperator: CompetencyGroupLogicOperator) => void;
   setPlaceholderRulePayload: (rulePayload: GradeRulePayload) => void;
-  discardPlaceholder: (next?: CriteriaSelection | null) => void;
+  discardPlaceholder: () => void;
 }
 
 export function usePlaceholderActions(dispatch: Dispatch<PlaceholderAction>): PlaceholderActions {
@@ -127,8 +127,8 @@ export function usePlaceholderActions(dispatch: Dispatch<PlaceholderAction>): Pl
     dispatch({ type: 'setPlaceholderRulePayload', rulePayload });
   }, [dispatch]);
 
-  const discardPlaceholder = useCallback((next: CriteriaSelection | null = null) => {
-    dispatch({ type: 'discardPlaceholder', selection: next });
+  const discardPlaceholder = useCallback(() => {
+    dispatch({ type: 'discardPlaceholder' });
   }, [dispatch]);
 
   return {
