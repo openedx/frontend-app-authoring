@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import type { MessageDescriptor } from 'react-intl';
 import {
   Alert,
@@ -230,10 +230,6 @@ const CourseUnit = () => {
   }, !!upstreamLibraryId);
   const canViewUpstreamLibrary = !!libraryPermissions?.canViewLibrary;
 
-  useEffect(() => {
-    document.title = getPageHeadTitle('', unitTitle);
-  }, [unitTitle]);
-
   useScrollToLastPosition();
 
   if (isLoading) {
@@ -251,6 +247,9 @@ const CourseUnit = () => {
   return (
     <UnitSidebarProvider readOnly={readOnly}>
       <UnitSidebarPagesProvider>
+        <Helmet>
+          <title>{getPageHeadTitle('', unitTitle)}</title>
+        </Helmet>
         <Container fluid className="course-unit px-4">
           <section className="course-unit-container mb-4 mt-5">
             <TransitionReplace>

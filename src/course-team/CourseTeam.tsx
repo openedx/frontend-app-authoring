@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -76,8 +77,6 @@ const CourseTeam = () => {
     }
   }, [shouldRedirectToAdminConsole, courseId]);
 
-  document.title = getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle));
-
   // The redirect is fired from the effect above, so keep the spinner up while the browser leaves.
   if (isLoadingPermissions || shouldRedirectToAdminConsole) {
     return <Loading />;
@@ -102,6 +101,9 @@ const CourseTeam = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
+      </Helmet>
       <Container size="xl" className="course-team px-4">
         <section className="course-team-container mb-4">
           <Layout

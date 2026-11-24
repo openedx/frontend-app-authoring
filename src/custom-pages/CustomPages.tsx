@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import {
   Routes,
   Route,
@@ -51,8 +52,6 @@ const CustomPages = () => {
   const [currentPage, setCurrentPage] = useState<string | undefined>();
   const [isOpen, open, close] = useToggle(false);
   const { courseId, courseDetails } = useCourseAuthoringContext();
-
-  document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
 
   const config = getConfig();
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
@@ -116,6 +115,9 @@ const CustomPages = () => {
   }
   return (
     <Container size="xl" className="p-4 pt-5">
+      <Helmet>
+        <title>{getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading))}</title>
+      </Helmet>
       <div className="small gray-700">
         <Breadcrumb
           ariaLabel="Custom Page breadcrumbs"
