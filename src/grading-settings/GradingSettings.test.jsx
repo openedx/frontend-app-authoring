@@ -4,6 +4,7 @@ import {
   render,
   screen,
   initializeMocks,
+  waitFor,
 } from '@src/testUtils';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import { getCourseSettingsApiUrl } from '@src/data/api';
@@ -11,6 +12,7 @@ import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 
 import gradingSettings from './__mocks__/gradingSettings';
+import assignmentMessages from './assignment-section/messages';
 import { getGradingSettingsApiUrl, getAuthoringGradingApiUrl } from './data/api';
 import * as apiHooks from './data/apiHooks';
 import GradingSettings from './GradingSettings';
@@ -117,6 +119,59 @@ describe('<GradingSettings />', () => {
     expect(saveAlert).toBeNull();
     // Ensure original save button text is no longer present because the prompt closed
     expect(screen.queryByText(messages.buttonSaveText.defaultMessage)).toBeNull();
+  });
+
+  it('should stop saving and show error alert when save fails', async () => {
+    axiosMock.onPatch(getAuthoringGradingApiUrl(courseId)).reply(500);
+    const segmentInputs = await screen.findAllByTestId('grading-scale-segment-input');
+    fireEvent.change(segmentInputs[1], { target: { value: 'Test' } });
+    testSaving();
+    await screen.findByText(messages.alertFail.defaultMessage);
+    // Give a retry loop time to fire before counting requests.
+    await act(async () => {
+      await new Promise((resolve) => {
+        setTimeout(resolve, 100);
+      });
+    });
+    expect(axiosMock.history.patch).toHaveLength(1);
+    expect(screen.getByText(messages.alertFail.defaultMessage)).toBeVisible();
+    expect(screen.getByText(messages.buttonSaveText.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('should send one request when saving again after a failed save', async () => {
+    axiosMock.onPatch(getAuthoringGradingApiUrl(courseId)).reply(500);
+    const segmentInputs = await screen.findAllByTestId('grading-scale-segment-input');
+    fireEvent.change(segmentInputs[1], { target: { value: 'Test' } });
+    testSaving();
+    await screen.findByText(messages.alertFail.defaultMessage);
+    axiosMock.onPatch(getAuthoringGradingApiUrl(courseId)).reply(200, {});
+    fireEvent.click(screen.getByText(messages.buttonSaveText.defaultMessage));
+    await screen.findByText(messages.alertSuccess.defaultMessage);
+    await act(async () => {
+      await new Promise((resolve) => {
+        setTimeout(resolve, 100);
+      });
+    });
+    expect(axiosMock.history.patch).toHaveLength(2);
+  });
+
+  it('should hide the save error alert on cancel', async () => {
+    axiosMock.onPatch(getAuthoringGradingApiUrl(courseId)).reply(500);
+    const segmentInputs = await screen.findAllByTestId('grading-scale-segment-input');
+    fireEvent.change(segmentInputs[1], { target: { value: 'Test' } });
+    testSaving();
+    await screen.findByText(messages.alertFail.defaultMessage);
+    fireEvent.click(screen.getByText(messages.buttonCancelText.defaultMessage));
+    await waitFor(() => {
+      expect(screen.queryByText(messages.alertFail.defaultMessage)).not.toBeInTheDocument();
+    });
+  });
+
+  it('should allow saving after deleting an assignment type with an invalid field', async () => {
+    const weightInputs = await screen.findAllByTestId('assignment-weight-input');
+    fireEvent.change(weightInputs[0], { target: { value: '' } });
+    fireEvent.click(screen.getAllByText(assignmentMessages.assignmentDeleteButton.defaultMessage)[0]);
+    expect(await screen.findByText(messages.buttonSaveText.defaultMessage)).toBeInTheDocument();
   });
 
   it('should handle being offline gracefully', async () => {
