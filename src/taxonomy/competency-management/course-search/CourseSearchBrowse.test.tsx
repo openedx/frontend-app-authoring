@@ -15,7 +15,9 @@ import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { CompetencyAssociationsProvider } from '../CompetencyAssociationsContext';
 import {
   byTextContent,
+  criterion,
   defaultProfileResponse,
+  group,
   mockHeldGroupsRefetch,
   MockCompetencyAssociationsProvider,
   mockScrollIntoView,
@@ -1820,7 +1822,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
     });
   });
 
-  describe('removing a rule box (#833)', () => {
+  describe('removing a rule box', () => {
     mockScrollIntoView();
 
     it('disables a subsection\'s select button, in the courses panel, until the refetch lands', async () => {
@@ -1828,32 +1830,18 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       const course = buildCourse();
       const tagId = Number(activeCompetency.id);
       const groupsUrl = competencyManagementApiUrls.competencyCriteriaGroups(tagId);
-      const group = { tagId, name: 'x', ordering: 0, logicOperator: 'AND', archived: false } as const;
       const withOneAssociation = {
         groups: [
-          { ...group, id: 500, parentId: null, courseKey: null, name: 'root' },
-          { ...group, id: 1, parentId: 500, courseKey: course.courseKey, name: 'course' },
-          { ...group, id: 10, parentId: 1, courseKey: null, name: 'leaf' },
+          group(500, null, null, 0),
+          group(1, 500, course.courseKey, 0),
+          group(10, 1, null, 0),
         ],
-        criteria: [
-          {
-            id: 901,
-            objectId: 'sub-1a',
-            groupId: 10,
-            ruleProfileId: 1,
-            ruleTypeOverride: null,
-            rulePayloadOverride: null,
-          },
-        ],
+        criteria: [criterion(901, 'sub-1a', 10)],
         criteriaCount: 1,
         totalCriteriaCount: 1,
       };
-      const reads = mockHeldGroupsRefetch(axiosMock, tagId, withOneAssociation, {
-        groups: [],
-        criteria: [],
-        criteriaCount: 0,
-        totalCriteriaCount: 0,
-      });
+      const withNoAssociations = { groups: [], criteria: [], criteriaCount: 0, totalCriteriaCount: 0 };
+      const reads = mockHeldGroupsRefetch(axiosMock, tagId, withOneAssociation, withNoAssociations);
       axiosMock.onDelete(competencyManagementApiUrls.deleteCompetencyCriterion(tagId, 901))
         .reply(200, { id: 901, archived: false });
       axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([course]));

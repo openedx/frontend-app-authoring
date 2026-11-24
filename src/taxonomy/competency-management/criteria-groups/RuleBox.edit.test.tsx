@@ -132,27 +132,26 @@ describe('<RuleBox /> editing (#794)', () => {
     expect(selectRuleBox).not.toHaveBeenCalled();
   });
 
-  describe('rule box menu (#833)', () => {
-    const savedMenuName = 'More actions for the rule with a score of 70% or higher';
+  describe('rule box menu', () => {
+    const saved70PercentRuleBoxMenuName = 'More actions for the rule with a score of 70% or higher';
     const placeholderMenuName = 'More actions for the new rule';
 
     it('shows a menu button named after the box\'s score only when the author can edit', () => {
       const { unmount } = renderRuleBox({}, { canEdit: true });
-      expect(screen.getByRole('button', { name: savedMenuName })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: saved70PercentRuleBoxMenuName })).toBeInTheDocument();
       unmount();
 
       renderRuleBox({}, { canEdit: false });
-      expect(screen.queryByRole('button', { name: savedMenuName })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: saved70PercentRuleBoxMenuName })).not.toBeInTheDocument();
     });
 
     it('calls deleteRuleBox with its group and key, without focusing the box, when Remove rule is chosen', async () => {
-      const user = userEvent.setup();
       const deleteRuleBox = jest.fn();
       const discardPlaceholderRuleBox = jest.fn();
       const selectRuleBox = jest.fn();
       renderRuleBox({ deleteRuleBox, discardPlaceholderRuleBox, selectRuleBox }, { canEdit: true });
 
-      await user.click(screen.getByRole('button', { name: savedMenuName }));
+      await user.click(screen.getByRole('button', { name: saved70PercentRuleBoxMenuName }));
       await user.click(screen.getByRole('button', { name: 'Remove rule' }));
 
       expect(deleteRuleBox).toHaveBeenCalledTimes(1);
@@ -162,7 +161,6 @@ describe('<RuleBox /> editing (#794)', () => {
     });
 
     it('lets the placeholder rule box in a saved group discard itself without calling deleteRuleBox', async () => {
-      const user = userEvent.setup();
       const deleteRuleBox = jest.fn();
       const discardPlaceholderRuleBox = jest.fn();
       renderRuleBox(
@@ -178,7 +176,6 @@ describe('<RuleBox /> editing (#794)', () => {
     });
 
     it.each(['{Enter}', ' '])('opens from the keyboard and removes the rule with %j', async (activationKey) => {
-      const user = userEvent.setup();
       const deleteRuleBox = jest.fn();
       renderRuleBox({ deleteRuleBox }, { canEdit: true });
 
@@ -187,7 +184,7 @@ describe('<RuleBox /> editing (#794)', () => {
       await user.tab();
       expect(screen.getByRole('button', { name: 'With a score of 70% or higher' })).toHaveFocus();
       await user.tab();
-      expect(screen.getByRole('button', { name: savedMenuName })).toHaveFocus();
+      expect(screen.getByRole('button', { name: saved70PercentRuleBoxMenuName })).toHaveFocus();
       await user.keyboard('{Enter}');
       await user.keyboard('{ArrowDown}');
       expect(screen.getByRole('button', { name: 'Remove rule' })).toHaveFocus();

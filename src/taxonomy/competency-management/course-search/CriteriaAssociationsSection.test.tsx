@@ -112,7 +112,7 @@ describe('<CriteriaAssociationsSection />', () => {
       .toBeInTheDocument();
   });
 
-  describe('removing a rule box (#833)', () => {
+  describe('removing a rule box', () => {
     mockScrollIntoView();
 
     const courseKey = 'course-v1:OrgX+CS101+2024';
@@ -138,30 +138,30 @@ describe('<CriteriaAssociationsSection />', () => {
       ruleTypeOverride: 'grade',
       rulePayloadOverride: { op: 'gte', value: 0.8, scale: 'percent' },
     };
-    const withBothBoxes: CompetencyCriteriaGroupsResponse = {
+    const group10With70And80PercentRuleBoxesResponse: CompetencyCriteriaGroupsResponse = {
       groups: hierarchy,
       criteria: [defaultRuleCriterion, eightyPercentCriterion],
       criteriaCount: 2,
       totalCriteriaCount: 2,
     };
-    const onlyDefaultBox: CompetencyCriteriaGroupsResponse = {
+    const group10With70PercentRuleBoxResponse: CompetencyCriteriaGroupsResponse = {
       groups: hierarchy,
       criteria: [defaultRuleCriterion],
       criteriaCount: 1,
       totalCriteriaCount: 1,
     };
-    const nothingLeft: CompetencyCriteriaGroupsResponse = {
+    const noGroupsOrCriteriaResponse: CompetencyCriteriaGroupsResponse = {
       groups: [],
       criteria: [],
       criteriaCount: 0,
       totalCriteriaCount: 0,
     };
     const groupsUrl = apiUrls.competencyCriteriaGroups(tagId);
-    const eightyPercentToggleName = 'More actions for the rule with a score of 80% or higher';
-    const defaultToggleName = 'More actions for the rule with a score of 70% or higher';
+    const eightyPercentRuleBoxMenuName = 'More actions for the rule with a score of 80% or higher';
+    const seventyPercentRuleBoxMenuName = 'More actions for the rule with a score of 70% or higher';
 
     /** `mockHeldGroupsRefetch`, plus the profile, outline and delete replies a run needs. */
-    const mockRun = (
+    const mockServerRepliesForRuleBoxDelete = (
       initial: CompetencyCriteriaGroupsResponse,
       refetched: CompetencyCriteriaGroupsResponse,
       deleteStatus = 200,
@@ -200,16 +200,24 @@ describe('<CriteriaAssociationsSection />', () => {
         control.release();
       });
 
-    const removeEightyPercentRuleFromKeyboard = async (
-      deleteStatus: number,
-      refetched: CompetencyCriteriaGroupsResponse,
-    ) => {
+    /** Removes the 80% rule box with the keyboard. The panel starts from `startingResponse`, the delete requests
+     * answer `deleteStatus`, and the panel refetches `responseAfterRefetch`.
+     */
+    const removeEightyPercentRuleFromKeyboard = async ({
+      startingResponse,
+      deleteStatus,
+      responseAfterRefetch,
+    }: {
+      startingResponse: CompetencyCriteriaGroupsResponse;
+      deleteStatus: number;
+      responseAfterRefetch: CompetencyCriteriaGroupsResponse;
+    }) => {
       const user = userEvent.setup();
-      const run = mockRun(withBothBoxes, refetched, deleteStatus);
+      const run = mockServerRepliesForRuleBoxDelete(startingResponse, responseAfterRefetch, deleteStatus);
       renderSection();
 
-      const toggle = await screen.findByRole('button', { name: eightyPercentToggleName });
-      act(() => toggle.focus());
+      const menuButton = await screen.findByRole('button', { name: eightyPercentRuleBoxMenuName });
+      act(() => menuButton.focus());
       await user.keyboard('{Enter}');
       await user.keyboard('{ArrowDown}');
       expect(screen.getByRole('button', { name: 'Remove rule' })).toHaveFocus();
@@ -220,7 +228,11 @@ describe('<CriteriaAssociationsSection />', () => {
     };
 
     it('returns keyboard focus to the group\'s header once the rule is removed', async () => {
-      await removeEightyPercentRuleFromKeyboard(200, onlyDefaultBox);
+      await removeEightyPercentRuleFromKeyboard({
+        startingResponse: group10With70And80PercentRuleBoxesResponse,
+        deleteStatus: 200,
+        responseAfterRefetch: group10With70PercentRuleBoxResponse,
+      });
 
       await waitFor(() =>
         expect(screen.getByRole('button', { name: 'By completing all of the following' })).toHaveFocus()
@@ -229,21 +241,25 @@ describe('<CriteriaAssociationsSection />', () => {
     });
 
     it('returns keyboard focus to the group\'s header when the removal fails, and keeps the rule', async () => {
-      await removeEightyPercentRuleFromKeyboard(500, withBothBoxes);
+      await removeEightyPercentRuleFromKeyboard({
+        startingResponse: group10With70And80PercentRuleBoxesResponse,
+        deleteStatus: 500,
+        responseAfterRefetch: group10With70And80PercentRuleBoxesResponse,
+      });
 
       await waitFor(() =>
         expect(screen.getByRole('button', { name: 'By completing all of the following' })).toHaveFocus()
       );
-      expect(screen.getByRole('button', { name: eightyPercentToggleName })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: eightyPercentRuleBoxMenuName })).toBeInTheDocument();
     });
 
     it('leaves the empty state, with no course or group card, when the last box on the page is removed', async () => {
       const user = userEvent.setup();
-      const run = mockRun(onlyDefaultBox, nothingLeft);
+      const run = mockServerRepliesForRuleBoxDelete(group10With70PercentRuleBoxResponse, noGroupsOrCriteriaResponse);
       renderSection();
       expect(await screen.findByText('Demo Course')).toBeInTheDocument();
 
-      await user.click(await screen.findByRole('button', { name: defaultToggleName }));
+      await user.click(await screen.findByRole('button', { name: seventyPercentRuleBoxMenuName }));
       await user.click(screen.getByRole('button', { name: 'Remove rule' }));
       await waitForHeldRefetch();
       await releaseRefetch(run);
@@ -255,12 +271,35 @@ describe('<CriteriaAssociationsSection />', () => {
       expect(screen.queryByRole('button', { name: /More actions/ })).not.toBeInTheDocument();
     });
 
-    it('disables every actions menu on the panel until the refetch lands', async () => {
+    it('enables the add controls again once the new rule box is discarded through its menu', async () => {
       const user = userEvent.setup();
-      const run = mockRun(withBothBoxes, onlyDefaultBox);
+      mockServerRepliesForRuleBoxDelete(group10With70PercentRuleBoxResponse, group10With70PercentRuleBoxResponse);
       renderSection();
 
-      await user.click(await screen.findByRole('button', { name: eightyPercentToggleName }));
+      await user.click(await screen.findByRole('button', { name: 'Add Rule' }));
+      // The new rule box opens its score popover, which hides the rest of the page until it closes.
+      await user.keyboard('{Escape}');
+
+      expect(screen.getByRole('button', { name: 'Add Rule' })).toHaveAttribute('aria-disabled', 'true');
+      expect(screen.getByRole('button', { name: 'Add Rule Group' })).toHaveAttribute('aria-disabled', 'true');
+
+      await user.click(screen.getByRole('button', { name: 'More actions for the new rule' }));
+      await user.click(screen.getByRole('button', { name: 'Remove rule' }));
+
+      expect(screen.queryByRole('button', { name: 'More actions for the new rule' })).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Add Rule' })).toHaveAttribute('aria-disabled', 'false');
+      expect(screen.getByRole('button', { name: 'Add Rule Group' })).toHaveAttribute('aria-disabled', 'false');
+    });
+
+    it('disables every actions menu on the panel until the refetch lands', async () => {
+      const user = userEvent.setup();
+      const run = mockServerRepliesForRuleBoxDelete(
+        group10With70And80PercentRuleBoxesResponse,
+        group10With70PercentRuleBoxResponse,
+      );
+      renderSection();
+
+      await user.click(await screen.findByRole('button', { name: eightyPercentRuleBoxMenuName }));
       await user.click(screen.getByRole('button', { name: 'Remove rule' }));
       await waitForHeldRefetch();
 

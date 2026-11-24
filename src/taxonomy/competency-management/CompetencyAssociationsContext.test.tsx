@@ -46,7 +46,7 @@ let queryClient: ReturnType<typeof initializeMocks>['queryClient'];
 let user: ReturnType<typeof userEvent.setup>;
 
 const otherTagId = 43;
-const gteKey = 'grade:gte:0.7:percent';
+const gte70PercentRuleKey = 'grade:gte:0.7:percent';
 const eqKey = 'grade:eq:1:percent';
 
 const groupsUrl = apiUrls.competencyCriteriaGroups(tagId);
@@ -112,11 +112,11 @@ const afterRemovingSubAResponse = {
   criteria: twoCriteriaInGroupResponse.criteria.filter((item) => item.id !== 901),
 };
 
-const rule80Key = 'grade:gte:0.8:percent';
-const rule90Key = 'grade:gte:0.9:percent';
+const gte80PercentRuleKey = 'grade:gte:0.8:percent';
+const gte90PercentRuleKey = 'grade:gte:0.9:percent';
 
 /** A criterion in group `groupId` at `percent`, or one resolving through the 70% default profile when `percent` is null. */
-const criterionAt = (id: number, groupId: number, percent: number | null) => (
+const criterionInGroupAtScore = (id: number, groupId: number, percent: number | null) => (
   percent === null
     ? criterion(id, `sub-${id}`, groupId)
     : criterion(id, `sub-${id}`, groupId, {
@@ -126,36 +126,54 @@ const criterionAt = (id: number, groupId: number, percent: number | null) => (
     })
 );
 
-const withoutCriteria = (response: CompetencyCriteriaGroupsResponse, criterionIds: number[]) => ({
+const responseWithoutCriteria = (response: CompetencyCriteriaGroupsResponse, criterionIds: number[]) => ({
   ...response,
   criteria: response.criteria.filter((item) => !criterionIds.includes(item.id)),
 });
 
-/** Group 10 holds three rule boxes (70%, 80%, 90%) and group 11 one, so a box can vanish while its group survives. */
-const threeBoxesInGroupResponse: CompetencyCriteriaGroupsResponse = {
+// Criterion ids in `threeRuleBoxesInGroup10Response` and `fourRuleBoxesInGroup10Response`, named by the rule box each
+// belongs to. Each box in those responses holds one criterion. `twoGroupsWithCriteriaResponse` gives group 10 and
+// group 11 one 70% box each, with the same ids as the 70% boxes here.
+const criterionIdIn70PercentRuleBoxOfGroup10 = 901;
+const criterionIdIn80PercentRuleBoxOfGroup10 = 903;
+const criterionIdIn90PercentRuleBoxOfGroup10 = 904;
+const criterionIdIn95PercentRuleBoxOfGroup10 = 907;
+const criterionIdIn70PercentRuleBoxOfGroup11 = 902;
+
+/** Group 10 holds three rule boxes (70%, 80%, 90%) and group 11 one (70%), so a box can vanish while its group
+ * survives.
+ */
+const threeRuleBoxesInGroup10Response: CompetencyCriteriaGroupsResponse = {
   ...twoGroupsResponse,
   criteria: [
-    criterionAt(901, 10, null),
-    criterionAt(903, 10, 80),
-    criterionAt(904, 10, 90),
-    criterionAt(902, 11, null),
+    criterionInGroupAtScore(criterionIdIn70PercentRuleBoxOfGroup10, 10, null),
+    criterionInGroupAtScore(criterionIdIn80PercentRuleBoxOfGroup10, 10, 80),
+    criterionInGroupAtScore(criterionIdIn90PercentRuleBoxOfGroup10, 10, 90),
+    criterionInGroupAtScore(criterionIdIn70PercentRuleBoxOfGroup11, 11, null),
   ],
 };
 
-/** `threeBoxesInGroupResponse` plus a fourth box (95%) in group 10, so a removed box has a neighbor on each side. */
-const fourBoxesInGroupResponse: CompetencyCriteriaGroupsResponse = {
-  ...threeBoxesInGroupResponse,
-  criteria: [...threeBoxesInGroupResponse.criteria, criterionAt(907, 10, 95)],
+/** `threeRuleBoxesInGroup10Response` plus a fourth box (95%) in group 10, so a removed box has a neighbor on each
+ * side.
+ */
+const fourRuleBoxesInGroup10Response: CompetencyCriteriaGroupsResponse = {
+  ...threeRuleBoxesInGroup10Response,
+  criteria: [
+    ...threeRuleBoxesInGroup10Response.criteria,
+    criterionInGroupAtScore(criterionIdIn95PercentRuleBoxOfGroup10, 10, 95),
+  ],
 };
 
-/** Group 10's 70% box holds three criteria (901, 905, 906) and its 80% box one (903). */
-const boxOfThreeResponse: CompetencyCriteriaGroupsResponse = {
+// Criterion ids in `threeCriteriaInOneRuleBoxResponse`, in the order the API lists them.
+const criterionIdsIn70PercentRuleBox = [901, 905, 906];
+const criterionIdsIn80PercentRuleBox = [903];
+
+/** Group 10 holds a 70% rule box with three criteria and an 80% rule box with one. */
+const threeCriteriaInOneRuleBoxResponse: CompetencyCriteriaGroupsResponse = {
   ...singleGroupResponse,
   criteria: [
-    criterionAt(901, 10, null),
-    criterionAt(905, 10, null),
-    criterionAt(906, 10, null),
-    criterionAt(903, 10, 80),
+    ...criterionIdsIn70PercentRuleBox.map((id) => criterionInGroupAtScore(id, 10, null)),
+    ...criterionIdsIn80PercentRuleBox.map((id) => criterionInGroupAtScore(id, 10, 80)),
   ],
 };
 
@@ -194,14 +212,14 @@ const TestConsumer = () => {
   const ctx = useCompetencyAssociations();
   const actions: Array<[string, () => void]> = [
     ['Select group 999', () => ctx.selectGroup(999)],
-    ['Select rule box 999 gte', () => ctx.selectRuleBox(999, gteKey)],
+    ['Select rule box 999 gte', () => ctx.selectRuleBox(999, gte70PercentRuleKey)],
     ['Select group 10', () => ctx.selectGroup(10)],
     ['Select group 20', () => ctx.selectGroup(20)],
     ['Select group 21', () => ctx.selectGroup(21)],
-    ['Select rule box 10 gte', () => ctx.selectRuleBox(10, gteKey)],
-    ['Select rule box 10 80', () => ctx.selectRuleBox(10, rule80Key)],
-    ['Select rule box 10 90', () => ctx.selectRuleBox(10, rule90Key)],
-    ['Select rule box 21 gte', () => ctx.selectRuleBox(21, gteKey)],
+    ['Select rule box 10 gte', () => ctx.selectRuleBox(10, gte70PercentRuleKey)],
+    ['Select the 80% rule box in group 10', () => ctx.selectRuleBox(10, gte80PercentRuleKey)],
+    ['Select the 90% rule box in group 10', () => ctx.selectRuleBox(10, gte90PercentRuleKey)],
+    ['Select rule box 21 gte', () => ctx.selectRuleBox(21, gte70PercentRuleKey)],
     ['Select rule box 12 eq', () => ctx.selectRuleBox(12, eqKey)],
     ['Expand course A', () => ctx.notifyCourseExpanded(courseA)],
     ['Expand course B', () => ctx.notifyCourseExpanded(courseB)],
@@ -228,26 +246,26 @@ const TestConsumer = () => {
       },
     ],
     ['Discard placeholder group', () => ctx.discardPlaceholderGroup()],
-    ['Delete rule box 10 70', () => ctx.deleteRuleBox(10, gteKey)],
-    ['Delete rule box 10 80', () => ctx.deleteRuleBox(10, rule80Key)],
-    ['Delete rule box 10 90', () => ctx.deleteRuleBox(10, rule90Key)],
-    ['Delete rule box 11 70', () => ctx.deleteRuleBox(11, gteKey)],
-    ['Delete rule box 20 70', () => ctx.deleteRuleBox(20, gteKey)],
+    ['Delete the 70% rule box in group 10', () => ctx.deleteRuleBox(10, gte70PercentRuleKey)],
+    ['Delete the 80% rule box in group 10', () => ctx.deleteRuleBox(10, gte80PercentRuleKey)],
+    ['Delete the 90% rule box in group 10', () => ctx.deleteRuleBox(10, gte90PercentRuleKey)],
+    ['Delete the 70% rule box in group 11', () => ctx.deleteRuleBox(11, gte70PercentRuleKey)],
+    ['Delete the 70% rule box in group 20', () => ctx.deleteRuleBox(20, gte70PercentRuleKey)],
     [
-      'Delete rule box twice',
+      'Delete the 70% rule box in group 10 twice in one tick',
       () => {
-        ctx.deleteRuleBox(10, gteKey);
-        ctx.deleteRuleBox(10, gteKey);
+        ctx.deleteRuleBox(10, gte70PercentRuleKey);
+        ctx.deleteRuleBox(10, gte70PercentRuleKey);
       },
     ],
     [
-      'Delete rule box 10 70 then group 11',
+      'Delete the 70% rule box in group 10, then group 11, in one tick',
       () => {
-        ctx.deleteRuleBox(10, gteKey);
+        ctx.deleteRuleBox(10, gte70PercentRuleKey);
         ctx.deleteGroup(11);
       },
     ],
-    ['Remove placeholder rule box', () => ctx.discardPlaceholderRuleBox()],
+    ['Discard placeholder rule box', () => ctx.discardPlaceholderRuleBox()],
     ['Remove existing-sub chip', () => ctx.removeCriterion(900, 'group')],
     ['Remove sub-a chip', () => ctx.removeCriterion(901, 'group')],
     ['Remove criterion 902', () => ctx.removeCriterion(902, 'group')],
@@ -351,9 +369,11 @@ const noSelection = () => screen.getByText('Selection: none');
 const selectionOnGroup = (groupId: number) => new RegExp(`^Selection: group ${groupId},`);
 const selectionOn = (groupId: number, ruleKey: string | null) =>
   `Selection: group ${groupId}, rule ${ruleKey ?? 'none'}`;
+/** The text of the "Criterion ids" line, which lists the criteria of every saved rule box, in the order shown. */
+const criterionIdsShown = (ids: number[]) => `Criterion ids: ${JSON.stringify(ids)}`;
 
 /** Clears the initial selection the way an author can: by starting a placeholder rule box and discarding it. */
-const clearInitialSelection = async () => {
+const clearSelectionByAddingAndDiscardingPlaceholderRuleBox = async () => {
   await click('Add placeholder rule box in group 10');
   await click('Discard placeholder');
   expect(noSelection()).toBeInTheDocument();
@@ -394,7 +414,7 @@ describe('CompetencyAssociationsProvider', () => {
       axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
       renderProvider();
 
-      expect(await screen.findByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(await screen.findByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
     });
 
     it('leaves selection unset when more than one bottom-tier group exists across visible course groups', async () => {
@@ -917,11 +937,11 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Select group 21');
       expect(screen.getByText(selectionOn(21, eqKey))).toBeInTheDocument();
       await click('Select rule box 21 gte');
-      expect(screen.getByText(selectionOn(21, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(21, gte70PercentRuleKey))).toBeInTheDocument();
 
       await click('Select group 21');
 
-      expect(screen.getByText(selectionOn(21, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(21, gte70PercentRuleKey))).toBeInTheDocument();
     });
 
     it('moves selection to the rule box\'s own group when a rule box of another group is selected', async () => {
@@ -935,7 +955,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       await click('Select rule box 21 gte');
 
-      expect(screen.getByText(selectionOn(21, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(21, gte70PercentRuleKey))).toBeInTheDocument();
     });
   });
 
@@ -971,7 +991,7 @@ describe('CompetencyAssociationsProvider', () => {
     it('moves selection to the group\'s last rule box and creates into it', async () => {
       axiosMock.onPost(createUrl).reply(201, createdCriterion(10, eqRule));
       renderProvider();
-      await screen.findByText(selectionOn(10, gteKey));
+      await screen.findByText(selectionOn(10, gte70PercentRuleKey));
 
       await refetchGroupsAs(groupsWithRule(eqRule));
 
@@ -988,7 +1008,7 @@ describe('CompetencyAssociationsProvider', () => {
     it('keeps the group selected with no rule box when it has none left, and creates into it', async () => {
       axiosMock.onPost(createUrl).reply(201, createdCriterion(10));
       renderProvider();
-      await screen.findByText(selectionOn(10, gteKey));
+      await screen.findByText(selectionOn(10, gte70PercentRuleKey));
 
       await refetchGroupsAs(groupsWithRule(null));
 
@@ -1015,7 +1035,7 @@ describe('CompetencyAssociationsProvider', () => {
         return [201, createdCriterion(10, eqRule)];
       });
       renderProvider();
-      await screen.findByText(selectionOn(10, gteKey));
+      await screen.findByText(selectionOn(10, gte70PercentRuleKey));
 
       await click('Associate in course A');
 
@@ -1225,7 +1245,7 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Search for another course');
       await flushEffects();
 
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
     });
 
     it('reports an error, and sends no groups request, when the course list fails', async () => {
@@ -1251,7 +1271,7 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Search for another course');
       await screen.findByText('Status: pending');
       await waitForSuccess();
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
 
       await click('Associate in another course');
 
@@ -1615,19 +1635,12 @@ describe('CompetencyAssociationsProvider', () => {
     const groupsReads = () => axiosMock.history.get.filter((request) => request.url === groupsUrl);
     const keyboardRequest = (request: object | null) => `Keyboard request: ${JSON.stringify(request)}`;
 
-    /** Serves `initial` once, then `refetched` (held until `release` is called) for every later GET. */
+    /** `mockHeldGroupsRefetch`, plus the profile and both course outline reads. */
     const mockGroupsReads = (initial: object, refetched: object) => {
-      const control = { release: () => {} };
-      axiosMock.onGet(groupsUrl).replyOnce(200, initial);
-      axiosMock.onGet(groupsUrl).reply(() => (
-        new Promise((resolve) => {
-          control.release = () => resolve([200, refetched]);
-        })
-      ));
       axiosMock.onGet(profileUrl).reply(200, profileResponse);
       axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
       axiosMock.onGet(courseBOutlineUrl).reply(200, outlineFixture);
-      return control;
+      return mockHeldGroupsRefetch(axiosMock, tagId, initial, refetched);
     };
 
     const renderWithSelectionOnGroup10 = async () => {
@@ -1662,7 +1675,7 @@ describe('CompetencyAssociationsProvider', () => {
       });
 
       expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
-      expect(screen.getByText(selectionOn(11, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 11, selectionMoved: true })))
         .toBeInTheDocument();
       expect(mockShowToast).not.toHaveBeenCalled();
@@ -1724,12 +1737,12 @@ describe('CompetencyAssociationsProvider', () => {
 
       expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
       expect(axiosMock.history.delete).toHaveLength(1);
-      expect(screen.getByText(selectionOn(11, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
     });
 
     it.each([
       { selected: 'the group', setUp: async () => {} },
-      { selected: 'nothing', setUp: clearInitialSelection },
+      { selected: 'nothing', setUp: clearSelectionByAddingAndDiscardingPlaceholderRuleBox },
     ])('requests the empty state when the delete leaves no course group and $selected was selected', async (
       { setUp },
     ) => {
@@ -1770,7 +1783,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       await deleteAndRefetch('Delete group 20', reads);
 
-      expect(await screen.findByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(await screen.findByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: true })))
         .toBeInTheDocument();
     });
@@ -1783,7 +1796,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       await deleteAndRefetch('Delete group 10', reads);
 
-      expect(await screen.findByText(selectionOn(11, gteKey))).toBeInTheDocument();
+      expect(await screen.findByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
     });
 
     it('keeps selection, and asks to keep sections as they are, when the deleted group did not hold selection', async () => {
@@ -1905,7 +1918,7 @@ describe('CompetencyAssociationsProvider', () => {
 
         await deleteAndRefetch('Delete course group 1', reads);
 
-        expect(await screen.findByText(selectionOn(20, gteKey))).toBeInTheDocument();
+        expect(await screen.findByText(selectionOn(20, gte70PercentRuleKey))).toBeInTheDocument();
         expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 20, selectionMoved: true })))
           .toBeInTheDocument();
         expect(mockShowToast).not.toHaveBeenCalled();
@@ -1964,7 +1977,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       await deleteAndRefetch('Delete group 10', reads);
 
-      expect(await screen.findByText(selectionOn(20, gteKey))).toBeInTheDocument();
+      expect(await screen.findByText(selectionOn(20, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 20, selectionMoved: true })))
         .toBeInTheDocument();
     });
@@ -2063,46 +2076,66 @@ describe('CompetencyAssociationsProvider', () => {
     };
 
     it('sends exactly the box\'s criteria in order, refetches once, and leaves the other boxes alone', async () => {
-      mockDeletes(901, 905, 906, 903);
-      const reads = mockGroupsReads(boxOfThreeResponse, withoutCriteria(boxOfThreeResponse, [901, 905, 906]));
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
+      // Remove: the 70% box.
+      // After: only the 80% box (903) is left. Selection is not checked here.
+      mockDeletes(...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox);
+      const reads = mockGroupsReads(
+        threeCriteriaInOneRuleBoxResponse,
+        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
+      );
       await renderLoaded();
 
-      await clickAndSettle('Delete rule box 10 70', reads);
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
 
-      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(906)]);
+      expect(sentDeleteUrls()).toEqual(criterionIdsIn70PercentRuleBox.map(deleteUrlOf));
       expect(groupsReads()).toHaveLength(2);
-      expect(screen.getByText('Criterion ids: [903]')).toBeInTheDocument();
+      expect(screen.getByText(criterionIdsShown(criterionIdsIn80PercentRuleBox))).toBeInTheDocument();
       expect(mockShowToast).not.toHaveBeenCalled();
     });
 
     it('does not send content that shows up at the same score during the run, and keeps that box selected', async () => {
-      mockDeletes(901, 905, 903, 907);
-      const afterDelete: CompetencyCriteriaGroupsResponse = {
+      // Start: group 10 holds a 70% box (901, 905) and an 80% box (903), and the 70% box is selected.
+      // During the run: another session removes 901 and 905 and adds criterion 908 at 70%.
+      // Remove: the 70% box, which showed 901 and 905 when it was clicked.
+      // After: the 70% box holds 908, which was never deleted, and is still selected. The 80% box (903) is untouched.
+      const criterionIdsInBoxWhenClicked = [901, 905];
+      const criterionIdAddedByAnotherSession = 908;
+      const responseWhenClicked: CompetencyCriteriaGroupsResponse = {
         ...singleGroupResponse,
-        criteria: [criterionAt(907, 10, null), criterionAt(903, 10, 80)],
+        criteria: [
+          ...criterionIdsInBoxWhenClicked.map((id) => criterionInGroupAtScore(id, 10, null)),
+          ...criterionIdsIn80PercentRuleBox.map((id) => criterionInGroupAtScore(id, 10, 80)),
+        ],
       };
-      const reads = mockGroupsReads(
-        {
-          ...singleGroupResponse,
-          criteria: [criterionAt(901, 10, null), criterionAt(905, 10, null), criterionAt(903, 10, 80)],
-        },
-        afterDelete,
-      );
+      const responseAfterAnotherSessionAddedACriterion: CompetencyCriteriaGroupsResponse = {
+        ...singleGroupResponse,
+        criteria: [
+          criterionInGroupAtScore(criterionIdAddedByAnotherSession, 10, null),
+          ...criterionIdsIn80PercentRuleBox.map((id) => criterionInGroupAtScore(id, 10, 80)),
+        ],
+      };
+      mockDeletes(...criterionIdsInBoxWhenClicked, ...criterionIdsIn80PercentRuleBox, criterionIdAddedByAnotherSession);
+      const reads = mockGroupsReads(responseWhenClicked, responseAfterAnotherSessionAddedACriterion);
       await renderLoaded();
       await click('Select rule box 10 gte');
 
-      await clickAndSettle('Delete rule box 10 70', reads);
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
 
-      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905)]);
-      expect(screen.getByText('Criterion ids: [907,903]')).toBeInTheDocument();
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(sentDeleteUrls()).toEqual(criterionIdsInBoxWhenClicked.map(deleteUrlOf));
+      expect(screen.getByText(criterionIdsShown([criterionIdAddedByAnotherSession, ...criterionIdsIn80PercentRuleBox])))
+        .toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
     });
 
     it('sends nothing for a rule key the group does not have', async () => {
-      mockGroupsReads(boxOfThreeResponse, boxOfThreeResponse);
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903). Group 10 has no 90% box.
+      // Remove: the 90% box, which does not exist.
+      // After: nothing was sent and nothing was refetched.
+      mockGroupsReads(threeCriteriaInOneRuleBoxResponse, threeCriteriaInOneRuleBoxResponse);
       await renderLoaded();
 
-      await click('Delete rule box 10 90');
+      await click('Delete the 90% rule box in group 10');
 
       expect(axiosMock.history.delete).toHaveLength(0);
       expect(screen.getByText('Deleting: false')).toBeInTheDocument();
@@ -2111,34 +2144,37 @@ describe('CompetencyAssociationsProvider', () => {
 
     it.each([
       {
+        // Group 10's boxes: 70% (removed, selected), 80%, 90%. Nothing is above the removed box, so the box below
+        // (80%) is selected.
         name: 'the first of three boxes',
-        initial: threeBoxesInGroupResponse,
+        initial: threeRuleBoxesInGroup10Response,
         selectAction: 'Select rule box 10 gte',
-        deleteAction: 'Delete rule box 10 70',
-        gone: 901,
-        key: rule80Key,
+        deleteAction: 'Delete the 70% rule box in group 10',
+        removedCriterionId: criterionIdIn70PercentRuleBoxOfGroup10,
+        expectedSelectionKey: gte80PercentRuleKey,
       },
       {
-        // The box above (80%) is neither the group's first box nor the box below (95%).
+        // Group 10's boxes: 70%, 80%, 90% (removed, selected), 95%. The box above (80%) is selected. It is neither
+        // the group's first box nor the box below (95%).
         name: 'the third of four boxes',
-        initial: fourBoxesInGroupResponse,
-        selectAction: 'Select rule box 10 90',
-        deleteAction: 'Delete rule box 10 90',
-        gone: 904,
-        key: rule80Key,
+        initial: fourRuleBoxesInGroup10Response,
+        selectAction: 'Select the 90% rule box in group 10',
+        deleteAction: 'Delete the 90% rule box in group 10',
+        removedCriterionId: criterionIdIn90PercentRuleBoxOfGroup10,
+        expectedSelectionKey: gte80PercentRuleKey,
       },
     ])('moves selection to the box above, else below, when $name was selected and removed', async (
-      { initial, selectAction, deleteAction, gone, key },
+      { initial, selectAction, deleteAction, removedCriterionId, expectedSelectionKey },
     ) => {
-      mockDeletes(901, 904);
-      const reads = mockGroupsReads(initial, withoutCriteria(initial, [gone]));
+      mockDeletes(removedCriterionId);
+      const reads = mockGroupsReads(initial, responseWithoutCriteria(initial, [removedCriterionId]));
       await renderLoaded();
       await click(selectAction);
 
       await clickAndSettle(deleteAction, reads);
 
-      expect(sentDeleteUrls()).toEqual([deleteUrlOf(gone)]);
-      expect(screen.getByText(selectionOn(10, key))).toBeInTheDocument();
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(removedCriterionId)]);
+      expect(screen.getByText(selectionOn(10, expectedSelectionKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: false })))
         .toBeInTheDocument();
     });
@@ -2147,28 +2183,35 @@ describe('CompetencyAssociationsProvider', () => {
       {
         selected: 'on another box of the same group',
         selectAction: 'Select rule box 10 gte',
-        selectionText: selectionOn(10, gteKey),
+        selectionText: selectionOn(10, gte70PercentRuleKey),
         keyboardGroupId: 10,
       },
       {
         selected: 'in another group',
         selectAction: 'Select group 11',
-        selectionText: selectionOn(11, gteKey),
+        selectionText: selectionOn(11, gte70PercentRuleKey),
         keyboardGroupId: 11,
       },
       { selected: 'nothing', selectAction: null, selectionText: 'Selection: none', keyboardGroupId: 10 },
     ])('keeps the selection ($selected) and asks group $keyboardGroupId to take keyboard focus', async (
       { selectAction, selectionText, keyboardGroupId },
     ) => {
-      mockDeletes(901, 903, 904);
-      const reads = mockGroupsReads(threeBoxesInGroupResponse, withoutCriteria(threeBoxesInGroupResponse, [903]));
+      // Start: group 10 holds a 70% box (901), an 80% box (903) and a 90% box (904), and group 11 a 70% box (902).
+      //   Per case, the selection is on group 10's 70% box, on group 11, or nothing.
+      // Remove: group 10's 80% box, which is never the selected one.
+      // After: group 10 holds its 70% and 90% boxes, and the selection is unchanged.
+      mockDeletes(criterionIdIn80PercentRuleBoxOfGroup10);
+      const reads = mockGroupsReads(
+        threeRuleBoxesInGroup10Response,
+        responseWithoutCriteria(threeRuleBoxesInGroup10Response, [criterionIdIn80PercentRuleBoxOfGroup10]),
+      );
       await renderLoaded();
       if (selectAction !== null) {
         await click(selectAction);
       }
       expect(screen.getByText(selectionText)).toBeInTheDocument();
 
-      await clickAndSettle('Delete rule box 10 80', reads);
+      await clickAndSettle('Delete the 80% rule box in group 10', reads);
 
       expect(screen.getByText(selectionText)).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: keyboardGroupId, selectionMoved: false })))
@@ -2176,20 +2219,26 @@ describe('CompetencyAssociationsProvider', () => {
     });
 
     it('selects the neighbor group\'s first box when the last box takes its group away', async () => {
-      mockDeletes(901);
+      // Start: group 10 holds a 70% box (901) and group 11 holds a 70% box (902). Group 10 is selected.
+      // Remove: group 10's only box, so group 10 goes too.
+      // After: group 11 and its 70% box are selected.
+      mockDeletes(criterionIdIn70PercentRuleBoxOfGroup10);
       const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, afterDeletingGroup10Response);
       await renderLoaded();
       await click('Select group 10');
 
-      await clickAndSettle('Delete rule box 10 70', reads);
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
 
-      expect(screen.getByText(selectionOn(11, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 11, selectionMoved: true })))
         .toBeInTheDocument();
     });
 
     it('selects the group above, with its first box, when the last box takes its own group away', async () => {
-      mockDeletes(902);
+      // Start: group 10 holds a 70% box (901) and group 11 holds a 70% box (902). Group 11 is selected.
+      // Remove: group 11's only box, so group 11 goes too.
+      // After: group 10 and its 70% box are selected.
+      mockDeletes(criterionIdIn70PercentRuleBoxOfGroup11);
       const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, {
         groups: twoGroupsWithCriteriaResponse.groups.filter((group) => group.id !== 11),
         criteria: twoGroupsWithCriteriaResponse.criteria.filter((item) => item.groupId !== 11),
@@ -2197,32 +2246,45 @@ describe('CompetencyAssociationsProvider', () => {
       await renderLoaded();
       await click('Select group 11');
 
-      await clickAndSettle('Delete rule box 11 70', reads);
+      await clickAndSettle('Delete the 70% rule box in group 11', reads);
 
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: true })))
         .toBeInTheDocument();
     });
 
     it('follows the selection move, not the vanished group, when another author deleted the selected group meanwhile', async () => {
-      mockDeletes(901, 903, 904);
-      // Group 11 holds the selection, and goes away with the run; group 10 survives with one box fewer.
-      const reads = mockGroupsReads(threeBoxesInGroupResponse, {
-        groups: threeBoxesInGroupResponse.groups.filter((group) => group.id !== 11),
-        criteria: withoutCriteria(threeBoxesInGroupResponse, [903, 902]).criteria,
+      // Start: group 10 holds a 70% box (901), an 80% box (903) and a 90% box (904), and group 11 a 70% box (902).
+      //   Group 11 is selected.
+      // During the run: another author deletes group 11.
+      // Remove: group 10's 80% box.
+      // After: group 10 holds its 70% and 90% boxes, and group 10 is selected, because the selection moved off the
+      // vanished group 11.
+      mockDeletes(criterionIdIn80PercentRuleBoxOfGroup10);
+      const reads = mockGroupsReads(threeRuleBoxesInGroup10Response, {
+        groups: threeRuleBoxesInGroup10Response.groups.filter((group) => group.id !== 11),
+        criteria: responseWithoutCriteria(
+          threeRuleBoxesInGroup10Response,
+          [criterionIdIn80PercentRuleBoxOfGroup10, criterionIdIn70PercentRuleBoxOfGroup11],
+        ).criteria,
       });
       await renderLoaded();
       await click('Select group 11');
 
-      await clickAndSettle('Delete rule box 10 80', reads);
+      await clickAndSettle('Delete the 80% rule box in group 10', reads);
 
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: true })))
         .toBeInTheDocument();
     });
 
     it('selects the other section\'s group when the last box takes its whole section away', async () => {
-      mockDeletes(902);
+      // Start: course A's group 10 holds a 70% box (901) and course B's group 20 holds a 70% box (902).
+      //   Group 20 is selected.
+      // Remove: group 20's only box, so group 20 and course B's section go too.
+      // After: group 10 and its 70% box are selected.
+      const criterionIdInGroup20 = 902;
+      mockDeletes(criterionIdInGroup20);
       axiosMock.onGet(courseBOutlineUrl).reply(200, outlineFixture);
       const reads = mockGroupsReads(twoCoursesWithCriteriaResponse, {
         groups: twoCoursesWithCriteriaResponse.groups.filter((group) => group.id !== 2 && group.id !== 20),
@@ -2232,46 +2294,59 @@ describe('CompetencyAssociationsProvider', () => {
       await waitFor(() => expect(accessibleCourses()).toHaveTextContent(courseB));
       await click('Select group 20');
 
-      await clickAndSettle('Delete rule box 20 70', reads);
+      await clickAndSettle('Delete the 70% rule box in group 20', reads);
 
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: true })))
         .toBeInTheDocument();
     });
 
     it.each([
       { selected: 'its group', setUp: async () => {} },
-      { selected: 'nothing', setUp: clearInitialSelection },
+      { selected: 'nothing', setUp: clearSelectionByAddingAndDiscardingPlaceholderRuleBox },
     ])('requests the empty state when the last box on the page goes and $selected was selected', async (
       { setUp },
     ) => {
-      mockDeletes(900);
+      // Start: group 10 is the only group, and holds one 70% box (criterion 900). Per case, group 10 is selected
+      //   or nothing is.
+      // Remove: that box, so group 10 and the page's last group go too.
+      // After: nothing is selected, and the empty state takes keyboard focus.
+      const criterionIdInOnlyRuleBox = 900;
+      mockDeletes(criterionIdInOnlyRuleBox);
       const reads = mockGroupsReads(singleGroupResponse, noGroupsResponse);
       renderProvider();
       expect(await screen.findByText(selectionOnGroup(10))).toBeInTheDocument();
       await setUp();
 
-      await clickAndSettle('Delete rule box 10 70', reads);
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
 
       expect(noSelection()).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'empty' }))).toBeInTheDocument();
     });
 
     it('moves a selected placeholder rule box out of the group that vanished', async () => {
-      mockDeletes(901);
+      // Start: group 10 holds a 70% box (901) and group 11 holds a 70% box (902). A placeholder rule box in group 10
+      //   is selected.
+      // Remove: group 10's only saved box, so group 10 goes too, and the placeholder with it.
+      // After: group 11 and its 70% box are selected, and there is no placeholder.
+      mockDeletes(criterionIdIn70PercentRuleBoxOfGroup10);
       const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, afterDeletingGroup10Response);
       await renderLoaded();
       await click('Add placeholder rule box in group 10');
       expect(screen.getByText('Has placeholder: true')).toBeInTheDocument();
 
-      await clickAndSettle('Delete rule box 10 70', reads);
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
 
-      expect(screen.getByText(selectionOn(11, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
     });
 
     it('moves a selected placeholder group out of the section that vanished', async () => {
-      mockDeletes(901);
+      // Start: course A's group 10 holds a 70% box (901) and course B's group 20 holds a 70% box (902). A
+      //   placeholder group under course A is selected.
+      // Remove: group 10's only box, so group 10 and course A's section go too, and the placeholder with them.
+      // After: group 20 and its 70% box are selected, and there is no placeholder.
+      mockDeletes(criterionIdIn70PercentRuleBoxOfGroup10);
       axiosMock.onGet(courseBOutlineUrl).reply(200, outlineFixture);
       const reads = mockGroupsReads(twoCoursesWithCriteriaResponse, {
         groups: twoCoursesWithCriteriaResponse.groups.filter((group) => group.id !== 1 && group.id !== 10),
@@ -2282,139 +2357,193 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Add placeholder group under course A');
       expect(screen.getByText('Has placeholder: true')).toBeInTheDocument();
 
-      await clickAndSettle('Delete rule box 10 70', reads);
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
 
-      expect(screen.getByText(selectionOn(20, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(20, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
     });
 
     it('stops at a failure partway, shows the partial-failure toast, and keeps the selection', async () => {
-      mockDeletes(901, 906, 903);
-      axiosMock.onDelete(deleteUrlOf(905)).reply(500);
-      const reads = mockGroupsReads(boxOfThreeResponse, withoutCriteria(boxOfThreeResponse, [901]));
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903), and the 70% box is selected.
+      // Remove: the 70% box, but 905 answers 500, so 906 is never sent.
+      // After: 901 is gone. 905, 906 and the 80% box (903) are left, and the 70% box is still selected.
+      const [firstCriterion, failingCriterion, thirdCriterion] = criterionIdsIn70PercentRuleBox;
+      mockDeletes(firstCriterion, thirdCriterion, ...criterionIdsIn80PercentRuleBox);
+      axiosMock.onDelete(deleteUrlOf(failingCriterion)).reply(500);
+      const reads = mockGroupsReads(
+        threeCriteriaInOneRuleBoxResponse,
+        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, [firstCriterion]),
+      );
       await renderLoaded();
       await click('Select rule box 10 gte');
 
-      await clickAndSettle('Delete rule box 10 70', reads);
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
 
-      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905)]);
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(firstCriterion), deleteUrlOf(failingCriterion)]);
       expect(mockShowToast).toHaveBeenCalledTimes(1);
       expectToast('Some of this rule\'s associations couldn\'t be removed. Please try again.', ErrorIcon);
-      expect(screen.getByText('Criterion ids: [905,906,903]')).toBeInTheDocument();
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(criterionIdsShown([failingCriterion, thirdCriterion, ...criterionIdsIn80PercentRuleBox])))
+        .toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: false })))
         .toBeInTheDocument();
     });
 
     it('shows the nothing-removed toast, not the partial one, when the first request fails', async () => {
-      axiosMock.onDelete(deleteUrlOf(901)).reply(500);
-      mockDeletes(905, 906, 903);
-      const reads = mockGroupsReads(boxOfThreeResponse, boxOfThreeResponse);
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
+      // Remove: the 70% box, but 901 answers 500, so nothing is removed and no other delete is sent.
+      // After: all four criteria are still there.
+      const [failingFirstCriterion, ...otherCriteria] = criterionIdsIn70PercentRuleBox;
+      const allCriterionIds = [...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox];
+      axiosMock.onDelete(deleteUrlOf(failingFirstCriterion)).reply(500);
+      mockDeletes(...otherCriteria, ...criterionIdsIn80PercentRuleBox);
+      const reads = mockGroupsReads(threeCriteriaInOneRuleBoxResponse, threeCriteriaInOneRuleBoxResponse);
       await renderLoaded();
 
-      await clickAndSettle('Delete rule box 10 70', reads);
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
 
-      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901)]);
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(failingFirstCriterion)]);
       expect(mockShowToast).toHaveBeenCalledTimes(1);
       expectToast('There was a problem removing this rule. Please try again.', ErrorIcon);
-      expect(screen.getByText('Criterion ids: [901,905,906,903]')).toBeInTheDocument();
+      expect(screen.getByText(criterionIdsShown(allCriterionIds))).toBeInTheDocument();
     });
 
     it('shows the partial-failure toast when the refetch after a partial failure fails too', async () => {
-      mockDeletes(901, 906, 903);
-      axiosMock.onDelete(deleteUrlOf(905)).reply(500);
-      axiosMock.onGet(groupsUrl).replyOnce(200, boxOfThreeResponse);
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
+      // Remove: the 70% box, but 905 answers 500, and then the refetch answers 500 too.
+      // After: the panel still shows the data from before the delete, and the partial-failure toast appears.
+      const [firstCriterion, failingCriterion, thirdCriterion] = criterionIdsIn70PercentRuleBox;
+      mockDeletes(firstCriterion, thirdCriterion, ...criterionIdsIn80PercentRuleBox);
+      axiosMock.onDelete(deleteUrlOf(failingCriterion)).reply(500);
+      axiosMock.onGet(groupsUrl).replyOnce(200, threeCriteriaInOneRuleBoxResponse);
       axiosMock.onGet(groupsUrl).reply(500);
       axiosMock.onGet(profileUrl).reply(200, profileResponse);
       axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
       await renderLoaded();
 
-      await click('Delete rule box 10 70');
+      await click('Delete the 70% rule box in group 10');
       await waitFor(() => expect(groupsReads()).toHaveLength(2));
       expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
 
-      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905)]);
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(firstCriterion), deleteUrlOf(failingCriterion)]);
       expect(mockShowToast).toHaveBeenCalledTimes(1);
       expectToast('Some of this rule\'s associations couldn\'t be removed. Please try again.', ErrorIcon);
     });
 
     it('counts a 404 in the middle as removed: every criterion is tried, no toast, the box is gone', async () => {
-      mockDeletes(901, 906, 903);
-      axiosMock.onDelete(deleteUrlOf(905)).reply(404);
-      const reads = mockGroupsReads(boxOfThreeResponse, withoutCriteria(boxOfThreeResponse, [901, 905, 906]));
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903), and the 70% box is selected.
+      // Remove: the 70% box. 905 answers 404, which counts as removed, so 906 is still sent.
+      // After: only the 80% box (903) is left, and it is selected, because the removed box had no box above.
+      const [firstCriterion, missingCriterion, thirdCriterion] = criterionIdsIn70PercentRuleBox;
+      mockDeletes(firstCriterion, thirdCriterion, ...criterionIdsIn80PercentRuleBox);
+      axiosMock.onDelete(deleteUrlOf(missingCriterion)).reply(404);
+      const reads = mockGroupsReads(
+        threeCriteriaInOneRuleBoxResponse,
+        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
+      );
       await renderLoaded();
       await click('Select rule box 10 gte');
 
-      await clickAndSettle('Delete rule box 10 70', reads);
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
 
-      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(906)]);
+      expect(sentDeleteUrls()).toEqual(criterionIdsIn70PercentRuleBox.map(deleteUrlOf));
       expect(mockShowToast).not.toHaveBeenCalled();
-      expect(screen.getByText('Criterion ids: [903]')).toBeInTheDocument();
-      expect(screen.getByText(selectionOn(10, rule80Key))).toBeInTheDocument();
+      expect(screen.getByText(criterionIdsShown(criterionIdsIn80PercentRuleBox))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte80PercentRuleKey))).toBeInTheDocument();
     });
 
     it('lets a retry send only what is left after a partial failure', async () => {
-      mockDeletes(901, 906, 903);
-      axiosMock.onDelete(deleteUrlOf(905)).replyOnce(500);
-      axiosMock.onDelete(deleteUrlOf(905)).reply(200, { id: 905, archived: false });
-      axiosMock.onGet(groupsUrl).replyOnce(200, boxOfThreeResponse);
-      axiosMock.onGet(groupsUrl).replyOnce(200, withoutCriteria(boxOfThreeResponse, [901]));
-      axiosMock.onGet(groupsUrl).reply(200, withoutCriteria(boxOfThreeResponse, [901, 905, 906]));
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
+      // First remove: 901 is deleted, 905 answers 500, so 905, 906 and the 80% box (903) are left.
+      // Second remove: 905 and 906 are deleted this time, so only the 80% box (903) is left.
+      const [firstCriterion, retriedCriterion, thirdCriterion] = criterionIdsIn70PercentRuleBox;
+      const afterFirstDeleteResponse = responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, [firstCriterion]);
+      const afterRetryResponse = responseWithoutCriteria(
+        threeCriteriaInOneRuleBoxResponse,
+        criterionIdsIn70PercentRuleBox,
+      );
+      const idsAfterFirstDelete = [retriedCriterion, thirdCriterion, ...criterionIdsIn80PercentRuleBox];
+      mockDeletes(firstCriterion, thirdCriterion, ...criterionIdsIn80PercentRuleBox);
+      axiosMock.onDelete(deleteUrlOf(retriedCriterion)).replyOnce(500);
+      axiosMock.onDelete(deleteUrlOf(retriedCriterion)).reply(200, { id: retriedCriterion, archived: false });
+      axiosMock.onGet(groupsUrl).replyOnce(200, threeCriteriaInOneRuleBoxResponse);
+      axiosMock.onGet(groupsUrl).replyOnce(200, afterFirstDeleteResponse);
+      axiosMock.onGet(groupsUrl).reply(200, afterRetryResponse);
       axiosMock.onGet(profileUrl).reply(200, profileResponse);
       axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
       await renderLoaded();
 
-      await click('Delete rule box 10 70');
-      expect(await screen.findByText('Criterion ids: [905,906,903]')).toBeInTheDocument();
+      await click('Delete the 70% rule box in group 10');
+      expect(await screen.findByText(criterionIdsShown(idsAfterFirstDelete))).toBeInTheDocument();
       expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
       expect(mockShowToast).toHaveBeenCalledTimes(1);
 
-      await click('Delete rule box 10 70');
-      expect(await screen.findByText('Criterion ids: [903]')).toBeInTheDocument();
+      await click('Delete the 70% rule box in group 10');
+      expect(await screen.findByText(criterionIdsShown(criterionIdsIn80PercentRuleBox))).toBeInTheDocument();
       expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
 
-      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(905), deleteUrlOf(906)]);
+      expect(sentDeleteUrls()).toEqual(
+        [firstCriterion, retriedCriterion, retriedCriterion, thirdCriterion].map(deleteUrlOf),
+      );
       expect(mockShowToast).toHaveBeenCalledTimes(1);
     });
 
     it('drops a second call made in the same tick as the first, so one run is sent', async () => {
-      mockDeletes(901, 905, 906, 903);
-      const reads = mockGroupsReads(boxOfThreeResponse, withoutCriteria(boxOfThreeResponse, [901, 905, 906]));
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
+      // Remove: the 70% box, asked for twice in one click.
+      // After: one run of three deletes was sent, and one refetch was made.
+      mockDeletes(...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox);
+      const reads = mockGroupsReads(
+        threeCriteriaInOneRuleBoxResponse,
+        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
+      );
       await renderLoaded();
 
-      await clickAndSettle('Delete rule box twice', reads);
+      await clickAndSettle('Delete the 70% rule box in group 10 twice in one tick', reads);
 
-      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(906)]);
+      expect(sentDeleteUrls()).toEqual(criterionIdsIn70PercentRuleBox.map(deleteUrlOf));
       expect(groupsReads()).toHaveLength(2);
     });
 
     it('drops a group delete made in the same tick as a rule box delete, so only the rule box is deleted', async () => {
-      mockDeletes(901);
+      // Start: group 10 holds a 70% box (901), an 80% box (903) and a 90% box (904), and group 11 a 70% box (902).
+      // Remove: group 10's 70% box, and ask to delete group 11 in the same click.
+      // After: only the 70% box's criterion (901) was sent for deletion, and group 11 was not deleted.
+      mockDeletes(criterionIdIn70PercentRuleBoxOfGroup10);
       axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 11)).reply(200, {});
-      const reads = mockGroupsReads(threeBoxesInGroupResponse, withoutCriteria(threeBoxesInGroupResponse, [901]));
+      const reads = mockGroupsReads(
+        threeRuleBoxesInGroup10Response,
+        responseWithoutCriteria(threeRuleBoxesInGroup10Response, [criterionIdIn70PercentRuleBoxOfGroup10]),
+      );
       await renderLoaded();
 
-      await clickAndSettle('Delete rule box 10 70 then group 11', reads);
+      await clickAndSettle('Delete the 70% rule box in group 10, then group 11, in one tick', reads);
 
-      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901)]);
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(criterionIdIn70PercentRuleBoxOfGroup10)]);
       expect(groupsReads()).toHaveLength(2);
     });
 
     it('drops a second call made while the first is still deleting, so one run is sent', async () => {
-      mockDeletes(901, 905, 906, 903);
-      const reads = mockGroupsReads(boxOfThreeResponse, withoutCriteria(boxOfThreeResponse, [901, 905, 906]));
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
+      // Remove: the 70% box, then click remove again while the first run is still deleting.
+      // After: one run of three deletes was sent, and no toast was shown.
+      mockDeletes(...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox);
+      const reads = mockGroupsReads(
+        threeCriteriaInOneRuleBoxResponse,
+        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
+      );
       await renderLoaded();
-      await click('Delete rule box 10 70');
+      await click('Delete the 70% rule box in group 10');
       expect(await screen.findByText('Deleting: true')).toBeInTheDocument();
 
-      await click('Delete rule box 10 70');
+      await click('Delete the 70% rule box in group 10');
       await waitFor(() => expect(groupsReads()).toHaveLength(2));
       await act(async () => {
         reads.release();
       });
 
       expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
-      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(906)]);
+      expect(sentDeleteUrls()).toEqual(criterionIdsIn70PercentRuleBox.map(deleteUrlOf));
       expect(mockShowToast).not.toHaveBeenCalled();
     });
   });
@@ -2475,7 +2604,7 @@ describe('CompetencyAssociationsProvider', () => {
       renderProvider();
       await waitForSuccess();
       await click('Select rule box 10 gte');
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
 
       await clickAndSettle('Remove sub-a chip', reads);
 
@@ -2491,7 +2620,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       await clickAndSettle('Remove sub-a chip', reads);
 
-      expect(screen.getByText(selectionOn(11, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 11, selectionMoved: true })))
         .toBeInTheDocument();
     });
@@ -2714,10 +2843,10 @@ describe('CompetencyAssociationsProvider', () => {
 
   describe('a delete that settles after the competency changed', () => {
     it.each([
-      { action: 'Delete group 10' },
-      { action: 'Remove sub-a chip' },
-      { action: 'Delete rule box 10 70' },
-    ])('leaves the new competency\'s selection and keyboard focus alone ($action)', async ({ action }) => {
+      { deleteAction: 'Delete group 10' },
+      { deleteAction: 'Remove sub-a chip' },
+      { deleteAction: 'Delete the 70% rule box in group 10' },
+    ])('leaves the new competency\'s selection and keyboard focus alone ($deleteAction)', async ({ deleteAction }) => {
       axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10)).reply(200, {});
       axiosMock.onDelete(apiUrls.deleteCompetencyCriterion(tagId, 901)).reply(200, { id: 901, archived: false });
       axiosMock.onGet(profileUrl).reply(200, profileResponse);
@@ -2732,7 +2861,7 @@ describe('CompetencyAssociationsProvider', () => {
       axiosMock.onGet(otherGroupsUrl).reply(200, courseBGroupsResponse);
       const { rerender } = renderProvider();
       await waitForSuccess();
-      await click(action);
+      await click(deleteAction);
       await waitFor(() => expect(axiosMock.history.get.filter((request) => request.url === groupsUrl)).toHaveLength(2));
 
       rerender(providerFor(otherTagId));
@@ -2763,7 +2892,7 @@ describe('CompetencyAssociationsProvider', () => {
       axiosMock.onGet(otherGroupsUrl).reply(200, courseBGroupsResponse);
       const { rerender } = renderProvider();
       await waitForSuccess();
-      await click('Delete rule box 10 70');
+      await click('Delete the 70% rule box in group 10');
       await waitFor(() => expect(axiosMock.history.get.filter((request) => request.url === groupsUrl)).toHaveLength(2));
       expect(axiosMock.history.delete).toHaveLength(1);
 
@@ -2790,7 +2919,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       await click('Discard placeholder group');
 
-      expect(screen.getByText(selectionOn(11, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
       expect(screen.getByText('Deleting: false')).toBeInTheDocument();
       expect(screen.getByText('Associating: false')).toBeInTheDocument();
@@ -2838,9 +2967,9 @@ describe('CompetencyAssociationsProvider', () => {
     it('sends no request, and selects the group\'s last saved box with a keyboard request', async () => {
       await renderWithPlaceholderRuleBox(twoCriteriaInGroupResponse);
 
-      await click('Remove placeholder rule box');
+      await click('Discard placeholder rule box');
 
-      expect(screen.getByText(selectionOn(10, rule80Key))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte80PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
       expect(screen.getByText('Keyboard request: {"kind":"group","groupId":10,"selectionMoved":true}'))
         .toBeInTheDocument();
@@ -2854,7 +2983,7 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Set placeholder score');
       expect(screen.getByText(/"rulePayload":\{"op":"gte","value":0.85/)).toBeInTheDocument();
 
-      await click('Remove placeholder rule box');
+      await click('Discard placeholder rule box');
       await click('Add placeholder rule box in group 10');
 
       expect(screen.getByText(
@@ -2868,16 +2997,17 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Associate in course A');
       expect(screen.getByText('Duplicate rejected: true')).toBeInTheDocument();
 
-      await click('Remove placeholder rule box');
+      await click('Discard placeholder rule box');
 
       expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
       expect(screen.getByText('Duplicate rejected: false')).toBeInTheDocument();
     });
 
     it('clears selection when the group has no saved box to return to', async () => {
+      // The API cannot create a saved group with no criteria, so this data is only a way to cover the fallback.
       await renderWithPlaceholderRuleBox(twoGroupsResponse);
 
-      await click('Remove placeholder rule box');
+      await click('Discard placeholder rule box');
 
       expect(noSelection()).toBeInTheDocument();
       expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
@@ -2887,9 +3017,9 @@ describe('CompetencyAssociationsProvider', () => {
       await renderLoaded(twoCriteriaInGroupResponse);
       await click('Select rule box 10 gte');
 
-      await click('Remove placeholder rule box');
+      await click('Discard placeholder rule box');
 
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText('Keyboard request: null')).toBeInTheDocument();
     });
   });
@@ -3223,14 +3353,14 @@ describe('CompetencyAssociationsProvider', () => {
       axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
       axiosMock.onPatch(updateRuleScoreUrl).reply(500);
       renderProvider();
-      expect(await screen.findByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(await screen.findByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
 
       await click('Update rule score');
 
       await waitFor(() => {
         expectToast('There was a problem updating this rule\'s score. Please try again.', ErrorIcon);
       });
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
     });
   });
 });

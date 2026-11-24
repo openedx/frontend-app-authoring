@@ -274,11 +274,12 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
       },
     );
 
-    it('leaves focus in a text field, and still consumes the request', async () => {
+    it('leaves focus in a text field when a finished delete asks the group to take focus, and still consumes the request', async () => {
       const consumeKeyboardFocusRequest = jest.fn();
       const { rerender } = renderBox();
       await user.click(screen.getAllByRole('button', { name: /With a score of/ })[0]);
       await user.click(screen.getByRole('textbox'));
+      const focus = jest.spyOn(HTMLButtonElement.prototype, 'focus');
 
       rerender(
         <MockCompetencyAssociationsProvider
@@ -298,6 +299,8 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
       );
 
       expect(screen.getByRole('textbox')).toHaveFocus();
+      // The open score popover returns focus to the text field by itself, so the call that would take it is checked.
+      expect(focus).not.toHaveBeenCalledWith({ preventScroll: true });
       expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
     });
 

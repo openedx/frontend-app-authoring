@@ -219,12 +219,18 @@ describe('<CourseGroupList />', () => {
       canEditCourse: (courseId) => courseId === courseB,
     });
 
-    expect(await screen.findByRole('heading', { name: 'From within Course B ...' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'From within Course A ...' })).toBeInTheDocument();
-    expect(screen.getAllByRole('button', { name: /More actions for the rule with a score of/ })).toHaveLength(1);
-    expect(screen.getAllByRole('button', { name: /^More actions for rule group/ })).toHaveLength(1);
-    expect(screen.getByRole('button', { name: 'More actions for Course B' })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'More actions for Course A' })).not.toBeInTheDocument();
+    const sectionOf = (heading: HTMLElement) => within(heading.closest('.course-group-section') as HTMLElement);
+    const courseBSection = sectionOf(await screen.findByRole('heading', { name: 'From within Course B ...' }));
+    const courseASection = sectionOf(screen.getByRole('heading', { name: 'From within Course A ...' }));
+
+    expect(courseBSection.getAllByRole('button', { name: /More actions for the rule with a score of/ }))
+      .toHaveLength(1);
+    expect(courseBSection.getAllByRole('button', { name: /^More actions for rule group/ })).toHaveLength(1);
+    expect(courseBSection.getByRole('button', { name: 'More actions for Course B' })).toBeInTheDocument();
+    expect(courseASection.queryByRole('button', { name: /^More actions for/ })).not.toBeInTheDocument();
+    // Course A shows its rule group and rule box, so the missing menus are not an empty section.
+    expect(courseASection.getByRole('button', { name: 'By completing any of the following' })).toBeInTheDocument();
+    expect(courseASection.getByRole('button', { name: 'With a score of 70% or higher' })).toBeInTheDocument();
   });
 
   it('takes keyboard focus on the empty state when a request asks for it, then consumes the request', () => {
