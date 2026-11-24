@@ -48,16 +48,13 @@ export const useAddCustomPage = (courseId: string) => {
 
 /**
  * Reorder custom pages.
- * Accepts pages array, maps to tab_locator format, and POSTs reorder.
+ * Accepts pages array and saves their ids in that order.
  * Invalidates list query on settled (including error, to roll back optimistic reorder).
  */
 export const useReorderCustomPages = (courseId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (pages: CustomPage[]) => {
-      const tabs = pages.map(page => ({ tab_locator: page.id }));
-      return updateCustomPageOrder(courseId, tabs);
-    },
+    mutationFn: (pages: CustomPage[]) => updateCustomPageOrder(courseId, pages.map(page => page.id)),
     onSettled: () => queryClient.invalidateQueries({ queryKey: customPagesQueryKeys.list(courseId) }),
   });
 };

@@ -33,7 +33,7 @@ describe('useReorderCustomPages', () => {
     jest.clearAllMocks();
   });
 
-  it('should call updateCustomPageOrder with mapped tabs and invalidate list', async () => {
+  it('should call updateCustomPageOrder with the page ids and invalidate list', async () => {
     (updateCustomPageOrder as jest.Mock).mockResolvedValue(undefined);
     const { wrapper, queryClient } = createWrapper();
 
@@ -45,10 +45,7 @@ describe('useReorderCustomPages', () => {
     result.current.mutate(reorderedPages);
 
     await waitFor(() => {
-      expect(updateCustomPageOrder).toHaveBeenCalledWith(courseId, [
-        { tab_locator: 'block-2' },
-        { tab_locator: 'block-1' },
-      ]);
+      expect(updateCustomPageOrder).toHaveBeenCalledWith(courseId, ['block-2', 'block-1']);
       const state = queryClient.getQueryState(customPagesQueryKeys.list(courseId));
       expect(state?.isInvalidated).toBe(true);
     });

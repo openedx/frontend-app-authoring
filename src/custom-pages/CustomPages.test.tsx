@@ -10,10 +10,11 @@ import {
   act,
 } from '@src/testUtils';
 import { getApiWaffleFlagsUrl } from '@src/data/api';
+import { paginatedListPage } from '@src/generic/data/paginatedList';
 import { useCourseDetails } from '@src/data/apiHooks';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
 import CustomPages from './CustomPages';
-import { getApiBaseUrl, getTabHandlerUrl } from './data/api';
+import { getApiBaseUrl, getCustomPageOrderApiUrl, getCustomPagesApiUrl } from './data/api';
 import { customPagesQueryKeys } from './data/apiHooks';
 import messages from './messages';
 
@@ -43,18 +44,19 @@ ReactDOM.createPortal = jest.fn(node => node);
 
 const courseId = 'course-v1:edX+DemoX+Demo_Course';
 
-const generateFetchPageApiResponse = () => [{
-  type: 'static_tab',
-  title: null,
-  is_hideable: false,
-  is_hidden: false,
-  is_movable: true,
-  course_staff_only: false,
-  name: 'test',
-  tab_id: 'static_tab_1',
-  settings: { url_slug: '1' },
-  id: 'mOckID1',
-}];
+const generateFetchPageApiResponse = () =>
+  paginatedListPage([{
+    type: 'static_tab',
+    title: null,
+    is_hideable: false,
+    is_hidden: false,
+    is_movable: true,
+    course_staff_only: false,
+    name: 'test',
+    tab_id: 'static_tab_1',
+    settings: { url_slug: '1' },
+    id: 'mOckID1',
+  }]);
 
 const generateNewPageApiResponse = () => ({
   locator: 'mOckID2',
@@ -107,23 +109,23 @@ describe('CustomPages', () => {
   });
 
   it('should render placeholder on 403', async () => {
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(403);
+    axiosMock.onGet(getCustomPagesApiUrl()).reply(403);
     renderComponent();
     expect(await screen.findByTestId('under-construction-placeholder')).toBeVisible();
   });
 
   it('should render placeholder on 403 even with cached pages', async () => {
     // Seed the query cache with pages simulating a prior successful fetch
-    queryClient.setQueryData(customPagesQueryKeys.list(courseId), generateFetchPageApiResponse());
+    queryClient.setQueryData(customPagesQueryKeys.list(courseId), generateFetchPageApiResponse().results);
     // API returns 403 on the subsequent refetch triggered by staleTime: 0
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(403);
+    axiosMock.onGet(getCustomPagesApiUrl()).reply(403);
     renderComponent();
     expect(await screen.findByTestId('under-construction-placeholder')).toBeVisible();
   });
 
   it('should add new page when "add a new page button" is clicked', async () => {
     const xblockAddUrl = `${getApiBaseUrl()}/xblock/`;
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
+    axiosMock.onGet(getCustomPagesApiUrl()).reply(200, generateFetchPageApiResponse());
     axiosMock.onPut(xblockAddUrl).reply(200, generateNewPageApiResponse());
 
     renderComponent();
@@ -137,15 +139,15 @@ describe('CustomPages', () => {
     });
   });
 
-  it('should post reordered pages to /reorder endpoint', async () => {
+  it('should put reordered pages to the custom page order endpoint', async () => {
     const { verticalSortableListCollisionDetection } = await import('@src/generic/DraggableList/verticalSortableList');
-    const twoPages = [
-      { ...generateFetchPageApiResponse()[0], id: 'mOckID1', name: 'Page 1' },
-      { ...generateFetchPageApiResponse()[0], id: 'mOckID2', name: 'Page 2', tab_id: 'static_tab_2' },
-    ];
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, twoPages);
-    const reorderUrl = `${getTabHandlerUrl(courseId)}/reorder`;
-    axiosMock.onPost(reorderUrl).reply(204);
+    const [page] = generateFetchPageApiResponse().results;
+    const twoPages = paginatedListPage([
+      { ...page, id: 'mOckID1', name: 'Page 1' },
+      { ...page, id: 'mOckID2', name: 'Page 2', tab_id: 'static_tab_2' },
+    ]);
+    axiosMock.onGet(getCustomPagesApiUrl()).reply(200, twoPages);
+    axiosMock.onPut(getCustomPageOrderApiUrl(courseId)).reply(204);
 
     // Mock collision detection so keyboard drag lands on the second page
     jest.mocked(verticalSortableListCollisionDetection).mockReturnValue([{ id: 'mOckID2' }]);
@@ -166,20 +168,17 @@ describe('CustomPages', () => {
     fireEvent.keyDown(dragHandles[0], { code: 'Space' });
 
     await waitFor(() => {
-      expect(axiosMock.history.post.length).toBeGreaterThanOrEqual(1);
+      expect(axiosMock.history.put.length).toBeGreaterThanOrEqual(1);
     });
 
-    const postData = JSON.parse(axiosMock.history.post[0].data);
-    expect(postData).toEqual([
-      { tab_locator: 'mOckID2' },
-      { tab_locator: 'mOckID1' },
-    ]);
+    expect(axiosMock.history.put[0].url).toEqual(getCustomPageOrderApiUrl(courseId));
+    expect(JSON.parse(axiosMock.history.put[0].data)).toEqual({ custom_pages: ['mOckID2', 'mOckID1'] });
   });
 
   it('should delete page on successful delete', async () => {
     const pageId = 'mOckID1';
     const xblockEditUrl = `${getApiBaseUrl()}/xblock/${pageId}`;
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
+    axiosMock.onGet(getCustomPagesApiUrl()).reply(200, generateFetchPageApiResponse());
     axiosMock.onDelete(xblockEditUrl).reply(204);
 
     renderComponent();
@@ -195,7 +194,7 @@ describe('CustomPages', () => {
   it('should show error alert on delete failure', async () => {
     const pageId = 'mOckID1';
     const xblockEditUrl = `${getApiBaseUrl()}/xblock/${pageId}`;
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
+    axiosMock.onGet(getCustomPagesApiUrl()).reply(200, generateFetchPageApiResponse());
     axiosMock.onDelete(xblockEditUrl).reply(500);
 
     renderComponent();
@@ -209,8 +208,8 @@ describe('CustomPages', () => {
   });
 
   it('should navigate back and update cached name when editor closes with metadata', async () => {
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
-    queryClient.setQueryData(customPagesQueryKeys.list(courseId), generateFetchPageApiResponse());
+    axiosMock.onGet(getCustomPagesApiUrl()).reply(200, generateFetchPageApiResponse());
+    queryClient.setQueryData(customPagesQueryKeys.list(courseId), generateFetchPageApiResponse().results);
 
     render(
       <CourseAuthoringProvider courseId={courseId}>
@@ -236,8 +235,8 @@ describe('CustomPages', () => {
   });
 
   it('should navigate back and leave name unchanged when editor closes without metadata', async () => {
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
-    queryClient.setQueryData(customPagesQueryKeys.list(courseId), generateFetchPageApiResponse());
+    axiosMock.onGet(getCustomPagesApiUrl()).reply(200, generateFetchPageApiResponse());
+    queryClient.setQueryData(customPagesQueryKeys.list(courseId), generateFetchPageApiResponse().results);
 
     render(
       <CourseAuthoringProvider courseId={courseId}>
@@ -263,7 +262,7 @@ describe('CustomPages', () => {
   it('should save visibility on successful toggle', async () => {
     const pageId = 'mOckID1';
     const xblockEditUrl = `${getApiBaseUrl()}/xblock/${pageId}`;
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
+    axiosMock.onGet(getCustomPagesApiUrl()).reply(200, generateFetchPageApiResponse());
     axiosMock.onPut(xblockEditUrl).reply(200, {});
 
     renderComponent();
@@ -278,7 +277,7 @@ describe('CustomPages', () => {
   it('should show error alert on visibility save failure', async () => {
     const pageId = 'mOckID1';
     const xblockEditUrl = `${getApiBaseUrl()}/xblock/${pageId}`;
-    axiosMock.onGet(getTabHandlerUrl(courseId)).reply(200, generateFetchPageApiResponse());
+    axiosMock.onGet(getCustomPagesApiUrl()).reply(200, generateFetchPageApiResponse());
     axiosMock.onPut(xblockEditUrl).reply(500);
 
     renderComponent();
