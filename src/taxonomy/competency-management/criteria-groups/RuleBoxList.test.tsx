@@ -253,13 +253,13 @@ describe('<RuleBoxList />', () => {
             }}
           >
             <RuleBoxList
-            groupId={10}
-            boxes={boxes}
-            subsectionNamesByUsageKey={{}}
-            canEdit
-            position={1}
-            courseName="Demo Course"
-          />
+              groupId={10}
+              boxes={boxes}
+              subsectionNamesByUsageKey={{}}
+              canEdit
+              position={1}
+              courseName="Demo Course"
+            />
           </MockCompetencyAssociationsProvider>
         );
       };

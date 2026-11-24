@@ -18,7 +18,13 @@ interface MoreActionsMenuProps {
  * inline size into the header's. Explicit props instead of children keep that `size` off the toggle.
  */
 const MoreActionsMenu = ({
-  toggleRef, toggleClassName, id, toggleLabel, removeLabel, disabled, onRemove,
+  toggleRef,
+  toggleClassName,
+  id,
+  toggleLabel,
+  removeLabel,
+  disabled,
+  onRemove,
 }: MoreActionsMenuProps) => (
   <Dropdown className="more-actions-menu">
     <Dropdown.Toggle
