@@ -123,7 +123,23 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
     setCourseSearch,
     setCourseDateRange,
     criteriaCounts,
+    keyboardFocusRequest,
+    consumeKeyboardFocusRequest,
+    isDeletingGroupOrCriterion,
+    isAssociating,
   } = useCompetencyAssociations();
+
+  // Rows run their effects first, so a subsection request still held here has no row on the page (collapsed or left
+  // the list). It is dropped so it does not take focus when the row is shown again.
+  const holdsUnclaimedRowRequest = keyboardFocusRequest?.kind === 'subsection'
+    && !isDeletingGroupOrCriterion
+    && !isAssociating;
+  useEffect(() => {
+    if (holdsUnclaimedRowRequest) {
+      consumeKeyboardFocusRequest();
+    }
+  }, [holdsUnclaimedRowRequest, consumeKeyboardFocusRequest]);
+
   // `inputValue` is the raw field value, so typing feels responsive; the context's `search` is the debounced
   // value that drives the course list query.
   const [inputValue, setInputValue] = useState('');

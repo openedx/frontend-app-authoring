@@ -18,6 +18,7 @@ import {
   useCreateCompetencyCriterion,
   useDefaultCompetencyRuleProfile,
   useDeleteCompetencyCriteriaGroup,
+  useDeleteCompetencyCriterion,
   useUpdateCompetencyCriteriaGroupOperator,
   useUpdateCompetencyCriteriaRule,
 } from './apiHooks';
@@ -345,6 +346,49 @@ describe('useUpdateCompetencyCriteriaGroupOperator', () => {
     });
 
     await waitFor(() => expect(criteriaGroupsRequests(axiosMock)).toHaveLength(2));
+  });
+});
+
+describe('useDeleteCompetencyCriterion', () => {
+  it('refetches that tagId\'s active groups query on success', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, emptyGroupsBody);
+    axiosMock.onDelete(apiUrls.deleteCompetencyCriterion(tagId, 101)).reply(200, { id: 101, archived: false });
+    const result = await renderMutationWithActiveGroupsQuery(useDeleteCompetencyCriterion);
+
+    await act(async () => {
+      await result.current.mutation.mutateAsync({ tagId, criterionId: 101 });
+    });
+
+    await waitFor(() => expect(criteriaGroupsRequests(axiosMock)).toHaveLength(2));
+  });
+
+  it('refetches that tagId\'s active groups query on failure too', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, emptyGroupsBody);
+    axiosMock.onDelete(apiUrls.deleteCompetencyCriterion(tagId, 101)).reply(403);
+    const result = await renderMutationWithActiveGroupsQuery(useDeleteCompetencyCriterion);
+
+    await act(async () => {
+      await expect(result.current.mutation.mutateAsync({ tagId, criterionId: 101 })).rejects.toBeDefined();
+    });
+
+    await waitFor(() => expect(criteriaGroupsRequests(axiosMock)).toHaveLength(2));
+  });
+
+  it('drops an inactive scoped page from the cache, so a page revisited later cannot show the removed criterion', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    const otherPageKey = competencyQueryKeys.competencyCriteriaGroups(tagId, ['course-v1:OrgX+CS201+2024']);
+    queryClient.setQueryData(otherPageKey, emptyGroupsData);
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, emptyGroupsBody);
+    axiosMock.onDelete(apiUrls.deleteCompetencyCriterion(tagId, 101)).reply(200, { id: 101, archived: false });
+    const result = await renderMutationWithActiveGroupsQuery(useDeleteCompetencyCriterion);
+
+    await act(async () => {
+      await result.current.mutation.mutateAsync({ tagId, criterionId: 101 });
+    });
+
+    expect(queryClient.getQueryState(otherPageKey)).toBeUndefined();
   });
 });
 
