@@ -615,6 +615,23 @@ describe('useDeleteCompetencyRuleBox', () => {
     await waitFor(() => expect(result.current.mutation.isSuccess).toBe(true));
     expect(axiosMock.history.get).toHaveLength(2);
   });
+
+  it('drops an inactive scoped page from the cache, so a page revisited later cannot show the removed criteria', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    const otherPageKey = competencyQueryKeys.competencyCriteriaGroups(tagId, ['course-v1:OrgX+CS201+2024']);
+    queryClient.setQueryData(otherPageKey, emptyGroupsData);
+    axiosMock.onGet(apiUrls.competencyCriteriaGroups(tagId)).reply(200, emptyGroupsBody);
+    [101, 102].forEach((id) => {
+      axiosMock.onDelete(deleteUrl(id)).reply(200, { id, archived: false });
+    });
+    const result = await renderMutationWithActiveGroupsQuery(useDeleteCompetencyRuleBox);
+
+    await act(async () => {
+      await result.current.mutation.mutateAsync({ tagId, criterionIds: [101, 102] });
+    });
+
+    expect(queryClient.getQueryState(otherPageKey)).toBeUndefined();
+  });
 });
 
 describe('useUpdateCompetencyCriteriaRule', () => {

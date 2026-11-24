@@ -2546,6 +2546,26 @@ describe('CompetencyAssociationsProvider', () => {
       expect(sentDeleteUrls()).toEqual(criterionIdsIn70PercentRuleBox.map(deleteUrlOf));
       expect(mockShowToast).not.toHaveBeenCalled();
     });
+
+    it('drops a call made while an association is being created, so no delete is sent', async () => {
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903), and a create is in flight.
+      // Remove: the 70% box, while the create is still pending.
+      // After: no delete was sent, and no toast was shown.
+      mockDeletes(...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox);
+      axiosMock.onPost(createUrl).reply(() => new Promise(() => {}));
+      mockGroupsReads(
+        threeCriteriaInOneRuleBoxResponse,
+        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
+      );
+      await renderLoaded();
+      await click('Associate in course A');
+      await screen.findByText('Associating: true');
+
+      await click('Delete the 70% rule box in group 10');
+
+      expect(sentDeleteUrls()).toEqual([]);
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
   });
 
   describe('removeCriterion', () => {

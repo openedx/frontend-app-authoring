@@ -22,13 +22,15 @@ export interface CriteriaGroupBoxProps {
   /** `undefined` for the not-yet-saved placeholder group, which reads its any/all logic from the context. */
   group?: BottomTierCompetencyCriteriaGroup;
   subsectionNamesByUsageKey: Record<string, string>;
-  /** Whether the author can edit this group's any/all logic and its rule boxes' scores. */
+  /** Whether the author can edit this group's any/all logic and its rule boxes' scores, and whether the ⋮ menus
+   * show.
+   */
   canEdit: boolean;
-  /** The 1-based position of `group` among its course group's rule groups, which names its menu. Unused for the
-   * placeholder.
+  /** The 1-based position of `group` among its course group's rule groups, which names its menu and its rule boxes'
+   * menus. Unused for the placeholder.
    */
   position: number;
-  /** The course the group belongs to, which names its menu. */
+  /** The course the group belongs to, which names its menu and its rule boxes' menus. */
   courseName: string;
 }
 
@@ -206,6 +208,8 @@ const CriteriaGroupBox = (
             boxes={boxes}
             subsectionNamesByUsageKey={subsectionNamesByUsageKey}
             canEdit={canEdit}
+            position={position}
+            courseName={courseName}
           />
           {canEdit && groupId !== null && (
             <AddControl

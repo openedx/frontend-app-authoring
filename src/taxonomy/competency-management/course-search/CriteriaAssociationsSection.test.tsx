@@ -157,8 +157,10 @@ describe('<CriteriaAssociationsSection />', () => {
       totalCriteriaCount: 0,
     };
     const groupsUrl = apiUrls.competencyCriteriaGroups(tagId);
-    const eightyPercentRuleBoxMenuName = 'More actions for the rule with a score of 80% or higher';
-    const seventyPercentRuleBoxMenuName = 'More actions for the rule with a score of 70% or higher';
+    const eightyPercentRuleBoxMenuName = 'More actions for the rule with a score of 80% or higher in rule group 1 in '
+      + 'Demo Course';
+    const seventyPercentRuleBoxMenuName = 'More actions for the rule with a score of 70% or higher in rule group 1 in '
+      + 'Demo Course';
 
     /** `mockHeldGroupsRefetch`, plus the profile, outline and delete replies a run needs. */
     const mockServerRepliesForRuleBoxDelete = (

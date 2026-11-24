@@ -21,9 +21,11 @@ const messages = defineMessages({
   },
   ruleBoxMoreActionsLabel: {
     id: 'course-authoring.competency-management.criteria-groups.rule-box-more-actions-label',
-    defaultMessage: 'More actions for the rule with a score of {score}',
+    defaultMessage: 'More actions for the rule with a score of {score} in rule group {position} in {courseName}',
     description: 'Accessible label for the ⋮ button that opens a saved rule box\'s actions menu. {score} is the '
-      + 'box\'s score with its comparison, such as "75% or higher".',
+      + 'box\'s score with its comparison, such as "75% or higher", {position} is the 1-based position of the '
+      + 'box\'s rule group among the rule groups of its course group, and {courseName} is the name of the course '
+      + 'the group belongs to.',
   },
   placeholderRuleBoxMoreActionsLabel: {
     id: 'course-authoring.competency-management.criteria-groups.placeholder-rule-box-more-actions-label',

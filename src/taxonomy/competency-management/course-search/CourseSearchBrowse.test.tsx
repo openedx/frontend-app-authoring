@@ -1871,7 +1871,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
       await user.click(
         await screen.findByRole('button', {
-          name: 'More actions for the rule with a score of 70% or higher',
+          name: 'More actions for the rule with a score of 70% or higher in rule group 1 in Test Course',
         }),
       );
       await user.click(screen.getByRole('button', { name: 'Remove rule' }));

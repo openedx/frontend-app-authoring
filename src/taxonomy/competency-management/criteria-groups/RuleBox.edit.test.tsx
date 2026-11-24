@@ -24,6 +24,8 @@ const renderRuleBox = (
         rule={rule}
         criteria={criteria}
         subsectionNamesByUsageKey={{ 'block-a': 'Subsection A' }}
+        position={1}
+        courseName="Demo Course"
         {...props}
       />
     </MockCompetencyAssociationsProvider>,
@@ -133,7 +135,8 @@ describe('<RuleBox /> editing (#794)', () => {
   });
 
   describe('rule box menu', () => {
-    const saved70PercentRuleBoxMenuName = 'More actions for the rule with a score of 70% or higher';
+    const saved70PercentRuleBoxMenuName = 'More actions for the rule with a score of 70% or higher in rule group 1 in '
+      + 'Demo Course';
     const placeholderMenuName = 'More actions for the new rule';
 
     it('shows a menu button named after the box\'s score only when the author can edit', () => {
@@ -158,6 +161,15 @@ describe('<RuleBox /> editing (#794)', () => {
       expect(deleteRuleBox).toHaveBeenCalledWith(10, 'grade:gte:0.7:percent');
       expect(discardPlaceholderRuleBox).not.toHaveBeenCalled();
       expect(selectRuleBox).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['a delete', { isDeletingGroupOrRuleBoxOrCriterion: true }],
+      ['a create', { isAssociating: true }],
+    ])('disables the menu button while %s is in flight', (_name, overrides) => {
+      renderRuleBox(overrides, { canEdit: true });
+
+      expect(screen.getByRole('button', { name: saved70PercentRuleBoxMenuName })).toBeDisabled();
     });
 
     it('lets the placeholder rule box in a saved group discard itself without calling deleteRuleBox', async () => {

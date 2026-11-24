@@ -244,11 +244,6 @@
     }
   }
 
-  // Hugs the text instead of stretching when the editable variant sits directly in the rule box's column.
-  .score-threshold-field {
-    align-self: flex-start;
-  }
-
   .score-threshold-field__sentence {
     display: inline-flex;
     align-items: center;

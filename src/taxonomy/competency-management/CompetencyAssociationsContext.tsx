@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useReducer,
   useRef,
@@ -184,10 +185,11 @@ export interface CompetencyAssociationsContextBase {
    * with its last criterion. A 404 counts as success; any other failure shows a toast.
    */
   removeCriterion: (criterionId: number, returnFocusTo: 'group' | 'subsection') => void;
-  /** Deletes every criterion the saved rule box shows at call time, and drops the call while another delete is in
-   * flight. Only a selection on this box moves: to the box above, else below, else the group's first box; when the
-   * group goes too, `deleteGroup`'s rule applies. Either way, keyboard focus counts as lost, because the run disables
-   * the box's ⋮ toggle. A failure's toast says whether some of the box's associations were already removed.
+  /** Deletes every criterion the saved rule box shows at call time, and drops the call while another delete or a
+   * create is in flight. Only a selection on this box moves: to the box above, else below, else the group's first
+   * box; when the group goes too, `deleteGroup`'s rule applies. Either way, keyboard focus counts as lost, because the
+   * run disables the box's ⋮ toggle. A failure's toast says whether some of the box's associations were already
+   * removed.
    */
   deleteRuleBox: (groupId: number, ruleKey: string) => void;
   /** Discards a saved group's placeholder rule box without a request; selection returns to the box above it. */
@@ -796,7 +798,9 @@ export const CompetencyAssociationsProvider = ({
     || (isRuleBoxDeletePending && ruleBoxDeleteVariables?.tagId === tagId);
   // The latest generation, so a rule box delete that settles after a competency switch can tell it is stale.
   const generationRef = useRef(generation);
-  generationRef.current = generation;
+  useLayoutEffect(() => {
+    generationRef.current = generation;
+  }, [generation]);
   // Closes the gap between a click and the render that disables the delete menus. Holds the generation that started
   // the delete, so a delete still pending for the previous competency does not block this one.
   const deleteInFlightGenerationRef = useRef<number | null>(null);
@@ -1252,7 +1256,12 @@ export const CompetencyAssociationsProvider = ({
   ]);
 
   const deleteRuleBox = useCallback((groupId: number, ruleKey: string) => {
-    if (deleteInFlightGenerationRef.current === generation || !groupsIndex || !systemDefaultProfile) {
+    if (
+      deleteInFlightGenerationRef.current === generation
+      || isAssociating
+      || !groupsIndex
+      || !systemDefaultProfile
+    ) {
       return;
     }
     const boxesBeforeDelete = ruleBoxesForGroup(groupId, groupsIndex, systemDefaultProfile);
@@ -1316,6 +1325,7 @@ export const CompetencyAssociationsProvider = ({
   }, [
     groupsIndex,
     systemDefaultProfile,
+    isAssociating,
     accessibleCourseGroups,
     tagId,
     listedCourseKeys,

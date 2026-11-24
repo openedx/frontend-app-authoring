@@ -18,8 +18,14 @@ export interface RuleBoxProps {
   rule: EffectiveRule;
   criteria: CompetencyCriterion[];
   subsectionNamesByUsageKey: Record<string, string>;
-  /** Whether the author can edit the score threshold. */
+  /** Whether the author can edit the score threshold, and whether the ⋮ menu shows. */
   canEdit?: boolean;
+  /** The 1-based position of the box's rule group among the rule groups of its course group, which names the menu
+   * of a saved box. Unused for the placeholder group.
+   */
+  position: number;
+  /** The course the box belongs to, which names the menu of a saved box. */
+  courseName: string;
   /** Duplicate-score check for this box, used only when `canEdit`. */
   getInlineValidationMessage?: (candidate: GradeRulePayload) => string;
   /** Placeholder only: shown in the score settings popover when another box in the group already uses this score. */
@@ -45,6 +51,8 @@ const RuleBox = ({
   criteria,
   subsectionNamesByUsageKey,
   canEdit = false,
+  position,
+  courseName,
   getInlineValidationMessage,
   scoreTakenHint,
   scoreSuggestion,
@@ -62,6 +70,7 @@ const RuleBox = ({
     deleteRuleBox,
     discardPlaceholderRuleBox,
     isDeletingGroupOrRuleBoxOrCriterion,
+    isAssociating,
   } = useCompetencyAssociations();
   const isSelected = selection?.groupId === groupId && selection?.ruleKey === ruleKey;
   const isPlaceholder = ruleKey === null;
@@ -148,9 +157,11 @@ const RuleBox = ({
                     ? intl.formatMessage(messages.placeholderRuleBoxMoreActionsLabel)
                     : intl.formatMessage(messages.ruleBoxMoreActionsLabel, {
                       score: formatScoreSummary(intl, rule.rulePayload),
+                      position,
+                      courseName,
                     })}
                   removeLabel={intl.formatMessage(messages.removeRuleBoxMenuItem)}
-                  disabled={isDeletingGroupOrRuleBoxOrCriterion}
+                  disabled={isDeletingGroupOrRuleBoxOrCriterion || isAssociating}
                   onRemove={handleRemoveClick}
                 />
               )}
