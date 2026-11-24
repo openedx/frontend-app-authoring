@@ -1,17 +1,12 @@
 import { useEffect, useId, useRef } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Dropdown,
-  Icon,
-  IconButton,
-  Stack,
-} from '@openedx/paragon';
-import { MoreVert } from '@openedx/paragon/icons';
+import { Stack } from '@openedx/paragon';
 import classNames from 'classnames';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import type { CompetencyCriterion, EffectiveRule, GradeRulePayload } from '../data/types';
 import CriterionChipList from './CriterionChipList';
 import { formatScoreSummary } from './formatScoreSummary';
+import MoreActionsMenu from './MoreActionsMenu';
 import ScoreThresholdField from './ScoreThresholdField';
 import messages from './messages';
 
@@ -146,28 +141,18 @@ const RuleBox = ({
                   menu removes the box with the group. */
               }
               {groupId !== null && (
-                <Dropdown>
-                  <Dropdown.Toggle
-                    id={menuToggleId}
-                    as={IconButton}
-                    src={MoreVert}
-                    iconAs={Icon}
-                    variant="primary"
-                    className="rule-box__menu-toggle"
-                    size="inline"
-                    aria-label={isPlaceholder
-                      ? intl.formatMessage(messages.placeholderRuleBoxMoreActionsLabel)
-                      : intl.formatMessage(messages.ruleBoxMoreActionsLabel, {
-                        score: formatScoreSummary(intl, rule.rulePayload),
-                      })}
-                    disabled={isDeletingGroupOrRuleBoxOrCriterion}
-                  />
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={handleRemoveClick}>
-                      {intl.formatMessage(messages.removeRuleBoxMenuItem)}
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
+                <MoreActionsMenu
+                  id={menuToggleId}
+                  toggleClassName="rule-box__menu-toggle"
+                  toggleLabel={isPlaceholder
+                    ? intl.formatMessage(messages.placeholderRuleBoxMoreActionsLabel)
+                    : intl.formatMessage(messages.ruleBoxMoreActionsLabel, {
+                      score: formatScoreSummary(intl, rule.rulePayload),
+                    })}
+                  removeLabel={intl.formatMessage(messages.removeRuleBoxMenuItem)}
+                  disabled={isDeletingGroupOrRuleBoxOrCriterion}
+                  onRemove={handleRemoveClick}
+                />
               )}
             </div>
           </>

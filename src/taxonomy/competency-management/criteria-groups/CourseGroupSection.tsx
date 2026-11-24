@@ -16,8 +16,8 @@ import { bottomTierGroupsForCourse } from '@src/taxonomy/competency-management/u
 import AddControl from './AddControl';
 import type { AddControlProps } from './AddControl';
 import CriteriaGroupBox from './CriteriaGroupBox';
-import GroupActionsMenu from './GroupActionsMenu';
 import GroupConnector from './GroupConnector';
+import MoreActionsMenu from './MoreActionsMenu';
 import messages from './messages';
 
 export interface CourseGroupSectionProps {
@@ -166,7 +166,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
           </Stack>
         }
         actions={canEdit && (
-          <GroupActionsMenu
+          <MoreActionsMenu
             toggleRef={menuToggleRef}
             id={`course-group-menu-toggle-${courseGroup.id}`}
             toggleLabel={intl.formatMessage(messages.courseGroupMoreActionsLabel, { courseName })}

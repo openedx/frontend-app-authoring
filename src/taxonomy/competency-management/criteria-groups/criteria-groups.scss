@@ -96,8 +96,8 @@
     }
   }
 
-  // Figma draws both ⋮ toggles at 24×24; Paragon's inline size pads them to 2em.
-  .group-actions-menu .btn-icon-inline {
+  // Figma draws all ⋮ toggles at 24×24; Paragon's inline size pads them to 2em.
+  .more-actions-menu .btn-icon-inline {
     --pgn-size-icon-button-diameter-inline: var(--pgn-size-icon-md);
 
     padding: 0;

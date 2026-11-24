@@ -6,8 +6,8 @@ import type { BottomTierCompetencyCriteriaGroup } from '../data/types';
 import { ruleBoxesForGroup } from '../utils';
 import AddControl from './AddControl';
 import type { AddControlProps } from './AddControl';
-import GroupActionsMenu from './GroupActionsMenu';
 import LogicOperatorSelect from './LogicOperatorSelect';
+import MoreActionsMenu from './MoreActionsMenu';
 import RuleBoxList from './RuleBoxList';
 import messages from './messages';
 
@@ -176,7 +176,7 @@ const CriteriaGroupBox = (
               )}
               {sentence}
             </div>
-            <GroupActionsMenu
+            <MoreActionsMenu
               toggleRef={menuToggleRef}
               id={`rule-group-menu-toggle-${group?.id ?? 'placeholder'}`}
               toggleLabel={group
