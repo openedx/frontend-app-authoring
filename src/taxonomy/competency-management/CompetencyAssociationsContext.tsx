@@ -184,10 +184,10 @@ export interface CompetencyAssociationsContextBase {
    * with its last criterion. A 404 counts as success; any other failure shows a toast.
    */
   removeCriterion: (criterionId: number, returnFocusTo: 'group' | 'subsection') => void;
-  /** Deletes every criterion the saved rule box shows now, and drops the call during another delete.
-   * Only a selection on this box moves: to the box above it, else below, else the group's first box; when its
-   * group goes too, `deleteGroup`'s rule applies. Success or failure, keyboard focus is treated as lost, since the
-   * run disabled the box's ⋮. A failure's toast says whether some of the box's content was already removed.
+  /** Deletes every criterion the saved rule box shows at call time, and drops the call while another delete is in
+   * flight. Only a selection on this box moves: to the box above, else below, else the group's first box; when the
+   * group goes too, `deleteGroup`'s rule applies. Either way, keyboard focus counts as lost, because the run disables
+   * the box's ⋮ toggle. A failure's toast says whether some of the box's associations were already removed.
    */
   deleteRuleBox: (groupId: number, ruleKey: string) => void;
   /** Discards a saved group's placeholder rule box without a request; selection returns to the box above it. */
@@ -506,7 +506,8 @@ function reduceGroupDeleted(
   );
 
   if (target === 'keep-current') {
-    // The selected group, else the deleted one when it survives and nothing or a placeholder group is selected.
+    // The selected group takes focus; with nothing or a placeholder group selected, the deleted group does if it
+    // survives.
     const keyboardGroupId = state.selection?.groupId ?? (isDeletedGroupGone ? null : deletedGroupId);
     if (isKeyboardFocusLost && keyboardGroupId !== null) {
       return { ...state, keyboardFocusRequest: { kind: 'group', groupId: keyboardGroupId, selectionMoved: false } };
@@ -793,7 +794,7 @@ export const CompetencyAssociationsProvider = ({
   const isDeletingGroupOrRuleBoxOrCriterion = (isGroupDeletePending && groupDeleteVariables?.tagId === tagId)
     || (isCriterionDeletePending && criterionDeleteVariables?.tagId === tagId)
     || (isRuleBoxDeletePending && ruleBoxDeleteVariables?.tagId === tagId);
-  // The latest generation, so a rule box delete that settles after the author switched competency can tell.
+  // The latest generation, so a rule box delete that settles after a competency switch can tell it is stale.
   const generationRef = useRef(generation);
   generationRef.current = generation;
   // Closes the gap between a click and the render that disables the delete menus. Holds the generation that started
@@ -1095,12 +1096,12 @@ export const CompetencyAssociationsProvider = ({
   }, []);
 
   /**
-   * Moves selection and keyboard focus once a delete's refetch has landed, from the groups cache as it is then.
+   * Moves selection and keyboard focus after a delete, reading the groups cache once the delete's refetch has landed.
    * @param deletedGroupId The group that was deleted, or the group that held the deleted criterion or rule box.
    * @param snapshot The page order captured at click time, which decides where selection moves if the group is gone.
    * @param deleteFailed Whether the delete failed. When the group survives, a failure asks for keyboard focus on its
    * ⋮ menu toggle, unless `triggerLosesKeyboardFocus` already asks for the group.
-   * @param profile The system default rule profile, which derives rule boxes from the fresh criteria.
+   * @param profile The system default rule profile, used to derive rule boxes from the fresh criteria.
    * @param triggerLosesKeyboardFocus Whether the control that started the delete was disabled for the run, so the
    * browser dropped its keyboard focus even though its group may survive. When true, keyboard focus goes to the group
    * (or to a neighbor, or the empty state, when the group is gone) instead of the ⋮ menu toggle.
@@ -1261,7 +1262,7 @@ export const CompetencyAssociationsProvider = ({
     }
     const ruleKeysBeforeDelete = boxesBeforeDelete.map((candidate) => candidate.key);
     const snapshot = snapshotPageOrder(groupsIndex, accessibleCourseGroups);
-    // Content added at this score after the click is not sent, so it survives the delete.
+    // Only the criteria shown at click time are sent, so content another session adds at this score survives.
     const criterionIds = box.criteria.map((criterion) => criterion.id);
     deleteInFlightGenerationRef.current = generation;
     mutateDeleteRuleBox({ tagId, criterionIds }, {
@@ -1275,7 +1276,8 @@ export const CompetencyAssociationsProvider = ({
         // Keyboard focus is lost even when the box survives: its ⋮ toggle was disabled for the run.
         resolveSelectionAfterDelete(groupId, snapshot, false, systemDefaultProfile, true);
         if (deleteError) {
-          // The error's own count, not the refetched data: that refetch can fail too and leave the pre-delete cache.
+          // Uses the error's count, not the refetched data: the refetch can fail too and leave the pre-delete data
+          // cached.
           showToast(
             intl.formatMessage(
               deleteError.removedCount > 0

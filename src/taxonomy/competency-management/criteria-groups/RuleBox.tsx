@@ -35,8 +35,8 @@ export interface RuleBoxProps {
 /**
  * One rule box: its score threshold, whose score settings button opens the box's settings popover, and its
  * criterion chips, or a hint when it is the placeholder.
- * In a saved group, each box has a ⋮ menu whose Remove rule item deletes it, or discards the placeholder; without
- * `canEdit` the menu is not rendered at all.
+ * In a saved group, each box has a ⋮ menu whose Remove rule item deletes the box, or discards the placeholder.
+ * Without `canEdit`, there is no menu.
  */
 const RuleBox = ({
   groupId,

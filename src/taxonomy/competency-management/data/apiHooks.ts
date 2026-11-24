@@ -184,10 +184,9 @@ export const useDeleteCompetencyCriterion = () => {
 };
 
 /**
- * The failure of a rule box delete that stopped at its first non-404 error.
- * `removedCount` is how many of the box's criteria were already gone by then, a 404 included, so a caller
- * can tell "nothing was removed" from "part of the box was removed" without reading the refetched data,
- * which is stale when that refetch fails too.
+ * Thrown by a rule box delete that stopped at its first non-404 error. `removedCount` is how many of the box's
+ * criteria were gone by then, a 404 counting as gone, so a caller can tell "nothing was removed" from "part of the
+ * box was removed" without reading the refetched data, which is stale when the refetch fails too.
  */
 export class RuleBoxDeleteError extends Error {
   readonly removedCount: number;
@@ -200,14 +199,13 @@ export class RuleBoxDeleteError extends Error {
 }
 
 /**
- * Deletes a rule box's criteria, one request at a time. The backend locks the competency's tag row during a
- * criterion delete, so concurrent requests would not corrupt the group. Sequential requests are still right
- * because a failed run has to stop at the first failure with a known number of criteria removed, which a
- * parallel run cannot report.
- * Stops at the first failure and throws a `RuleBoxDeleteError` carrying that number; a 404 means the criterion
- * is already gone, so it counts as removed and doesn't stop the run.
- * `onSettled` returns the refetch promise, so `isPending` stays true until the panel is fresh: otherwise the
- * stale box would briefly show an enabled ⋮ whose next click re-sends ids that are already gone.
+ * Build the mutation to delete a rule box's criteria, one request at a time. The backend locks the competency's tag
+ * row during a criterion delete, so parallel requests would not leave an empty group stored. The requests are still
+ * sequential, because a failed run has to stop at its first failure with a known number of criteria removed. It then
+ * throws a `RuleBoxDeleteError` carrying that number. A 404 means the criterion is already gone, so it counts as
+ * removed and the run goes on.
+ * `onSettled` returns the refetch promise, so `isPending` stays true until the panel is fresh. Otherwise the stale
+ * box would briefly show an enabled ⋮ whose next click re-sends ids that are already gone.
  */
 export const useDeleteCompetencyRuleBox = () => {
   const queryClient = useQueryClient();
