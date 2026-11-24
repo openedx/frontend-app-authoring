@@ -14,7 +14,7 @@ import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { CompetencyAssociationsProvider } from '../CompetencyAssociationsContext';
 import { byTextContent, defaultProfileResponse, MockCompetencyAssociationsProvider } from '../__mocks__';
-import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
+import type { MockCompetencyAssociationsOverrides } from '@src/taxonomy/competency-management/__mocks__';
 import { apiUrls as competencyManagementApiUrls } from '../data/api';
 import type { CompetencyTreeNode } from '../CompetencyTree';
 import CourseRow from './CourseRow';

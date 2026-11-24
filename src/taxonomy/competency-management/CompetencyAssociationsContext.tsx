@@ -772,7 +772,6 @@ export const CompetencyAssociationsProvider = ({
   } = useDeleteCompetencyCriterion();
   const isDeletingGroupOrCriterion = (isGroupDeletePending && groupDeleteVariables?.tagId === tagId)
     || (isCriterionDeletePending && criterionDeleteVariables?.tagId === tagId);
-  const queryClient = useQueryClient();
   // Closes the gap between a click and the render that disables the delete menus. Holds the generation that started
   // the delete, so a delete still pending for the previous competency does not block this one.
   const deleteInFlightGenerationRef = useRef<number | null>(null);

@@ -1,6 +1,6 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Chip } from '@openedx/paragon';
-import { Cancel } from '@openedx/paragon/icons';
+import { Close } from '@openedx/paragon/icons';
 
 import rootMessages from '@src/taxonomy/competency-management/messages';
 
@@ -17,7 +17,7 @@ const CriterionChip = ({ displayName, onRemove = undefined, disabled = false }: 
     <Chip
       variant="dark"
       className="criterion-chip mr-1"
-      iconAfter={onRemove ? Cancel : undefined}
+      iconAfter={onRemove ? Close : undefined}
       iconAfterAlt={onRemove
         ? intl.formatMessage(rootMessages.removeCriterionButtonLabel, { subsectionName: displayName })
         : undefined}

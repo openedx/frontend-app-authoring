@@ -547,6 +547,44 @@ describe('<CourseOutlineSubtree />', () => {
       expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
     });
 
+    it('keeps the remove button working on an associated row in a blocked course', async () => {
+      const removeCriterion = jest.fn();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({
+        associatedObjectIds: new Set(['sub-1a']),
+        groupsIndex: buildCompetencyCriteriaGroupsIndex({
+          groups: singleGroupResponse.groups,
+          criteria: [criterion(77, 'sub-1a', 10)],
+        }),
+        conflictingCompetencyName: blockedIn(courseId),
+        removeCriterion,
+      });
+      await expandFirstSection();
+
+      const removeButton = await screen.findByRole('button', {
+        name: 'Remove the association with Subsection 1A (graded)',
+      });
+      expect(removeButton).toBeEnabled();
+      await userEvent.setup().click(removeButton);
+
+      expect(removeCriterion).toHaveBeenCalledWith(77, 'subsection');
+    });
+
+    it('focuses the associate button of a blocked course after a remove, then consumes the request', async () => {
+      const consumeKeyboardFocusRequest = jest.fn();
+      axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
+      renderSubtreeWithAssociations({
+        conflictingCompetencyName: blockedIn(courseId),
+        competencyExternalId: 'EXT-042',
+        keyboardFocusRequest: { kind: 'subsection', objectId: 'sub-1a' },
+        consumeKeyboardFocusRequest,
+      });
+      await expandFirstSection();
+
+      expect(await screen.findByRole('button', { name: associateLabel('Subsection 1A (graded)') })).toHaveFocus();
+      expect(consumeKeyboardFocusRequest).toHaveBeenCalled();
+    });
+
     it('gives the blocked button its reason as a description when the competency has no external ID', async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
       renderSubtreeWithAssociations({ competencyExternalId: null, conflictingCompetencyName: blockedIn(courseId) });

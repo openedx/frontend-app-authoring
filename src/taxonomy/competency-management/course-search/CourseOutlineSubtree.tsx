@@ -204,6 +204,7 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
             <IconButton
               ref={removeButtonRef}
               src={Cancel}
+              className="course-search-browse__subsection-remove"
               size="inline"
               invertColors
               alt={intl.formatMessage(rootMessages.removeCriterionButtonLabel, {
