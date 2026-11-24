@@ -69,12 +69,13 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
   // The value the block was loaded with, before the user touched the toggle.
   // Kept separately from `useMfeTheming` so isDirty can tell a toggle-only
-  // change from an untouched editor. A new block starts opted in; an existing
-  // block without the setting keeps the field's default, which is off.
+  // change from an untouched editor. A library block is created by the editor
+  // itself, so it keeps the create-workflow default; course blocks are created
+  // with the setting already on.
   const storedUseMfeTheming = blockValue?.data?.metadata?.use_mfe_theming;
   const initialUseMfeTheming = typeof storedUseMfeTheming === 'boolean'
     ? storedUseMfeTheming
-    : isCreateWorkflow;
+    : (isLibrary && isCreateWorkflow);
 
   const [useMfeThemingOverride, setUseMfeThemingOverride] = useState<boolean | null>(null);
   const useMfeTheming = useMfeThemingOverride ?? initialUseMfeTheming;

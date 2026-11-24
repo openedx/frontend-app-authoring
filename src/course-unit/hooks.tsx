@@ -302,6 +302,8 @@ export interface CreateCourseXBlockParams {
   libraryContentKey?: string;
   /** Specify this to paste from clipboard rather than creating a blank component. */
   stagedContent?: 'clipboard';
+  /** Settings to apply to the block when it is created. */
+  metadata?: Record<string, unknown>;
 }
 
 export const useHandleCreateNewCourseXBlock = ({ blockId }: { blockId: string; }) => {

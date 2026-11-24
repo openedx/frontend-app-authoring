@@ -468,6 +468,7 @@ describe('<AddComponent />', () => {
       parentLocator: '123',
       type: COMPONENT_TYPES.html,
       boilerplate: COMPONENT_TYPES.html,
+      metadata: { use_mfe_theming: true },
     }, expect.any(Function));
   });
 

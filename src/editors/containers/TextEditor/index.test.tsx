@@ -163,10 +163,17 @@ describe('TextEditor', () => {
       expect(screen.getByRole('switch', { name: /apply theme styles/i })).not.toBeChecked();
     });
 
-    test('defaults to checked while creating a new block', () => {
+    test('is unchecked for a new course block', () => {
       // The create workflow renders with `blockFinished` already true and no
-      // blockValue -- there is no fetch to wait for.
+      // blockValue -- there is no fetch to wait for. Course blocks are created
+      // by the unit page with the setting already on, so the editor does not
+      // seed it.
       render(<TextEditor {...props} blockValue={null} isCreateWorkflow />);
+      expect(screen.getByRole('switch', { name: /apply theme styles/i })).not.toBeChecked();
+    });
+
+    test('defaults to checked while creating a new library block', () => {
+      render(<TextEditor {...props} blockValue={null} isCreateWorkflow isLibrary />);
       expect(screen.getByRole('switch', { name: /apply theme styles/i })).toBeChecked();
     });
 
