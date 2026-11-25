@@ -1,10 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Stack } from '@openedx/paragon';
 import classNames from 'classnames';
 import { useCompetencyAssociations } from '../CompetencyAssociationsContext';
 import type { CompetencyCriterion, EffectiveRule, GradeRulePayload } from '../data/types';
 import CriterionChipList from './CriterionChipList';
+import { formatScoreSummary } from './formatScoreSummary';
+import MoreActionsMenu from './MoreActionsMenu';
 import ScoreThresholdField from './ScoreThresholdField';
 import messages from './messages';
 
@@ -16,8 +18,14 @@ export interface RuleBoxProps {
   rule: EffectiveRule;
   criteria: CompetencyCriterion[];
   subsectionNamesByUsageKey: Record<string, string>;
-  /** Whether the author can edit the score threshold. */
+  /** Whether the author can edit the score threshold, and whether the ⋮ menu shows. */
   canEdit?: boolean;
+  /** The 1-based position of the box's rule group among the rule groups of its course group, which names the menu
+   * of a saved box. Unused for the placeholder group.
+   */
+  position: number;
+  /** The course the box belongs to, which names the menu of a saved box. */
+  courseName: string;
   /** Duplicate-score check for this box, used only when `canEdit`. */
   getInlineValidationMessage?: (candidate: GradeRulePayload) => string;
   /** Placeholder only: shown in the score settings popover when another box in the group already uses this score. */
@@ -33,6 +41,8 @@ export interface RuleBoxProps {
 /**
  * One rule box: its score threshold, whose score settings button opens the box's settings popover, and its
  * criterion chips, or a hint when it is the placeholder.
+ * In a saved group, each box has a ⋮ menu whose Remove rule item deletes the box, or discards the placeholder.
+ * Without `canEdit`, there is no menu.
  */
 const RuleBox = ({
   groupId,
@@ -41,6 +51,8 @@ const RuleBox = ({
   criteria,
   subsectionNamesByUsageKey,
   canEdit = false,
+  position,
+  courseName,
   getInlineValidationMessage,
   scoreTakenHint,
   scoreSuggestion,
@@ -55,10 +67,15 @@ const RuleBox = ({
     setPlaceholderRulePayload,
     placeholderDuplicateRejected,
     placeholderDuplicateRejectionCount,
+    deleteRuleBox,
+    discardPlaceholderRuleBox,
+    isDeletingGroupOrRuleBoxOrCriterion,
+    isAssociating,
   } = useCompetencyAssociations();
   const isSelected = selection?.groupId === groupId && selection?.ruleKey === ruleKey;
   const isPlaceholder = ruleKey === null;
   const ref = useRef<HTMLDivElement>(null);
+  const menuToggleId = useId();
 
   useEffect(() => {
     if (isSelected) {
@@ -83,6 +100,17 @@ const RuleBox = ({
     }
   };
 
+  const handleRemoveClick = () => {
+    if (groupId === null) {
+      return;
+    }
+    if (ruleKey === null) {
+      discardPlaceholderRuleBox();
+    } else {
+      deleteRuleBox(groupId, ruleKey);
+    }
+  };
+
   return (
     <Stack
       ref={ref}
@@ -103,17 +131,41 @@ const RuleBox = ({
                 <span className="sr-only">{intl.formatMessage(messages.selectRuleBoxButtonLabel)}</span>
               </button>
             )}
-            <ScoreThresholdField
-              rulePayload={rule.rulePayload}
-              onChange={handleScoreChange}
-              getInlineValidationMessage={getInlineValidationMessage}
-              autoOpen={autoOpen}
-              focusButtonOnMount={focusButtonOnMount}
-              scoreTakenHint={scoreTakenHint}
-              hintIsError={isDuplicateRejected}
-              rejectionCount={placeholderDuplicateRejectionCount}
-              scoreSuggestion={scoreSuggestion}
-            />
+            <div className="d-flex align-items-start">
+              <div className="flex-grow-1">
+                <ScoreThresholdField
+                  rulePayload={rule.rulePayload}
+                  onChange={handleScoreChange}
+                  getInlineValidationMessage={getInlineValidationMessage}
+                  autoOpen={autoOpen}
+                  focusButtonOnMount={focusButtonOnMount}
+                  scoreTakenHint={scoreTakenHint}
+                  hintIsError={isDuplicateRejected}
+                  rejectionCount={placeholderDuplicateRejectionCount}
+                  scoreSuggestion={scoreSuggestion}
+                />
+              </div>
+              {
+                /* `groupId` is null only inside a placeholder group, so its rule box gets no menu here; the group's own
+                  menu removes the box with the group. */
+              }
+              {groupId !== null && (
+                <MoreActionsMenu
+                  id={menuToggleId}
+                  toggleClassName="rule-box__menu-toggle"
+                  toggleLabel={isPlaceholder
+                    ? intl.formatMessage(messages.placeholderRuleBoxMoreActionsLabel)
+                    : intl.formatMessage(messages.ruleBoxMoreActionsLabel, {
+                      score: formatScoreSummary(intl, rule.rulePayload),
+                      position,
+                      courseName,
+                    })}
+                  removeLabel={intl.formatMessage(messages.removeRuleBoxMenuItem)}
+                  disabled={isDeletingGroupOrRuleBoxOrCriterion || isAssociating}
+                  onRemove={handleRemoveClick}
+                />
+              )}
+            </div>
           </>
         )
         : (

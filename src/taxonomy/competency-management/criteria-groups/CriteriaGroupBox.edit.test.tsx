@@ -106,7 +106,7 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     ],
     [
       'a group is being removed',
-      { isDeletingGroupOrCriterion: true },
+      { isDeletingGroupOrRuleBoxOrCriterion: true },
       'Wait for the removal to finish before adding another.',
     ],
     [
@@ -207,7 +207,7 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
     });
 
     it.each([
-      ['a delete', { isDeletingGroupOrCriterion: true }],
+      ['a delete', { isDeletingGroupOrRuleBoxOrCriterion: true }],
       ['a create', { isAssociating: true }],
     ])('disables the menu button while %s is in flight', (_name, overrides) => {
       renderBox(overrides);
@@ -231,6 +231,20 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
 
       expect(discardPlaceholderGroup).toHaveBeenCalledTimes(1);
       expect(deleteGroup).not.toHaveBeenCalled();
+    });
+
+    it('gives the placeholder group\'s own rule box no menu, since the group\'s menu removes both', () => {
+      render(
+        <MockCompetencyAssociationsProvider value={{ selection: { groupId: null, ruleKey: null } }}>
+          <CriteriaGroupBox subsectionNamesByUsageKey={{}} canEdit position={3} courseName="Demo Course" />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+      expect(screen.getByText('Select content below to add it here.')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'More actions for the new rule group in Demo Course' }))
+        .toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /^More actions for the (rule with|new rule$)/ })).not
+        .toBeInTheDocument();
     });
 
     it.each([
@@ -260,6 +274,36 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
       },
     );
 
+    it('leaves focus in a text field when a finished delete asks the group to take focus, and still consumes the request', async () => {
+      const consumeKeyboardFocusRequest = jest.fn();
+      const { rerender } = renderBox();
+      await user.click(screen.getAllByRole('button', { name: /With a score of/ })[0]);
+      await user.click(screen.getByRole('textbox'));
+      const focus = jest.spyOn(HTMLButtonElement.prototype, 'focus');
+
+      rerender(
+        <MockCompetencyAssociationsProvider
+          value={{
+            keyboardFocusRequest: { kind: 'group', groupId: 10, selectionMoved: true },
+            consumeKeyboardFocusRequest,
+          }}
+        >
+          <CriteriaGroupBox
+            group={group}
+            subsectionNamesByUsageKey={{}}
+            canEdit
+            position={2}
+            courseName="Demo Course"
+          />
+        </MockCompetencyAssociationsProvider>,
+      );
+
+      expect(screen.getByRole('textbox')).toHaveFocus();
+      // The open score popover returns focus to the text field by itself, so the call that would take it is checked.
+      expect(focus).not.toHaveBeenCalledWith({ preventScroll: true });
+      expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
+    });
+
     it('takes keyboard focus on its menu button when a menu request names it, then consumes the request', () => {
       const consumeKeyboardFocusRequest = jest.fn();
       renderBox({ keyboardFocusRequest: { kind: 'menu', groupId: 10 }, consumeKeyboardFocusRequest });
@@ -273,7 +317,7 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
       renderBox({
         keyboardFocusRequest: { kind: 'menu', groupId: 10 },
         consumeKeyboardFocusRequest,
-        isDeletingGroupOrCriterion: true,
+        isDeletingGroupOrRuleBoxOrCriterion: true,
       });
 
       expect(consumeKeyboardFocusRequest).not.toHaveBeenCalled();

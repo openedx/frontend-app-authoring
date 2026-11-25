@@ -387,7 +387,10 @@ describe('<CourseOutlineSubtree />', () => {
 
     it('disables the remove button while a delete is in flight', async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      renderSubtreeWithAssociations({ associatedObjectIds: new Set(['sub-1a']), isDeletingGroupOrCriterion: true });
+      renderSubtreeWithAssociations({
+        associatedObjectIds: new Set(['sub-1a']),
+        isDeletingGroupOrRuleBoxOrCriterion: true,
+      });
       await expandFirstSection();
 
       expect(await screen.findByRole('button', { name: 'Remove the association with Subsection 1A (graded)' }))
@@ -408,7 +411,7 @@ describe('<CourseOutlineSubtree />', () => {
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
       renderSubtreeWithAssociations({
         associatedObjectIds: new Set(['sub-1a']),
-        isDeletingGroupOrCriterion: true,
+        isDeletingGroupOrRuleBoxOrCriterion: true,
         keyboardFocusRequest: { kind: 'subsection', objectId: 'sub-1a' },
         consumeKeyboardFocusRequest,
       });
@@ -451,7 +454,7 @@ describe('<CourseOutlineSubtree />', () => {
 
     it('disables the add button while a delete is in flight', async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, mixedOutline);
-      renderSubtreeWithAssociations({ isDeletingGroupOrCriterion: true, competencyExternalId: 'EXT-042' });
+      renderSubtreeWithAssociations({ isDeletingGroupOrRuleBoxOrCriterion: true, competencyExternalId: 'EXT-042' });
       await expandFirstSection();
 
       expect(await screen.findByRole('button', { name: 'Associate EXT-042 with Subsection 1A (graded)' }))

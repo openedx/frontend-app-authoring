@@ -6,22 +6,31 @@ import type { BottomTierCompetencyCriteriaGroup } from '../data/types';
 import { ruleBoxesForGroup } from '../utils';
 import AddControl from './AddControl';
 import type { AddControlProps } from './AddControl';
-import GroupActionsMenu from './GroupActionsMenu';
 import LogicOperatorSelect from './LogicOperatorSelect';
+import MoreActionsMenu from './MoreActionsMenu';
 import RuleBoxList from './RuleBoxList';
 import messages from './messages';
+
+const isInputOrEditableElement = (element: Element | null): boolean => (
+  element instanceof HTMLInputElement
+  || element instanceof HTMLTextAreaElement
+  || element instanceof HTMLSelectElement
+  || (element instanceof HTMLElement && element.isContentEditable)
+);
 
 export interface CriteriaGroupBoxProps {
   /** `undefined` for the not-yet-saved placeholder group, which reads its any/all logic from the context. */
   group?: BottomTierCompetencyCriteriaGroup;
   subsectionNamesByUsageKey: Record<string, string>;
-  /** Whether the author can edit this group's any/all logic and its rule boxes' scores. */
+  /** Whether the author can edit this group's any/all logic and its rule boxes' scores, and whether the ⋮ menus
+   * show.
+   */
   canEdit: boolean;
-  /** The 1-based position of `group` among its course group's rule groups, which names its menu. Unused for the
-   * placeholder.
+  /** The 1-based position of `group` among its course group's rule groups, which names its menu and its rule boxes'
+   * menus. Unused for the placeholder.
    */
   position: number;
-  /** The course the group belongs to, which names its menu. */
+  /** The course the group belongs to, which names its menu and its rule boxes' menus. */
   courseName: string;
 }
 
@@ -52,7 +61,7 @@ const CriteriaGroupBox = (
     isAssociating,
     courseList,
     deleteGroup,
-    isDeletingGroupOrCriterion,
+    isDeletingGroupOrRuleBoxOrCriterion,
     discardPlaceholderGroup,
     keyboardFocusRequest,
     consumeKeyboardFocusRequest,
@@ -87,13 +96,16 @@ const CriteriaGroupBox = (
 
   useEffect(() => {
     if (takesKeyboardFocus && selectButtonRef.current) {
-      selectButtonRef.current.focus({ preventScroll: selectionMoved });
+      // Moving focus off a text field would interrupt the author's typing.
+      if (!isInputOrEditableElement(document.activeElement)) {
+        selectButtonRef.current.focus({ preventScroll: selectionMoved });
+      }
       consumeKeyboardFocusRequest();
     }
   }, [takesKeyboardFocus, selectionMoved, consumeKeyboardFocusRequest]);
 
   const menuToggleRef = useRef<HTMLButtonElement>(null);
-  const isMenuDisabled = isDeletingGroupOrCriterion || isAssociating;
+  const isMenuDisabled = isDeletingGroupOrRuleBoxOrCriterion || isAssociating;
   // Waits for the toggle to be enabled again, since a disabled button cannot take focus.
   const takesMenuFocus = group !== undefined
     && keyboardFocusRequest?.kind === 'menu'
@@ -137,7 +149,7 @@ const CriteriaGroupBox = (
   } else if (courseList.isPlaceholderData) {
     // A reload can list other courses, which would discard an unsaved box started now.
     disabledReason = 'loading';
-  } else if (isDeletingGroupOrCriterion) {
+  } else if (isDeletingGroupOrRuleBoxOrCriterion) {
     disabledReason = 'deleting';
   } else if (hasPlaceholder) {
     disabledReason = 'placeholder';
@@ -166,7 +178,7 @@ const CriteriaGroupBox = (
               )}
               {sentence}
             </div>
-            <GroupActionsMenu
+            <MoreActionsMenu
               toggleRef={menuToggleRef}
               id={`rule-group-menu-toggle-${group?.id ?? 'placeholder'}`}
               toggleLabel={group
@@ -196,6 +208,8 @@ const CriteriaGroupBox = (
             boxes={boxes}
             subsectionNamesByUsageKey={subsectionNamesByUsageKey}
             canEdit={canEdit}
+            position={position}
+            courseName={courseName}
           />
           {canEdit && groupId !== null && (
             <AddControl

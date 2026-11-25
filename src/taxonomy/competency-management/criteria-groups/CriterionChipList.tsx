@@ -17,7 +17,7 @@ export interface CriterionChipListProps {
 /** The chips inside one rule box, one per criterion. */
 const CriterionChipList = ({ criteria, subsectionNamesByUsageKey, canEdit = false }: CriterionChipListProps) => {
   const intl = useIntl();
-  const { removeCriterion, isDeletingGroupOrCriterion, isAssociating } = useCompetencyAssociations();
+  const { removeCriterion, isDeletingGroupOrRuleBoxOrCriterion, isAssociating } = useCompetencyAssociations();
 
   return (
     <div className="criterion-chip-list d-flex flex-wrap">
@@ -26,7 +26,7 @@ const CriterionChipList = ({ criteria, subsectionNamesByUsageKey, canEdit = fals
           key={criterion.id}
           displayName={subsectionNamesByUsageKey[criterion.objectId] ??
             intl.formatMessage(messages.unknownSubsectionLabel)}
-          disabled={isDeletingGroupOrCriterion || isAssociating}
+          disabled={isDeletingGroupOrRuleBoxOrCriterion || isAssociating}
           onRemove={canEdit ? () => removeCriterion(criterion.id, 'group') : undefined}
         />
       ))}

@@ -11,6 +11,7 @@ import {
   byTextContent,
   courseA,
   courseB,
+  criterion,
   MockCompetencyAssociationsProvider,
   twoCoursesResponse,
 } from '../__mocks__';
@@ -197,6 +198,39 @@ describe('<CourseGroupList />', () => {
         .toBeInTheDocument();
       expect(screen.queryByText(noAssociationsPromptMessage)).not.toBeInTheDocument();
     });
+  });
+
+  it('shows rule box menus only in the courses the author can edit', async () => {
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(
+      200,
+      buildOutlineIndex({ overrides: { courseStructure: { displayName: 'Course A' } } }),
+    );
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseB)).reply(
+      200,
+      buildOutlineIndex({ overrides: { courseStructure: { displayName: 'Course B' } } }),
+    );
+    const groupsIndex = buildCompetencyCriteriaGroupsIndex({
+      ...twoCoursesResponse,
+      criteria: [criterion(901, 'sub-a', 10), criterion(902, 'sub-b', 20)],
+    });
+    renderList({
+      groupsIndex,
+      accessibleCourseGroups: groupsIndex.courseGroups,
+      canEditCourse: (courseId) => courseId === courseB,
+    });
+
+    const sectionOf = (heading: HTMLElement) => within(heading.closest('.course-group-section') as HTMLElement);
+    const courseBSection = sectionOf(await screen.findByRole('heading', { name: 'From within Course B ...' }));
+    const courseASection = sectionOf(screen.getByRole('heading', { name: 'From within Course A ...' }));
+
+    expect(courseBSection.getAllByRole('button', { name: /More actions for the rule with a score of/ }))
+      .toHaveLength(1);
+    expect(courseBSection.getAllByRole('button', { name: /^More actions for rule group/ })).toHaveLength(1);
+    expect(courseBSection.getByRole('button', { name: 'More actions for Course B' })).toBeInTheDocument();
+    expect(courseASection.queryByRole('button', { name: /^More actions for/ })).not.toBeInTheDocument();
+    // Course A shows its rule group and rule box, so the missing menus are not an empty section.
+    expect(courseASection.getByRole('button', { name: 'By completing any of the following' })).toBeInTheDocument();
+    expect(courseASection.getByRole('button', { name: 'With a score of 70% or higher' })).toBeInTheDocument();
   });
 
   it('takes keyboard focus on the empty state when a request asks for it, then consumes the request', () => {

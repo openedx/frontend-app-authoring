@@ -69,7 +69,7 @@ describe('<CriterionChipList />', () => {
         subsectionNamesByUsageKey: { 'block-a': 'Subsection A' },
         canEdit: true,
       },
-      { isDeletingGroupOrCriterion: true },
+      { isDeletingGroupOrRuleBoxOrCriterion: true },
     );
 
     expect(screen.getByRole('button', { name: 'Remove the association with Subsection A' }))
