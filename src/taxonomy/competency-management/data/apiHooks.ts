@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { skipToken, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { QueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import type { AxiosError } from 'axios';
 
 import { useUserPermissions } from '@src/authz/data/apiHooks';
@@ -178,6 +179,50 @@ export const useDeleteCompetencyCriterion = () => {
   const queryClient = useQueryClient();
   return useMutation<void, AxiosError, { tagId: number; criterionId: number; }>({
     mutationFn: ({ tagId, criterionId }) => api.deleteCompetencyCriterion(tagId, criterionId),
+    onSettled: (_data, _error, { tagId }) => refreshCompetencyCriteriaGroups(queryClient, tagId),
+  });
+};
+
+/**
+ * Thrown by a rule box delete that stopped at its first non-404 error. `removedCount` is how many of the box's
+ * criteria were gone by then, a 404 counting as gone, so a caller can tell "nothing was removed" from "part of the
+ * box was removed" without reading the refetched data, which is stale when the refetch fails too.
+ */
+export class RuleBoxDeleteError extends Error {
+  readonly removedCount: number;
+
+  constructor(removedCount: number, cause: unknown) {
+    super(cause instanceof Error ? cause.message : 'Rule box delete failed', { cause });
+    this.name = 'RuleBoxDeleteError';
+    this.removedCount = removedCount;
+  }
+}
+
+/**
+ * Build the mutation to delete a rule box's criteria, one request at a time. The backend locks the competency's tag
+ * row during a criterion delete, so parallel requests would not leave an empty group stored. The requests are still
+ * sequential, because a failed run has to stop at its first failure with a known number of criteria removed. It then
+ * throws a `RuleBoxDeleteError` carrying that number. A 404 means the criterion is already gone, so it counts as
+ * removed and the run goes on.
+ * `onSettled` returns the refetch promise, so `isPending` stays true until the panel is fresh. Otherwise the stale
+ * box would briefly show an enabled ⋮ whose next click re-sends ids that are already gone.
+ */
+export const useDeleteCompetencyRuleBox = () => {
+  const queryClient = useQueryClient();
+  return useMutation<void, RuleBoxDeleteError, { tagId: number; criterionIds: number[]; }>({
+    mutationFn: async ({ tagId, criterionIds }) => {
+      let removedCount = 0;
+      for (const criterionId of criterionIds) {
+        try {
+          await api.deleteCompetencyCriterion(tagId, criterionId);
+        } catch (error) {
+          if (!isAxiosError(error) || error.response?.status !== 404) {
+            throw new RuleBoxDeleteError(removedCount, error);
+          }
+        }
+        removedCount += 1;
+      }
+    },
     onSettled: (_data, _error, { tagId }) => refreshCompetencyCriteriaGroups(queryClient, tagId),
   });
 };

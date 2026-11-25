@@ -21,6 +21,7 @@ import {
 import type { MockCompetencyAssociationsOverrides } from '../__mocks__';
 import type { CourseCompetencyCriteriaGroup } from '../data/types';
 import { CompetencyAssociationsContext } from '../CompetencyAssociationsContext';
+import { RemovalTargetKind } from '@src/taxonomy/competency-management/constants';
 import { buildCompetencyCriteriaGroupsIndex } from '../utils';
 import CourseGroupSection from './CourseGroupSection';
 
@@ -246,7 +247,7 @@ describe('<CourseGroupSection />', () => {
     },
   );
 
-  it('names each rule group menu button by its position, and the placeholder group\'s as the new one', async () => {
+  it('names rule group menus by position, and same-score rule box menus by their group', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
     renderSection({
       selection: { groupId: null, ruleKey: null },
@@ -267,7 +268,9 @@ describe('<CourseGroupSection />', () => {
     expect(names).toEqual([
       'More actions for Demo Course',
       'More actions for rule group 1 in Demo Course',
+      'More actions for the rule with a score of 70% or higher in rule group 1 in Demo Course',
       'More actions for rule group 2 in Demo Course',
+      'More actions for the rule with a score of 70% or higher in rule group 2 in Demo Course',
       'More actions for the new rule group in Demo Course',
     ]);
   });
@@ -307,7 +310,7 @@ describe('<CourseGroupSection />', () => {
     ],
     [
       'a group is being removed',
-      { isDeletingGroupOrCriterion: true },
+      { isDeletingGroupOrRuleBoxOrCriterion: true },
       'Wait for the removal to finish before adding another.',
     ],
     [
@@ -427,15 +430,15 @@ describe('<CourseGroupSection />', () => {
   });
 
   describe('delete control', () => {
-    it('calls deleteGroup with the course group id when Remove from the competency is chosen', async () => {
+    it('requests the course group\'s removal when Remove from the competency is chosen', async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
-      const deleteGroup = jest.fn();
-      renderSection({ deleteGroup, canEditCourse: () => true, competencyName: 'Critical Thinking' });
+      const requestRemoval = jest.fn();
+      renderSection({ requestRemoval, canEditCourse: () => true, competencyName: 'Critical Thinking' });
 
       await user.click(await screen.findByRole('button', { name: 'More actions for Demo Course' }));
       await user.click(screen.getByRole('button', { name: 'Remove from Critical Thinking' }));
 
-      expect(deleteGroup).toHaveBeenCalledWith(courseGroup.id);
+      expect(requestRemoval).toHaveBeenCalledWith({ kind: RemovalTargetKind.CourseGroup, groupId: courseGroup.id });
     });
 
     it('renders the menu button at the inline size, whatever size the card header injects', async () => {
@@ -458,7 +461,7 @@ describe('<CourseGroupSection />', () => {
     });
 
     it.each([
-      ['a delete', { isDeletingGroupOrCriterion: true }],
+      ['a delete', { isDeletingGroupOrRuleBoxOrCriterion: true }],
       ['a create', { isAssociating: true }],
     ])('disables the menu button while %s is in flight', async (_name, overrides) => {
       axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
@@ -516,60 +519,9 @@ describe('<CourseGroupSection />', () => {
         </MockCompetencyAssociationsProvider>,
       );
 
-      expect(screen.getByRole('button', { name: 'Expand Demo Course' })).toHaveFocus();
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Expand Demo Course' })).toHaveFocus());
       expect(screen.queryByText('Subsection 1A')).not.toBeInTheDocument();
       expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
-    });
-
-    it('stays collapsed and focuses its expand button for a menu request naming one of its rule groups', async () => {
-      axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
-      const consumeKeyboardFocusRequest = jest.fn();
-      const { rerender } = renderSection({ consumeKeyboardFocusRequest });
-      await user.click(await screen.findByRole('button', { name: 'Collapse Demo Course' }));
-      screen.getByRole('button', { name: 'Expand Demo Course' }).blur();
-
-      rerender(
-        <MockCompetencyAssociationsProvider
-          value={{
-            groupsIndex: index,
-            canEditCourse: () => true,
-            consumeKeyboardFocusRequest,
-            keyboardFocusRequest: { kind: 'menu', groupId: 11 },
-          }}
-        >
-          <CourseGroupSection courseGroup={courseGroup} />
-        </MockCompetencyAssociationsProvider>,
-      );
-
-      expect(screen.getByRole('button', { name: 'Expand Demo Course' })).toHaveFocus();
-      expect(screen.queryByText('Subsection 1A')).not.toBeInTheDocument();
-      expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
-    });
-
-    it('takes keyboard focus on its menu button when a menu request names it, then consumes the request', async () => {
-      axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
-      const consumeKeyboardFocusRequest = jest.fn();
-      renderSection({
-        canEditCourse: () => true,
-        keyboardFocusRequest: { kind: 'menu', groupId: courseGroup.id },
-        consumeKeyboardFocusRequest,
-      });
-
-      expect(await screen.findByRole('button', { name: 'More actions for Demo Course' })).toHaveFocus();
-      expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
-    });
-
-    it('ignores a menu request that names another group', async () => {
-      axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
-      const consumeKeyboardFocusRequest = jest.fn();
-      renderSection({
-        canEditCourse: () => true,
-        keyboardFocusRequest: { kind: 'menu', groupId: 99 },
-        consumeKeyboardFocusRequest,
-      });
-
-      expect(await screen.findByRole('button', { name: 'More actions for Demo Course' })).not.toHaveFocus();
-      expect(consumeKeyboardFocusRequest).not.toHaveBeenCalled();
     });
 
     it('stays collapsed for a keyboard focus request that names a group of another course group', async () => {

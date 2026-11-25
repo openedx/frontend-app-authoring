@@ -2,6 +2,7 @@ import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import type { Course } from '@src/studio-home/data/api';
 import {
+  act,
   initializeMocks,
   render,
   screen,
@@ -32,6 +33,7 @@ import CourseRow from './course-search/CourseRow';
 import { CourseGroupList } from './criteria-groups';
 import { apiUrls } from './data/api';
 import type { CompetencyCriteriaGroupsResponse } from './data/types';
+import { RemovalConfirmationModal } from './removal-confirmation';
 
 let axiosMock: ReturnType<typeof initializeMocks>['axiosMock'];
 
@@ -74,6 +76,7 @@ const renderPanel = (rows: Course[] = [courseBRow]) => {
   return render(
     <CompetencyAssociationsProvider tagId={tagId} competencyName="Test Competency" competencyExternalId="CCRS-1.3">
       <CourseGroupList />
+      <RemovalConfirmationModal />
       {rows.map((row) => <CourseRow key={row.courseKey} course={row} />)}
     </CompetencyAssociationsProvider>,
   );
@@ -569,6 +572,13 @@ describe('competency associations over the real provider', () => {
       await user.click(screen.getByRole('button', { name: `More actions for rule group ${position} in Course A` }));
     };
 
+    /** Every removal opens its confirmation first; nothing is sent until its Remove button is clicked. */
+    const confirmRemoval = async () => {
+      const dialog = await screen.findByRole('dialog');
+      expect(axiosMock.history.delete).toHaveLength(0);
+      await user.click(within(dialog).getByRole('button', { name: 'Remove' }));
+    };
+
     const expandCourseA = async () => {
       await user.click(await screen.findByRole('button', { name: 'Expand' }));
       await user.click(await screen.findByRole('button', { name: 'Expand' }));
@@ -583,6 +593,7 @@ describe('competency associations over the real provider', () => {
 
       await openRuleGroupMenu(2);
       await user.click(screen.getByRole('button', { name: 'Remove group' }));
+      await confirmRemoval();
 
       expect(await screen.findByRole('button', { name: 'Associate CCRS-1.3 with Homework 1' })).toBeInTheDocument();
       expect(axiosMock.history.delete).toHaveLength(1);
@@ -599,6 +610,7 @@ describe('competency associations over the real provider', () => {
 
       await openRuleGroupMenu(2);
       await user.click(screen.getByRole('button', { name: 'Remove group' }));
+      await confirmRemoval();
 
       await waitFor(() => expect(groupHeaders()).toHaveLength(1));
       expect(currentStates(groupHeaders())).toEqual(['true']);
@@ -633,6 +645,7 @@ describe('competency associations over the real provider', () => {
       await expandCourseA();
       await user.click(screen.getByRole('button', { name: 'More actions for rule group 1 in Course A' }));
       await user.click(screen.getByRole('button', { name: 'Remove group' }));
+      await confirmRemoval();
 
       const emptyMessage = await screen.findByText(byTextContent('No content associated with Test Competency yet.'));
       await waitFor(() => expect(emptyMessage.parentElement).toHaveFocus());
@@ -654,6 +667,7 @@ describe('competency associations over the real provider', () => {
       const item = await screen.findByRole('button', { name: 'Remove group' });
       await waitFor(() => expect(item).toHaveFocus());
       await user.keyboard('{Enter}');
+      await confirmRemoval();
 
       await waitFor(() => expect(groupHeaders()).toHaveLength(1));
       await waitFor(() => expect(groupHeaders()[0]).toHaveFocus());
@@ -676,10 +690,40 @@ describe('competency associations over the real provider', () => {
 
       await user.click(screen.getByRole('button', { name: 'More actions for Course B' }));
       await user.click(screen.getByRole('button', { name: 'Remove from Test Competency' }));
+      await confirmRemoval();
 
       await waitFor(() => expect(groupHeaders()).toHaveLength(1));
       await waitFor(() => expect(groupHeaders()[0]).toHaveFocus());
       expect(screen.getByRole('button', { name: 'Collapse Course A' })).toBeInTheDocument();
+    });
+
+    it('keeps focus on a collapsed course group\'s expand button after the dialog closes on another course\'s group', async () => {
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseB)).reply(200, outlineOf('Course B', {}));
+      // Course A's group holds a criterion, so selecting it is not a placeholder that collapsing its course discards.
+      const withCriterionInCourseA: CompetencyCriteriaGroupsResponse = {
+        ...courseBGroupsResponse,
+        criteria: [criterion(900, 'a-sub-1', 10), ...courseBGroupsResponse.criteria],
+      };
+      let reply = withCriterionInCourseA;
+      axiosMock.onGet(groupsUrl).reply(() => [200, reply]);
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 20)).reply(() => {
+        reply = { ...withCriterionInCourseA, groups: withCriterionInCourseA.groups.filter((item) => item.id !== 20) };
+        return [200];
+      });
+      renderPanel([courseARow, courseBRow]);
+      await screen.findAllByRole('heading', { name: /^From within Course/ });
+      await user.click(groupHeaders()[0]);
+      await user.click(screen.getByRole('button', { name: 'Collapse Course A' }));
+
+      await user.click(screen.getByRole('button', { name: 'More actions for rule group 1 in Course B' }));
+      await user.click(screen.getByRole('button', { name: 'Remove group' }));
+      await confirmRemoval();
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      await act(async () => {});
+      expect(groupHeaders()).toHaveLength(1);
+      expect(screen.getByRole('button', { name: 'Expand Course A' })).toHaveFocus();
     });
   });
 });

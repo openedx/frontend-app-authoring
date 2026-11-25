@@ -27,6 +27,7 @@ import {
   eqRule,
   group,
   gteRule,
+  mockHeldGroupsRefetch,
   noGroupsResponse,
   otherSingleGroupResponse,
   singleGroupResponse,
@@ -35,9 +36,11 @@ import {
   twoGroupsResponse,
 } from './__mocks__';
 import { CompetencyAssociationsProvider, useCompetencyAssociations } from './CompetencyAssociationsContext';
+import { RemovalTargetKind } from './constants';
 import { apiUrls } from './data/api';
 import { competencyQueryKeys } from './data/apiHooks';
-import type { GradeRulePayload } from './data/types';
+import type { CompetencyCriteriaGroupsResponse, GradeRulePayload } from './data/types';
+import { ruleBoxesForGroup } from './utils';
 
 let axiosMock: ReturnType<typeof initializeMocks>['axiosMock'];
 let mockShowToast: ReturnType<typeof initializeMocks>['mockShowToast'];
@@ -45,7 +48,7 @@ let queryClient: ReturnType<typeof initializeMocks>['queryClient'];
 let user: ReturnType<typeof userEvent.setup>;
 
 const otherTagId = 43;
-const gteKey = 'grade:gte:0.7:percent';
+const gte70PercentRuleKey = 'grade:gte:0.7:percent';
 const eqKey = 'grade:eq:1:percent';
 
 const groupsUrl = apiUrls.competencyCriteriaGroups(tagId);
@@ -111,6 +114,71 @@ const afterRemovingSubAResponse = {
   criteria: twoCriteriaInGroupResponse.criteria.filter((item) => item.id !== 901),
 };
 
+const gte80PercentRuleKey = 'grade:gte:0.8:percent';
+const gte90PercentRuleKey = 'grade:gte:0.9:percent';
+
+/** A criterion in group `groupId` at `percent`, or one resolving through the 70% default profile when `percent` is null. */
+const criterionInGroupAtScore = (id: number, groupId: number, percent: number | null) => (
+  percent === null
+    ? criterion(id, `sub-${id}`, groupId)
+    : criterion(id, `sub-${id}`, groupId, {
+      ruleProfileId: null,
+      ruleTypeOverride: 'grade',
+      rulePayloadOverride: { op: 'gte', value: percent / 100, scale: 'percent' },
+    })
+);
+
+const responseWithoutCriteria = (response: CompetencyCriteriaGroupsResponse, criterionIds: number[]) => ({
+  ...response,
+  criteria: response.criteria.filter((item) => !criterionIds.includes(item.id)),
+});
+
+// Criterion ids in `threeRuleBoxesInGroup10Response` and `fourRuleBoxesInGroup10Response`, named by the rule box each
+// belongs to. Each box in those responses holds one criterion. `twoGroupsWithCriteriaResponse` gives group 10 and
+// group 11 one 70% box each, with the same ids as the 70% boxes here.
+const criterionIdIn70PercentRuleBoxOfGroup10 = 901;
+const criterionIdIn80PercentRuleBoxOfGroup10 = 903;
+const criterionIdIn90PercentRuleBoxOfGroup10 = 904;
+const criterionIdIn95PercentRuleBoxOfGroup10 = 907;
+const criterionIdIn70PercentRuleBoxOfGroup11 = 902;
+
+/** Group 10 holds three rule boxes (70%, 80%, 90%) and group 11 one (70%), so a box can vanish while its group
+ * survives.
+ */
+const threeRuleBoxesInGroup10Response: CompetencyCriteriaGroupsResponse = {
+  ...twoGroupsResponse,
+  criteria: [
+    criterionInGroupAtScore(criterionIdIn70PercentRuleBoxOfGroup10, 10, null),
+    criterionInGroupAtScore(criterionIdIn80PercentRuleBoxOfGroup10, 10, 80),
+    criterionInGroupAtScore(criterionIdIn90PercentRuleBoxOfGroup10, 10, 90),
+    criterionInGroupAtScore(criterionIdIn70PercentRuleBoxOfGroup11, 11, null),
+  ],
+};
+
+/** `threeRuleBoxesInGroup10Response` plus a fourth box (95%) in group 10, so a removed box has a neighbor on each
+ * side.
+ */
+const fourRuleBoxesInGroup10Response: CompetencyCriteriaGroupsResponse = {
+  ...threeRuleBoxesInGroup10Response,
+  criteria: [
+    ...threeRuleBoxesInGroup10Response.criteria,
+    criterionInGroupAtScore(criterionIdIn95PercentRuleBoxOfGroup10, 10, 95),
+  ],
+};
+
+// Criterion ids in `threeCriteriaInOneRuleBoxResponse`, in the order the API lists them.
+const criterionIdsIn70PercentRuleBox = [901, 905, 906];
+const criterionIdsIn80PercentRuleBox = [903];
+
+/** Group 10 holds a 70% rule box with three criteria and an 80% rule box with one. */
+const threeCriteriaInOneRuleBoxResponse: CompetencyCriteriaGroupsResponse = {
+  ...singleGroupResponse,
+  criteria: [
+    ...criterionIdsIn70PercentRuleBox.map((id) => criterionInGroupAtScore(id, 10, null)),
+    ...criterionIdsIn80PercentRuleBox.map((id) => criterionInGroupAtScore(id, 10, 80)),
+  ],
+};
+
 const courseAOutlineUrl = getCourseOutlineIndexApiUrl(courseA);
 const courseBOutlineUrl = getCourseOutlineIndexApiUrl(courseB);
 const updateGroupOperatorUrl = apiUrls.competencyCriteriaGroup(tagId, 10);
@@ -119,7 +187,6 @@ const updateRuleScoreUrl = apiUrls.updateCompetencyCriteriaRule(10);
 const outlineFixture = buildOutlineIndex();
 
 const createFailedMessage = 'There was a problem creating this association. Please try again.';
-const removeFailedMessage = 'There was a problem removing this association. Please try again.';
 
 /** The body of a 201 from the create endpoint: an override rule when `rule` is
  * given, otherwise the default profile.
@@ -144,14 +211,30 @@ const deferred = () => {
 /** Renders every context value as text and every action as a button. */
 const TestConsumer = () => {
   const ctx = useCompetencyAssociations();
+  // Asks for the box's removal with the ids a rendered rule box holds, which is what `RuleBox` hands to
+  // `requestRemoval`; none for a key the group lacks.
+  const requestRuleBoxRemoval = (groupId: number, ruleKey: string) =>
+    ctx.requestRemoval({
+      kind: RemovalTargetKind.RuleBox,
+      groupId,
+      criterionIds: ctx.groupsIndex && ctx.systemDefaultProfile
+        ? ruleBoxesForGroup(groupId, ctx.groupsIndex, ctx.systemDefaultProfile)
+          .find((box) => box.key === ruleKey)?.criteria.map((criterion) => criterion.id) ?? []
+        : [],
+    });
+  const requestAssociationRemoval = (criterionId: number, returnFocusTo: 'group' | 'subsection') => (
+    ctx.requestRemoval({ kind: RemovalTargetKind.Association, criterionId, returnFocusTo })
+  );
   const actions: Array<[string, () => void]> = [
     ['Select group 999', () => ctx.selectGroup(999)],
-    ['Select rule box 999 gte', () => ctx.selectRuleBox(999, gteKey)],
+    ['Select rule box 999 gte', () => ctx.selectRuleBox(999, gte70PercentRuleKey)],
     ['Select group 10', () => ctx.selectGroup(10)],
     ['Select group 20', () => ctx.selectGroup(20)],
     ['Select group 21', () => ctx.selectGroup(21)],
-    ['Select rule box 10 gte', () => ctx.selectRuleBox(10, gteKey)],
-    ['Select rule box 21 gte', () => ctx.selectRuleBox(21, gteKey)],
+    ['Select rule box 10 gte', () => ctx.selectRuleBox(10, gte70PercentRuleKey)],
+    ['Select the 80% rule box in group 10', () => ctx.selectRuleBox(10, gte80PercentRuleKey)],
+    ['Select the 90% rule box in group 10', () => ctx.selectRuleBox(10, gte90PercentRuleKey)],
+    ['Select rule box 21 gte', () => ctx.selectRuleBox(21, gte70PercentRuleKey)],
     ['Select rule box 12 eq', () => ctx.selectRuleBox(12, eqKey)],
     ['Expand course A', () => ctx.notifyCourseExpanded(courseA)],
     ['Expand course B', () => ctx.notifyCourseExpanded(courseB)],
@@ -166,29 +249,43 @@ const TestConsumer = () => {
     ['Go to page 1', () => ctx.setCoursePage(1)],
     ['Discard placeholder', () => ctx.discardPlaceholder()],
     ['Select group 11', () => ctx.selectGroup(11)],
-    ['Delete group 10', () => ctx.deleteGroup(10)],
-    ['Delete group 20', () => ctx.deleteGroup(20)],
-    ['Delete group 30', () => ctx.deleteGroup(30)],
-    ['Delete course group 1', () => ctx.deleteGroup(1)],
-    [
-      'Delete group 10 twice',
-      () => {
-        ctx.deleteGroup(10);
-        ctx.deleteGroup(10);
-      },
-    ],
+    ['Delete group 10', () => ctx.requestRemoval({ kind: RemovalTargetKind.RuleGroup, groupId: 10 })],
+    ['Delete group 20', () => ctx.requestRemoval({ kind: RemovalTargetKind.RuleGroup, groupId: 20 })],
+    ['Delete group 30', () => ctx.requestRemoval({ kind: RemovalTargetKind.RuleGroup, groupId: 30 })],
+    ['Request remove group 11', () => ctx.requestRemoval({ kind: RemovalTargetKind.RuleGroup, groupId: 11 })],
+    ['Request remove course group 1', () => ctx.requestRemoval({ kind: RemovalTargetKind.CourseGroup, groupId: 1 })],
+    ['Confirm removal', () => ctx.confirmRemoval()],
+    ['Cancel removal', () => ctx.cancelRemoval()],
     ['Discard placeholder group', () => ctx.discardPlaceholderGroup()],
-    ['Remove existing-sub chip', () => ctx.removeCriterion(900, 'group')],
-    ['Remove sub-a chip', () => ctx.removeCriterion(901, 'group')],
-    ['Remove criterion 902', () => ctx.removeCriterion(902, 'group')],
-    ['Remove sub-a from browse', () => ctx.removeCriterion(901, 'subsection')],
+    ['Delete the 70% rule box in group 10', () => requestRuleBoxRemoval(10, gte70PercentRuleKey)],
+    ['Delete the 80% rule box in group 10', () => requestRuleBoxRemoval(10, gte80PercentRuleKey)],
+    ['Delete the 90% rule box in group 10', () => requestRuleBoxRemoval(10, gte90PercentRuleKey)],
+    ['Delete the 70% rule box in group 11', () => requestRuleBoxRemoval(11, gte70PercentRuleKey)],
+    ['Delete the 70% rule box in group 20', () => requestRuleBoxRemoval(20, gte70PercentRuleKey)],
     [
-      'Remove sub-a twice',
+      'Confirm removal twice in one tick',
       () => {
-        ctx.removeCriterion(901, 'group');
-        ctx.removeCriterion(901, 'group');
+        void ctx.confirmRemoval();
+        void ctx.confirmRemoval();
       },
     ],
+    [
+      'Confirm removal, then request removing group 11 and confirm it, in one tick',
+      () => {
+        void ctx.confirmRemoval();
+        ctx.requestRemoval({ kind: RemovalTargetKind.RuleGroup, groupId: 11 });
+        void ctx.confirmRemoval();
+      },
+    ],
+    [
+      'Delete rule box with ids 999',
+      () => ctx.requestRemoval({ kind: RemovalTargetKind.RuleBox, groupId: 10, criterionIds: [999] }),
+    ],
+    ['Discard placeholder rule box', () => ctx.discardPlaceholderRuleBox()],
+    ['Remove existing-sub chip', () => requestAssociationRemoval(900, 'group')],
+    ['Remove sub-a chip', () => requestAssociationRemoval(901, 'group')],
+    ['Remove criterion 902', () => requestAssociationRemoval(902, 'group')],
+    ['Remove sub-a from browse', () => requestAssociationRemoval(901, 'subsection')],
     ['Add placeholder rule box in group 10', () => ctx.addPlaceholderRuleBox(10)],
     ['Add placeholder group under course A', () => ctx.addPlaceholderGroup(1)],
     ['Set placeholder logic operator to AND', () => ctx.setPlaceholderLogicOperator('AND')],
@@ -216,7 +313,13 @@ const TestConsumer = () => {
       </p>
       <p>Status: {ctx.status}</p>
       <p>Has placeholder: {String(ctx.hasPlaceholder)}</p>
-      <p>Deleting: {String(ctx.isDeletingGroupOrCriterion)}</p>
+      <p>Deleting: {String(ctx.isDeletingGroupOrRuleBoxOrCriterion)}</p>
+      <p>
+        Pending removal: {ctx.pendingRemoval
+          ? JSON.stringify({ kind: ctx.pendingRemoval.target.kind, failure: ctx.pendingRemoval.failure })
+          : 'closed'}
+      </p>
+      <p>Pending summary: {JSON.stringify(ctx.pendingRemoval?.summary ?? null)}</p>
       <p>
         Criterion ids: {JSON.stringify(
           ctx.groupsIndex?.criteriaByGroupId && [...ctx.groupsIndex.criteriaByGroupId.values()].flat().map((c) => c.id),
@@ -236,6 +339,7 @@ const TestConsumer = () => {
       <p>Course page: {ctx.coursePage}</p>
       <p>Course search: {JSON.stringify(ctx.courseSearch)}</p>
       <p>Criteria counts: {JSON.stringify(ctx.criteriaCounts ?? null)}</p>
+      <p>Groups refresh error: {String(ctx.hasGroupsRefreshError)}</p>
       <p>Competency: {String(ctx.competencyExternalId)}</p>
       <p>Conflict in course A: {ctx.conflictingCompetencyName(courseA) ?? 'none'}</p>
       <p>Conflict in course B: {ctx.conflictingCompetencyName(courseB) ?? 'none'}</p>
@@ -275,12 +379,28 @@ const renderProvider = () => render(providerFor(tagId));
 
 const click = (name: string) => user.click(screen.getByRole('button', { name }));
 
+/** Opens the confirmation for the removal behind `requestName`, then confirms it. */
+const requestAndConfirm = async (requestName: string) => {
+  await click(requestName);
+  await click('Confirm removal');
+};
+const pendingRemoval = (text: string) => `Pending removal: ${text}`;
+
 const waitForSuccess = () => screen.findByText('Status: success');
 const accessibleCourses = () => screen.getByRole('list', { name: 'Accessible courses' });
 const noSelection = () => screen.getByText('Selection: none');
 const selectionOnGroup = (groupId: number) => new RegExp(`^Selection: group ${groupId},`);
 const selectionOn = (groupId: number, ruleKey: string | null) =>
   `Selection: group ${groupId}, rule ${ruleKey ?? 'none'}`;
+/** The text of the "Criterion ids" line, which lists the criteria of every saved rule box, in the order shown. */
+const criterionIdsShown = (ids: number[]) => `Criterion ids: ${JSON.stringify(ids)}`;
+
+/** Clears the initial selection the way an author can: by starting a placeholder rule box and discarding it. */
+const clearSelectionByAddingAndDiscardingPlaceholderRuleBox = async () => {
+  await click('Add placeholder rule box in group 10');
+  await click('Discard placeholder');
+  expect(noSelection()).toBeInTheDocument();
+};
 
 /** Lets effects and the state updates they dispatch run to completion. */
 const flushEffects = (ms = 0) =>
@@ -317,7 +437,7 @@ describe('CompetencyAssociationsProvider', () => {
       axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
       renderProvider();
 
-      expect(await screen.findByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(await screen.findByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
     });
 
     it('leaves selection unset when more than one bottom-tier group exists across visible course groups', async () => {
@@ -393,6 +513,46 @@ describe('CompetencyAssociationsProvider', () => {
         expect(accessibleCourses()).not.toHaveTextContent(courseB);
       },
     );
+
+    it('keeps the loaded groups and the success status when a groups refetch fails', async () => {
+      axiosMock.onGet(groupsUrl).replyOnce(200, singleGroupResponse).onGet(groupsUrl).reply(500);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      renderProvider();
+      await waitForSuccess();
+
+      await act(async () => {
+        await queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
+      });
+
+      await waitFor(() => expect(axiosMock.history.get.filter((request) => request.url === groupsUrl)).toHaveLength(2));
+      expect(screen.getByText('Status: success')).toBeInTheDocument();
+      expect(screen.getByText('Error: none')).toBeInTheDocument();
+      expect(screen.getByText('Groups refresh error: true')).toBeInTheDocument();
+      expect(screen.getByText('Groups index: loaded')).toBeInTheDocument();
+      expect(accessibleCourses()).toHaveTextContent(courseA);
+    });
+
+    it('clears the refresh error once a later groups load succeeds', async () => {
+      axiosMock.onGet(groupsUrl).replyOnce(200, singleGroupResponse);
+      axiosMock.onGet(groupsUrl).replyOnce(500);
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      renderProvider();
+      await waitForSuccess();
+      expect(screen.getByText('Groups refresh error: false')).toBeInTheDocument();
+      const invalidateGroups = () =>
+        act(async () => {
+          await queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
+        });
+
+      await invalidateGroups();
+      expect(await screen.findByText('Groups refresh error: true')).toBeInTheDocument();
+      await invalidateGroups();
+
+      expect(await screen.findByText('Groups refresh error: false')).toBeInTheDocument();
+    });
 
     it('reports an error when a course outline refetch fails after the status was success', async () => {
       axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
@@ -840,11 +1000,11 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Select group 21');
       expect(screen.getByText(selectionOn(21, eqKey))).toBeInTheDocument();
       await click('Select rule box 21 gte');
-      expect(screen.getByText(selectionOn(21, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(21, gte70PercentRuleKey))).toBeInTheDocument();
 
       await click('Select group 21');
 
-      expect(screen.getByText(selectionOn(21, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(21, gte70PercentRuleKey))).toBeInTheDocument();
     });
 
     it('moves selection to the rule box\'s own group when a rule box of another group is selected', async () => {
@@ -858,7 +1018,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       await click('Select rule box 21 gte');
 
-      expect(screen.getByText(selectionOn(21, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(21, gte70PercentRuleKey))).toBeInTheDocument();
     });
   });
 
@@ -894,7 +1054,7 @@ describe('CompetencyAssociationsProvider', () => {
     it('moves selection to the group\'s last rule box and creates into it', async () => {
       axiosMock.onPost(createUrl).reply(201, createdCriterion(10, eqRule));
       renderProvider();
-      await screen.findByText(selectionOn(10, gteKey));
+      await screen.findByText(selectionOn(10, gte70PercentRuleKey));
 
       await refetchGroupsAs(groupsWithRule(eqRule));
 
@@ -911,7 +1071,7 @@ describe('CompetencyAssociationsProvider', () => {
     it('keeps the group selected with no rule box when it has none left, and creates into it', async () => {
       axiosMock.onPost(createUrl).reply(201, createdCriterion(10));
       renderProvider();
-      await screen.findByText(selectionOn(10, gteKey));
+      await screen.findByText(selectionOn(10, gte70PercentRuleKey));
 
       await refetchGroupsAs(groupsWithRule(null));
 
@@ -938,7 +1098,7 @@ describe('CompetencyAssociationsProvider', () => {
         return [201, createdCriterion(10, eqRule)];
       });
       renderProvider();
-      await screen.findByText(selectionOn(10, gteKey));
+      await screen.findByText(selectionOn(10, gte70PercentRuleKey));
 
       await click('Associate in course A');
 
@@ -1148,7 +1308,7 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Search for another course');
       await flushEffects();
 
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
     });
 
     it('reports an error, and sends no groups request, when the course list fails', async () => {
@@ -1174,7 +1334,7 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Search for another course');
       await screen.findByText('Status: pending');
       await waitForSuccess();
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
 
       await click('Associate in another course');
 
@@ -1533,24 +1693,17 @@ describe('CompetencyAssociationsProvider', () => {
     });
   });
 
-  describe('deleteGroup', () => {
+  describe('deleting a rule group', () => {
     const deleteUrl = apiUrls.competencyCriteriaGroup(tagId, 10);
     const groupsReads = () => axiosMock.history.get.filter((request) => request.url === groupsUrl);
     const keyboardRequest = (request: object | null) => `Keyboard request: ${JSON.stringify(request)}`;
 
-    /** Serves `initial` once, then `refetched` (held until `release` is called) for every later GET. */
+    /** `mockHeldGroupsRefetch`, plus the profile and both course outline reads. */
     const mockGroupsReads = (initial: object, refetched: object) => {
-      const control = { release: () => {} };
-      axiosMock.onGet(groupsUrl).replyOnce(200, initial);
-      axiosMock.onGet(groupsUrl).reply(() => (
-        new Promise((resolve) => {
-          control.release = () => resolve([200, refetched]);
-        })
-      ));
       axiosMock.onGet(profileUrl).reply(200, profileResponse);
       axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
       axiosMock.onGet(courseBOutlineUrl).reply(200, outlineFixture);
-      return control;
+      return mockHeldGroupsRefetch(axiosMock, tagId, initial, refetched);
     };
 
     const renderWithSelectionOnGroup10 = async () => {
@@ -1561,23 +1714,24 @@ describe('CompetencyAssociationsProvider', () => {
     };
 
     const deleteAndRefetch = async (action: string, reads: { release: () => void; }) => {
-      await click(action);
+      await requestAndConfirm(action);
       await waitFor(() => expect(groupsReads()).toHaveLength(2));
       await act(async () => {
         reads.release();
       });
     };
 
-    it('stays pending until the refetch lands, then selects the neighbor and requests keyboard focus for it', async () => {
+    it('keeps the dialog open until the refetch lands, then closes it, selects the neighbor and requests keyboard focus for it', async () => {
       axiosMock.onDelete(deleteUrl).reply(200, {});
       const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, afterDeletingGroup10Response);
       await renderWithSelectionOnGroup10();
 
-      await click('Delete group 10');
+      await requestAndConfirm('Delete group 10');
 
       await waitFor(() => expect(groupsReads()).toHaveLength(2));
       // The delete itself has resolved, but the refetch has not.
       expect(screen.getByText('Deleting: true')).toBeInTheDocument();
+      expect(screen.getByText(pendingRemoval('{"kind":"ruleGroup","failure":null}'))).toBeInTheDocument();
       expect(screen.getByText(selectionOnGroup(10))).toBeInTheDocument();
 
       await act(async () => {
@@ -1585,24 +1739,26 @@ describe('CompetencyAssociationsProvider', () => {
       });
 
       expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
-      expect(screen.getByText(selectionOn(11, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 11, selectionMoved: true })))
         .toBeInTheDocument();
       expect(mockShowToast).not.toHaveBeenCalled();
     });
 
-    it('treats a 404 as success: no toast', async () => {
+    it('treats a 404 as success: no failure, and selection still moves off the vanished group', async () => {
       axiosMock.onDelete(deleteUrl).reply(404);
       const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, afterDeletingGroup10Response);
       await renderWithSelectionOnGroup10();
 
       await deleteAndRefetch('Delete group 10', reads);
 
-      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+      expect(await screen.findByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
       expect(mockShowToast).not.toHaveBeenCalled();
     });
 
-    it('toasts on a failure, keeps selection when the group is still there, and asks to focus its menu', async () => {
+    it('keeps the dialog open on a failure, keeps selection when the group is still there, and requests no keyboard focus', async () => {
       axiosMock.onDelete(deleteUrl).reply(500);
       const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, twoGroupsWithCriteriaResponse);
       await renderWithSelectionOnGroup10();
@@ -1610,51 +1766,42 @@ describe('CompetencyAssociationsProvider', () => {
       await deleteAndRefetch('Delete group 10', reads);
 
       expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
-      expectToast('There was a problem removing this group. Please try again.', ErrorIcon);
+      expect(await screen.findByText(pendingRemoval('{"kind":"ruleGroup","failure":"nothing-removed"}')))
+        .toBeInTheDocument();
+      expect(mockShowToast).not.toHaveBeenCalled();
       expect(screen.getByText(selectionOnGroup(10))).toBeInTheDocument();
-      expect(screen.getByText(keyboardRequest({ kind: 'menu', groupId: 10 }))).toBeInTheDocument();
+      expect(screen.getByText(keyboardRequest(null))).toBeInTheDocument();
     });
 
-    it('clears selection when the refetch after a successful delete fails', async () => {
+    it('keeps the loaded groups and clears selection when the refetch after a successful delete fails', async () => {
       axiosMock.onDelete(deleteUrl).reply(200, {});
       axiosMock.onGet(groupsUrl).replyOnce(200, twoGroupsWithCriteriaResponse).onGet(groupsUrl).reply(500);
       axiosMock.onGet(profileUrl).reply(200, profileResponse);
       axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
       await renderWithSelectionOnGroup10();
 
-      await click('Delete group 10');
+      await requestAndConfirm('Delete group 10');
 
-      expect(await screen.findByText('Status: error')).toBeInTheDocument();
       await waitFor(() => expect(screen.getByText('Deleting: false')).toBeInTheDocument());
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+      expect(screen.getByText('Status: success')).toBeInTheDocument();
+      expect(screen.getByText('Error: none')).toBeInTheDocument();
+      expect(screen.getByText('Groups refresh error: true')).toBeInTheDocument();
+      expect(screen.getByText('Groups index: loaded')).toBeInTheDocument();
       expect(noSelection()).toBeInTheDocument();
     });
 
-    it('drops a second call made while the first delete is pending, so one request is sent', async () => {
-      const deleteGate = deferred();
-      axiosMock.onDelete(deleteUrl).reply(() => deleteGate.released.then(() => [200, {}]));
-      const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, afterDeletingGroup10Response);
-      await renderWithSelectionOnGroup10();
-
-      await click('Delete group 10 twice');
-      await waitFor(() => expect(axiosMock.history.delete).toHaveLength(1));
-      await act(async () => {
-        deleteGate.release();
-      });
-      await waitFor(() => expect(groupsReads()).toHaveLength(2));
-      await act(async () => {
-        reads.release();
-      });
-
-      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
-      expect(axiosMock.history.delete).toHaveLength(1);
-      expect(screen.getByText(selectionOn(11, gteKey))).toBeInTheDocument();
-    });
-
-    it('requests the empty state when the delete leaves no course group', async () => {
+    it.each([
+      { selected: 'the group', setUp: async () => {} },
+      { selected: 'nothing', setUp: clearSelectionByAddingAndDiscardingPlaceholderRuleBox },
+    ])('requests the empty state when the delete leaves no course group and $selected was selected', async (
+      { setUp },
+    ) => {
       axiosMock.onDelete(deleteUrl).reply(200, {});
       const reads = mockGroupsReads(singleGroupResponse, noGroupsResponse);
       renderProvider();
       expect(await screen.findByText(selectionOnGroup(10))).toBeInTheDocument();
+      await setUp();
 
       await deleteAndRefetch('Delete group 10', reads);
 
@@ -1687,7 +1834,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       await deleteAndRefetch('Delete group 20', reads);
 
-      expect(await screen.findByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(await screen.findByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: true })))
         .toBeInTheDocument();
     });
@@ -1700,7 +1847,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       await deleteAndRefetch('Delete group 10', reads);
 
-      expect(await screen.findByText(selectionOn(11, gteKey))).toBeInTheDocument();
+      expect(await screen.findByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
     });
 
     it('keeps selection, and asks to keep sections as they are, when the deleted group did not hold selection', async () => {
@@ -1723,7 +1870,7 @@ describe('CompetencyAssociationsProvider', () => {
       const reads = mockGroupsReads(threeGroupsWithCriteriaResponse, afterDeletingGroup10OfThreeResponse);
       await renderWithSelectionOnGroup10();
 
-      await click('Delete group 10');
+      await requestAndConfirm('Delete group 10');
       await waitFor(() => expect(groupsReads()).toHaveLength(2));
       await click('Select rule box 12 eq');
       await act(async () => {
@@ -1745,7 +1892,7 @@ describe('CompetencyAssociationsProvider', () => {
         const { rerender } = renderProvider();
         await waitForSuccess();
         await click('Select group 10');
-        await click('Delete group 10');
+        await requestAndConfirm('Delete group 10');
         await waitFor(() => expect(axiosMock.history.delete).toHaveLength(1));
         rerender(providerFor(otherTagId));
         await screen.findByText(selectionOnGroup(30));
@@ -1774,7 +1921,7 @@ describe('CompetencyAssociationsProvider', () => {
         axiosMock.onDelete(apiUrls.competencyCriteriaGroup(otherTagId, 30)).reply(200, {});
         await renderSwitchedWhileDeleting();
 
-        await click('Delete group 30');
+        await requestAndConfirm('Delete group 30');
 
         await waitFor(() => expect(axiosMock.history.delete).toHaveLength(2));
       });
@@ -1802,17 +1949,19 @@ describe('CompetencyAssociationsProvider', () => {
         criteria: twoCoursesWithCriteriaResponse.criteria.filter((item) => item.groupId === 20),
       };
 
-      it('toasts on a failure, keeps selection, and asks to focus the course group\'s menu', async () => {
+      it('keeps the dialog open on a failure, keeps selection, and requests no keyboard focus', async () => {
         axiosMock.onDelete(courseGroupUrl).reply(500);
         const reads = mockGroupsReads(twoCoursesWithCriteriaResponse, twoCoursesWithCriteriaResponse);
         await renderWithSelectionOnGroup10();
 
-        await deleteAndRefetch('Delete course group 1', reads);
+        await deleteAndRefetch('Request remove course group 1', reads);
 
         expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
-        expectToast('There was a problem removing this group. Please try again.', ErrorIcon);
+        expect(await screen.findByText(pendingRemoval('{"kind":"courseGroup","failure":"nothing-removed"}')))
+          .toBeInTheDocument();
+        expect(mockShowToast).not.toHaveBeenCalled();
         expect(screen.getByText(selectionOnGroup(10))).toBeInTheDocument();
-        expect(screen.getByText(keyboardRequest({ kind: 'menu', groupId: 1 }))).toBeInTheDocument();
+        expect(screen.getByText(keyboardRequest(null))).toBeInTheDocument();
       });
 
       it('treats a 404 as success: no toast, and selection moves off the vanished course group', async () => {
@@ -1820,9 +1969,9 @@ describe('CompetencyAssociationsProvider', () => {
         const reads = mockGroupsReads(twoCoursesWithCriteriaResponse, afterDeletingCourseGroup1Response);
         await renderWithSelectionOnGroup10();
 
-        await deleteAndRefetch('Delete course group 1', reads);
+        await deleteAndRefetch('Request remove course group 1', reads);
 
-        expect(await screen.findByText(selectionOn(20, gteKey))).toBeInTheDocument();
+        expect(await screen.findByText(selectionOn(20, gte70PercentRuleKey))).toBeInTheDocument();
         expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 20, selectionMoved: true })))
           .toBeInTheDocument();
         expect(mockShowToast).not.toHaveBeenCalled();
@@ -1881,7 +2030,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       await deleteAndRefetch('Delete group 10', reads);
 
-      expect(await screen.findByText(selectionOn(20, gteKey))).toBeInTheDocument();
+      expect(await screen.findByText(selectionOn(20, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 20, selectionMoved: true })))
         .toBeInTheDocument();
     });
@@ -1915,7 +2064,7 @@ describe('CompetencyAssociationsProvider', () => {
       renderProvider();
       expect(await screen.findByText(selectionOnGroup(10))).toBeInTheDocument();
 
-      await click('Delete group 10');
+      await requestAndConfirm('Delete group 10');
       await waitFor(() => expect(defaultScopeReads).toBe(2));
       await screen.findByText('Deleting: false');
       await click('Search for another course');
@@ -1944,7 +2093,476 @@ describe('CompetencyAssociationsProvider', () => {
     });
   });
 
-  describe('removeCriterion', () => {
+  describe('deleting a rule box', () => {
+    const deleteUrlOf = (criterionId: number) => apiUrls.deleteCompetencyCriterion(tagId, criterionId);
+    const sentDeleteUrls = () => axiosMock.history.delete.map((request) => request.url);
+    const groupsReads = () => axiosMock.history.get.filter((request) => request.url === groupsUrl);
+    const keyboardRequest = (request: object | null) => `Keyboard request: ${JSON.stringify(request)}`;
+    // An unmatched URL answers 404, which counts as removed, so each test asserts the exact DELETE URLs sent. Mock only
+    // the DELETEs a test expects.
+    const mockDeletes = (...criterionIds: number[]) => {
+      criterionIds.forEach((id) => {
+        axiosMock.onDelete(deleteUrlOf(id)).reply(200, { id, archived: false });
+      });
+    };
+
+    /** `mockHeldGroupsRefetch`, plus the profile and course A outline reads. */
+    const mockGroupsReads = (initial: object, refetched: object) => {
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      return mockHeldGroupsRefetch(axiosMock, tagId, initial, refetched);
+    };
+
+    const renderLoaded = async () => {
+      renderProvider();
+      await waitForSuccess();
+      await waitFor(() => expect(accessibleCourses()).toHaveTextContent(courseA));
+    };
+
+    /** Requests the removal behind `name` and confirms it, then lets the held refetch land and the delete settle. */
+    const clickAndSettle = async (name: string, reads: { release: () => void; }) => {
+      await requestAndConfirm(name);
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+      await act(async () => {
+        reads.release();
+      });
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+    };
+
+    it('sends exactly the box\'s criteria in order, refetches once, and leaves the other boxes alone', async () => {
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
+      // Remove: the 70% box.
+      // After: only the 80% box (903) is left. Selection is not checked here.
+      mockDeletes(...criterionIdsIn70PercentRuleBox);
+      const reads = mockGroupsReads(
+        threeCriteriaInOneRuleBoxResponse,
+        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
+      );
+      await renderLoaded();
+
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
+
+      expect(sentDeleteUrls()).toEqual(criterionIdsIn70PercentRuleBox.map(deleteUrlOf));
+      expect(groupsReads()).toHaveLength(2);
+      expect(screen.getByText(criterionIdsShown(criterionIdsIn80PercentRuleBox))).toBeInTheDocument();
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
+
+    it('does not send content that shows up at the same score during the run, and keeps that box selected', async () => {
+      // Start: group 10 holds a 70% box (901, 905) and an 80% box (903), and the 70% box is selected.
+      // During the run: another session removes 901 and 905 and adds criterion 908 at 70%.
+      // Remove: the 70% box, which showed 901 and 905 when it was clicked.
+      // After: the 70% box holds 908, which was never deleted, and is still selected. The 80% box (903) is untouched.
+      const criterionIdsInBoxWhenClicked = [901, 905];
+      const criterionIdAddedByAnotherSession = 908;
+      const responseWhenClicked: CompetencyCriteriaGroupsResponse = {
+        ...singleGroupResponse,
+        criteria: [
+          ...criterionIdsInBoxWhenClicked.map((id) => criterionInGroupAtScore(id, 10, null)),
+          ...criterionIdsIn80PercentRuleBox.map((id) => criterionInGroupAtScore(id, 10, 80)),
+        ],
+      };
+      const responseAfterAnotherSessionAddedACriterion: CompetencyCriteriaGroupsResponse = {
+        ...singleGroupResponse,
+        criteria: [
+          criterionInGroupAtScore(criterionIdAddedByAnotherSession, 10, null),
+          ...criterionIdsIn80PercentRuleBox.map((id) => criterionInGroupAtScore(id, 10, 80)),
+        ],
+      };
+      mockDeletes(...criterionIdsInBoxWhenClicked);
+      const reads = mockGroupsReads(responseWhenClicked, responseAfterAnotherSessionAddedACriterion);
+      await renderLoaded();
+      await click('Select rule box 10 gte');
+
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
+
+      expect(sentDeleteUrls()).toEqual(criterionIdsInBoxWhenClicked.map(deleteUrlOf));
+      expect(screen.getByText(criterionIdsShown([criterionIdAddedByAnotherSession, ...criterionIdsIn80PercentRuleBox])))
+        .toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
+    });
+
+    it('leaves the dialog closed for criterion ids the group no longer has', async () => {
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
+      // Request: removing criterion 999, which group 10 does not hold.
+      // After: no dialog opened, nothing was sent and nothing was refetched.
+      mockGroupsReads(threeCriteriaInOneRuleBoxResponse, threeCriteriaInOneRuleBoxResponse);
+      await renderLoaded();
+
+      await click('Delete rule box with ids 999');
+
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+      expect(axiosMock.history.delete).toHaveLength(0);
+      expect(screen.getByText('Deleting: false')).toBeInTheDocument();
+      expect(groupsReads()).toHaveLength(1);
+    });
+
+    it.each([
+      {
+        // Group 10's boxes: 70% (removed, selected), 80%, 90%. Nothing is above the removed box, so the box below
+        // (80%) is selected.
+        name: 'the first of three boxes',
+        initial: threeRuleBoxesInGroup10Response,
+        selectAction: 'Select rule box 10 gte',
+        deleteAction: 'Delete the 70% rule box in group 10',
+        removedCriterionId: criterionIdIn70PercentRuleBoxOfGroup10,
+        expectedSelectionKey: gte80PercentRuleKey,
+      },
+      {
+        // Group 10's boxes: 70%, 80%, 90% (removed, selected), 95%. The box above (80%) is selected. It is neither
+        // the group's first box nor the box below (95%).
+        name: 'the third of four boxes',
+        initial: fourRuleBoxesInGroup10Response,
+        selectAction: 'Select the 90% rule box in group 10',
+        deleteAction: 'Delete the 90% rule box in group 10',
+        removedCriterionId: criterionIdIn90PercentRuleBoxOfGroup10,
+        expectedSelectionKey: gte80PercentRuleKey,
+      },
+    ])('moves selection to the box above, else below, when $name was selected and removed', async (
+      { initial, selectAction, deleteAction, removedCriterionId, expectedSelectionKey },
+    ) => {
+      mockDeletes(removedCriterionId);
+      const reads = mockGroupsReads(initial, responseWithoutCriteria(initial, [removedCriterionId]));
+      await renderLoaded();
+      await click(selectAction);
+
+      await clickAndSettle(deleteAction, reads);
+
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(removedCriterionId)]);
+      expect(screen.getByText(selectionOn(10, expectedSelectionKey))).toBeInTheDocument();
+      expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: false })))
+        .toBeInTheDocument();
+    });
+
+    it.each([
+      {
+        selected: 'on another box of the same group',
+        selectAction: 'Select rule box 10 gte',
+        selectionText: selectionOn(10, gte70PercentRuleKey),
+        keyboardGroupId: 10,
+      },
+      {
+        selected: 'in another group',
+        selectAction: 'Select group 11',
+        selectionText: selectionOn(11, gte70PercentRuleKey),
+        keyboardGroupId: 11,
+      },
+      { selected: 'nothing', selectAction: null, selectionText: 'Selection: none', keyboardGroupId: 10 },
+    ])('keeps the selection ($selected) and asks group $keyboardGroupId to take keyboard focus', async (
+      { selectAction, selectionText, keyboardGroupId },
+    ) => {
+      // Start: group 10 holds a 70% box (901), an 80% box (903) and a 90% box (904), and group 11 a 70% box (902).
+      //   Per case, the selection is on group 10's 70% box, on group 11, or nothing.
+      // Remove: group 10's 80% box, which is never the selected one.
+      // After: group 10 holds its 70% and 90% boxes, and the selection is unchanged.
+      mockDeletes(criterionIdIn80PercentRuleBoxOfGroup10);
+      const reads = mockGroupsReads(
+        threeRuleBoxesInGroup10Response,
+        responseWithoutCriteria(threeRuleBoxesInGroup10Response, [criterionIdIn80PercentRuleBoxOfGroup10]),
+      );
+      await renderLoaded();
+      if (selectAction !== null) {
+        await click(selectAction);
+      }
+      expect(screen.getByText(selectionText)).toBeInTheDocument();
+
+      await clickAndSettle('Delete the 80% rule box in group 10', reads);
+
+      expect(screen.getByText(selectionText)).toBeInTheDocument();
+      expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: keyboardGroupId, selectionMoved: false })))
+        .toBeInTheDocument();
+    });
+
+    it('selects the neighbor group\'s first box when the last box takes its group away', async () => {
+      // Start: group 10 holds a 70% box (901) and group 11 holds a 70% box (902). Group 10 is selected.
+      // Remove: group 10's only box, so group 10 goes too.
+      // After: group 11 and its 70% box are selected.
+      mockDeletes(criterionIdIn70PercentRuleBoxOfGroup10);
+      const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, afterDeletingGroup10Response);
+      await renderLoaded();
+      await click('Select group 10');
+
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
+
+      expect(screen.getByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
+      expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 11, selectionMoved: true })))
+        .toBeInTheDocument();
+    });
+
+    it('selects the group above, with its first box, when the last box takes its own group away', async () => {
+      // Start: group 10 holds a 70% box (901) and group 11 holds a 70% box (902). Group 11 is selected.
+      // Remove: group 11's only box, so group 11 goes too.
+      // After: group 10 and its 70% box are selected.
+      mockDeletes(criterionIdIn70PercentRuleBoxOfGroup11);
+      const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, {
+        groups: twoGroupsWithCriteriaResponse.groups.filter((group) => group.id !== 11),
+        criteria: twoGroupsWithCriteriaResponse.criteria.filter((item) => item.groupId !== 11),
+      });
+      await renderLoaded();
+      await click('Select group 11');
+
+      await clickAndSettle('Delete the 70% rule box in group 11', reads);
+
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
+      expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: true })))
+        .toBeInTheDocument();
+    });
+
+    it('follows the selection move, not the vanished group, when another author deleted the selected group meanwhile', async () => {
+      // Start: group 10 holds a 70% box (901), an 80% box (903) and a 90% box (904), and group 11 a 70% box (902).
+      //   Group 11 is selected.
+      // During the run: another author deletes group 11.
+      // Remove: group 10's 80% box.
+      // After: group 10 holds its 70% and 90% boxes, and group 10 is selected, because the selection moved off the
+      // vanished group 11.
+      mockDeletes(criterionIdIn80PercentRuleBoxOfGroup10);
+      const reads = mockGroupsReads(threeRuleBoxesInGroup10Response, {
+        groups: threeRuleBoxesInGroup10Response.groups.filter((group) => group.id !== 11),
+        criteria: responseWithoutCriteria(
+          threeRuleBoxesInGroup10Response,
+          [criterionIdIn80PercentRuleBoxOfGroup10, criterionIdIn70PercentRuleBoxOfGroup11],
+        ).criteria,
+      });
+      await renderLoaded();
+      await click('Select group 11');
+
+      await clickAndSettle('Delete the 80% rule box in group 10', reads);
+
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
+      expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: true })))
+        .toBeInTheDocument();
+    });
+
+    it('selects the other section\'s group when the last box takes its whole section away', async () => {
+      // Start: course A's group 10 holds a 70% box (901) and course B's group 20 holds a 70% box (902).
+      //   Group 20 is selected.
+      // Remove: group 20's only box, so group 20 and course B's section go too.
+      // After: group 10 and its 70% box are selected.
+      const criterionIdInGroup20 = 902;
+      mockDeletes(criterionIdInGroup20);
+      axiosMock.onGet(courseBOutlineUrl).reply(200, outlineFixture);
+      const reads = mockGroupsReads(twoCoursesWithCriteriaResponse, {
+        groups: twoCoursesWithCriteriaResponse.groups.filter((group) => group.id !== 2 && group.id !== 20),
+        criteria: twoCoursesWithCriteriaResponse.criteria.filter((item) => item.groupId === 10),
+      });
+      await renderLoaded();
+      await waitFor(() => expect(accessibleCourses()).toHaveTextContent(courseB));
+      await click('Select group 20');
+
+      await clickAndSettle('Delete the 70% rule box in group 20', reads);
+
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
+      expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: true })))
+        .toBeInTheDocument();
+    });
+
+    it.each([
+      { selected: 'its group', setUp: async () => {} },
+      { selected: 'nothing', setUp: clearSelectionByAddingAndDiscardingPlaceholderRuleBox },
+    ])('requests the empty state when the last box on the page goes and $selected was selected', async (
+      { setUp },
+    ) => {
+      // Start: group 10 is the only group, and holds one 70% box (criterion 900). Per case, group 10 is selected
+      //   or nothing is.
+      // Remove: that box, so group 10 and the page's last group go too.
+      // After: nothing is selected, and the empty state takes keyboard focus.
+      const criterionIdInOnlyRuleBox = 900;
+      mockDeletes(criterionIdInOnlyRuleBox);
+      const reads = mockGroupsReads(singleGroupResponse, noGroupsResponse);
+      renderProvider();
+      expect(await screen.findByText(selectionOnGroup(10))).toBeInTheDocument();
+      await setUp();
+
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
+
+      expect(noSelection()).toBeInTheDocument();
+      expect(screen.getByText(keyboardRequest({ kind: 'empty' }))).toBeInTheDocument();
+    });
+
+    it('moves a selected placeholder rule box out of the group that vanished', async () => {
+      // Start: group 10 holds a 70% box (901) and group 11 holds a 70% box (902). A placeholder rule box in group 10
+      //   is selected.
+      // Remove: group 10's only saved box, so group 10 goes too, and the placeholder with it.
+      // After: group 11 and its 70% box are selected, and there is no placeholder.
+      mockDeletes(criterionIdIn70PercentRuleBoxOfGroup10);
+      const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, afterDeletingGroup10Response);
+      await renderLoaded();
+      await click('Add placeholder rule box in group 10');
+      expect(screen.getByText('Has placeholder: true')).toBeInTheDocument();
+
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
+
+      expect(screen.getByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
+      expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
+    });
+
+    it('moves a selected placeholder group out of the section that vanished', async () => {
+      // Start: course A's group 10 holds a 70% box (901) and course B's group 20 holds a 70% box (902). A
+      //   placeholder group under course A is selected.
+      // Remove: group 10's only box, so group 10 and course A's section go too, and the placeholder with them.
+      // After: group 20 and its 70% box are selected, and there is no placeholder.
+      mockDeletes(criterionIdIn70PercentRuleBoxOfGroup10);
+      axiosMock.onGet(courseBOutlineUrl).reply(200, outlineFixture);
+      const reads = mockGroupsReads(twoCoursesWithCriteriaResponse, {
+        groups: twoCoursesWithCriteriaResponse.groups.filter((group) => group.id !== 1 && group.id !== 10),
+        criteria: twoCoursesWithCriteriaResponse.criteria.filter((item) => item.groupId === 20),
+      });
+      await renderLoaded();
+      await waitFor(() => expect(accessibleCourses()).toHaveTextContent(courseB));
+      await click('Add placeholder group under course A');
+      expect(screen.getByText('Has placeholder: true')).toBeInTheDocument();
+
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
+
+      expect(screen.getByText(selectionOn(20, gte70PercentRuleKey))).toBeInTheDocument();
+      expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
+    });
+
+    it('stops at a failure partway, keeps the dialog open as partly removed, and keeps the selection', async () => {
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903), and the 70% box is selected.
+      // Remove: the 70% box, but 905 answers 500, so 906 is never sent.
+      // After: 901 is gone. 905, 906 and the 80% box (903) are left, and the 70% box is still selected.
+      const [firstCriterion, failingCriterion, thirdCriterion] = criterionIdsIn70PercentRuleBox;
+      mockDeletes(firstCriterion);
+      axiosMock.onDelete(deleteUrlOf(failingCriterion)).reply(500);
+      const reads = mockGroupsReads(
+        threeCriteriaInOneRuleBoxResponse,
+        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, [firstCriterion]),
+      );
+      await renderLoaded();
+      await click('Select rule box 10 gte');
+
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
+
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(firstCriterion), deleteUrlOf(failingCriterion)]);
+      expect(await screen.findByText(pendingRemoval('{"kind":"ruleBox","failure":"partly-removed"}')))
+        .toBeInTheDocument();
+      expect(mockShowToast).not.toHaveBeenCalled();
+      expect(screen.getByText(criterionIdsShown([failingCriterion, thirdCriterion, ...criterionIdsIn80PercentRuleBox])))
+        .toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
+      expect(screen.getByText(keyboardRequest(null))).toBeInTheDocument();
+    });
+
+    it('keeps the dialog open as nothing removed when the first request fails', async () => {
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
+      // Remove: the 70% box, but 901 answers 500, so nothing is removed and no other delete is sent.
+      // After: all four criteria are still there.
+      const [failingFirstCriterion] = criterionIdsIn70PercentRuleBox;
+      const allCriterionIds = [...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox];
+      axiosMock.onDelete(deleteUrlOf(failingFirstCriterion)).reply(500);
+      const reads = mockGroupsReads(threeCriteriaInOneRuleBoxResponse, threeCriteriaInOneRuleBoxResponse);
+      await renderLoaded();
+
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
+
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(failingFirstCriterion)]);
+      expect(await screen.findByText(pendingRemoval('{"kind":"ruleBox","failure":"nothing-removed"}')))
+        .toBeInTheDocument();
+      expect(mockShowToast).not.toHaveBeenCalled();
+      expect(screen.getByText(criterionIdsShown(allCriterionIds))).toBeInTheDocument();
+    });
+
+    it('keeps the dialog open as partly removed when the refetch after a partial failure fails too', async () => {
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
+      // Remove: the 70% box, but 905 answers 500, and then the refetch answers 500 too.
+      // After: the panel still shows the criteria from before the delete, with the refresh-error alert above them, and
+      // the dialog reports a partial failure from the error's count of removed criteria, not from that stale data.
+      const [firstCriterion, failingCriterion] = criterionIdsIn70PercentRuleBox;
+      const allCriterionIds = [...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox];
+      mockDeletes(firstCriterion);
+      axiosMock.onDelete(deleteUrlOf(failingCriterion)).reply(500);
+      axiosMock.onGet(groupsUrl).replyOnce(200, threeCriteriaInOneRuleBoxResponse);
+      axiosMock.onGet(groupsUrl).reply(500);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      await renderLoaded();
+
+      await requestAndConfirm('Delete the 70% rule box in group 10');
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(firstCriterion), deleteUrlOf(failingCriterion)]);
+      expect(await screen.findByText(pendingRemoval('{"kind":"ruleBox","failure":"partly-removed"}')))
+        .toBeInTheDocument();
+      expect(mockShowToast).not.toHaveBeenCalled();
+      expect(screen.getByText(criterionIdsShown(allCriterionIds))).toBeInTheDocument();
+      expect(screen.getByText('Groups refresh error: true')).toBeInTheDocument();
+    });
+
+    it('counts a 404 in the middle as removed: every criterion is tried, no toast, the box is gone', async () => {
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903), and the 70% box is selected.
+      // Remove: the 70% box. 905 answers 404, which counts as removed, so 906 is still sent.
+      // After: only the 80% box (903) is left, and it is selected, because the removed box had no box above.
+      const [firstCriterion, missingCriterion, thirdCriterion] = criterionIdsIn70PercentRuleBox;
+      mockDeletes(firstCriterion, thirdCriterion);
+      axiosMock.onDelete(deleteUrlOf(missingCriterion)).reply(404);
+      const reads = mockGroupsReads(
+        threeCriteriaInOneRuleBoxResponse,
+        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
+      );
+      await renderLoaded();
+      await click('Select rule box 10 gte');
+
+      await clickAndSettle('Delete the 70% rule box in group 10', reads);
+
+      expect(sentDeleteUrls()).toEqual(criterionIdsIn70PercentRuleBox.map(deleteUrlOf));
+      expect(mockShowToast).not.toHaveBeenCalled();
+      expect(screen.getByText(criterionIdsShown(criterionIdsIn80PercentRuleBox))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte80PercentRuleKey))).toBeInTheDocument();
+    });
+
+    it('drops a group delete made in the same tick as a rule box delete, so only the rule box is deleted', async () => {
+      // Start: group 10 holds a 70% box (901), an 80% box (903) and a 90% box (904), and group 11 a 70% box (902).
+      // Remove: group 10's 70% box, and ask to remove group 11 and confirm it in the same click.
+      // After: only the 70% box's criterion (901) was sent for deletion, and group 11 was not deleted.
+      mockDeletes(criterionIdIn70PercentRuleBoxOfGroup10);
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 11)).reply(200, {});
+      const reads = mockGroupsReads(
+        threeRuleBoxesInGroup10Response,
+        responseWithoutCriteria(threeRuleBoxesInGroup10Response, [criterionIdIn70PercentRuleBoxOfGroup10]),
+      );
+      await renderLoaded();
+      await click('Delete the 70% rule box in group 10');
+
+      await click('Confirm removal, then request removing group 11 and confirm it, in one tick');
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+      await act(async () => {
+        reads.release();
+      });
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(criterionIdIn70PercentRuleBoxOfGroup10)]);
+      expect(groupsReads()).toHaveLength(2);
+    });
+
+    it('drops a second call made while the first is still deleting, so one run is sent', async () => {
+      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
+      // Remove: the 70% box, then ask to remove it again while the first run is still deleting.
+      // After: one run of three deletes was sent, and no toast was shown.
+      mockDeletes(...criterionIdsIn70PercentRuleBox);
+      const reads = mockGroupsReads(
+        threeCriteriaInOneRuleBoxResponse,
+        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
+      );
+      await renderLoaded();
+      await requestAndConfirm('Delete the 70% rule box in group 10');
+      expect(await screen.findByText('Deleting: true')).toBeInTheDocument();
+
+      await requestAndConfirm('Delete the 70% rule box in group 10');
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+      await act(async () => {
+        reads.release();
+      });
+
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+      expect(sentDeleteUrls()).toEqual(criterionIdsIn70PercentRuleBox.map(deleteUrlOf));
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('removing an association', () => {
     const deleteUrl = apiUrls.deleteCompetencyCriterion(tagId, 901);
     const groupsReads = () => axiosMock.history.get.filter((request) => request.url === groupsUrl);
     const keyboardRequest = (request: object | null) => `Keyboard request: ${JSON.stringify(request)}`;
@@ -1964,7 +2582,7 @@ describe('CompetencyAssociationsProvider', () => {
     };
 
     const clickAndSettle = async (name: string, reads: { release: () => void; }) => {
-      await click(name);
+      await requestAndConfirm(name);
       await waitFor(() => expect(groupsReads()).toHaveLength(2));
       await act(async () => {
         reads.release();
@@ -1979,15 +2597,17 @@ describe('CompetencyAssociationsProvider', () => {
       await waitForSuccess();
       await click('Select group 10');
 
-      await click('Remove sub-a chip');
+      await requestAndConfirm('Remove sub-a chip');
       await waitFor(() => expect(groupsReads()).toHaveLength(2));
       // The delete itself has resolved, but the refetch has not.
       expect(screen.getByText('Deleting: true')).toBeInTheDocument();
+      expect(screen.getByText(pendingRemoval('{"kind":"association","failure":null}'))).toBeInTheDocument();
       await act(async () => {
         reads.release();
       });
 
       expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: false })))
         .toBeInTheDocument();
       expect(screen.getByText('Criterion ids: [903]')).toBeInTheDocument();
@@ -2000,7 +2620,7 @@ describe('CompetencyAssociationsProvider', () => {
       renderProvider();
       await waitForSuccess();
       await click('Select rule box 10 gte');
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
 
       await clickAndSettle('Remove sub-a chip', reads);
 
@@ -2016,7 +2636,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       await clickAndSettle('Remove sub-a chip', reads);
 
-      expect(screen.getByText(selectionOn(11, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 11, selectionMoved: true })))
         .toBeInTheDocument();
     });
@@ -2033,7 +2653,7 @@ describe('CompetencyAssociationsProvider', () => {
       expect(screen.getByText(keyboardRequest({ kind: 'empty' }))).toBeInTheDocument();
     });
 
-    it('treats a 404 as success when the refetch no longer has the criterion: no toast', async () => {
+    it('treats a 404 as success when the refetch no longer has the criterion: no failure', async () => {
       axiosMock.onDelete(deleteUrl).reply(404);
       const reads = mockGroupsReads(twoCriteriaInGroupResponse, afterRemovingSubAResponse);
       renderProvider();
@@ -2044,12 +2664,13 @@ describe('CompetencyAssociationsProvider', () => {
       await clickAndSettle('Remove sub-a chip', reads);
 
       expect(mockShowToast).not.toHaveBeenCalled();
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
       expect(screen.getByText('Criterion ids: [903]')).toBeInTheDocument();
       expect(screen.getByText(keyboardRequest({ kind: 'group', groupId: 10, selectionMoved: false })))
         .toBeInTheDocument();
     });
 
-    it('treats a 404 as success even when the refetch still has the criterion: no toast', async () => {
+    it('treats a 404 as success even when the refetch still has the criterion: no failure', async () => {
       axiosMock.onDelete(deleteUrl).reply(404);
       const reads = mockGroupsReads(twoCriteriaInGroupResponse, twoCriteriaInGroupResponse);
       renderProvider();
@@ -2058,34 +2679,28 @@ describe('CompetencyAssociationsProvider', () => {
       await clickAndSettle('Remove sub-a chip', reads);
 
       expect(mockShowToast).not.toHaveBeenCalled();
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
       expect(screen.getByText('Criterion ids: [901,903]')).toBeInTheDocument();
     });
 
-    it('toasts on a failure and requests no keyboard focus, since the association is still there', async () => {
-      axiosMock.onDelete(deleteUrl).reply(500);
-      const reads = mockGroupsReads(twoCriteriaInGroupResponse, twoCriteriaInGroupResponse);
-      renderProvider();
-      await waitForSuccess();
-      await click('Select group 10');
+    it.each(['Remove sub-a chip', 'Remove sub-a from browse'])(
+      'keeps the dialog open on a failure from "%s" and requests no keyboard focus, since the association is still there',
+      async (requestName) => {
+        axiosMock.onDelete(deleteUrl).reply(500);
+        const reads = mockGroupsReads(twoCriteriaInGroupResponse, twoCriteriaInGroupResponse);
+        renderProvider();
+        await waitForSuccess();
+        await click('Select group 10');
 
-      await clickAndSettle('Remove sub-a chip', reads);
+        await clickAndSettle(requestName, reads);
 
-      expectToast(removeFailedMessage, ErrorIcon);
-      expect(screen.getByText('Criterion ids: [901,903]')).toBeInTheDocument();
-      expect(screen.getByText(keyboardRequest(null))).toBeInTheDocument();
-    });
-
-    it('toasts on a failure and still returns focus to the subsection row', async () => {
-      axiosMock.onDelete(deleteUrl).reply(500);
-      const reads = mockGroupsReads(twoCriteriaInGroupResponse, twoCriteriaInGroupResponse);
-      renderProvider();
-      await waitForSuccess();
-
-      await clickAndSettle('Remove sub-a from browse', reads);
-
-      expectToast(removeFailedMessage, ErrorIcon);
-      expect(screen.getByText(keyboardRequest({ kind: 'subsection', objectId: 'sub-a' }))).toBeInTheDocument();
-    });
+        expect(await screen.findByText(pendingRemoval('{"kind":"association","failure":"nothing-removed"}')))
+          .toBeInTheDocument();
+        expect(mockShowToast).not.toHaveBeenCalled();
+        expect(screen.getByText('Criterion ids: [901,903]')).toBeInTheDocument();
+        expect(screen.getByText(keyboardRequest(null))).toBeInTheDocument();
+      },
+    );
 
     it('deletes the criterion with the given id when another group holds one for the same subsection', async () => {
       // This page cannot create that data, but the backend allows it for a different explicit group, so the delete
@@ -2110,42 +2725,18 @@ describe('CompetencyAssociationsProvider', () => {
       expect(screen.getByText('Criterion ids: [901]')).toBeInTheDocument();
     });
 
-    it('sends one request when two calls are made in the same event', async () => {
-      axiosMock.onDelete(deleteUrl).reply(200, { id: 901 });
-      const reads = mockGroupsReads(twoCriteriaInGroupResponse, afterRemovingSubAResponse);
-      renderProvider();
-      await waitForSuccess();
-
-      await clickAndSettle('Remove sub-a twice', reads);
-
-      expect(axiosMock.history.delete).toHaveLength(1);
-    });
-
     it('drops a group delete started while a removal is pending', async () => {
       const deleteGate = deferred();
       axiosMock.onDelete(deleteUrl).reply(() => deleteGate.released.then(() => [200, { id: 901 }]));
       mockGroupsReads(twoCriteriaInGroupResponse, afterRemovingSubAResponse);
       renderProvider();
       await waitForSuccess();
-      await click('Remove sub-a chip');
+      await requestAndConfirm('Remove sub-a chip');
       await waitFor(() => expect(axiosMock.history.delete).toHaveLength(1));
 
-      await click('Delete group 10');
+      await requestAndConfirm('Delete group 10');
 
       expect(axiosMock.history.delete).toHaveLength(1);
-    });
-
-    it('drops a call made while an association is being created', async () => {
-      axiosMock.onPost(createUrl).reply(() => new Promise(() => {}));
-      mockGroupsReads(twoCriteriaInGroupResponse, afterRemovingSubAResponse);
-      renderProvider();
-      await waitForSuccess();
-      await click('Associate in course A');
-      await screen.findByText('Associating: true');
-
-      await click('Remove sub-a chip');
-
-      expect(axiosMock.history.delete).toHaveLength(0);
     });
 
     describe('when the cached groups change while a removal is pending', () => {
@@ -2172,7 +2763,7 @@ describe('CompetencyAssociationsProvider', () => {
         mockGroupsReadsAroundDelete(deleteGate);
         renderProvider();
         await waitForSuccess();
-        await click('Remove sub-a chip');
+        await requestAndConfirm('Remove sub-a chip');
         await waitFor(() => expect(axiosMock.history.delete).toHaveLength(1));
 
         await click('Search for course B');
@@ -2191,7 +2782,7 @@ describe('CompetencyAssociationsProvider', () => {
         mockGroupsReadsAroundDelete(deleteGate);
         const { rerender } = renderProvider();
         await waitForSuccess();
-        await click('Remove sub-a from browse');
+        await requestAndConfirm('Remove sub-a from browse');
         await waitFor(() => expect(axiosMock.history.delete).toHaveLength(1));
 
         rerender(providerFor(otherTagId));
@@ -2208,6 +2799,29 @@ describe('CompetencyAssociationsProvider', () => {
         expect(await screen.findByText('Criterion ids: [903]')).toBeInTheDocument();
       });
 
+      it('leaves a dialog opened in the new competency open when the earlier removal finishes', async () => {
+        const deleteGate = deferred();
+        mockGroupsReadsAroundDelete(deleteGate);
+        const { rerender } = renderProvider();
+        await waitForSuccess();
+        await requestAndConfirm('Remove sub-a chip');
+        await waitFor(() => expect(axiosMock.history.delete).toHaveLength(1));
+        await click('Cancel removal');
+        rerender(providerFor(otherTagId));
+        await screen.findByText(selectionOnGroup(30));
+        await click('Delete group 30');
+        expect(screen.getByText(pendingRemoval('{"kind":"ruleGroup","failure":null}'))).toBeInTheDocument();
+
+        await act(async () => {
+          deleteGate.release();
+        });
+        await flushEffects(50);
+
+        expect(screen.getByText(pendingRemoval('{"kind":"ruleGroup","failure":null}'))).toBeInTheDocument();
+        expect(axiosMock.history.delete).toHaveLength(1);
+        expect(mockShowToast).not.toHaveBeenCalled();
+      });
+
       it('shows no toast when the refetch after the removal fails', async () => {
         axiosMock.onDelete(deleteUrl).reply(200, { id: 901 });
         axiosMock.onGet(groupsUrl).replyOnce(200, twoCriteriaInGroupResponse).onGet(groupsUrl).reply(500);
@@ -2216,10 +2830,13 @@ describe('CompetencyAssociationsProvider', () => {
         renderProvider();
         await waitForSuccess();
 
-        await click('Remove sub-a chip');
+        await requestAndConfirm('Remove sub-a chip');
 
-        expect(await screen.findByText('Status: error')).toBeInTheDocument();
-        expect(screen.getByText('Deleting: false')).toBeInTheDocument();
+        await waitFor(() => expect(groupsReads()).toHaveLength(2));
+        expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+        expect(screen.getByText('Status: success')).toBeInTheDocument();
+        expect(screen.getByText('Groups refresh error: true')).toBeInTheDocument();
+        expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
         expect(mockShowToast).not.toHaveBeenCalled();
       });
     });
@@ -2235,6 +2852,535 @@ describe('CompetencyAssociationsProvider', () => {
 
       expect(screen.getByText(keyboardRequest({ kind: 'subsection', objectId: 'sub-a' }))).toBeInTheDocument();
     });
+
+    it('blocks a group removal request while a removal is in flight', async () => {
+      axiosMock.onDelete(deleteUrl).reply(200, { id: 901 });
+      const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, afterDeletingGroup10Response);
+      renderProvider();
+      await waitForSuccess();
+
+      await requestAndConfirm('Remove sub-a chip');
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+      await click('Request remove group 11');
+      expect(screen.getByText(pendingRemoval('{"kind":"association","failure":null}'))).toBeInTheDocument();
+      await act(async () => {
+        reads.release();
+      });
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+
+      expect(axiosMock.history.delete).toHaveLength(1);
+      expect(axiosMock.history.delete[0].url).toEqual(deleteUrl);
+    });
+  });
+
+  describe('a delete that settles after the competency changed', () => {
+    it.each([
+      { deleteAction: 'Delete group 10' },
+      { deleteAction: 'Remove sub-a chip' },
+      { deleteAction: 'Delete the 70% rule box in group 10' },
+    ])('leaves the new competency\'s selection and keyboard focus alone ($deleteAction)', async ({ deleteAction }) => {
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10)).reply(200, {});
+      axiosMock.onDelete(apiUrls.deleteCompetencyCriterion(tagId, 901)).reply(200, { id: 901, archived: false });
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      axiosMock.onGet(courseBOutlineUrl).reply(200, outlineFixture);
+      const reads = mockHeldGroupsRefetch(
+        axiosMock,
+        tagId,
+        twoGroupsWithCriteriaResponse,
+        afterDeletingGroup10Response,
+      );
+      axiosMock.onGet(otherGroupsUrl).reply(200, courseBGroupsResponse);
+      const { rerender } = renderProvider();
+      await waitForSuccess();
+      await requestAndConfirm(deleteAction);
+      await waitFor(() => expect(axiosMock.history.get.filter((request) => request.url === groupsUrl)).toHaveLength(2));
+
+      rerender(providerFor(otherTagId));
+      await waitForSuccess();
+      await click('Select group 20');
+      expect(screen.getByText(selectionOnGroup(20))).toBeInTheDocument();
+      await act(async () => {
+        reads.release();
+      });
+
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+      expect(screen.getByText(selectionOnGroup(20))).toBeInTheDocument();
+      expect(screen.getByText('Keyboard request: null')).toBeInTheDocument();
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      {
+        name: 'a rule box',
+        requestName: 'Delete the 70% rule box in group 10',
+        mockDelete: () => axiosMock.onDelete(apiUrls.deleteCompetencyCriterion(tagId, 901)).reply(500),
+      },
+      {
+        name: 'a criterion',
+        requestName: 'Remove sub-a chip',
+        mockDelete: () => axiosMock.onDelete(apiUrls.deleteCompetencyCriterion(tagId, 901)).reply(500),
+      },
+      {
+        name: 'a group',
+        requestName: 'Delete group 10',
+        mockDelete: () => axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10)).reply(500),
+      },
+    ])('shows no failure toast for $name delete that fails after the switch', async ({ requestName, mockDelete }) => {
+      mockDelete();
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      axiosMock.onGet(courseBOutlineUrl).reply(200, outlineFixture);
+      const reads = mockHeldGroupsRefetch(
+        axiosMock,
+        tagId,
+        twoGroupsWithCriteriaResponse,
+        twoGroupsWithCriteriaResponse,
+      );
+      axiosMock.onGet(otherGroupsUrl).reply(200, courseBGroupsResponse);
+      const { rerender } = renderProvider();
+      await waitForSuccess();
+      await requestAndConfirm(requestName);
+      await waitFor(() => expect(axiosMock.history.get.filter((request) => request.url === groupsUrl)).toHaveLength(2));
+      expect(axiosMock.history.delete).toHaveLength(1);
+
+      rerender(providerFor(otherTagId));
+      await waitForSuccess();
+      await act(async () => {
+        reads.release();
+      });
+      await flushEffects();
+
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('requestRemoval, confirmRemoval, cancelRemoval', () => {
+    const deleteUrlOf = (criterionId: number) => apiUrls.deleteCompetencyCriterion(tagId, criterionId);
+    const sentDeleteUrls = () => axiosMock.history.delete.map((request) => request.url);
+    const groupsReads = () => axiosMock.history.get.filter((request) => request.url === groupsUrl);
+    const mockDeletes = (...criterionIds: number[]) => {
+      criterionIds.forEach((id) => {
+        axiosMock.onDelete(deleteUrlOf(id)).reply(200, { id, archived: false });
+      });
+    };
+    const sentWrites = () => (
+      axiosMock.history.delete.length + axiosMock.history.patch.length + axiosMock.history.post.length
+    );
+    const summary = () =>
+      JSON.parse(
+        screen.getByText(/^Pending summary: /).textContent?.replace(/^Pending summary: /, '') ?? 'null',
+      );
+    const namedOutline = buildOutlineIndex({
+      sections: [{
+        id: 'section-1',
+        displayName: 'Section 1',
+        children: [
+          { id: 'sub-901', displayName: 'Quiz 901' },
+          { id: 'sub-905', displayName: 'Quiz 905' },
+          { id: 'sub-906', displayName: 'Quiz 906' },
+          { id: 'sub-903', displayName: 'Quiz 903' },
+        ],
+      }],
+    });
+
+    /** `mockHeldGroupsRefetch`, plus the profile and course A outline reads. */
+    const mockGroupsReads = (initial: object, refetched: object) => {
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      return mockHeldGroupsRefetch(axiosMock, tagId, initial, refetched);
+    };
+
+    const renderLoaded = async () => {
+      renderProvider();
+      await waitForSuccess();
+      await waitFor(() => expect(accessibleCourses()).toHaveTextContent(courseA));
+    };
+
+    it('opens the confirmation with the names read from the course outline, and sends nothing', async () => {
+      mockGroupsReads(threeCriteriaInOneRuleBoxResponse, threeCriteriaInOneRuleBoxResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, namedOutline);
+      await renderLoaded();
+
+      await click('Delete the 70% rule box in group 10');
+
+      expect(screen.getByText(pendingRemoval('{"kind":"ruleBox","failure":null}'))).toBeInTheDocument();
+      expect(summary()).toEqual({
+        kind: RemovalTargetKind.RuleBox,
+        contentNames: ['Quiz 901', 'Quiz 905', 'Quiz 906'],
+        otherRuleCount: 1,
+        leavesCourseWithoutAssociations: false,
+      });
+      expect(sentWrites()).toBe(0);
+    });
+
+    it('describes a whole course group by its association count and course name', async () => {
+      mockGroupsReads(threeCriteriaInOneRuleBoxResponse, threeCriteriaInOneRuleBoxResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, namedOutline);
+      await renderLoaded();
+
+      await click('Request remove course group 1');
+
+      expect(summary()).toEqual({
+        kind: RemovalTargetKind.CourseGroup,
+        associationCount: 4,
+        courseName: 'Test Course',
+      });
+      expect(sentWrites()).toBe(0);
+    });
+
+    it('removes a course group, with its refetch, once confirmed', async () => {
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 1)).reply(200, {});
+      const reads = mockGroupsReads(threeCriteriaInOneRuleBoxResponse, noGroupsResponse);
+      await renderLoaded();
+
+      await requestAndConfirm('Request remove course group 1');
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+      await act(async () => {
+        reads.release();
+      });
+
+      expect(await screen.findByText(pendingRemoval('closed'))).toBeInTheDocument();
+      expect(sentDeleteUrls()).toEqual([apiUrls.competencyCriteriaGroup(tagId, 1)]);
+    });
+
+    it('closes the confirmation on cancel without sending anything', async () => {
+      mockGroupsReads(threeCriteriaInOneRuleBoxResponse, threeCriteriaInOneRuleBoxResponse);
+      await renderLoaded();
+      await click('Remove sub-a chip');
+      expect(screen.getByText(/^Pending removal: .*"kind":"association"/)).toBeInTheDocument();
+
+      await click('Cancel removal');
+
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+      expect(sentWrites()).toBe(0);
+    });
+
+    it('sends nothing when confirmed with no removal pending', async () => {
+      mockGroupsReads(threeCriteriaInOneRuleBoxResponse, threeCriteriaInOneRuleBoxResponse);
+      await renderLoaded();
+
+      await click('Confirm removal');
+
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+      expect(sentWrites()).toBe(0);
+    });
+
+    it('stays closed, and toasts the failure, when the author cancels while the request runs and then it fails', async () => {
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10)).reply(500);
+      const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, twoGroupsWithCriteriaResponse);
+      await renderLoaded();
+      await requestAndConfirm('Delete group 10');
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+
+      await click('Cancel removal');
+      await act(async () => {
+        reads.release();
+      });
+
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+      await waitFor(() => {
+        expectToast('There was a problem with the removal you confirmed. Please try again.', ErrorIcon);
+      });
+    });
+
+    /** One removal of each kind: the control that requests it, the groups before and after it, and its deletes. */
+    const removalKinds = [
+      {
+        name: 'a rule group',
+        requestName: 'Delete group 10',
+        kind: RemovalTargetKind.RuleGroup,
+        initial: twoGroupsWithCriteriaResponse,
+        refetched: afterDeletingGroup10Response,
+        mock: () => axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10)).reply(200, {}),
+        urls: [apiUrls.competencyCriteriaGroup(tagId, 10)],
+      },
+      {
+        name: 'an association',
+        requestName: 'Remove sub-a chip',
+        kind: RemovalTargetKind.Association,
+        initial: twoCriteriaInGroupResponse,
+        refetched: afterRemovingSubAResponse,
+        mock: () => mockDeletes(901),
+        urls: [deleteUrlOf(901)],
+      },
+      {
+        name: 'a rule box',
+        requestName: 'Delete the 70% rule box in group 10',
+        kind: RemovalTargetKind.RuleBox,
+        initial: threeCriteriaInOneRuleBoxResponse,
+        refetched: responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, [901, 905, 906]),
+        mock: () => mockDeletes(901, 905, 906),
+        urls: [deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(906)],
+      },
+    ];
+
+    it.each(removalKinds)(
+      'sends one request for $name confirmed again while deleting, and keeps the dialog open and the page blocked until the refetch lands',
+      async ({ requestName, kind, initial, refetched, mock, urls }) => {
+        mock();
+        const reads = mockGroupsReads(initial, refetched);
+        await renderLoaded();
+
+        await requestAndConfirm(requestName);
+        expect(await screen.findByText('Deleting: true')).toBeInTheDocument();
+        await click('Confirm removal');
+        await waitFor(() => expect(groupsReads()).toHaveLength(2));
+        await click('Request remove group 11');
+
+        expect(screen.getByText('Deleting: true')).toBeInTheDocument();
+        expect(screen.getByText(pendingRemoval(`{"kind":"${kind}","failure":null}`))).toBeInTheDocument();
+        await act(async () => {
+          reads.release();
+        });
+
+        expect(await screen.findByText(pendingRemoval('closed'))).toBeInTheDocument();
+        expect(sentDeleteUrls()).toEqual(urls);
+      },
+    );
+
+    it.each(removalKinds)(
+      'sends one request for $name confirmed twice in one tick, and keeps the dialog open until the refetch lands',
+      async ({ requestName, kind, initial, refetched, mock, urls }) => {
+        mock();
+        const reads = mockGroupsReads(initial, refetched);
+        await renderLoaded();
+        await click(requestName);
+
+        await click('Confirm removal twice in one tick');
+        await waitFor(() => expect(groupsReads()).toHaveLength(2));
+
+        // The dropped second call must not close the dialog as if its own delete had succeeded.
+        expect(screen.getByText(pendingRemoval(`{"kind":"${kind}","failure":null}`))).toBeInTheDocument();
+        await act(async () => {
+          reads.release();
+        });
+        expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+        expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+        expect(sentDeleteUrls()).toEqual(urls);
+        expect(groupsReads()).toHaveLength(2);
+      },
+    );
+
+    it.each(removalKinds)(
+      'opens no dialog for $name requested while an association is being created, so no delete is sent',
+      async ({ requestName, initial, refetched, mock }) => {
+        mock();
+        axiosMock.onPost(createUrl).reply(() => new Promise(() => {}));
+        mockGroupsReads(initial, refetched);
+        await renderLoaded();
+        await click('Associate in course A');
+        await screen.findByText('Associating: true');
+
+        await requestAndConfirm(requestName);
+
+        expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+        expect(sentDeleteUrls()).toEqual([]);
+        expect(mockShowToast).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each(removalKinds)(
+      'drops a confirm for $name made while an association is being created, and keeps the dialog open',
+      async ({ requestName, kind, initial, refetched, mock }) => {
+        mock();
+        axiosMock.onPost(createUrl).reply(() => new Promise(() => {}));
+        mockGroupsReads(initial, refetched);
+        await renderLoaded();
+        await click(requestName);
+        await click('Associate in course A');
+        await screen.findByText('Associating: true');
+
+        await click('Confirm removal');
+
+        expect(sentDeleteUrls()).toEqual([]);
+        expect(screen.getByText(pendingRemoval(`{"kind":"${kind}","failure":null}`))).toBeInTheDocument();
+        expect(mockShowToast).not.toHaveBeenCalled();
+      },
+    );
+
+    it('closes the dialog, as a success, when a group DELETE answers 404 while the refetch still lists the group', async () => {
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10)).reply(404);
+      const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, twoGroupsWithCriteriaResponse);
+      await renderLoaded();
+      await requestAndConfirm('Delete group 10');
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+
+      await act(async () => {
+        reads.release();
+      });
+
+      expect(await screen.findByText(pendingRemoval('closed'))).toBeInTheDocument();
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
+
+    it('clears the dialog\'s failure while a retry runs', async () => {
+      const retryGate = deferred();
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10)).replyOnce(500);
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10))
+        .reply(() => retryGate.released.then(() => [200, {}]));
+      axiosMock.onGet(groupsUrl).reply(200, twoGroupsWithCriteriaResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      await renderLoaded();
+      await requestAndConfirm('Delete group 10');
+      expect(await screen.findByText(pendingRemoval('{"kind":"ruleGroup","failure":"nothing-removed"}')))
+        .toBeInTheDocument();
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+
+      await click('Confirm removal');
+
+      expect(await screen.findByText('Deleting: true')).toBeInTheDocument();
+      expect(screen.getByText(pendingRemoval('{"kind":"ruleGroup","failure":null}'))).toBeInTheDocument();
+      await act(async () => {
+        retryGate.release();
+      });
+      expect(await screen.findByText(pendingRemoval('closed'))).toBeInTheDocument();
+    });
+
+    it('closes the dialog when a group DELETE fails but the refetch no longer has the group', async () => {
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10)).reply(500);
+      const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, afterDeletingGroup10Response);
+      await renderLoaded();
+      await requestAndConfirm('Delete group 10');
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+
+      await act(async () => {
+        reads.release();
+      });
+
+      expect(await screen.findByText(pendingRemoval('closed'))).toBeInTheDocument();
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
+
+    it('closes the dialog when a rule box DELETE fails but the refetch has none of its criteria left', async () => {
+      mockDeletes(901, 905);
+      axiosMock.onDelete(deleteUrlOf(906)).reply(500);
+      const reads = mockGroupsReads(
+        threeCriteriaInOneRuleBoxResponse,
+        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, [901, 905, 906]),
+      );
+      await renderLoaded();
+      await requestAndConfirm('Delete the 70% rule box in group 10');
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+
+      await act(async () => {
+        reads.release();
+      });
+
+      expect(await screen.findByText(pendingRemoval('closed'))).toBeInTheDocument();
+    });
+
+    it('closes an open dialog when the competency changes', async () => {
+      mockGroupsReads(threeCriteriaInOneRuleBoxResponse, threeCriteriaInOneRuleBoxResponse);
+      axiosMock.onGet(otherGroupsUrl).reply(200, noGroupsResponse);
+      const { rerender } = renderProvider();
+      await waitFor(() => expect(accessibleCourses()).toHaveTextContent(courseA));
+      await click('Request remove course group 1');
+      expect(screen.getByText(/^Pending removal: .*"kind":"courseGroup"/)).toBeInTheDocument();
+
+      rerender(providerFor(otherTagId));
+
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+    });
+
+    it('closes an open dialog when the listed courses change, and a later confirm sends nothing', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, threeCriteriaInOneRuleBoxResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      mockDeletes(901);
+      await renderLoaded();
+      await click('Remove sub-a chip');
+      expect(screen.getByText(pendingRemoval('{"kind":"association","failure":null}'))).toBeInTheDocument();
+
+      await click('Search for course B');
+      await screen.findByText(`Listed course keys: ${JSON.stringify([courseB])}`);
+
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+      await click('Confirm removal');
+      await flushEffects();
+      expect(sentDeleteUrls()).toEqual([]);
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
+
+    it('recomputes the last-association warning from the refetched data after a failure', async () => {
+      mockDeletes(901);
+      axiosMock.onDelete(deleteUrlOf(905)).reply(500);
+      axiosMock.onGet(groupsUrl).replyOnce(200, threeCriteriaInOneRuleBoxResponse);
+      // Another author removed the 80% box meanwhile, so what is left is all the course has.
+      axiosMock.onGet(groupsUrl).reply(200, responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, [901, 903]));
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, namedOutline);
+      await renderLoaded();
+
+      await click('Delete the 70% rule box in group 10');
+      expect(summary().leavesCourseWithoutAssociations).toBe(false);
+      await click('Confirm removal');
+
+      expect(await screen.findByText(pendingRemoval('{"kind":"ruleBox","failure":"partly-removed"}')))
+        .toBeInTheDocument();
+      expect(summary().leavesCourseWithoutAssociations).toBe(true);
+    });
+
+    it('keeps the last-association warning, and names only what is left, when the refetch after a partial failure fails too', async () => {
+      // Start: group 10 holds a 70% box (901, 905, 906), which is all the course has.
+      // Remove: the 70% box. 901 is deleted, 905 answers 500, and the refetch answers 500 too, so the cached groups
+      //   still list 901.
+      // After: the dialog still warns that the course is left without associations, names only 905 and 906, and a
+      //   retry sends only those two.
+      const onlyTheBoxResponse = responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, [903]);
+      mockDeletes(901, 906);
+      axiosMock.onDelete(deleteUrlOf(905)).replyOnce(500);
+      axiosMock.onDelete(deleteUrlOf(905)).reply(200, { id: 905, archived: false });
+      axiosMock.onGet(groupsUrl).replyOnce(200, onlyTheBoxResponse);
+      axiosMock.onGet(groupsUrl).reply(500);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, namedOutline);
+      await renderLoaded();
+
+      await click('Delete the 70% rule box in group 10');
+      expect(summary().leavesCourseWithoutAssociations).toBe(true);
+      await click('Confirm removal');
+
+      expect(await screen.findByText(pendingRemoval('{"kind":"ruleBox","failure":"partly-removed"}')))
+        .toBeInTheDocument();
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+      expect(summary().leavesCourseWithoutAssociations).toBe(true);
+      expect(summary().contentNames).toEqual(['Quiz 905', 'Quiz 906']);
+
+      await click('Confirm removal');
+      await waitFor(() => expect(sentDeleteUrls()).toHaveLength(4));
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(905), deleteUrlOf(906)]);
+    });
+
+    it('lets a retry send only what is left after a partial failure', async () => {
+      mockDeletes(901, 906);
+      axiosMock.onDelete(deleteUrlOf(905)).replyOnce(500);
+      axiosMock.onDelete(deleteUrlOf(905)).reply(200, { id: 905, archived: false });
+      axiosMock.onGet(groupsUrl).replyOnce(200, threeCriteriaInOneRuleBoxResponse);
+      axiosMock.onGet(groupsUrl).replyOnce(200, responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, [901]));
+      axiosMock.onGet(groupsUrl)
+        .reply(200, responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, [901, 905, 906]));
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, namedOutline);
+      await renderLoaded();
+
+      await requestAndConfirm('Delete the 70% rule box in group 10');
+      expect(await screen.findByText(pendingRemoval('{"kind":"ruleBox","failure":"partly-removed"}')))
+        .toBeInTheDocument();
+      expect(summary().contentNames).toEqual(['Quiz 905', 'Quiz 906']);
+      expect(screen.getByText('Deleting: false')).toBeInTheDocument();
+
+      await click('Confirm removal');
+      expect(await screen.findByText(pendingRemoval('closed'))).toBeInTheDocument();
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(905), deleteUrlOf(906)]);
+      expect(screen.getByText('Criterion ids: [903]')).toBeInTheDocument();
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
   });
 
   describe('discardPlaceholderGroup', () => {
@@ -2249,7 +3395,7 @@ describe('CompetencyAssociationsProvider', () => {
 
       await click('Discard placeholder group');
 
-      expect(screen.getByText(selectionOn(11, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
       expect(screen.getByText('Deleting: false')).toBeInTheDocument();
       expect(screen.getByText('Associating: false')).toBeInTheDocument();
@@ -2274,6 +3420,82 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Discard placeholder group');
 
       expect(noSelection()).toBeInTheDocument();
+      expect(screen.getByText('Keyboard request: null')).toBeInTheDocument();
+    });
+  });
+
+  describe('discardPlaceholderRuleBox', () => {
+    const renderLoaded = async (response: CompetencyCriteriaGroupsResponse) => {
+      axiosMock.onGet(groupsUrl).reply(200, response);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      renderProvider();
+      await waitForSuccess();
+    };
+
+    const renderWithPlaceholderRuleBox = async (response: CompetencyCriteriaGroupsResponse) => {
+      await renderLoaded(response);
+      await click('Add placeholder rule box in group 10');
+      expect(screen.getByText(selectionOn(10, null))).toBeInTheDocument();
+      expect(screen.getByText('Has placeholder: true')).toBeInTheDocument();
+    };
+
+    it('sends no request, and selects the group\'s last saved box with a keyboard request', async () => {
+      await renderWithPlaceholderRuleBox(twoCriteriaInGroupResponse);
+
+      await click('Discard placeholder rule box');
+
+      expect(screen.getByText(selectionOn(10, gte80PercentRuleKey))).toBeInTheDocument();
+      expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
+      expect(screen.getByText('Keyboard request: {"kind":"group","groupId":10,"selectionMoved":true}'))
+        .toBeInTheDocument();
+      expect(axiosMock.history.delete).toHaveLength(0);
+      expect(axiosMock.history.patch).toHaveLength(0);
+      expect(axiosMock.history.post).toHaveLength(0);
+    });
+
+    it('does not carry the discarded placeholder\'s chosen score into the next placeholder rule box', async () => {
+      await renderWithPlaceholderRuleBox(twoCriteriaInGroupResponse);
+      await click('Set placeholder score');
+      expect(screen.getByText(/"rulePayload":\{"op":"gte","value":0.85/)).toBeInTheDocument();
+
+      await click('Discard placeholder rule box');
+      await click('Add placeholder rule box in group 10');
+
+      expect(screen.getByText(
+        'Placeholder: {"parentRuleGroupId":null,"logicOperator":"OR","rulePayload":null,"justAdded":true}',
+      )).toBeInTheDocument();
+    });
+
+    it('clears a duplicate rejection along with the placeholder', async () => {
+      await renderWithPlaceholderRuleBox(twoCriteriaInGroupResponse);
+      // The untouched placeholder's default score duplicates the group's saved default box.
+      await click('Associate in course A');
+      expect(screen.getByText('Duplicate rejected: true')).toBeInTheDocument();
+
+      await click('Discard placeholder rule box');
+
+      expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
+      expect(screen.getByText('Duplicate rejected: false')).toBeInTheDocument();
+    });
+
+    it('clears selection when the group has no saved box to return to', async () => {
+      // The API cannot create a saved group with no criteria, so this data is only a way to cover the fallback.
+      await renderWithPlaceholderRuleBox(twoGroupsResponse);
+
+      await click('Discard placeholder rule box');
+
+      expect(noSelection()).toBeInTheDocument();
+      expect(screen.getByText('Has placeholder: false')).toBeInTheDocument();
+    });
+
+    it('does nothing when no placeholder rule box is selected', async () => {
+      await renderLoaded(twoCriteriaInGroupResponse);
+      await click('Select rule box 10 gte');
+
+      await click('Discard placeholder rule box');
+
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
       expect(screen.getByText('Keyboard request: null')).toBeInTheDocument();
     });
   });
@@ -2404,6 +3626,21 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Associate in course A');
 
       expect(await screen.findByText(selectionOn(999, eqKey))).toBeInTheDocument();
+    });
+
+    it('flags a groups refresh error when the refetch after a successful create fails', async () => {
+      axiosMock.onGet(groupsUrl).replyOnce(200, singleGroupResponse).onGet(groupsUrl).reply(500);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      axiosMock.onPost(createUrl).reply(201, createdCriterion(10));
+      renderProvider();
+      await waitForSuccess();
+      expect(screen.getByText('Groups refresh error: false')).toBeInTheDocument();
+
+      await click('Associate in course A');
+
+      expect(await screen.findByText('Groups refresh error: true')).toBeInTheDocument();
+      expect(screen.getByText('Status: success')).toBeInTheDocument();
     });
 
     it.each([
@@ -2607,14 +3844,14 @@ describe('CompetencyAssociationsProvider', () => {
       axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
       axiosMock.onPatch(updateRuleScoreUrl).reply(500);
       renderProvider();
-      expect(await screen.findByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(await screen.findByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
 
       await click('Update rule score');
 
       await waitFor(() => {
         expectToast('There was a problem updating this rule\'s score. Please try again.', ErrorIcon);
       });
-      expect(screen.getByText(selectionOn(10, gteKey))).toBeInTheDocument();
+      expect(screen.getByText(selectionOn(10, gte70PercentRuleKey))).toBeInTheDocument();
     });
   });
 });

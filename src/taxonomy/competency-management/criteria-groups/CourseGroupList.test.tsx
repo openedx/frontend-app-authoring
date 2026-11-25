@@ -1,9 +1,11 @@
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import {
+  act,
   initializeMocks,
   render,
   screen,
+  waitFor,
   within,
 } from '@src/testUtils';
 import {
@@ -11,6 +13,7 @@ import {
   byTextContent,
   courseA,
   courseB,
+  criterion,
   MockCompetencyAssociationsProvider,
   twoCoursesResponse,
 } from '../__mocks__';
@@ -49,6 +52,51 @@ describe('<CourseGroupList />', () => {
     expect(screen.getByText('There was a problem loading this competency\'s associations. Please try again.'))
       .toBeInTheDocument();
     expect(screen.queryByText(byTextContent(noAssociationsMessage))).not.toBeInTheDocument();
+  });
+
+  describe('when the groups refresh failed', () => {
+    const loadErrorMessage = 'There was a problem loading this competency\'s associations. Please try again.';
+
+    it('lists the loaded groups below an alert', async () => {
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(
+        200,
+        buildOutlineIndex({ overrides: { courseStructure: { displayName: 'Course A' } } }),
+      );
+      const groupsIndex = buildCompetencyCriteriaGroupsIndex(twoCoursesResponse);
+      renderList({
+        groupsIndex,
+        accessibleCourseGroups: groupsIndex.courseGroups.filter((courseGroup) => courseGroup.courseKey === courseA),
+        hasGroupsRefreshError: true,
+      });
+
+      const alert = screen.getByRole('alert');
+      expect(alert).toHaveTextContent(loadErrorMessage);
+      const heading = await screen.findByRole('heading', { name: 'From within Course A ...' });
+      expect(alert.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    });
+
+    it('shows no alert while the groups are fresh', async () => {
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(
+        200,
+        buildOutlineIndex({ overrides: { courseStructure: { displayName: 'Course A' } } }),
+      );
+      const groupsIndex = buildCompetencyCriteriaGroupsIndex(twoCoursesResponse);
+      renderList({
+        groupsIndex,
+        accessibleCourseGroups: groupsIndex.courseGroups.filter((courseGroup) => courseGroup.courseKey === courseA),
+      });
+
+      await screen.findByRole('heading', { name: 'From within Course A ...' });
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
+    it('shows a single alert, and no empty state, when no group is listed', () => {
+      renderList({ accessibleCourseGroups: [], criteriaCounts: undefined, hasGroupsRefreshError: true });
+
+      expect(screen.getAllByRole('alert')).toHaveLength(1);
+      expect(screen.getByRole('alert')).toHaveTextContent(loadErrorMessage);
+      expect(screen.queryByText(noAssociationsPromptMessage)).not.toBeInTheDocument();
+    });
   });
 
   it('renders the empty state when no course group is accessible, whatever the groups index holds', () => {
@@ -199,7 +247,40 @@ describe('<CourseGroupList />', () => {
     });
   });
 
-  it('takes keyboard focus on the empty state when a request asks for it, then consumes the request', () => {
+  it('shows rule box menus only in the courses the author can edit', async () => {
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(
+      200,
+      buildOutlineIndex({ overrides: { courseStructure: { displayName: 'Course A' } } }),
+    );
+    axiosMock.onGet(getCourseOutlineIndexApiUrl(courseB)).reply(
+      200,
+      buildOutlineIndex({ overrides: { courseStructure: { displayName: 'Course B' } } }),
+    );
+    const groupsIndex = buildCompetencyCriteriaGroupsIndex({
+      ...twoCoursesResponse,
+      criteria: [criterion(901, 'sub-a', 10), criterion(902, 'sub-b', 20)],
+    });
+    renderList({
+      groupsIndex,
+      accessibleCourseGroups: groupsIndex.courseGroups,
+      canEditCourse: (courseId) => courseId === courseB,
+    });
+
+    const sectionOf = (heading: HTMLElement) => within(heading.closest('.course-group-section') as HTMLElement);
+    const courseBSection = sectionOf(await screen.findByRole('heading', { name: 'From within Course B ...' }));
+    const courseASection = sectionOf(screen.getByRole('heading', { name: 'From within Course A ...' }));
+
+    expect(courseBSection.getAllByRole('button', { name: /More actions for the rule with a score of/ }))
+      .toHaveLength(1);
+    expect(courseBSection.getAllByRole('button', { name: /^More actions for rule group/ })).toHaveLength(1);
+    expect(courseBSection.getByRole('button', { name: 'More actions for Course B' })).toBeInTheDocument();
+    expect(courseASection.queryByRole('button', { name: /^More actions for/ })).not.toBeInTheDocument();
+    // Course A shows its rule group and rule box, so the missing menus are not an empty section.
+    expect(courseASection.getByRole('button', { name: 'By completing any of the following' })).toBeInTheDocument();
+    expect(courseASection.getByRole('button', { name: 'With a score of 70% or higher' })).toBeInTheDocument();
+  });
+
+  it('takes keyboard focus on the empty state when a request asks for it, then consumes the request', async () => {
     const consumeKeyboardFocusRequest = jest.fn();
     renderList({
       accessibleCourseGroups: [],
@@ -207,13 +288,14 @@ describe('<CourseGroupList />', () => {
       consumeKeyboardFocusRequest,
     });
 
-    expect(screen.getByText(byTextContent(noAssociationsMessage)).parentElement).toHaveFocus();
+    await waitFor(() => expect(screen.getByText(byTextContent(noAssociationsMessage)).parentElement).toHaveFocus());
     expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
   });
 
-  it('leaves the empty state unfocused without a request', () => {
+  it('leaves the empty state unfocused without a request', async () => {
     renderList({ accessibleCourseGroups: [] });
 
+    await act(async () => {});
     expect(screen.getByText(byTextContent(noAssociationsMessage)).parentElement).not.toHaveFocus();
   });
 });

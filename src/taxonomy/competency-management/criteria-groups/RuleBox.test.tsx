@@ -31,6 +31,8 @@ const renderRuleBox = (contextOverrides: Parameters<typeof buildMockCompetencyAs
         rule={rule}
         criteria={criteria}
         subsectionNamesByUsageKey={{ 'block-a': 'Subsection A' }}
+        position={1}
+        courseName="Demo Course"
       />
     </MockCompetencyAssociationsProvider>,
   )

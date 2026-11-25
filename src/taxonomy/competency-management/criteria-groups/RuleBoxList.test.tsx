@@ -46,6 +46,8 @@ const renderList = (
         groupId={10}
         boxes={listedBoxes}
         subsectionNamesByUsageKey={{ 'block-a': 'Subsection A', 'block-b': 'Subsection B', 'block-c': 'Subsection C' }}
+        position={1}
+        courseName="Demo Course"
       />
     </MockCompetencyAssociationsProvider>,
   )
@@ -95,6 +97,28 @@ describe('<RuleBoxList />', () => {
     ).toEqual(['Subsection A', 'Subsection B']);
   });
 
+  it('gives each saved box a menu button named after its own score, so two boxes in a group differ', () => {
+    render(
+      <MockCompetencyAssociationsProvider>
+        <RuleBoxList
+          groupId={10}
+          boxes={boxes}
+          subsectionNamesByUsageKey={{}}
+          canEdit
+          position={2}
+          courseName="Demo Course"
+        />
+      </MockCompetencyAssociationsProvider>,
+    );
+
+    expect(screen.getByRole('button', {
+      name: 'More actions for the rule with a score of 70% or higher in rule group 2 in Demo Course',
+    })).toBeInTheDocument();
+    expect(screen.getByRole('button', {
+      name: 'More actions for the rule with a score of 90% or lower in rule group 2 in Demo Course',
+    })).toBeInTheDocument();
+  });
+
   it('marks only the box matching the context selection as current', () => {
     renderList({ groupId: 10, ruleKey: 'grade:lte:0.9:percent' });
 
@@ -137,7 +161,14 @@ describe('<RuleBoxList />', () => {
     const renderEditableList = (updateRuleScore: jest.Mock) =>
       render(
         <MockCompetencyAssociationsProvider value={{ updateRuleScore }}>
-          <RuleBoxList groupId={10} boxes={editableBoxes} subsectionNamesByUsageKey={{}} canEdit />
+          <RuleBoxList
+            groupId={10}
+            boxes={editableBoxes}
+            subsectionNamesByUsageKey={{}}
+            canEdit
+            position={1}
+            courseName="Demo Course"
+          />
         </MockCompetencyAssociationsProvider>,
       );
 
@@ -181,7 +212,14 @@ describe('<RuleBoxList />', () => {
             setPlaceholderRulePayload,
           }}
         >
-          <RuleBoxList groupId={10} boxes={boxes} subsectionNamesByUsageKey={{}} canEdit />
+          <RuleBoxList
+            groupId={10}
+            boxes={boxes}
+            subsectionNamesByUsageKey={{}}
+            canEdit
+            position={1}
+            courseName="Demo Course"
+          />
         </MockCompetencyAssociationsProvider>,
       );
 
@@ -214,7 +252,14 @@ describe('<RuleBoxList />', () => {
               setPlaceholderRulePayload: setRulePayload,
             }}
           >
-            <RuleBoxList groupId={10} boxes={boxes} subsectionNamesByUsageKey={{}} canEdit />
+            <RuleBoxList
+              groupId={10}
+              boxes={boxes}
+              subsectionNamesByUsageKey={{}}
+              canEdit
+              position={1}
+              courseName="Demo Course"
+            />
           </MockCompetencyAssociationsProvider>
         );
       };
@@ -254,7 +299,14 @@ describe('<RuleBoxList />', () => {
             placeholderDuplicateRejectionCount: duplicateRejectionCount,
           }}
         >
-          <RuleBoxList groupId={10} boxes={boxesInGroup} subsectionNamesByUsageKey={{}} canEdit />
+          <RuleBoxList
+            groupId={10}
+            boxes={boxesInGroup}
+            subsectionNamesByUsageKey={{}}
+            canEdit
+            position={1}
+            courseName="Demo Course"
+          />
         </MockCompetencyAssociationsProvider>
       );
       return { ...render(ui(count)), ui };
@@ -342,6 +394,8 @@ describe('<RuleBoxList />', () => {
             boxes={placeholderBoxes}
             subsectionNamesByUsageKey={{}}
             canEdit={canEdit}
+            position={1}
+            courseName="Demo Course"
           />
         </MockCompetencyAssociationsProvider>,
       );

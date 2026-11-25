@@ -10,14 +10,15 @@ import classNames from 'classnames';
 
 import { useCourseOutlineIndex } from '@src/course-outline/data';
 import { useCompetencyAssociations } from '@src/taxonomy/competency-management/CompetencyAssociationsContext';
+import { RemovalTargetKind } from '@src/taxonomy/competency-management/constants';
 import { courseKeyOfSelection } from '@src/taxonomy/competency-management/criterionTarget';
 import type { CourseCompetencyCriteriaGroup } from '@src/taxonomy/competency-management/data/types';
-import { bottomTierGroupsForCourse } from '@src/taxonomy/competency-management/utils';
+import { bottomTierGroupsForCourse, subsectionNamesFromOutline } from '@src/taxonomy/competency-management/utils';
 import AddControl from './AddControl';
 import type { AddControlProps } from './AddControl';
 import CriteriaGroupBox from './CriteriaGroupBox';
-import GroupActionsMenu from './GroupActionsMenu';
 import GroupConnector from './GroupConnector';
+import MoreActionsMenu from './MoreActionsMenu';
 import messages from './messages';
 
 export interface CourseGroupSectionProps {
@@ -43,25 +44,19 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     isAssociating,
     courseList,
     competencyName,
-    deleteGroup,
-    isDeletingGroupOrCriterion,
+    requestRemoval,
+    isDeletingGroupOrRuleBoxOrCriterion,
     keyboardFocusRequest,
     consumeKeyboardFocusRequest,
   } = useCompetencyAssociations();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const sectionToggleRef = useRef<HTMLButtonElement>(null);
-  const menuToggleRef = useRef<HTMLButtonElement>(null);
   const { data } = useCourseOutlineIndex(courseGroup.courseKey, { refetchOnMount: false });
 
-  const subsectionNamesByUsageKey = useMemo(() => {
-    const names: Record<string, string> = {};
-    (data?.courseStructure.childInfo?.children ?? []).forEach((section) => {
-      (section.childInfo?.children ?? []).forEach((subsection) => {
-        names[subsection.id] = subsection.displayName;
-      });
-    });
-    return names;
-  }, [data]);
+  const subsectionNamesByUsageKey = useMemo(
+    () => (data ? subsectionNamesFromOutline(data.courseStructure) : {}),
+    [data],
+  );
 
   // A placeholder group (`selection.groupId === null`) is shown as one more card after the real ones.
   const showPlaceholderGroup = selection?.groupId === null && placeholder.parentRuleGroupId === courseGroup.id;
@@ -73,36 +68,25 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
 
   const bottomTierGroups = status === 'success' ? bottomTierGroupsForCourse(groupsIndex, courseGroup.courseKey) : [];
 
-  // A collapsed section has not mounted its cards. A request that moves selection into it is opened by the selection
-  // effect below. One that keeps the author's collapse, or a menu request, lands on the section's expand toggle instead.
-  const request = (keyboardFocusRequest?.kind === 'group' || keyboardFocusRequest?.kind === 'menu')
+  // A collapsed section has not mounted its cards. When the request moves selection into the section, the selection
+  // effect below expands it. When the request keeps the author's collapse, the section stays collapsed and focus goes
+  // to its expand toggle.
+  const request = keyboardFocusRequest?.kind === 'group'
       && bottomTierGroups.some((group) => group.id === keyboardFocusRequest.groupId)
     ? keyboardFocusRequest
     : null;
   const holdsFocusRequestTarget = request !== null;
-  const requestMovesSelection = request?.kind === 'group' && request.selectionMoved;
+  const requestMovesSelection = request !== null && request.selectionMoved;
   useEffect(() => {
     if (holdsFocusRequestTarget && isCollapsed && !requestMovesSelection) {
-      sectionToggleRef.current?.focus();
+      // The dialog's own focus return runs in a microtask when it unmounts, so this one is queued to land after it.
+      queueMicrotask(() => sectionToggleRef.current?.focus());
       consumeKeyboardFocusRequest();
     }
   }, [holdsFocusRequestTarget, requestMovesSelection, isCollapsed, consumeKeyboardFocusRequest]);
 
-  const isMenuDisabled = isDeletingGroupOrCriterion || isAssociating;
+  const isMenuDisabled = isDeletingGroupOrRuleBoxOrCriterion || isAssociating;
   const canEdit = canEditCourse(courseGroup.courseKey);
-  const isRendered = status === 'success' && Boolean(data);
-  // Waits for the toggle to render and be enabled again, since a disabled button cannot take focus.
-  const takesMenuFocus = isRendered
-    && canEdit
-    && keyboardFocusRequest?.kind === 'menu'
-    && keyboardFocusRequest.groupId === courseGroup.id
-    && !isMenuDisabled;
-  useEffect(() => {
-    if (takesMenuFocus && menuToggleRef.current) {
-      menuToggleRef.current.focus();
-      consumeKeyboardFocusRequest();
-    }
-  }, [takesMenuFocus, consumeKeyboardFocusRequest]);
 
   const handleToggleCollapsed = () => {
     // A collapsed section hides its placeholder, so it is dropped instead of lingering unseen.
@@ -137,7 +121,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   } else if (courseList.isPlaceholderData) {
     // A reload can list other courses, which would discard an unsaved box started now.
     disabledReason = 'loading';
-  } else if (isDeletingGroupOrCriterion) {
+  } else if (isDeletingGroupOrRuleBoxOrCriterion) {
     disabledReason = 'deleting';
   } else if (hasPlaceholder) {
     disabledReason = 'placeholder';
@@ -166,13 +150,12 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
           </Stack>
         }
         actions={canEdit && (
-          <GroupActionsMenu
-            toggleRef={menuToggleRef}
+          <MoreActionsMenu
             id={`course-group-menu-toggle-${courseGroup.id}`}
             toggleLabel={intl.formatMessage(messages.courseGroupMoreActionsLabel, { courseName })}
             removeLabel={intl.formatMessage(messages.removeFromCompetencyMenuItem, { competencyName })}
             disabled={isMenuDisabled}
-            onRemove={() => deleteGroup(courseGroup.id)}
+            onRemove={() => requestRemoval({ kind: RemovalTargetKind.CourseGroup, groupId: courseGroup.id })}
           />
         )}
       />

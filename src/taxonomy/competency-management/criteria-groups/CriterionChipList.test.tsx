@@ -6,6 +6,7 @@ import {
 } from '@src/testUtils';
 import { criterion, MockCompetencyAssociationsProvider } from '@src/taxonomy/competency-management/__mocks__';
 import type { MockCompetencyAssociationsOverrides } from '@src/taxonomy/competency-management/__mocks__';
+import { RemovalTargetKind } from '@src/taxonomy/competency-management/constants';
 import CriterionChipList from './CriterionChipList';
 import type { CriterionChipListProps } from './CriterionChipList';
 
@@ -44,22 +45,26 @@ describe('<CriterionChipList />', () => {
     expect(screen.queryByRole('button', { name: /^Remove the association/ })).not.toBeInTheDocument();
   });
 
-  it('removes the association of the chip whose remove button is clicked', async () => {
+  it('asks to remove the association of the chip whose remove button is clicked', async () => {
     const user = userEvent.setup();
-    const removeCriterion = jest.fn();
+    const requestRemoval = jest.fn();
     renderList(
       {
         criteria: [criterion(1, 'block-a', 10), criterion(2, 'block-b', 10)],
         subsectionNamesByUsageKey: { 'block-a': 'Subsection A', 'block-b': 'Subsection B' },
         canEdit: true,
       },
-      { removeCriterion },
+      { requestRemoval },
     );
 
     await user.click(screen.getByRole('button', { name: 'Remove the association with Subsection B' }));
 
-    expect(removeCriterion).toHaveBeenCalledTimes(1);
-    expect(removeCriterion).toHaveBeenCalledWith(2, 'group');
+    expect(requestRemoval).toHaveBeenCalledTimes(1);
+    expect(requestRemoval).toHaveBeenCalledWith({
+      kind: RemovalTargetKind.Association,
+      criterionId: 2,
+      returnFocusTo: 'group',
+    });
   });
 
   it('takes the remove button out of the tab order while a delete is in flight', () => {
@@ -69,7 +74,7 @@ describe('<CriterionChipList />', () => {
         subsectionNamesByUsageKey: { 'block-a': 'Subsection A' },
         canEdit: true,
       },
-      { isDeletingGroupOrCriterion: true },
+      { isDeletingGroupOrRuleBoxOrCriterion: true },
     );
 
     expect(screen.getByRole('button', { name: 'Remove the association with Subsection A' }))
