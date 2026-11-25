@@ -102,7 +102,7 @@ describe('RemovalConfirmationModal', () => {
       expect(bodyOf().textContent).toBe(closingLine);
     });
 
-    it('shows the fallback label for content its course outline no longer lists', () => {
+    it('changes the title for content its course outline no longer lists', () => {
       renderModal(associationRemoval(null));
 
       expect(screen.getByRole('dialog', { name: 'Remove this unavailable content from Inference?' }))

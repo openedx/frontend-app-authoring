@@ -347,7 +347,7 @@ describe('<CriteriaAssociationsSection />', () => {
     });
   });
 
-  describe('confirming a removal (#786)', () => {
+  describe('confirming a removal', () => {
     const baseOutline = buildOutlineIndex({
       sections: [{
         id: 'section-1',

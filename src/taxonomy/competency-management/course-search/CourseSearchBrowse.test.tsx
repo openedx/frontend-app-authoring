@@ -1825,7 +1825,6 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
   /** One course whose `sub-1a` is associated, with every groups read after the first held until `release`. */
   const renderWithAssociatedSubsection1A = async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-    Element.prototype.scrollIntoView = jest.fn();
     const course = buildCourse();
     const tagId = Number(activeCompetency.id);
     const groupsUrl = competencyManagementApiUrls.competencyCriteriaGroups(tagId);
@@ -1866,7 +1865,9 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
     return { user, coursesContainer, run, groupsUrl };
   };
 
-  describe('removing an association (#786)', () => {
+  describe('removing an association', () => {
+    mockScrollIntoView();
+
     it('asks for confirmation before removing from the courses panel, and sends nothing until Remove', async () => {
       const { user, coursesContainer, run, groupsUrl } = await renderWithAssociatedSubsection1A();
 

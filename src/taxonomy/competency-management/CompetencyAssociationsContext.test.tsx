@@ -1790,31 +1790,6 @@ describe('CompetencyAssociationsProvider', () => {
       expect(noSelection()).toBeInTheDocument();
     });
 
-    it('runs one delete, and keeps the dialog open until it settles, when the removal is confirmed twice in one tick', async () => {
-      const deleteGate = deferred();
-      axiosMock.onDelete(deleteUrl).reply(() => deleteGate.released.then(() => [200, {}]));
-      const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, afterDeletingGroup10Response);
-      await renderWithSelectionOnGroup10();
-      await click('Delete group 10');
-
-      await click('Confirm removal twice in one tick');
-
-      await waitFor(() => expect(axiosMock.history.delete).toHaveLength(1));
-      // The dropped second call must not close the dialog as if its own delete had succeeded.
-      expect(screen.getByText(pendingRemoval('{"kind":"ruleGroup","failure":null}'))).toBeInTheDocument();
-      await act(async () => {
-        deleteGate.release();
-      });
-      await waitFor(() => expect(groupsReads()).toHaveLength(2));
-      await act(async () => {
-        reads.release();
-      });
-
-      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
-      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
-      expect(axiosMock.history.delete).toHaveLength(1);
-      expect(screen.getByText(selectionOn(11, gte70PercentRuleKey))).toBeInTheDocument();
-    });
     it.each([
       { selected: 'the group', setUp: async () => {} },
       { selected: 'nothing', setUp: clearSelectionByAddingAndDiscardingPlaceholderRuleBox },
@@ -2534,69 +2509,6 @@ describe('CompetencyAssociationsProvider', () => {
       expect(screen.getByText(selectionOn(10, gte80PercentRuleKey))).toBeInTheDocument();
     });
 
-    it('lets a retry send only what is left after a partial failure', async () => {
-      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
-      // First remove: 901 is deleted, 905 answers 500, so 905, 906 and the 80% box (903) are left.
-      // Retry from the open dialog: 905 and 906 are deleted this time, so only the 80% box (903) is left.
-      const [firstCriterion, retriedCriterion, thirdCriterion] = criterionIdsIn70PercentRuleBox;
-      const afterFirstDeleteResponse = responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, [firstCriterion]);
-      const afterRetryResponse = responseWithoutCriteria(
-        threeCriteriaInOneRuleBoxResponse,
-        criterionIdsIn70PercentRuleBox,
-      );
-      const idsAfterFirstDelete = [retriedCriterion, thirdCriterion, ...criterionIdsIn80PercentRuleBox];
-      mockDeletes(firstCriterion, thirdCriterion, ...criterionIdsIn80PercentRuleBox);
-      axiosMock.onDelete(deleteUrlOf(retriedCriterion)).replyOnce(500);
-      axiosMock.onDelete(deleteUrlOf(retriedCriterion)).reply(200, { id: retriedCriterion, archived: false });
-      axiosMock.onGet(groupsUrl).replyOnce(200, threeCriteriaInOneRuleBoxResponse);
-      axiosMock.onGet(groupsUrl).replyOnce(200, afterFirstDeleteResponse);
-      axiosMock.onGet(groupsUrl).reply(200, afterRetryResponse);
-      axiosMock.onGet(profileUrl).reply(200, profileResponse);
-      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
-      await renderLoaded();
-
-      await requestAndConfirm('Delete the 70% rule box in group 10');
-      expect(await screen.findByText(criterionIdsShown(idsAfterFirstDelete))).toBeInTheDocument();
-      expect(await screen.findByText(pendingRemoval('{"kind":"ruleBox","failure":"partly-removed"}')))
-        .toBeInTheDocument();
-      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
-
-      await click('Confirm removal');
-      expect(await screen.findByText(criterionIdsShown(criterionIdsIn80PercentRuleBox))).toBeInTheDocument();
-      expect(await screen.findByText(pendingRemoval('closed'))).toBeInTheDocument();
-      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
-
-      expect(sentDeleteUrls()).toEqual(
-        [firstCriterion, retriedCriterion, retriedCriterion, thirdCriterion].map(deleteUrlOf),
-      );
-      expect(mockShowToast).not.toHaveBeenCalled();
-    });
-
-    it('drops a second confirm made in the same tick as the first, so one run is sent and the dialog stays open', async () => {
-      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
-      // Remove: the 70% box, confirmed twice in one click.
-      // After: one run of three deletes was sent, one refetch was made, and the dialog stayed open until it landed.
-      mockDeletes(...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox);
-      const reads = mockGroupsReads(
-        threeCriteriaInOneRuleBoxResponse,
-        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
-      );
-      await renderLoaded();
-      await click('Delete the 70% rule box in group 10');
-
-      await click('Confirm removal twice in one tick');
-      await waitFor(() => expect(groupsReads()).toHaveLength(2));
-
-      expect(screen.getByText(pendingRemoval('{"kind":"ruleBox","failure":null}'))).toBeInTheDocument();
-      await act(async () => {
-        reads.release();
-      });
-      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
-      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
-      expect(sentDeleteUrls()).toEqual(criterionIdsIn70PercentRuleBox.map(deleteUrlOf));
-      expect(groupsReads()).toHaveLength(2);
-    });
-
     it('drops a group delete made in the same tick as a rule box delete, so only the rule box is deleted', async () => {
       // Start: group 10 holds a 70% box (901), an 80% box (903) and a 90% box (904), and group 11 a 70% box (902).
       // Remove: group 10's 70% box, and ask to remove group 11 and confirm it in the same click.
@@ -2645,48 +2557,6 @@ describe('CompetencyAssociationsProvider', () => {
       expect(mockShowToast).not.toHaveBeenCalled();
     });
 
-    it('opens no dialog for a request made while an association is being created, so no delete is sent', async () => {
-      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903), and a create is in flight.
-      // Request: removing the 70% box, while the create is still pending.
-      // After: no dialog opened, no delete was sent, and no toast was shown.
-      mockDeletes(...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox);
-      axiosMock.onPost(createUrl).reply(() => new Promise(() => {}));
-      mockGroupsReads(
-        threeCriteriaInOneRuleBoxResponse,
-        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
-      );
-      await renderLoaded();
-      await click('Associate in course A');
-      await screen.findByText('Associating: true');
-
-      await requestAndConfirm('Delete the 70% rule box in group 10');
-
-      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
-      expect(sentDeleteUrls()).toEqual([]);
-      expect(mockShowToast).not.toHaveBeenCalled();
-    });
-
-    it('drops a confirm made while an association is being created, and keeps the dialog open', async () => {
-      // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
-      // Request: removing the 70% box, which opens the dialog. Then a create starts, and the removal is confirmed.
-      // After: no delete was sent, and the dialog is still open.
-      mockDeletes(...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox);
-      axiosMock.onPost(createUrl).reply(() => new Promise(() => {}));
-      mockGroupsReads(
-        threeCriteriaInOneRuleBoxResponse,
-        responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
-      );
-      await renderLoaded();
-      await click('Delete the 70% rule box in group 10');
-      await click('Associate in course A');
-      await screen.findByText('Associating: true');
-
-      await click('Confirm removal');
-
-      expect(sentDeleteUrls()).toEqual([]);
-      expect(screen.getByText(pendingRemoval('{"kind":"ruleBox","failure":null}'))).toBeInTheDocument();
-      expect(mockShowToast).not.toHaveBeenCalled();
-    });
   });
 
   describe('removing an association', () => {
@@ -2852,32 +2722,6 @@ describe('CompetencyAssociationsProvider', () => {
       expect(screen.getByText('Criterion ids: [901]')).toBeInTheDocument();
     });
 
-    it('sends one request when the removal is confirmed twice in the same event, and keeps the dialog open', async () => {
-      const deleteGate = deferred();
-      axiosMock.onDelete(deleteUrl).reply(() => deleteGate.released.then(() => [200, { id: 901 }]));
-      const reads = mockGroupsReads(twoCriteriaInGroupResponse, afterRemovingSubAResponse);
-      renderProvider();
-      await waitForSuccess();
-      await click('Remove sub-a chip');
-
-      await click('Confirm removal twice in one tick');
-      await waitFor(() => expect(axiosMock.history.delete).toHaveLength(1));
-
-      // The dropped second call must not close the dialog as if its own delete had succeeded.
-      expect(screen.getByText(pendingRemoval('{"kind":"association","failure":null}'))).toBeInTheDocument();
-      await act(async () => {
-        deleteGate.release();
-      });
-      await waitFor(() => expect(groupsReads()).toHaveLength(2));
-      await act(async () => {
-        reads.release();
-      });
-
-      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
-      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
-      expect(axiosMock.history.delete).toHaveLength(1);
-    });
-
     it('drops a group delete started while a removal is pending', async () => {
       const deleteGate = deferred();
       axiosMock.onDelete(deleteUrl).reply(() => deleteGate.released.then(() => [200, { id: 901 }]));
@@ -2890,35 +2734,6 @@ describe('CompetencyAssociationsProvider', () => {
       await requestAndConfirm('Delete group 10');
 
       expect(axiosMock.history.delete).toHaveLength(1);
-    });
-
-    it('opens no dialog for a request made while an association is being created', async () => {
-      axiosMock.onPost(createUrl).reply(() => new Promise(() => {}));
-      mockGroupsReads(twoCriteriaInGroupResponse, afterRemovingSubAResponse);
-      renderProvider();
-      await waitForSuccess();
-      await click('Associate in course A');
-      await screen.findByText('Associating: true');
-
-      await requestAndConfirm('Remove sub-a chip');
-
-      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
-      expect(axiosMock.history.delete).toHaveLength(0);
-    });
-
-    it('drops a confirm made while an association is being created, and keeps the dialog open', async () => {
-      axiosMock.onPost(createUrl).reply(() => new Promise(() => {}));
-      mockGroupsReads(twoCriteriaInGroupResponse, afterRemovingSubAResponse);
-      renderProvider();
-      await waitForSuccess();
-      await click('Remove sub-a chip');
-      await click('Associate in course A');
-      await screen.findByText('Associating: true');
-
-      await click('Confirm removal');
-
-      expect(axiosMock.history.delete).toHaveLength(0);
-      expect(screen.getByText(pendingRemoval('{"kind":"association","failure":null}'))).toBeInTheDocument();
     });
 
     describe('when the cached groups change while a removal is pending', () => {
@@ -3138,7 +2953,7 @@ describe('CompetencyAssociationsProvider', () => {
     });
   });
 
-  describe('requestRemoval, confirmRemoval, cancelRemoval (#786)', () => {
+  describe('requestRemoval, confirmRemoval, cancelRemoval', () => {
     const deleteUrlOf = (criterionId: number) => apiUrls.deleteCompetencyCriterion(tagId, criterionId);
     const sentDeleteUrls = () => axiosMock.history.delete.map((request) => request.url);
     const groupsReads = () => axiosMock.history.get.filter((request) => request.url === groupsUrl);
@@ -3268,7 +3083,8 @@ describe('CompetencyAssociationsProvider', () => {
       });
     });
 
-    it.each([
+    /** One removal of each kind: the control that requests it, the groups before and after it, and its deletes. */
+    const removalKinds = [
       {
         name: 'a rule group',
         requestName: 'Delete group 10',
@@ -3296,7 +3112,9 @@ describe('CompetencyAssociationsProvider', () => {
         mock: () => mockDeletes(901, 905, 906, 903),
         urls: [deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(906)],
       },
-    ])(
+    ];
+
+    it.each(removalKinds)(
       'sends one request for $name confirmed again while deleting, and keeps the dialog open and the page blocked until the refetch lands',
       async ({ requestName, kind, initial, refetched, mock, urls }) => {
         mock();
@@ -3319,6 +3137,105 @@ describe('CompetencyAssociationsProvider', () => {
         expect(sentDeleteUrls()).toEqual(urls);
       },
     );
+
+    it.each(removalKinds)(
+      'sends one request for $name confirmed twice in one tick, and keeps the dialog open until the refetch lands',
+      async ({ requestName, kind, initial, refetched, mock, urls }) => {
+        mock();
+        const reads = mockGroupsReads(initial, refetched);
+        await renderLoaded();
+        await click(requestName);
+
+        await click('Confirm removal twice in one tick');
+        await waitFor(() => expect(groupsReads()).toHaveLength(2));
+
+        // The dropped second call must not close the dialog as if its own delete had succeeded.
+        expect(screen.getByText(pendingRemoval(`{"kind":"${kind}","failure":null}`))).toBeInTheDocument();
+        await act(async () => {
+          reads.release();
+        });
+        expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+        expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+        expect(sentDeleteUrls()).toEqual(urls);
+        expect(groupsReads()).toHaveLength(2);
+      },
+    );
+
+    it.each(removalKinds)(
+      'opens no dialog for $name requested while an association is being created, so no delete is sent',
+      async ({ requestName, initial, refetched, mock }) => {
+        mock();
+        axiosMock.onPost(createUrl).reply(() => new Promise(() => {}));
+        mockGroupsReads(initial, refetched);
+        await renderLoaded();
+        await click('Associate in course A');
+        await screen.findByText('Associating: true');
+
+        await requestAndConfirm(requestName);
+
+        expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+        expect(sentDeleteUrls()).toEqual([]);
+        expect(mockShowToast).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each(removalKinds)(
+      'drops a confirm for $name made while an association is being created, and keeps the dialog open',
+      async ({ requestName, kind, initial, refetched, mock }) => {
+        mock();
+        axiosMock.onPost(createUrl).reply(() => new Promise(() => {}));
+        mockGroupsReads(initial, refetched);
+        await renderLoaded();
+        await click(requestName);
+        await click('Associate in course A');
+        await screen.findByText('Associating: true');
+
+        await click('Confirm removal');
+
+        expect(sentDeleteUrls()).toEqual([]);
+        expect(screen.getByText(pendingRemoval(`{"kind":"${kind}","failure":null}`))).toBeInTheDocument();
+        expect(mockShowToast).not.toHaveBeenCalled();
+      },
+    );
+
+    it('closes the dialog, as a success, when a group DELETE answers 404 while the refetch still lists the group', async () => {
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10)).reply(404);
+      const reads = mockGroupsReads(twoGroupsWithCriteriaResponse, twoGroupsWithCriteriaResponse);
+      await renderLoaded();
+      await requestAndConfirm('Delete group 10');
+      await waitFor(() => expect(groupsReads()).toHaveLength(2));
+
+      await act(async () => {
+        reads.release();
+      });
+
+      expect(await screen.findByText(pendingRemoval('closed'))).toBeInTheDocument();
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
+
+    it('clears the dialog\'s failure while a retry runs', async () => {
+      const retryGate = deferred();
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10)).replyOnce(500);
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10))
+        .reply(() => retryGate.released.then(() => [200, {}]));
+      axiosMock.onGet(groupsUrl).reply(200, twoGroupsWithCriteriaResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      await renderLoaded();
+      await requestAndConfirm('Delete group 10');
+      expect(await screen.findByText(pendingRemoval('{"kind":"ruleGroup","failure":"nothing-removed"}')))
+        .toBeInTheDocument();
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+
+      await click('Confirm removal');
+
+      expect(await screen.findByText('Deleting: true')).toBeInTheDocument();
+      expect(screen.getByText(pendingRemoval('{"kind":"ruleGroup","failure":null}'))).toBeInTheDocument();
+      await act(async () => {
+        retryGate.release();
+      });
+      expect(await screen.findByText(pendingRemoval('closed'))).toBeInTheDocument();
+    });
 
     it('closes the dialog when a group DELETE fails but the refetch no longer has the group', async () => {
       axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 10)).reply(500);
@@ -3351,21 +3268,6 @@ describe('CompetencyAssociationsProvider', () => {
       });
 
       expect(await screen.findByText(pendingRemoval('closed'))).toBeInTheDocument();
-    });
-
-    it('closes the dialog when an association DELETE succeeds but the refetch fails', async () => {
-      axiosMock.onDelete(deleteUrlOf(901)).reply(200, { id: 901, archived: false });
-      axiosMock.onGet(groupsUrl).replyOnce(200, twoCriteriaInGroupResponse);
-      axiosMock.onGet(groupsUrl).reply(500);
-      axiosMock.onGet(profileUrl).reply(200, profileResponse);
-      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
-      await renderLoaded();
-
-      await requestAndConfirm('Remove sub-a chip');
-
-      expect(await screen.findByText(pendingRemoval('closed'))).toBeInTheDocument();
-      expect(screen.getByText('Deleting: false')).toBeInTheDocument();
-      expect(mockShowToast).not.toHaveBeenCalled();
     });
 
     it('closes an open dialog when the competency changes', async () => {
