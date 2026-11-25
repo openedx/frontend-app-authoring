@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import {
   Routes,
   Route,
   useNavigate,
   Link,
+  Navigate,
 } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
@@ -27,7 +29,10 @@ import DraggableList, { SortableItem } from '@src/generic/DraggableList';
 import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { RequestStatus } from '@src/data/constants';
 import getPageHeadTitle from '@src/generic/utils';
+import ViewOnlyPermissionsAlert from '@src/generic/ViewOnlyPermissionsAlert';
 import { getPagePath } from '@src/utils';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getPagesAndResourcesPermissions } from '@src/authz/permissionHelpers';
 
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
 import {
@@ -44,6 +49,32 @@ import CustomPageCard from './CustomPageCard';
 import messages from './messages';
 import EditModal from './EditModal';
 
+interface CustomPageEditorRouteProps {
+  courseId: string;
+  pageId?: string;
+  isEditable: boolean;
+  onClose: () => (content: any) => void;
+}
+
+const CustomPageEditorRoute = ({
+  courseId,
+  pageId,
+  isEditable,
+  onClose,
+}: CustomPageEditorRouteProps) => {
+  if (!isEditable) {
+    return <Navigate to={`/course/${courseId}/custom-pages`} replace />;
+  }
+  if (!pageId) {
+    return null;
+  }
+  return (
+    <PageWrap>
+      <EditModal courseId={courseId} pageId={pageId} onClose={onClose} />
+    </PageWrap>
+  );
+};
+
 const CustomPages = () => {
   const intl = useIntl();
   const navigate = useNavigate();
@@ -51,8 +82,11 @@ const CustomPages = () => {
   const [currentPage, setCurrentPage] = useState<string | undefined>();
   const [isOpen, open, close] = useToggle(false);
   const { courseId, courseDetails } = useCourseAuthoringContext();
-
-  document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
+  const {
+    isLoading: isLoadingUserPermissions,
+    canManagePagesAndResources,
+  } = useCourseUserPermissions(courseId, getPagesAndResourcesPermissions(courseId));
+  const isEditable = !isLoadingUserPermissions && canManagePagesAndResources;
 
   const config = getConfig();
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
@@ -103,7 +137,7 @@ const CustomPages = () => {
     disabledStates: ['pending'],
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingUserPermissions) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
@@ -116,6 +150,9 @@ const CustomPages = () => {
   }
   return (
     <Container size="xl" className="p-4 pt-5">
+      <Helmet>
+        <title>{getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading))}</title>
+      </Helmet>
       <div className="small gray-700">
         <Breadcrumb
           ariaLabel="Custom Page breadcrumbs"
@@ -137,13 +174,15 @@ const CustomPages = () => {
           <FormattedMessage {...messages.heading} />
         </div>
         <ActionRow.Spacer />
-        <Button
-          iconBefore={Add}
-          onClick={handleAddPage}
-          data-testid="header-add-button"
-        >
-          <FormattedMessage {...messages.addPageHeaderLabel} />
-        </Button>
+        {isEditable && (
+          <Button
+            iconBefore={Add}
+            onClick={handleAddPage}
+            data-testid="header-add-button"
+          >
+            <FormattedMessage {...messages.addPageHeaderLabel} />
+          </Button>
+        )}
         <Hyperlink
           destination={learningCourseURL}
           target="_blank"
@@ -156,6 +195,7 @@ const CustomPages = () => {
           </Button>
         </Hyperlink>
       </ActionRow>
+      {!isEditable && <ViewOnlyPermissionsAlert className="mt-3 mb-0" />}
       <hr />
       <Layout
         lg={[{ span: 9, offset: 0 }, { span: 3, offset: 0 }]}
@@ -188,6 +228,7 @@ const CustomPages = () => {
               <SortableItem
                 id={page.id}
                 key={page.id}
+                disabled={!isEditable}
                 componentStyle={{
                   background: 'white',
                   borderRadius: '6px',
@@ -202,6 +243,7 @@ const CustomPages = () => {
                     setCurrentPage={setCurrentPage}
                     onDelete={(blockId, onSettled) => deleteMutation.mutate(blockId, { onSettled })}
                     isDeleting={deleteMutation.isPending}
+                    isEditable={isEditable}
                     onToggleVisibility={(blockId, courseStaffOnly) =>
                       visibilityMutation.mutate({
                         blockId,
@@ -212,12 +254,14 @@ const CustomPages = () => {
               />
             ))}
           </DraggableList>
-          <StatefulButton
-            data-testid="body-add-button"
-            onClick={handleAddPage}
-            state={addPageMutation.isPending ? RequestStatus.PENDING : 'default'}
-            {...addPageStateProps}
-          />
+          {isEditable && (
+            <StatefulButton
+              data-testid="body-add-button"
+              onClick={handleAddPage}
+              state={addPageMutation.isPending ? RequestStatus.PENDING : 'default'}
+              {...addPageStateProps}
+            />
+          )}
         </Layout.Element>
         <Layout.Element>
           <div className="h4">
@@ -273,15 +317,14 @@ const CustomPages = () => {
       <Routes>
         <Route
           path="/editor"
-          element={currentPage && (
-            <PageWrap>
-              <EditModal
-                courseId={courseId}
-                pageId={currentPage}
-                onClose={handleEditClose}
-              />
-            </PageWrap>
-          )}
+          element={
+            <CustomPageEditorRoute
+              courseId={courseId}
+              pageId={currentPage}
+              isEditable={isEditable}
+              onClose={handleEditClose}
+            />
+          }
         />
       </Routes>
     </Container>

@@ -17,6 +17,8 @@ import './CompetencyTree.scss';
 interface CompetencyTreeProps {
   taxonomyId: number;
   taxonomyName: string;
+  selectedCompetencyId?: string | null;
+  onSelectCompetency?: (node: CompetencyTreeNode) => void;
 }
 
 /** A single node of this page's tree: either a real tag (from `TagTree`) or
@@ -49,8 +51,17 @@ function collectExpandableIds(node: CompetencyTreeNode): string[] {
   ];
 }
 
-const CompetencyTree = ({ taxonomyId, taxonomyName }: CompetencyTreeProps) => {
+const CompetencyTree = ({
+  taxonomyId,
+  taxonomyName,
+  selectedCompetencyId,
+  onSelectCompetency,
+}: CompetencyTreeProps) => {
   const intl = useIntl();
+  // Mirrors `CompetencyTreeItem`'s own `isSelectable`: the `role="tree"`
+  // structure only applies when rows are actually `treeitem`s (see there);
+  // without selection, this renders as a plain, validly-semantic list instead.
+  const isSelectable = !!onSelectCompetency;
   const { isLoading, isError, data: tagList } = useTagListData(taxonomyId, {
     pageIndex: 0,
     disablePagination: true,
@@ -155,13 +166,20 @@ const CompetencyTree = ({ taxonomyId, taxonomyName }: CompetencyTreeProps) => {
               <span className="competency-row__label">{taxonomyName}</span>
             </div>
             {rootIsExpanded && rootHasChildren && (
-              <ul>
+              // `role="tree"` starts the ARIA tree structure here, not on
+              // the root row above: that row is a display-only entry point
+              // (see its own comment elsewhere in this file), not a real
+              // `treeitem` itself, so a `role="tree"` container holding only
+              // real treeitems is the correct scope for it.
+              <ul role={isSelectable ? 'tree' : undefined} aria-label={isSelectable ? taxonomyName : undefined}>
                 {rootNode.subRows!.map((group) => (
                   <CompetencyTreeItem
                     key={group.id}
                     node={group}
                     expandedIds={expandedIds}
                     onToggle={handleToggle}
+                    selectedCompetencyId={selectedCompetencyId}
+                    onSelectCompetency={onSelectCompetency}
                   />
                 ))}
               </ul>

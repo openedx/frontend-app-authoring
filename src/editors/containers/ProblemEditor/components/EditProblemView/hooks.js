@@ -20,46 +20,37 @@ export const saveWarningModalToggle = () => {
   };
 };
 
+/** Returns every tinymce editor instance currently on the page */
+const getEditors = () => window.tinymce.get();
+
 /** Checks if any tinymce editor in window is dirty */
-export const checkIfEditorsDirty = () => {
-  const EditorsArray = window.tinymce.editors;
-  return Object.entries(EditorsArray).some(([id, editor]) => {
-    if (Number.isNaN(parseInt(id, 10))) {
-      if (!editor.isNotDirty) {
-        return true;
-      }
-    }
-    return false;
-  });
-};
+export const checkIfEditorsDirty = () => getEditors().some((editor) => editor.isDirty());
 
 export const fetchEditorContent = ({ format }) => {
   const editorObject = { hints: [] };
-  const EditorsArray = window.tinymce.editors;
-  Object.entries(EditorsArray).forEach(([id, editor]) => {
-    if (Number.isNaN(parseInt(id, 10))) {
-      if (id.startsWith('answer')) {
-        const { answers } = editorObject;
-        const answerId = id.substring(id.indexOf('-') + 1);
-        editorObject.answers = { ...answers, [answerId]: editor.getContent({ format }) };
-      } else if (id.includes('Feedback')) {
-        const { selectedFeedback, unselectedFeedback, groupFeedback } = editorObject;
-        const feedbackId = id.substring(id.indexOf('-') + 1);
-        if (id.startsWith('selected')) {
-          editorObject.selectedFeedback = { ...selectedFeedback, [feedbackId]: editor.getContent() };
-        }
-        if (id.startsWith('unselected')) {
-          editorObject.unselectedFeedback = { ...unselectedFeedback, [feedbackId]: editor.getContent() };
-        }
-        if (id.startsWith('group')) {
-          editorObject.groupFeedback = { ...groupFeedback, [feedbackId]: editor.getContent() };
-        }
-      } else if (id.startsWith('hint')) {
-        const { hints } = editorObject;
-        hints.push(editor.getContent());
-      } else {
-        editorObject[id] = editor.getContent();
+  getEditors().forEach((editor) => {
+    const { id } = editor;
+    if (id.startsWith('answer')) {
+      const { answers } = editorObject;
+      const answerId = id.substring(id.indexOf('-') + 1);
+      editorObject.answers = { ...answers, [answerId]: editor.getContent({ format }) };
+    } else if (id.includes('Feedback')) {
+      const { selectedFeedback, unselectedFeedback, groupFeedback } = editorObject;
+      const feedbackId = id.substring(id.indexOf('-') + 1);
+      if (id.startsWith('selected')) {
+        editorObject.selectedFeedback = { ...selectedFeedback, [feedbackId]: editor.getContent() };
       }
+      if (id.startsWith('unselected')) {
+        editorObject.unselectedFeedback = { ...unselectedFeedback, [feedbackId]: editor.getContent() };
+      }
+      if (id.startsWith('group')) {
+        editorObject.groupFeedback = { ...groupFeedback, [feedbackId]: editor.getContent() };
+      }
+    } else if (id.startsWith('hint')) {
+      const { hints } = editorObject;
+      hints.push(editor.getContent());
+    } else {
+      editorObject[id] = editor.getContent();
     }
   });
   return editorObject;

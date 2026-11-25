@@ -1,0 +1,344 @@
+// Scoped under `.course-search-browse`, mirroring `../CompetencyTree.scss`.
+//
+// Color/shadow/radius literals below match `CompetencyTree.scss`'s own
+// toolbar/container/row look, redeclared rather than shared through a
+// partial - not enough call sites yet to justify one.
+//
+// Imported directly, not through `src/index.scss`, so this needs its own
+// `@use` to resolve the breakpoint name used below (see `../CompetencyTree
+// .scss`).
+@use "@openedx/paragon/styles/css/core/custom-media-breakpoints.css";
+
+.course-search-browse {
+  $line-color: rgb(0 0 0 / .08);
+  $shadow-color: rgb(0 0 0 / .12);
+  $border-radius: 8px;
+  $container-padding-y: 12px;
+  $container-padding-x: var(--pgn-spacing-spacer-3);
+  // One consistent indent step between nesting levels (course -> section ->
+  // subsection), mirroring `../CompetencyTree.scss`'s own `$indent`.
+  $indent-step: 20px;
+  // Border color darkest at the course level, lightest at the subsection
+  // level, so color signals nesting depth alongside indent - swatches read
+  // off Figma.
+  $group-border-color-course: var(--pgn-color-gray-600); // #5C5C5C
+  $group-border-color-section: var(--pgn-color-gray-400); // #8F8F8F
+  $group-border-color-subsection: var(--pgn-color-gray-200); // #CCCCCC
+  // Figma's "Elevation Level 1 (Centered)" style, shared by every bordered
+  // box in the outline.
+  $block-shadow: var(--pgn-elevation-box-shadow-centered-1);
+  // Equals the widest blur in `$block-shadow`.
+  $shadow-clearance: .25rem;
+
+  display: flex;
+  flex-direction: column;
+
+  // See `../associations/CompetencyAssociationsPanel.scss`.
+  @media (--pgn-size-breakpoint-min-width-lg) {
+    height: var(--competency-panel-height);
+  }
+
+  .competency-row__badge {
+    // Keeps its width up to 6rem so a long name can't squeeze the ID; past that, `text-truncate` ellipsizes it.
+    flex-shrink: 0;
+    max-width: 6rem;
+    border-radius: var(--pgn-size-badge-border-radius-base);
+
+    --pgn-spacing-badge-padding-y: 1.5px;
+    --pgn-spacing-badge-padding-x-base: 6px;
+    --pgn-typography-badge-font-weight: 400;
+    --pgn-typography-badge-font-size: 62.5%;
+
+    line-height: 15.75px;
+    letter-spacing: normal;
+  }
+
+  // Matches `.competency-tree__toolbar` so the search field/date range here
+  // starts at the same vertical offset as the tree's "Expand All" button.
+  &__toolbar {
+    background-color: var(--pgn-color-light-400);
+    padding: var(--pgn-spacing-spacer-4) 0;
+  }
+
+  // `overflow: hidden` is needed since the child `.pgn__searchfield-form`
+  // has its own opaque, square-cornered background that otherwise paints
+  // over the rounding.
+  &__toolbar .pgn__searchfield {
+    border-radius: var(--pgn-size-border-radius-base);
+    overflow: hidden;
+
+    --pgn-size-search-field-border-radius: var(--pgn-size-border-radius-base);
+  }
+
+  &__summary {
+    overflow-wrap: anywhere;
+    min-height: 1.5em;
+  }
+
+  // Shared white envelope for `&__associations` and `&__container`;
+  // `flex: 1` fills the root's fixed height.
+  &__panel {
+    background-color: var(--pgn-color-white);
+    border-radius: $border-radius;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  // Holds the "Courses & Content" label, `&__list` and the pagination;
+  // `border-top` is the divider from `&__associations` above it. Fills
+  // whatever height `&__panel` leaves after `&__associations`.
+  &__container {
+    border-top: 1px solid $line-color;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: $container-padding-y $container-padding-x;
+
+    @media (--pgn-size-breakpoint-min-width-lg) {
+      flex: 1 1 0;
+      min-height: 0;
+    }
+  }
+
+  // Only the course rows scroll, so the label and the pagination stay visible.
+  // The padding keeps `overflow-y` from clipping the cards' shadows.
+  &__list {
+    padding: $shadow-clearance;
+    margin: -$shadow-clearance;
+
+    @media (--pgn-size-breakpoint-min-width-lg) {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+    }
+  }
+
+  // Wider than the nested-level gaps below (10px) so each card's own shadow
+  // reads as clearly separated from its neighbors.
+  &__list > * + * {
+    margin-top: 16px;
+  }
+
+  &__pagination {
+    border-top: 1px solid var(--pgn-color-gray-100);
+    padding-top: var(--pgn-spacing-spacer-1);
+  }
+
+  // Persistent "Courses & Content" header strip, always the container's
+  // first child regardless of loading/error/empty/populated state.
+  &__section-label {
+    padding: var(--pgn-spacing-spacer-1) var(--pgn-spacing-spacer-2);
+    background-color: var(--pgn-color-info-100);
+    text-transform: uppercase;
+    font-family: var(--pgn-typography-font-family-monospace);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: normal;
+    color: var(--pgn-color-info-900);
+  }
+
+  // Styled identically to `&__section-label` for visual consistency between
+  // the two header strips in this column.
+  &__associations-label {
+    padding: var(--pgn-spacing-spacer-1) var(--pgn-spacing-spacer-2);
+    background-color: var(--pgn-color-info-100);
+    text-transform: uppercase;
+    font-family: var(--pgn-typography-font-family-monospace);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: normal;
+    color: var(--pgn-color-info-900);
+  }
+
+  &__associations {
+    padding: $container-padding-y $container-padding-x;
+
+    // Equal halves with `&__container`, each scrolling on its own.
+    @media (--pgn-size-breakpoint-min-width-lg) {
+      flex: 1 1 0;
+      min-height: 0;
+      overflow-y: auto;
+    }
+  }
+
+  // Figma gives regular weight for this text layer - only the interpolated
+  // competency name (its own bold `<span>` in the JSX) is bold.
+  &__associations-mastery {
+    margin: var(--pgn-spacing-spacer-3) 0;
+    font-size: var(--pgn-typography-font-size-sm);
+    line-height: 25px;
+    letter-spacing: normal;
+  }
+
+  // A node with children's own envelope, recursing to any depth - shared by
+  // the course-level group (`CourseRow`'s wrapper) and the section-level
+  // group nested inside it (`CourseOutlineSubtree`'s per-section wrapper).
+  &__group {
+    background-color: var(--pgn-color-white);
+    border-radius: 5px;
+    box-shadow: $block-shadow;
+    padding: 10px 8px;
+  }
+
+  &__group--course {
+    border-left: 6px solid $group-border-color-course;
+  }
+
+  &__group--section {
+    border-left: 6px solid $group-border-color-section;
+  }
+
+  &__group > * + * {
+    margin-top: 10px;
+  }
+
+  &__outline {
+    padding-left: $indent-step;
+  }
+
+  &__outline > * + * {
+    margin-top: 10px;
+  }
+
+  // `min-width: 0` overrides the flex item's default content-based floor, and
+  // `overflow-wrap: anywhere` lets a long, unbroken title actually wrap
+  // instead of forcing its sibling disclosure icon in `&__course-row` (and,
+  // through it, the whole column) to a wider intrinsic width than the
+  // resizable divider between the tree and this column can then shrink past.
+  &__course-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  // Same reasoning as `&__course-title` above, for `CourseOutlineSubtree`'s
+  // per-section title.
+  &__section-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  // Without this, a long title in `&__course-title`/`&__section-title`
+  // squeezes its sibling disclosure `IconButton` along the row's main axis
+  // only (never its height), flattening the icon's circular hit area into an
+  // oval instead of leaving it at its fixed size and letting the title wrap.
+  &__course-row .btn-icon-sm,
+  &__section-header .btn-icon-sm {
+    flex-shrink: 0;
+  }
+
+  // One level deeper than `&__group`, further indented.
+  &__subsection {
+    margin-left: $indent-step;
+    font-size: 14px;
+    font-weight: 700;
+    background-color: var(--pgn-color-white);
+    border-left: 6px solid $group-border-color-subsection;
+    border-radius: 5px;
+    box-shadow: $block-shadow;
+    padding: 10px 8px;
+  }
+
+  &__subsection-pill {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    height: 1.8125rem;
+    gap: 5px;
+    padding: 2px var(--pgn-spacing-spacer-2) 3px var(--pgn-spacing-spacer-1);
+    border: 1px solid var(--pgn-color-info-600);
+    border-radius: 4rem;
+    font-size: .75rem;
+    font-weight: 400;
+    line-height: 1.3125rem;
+
+    &--applied {
+      background-color: var(--pgn-color-info-600);
+      color: var(--pgn-color-white);
+    }
+
+    &--available {
+      border-style: dashed;
+
+      --pgn-btn-color: var(--pgn-color-info-600);
+      --pgn-btn-bg: var(--pgn-color-white);
+      --pgn-btn-border-color: var(--pgn-color-info-600);
+      --pgn-btn-hover-color: var(--pgn-color-info-600);
+      --pgn-btn-hover-bg: var(--pgn-color-info-100);
+      --pgn-btn-hover-border-color: var(--pgn-color-info-600);
+      --pgn-btn-disabled-color: var(--pgn-color-info-600);
+      --pgn-btn-disabled-bg: var(--pgn-color-white);
+      --pgn-btn-disabled-border-color: var(--pgn-color-info-600);
+      --pgn-btn-active-color: var(--pgn-color-info-600);
+      --pgn-btn-active-bg: var(--pgn-color-info-100);
+      --pgn-btn-active-border-color: var(--pgn-color-info-600);
+      --pgn-btn-focus-color: var(--pgn-color-info-600);
+      --pgn-btn-focus-bg: var(--pgn-color-white);
+      --pgn-btn-focus-border-color: var(--pgn-color-info-600);
+      // Rounds Paragon's focus ring (`.btn:focus::before`) to the pill.
+      --pgn-size-btn-focus-border-radius-base: 4rem;
+    }
+
+    // In a course another competency blocks: the dashed pill in grey. The
+    // button stays focusable, so hover, active and focus keep the resting
+    // colors and only the focus ring (`--pgn-btn-focus-outline-color`) shows.
+    &--blocked {
+      --pgn-btn-color: var(--pgn-color-gray-500);
+      --pgn-btn-border-color: var(--pgn-color-gray-500);
+      --pgn-btn-hover-color: var(--pgn-color-gray-500);
+      --pgn-btn-hover-bg: var(--pgn-color-white);
+      --pgn-btn-hover-border-color: var(--pgn-color-gray-500);
+      --pgn-btn-active-color: var(--pgn-color-gray-500);
+      --pgn-btn-active-bg: var(--pgn-color-white);
+      --pgn-btn-active-border-color: var(--pgn-color-gray-500);
+      --pgn-btn-focus-color: var(--pgn-color-gray-500);
+      --pgn-btn-focus-bg: var(--pgn-color-white);
+      --pgn-btn-focus-border-color: var(--pgn-color-gray-500);
+
+      // Paragon's `.btn:not(:disabled):not(.disabled)` sets `cursor: pointer`
+      // at three-class specificity, so these need the same weight to apply.
+      &.btn[aria-disabled='true'] {
+        border-color: var(--pgn-color-gray-500);
+        cursor: default;
+      }
+    }
+  }
+
+  // Sized like the plus icon on the dashed pill. Paragon sizes the icon with a literal `1.5rem`,
+  // not a token, so it takes a direct override.
+  &__subsection-remove.btn-icon.btn-icon-inline {
+    --pgn-size-icon-button-diameter-inline: var(--pgn-size-icon-xs);
+
+    padding: 0;
+
+    .btn-icon__icon-container .pgn__icon.btn-icon__icon {
+      width: var(--pgn-size-icon-xs);
+      height: var(--pgn-size-icon-xs);
+    }
+  }
+
+  &__subsection-pill-id {
+    font-weight: 400;
+  }
+
+  // Stretches over the pill's padding so the divider spans its full height.
+  &__subsection-pill-divider {
+    align-self: stretch;
+    width: 1px;
+    margin: -2px 0 -3px;
+    background-color: currentcolor;
+  }
+}
+
+// Top-level because the tooltip renders in a portal outside the panel. The
+// viewport cap keeps it on screen at phone widths.
+.course-search-browse-blocked-tooltip {
+  --pgn-size-tooltip-max-width: min(400px, calc(100vw - 1rem));
+}

@@ -7,6 +7,7 @@ import {
   IconButtonToggle,
   IconButtonWithTooltip,
   Stack,
+  useWindowSize,
 } from '@openedx/paragon';
 import { ResizableBox } from '@src/generic/resizable/Resizable';
 import type { MessageDescriptor } from 'react-intl';
@@ -24,6 +25,18 @@ export interface SidebarPage {
 }
 
 type SidebarPages = Record<string, SidebarPage>;
+
+/*
+ * Room the panel must leave beside it: the icon rail, the narrowest usable page
+ * content, and the page gutters. These match `$sidebar-rail-width`,
+ * `$sidebar-min-content-width` and `$sidebar-page-gutters` in `index.scss`, so the
+ * widest the panel can be dragged meets its 440px minimum exactly at the width
+ * where the layout stacks.
+ */
+const RESERVED_WIDTH = 74 + 440 + 48; // px
+
+/** Same default as `ResizableBox`, which only applies it when no `maxWidth` is passed. */
+const MAX_WINDOW_FRACTION = 0.65;
 
 /**
  * Sidebar component
@@ -100,42 +113,20 @@ export function Sidebar<T extends SidebarPages>({
   } = pages[effectivePageKey];
   const activeKey = isOpen ? effectivePageKey : undefined;
 
+  // Keep a dragged-wide panel from pushing the rail off-screen as the window narrows.
+  const { width: windowWidth } = useWindowSize();
+  const maxPanelWidth = windowWidth
+    ? Math.min(windowWidth * MAX_WINDOW_FRACTION, windowWidth - RESERVED_WIDTH)
+    : undefined;
+
+  /*
+   * The rail comes first in the DOM so keyboard focus reaches the collapse and page
+   * buttons before the panel. `.sidebar-inner` uses `row-reverse` to keep the panel
+   * visually on the left of the rail, and at narrow widths it becomes a plain column
+   * with the rail on top, so focus order matches what is displayed at every width.
+   */
   return (
-    <Stack direction="horizontal" className="align-items-baseline flex-fill overflow-hidden" gap={2}>
-      {(isOpen && !!currentPageKey) ?
-        (
-          <ResizableBox>
-            <div className="sidebar-content p-3 bg-white border-right">
-              <Dropdown data-testid="sidebar-dropdown">
-                <Dropdown.Toggle
-                  id="dropdown-toggle-with-iconbutton"
-                  as={Button}
-                  variant="tertiary"
-                  className="x-small text-primary font-weight-bold pl-0"
-                >
-                  {intl.formatMessage(title)}
-                  <Icon src={SidebarIcon} size="xs" className="ml-2" />
-                </Dropdown.Toggle>
-                <Dropdown.Menu className="mt-1">
-                  {Object.entries(pages).map(([key, page]) => (
-                    <Dropdown.Item
-                      key={key}
-                      onClick={() => setCurrentPageKey(key)}
-                      disabled={page.disabled}
-                    >
-                      <Stack direction="horizontal" gap={2}>
-                        <Icon src={page.icon} />
-                        {intl.formatMessage(page.title)}
-                      </Stack>
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-              <SidebarComponent />
-            </div>
-          </ResizableBox>
-        ) :
-        <div className="min-vh-100 border" />}
+    <Stack direction="horizontal" className="sidebar-inner flex-fill overflow-hidden" gap={2}>
       <div className="sidebar-toggle p-1" data-testid="sidebar-toggle">
         <IconButton
           src={isOpen ? ExpandedIcon : CollapsedIcon}
@@ -172,6 +163,40 @@ export function Sidebar<T extends SidebarPages>({
           })}
         </IconButtonToggle>
       </div>
+      {(isOpen && !!currentPageKey) ?
+        (
+          <ResizableBox maxWidth={maxPanelWidth}>
+            <div className="sidebar-content p-3 bg-white border-right">
+              <Dropdown data-testid="sidebar-dropdown">
+                <Dropdown.Toggle
+                  id="dropdown-toggle-with-iconbutton"
+                  as={Button}
+                  variant="tertiary"
+                  className="x-small text-primary font-weight-bold pl-0"
+                >
+                  {intl.formatMessage(title)}
+                  <Icon src={SidebarIcon} size="xs" className="ml-2" />
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="mt-1">
+                  {Object.entries(pages).map(([key, page]) => (
+                    <Dropdown.Item
+                      key={key}
+                      onClick={() => setCurrentPageKey(key)}
+                      disabled={page.disabled}
+                    >
+                      <Stack direction="horizontal" gap={2}>
+                        <Icon src={page.icon} />
+                        {intl.formatMessage(page.title)}
+                      </Stack>
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+              <SidebarComponent />
+            </div>
+          </ResizableBox>
+        ) :
+        <div className="sidebar-collapsed-spacer min-vh-100 border-left" />}
     </Stack>
   );
 }

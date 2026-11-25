@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet';
 import {
   initializeMocks,
   render,
@@ -9,8 +10,8 @@ import { DATE_FORMAT } from '@src/constants';
 import { getCourseSettingsApiUrl } from '@src/data/api';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { useCourseUserPermissions } from '@src/authz/hooks';
-
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
+
 import { courseDetailsMock, courseSettingsMock } from './__mocks__';
 import { getCourseDetailsApiUrl } from './data/api';
 import creditMessages from './credit-section/messages';
@@ -56,9 +57,9 @@ jest.mock('@tinymce/tinymce-react', () => {
 jest.mock('../editors/sharedComponents/TinyMceWidget', () => ({
   __esModule: true, // Required to mock a default export
   default: () => <div>Widget</div>,
-  prepareEditorRef: jest.fn(() => ({
+  useEditorRef: jest.fn(() => ({
     refReady: true,
-    setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
+    setEditorRef: jest.fn().mockName('useEditorRef.setEditorRef'),
   })),
 }));
 
@@ -88,6 +89,14 @@ describe('<ScheduleAndDetails />', () => {
     axiosMock
       .onPut(getCourseDetailsApiUrl(courseId))
       .reply(200);
+  });
+
+  it('sets the page title through Helmet', async () => {
+    renderComponent();
+    expect(
+      await screen.findByText(pacingMessages.pacingTitle.defaultMessage),
+    ).toBeInTheDocument();
+    expect(Helmet.peek().title).toContain(`${messages.headingTitle.defaultMessage} | `);
   });
 
   it('should render without errors', async () => {

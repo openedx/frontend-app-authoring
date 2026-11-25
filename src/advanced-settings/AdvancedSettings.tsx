@@ -69,9 +69,7 @@ const AdvancedSettings = () => {
     [unsortedAdvancedSettingsData],
   );
 
-  const {
-    data: proctoringExamErrors = {},
-  } = useProctoringExamErrors(courseId);
+  const { data: proctoringExamErrors } = useProctoringExamErrors(courseId);
 
   const updateMutation = useUpdateCourseAdvancedSettings(courseId);
 
@@ -90,10 +88,8 @@ const AdvancedSettings = () => {
     disabledStates: ['pending'],
   };
 
-  const {
-    proctoringErrors,
-    mfeProctoredExamSettingsUrl,
-  } = proctoringExamErrors;
+  const proctoringErrors = proctoringExamErrors?.proctoringErrors;
+  const mfeProctoredExamSettingsUrl = proctoringExamErrors?.mfeProctoredExamSettingsUrl;
 
   useEffect(() => {
     if (isQuerySuccess) {
@@ -172,7 +168,7 @@ const AdvancedSettings = () => {
       </Helmet>
       <Container size="xl" className="advanced-settings px-4">
         <div className="setting-header mt-5">
-          {(proctoringErrors?.length > 0) && (
+          {(proctoringErrors && proctoringErrors.length > 0) && (
             <AlertProctoringError
               icon={Info}
               proctoringErrorsData={proctoringErrors}

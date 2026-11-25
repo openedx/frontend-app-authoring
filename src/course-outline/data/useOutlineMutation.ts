@@ -1,5 +1,5 @@
 import { useQueryClient, type QueryClient } from '@tanstack/react-query';
-import { useMutationWithProcessingNotification } from '@src/generic/processing-notification/data/apiHooks';
+import { useMutationWithProcessingNotification } from '@src/generic/toast-notification/data/apiHooks';
 import { courseOutlineQueryKeys } from './queryKeys';
 import { getCourseKey } from '@src/generic/key-utils';
 import type { ParentIds } from '@src/generic/types';

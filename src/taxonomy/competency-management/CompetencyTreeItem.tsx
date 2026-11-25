@@ -1,14 +1,21 @@
+import type { FocusEvent, KeyboardEvent, MouseEvent } from 'react';
+import { useId, useRef } from 'react';
+
+import classNames from 'classnames';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Badge } from '@openedx/paragon';
 
 import ExpandCollapseIconButton from '@src/generic/ExpandCollapseIconButton';
 import type { CompetencyTreeNode } from './CompetencyTree';
+import { CompetencyTooltip, useCompetencyTooltip } from './competency-tooltip';
 import messages from './messages';
 
 export interface CompetencyTreeItemProps {
   node: CompetencyTreeNode;
   expandedIds: Set<string>;
   onToggle: (id: string) => void;
+  selectedCompetencyId?: string | null;
+  onSelectCompetency?: (node: CompetencyTreeNode) => void;
 }
 
 /** CompetencyTreeItem
@@ -19,14 +26,31 @@ export interface CompetencyTreeItemProps {
  *
  * Indentation comes from the `<ul>` nesting itself (see `CompetencyTree.scss`),
  * not from a depth number computed here. Whether a node's `<li>` reads
- * visually as a grey "group" envelope (wrapping its own header row and all
- * of its rendered children) or as a plain white leaf "pill" is likewise
+ * visually as a "group" envelope (wrapping its own header row and all
+ * of its rendered children) or as a leaf "pill" is likewise
  * driven by this same `hasChildren` check, via the `competency-group` class
  * below - not a depth number or a CSS structural-position selector, so it
  * holds recursively at any depth.
+ *
+ * Because a group's nested `<ul>` lives inside the group's own `<li>`, the
+ * `<li role="treeitem">` is given an explicit `aria-labelledby` pointing at
+ * its own row. Without it, the treeitem's accessible name would be computed
+ * from its entire subtree's text content, so focusing a top-level group would
+ * announce every descendant's name and Competency ID along with it.
  */
-const CompetencyTreeItem = ({ node, expandedIds, onToggle }: CompetencyTreeItemProps) => {
+const CompetencyTreeItem = ({
+  node,
+  expandedIds,
+  onToggle,
+  selectedCompetencyId,
+  onSelectCompetency,
+}: CompetencyTreeItemProps) => {
   const intl = useIntl();
+  const labelId = useId();
+  const externalIdLabelId = useId();
+  const rowRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const badgeRef = useRef<HTMLElement>(null);
   const nodeId = String(node.id);
   const hasChildren = !!node.subRows?.length;
   const isExpanded = expandedIds.has(nodeId);
@@ -37,9 +61,64 @@ const CompetencyTreeItem = ({ node, expandedIds, onToggle }: CompetencyTreeItemP
   // `externalId: ''`), so use a truthiness check rather than `!== null`.
   const { externalId } = node;
 
+  // Every node is selectable, group or leaf, as long as a selection handler was
+  // passed down - a group keeps its own separate expand/collapse control
+  // (see `ExpandCollapseIconButton`, which stops its click and keydown from
+  // also reaching this node's own `onClick`/`onKeyDown` below).
+  const isSelectable = !!onSelectCompetency;
+  const isSelected = isSelectable && selectedCompetencyId != null && nodeId === selectedCompetencyId;
+
+  const labelledBy = externalId ? `${labelId} ${externalIdLabelId}` : labelId;
+
+  const handleSelect = (event: MouseEvent<HTMLLIElement> | KeyboardEvent<HTMLLIElement>) => {
+    if (isSelectable && onSelectCompetency) {
+      event.stopPropagation();
+      onSelectCompetency(node);
+    }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLLIElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleSelect(event);
+    }
+  };
+
+  const tooltip = useCompetencyTooltip(
+    () => [labelRef.current, badgeRef.current].some((el) => !!el && el.scrollWidth > el.clientWidth),
+  );
+
+  // React focus events bubble; only this row's own `<li>` may open its tooltip.
+  const handleFocus = (event: FocusEvent<HTMLLIElement>) => {
+    if (event.target === event.currentTarget) { tooltip.openOnFocus(event); }
+  };
+  const handleBlur = (event: FocusEvent<HTMLLIElement>) => {
+    if (event.target === event.currentTarget) { tooltip.close(); }
+  };
+
   return (
-    <li className={hasChildren ? 'competency-group' : undefined}>
-      <div className="competency-row">
+    <li
+      className={classNames({
+        'competency-group': hasChildren,
+        'competency-node--selectable': isSelectable,
+        'competency-node--selected': isSelected,
+      }) || undefined}
+      role={isSelectable ? 'treeitem' : undefined}
+      tabIndex={isSelectable ? 0 : undefined}
+      aria-selected={isSelectable ? isSelected : undefined}
+      aria-labelledby={isSelectable ? labelledBy : undefined}
+      aria-expanded={isSelectable && hasChildren ? isExpanded : undefined}
+      onClick={isSelectable ? handleSelect : undefined}
+      onKeyDown={isSelectable ? handleKeyDown : undefined}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+    >
+      <div
+        className="competency-row"
+        ref={rowRef}
+        onMouseEnter={tooltip.openOnHover}
+        onMouseLeave={tooltip.close}
+      >
         <ExpandCollapseIconButton
           canExpand={hasChildren}
           isExpanded={isExpanded}
@@ -47,16 +126,17 @@ const CompetencyTreeItem = ({ node, expandedIds, onToggle }: CompetencyTreeItemP
           expandLabel={intl.formatMessage(messages.expandRowButtonLabel)}
           collapseLabel={intl.formatMessage(messages.collapseRowButtonLabel)}
         />
-        <span className="competency-row__label">{node.value}</span>
+        <span className="competency-row__label text-truncate" id={labelId} ref={labelRef}>{node.value}</span>
         {externalId ?
           (
             <>
-              <span className="sr-only">
+              <span className="sr-only" id={externalIdLabelId}>
                 {intl.formatMessage(messages.competencyIdAccessibleLabel, { externalId })}
               </span>
               <Badge
                 variant="info"
-                className="competency-row__badge ml-auto"
+                className="competency-row__badge text-truncate ml-auto"
+                ref={badgeRef}
                 aria-hidden="true"
               >
                 {externalId}
@@ -64,15 +144,23 @@ const CompetencyTreeItem = ({ node, expandedIds, onToggle }: CompetencyTreeItemP
             </>
           ) :
           null}
+        <CompetencyTooltip
+          anchorRef={rowRef}
+          name={node.value}
+          externalId={externalId}
+          {...tooltip.tooltipProps}
+        />
       </div>
       {isExpanded && hasChildren && (
-        <ul>
+        <ul role={isSelectable ? 'group' : undefined}>
           {node.subRows!.map((child) => (
             <CompetencyTreeItem
               key={child.id}
               node={child}
               expandedIds={expandedIds}
               onToggle={onToggle}
+              selectedCompetencyId={selectedCompetencyId}
+              onSelectCompetency={onSelectCompetency}
             />
           ))}
         </ul>

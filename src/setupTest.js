@@ -69,5 +69,6 @@ class ResizeObserver {
 
 window.ResizeObserver = ResizeObserver;
 
-// Mock the plugins repo so jest will stop complaining about ES6 syntax
-jest.mock('frontend-components-tinymce-advanced-plugins', () => {});
+// TinyMCE's UI cannot initialize under JSDOM. Stub out its theme so that editor initialization never completes in
+// tests (it will wait forever for the theme script to load). Tests that need editor content mock the relevant hooks.
+jest.mock('tinymce/themes/silver', () => {});

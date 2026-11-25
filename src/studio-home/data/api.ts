@@ -36,6 +36,25 @@ export async function getStudioHomeCoursesV2(search: string, customParams: objec
   return camelCaseObject(data);
 }
 
+export interface Course {
+  courseKey: string;
+  displayName: string;
+  lmsLink: string | null;
+  number: string;
+  org: string;
+  rerunLink: string | null;
+  run: string;
+  url: string;
+}
+
+export interface StudioHomeCoursesV2Response {
+  results: {
+    courses: Course[];
+  };
+  numPages: number;
+  count: number;
+}
+
 export interface LibraryV1Data {
   displayName: string;
   libraryKey: string;

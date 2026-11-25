@@ -175,6 +175,21 @@ describe('<ConfigureModal /> for Subsection', () => {
     expect(getByText(messages.neverShowAssessmentResultsButIncludeGradeDescription.defaultMessage)).toBeInTheDocument();
   });
 
+  it('selects "Hide entire subsection" for a gated subsection with an explicit staff lock', async () => {
+    const user = userEvent.setup();
+    const { getByRole } = renderSubsectionComponent({
+      currentItemData: {
+        ...currentSubsectionMock,
+        visibilityState: 'gated',
+        hasExplicitStaffLock: true,
+      } as unknown as AccessManagedXBlockDataTypes,
+    });
+
+    await user.click(getByRole('tab', { name: messages.visibilityTabTitle.defaultMessage }));
+    expect(getByRole('radio', { name: messages.hideEntireSubsection.defaultMessage })).toBeChecked();
+    expect(getByRole('radio', { name: messages.showEntireSubsection.defaultMessage })).not.toBeChecked();
+  });
+
   it('switches to the subsection Advanced tab and renders correctly', async () => {
     const user = userEvent.setup();
     const { getByRole, getByText } = renderSubsectionComponent();

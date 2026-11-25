@@ -32,6 +32,7 @@ const SearchUI: React.FC<{
 
   return (
     <SearchContextProvider
+      indexType="course"
       extraFilter={[
         'type = "course_block"',
         ...(searchThisCourse ? [`context_key = "${props.courseId}"`] : []),

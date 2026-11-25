@@ -1,11 +1,10 @@
-import { useNavigate } from 'react-router';
 import {
   createContext,
   useContext,
   useMemo,
 } from 'react';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-
+import { useNavigate } from 'react-router-dom';
 import { useToggleWithValue } from '@src/hooks';
 import { type UnitXBlock, type XBlock } from '@src/data/types';
 import { CourseDetailsData } from './data/api';

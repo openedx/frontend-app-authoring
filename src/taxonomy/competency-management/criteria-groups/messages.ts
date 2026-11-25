@@ -1,0 +1,257 @@
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+  ruleGroupMoreActionsLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.rule-group-more-actions-label',
+    defaultMessage: 'More actions for rule group {position} in {courseName}',
+    description: 'Accessible label for the ⋮ button that opens a saved rule group\'s actions menu. '
+      + '{position} is the group\'s 1-based position among the rule groups of its course group, '
+      + 'and {courseName} is the name of the course the group belongs to.',
+  },
+  placeholderRuleGroupMoreActionsLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.placeholder-rule-group-more-actions-label',
+    defaultMessage: 'More actions for the new rule group in {courseName}',
+    description: 'Accessible label for the ⋮ button on the unsaved new rule group, which has no position yet. '
+      + '{courseName} is the name of the course the group belongs to.',
+  },
+  removeRuleGroupMenuItem: {
+    id: 'course-authoring.competency-management.criteria-groups.remove-rule-group-menu-item',
+    defaultMessage: 'Remove group',
+    description: 'Menu item that removes a rule group, or discards the unsaved one, with its rule boxes.',
+  },
+  courseGroupMoreActionsLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.course-group-more-actions-label',
+    defaultMessage: 'More actions for {courseName}',
+    description: 'Accessible label for the ⋮ button that opens a course group\'s actions menu. '
+      + '{courseName} is the name of the course the group belongs to.',
+  },
+  removeFromCompetencyMenuItem: {
+    id: 'course-authoring.competency-management.criteria-groups.remove-from-competency-menu-item',
+    defaultMessage: 'Remove from {competencyName}',
+    description: 'Menu item that removes a course group, with all its rule groups, from the active competency. '
+      + '{competencyName} is the name of that competency.',
+  },
+  logicOperatorAnyLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.logic-operator-any-label',
+    defaultMessage: 'any',
+    description: 'Label for a bottom-tier group\'s "or" logic operator, shown inline in '
+      + '"By completing any of the following".',
+  },
+  logicOperatorAllLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.logic-operator-all-label',
+    defaultMessage: 'all',
+    description: 'Label for a bottom-tier group\'s "and" logic operator, shown inline in '
+      + '"By completing all of the following".',
+  },
+  logicOperatorOrLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.logic-operator-or-label',
+    defaultMessage: 'Or',
+    description: 'Label for a course-level group\'s "or" logic operator, shown on the connector between '
+      + 'two adjacent sibling bottom-tier groups.',
+  },
+  logicOperatorAndLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.logic-operator-and-label',
+    defaultMessage: 'And',
+    description: 'Label for a course-level group\'s "and" logic operator, shown on the connector between '
+      + 'two adjacent sibling bottom-tier groups.',
+  },
+  criteriaGroupBoxLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.criteria-group-box-label',
+    defaultMessage: 'By completing {operator} of the following',
+    description: 'Header sentence on a bottom-tier group\'s bracket, naming how its rule boxes combine. '
+      + '"{operator}" is replaced by the word "any" or "all".',
+  },
+  scoreThresholdPhrase: {
+    id: 'course-authoring.competency-management.criteria-groups.score-threshold-phrase',
+    defaultMessage: '{op, select, gte {{value} or higher} lte {{value} or lower} other {{value}}}',
+    description: 'A rule\'s score threshold, for example "75% or higher". '
+      + '"{op}" is the comparison: gte (at least), lte (at most) or any other value for an exact match. '
+      + '"{value}" is the already formatted percentage.',
+  },
+  scoreThresholdLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.score-threshold-label',
+    defaultMessage: 'With a score of <threshold>{score}</threshold>',
+    description: 'Label stating a rule box\'s score threshold, for example "With a score of 75% or higher". '
+      + '"{score}" is the threshold phrase, such as "75% or higher". '
+      + '"<threshold>" wraps the part shown in the highlighted box.',
+  },
+  unknownSubsectionLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.unknown-subsection-label',
+    defaultMessage: 'Content unavailable',
+    description: 'Fallback chip text for a criterion whose associated subsection isn\'t found in its '
+      + 'course\'s outline (deleted content or search-index lag, not a permission boundary).',
+  },
+  fromWithinCourseLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.from-within-course-label',
+    defaultMessage: 'From within {courseName} ...',
+    description: 'Header sentence on a course-level group\'s card, naming the course its bottom-tier groups '
+      + 'belong to. "{courseName}" is the course\'s name.',
+  },
+  expandCourseGroupButtonLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.expand-course-group.button-label',
+    defaultMessage: 'Expand {courseName}',
+    description: 'Accessible label for the disclosure control that expands a collapsed course-level '
+      + 'associations group. "{courseName}" is the course\'s name.',
+  },
+  collapseCourseGroupButtonLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.collapse-course-group.button-label',
+    defaultMessage: 'Collapse {courseName}',
+    description: 'Accessible label for the disclosure control that collapses an expanded course-level '
+      + 'associations group. "{courseName}" is the course\'s name.',
+  },
+  courseGroupListErrorMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.course-group-list-error-message',
+    defaultMessage: 'There was a problem loading this competency\'s associations. Please try again.',
+    description: 'Inline error message shown when loading a competency\'s existing criteria groups, or the '
+      + 'system default rule profile, fails.',
+  },
+  noAssociationsMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.no-associations-message',
+    defaultMessage: 'No content associated with {competencyName} yet.',
+    description: 'First line of the empty state shown in the associations block when the selected competency '
+      + 'has no criteria associations in any course. {competencyName} is the selected competency\'s name, '
+      + 'shown in bold.',
+  },
+  noAssociationsInListedCoursesMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.no-associations-in-listed-courses-message',
+    defaultMessage: 'No content associated with {competencyName} in the courses listed here. '
+      + '{count, plural, one {# association is} other {# associations are}} in courses that are not listed.',
+    description: 'First line of the empty state shown in the associations block when the selected competency has '
+      + 'criteria associations, but none in the courses currently listed in the course list below that the user '
+      + 'can view. {competencyName} is the selected competency\'s name, shown in bold. {count} is the number of '
+      + 'the competency\'s criteria associations in courses that are not currently listed.',
+  },
+  noAccessibleAssociationsInListedCoursesMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.no-accessible-associations-in-listed-courses-message',
+    defaultMessage: 'No content associated with {competencyName} that you can open in the courses listed here. '
+      + '{count, plural, one {# association is} other {# associations are}} in listed courses you can\'t open.',
+    description: 'First line of the empty state shown in the associations block when every one of the selected '
+      + 'competency\'s criteria associations is in a course currently listed in the course list below, but the user '
+      + 'cannot open any of those courses. {competencyName} is the selected competency\'s name, shown in bold. '
+      + '{count} is the number of the competency\'s criteria associations in those courses.',
+  },
+  someInaccessibleAssociationsInListedCoursesMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.some-inaccessible-associations-in-listed-courses-message',
+    defaultMessage: 'No content associated with {competencyName} that you can open in the courses listed here. '
+      + '{inaccessibleCount, plural, one {# association is} other {# associations are}} in listed courses you '
+      + 'can\'t open, and {outOfViewCount, plural, one {# is} other {# are}} in courses that are not listed.',
+    description: 'First line of the empty state shown in the associations block when some of the selected '
+      + 'competency\'s criteria associations are in courses currently listed in the course list below that the '
+      + 'user cannot open, and the rest are in courses that are not currently listed. {competencyName} is the '
+      + 'selected competency\'s name, shown in bold. {inaccessibleCount} is the number of associations in listed '
+      + 'courses the user cannot open. {outOfViewCount} is the number in courses that are not currently listed.',
+  },
+  noAssociationsPromptMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.no-associations-prompt-message',
+    defaultMessage: 'Make content selections to create competency criteria associations.',
+    description: 'Second line of the empty state shown in the associations block, prompting the user '
+      + 'to make content selections in the course list below.',
+  },
+  scoreThresholdInputAccessibleLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.score-threshold-input-accessible-label',
+    defaultMessage: 'Score threshold percentage',
+    description: 'Accessible name for the percentage input in the score settings popover, whose only visible '
+      + 'neighbors are the comparison menu and a "%" sign.',
+  },
+  duplicateScoreValidationMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.duplicate-score-validation-message',
+    defaultMessage: 'Another rule box in this group already uses this score.',
+    description: 'Inline validation message shown while editing a rule box\'s score threshold, when the typed '
+      + 'value would exactly duplicate another rule box\'s own score, rule type, and comparison in the same '
+      + 'group.',
+  },
+  scoreThresholdRangeValidationMessage: {
+    id: 'course-authoring.competency-management.criteria-groups.score-threshold-range-validation-message',
+    defaultMessage: 'Enter a whole number from 0 to 100.',
+    description: 'Inline validation message shown while editing a rule box\'s score threshold, when the typed '
+      + 'value is not a whole number from 0 to 100.',
+  },
+  selectRuleBoxButtonLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.select-rule-box-button-label',
+    defaultMessage: 'Select this rule',
+    description: 'Visually hidden accessible label for the button that selects a rule box, stretched to cover '
+      + 'the whole box - the box has no single short visible phrase of its own to reuse as this label.',
+  },
+  defaultScoreTakenHint: {
+    id: 'course-authoring.competency-management.criteria-groups.default-score-taken-hint',
+    defaultMessage: 'Another rule in this group already uses {score}. Choose a different score.',
+    description: 'Guidance shown inside the rule box\'s score settings popover when the displayed score is '
+      + 'already used by another box in the same group. "{score}" is the score as shown in the field, such as '
+      + '"75% or higher".',
+  },
+  useSuggestedScoreLink: {
+    id: 'course-authoring.competency-management.criteria-groups.use-suggested-score-link',
+    defaultMessage: 'Use {score}',
+    description: 'Link under the "score already used" guidance that applies the nearest unused score. '
+      + '"{score}" is that score as shown in the field, such as "80% or higher".',
+  },
+  addRuleButtonLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.add-rule-button-label',
+    defaultMessage: 'Rule',
+    description: 'Label for the button that adds a new, not-yet-saved rule box to a bottom-tier group.',
+  },
+  addRuleGroupButtonLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.add-rule-group-button-label',
+    defaultMessage: 'Rule Group',
+    description: 'Label for the button that adds a new, not-yet-saved bottom-tier group to a course-level group.',
+  },
+  addRuleAccessibleLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.add-rule-accessible-label',
+    defaultMessage: 'Add Rule',
+    description: 'Accessible name of the button that adds a new rule box, whose visible label is just "Rule".',
+  },
+  addRuleGroupAccessibleLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.add-rule-group-accessible-label',
+    defaultMessage: 'Add Rule Group',
+    description: 'Accessible name of the button that adds a new rule group, whose visible label is just "Rule Group".',
+  },
+  addControlDisabledTooltip: {
+    id: 'course-authoring.competency-management.criteria-groups.add-control-disabled-tooltip',
+    defaultMessage: 'Fill in the empty box before adding another.',
+    description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while a not-yet-saved placeholder '
+      + 'already exists elsewhere in the tree.',
+  },
+  addControlSavingTooltip: {
+    id: 'course-authoring.competency-management.criteria-groups.add-control-saving-tooltip',
+    defaultMessage: 'Wait for the save to finish before adding another.',
+    description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while a create request is '
+      + 'still in flight.',
+  },
+  addControlLoadingTooltip: {
+    id: 'course-authoring.competency-management.criteria-groups.add-control-loading-tooltip',
+    defaultMessage: 'Wait for the course list to finish loading before adding another.',
+    description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while the course list below is '
+      + 'reloading and the listed courses may change.',
+  },
+  addControlDeletingTooltip: {
+    id: 'course-authoring.competency-management.criteria-groups.add-control-deleting-tooltip',
+    defaultMessage: 'Wait for the removal to finish before adding another.',
+    description: 'Tooltip on a disabled "+ Rule"/"+ Rule Group" button, shown while a request to remove a group is '
+      + 'still in flight.',
+  },
+  placeholderRuleBoxHint: {
+    id: 'course-authoring.competency-management.criteria-groups.placeholder-rule-box-hint',
+    defaultMessage: 'Select content below to add it here.',
+    description: 'Hint text shown in place of chips on a not-yet-saved placeholder rule box, which has no '
+      + 'content associated with it yet.',
+  },
+  scoreSettingsHeading: {
+    id: 'course-authoring.competency-management.criteria-groups.score-settings-heading',
+    defaultMessage: 'Competency Completion Rule',
+    description: 'Heading of the popover where a rule box\'s comparison and score are edited.',
+  },
+  comparisonOperatorAccessibleLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.comparison-operator-accessible-label',
+    defaultMessage: '{op, select, gte {Comparison, or higher} lte {Comparison, or lower} other {Comparison, equal to}}',
+    description: 'Accessible name of the menu button that picks how a score is compared. '
+      + '"{op}" is the current comparison: gte (at least), lte (at most) or any other value for an exact match.',
+  },
+  comparisonOptionLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.comparison-option-label',
+    defaultMessage: '{op, select, gte {>= or higher} lte {<= or lower} other {= equal to}}',
+    description: 'Text of one item in the comparison menu: the symbol followed by its meaning in words. '
+      + '"{op}" is the comparison: gte (at least), lte (at most) or any other value for an exact match.',
+  },
+});
+
+export default messages;

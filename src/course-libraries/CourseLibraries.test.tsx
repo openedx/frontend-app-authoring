@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter/types';
 import { QueryClient } from '@tanstack/react-query';
 import {
+  act,
   initializeMocks,
   render,
   screen,
@@ -22,6 +23,8 @@ import {
   mockFetchIndexDocuments,
   mockUseLibBlockMetadata,
 } from './data/api.mocks';
+import * as api from './data/api';
+import { invalidateLinksQuery } from './data/apiHooks';
 
 mockContentSearchConfig.applyMock();
 mockGetEntityLinks.applyMock();
@@ -215,6 +218,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     mockShowToast = mocks.mockShowToast;
     fetchMock.mockReset();
     mockFetchIndexDocuments.applyMock();
+    mockGetEntityLinks.applyMock();
     localStorage.clear();
     searchParamsGetMock.mockReturnValue('review');
     queryClient = mocks.queryClient;
@@ -403,5 +407,163 @@ describe('<CourseLibraries ReviewTab />', () => {
     expect(screen.getByRole('tab', { name: /published library content/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /update to published library content/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /keep course content/i })).toBeInTheDocument();
+  });
+
+  it('keeps the Update button pending until the links refetch, then removes the card', async () => {
+    const user = userEvent.setup();
+    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
+    await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
+    const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
+    expect(updateBtns.length).toEqual(7);
+
+    // Hold the links refetch until the test releases it. Once released, the synced item is no longer ready to sync.
+    let releaseRefetch = () => {};
+    const refetchReleased = new Promise<void>((resolve) => {
+      releaseRefetch = resolve;
+    });
+    jest.spyOn(api, 'getEntityLinks').mockImplementation(async (courseId, readyToSync) => {
+      await refetchReleased;
+      const links = await mockGetEntityLinks(courseId, readyToSync);
+      return links.filter((link) => link.downstreamUsageKey !== usageKey);
+    });
+
+    try {
+      await user.click(updateBtns[0]);
+      await waitFor(() => {
+        expect(mockShowToast).toHaveBeenCalledWith('Success! "Dropdown" is updated');
+      });
+      // The sync is done but the links have not refetched yet, so a second click must not send another sync.
+      expect(updateBtns[0]).toHaveAttribute('aria-disabled', 'true');
+      await user.click(updateBtns[0]);
+      expect(axiosMock.history.post.length).toEqual(1);
+    } finally {
+      releaseRefetch();
+    }
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('button', { name: 'Update' }).length).toEqual(6);
+    });
+    expect(axiosMock.history.post.length).toEqual(1);
+  });
+
+  it('keeps the first Update button pending when a second update cancels its links refetch', async () => {
+    const user = userEvent.setup();
+    const firstKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    const secondKey = mockGetEntityLinks.response[1].downstreamUsageKey;
+    axiosMock.onPost(libraryBlockChangesUrl(firstKey)).reply(200, {});
+    axiosMock.onPost(libraryBlockChangesUrl(secondKey)).reply(200, {});
+    await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
+    const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
+    expect(updateBtns.length).toEqual(7);
+
+    // Hold every links refetch until the test releases them. Once released, both synced items are gone.
+    let releaseRefetch = () => {};
+    const refetchReleased = new Promise<void>((resolve) => {
+      releaseRefetch = resolve;
+    });
+    jest.spyOn(api, 'getEntityLinks').mockImplementation(async (courseId, readyToSync) => {
+      await refetchReleased;
+      const links = await mockGetEntityLinks(courseId, readyToSync);
+      return links.filter((link) => ![firstKey, secondKey].includes(link.downstreamUsageKey));
+    });
+
+    try {
+      await user.click(updateBtns[0]);
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toEqual(1);
+      });
+      // The second update invalidates the links again, which cancels the refetch the first update is waiting for.
+      await user.click(updateBtns[1]);
+      await waitFor(() => {
+        expect(axiosMock.history.post.length).toEqual(2);
+      });
+      await waitFor(() => {
+        expect(mockShowToast).toHaveBeenCalledTimes(2);
+      });
+      expect(updateBtns[0]).toHaveAttribute('aria-disabled', 'true');
+      expect(updateBtns[1]).toHaveAttribute('aria-disabled', 'true');
+    } finally {
+      releaseRefetch();
+    }
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('button', { name: 'Update' }).length).toEqual(5);
+    });
+    expect(axiosMock.history.post.length).toEqual(2);
+  });
+
+  it('keeps the card and re-enables the Update button when the sync fails', async () => {
+    const user = userEvent.setup();
+    const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
+    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(500, {});
+    await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
+    const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
+
+    await user.click(updateBtns[0]);
+    await waitFor(() => {
+      expect(mockShowToast).toHaveBeenCalledWith('Failed to update component');
+    });
+    await waitFor(() => {
+      expect(updateBtns[0]).not.toHaveAttribute('aria-disabled', 'true');
+    });
+    expect(screen.getAllByRole('button', { name: 'Update' }).length).toEqual(7);
+    expect(mockInvalidateQueries).not.toHaveBeenCalled();
+  });
+
+  it('re-enables the Update button if the item is still out of sync after the links refetch', async () => {
+    const user = userEvent.setup();
+    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
+    await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
+    const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
+
+    await user.click(updateBtns[0]);
+    await waitFor(() => {
+      expect(mockShowToast).toHaveBeenCalledWith('Success! "Dropdown" is updated');
+    });
+    await waitFor(() => {
+      expect(updateBtns[0]).not.toHaveAttribute('aria-disabled', 'true');
+    });
+    expect(screen.getAllByRole('button', { name: 'Update' }).length).toEqual(7);
+
+    // The button works again
+    await user.click(updateBtns[0]);
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(2);
+    });
+  });
+
+  it('updates an item that became ready to sync after the page loaded', async () => {
+    const user = userEvent.setup();
+    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
+    axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
+    let includeItem = false;
+    jest.spyOn(api, 'getEntityLinks').mockImplementation(async (courseId, readyToSync) => {
+      const links = await mockGetEntityLinks(courseId, readyToSync);
+      return includeItem ? links : links.filter((link) => link.downstreamUsageKey !== usageKey);
+    });
+    await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
+    await waitFor(() => {
+      expect(screen.getAllByRole('button', { name: 'Update' }).length).toEqual(6);
+    });
+
+    // The library is published again while the page is open, so the item shows up after a refetch.
+    includeItem = true;
+    await act(() => invalidateLinksQuery(queryClient, mockGetEntityLinks.courseKey));
+    await waitFor(() => {
+      expect(screen.getAllByRole('button', { name: 'Update' }).length).toEqual(7);
+    });
+
+    const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
+    await user.click(screen.getAllByRole('button', { name: 'Update' })[0]);
+    await waitFor(() => {
+      expect(mockShowToast).toHaveBeenCalledWith('Success! "Dropdown" is updated');
+    });
+    expect(mockShowToast).not.toHaveBeenCalledWith('Failed to update component');
+    expect(mockInvalidateQueries).toHaveBeenCalledWith({
+      queryKey: ['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX'],
+    });
   });
 });

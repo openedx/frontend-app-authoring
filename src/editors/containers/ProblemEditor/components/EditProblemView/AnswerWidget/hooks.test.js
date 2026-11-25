@@ -59,7 +59,9 @@ describe('Answer Options Hooks', () => {
     const answer = { id: 'A', correct: false };
     const dispatch = useDispatch();
     it('dispatches actions.problem.deleteAnswer', () => {
-      windowSpy.mockImplementation(() => ({ tinymce: { editors: { 'answer-A': { getContent: () => 'string' } } } }));
+      windowSpy.mockImplementation(() => ({
+        tinymce: { get: () => [{ id: 'answer-A', getContent: () => 'string' }] },
+      }));
       module.removeAnswer({
         answer,
         dispatch,
@@ -180,7 +182,7 @@ describe('Answer Options Hooks', () => {
       const key = state.keys.isFeedbackVisible;
       output = module.useFeedback(answerWithOnlyFeedback);
       windowSpy.mockImplementation(() => ({
-        tinymce: { editors: { 'selectedFeedback-A': { getContent: () => 'string' } } },
+        tinymce: { get: () => [{ id: 'selectedFeedback-A', getContent: () => 'string' }] },
       }));
       output.toggleFeedback(false);
       expect(state.setState[key]).toHaveBeenCalledWith(true);
@@ -189,7 +191,7 @@ describe('Answer Options Hooks', () => {
       const key = state.keys.isFeedbackVisible;
       output = module.useFeedback(answerWithOnlyFeedback);
       windowSpy.mockImplementation(() => ({
-        tinymce: { editors: { 'unselectedFeedback-A': { getContent: () => 'string' } } },
+        tinymce: { get: () => [{ id: 'unselectedFeedback-A', getContent: () => 'string' }] },
       }));
       output.toggleFeedback(false);
       expect(state.setState[key]).toHaveBeenCalledWith(true);
@@ -197,7 +199,9 @@ describe('Answer Options Hooks', () => {
     test('toggleFeedback with unselected feedback', () => {
       const key = state.keys.isFeedbackVisible;
       output = module.useFeedback(answerWithOnlyFeedback);
-      windowSpy.mockImplementation(() => ({ tinymce: { editors: { 'answer-A': { getContent: () => 'string' } } } }));
+      windowSpy.mockImplementation(() => ({
+        tinymce: { get: () => [{ id: 'answer-A', getContent: () => 'string' }] },
+      }));
       output.toggleFeedback(false);
       expect(state.setState[key]).toHaveBeenCalledWith(false);
     });

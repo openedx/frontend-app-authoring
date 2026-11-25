@@ -1,0 +1,211 @@
+import { defineMessages } from '@edx/frontend-platform/i18n';
+
+const messages = defineMessages({
+  coursesAndContentLabel: {
+    id: 'course-authoring.competency-management.course-search.courses-and-content-label',
+    defaultMessage: 'Courses & Content',
+    description: 'Persistent header label shown above the course list, in every state (loading/error/empty/'
+      + 'populated), once a competency is selected.',
+  },
+  searchPlaceholder: {
+    id: 'course-authoring.competency-management.course-search.search-placeholder',
+    defaultMessage: 'Search courses',
+    description: 'Placeholder text for the course search field in the competency management course browser.',
+  },
+  errorMessage: {
+    id: 'course-authoring.competency-management.course-search.error-message',
+    defaultMessage: 'There was a problem loading courses. Please try again.',
+    description: 'Inline error message shown when the course search request fails.',
+  },
+  noAccessibleCourses: {
+    id: 'course-authoring.competency-management.course-search.no-accessible-courses',
+    defaultMessage: 'You do not have access to any courses.',
+    description: 'Message shown when the course search returns no results and no search text has been entered.',
+  },
+  noMatchingCourses: {
+    id: 'course-authoring.competency-management.course-search.no-matching-courses',
+    defaultMessage: 'No courses match your search.',
+    description: 'Message shown when the course search returns no results for the entered search text.',
+  },
+  clearSearchButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.clear-search-button-label',
+    defaultMessage: 'Clear search',
+    description: 'Label for the button that clears the course search field and re-runs the query with no search text.',
+  },
+  expandRowButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.expand-row.button-label',
+    defaultMessage: 'Expand',
+    description: 'Accessible label for the disclosure control that expands a course row to show its outline.',
+  },
+  collapseRowButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.collapse-row.button-label',
+    defaultMessage: 'Collapse',
+    description: 'Accessible label for the disclosure control that collapses an expanded course row.',
+  },
+  expandSectionButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.expand-section.button-label',
+    defaultMessage: 'Expand',
+    description: 'Accessible label for the disclosure control that expands a section (chapter) within an '
+      + 'expanded course row to show its graded subsections. Distinct from expandRowButtonLabel, which is for the '
+      + 'course-row-level toggle, not this section-level one.',
+  },
+  collapseSectionButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.collapse-section.button-label',
+    defaultMessage: 'Collapse',
+    description: 'Accessible label for the disclosure control that collapses an expanded section (chapter) '
+      + 'within a course row. Distinct from collapseRowButtonLabel, which is for the course-row-level toggle, not '
+      + 'this section-level one.',
+  },
+  outlineErrorMessage: {
+    id: 'course-authoring.competency-management.course-search.outline-error-message',
+    defaultMessage: 'There was a problem loading this course\'s outline.',
+    description: 'Inline error message shown inside a single expanded course row when fetching that '
+      + 'course\'s outline fails. Distinct from the panel-level course search error message.',
+  },
+  noGradedSubsectionsMessage: {
+    id: 'course-authoring.competency-management.course-search.no-graded-subsections-message',
+    defaultMessage: 'This course has no gradeable subsections.',
+    description: 'Message shown in an expanded course row when the course outline contains no subsections '
+      + 'marked as graded, in place of the section/subsection list.',
+  },
+  permissionsErrorMessage: {
+    id: 'course-authoring.competency-management.course-search.permissions-error-message',
+    defaultMessage: 'There was a problem checking whether you can edit this course. Please try again.',
+    description: 'Inline error message shown above an expanded course\'s outline when the request that checks '
+      + 'the author\'s permission to manage competency associations fails. The "Associate" controls are hidden '
+      + 'until it succeeds.',
+  },
+  hierarchyConflictTooltip: {
+    id: 'course-authoring.competency-management.course-search.hierarchy-conflict-tooltip',
+    defaultMessage: 'Already associated with {competencyName} in this course',
+    description: 'Tooltip on the disabled associate button of a graded subsection, explaining why it cannot be '
+      + 'associated with the selected competency. {competencyName} is a different competency (an ancestor or '
+      + 'descendant of the selected one) that already has content associated in this course, which blocks the '
+      + 'selected one here.',
+  },
+  dateRangeLabel: {
+    id: 'course-authoring.competency-management.course-search.date-range-label',
+    defaultMessage: 'Start Date',
+    description: 'Accessible name and visible text for the button that opens the course start-date range '
+      + 'calendar, filtering the course list to courses starting on or after the chosen start date and/or on or '
+      + 'before the chosen end date. Always reads this fixed text, even once a range is picked.',
+  },
+  coursesSummary: {
+    id: 'course-authoring.competency-management.course-search.courses-summary',
+    defaultMessage: 'Showing <strong>{listedCount}</strong> of '
+      + '<strong>{totalCount, plural, one {# Course} other {# Courses}}</strong>'
+      + ', and <strong>{listedAssociationCount}</strong> of <strong>{totalAssociationCount, plural, '
+      + 'one {# Competency Criteria Association} other {# Competency Criteria Associations}}</strong>',
+    description: 'Summary line under the course search field when no search term or start-date filter is '
+      + 'applied. {listedCount} is the number of courses on the current page of the course list; {totalCount} is '
+      + 'every course the user can access, ignoring any search or filter.'
+      + ' {listedAssociationCount} is the number of the competency\'s criteria associations in the listed '
+      + 'courses; {totalAssociationCount} is every one of its associations, in any course.',
+  },
+  coursesSummaryWithSearch: {
+    id: 'course-authoring.competency-management.course-search.courses-summary-with-search',
+    defaultMessage: 'Showing <strong>{listedCount}</strong> of '
+      + '<strong>{totalCount, plural, one {# Course} other {# Courses}}</strong> containing <strong>“{searchTerm}”</strong>'
+      + ', and <strong>{listedAssociationCount}</strong> of <strong>{totalAssociationCount, plural, '
+      + 'one {# Competency Criteria Association} other {# Competency Criteria Associations}}</strong>',
+    description: 'Summary line under the course search field when only a search term is applied. {listedCount} '
+      + 'is the number of courses on the current page of the course list; {totalCount} is every course the user '
+      + 'can access, ignoring any search or filter; {searchTerm} is the search term, possibly truncated.'
+      + ' {listedAssociationCount} is the number of the competency\'s criteria associations in the listed '
+      + 'courses; {totalAssociationCount} is every one of its associations, in any course.',
+  },
+  coursesSummaryWithStartDate: {
+    id: 'course-authoring.competency-management.course-search.courses-summary-with-start-date',
+    defaultMessage: 'Showing <strong>{listedCount}</strong> of '
+      + '<strong>{totalCount, plural, one {# Course} other {# Courses}}</strong> starting on or after '
+      + '<strong>{startDate}</strong>'
+      + ', and <strong>{listedAssociationCount}</strong> of <strong>{totalAssociationCount, plural, '
+      + 'one {# Competency Criteria Association} other {# Competency Criteria Associations}}</strong>',
+    description: 'Summary line under the course search field when only a start date (no end date) is picked in '
+      + 'the start-date filter. {listedCount} is the number of courses on the current page of the course list; '
+      + '{totalCount} is every course the user can access, ignoring any search or filter; {startDate} is the '
+      + 'picked date.'
+      + ' {listedAssociationCount} is the number of the competency\'s criteria associations in the listed '
+      + 'courses; {totalAssociationCount} is every one of its associations, in any course.',
+  },
+  coursesSummaryWithDateRange: {
+    id: 'course-authoring.competency-management.course-search.courses-summary-with-date-range',
+    defaultMessage: 'Showing <strong>{listedCount}</strong> of '
+      + '<strong>{totalCount, plural, one {# Course} other {# Courses}}</strong> starting between '
+      + '<strong>{startDate}</strong> and <strong>{endDate}</strong>'
+      + ', and <strong>{listedAssociationCount}</strong> of <strong>{totalAssociationCount, plural, '
+      + 'one {# Competency Criteria Association} other {# Competency Criteria Associations}}</strong>',
+    description: 'Summary line under the course search field when a start and end date are picked in the '
+      + 'start-date filter. {listedCount} is the number of courses on the current page of the course list; '
+      + '{totalCount} is every course the user can access, ignoring any search or filter; {startDate} and '
+      + '{endDate} are the picked dates.'
+      + ' {listedAssociationCount} is the number of the competency\'s criteria associations in the listed '
+      + 'courses; {totalAssociationCount} is every one of its associations, in any course.',
+  },
+  coursesSummaryWithSearchAndStartDate: {
+    id: 'course-authoring.competency-management.course-search.courses-summary-with-search-and-start-date',
+    defaultMessage: 'Showing <strong>{listedCount}</strong> of '
+      + '<strong>{totalCount, plural, one {# Course} other {# Courses}}</strong> containing <strong>“{searchTerm}”</strong>, '
+      + 'starting on or after <strong>{startDate}</strong>'
+      + ', and <strong>{listedAssociationCount}</strong> of <strong>{totalAssociationCount, plural, '
+      + 'one {# Competency Criteria Association} other {# Competency Criteria Associations}}</strong>',
+    description: 'Summary line under the course search field when a search term and a start date (no end date) '
+      + 'are applied. {listedCount} is the number of courses on the current page of the course list; {totalCount} '
+      + 'is every course the user can access, ignoring any search or filter; {searchTerm} is the search term, '
+      + 'possibly truncated; {startDate} is the picked date.'
+      + ' {listedAssociationCount} is the number of the competency\'s criteria associations in the listed '
+      + 'courses; {totalAssociationCount} is every one of its associations, in any course.',
+  },
+  coursesSummaryWithSearchAndDateRange: {
+    id: 'course-authoring.competency-management.course-search.courses-summary-with-search-and-date-range',
+    defaultMessage: 'Showing <strong>{listedCount}</strong> of '
+      + '<strong>{totalCount, plural, one {# Course} other {# Courses}}</strong> containing <strong>“{searchTerm}”</strong>, '
+      + 'starting between <strong>{startDate}</strong> and <strong>{endDate}</strong>'
+      + ', and <strong>{listedAssociationCount}</strong> of <strong>{totalAssociationCount, plural, '
+      + 'one {# Competency Criteria Association} other {# Competency Criteria Associations}}</strong>',
+    description: 'Summary line under the course search field when a search term and a start and end date are '
+      + 'applied. {listedCount} is the number of courses on the current page of the course list; {totalCount} is '
+      + 'every course the user can access, ignoring any search or filter; {searchTerm} is the search term, '
+      + 'possibly truncated; {startDate} and {endDate} are the picked dates.'
+      + ' {listedAssociationCount} is the number of the competency\'s criteria associations in the listed '
+      + 'courses; {totalAssociationCount} is every one of its associations, in any course.',
+  },
+  clearDateRangeButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.clear-date-range-button-label',
+    defaultMessage: 'Clear dates',
+    description: 'Accessible label for the button that clears the selected course start-date range and re-runs '
+      + 'the query with no date filter. Only shown once a start date has been picked.',
+  },
+  associationsSectionLabel: {
+    id: 'course-authoring.competency-management.course-search.associations-section-label',
+    defaultMessage: 'Competency Criteria Associations',
+    description: 'Header label shown above the "Demonstrate Mastery For" line and the criteria groups, once a '
+      + 'competency is selected.',
+  },
+  demonstrateMasteryForLabel: {
+    id: 'course-authoring.competency-management.course-search.demonstrate-mastery-for-label',
+    defaultMessage: 'Demonstrate Mastery For {competencyName}',
+    description: 'Line shown under the associations section label, naming the currently active competency.',
+  },
+  associateSubsectionButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.associate-subsection.button-label',
+    defaultMessage: 'Associate {externalId} with {subsectionName}',
+    description: 'Accessible name of the pill button that associates the active competency with a subsection. '
+      + '{externalId} is the competency\'s short external id, for example "CCRS-1.3"; {subsectionName} is the '
+      + 'subsection\'s display name.',
+  },
+  associateSubsectionWithoutIdButtonLabel: {
+    id: 'course-authoring.competency-management.course-search.associate-subsection-without-id.button-label',
+    defaultMessage: 'Associate this competency with {subsectionName}',
+    description: 'Accessible name of the pill button that associates the active competency with a subsection, '
+      + 'used when the competency has no external id. {subsectionName} is the subsection\'s display name.',
+  },
+  subsectionAssociatedLabel: {
+    id: 'course-authoring.competency-management.course-search.subsection-associated-label',
+    defaultMessage: 'Associated',
+    description: 'Screen-reader-only text inside the pill on a subsection that is already associated with the '
+      + 'active competency.',
+  },
+});
+
+export default messages;

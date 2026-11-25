@@ -46,6 +46,7 @@ const HelpSidebar = ({
     ...permissionHelpers.getCourseTeamPermissions(courseId),
     ...permissionHelpers.getGroupConfigurationsPermissions(courseId),
     ...permissionHelpers.getAdvancedSettingsPermissions(courseId),
+    ...permissionHelpers.getPagesAndResourcesPermissions(courseId),
   });
 
   return (
@@ -116,7 +117,7 @@ const HelpSidebar = ({
                     isNewPage
                   />
                 )}
-                {proctoredExamSettingsUrl && (
+                {proctoredExamSettingsUrl && perms.canManagePagesAndResources && (
                   <HelpSidebarLink
                     pathToPage={proctoredExamSettingsUrl}
                     title={intl.formatMessage(

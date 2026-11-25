@@ -10,6 +10,7 @@ const PrereqSettings = ({
   values,
   setFieldValue,
   prereqs,
+  readOnly = false,
 }) => {
   const intl = useIntl();
   const {
@@ -46,6 +47,7 @@ const PrereqSettings = ({
             defaultValue={prereqUsageKey}
             onChange={handleSelectChange}
             role="combobox"
+            disabled={readOnly}
           >
             <option value="">
               {intl.formatMessage(messages.noPrerequisiteOption)}
@@ -71,6 +73,7 @@ const PrereqSettings = ({
               controlClasses="w-7rem"
               type="number"
               trailingElement="%"
+              readOnly={readOnly}
             />
             <FormikControl
               name="prereqMinCompletion"
@@ -81,6 +84,7 @@ const PrereqSettings = ({
               controlClasses="w-7rem"
               type="number"
               trailingElement="%"
+              readOnly={readOnly}
             />
           </>
         )}
@@ -97,7 +101,7 @@ const PrereqSettings = ({
         <FormattedMessage {...messages.prereqTitle} />
       </h5>
       <hr />
-      <Form.Checkbox checked={isPrereq} onChange={handleCheckboxChange}>
+      <Form.Checkbox checked={isPrereq} onChange={handleCheckboxChange} disabled={readOnly}>
         <FormattedMessage {...messages.prereqCheckboxLabel} />
       </Form.Checkbox>
     </>

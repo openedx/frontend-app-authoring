@@ -1,5 +1,6 @@
 import 'CourseAuthoring/editors/setupEditorTest';
 import { getConfig } from '@edx/frontend-platform';
+import tinymce from 'tinymce';
 import { MockUseState } from '../../testUtils';
 
 import * as tinyMCE from '../../data/constants/tinyMCE';
@@ -293,13 +294,10 @@ describe('TinyMceEditor hooks', () => {
             editorType: props.editorType,
           };
           expect(output.init.plugins).toEqual(pluginConfig(pluginProps).plugins);
-          expect(output.init.imagetools_toolbar).toEqual(pluginConfig(pluginProps).imageToolbar);
           expect(output.init.toolbar).toEqual(pluginConfig(pluginProps).toolbar);
           Object.keys(pluginConfig(pluginProps).config).forEach(key => {
             expect(output.init[key]).toEqual(pluginConfig(pluginProps).config[key]);
           });
-          // Commented out as we investigate whether this is only needed for image proxy
-          // expect(output.init.imagetools_cors_hosts).toMatchObject([props.lmsEndpointUrl]);
         });
       });
       describe('text editor plugins and toolbar for content library', () => {
@@ -310,7 +308,6 @@ describe('TinyMceEditor hooks', () => {
           };
           output = module.editorConfig({ ...props, isLibrary: true });
           expect(output.init.plugins).toEqual(pluginConfig(pluginProps).plugins);
-          expect(output.init.imagetools_toolbar).toEqual(pluginConfig(pluginProps).imageToolbar);
           expect(output.init.toolbar).toEqual(pluginConfig(pluginProps).toolbar);
           expect(output.init.quickbars_insert_toolbar).toEqual(pluginConfig(pluginProps).quickbarsInsertToolbar);
           expect(output.init.quickbars_selection_toolbar).toEqual(pluginConfig(pluginProps).quickbarsSelectionToolbar);
@@ -332,7 +329,6 @@ describe('TinyMceEditor hooks', () => {
             placeholder: 'soMEtExT',
           });
           expect(output.init.plugins).toEqual(pluginConfig(pluginProps).plugins);
-          expect(output.init.imagetools_toolbar).toEqual(pluginConfig(pluginProps).imageToolbar);
           expect(output.init.toolbar).toEqual(pluginConfig(pluginProps).toolbar);
           expect(output.init.quickbars_insert_toolbar).toEqual(pluginConfig(pluginProps).quickbarsInsertToolbar);
           expect(output.init.quickbars_selection_toolbar).toEqual(pluginConfig(pluginProps).quickbarsSelectionToolbar);
@@ -355,7 +351,6 @@ describe('TinyMceEditor hooks', () => {
             placeholder: 'soMEtExT',
           });
           expect(output.init.plugins).toEqual(pluginConfig(pluginProps).plugins);
-          expect(output.init.imagetools_toolbar).toEqual(pluginConfig(pluginProps).imageToolbar);
           expect(output.init.toolbar).toEqual(pluginConfig(pluginProps).toolbar);
           expect(output.init.quickbars_insert_toolbar).toEqual(pluginConfig(pluginProps).quickbarsInsertToolbar);
           expect(output.init.quickbars_selection_toolbar).toEqual(pluginConfig(pluginProps).quickbarsSelectionToolbar);
@@ -378,6 +373,18 @@ describe('TinyMceEditor hooks', () => {
         expect(output.initialValue).toBe(editorContentHtml);
       });
 
+      it('preserves HTML comments that contain markup', () => {
+        const html = '<p>a</p><!-- <p>old intro</p> --><p>b</p>';
+        const schema = tinymce.html.Schema({ valid_elements: output.init.valid_elements });
+        const parser = tinymce.html.DomParser({
+          validate: true,
+          sanitize: true,
+          allow_html_in_comments: output.init.allow_html_in_comments,
+        }, schema);
+        const serialized = tinymce.html.Serializer({}, schema).serialize(parser.parse(html));
+        expect(serialized).toEqual(html);
+      });
+
       it('calls setupCustomBehavior on setup', () => {
         expect(output.init.setup).toEqual(
           setupCustomBehavior({
@@ -389,6 +396,7 @@ describe('TinyMceEditor hooks', () => {
             images: mockImagesRef,
             lmsEndpointUrl: props.lmsEndpointUrl,
             learningContextId: props.learningContextId,
+            imageToolbar: pluginConfig({ editorType: props.editorType }).imageToolbar,
           }),
         );
       });

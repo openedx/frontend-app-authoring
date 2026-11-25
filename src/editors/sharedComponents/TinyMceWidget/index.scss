@@ -1,0 +1,26 @@
+// TInyMCE v7's oxide skin added a drop shadow and changed the toolbar icon
+// size/spacing. This override restores the same look as v5, which fits better
+// into the Authoring MFE UI.
+// Selectors are identical to the rules in the oxide skin,
+// so these rules win by being imported after the oxide skin rules.
+.tox:not(.tox-tinymce-inline) .tox-editor-header {
+  box-shadow: none;
+  padding: 0;
+  border-bottom: 1px solid var(--pgn-color-gray-100);
+}
+
+.tox .tox-toolbar__group {
+  padding: 0 4px;
+}
+
+.tox:not([dir="rtl"]) .tox-toolbar__group:not(:last-of-type) {
+  border-right: 1px solid var(--pgn-color-gray-100);
+}
+
+.tox .tox-tbtn {
+  margin: 2px 0 3px;
+}
+
+.tox-tinymce {
+  border-radius: 0;
+}

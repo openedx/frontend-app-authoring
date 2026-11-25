@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import * as api from './api';
-import { useMutationWithProcessingNotification } from '@src/generic/processing-notification/data/apiHooks';
+import { useMutationWithProcessingNotification } from '@src/generic/toast-notification/data/apiHooks';
 import { NOTIFICATION_MESSAGES } from '@src/constants';
 
 export const certificatesQueryKeys = {

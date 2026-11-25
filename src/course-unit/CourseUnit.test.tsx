@@ -1,6 +1,7 @@
 import fetchMock from 'fetch-mock-jest';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
+import { Helmet } from 'react-helmet';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import {
   camelCaseObject,
@@ -111,8 +112,8 @@ const postXBlockBody = {
   staged_content: 'clipboard',
 };
 
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ blockId, sequenceId }),
   useNavigate: () => mockedUsedNavigate,
 }));
@@ -166,6 +167,7 @@ describe('<CourseUnit />', () => {
       canViewCourse: true,
       canEditCourseContent: true,
       canPublishCourseContent: true,
+      canViewLibrary: true,
     });
     axiosMock
       .onGet(getClipboardUrl())
@@ -212,6 +214,14 @@ describe('<CourseUnit />', () => {
       .toBeInTheDocument();
     expect(await screen.findByRole('button', { name: currentSectionName })).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: currentSubSectionName })).toBeInTheDocument();
+  });
+
+  it('sets the page title through Helmet', async () => {
+    render(<RootWrapper />);
+    expect(await screen.findByTestId('unit-header-title')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(Helmet.peek().title).toEqual(`${unitDisplayName} | ${process.env.SITE_NAME}`);
+    });
   });
 
   it('renders the course unit iframe with correct attributes', async () => {
@@ -2729,7 +2739,11 @@ describe('<CourseUnit />', () => {
       });
     await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
 
-    expect(screen.getByText(messages.alertLibraryUnitReadOnlyLinkText.defaultMessage)).toBeInTheDocument();
+    // The user can view the upstream library, so the alert links to it
+    const libraryLink = await screen.findByRole('link', {
+      name: messages.alertLibraryUnitReadOnlyLinkText.defaultMessage,
+    });
+    expect(libraryLink).toHaveAttribute('href', 'some-link');
 
     // Edit button should be enabled even for library imported units
     const unitHeaderTitle = screen.getByTestId('unit-header-title');
@@ -2751,6 +2765,50 @@ describe('<CourseUnit />', () => {
 
     // Does not render the "Add Components" section
     expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();
+  });
+
+  it('does not link to the upstream library when the user cannot view it', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_UNIT_PAGE_NEW_DESIGN: false,
+    });
+    validateUserPermissionsMock.mockResolvedValue({
+      canViewCourse: true,
+      canEditCourseContent: true,
+      canPublishCourseContent: true,
+      canViewLibrary: false,
+    });
+    render(<RootWrapper />);
+
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          upstreamInfo: {
+            ...courseSectionVerticalMock.xblock_info,
+            upstreamRef: 'lct:org:lib:unit:unit-1',
+            upstreamLink: 'some-link',
+          },
+        },
+      });
+    await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
+
+    await waitFor(() => {
+      expect(validateUserPermissionsMock).toHaveBeenCalledWith({
+        canViewLibrary: {
+          action: 'content_libraries.view_library',
+          scope: 'lib:org:lib',
+        },
+      });
+    });
+
+    // The alert text is still shown, but "library content" is not a link
+    expect(screen.getByText(/Only certain edits are possible for library content/)).toBeInTheDocument();
+    expect(screen.queryByRole('link', {
+      name: messages.alertLibraryUnitReadOnlyLinkText.defaultMessage,
+    })).not.toBeInTheDocument();
   });
 
   it('renders new unit info/settings sidebar', async () => {
@@ -3489,6 +3547,27 @@ describe('<CourseUnit />', () => {
       });
     });
 
+    // Games has a built-in editor, so after the block is created that editor
+    // opens on it, as it does for Text and Problem. Other advanced blocks are
+    // only created (see the cases below).
+    it('creates a Games block and opens the built-in editor on it', async () => {
+      const settingsUrl =
+        `${getConfig().STUDIO_BASE_URL}/xblock/${courseCreateXblockMock.locator}/handler/get_settings`;
+      axiosMock.onPost(settingsUrl).reply(200, {});
+
+      await user.click(await screen.findByRole('button', { name: 'Advanced' }));
+      await user.click(await screen.findByRole('button', { name: 'Games' }));
+
+      await waitFor(() => {
+        expect(axiosMock.history.post.map((request) => request.url)).toContain(postXBlockBaseApiUrl());
+      });
+      expect(JSON.parse(axiosMock.history.post[0].data)).toMatchObject({ type: 'games', parent_locator: blockId });
+      // The editor loads the new block's settings: it opened, on that block.
+      await waitFor(() => {
+        expect(axiosMock.history.post.map((request) => request.url)).toContain(settingsUrl);
+      });
+    });
+
     [
       {
         name: 'Text',
@@ -3640,7 +3719,7 @@ describe('<CourseUnit />', () => {
       });
     await executeThunk(fetchCourseSectionVerticalData(courseId), store.dispatch);
 
-    expect(screen.getByText(messages.alertLibraryUnitReadOnlyLinkText.defaultMessage)).toBeInTheDocument();
+    expect(await screen.findByText(messages.alertLibraryUnitReadOnlyLinkText.defaultMessage)).toBeInTheDocument();
 
     // Does not render the "Add Components" section
     expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();

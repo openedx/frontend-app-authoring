@@ -1,3 +1,5 @@
+import type { KeyboardEvent, MouseEvent } from 'react';
+
 import { IconButton } from '@openedx/paragon';
 import { ExpandLess, ExpandMore } from '@openedx/paragon/icons';
 
@@ -50,10 +52,37 @@ const ExpandCollapseIconButton = ({
 
   const label = isExpanded ? collapseLabel : expandLabel;
 
+  // Stops the click from also reaching an enclosing row's own `onClick`, for
+  // a caller whose row is independently clickable (e.g. a selectable
+  // competency tree row - see `CompetencyTreeItem`) - this button only ever
+  // toggles expand/collapse, never whatever the enclosing row's own click
+  // does. A caller with no such click handler on its row is unaffected.
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    onToggle?.();
+  };
+
+  // Same isolation as `handleClick` above, but for the keyboard: this button
+  // and an enclosing clickable row can both be focusable/interactive, so
+  // pressing Enter or Space here would otherwise also bubble up as a keydown
+  // to the row's own key handler, which could cancel this button's own
+  // native Enter/Space-activates-the-button behavior (via `preventDefault`)
+  // before it can fire a click at all - silently selecting the row instead
+  // of toggling expand/collapse. `stopPropagation` (not `preventDefault`) is
+  // enough: it only stops the keydown from reaching the row, leaving this
+  // button's own native activation - and the `onClick` above that reacts to
+  // it - intact.
+  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.stopPropagation();
+    }
+  };
+
   return (
     <IconButton
       src={isExpanded ? ExpandLess : ExpandMore}
-      onClick={onToggle}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
       alt={label}
       aria-label={label}
       aria-expanded={isExpanded}

@@ -47,6 +47,7 @@ interface AdvancedTabProps {
   onlineProctoringRules?: string;
   hideTitle?: boolean;
   useBtnGroup?: boolean;
+  readOnly?: boolean;
 }
 
 interface SelectorProps {
@@ -56,6 +57,7 @@ interface SelectorProps {
   enableTimedExams?: boolean;
   enableProctoredExams?: boolean;
   supportsOnboarding?: boolean;
+  readOnly?: boolean;
 }
 
 const RadioForm = ({
@@ -65,6 +67,7 @@ const RadioForm = ({
   enableTimedExams,
   enableProctoredExams,
   supportsOnboarding,
+  readOnly,
 }: SelectorProps) => {
   const eventHandler = (e) => handleChange(e.target.value);
   return (
@@ -74,12 +77,12 @@ const RadioForm = ({
       value={examTypeValue}
     >
       {renderAlerts()}
-      <Form.Radio value="none" disabled={!enableTimedExams}>
+      <Form.Radio value="none" disabled={readOnly || !enableTimedExams}>
         <FormattedMessage {...messages.none} />
       </Form.Radio>
       <Form.Radio
         value="timed"
-        disabled={!enableTimedExams}
+        disabled={readOnly || !enableTimedExams}
         description={<FormattedMessage {...messages.timedDescription} />}
         controlClassName="mw-1-25rem"
       >
@@ -91,6 +94,7 @@ const RadioForm = ({
             value="proctoredExam"
             description={<FormattedMessage {...messages.proctoredExamDescription} />}
             controlClassName="mw-1-25rem"
+            disabled={readOnly}
           >
             <FormattedMessage {...messages.proctoredExam} />
           </Form.Radio>
@@ -100,6 +104,7 @@ const RadioForm = ({
                 description={<FormattedMessage {...messages.onboardingExamDescription} />}
                 value="onboardingExam"
                 controlClassName="mw-1-25rem"
+                disabled={readOnly}
               >
                 <FormattedMessage {...messages.onboardingExam} />
               </Form.Radio>
@@ -109,6 +114,7 @@ const RadioForm = ({
                 value="practiceExam"
                 controlClassName="mw-1-25rem"
                 description={<FormattedMessage {...messages.practiceExamDescription} />}
+                disabled={readOnly}
               >
                 <FormattedMessage {...messages.practiceExam} />
               </Form.Radio>
@@ -126,6 +132,7 @@ const ButtonGroupForm = ({
   enableTimedExams,
   enableProctoredExams,
   supportsOnboarding,
+  readOnly,
 }: SelectorProps) => (
   <>
     {renderAlerts()}
@@ -134,7 +141,7 @@ const ButtonGroupForm = ({
       vertical={enableTimedExams && (enableProctoredExams || supportsOnboarding)}
     >
       <Button
-        disabled={!enableTimedExams}
+        disabled={readOnly || !enableTimedExams}
         variant={examTypeValue === 'none' ? 'primary' : 'outline-primary'}
         onClick={() => handleChange('none')}
       >
@@ -149,7 +156,7 @@ const ButtonGroupForm = ({
         }
       >
         <Button
-          disabled={!enableTimedExams}
+          disabled={readOnly || !enableTimedExams}
           variant={examTypeValue === 'timed' ? 'primary' : 'outline-primary'}
           onClick={() => handleChange('timed')}
         >
@@ -228,6 +235,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
   onlineProctoringRules = '',
   hideTitle = false,
   useBtnGroup = false,
+  readOnly = false,
 }) => {
   const {
     isTimeLimited,
@@ -390,6 +398,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
             enableTimedExams={enableTimedExams}
             enableProctoredExams={enableProctoredExams}
             supportsOnboarding={supportsOnboarding}
+            readOnly={readOnly}
           />
         )
         : (
@@ -400,6 +409,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
             enableTimedExams={enableTimedExams}
             enableProctoredExams={enableProctoredExams}
             supportsOnboarding={supportsOnboarding}
+            readOnly={readOnly}
           />
         )}
       {isTimeLimited && (
@@ -413,6 +423,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
               value={timeLimit}
               placeholder={intl.formatMessage(messages.timeLimitPlaceholder)}
               pattern="^[0-9][0-9]:[0-5][0-9]$"
+              disabled={readOnly}
             />
           </Form.Group>
           <Form.Text>
@@ -431,6 +442,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
               value={examReviewRules}
               as="textarea"
               rows="3"
+              disabled={readOnly}
             />
           </Form.Group>
           <Form.Text>
@@ -461,6 +473,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
         values={values}
         setFieldValue={setFieldValue}
         prereqs={prereqs}
+        readOnly={readOnly}
       />
     </>
   );

@@ -30,10 +30,10 @@ jest.mock('@src/editors/data/redux', () => ({
 }));
 
 jest.mock('@src/editors/sharedComponents/TinyMceWidget/hooks', () => ({
-  ...jest.requireActual('../../../../../sharedComponents/TinyMceWidget/hooks'),
-  prepareEditorRef: jest.fn(() => ({
+  ...jest.requireActual('@src/editors/sharedComponents/TinyMceWidget/hooks'),
+  useEditorRef: jest.fn(() => ({
     refReady: true,
-    setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
+    setEditorRef: jest.fn().mockName('useEditorRef.setEditorRef'),
   })),
 }));
 

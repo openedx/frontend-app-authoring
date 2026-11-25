@@ -316,7 +316,8 @@ describe('<AddComponent />', () => {
     });
   });
 
-  const createPdfBlock = async (
+  const createAdvancedBlock = async (
+    label: string,
     { getByRole, queryAllByRole, user }: {
       getByRole: RenderResult['getByRole'];
       queryAllByRole: RenderResult['queryAllByRole'];
@@ -330,12 +331,21 @@ describe('<AddComponent />', () => {
     await user.click(advancedBtn);
 
     const dialog = getByRole('dialog');
-    const pdfOption = within(dialog).getByLabelText('PDF');
-    await user.click(pdfOption);
-    const confirmation = within(dialog).getByText('Select');
-    await user.click(confirmation);
+    await user.click(within(dialog).getByLabelText(label));
+    await user.click(within(dialog).getByText('Select'));
     await waitFor(() => expect(queryAllByRole('dialog')).toEqual([]));
   };
+  const createPdfBlock = (args: Parameters<typeof createAdvancedBlock>[1]) => createAdvancedBlock('PDF', args);
+
+  it('adds a Games block from the advanced selection as an mfe-editable block', async () => {
+    const user = userEvent.setup();
+    const { getByRole, queryAllByRole } = renderComponent();
+    await createAdvancedBlock('Games', { getByRole, queryAllByRole, user });
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
+      parentLocator: '123',
+      type: COMPONENT_TYPES.games,
+    }, expect.any(Function));
+  });
 
   it('adds a PDF block from the advanced selection in modal as an mfe-editable block', async () => {
     const user = userEvent.setup();

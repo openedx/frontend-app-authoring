@@ -17,10 +17,10 @@ jest.mock('../TinyMceWidget', () => 'TinyMceWidget');
 
 // Mock the TinyMceWidget
 jest.mock('../TinyMceWidget/hooks', () => ({
-  prepareEditorRef: jest.fn(() => ({
+  useEditorRef: jest.fn(() => ({
     editorRef: { current: { value: 'something' } },
     refReady: true,
-    setEditorRef: jest.fn().mockName('hooks.prepareEditorRef.setEditorRef'),
+    setEditorRef: jest.fn().mockName('hooks.useEditorRef.setEditorRef'),
   })),
 }));
 
@@ -45,10 +45,10 @@ describe('ExpandableTextArea', () => {
     });
     test('renders nothing when refReady is null', () => {
       // eslint-disable-next-line global-require
-      jest.spyOn(require('../TinyMceWidget/hooks'), 'prepareEditorRef').mockReturnValue({
+      jest.spyOn(require('../TinyMceWidget/hooks'), 'useEditorRef').mockReturnValue({
         editorRef: { current: { value: 'something' } },
         refReady: false,
-        setEditorRef: jest.fn().mockName('hooks.prepareEditorRef.setEditorRef'),
+        setEditorRef: jest.fn().mockName('hooks.useEditorRef.setEditorRef'),
       });
       const { container } = render(<ExpandableTextArea {...props} />);
       expect(container.firstChild?.textContent).toBe('');

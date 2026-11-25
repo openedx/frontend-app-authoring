@@ -23,6 +23,8 @@ import CourseOutlinePageAlertsSlot from '@src/plugin-slots/CourseOutlinePageAler
 import advancedSettingsMessages from '@src/advanced-settings/messages';
 import { OutOfSyncAlert } from '@src/course-libraries/OutOfSyncAlert';
 import { RequestStatus } from '@src/data/constants';
+import { useCourseUserPermissions } from '@src/authz/hooks';
+import { getAdvancedSettingsPermissions, getPagesAndResourcesPermissions } from '@src/authz/permissionHelpers';
 import { API_ERROR_TYPES } from '../constants';
 
 import ErrorAlert from '@src/editors/sharedComponents/ErrorAlerts/ErrorAlert';
@@ -54,6 +56,10 @@ const PageAlerts = ({
   const { data: pasteFileNotices, setData: setPasteFileNotices } = usePasteFileNotices(courseId);
   const [showOutOfSyncAlert, setShowOutOfSyncAlert] = useState(false);
   const navigate = useNavigate();
+  const { canManagePagesAndResources, canManageAdvancedSettings } = useCourseUserPermissions(courseId, {
+    ...getPagesAndResourcesPermissions(courseId),
+    ...getAdvancedSettingsPermissions(courseId),
+  });
 
   const getAssetsUrl = () => {
     if (getConfig().ENABLE_ASSETS_PAGE === 'true') {
@@ -207,25 +213,26 @@ const PageAlerts = ({
           </Alert.Heading>
           <div className="mb-2">
             {mfeProctoredExamSettingsUrl
-              ? (
+              ? canManagePagesAndResources && (
                 <FormattedMessage
                   {...messages.proctoringErrorText}
                   values={{
                     hyperlink: (
-                      <Hyperlink
-                        destination={mfeProctoredExamSettingsUrl}
+                      // The URL is a path relative to the MFE root, so use a router Link to prepend the basename.
+                      <Link
+                        to={mfeProctoredExamSettingsUrl}
                         target="_blank"
-                        showLaunchIcon={false}
+                        rel="noopener noreferrer"
                       >
                         <FormattedMessage
                           {...messages.proctoredSettingsLinkText}
                         />
-                      </Hyperlink>
+                      </Link>
                     ),
                   }}
                 />
               ) :
-              (
+              canManageAdvancedSettings && (
                 <FormattedMessage
                   {...messages.proctoringErrorText}
                   values={{

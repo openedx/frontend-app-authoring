@@ -1,0 +1,146 @@
+// Everything here is scoped to the wrapper GameEditor renders, so the
+// editor's .card/.sidebar rules never reach Paragon or Studio.
+//
+// Layout, spacing, colour and type come from Paragon utility classes on the
+// elements themselves. This file only holds what those classes do not cover:
+// flex `gap`, fixed sizes, and overrides of Paragon component styles.
+.xblock-games-editor {
+  .page-body {
+    gap: 1.5rem;
+  }
+
+  .terms {
+    flex: 1 0 0;
+    gap: 1rem;
+  }
+
+  .terms > div {
+    width: 100%;
+  }
+
+  .sidebar {
+    width: 320px;
+    gap: 1rem;
+  }
+
+  .card-number {
+    width: 2rem;
+    height: 2rem;
+    font-size: var(--pgn-typography-font-size-base);
+  }
+
+  .img-preview-wrapper {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .img-preview {
+    min-width: 1.5rem;
+    min-height: 1.5rem;
+    max-width: 2rem;
+    max-height: 2rem;
+    object-fit: cover;
+  }
+
+  .card-image-area {
+    gap: .625rem;
+    max-height: 200px;
+  }
+
+  .card-divider {
+    height: 1px;
+  }
+
+  .add-button:hover {
+    text-decoration: none;
+  }
+
+  .add-button .btn-icon-before {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .toggle-button {
+    flex: 1;
+  }
+
+  .preview-term,
+  .preview-definition {
+    max-width: 45%;
+  }
+
+  .preview-term {
+    left: 0;
+  }
+
+  .preview-definition {
+    left: 50%;
+  }
+
+  .preview-block {
+    bottom: 30%;
+  }
+
+  .description {
+    gap: .25rem;
+  }
+
+  .description-header,
+  .sidebar-title {
+    font-size: var(--pgn-typography-font-size-base);
+    line-height: 1.5rem;
+  }
+
+  // Paragon's .card has a border and radius the game card does not want.
+  .card {
+    border: none;
+  }
+
+  .card-heading-row,
+  .card-heading-wrapper,
+  .card-heading {
+    gap: .75rem;
+  }
+
+  // Lets the collapsed preview truncate instead of widening the row.
+  .card-heading-wrapper {
+    min-width: 0;
+  }
+
+  .card-term,
+  .card-definition {
+    gap: 1rem;
+    font-size: .875rem;
+    line-height: 1.75rem;
+  }
+
+  .card-image {
+    max-height: 200px;
+  }
+
+  .card-input-line {
+    font-size: .875rem;
+    line-height: 1.5rem;
+  }
+
+  // SettingsCard draws a border and no shadow; the sidebar wants the reverse.
+  .sidebar-type,
+  .sidebar-shuffle,
+  .sidebar-timer {
+    border-radius: 4px;
+    border: none !important;
+    justify-content: space-between;
+    // stylelint-disable-next-line
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .sidebar-type > div,
+  .sidebar-shuffle > div,
+  .sidebar-timer > div {
+    width: 100%;
+  }
+
+  .card-dropdown {
+    z-index: 10;
+  }
+}

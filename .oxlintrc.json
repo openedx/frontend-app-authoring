@@ -29,7 +29,9 @@
         // complete, but we rarely if ever want that; we usually want to
         // continue invalidating more things immediately. So we don't usually
         // want to await this.
-        "invalidateQueries"
+        "invalidateQueries",
+        // Same for this wrapper around queryClient.invalidateQueries
+        "invalidateLinksQuery"
       ]
     }],
     // no-conditional-expect is disabled because the existing code had a lot of violations. Enable in the future?

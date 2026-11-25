@@ -1,0 +1,176 @@
+import { camelCaseObject, getConfig } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import type {
+  CompetencyBlockedCourse,
+  CompetencyCriteriaGroup,
+  CompetencyCriteriaGroupsResponse,
+  CompetencyCriterion,
+  CompetencyGroupLogicOperator,
+  CompetencyRuleProfile,
+  CompetencyRuleProfileListResponse,
+  CreateCompetencyCriterionPayload,
+  CreateCompetencyCriterionResponse,
+  GradeRulePayload,
+  UpdateCompetencyCriteriaGroupPayload,
+  UpdateCompetencyCriteriaRulePayload,
+} from './types';
+
+const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
+
+const getCbeV1Endpoint = () => new URL('api/cbe/v1/', getApiBaseUrl()).href;
+const getCompetencyManagementV1Endpoint = () => new URL('competencies/', getCbeV1Endpoint()).href;
+
+const makeUrl = (path: string): string => new URL(path, getCompetencyManagementV1Endpoint()).href;
+
+const makeCbeV1Url = (path: string): string => new URL(path, getCbeV1Endpoint()).href;
+
+export const apiUrls = {
+  /** GET: the course-level and bottom-tier criteria groups, plus criteria, for one competency (tag). */
+  competencyCriteriaGroups: (tagId: number) => makeUrl(`${tagId}/criteria-groups/`),
+  /** GET: the paginated list of courses where an ancestor or descendant competency blocks this one. */
+  competencyBlockedCourses: (tagId: number) => makeUrl(`${tagId}/blocked-courses/`),
+  /** GET: the paginated list of competency rule profiles (see `scopeType` on `CompetencyRuleProfile`). */
+  defaultCompetencyRuleProfile: () => makeCbeV1Url('rule_profiles/'),
+  /** POST: create a new criterion under this competency (tag). */
+  createCompetencyCriterion: (tagId: number) => makeUrl(`${tagId}/criteria/`),
+  /** One criteria group of a competency (tag). PATCH updates a bottom-tier group's any/all combining logic (`#760`),
+   * and DELETE removes a group and cascades to its descendants (`#709`).
+   */
+  competencyCriteriaGroup: (tagId: number, groupId: number) => makeUrl(`${tagId}/criteria-groups/${groupId}/`),
+  /** DELETE: remove one criterion (association). Backs `#674`. */
+  deleteCompetencyCriterion: (tagId: number, criterionId: number) => makeUrl(`${tagId}/criteria/${criterionId}/`),
+  /** PATCH: batch-update a rule box's score across every criterion sharing it. Backs `#759`. */
+  updateCompetencyCriteriaRule: (groupId: number) => makeCbeV1Url(`criteria-groups/${groupId}/criteria/bulk-update/`),
+} satisfies Record<string, (...args: any[]) => string>;
+
+/**
+ * Get one competency's existing criteria groups and criteria.
+ * @param tagId The id of the competency (tag) to load associations for.
+ * @param courseKeys The listed courses' keys, always sent (empty means instance-wide only).
+ */
+export async function getCompetencyCriteriaGroups(
+  tagId: number,
+  courseKeys: string[],
+): Promise<CompetencyCriteriaGroupsResponse> {
+  const { data } = await getAuthenticatedHttpClient().get(apiUrls.competencyCriteriaGroups(tagId), {
+    params: { course_keys: courseKeys.join(',') },
+  });
+  return camelCaseObject(data);
+}
+
+/**
+ * Get which of the given courses are blocked for a competency, because an ancestor or descendant of it already has associations there.
+ *
+ * Reads only the first page. The backend returns at most one row per requested
+ * course and pins its page size to 100, while `courseKeys` holds one page of the
+ * course list (`PAGE_SIZE`, 10). Follow `next` if either number changes.
+ */
+export async function getCompetencyBlockedCourses(
+  tagId: number,
+  courseKeys: string[],
+): Promise<CompetencyBlockedCourse[]> {
+  const { data } = await getAuthenticatedHttpClient().get(apiUrls.competencyBlockedCourses(tagId), {
+    params: { course_keys: courseKeys.join(',') },
+  });
+  return camelCaseObject(data.results);
+}
+
+/**
+ * Get the studio-wide default competency rule profile, used to resolve a
+ * criterion that carries no override fields of its own.
+ *
+ * The endpoint lists every rule profile in scope, so the row is picked by
+ * `scopeType === 'system_default'`, not by array position.
+ * @throws {Error} if the response has no `system_default` row.
+ */
+export async function getDefaultCompetencyRuleProfile(): Promise<CompetencyRuleProfile> {
+  const { data } = await getAuthenticatedHttpClient().get(apiUrls.defaultCompetencyRuleProfile());
+  const { results } = camelCaseObject(data) as CompetencyRuleProfileListResponse;
+  const systemDefaultProfile = results.find((profile) => profile.scopeType === 'system_default');
+  if (!systemDefaultProfile) {
+    throw new Error('No system_default competency rule profile was found in the rule_profiles response.');
+  }
+  return systemDefaultProfile;
+}
+
+/**
+ * Create a new criterion associating a piece of course content with a
+ * competency.
+ * @param tagId The id of the competency (tag) the new criterion belongs to.
+ * @param payload The new criterion's fields, snake_case per the wire format.
+ */
+export async function createCompetencyCriterion(
+  tagId: number,
+  payload: CreateCompetencyCriterionPayload,
+): Promise<CreateCompetencyCriterionResponse> {
+  const { data } = await getAuthenticatedHttpClient().post(apiUrls.createCompetencyCriterion(tagId), payload);
+  return camelCaseObject(data);
+}
+
+/**
+ * Update a bottom-tier group's any/all combining logic (`#760`).
+ * @param tagId The competency (tag) the group belongs to.
+ * @param groupId The bottom-tier group to update.
+ * @param logicOperator The new operator.
+ */
+export async function updateCompetencyCriteriaGroupOperator(
+  tagId: number,
+  groupId: number,
+  logicOperator: CompetencyGroupLogicOperator,
+): Promise<CompetencyCriteriaGroup> {
+  const payload: UpdateCompetencyCriteriaGroupPayload = { logic_operator: logicOperator };
+  const { data } = await getAuthenticatedHttpClient().patch(
+    apiUrls.competencyCriteriaGroup(tagId, groupId),
+    payload,
+  );
+  return camelCaseObject(data);
+}
+
+/**
+ * Delete a group (`#709`). The delete can cascade to the parent, so callers refetch the groups.
+ * @param tagId The competency (tag) the group belongs to.
+ * @param groupId The group to delete.
+ */
+export async function deleteCompetencyCriteriaGroup(tagId: number, groupId: number): Promise<void> {
+  await getAuthenticatedHttpClient().delete(apiUrls.competencyCriteriaGroup(tagId, groupId));
+}
+
+/**
+ * Delete one criterion (`#710`). A group this empties no longer appears in the
+ * criteria-groups GET (it may be archived), cascading up through its ancestors,
+ * so callers re-read the groups.
+ * @param tagId The competency (tag) the criterion belongs to.
+ * @param criterionId The criterion to delete.
+ */
+export async function deleteCompetencyCriterion(tagId: number, criterionId: number): Promise<void> {
+  await getAuthenticatedHttpClient().delete(apiUrls.deleteCompetencyCriterion(tagId, criterionId));
+}
+
+/**
+ * Batch-update a rule box's score threshold, across every criterion that
+ * currently shares it (`#759`). Always sends explicit override values,
+ * never a shared rule-profile reference - the backend reassigns a
+ * criterion back to a matching default profile itself when the submitted
+ * value matches it. Atomic; a `criterionIds` entry outside the target
+ * group, or nonexistent, rejects the whole request and changes nothing.
+ * @param groupId The bottom-tier group the batched criteria belong to.
+ * @param criterionIds Every criterion currently in the rule box being edited.
+ * @param ruleType The rule box's own rule type, pinned unchanged - only the
+ * numeric value is user-editable (`#794`'s own scope).
+ * @param rulePayload The new score threshold, applied to every listed criterion.
+ * @returns The updated criteria as actually persisted.
+ */
+export async function updateCompetencyCriteriaRule(
+  groupId: number,
+  criterionIds: number[],
+  ruleType: string,
+  rulePayload: GradeRulePayload,
+): Promise<CompetencyCriterion[]> {
+  const payload: UpdateCompetencyCriteriaRulePayload = {
+    criterion_ids: criterionIds,
+    rule_type_override: ruleType,
+    rule_payload_override: rulePayload,
+  };
+  const { data } = await getAuthenticatedHttpClient().patch(apiUrls.updateCompetencyCriteriaRule(groupId), payload);
+  return camelCaseObject(data);
+}

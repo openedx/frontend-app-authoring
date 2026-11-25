@@ -110,6 +110,18 @@ describe('VisibilitySection component', () => {
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
   });
 
+  it('shows staff only for a gated subsection with an explicit staff lock', async () => {
+    // The backend reports a prerequisite-gated subsection as "gated" even when it is staff locked.
+    mockUseCourseItemData.mockReturnValue({
+      data: { visibilityState: VisibilityTypes.GATED, hasExplicitStaffLock: true, hideAfterDue: false },
+    });
+    renderWithWrapper(<VisibilitySection {...defaultProps} />);
+
+    expect(await screen.findByRole('button', { name: 'Staff Only' })).toHaveClass('btn-primary');
+    expect(screen.getByRole('button', { name: 'Student Visible' })).toHaveClass('btn-outline-primary');
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+  });
+
   it('disables both visibility buttons when the user cannot edit course content', async () => {
     validateUserPermissionsMock.mockResolvedValue({
       canEditCourseContent: false,

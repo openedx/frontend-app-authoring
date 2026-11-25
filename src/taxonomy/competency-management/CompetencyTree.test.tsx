@@ -1,4 +1,5 @@
 import {
+  act,
   fireEvent,
   initializeMocks,
   render,
@@ -7,7 +8,7 @@ import {
 } from '@src/testUtils';
 import { apiUrls } from '@src/taxonomy/data/api';
 import { TAXONOMY_MAX_DEPTH } from '@src/taxonomy/taxonomy-detail/constants';
-import CompetencyTree from './CompetencyTree';
+import CompetencyTree, { type CompetencyTreeNode } from './CompetencyTree';
 
 let axiosMock;
 
@@ -80,9 +81,38 @@ const buildDuplicateValueResponse = () => ({
   ],
 });
 
+const longName =
+  'Demonstrate the ability to analyze and communicate complex quantitative findings to non-technical stakeholders';
+const longExternalId = 'COMPETENCY-FRAMEWORK-2024-QUANTITATIVE-REASONING-0042';
+
+const buildLongTextResponse = () => ({
+  ...nestedTagsResponse,
+  count: 1,
+  results: [{
+    ...tagDefaults,
+    id: 20,
+    value: longName,
+    external_id: longExternalId,
+  }],
+});
+
 const taxonomyName = 'Test Taxonomy';
 
-const renderTree = () => render(<CompetencyTree taxonomyId={taxonomyId} taxonomyName={taxonomyName} />);
+const renderTree = (extraProps: {
+  selectedCompetencyId?: string | null;
+  onSelectCompetency?: (node: CompetencyTreeNode) => void;
+} = {}) =>
+  render(
+    <CompetencyTree taxonomyId={taxonomyId} taxonomyName={taxonomyName} {...extraProps} />,
+  );
+
+// jsdom treats :focus-visible as :focus, so simulate pointer-initiated focus explicitly.
+const mockPointerFocus = () => {
+  const originalMatches = Element.prototype.matches;
+  jest.spyOn(Element.prototype, 'matches').mockImplementation(function matches(this: Element, selector: string) {
+    return selector === ':focus-visible' ? false : originalMatches.call(this, selector);
+  });
+};
 
 describe('<CompetencyTree />', () => {
   beforeEach(() => {
@@ -238,5 +268,258 @@ describe('<CompetencyTree />', () => {
 
     expect(await screen.findByTestId('connectionErrorAlert')).toBeInTheDocument();
     expect(screen.queryByText('Dup Tag')).not.toBeInTheDocument();
+  });
+
+  it('selects a leaf row on click, calling onSelectCompetency with its own node data, then reflects the selection as aria-selected once the parent feeds the id back in', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    const onSelectCompetency = jest.fn();
+    const { rerender } = renderTree({ onSelectCompetency });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    const leafItem = (await screen.findByText('Leaf A1a')).closest('li') as HTMLElement;
+
+    expect(leafItem).toHaveAttribute('role', 'treeitem');
+    expect(leafItem).toHaveAttribute('aria-selected', 'false');
+    expect(leafItem.querySelector('.competency-row')).not.toHaveAttribute('role');
+
+    fireEvent.click(leafItem);
+
+    // Checked against the fields this feature cares about (id/value/externalId),
+    // not the full raw TagData shape (which also carries API-internal fields
+    // like depth/parentValue/childCount unrelated to selection).
+    expect(onSelectCompetency).toHaveBeenCalledTimes(1);
+    expect(onSelectCompetency).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 3, value: 'Leaf A1a', externalId: 'EXT-003' }),
+    );
+    // The leaf sits inside Group A1's (and Root A's) own `<li>` envelope, so
+    // without `stopPropagation` the click would bubble up and select the
+    // ancestor groups too.
+    expect(onSelectCompetency).not.toHaveBeenCalledWith(expect.objectContaining({ id: 2 }));
+
+    // `CompetencyTree` is a controlled component for selection: it has no
+    // selection state of its own, it only reports the click via
+    // `onSelectCompetency` and renders whatever `selectedCompetencyId` it's
+    // given. Simulate the parent feeding the clicked node's id back in.
+    rerender(
+      <CompetencyTree
+        taxonomyId={taxonomyId}
+        taxonomyName={taxonomyName}
+        selectedCompetencyId="3"
+        onSelectCompetency={onSelectCompetency}
+      />,
+    );
+    expect(leafItem).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('selects a group row on click, and its own disclosure icon only toggles expand/collapse without also selecting it', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    const onSelectCompetency = jest.fn();
+    renderTree({ onSelectCompetency });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    const groupItem = (await screen.findByText('Group A1')).closest('li') as HTMLElement;
+    const groupRow = groupItem.querySelector('.competency-row') as HTMLElement;
+
+    // A group now gets the same selection semantics a leaf already has -
+    // `tabIndex="0"` marks it focusable/selectable, and `role="treeitem"`
+    // (not `role="button"`, which combined with the nested disclosure
+    // `<button>` below used to trip axe's `nested-interactive` rule - see
+    // `CompetencyTreeItem.tsx`).
+    expect(groupItem).toHaveAttribute('tabIndex', '0');
+    expect(groupItem).toHaveAttribute('role', 'treeitem');
+
+    // The group's own nested children live inside that same treeitem, so its
+    // whole envelope - not just the header strip - is the hover/click target.
+    expect(within(groupItem).getByText('Leaf A1a')).toBeInTheDocument();
+
+    fireEvent.click(groupItem);
+    expect(onSelectCompetency).toHaveBeenCalledTimes(1);
+    expect(onSelectCompetency).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 2, value: 'Group A1', externalId: null }),
+    );
+    onSelectCompetency.mockClear();
+
+    // The node's own disclosure icon (distinct from the body clicked above)
+    // still only toggles expand/collapse - its click must not also bubble up
+    // and fire the node's own selection handler.
+    const collapseIcon = within(groupRow).getByRole('button', { name: 'Collapse' });
+    fireEvent.click(collapseIcon);
+    expect(onSelectCompetency).not.toHaveBeenCalled();
+    expect(screen.queryByText('Leaf A1a')).not.toBeInTheDocument();
+  });
+
+  it('activates a disclosure icon via keyboard without also selecting the enclosing row', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    const onSelectCompetency = jest.fn();
+    renderTree({ onSelectCompetency });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    const groupRow = (await screen.findByText('Group A1')).closest('.competency-row') as HTMLElement;
+    const collapseIcon = within(groupRow).getByRole('button', { name: 'Collapse' });
+
+    // Pressing Enter/Space while the disclosure icon itself has focus fires a
+    // keydown that bubbles up to the enclosing row's own `onKeyDown`
+    // (`CompetencyTreeItem`'s `handleKeyDown`), which treats any Enter/Space
+    // it sees as a selection, calling `preventDefault` in the process -
+    // without the icon's own keydown handler stopping that bubbling first,
+    // this cancels the icon's native Enter/Space-activates-the-button
+    // behavior before it can fire, so toggling a row's disclosure via
+    // keyboard silently selects the row instead of expanding/collapsing it
+    // (see `ExpandCollapseIconButton`'s `handleKeyDown`).
+    fireEvent.keyDown(collapseIcon, { key: 'Enter' });
+    expect(onSelectCompetency).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(collapseIcon, { key: ' ' });
+    expect(onSelectCompetency).not.toHaveBeenCalled();
+  });
+
+  it('activates leaf selection via keyboard, both Enter and Space', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    const onSelectCompetency = jest.fn();
+    renderTree({ onSelectCompetency });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    const leafItem = (await screen.findByText('Leaf A1a')).closest('li') as HTMLElement;
+
+    fireEvent.keyDown(leafItem, { key: 'Enter' });
+    expect(onSelectCompetency).toHaveBeenCalledTimes(1);
+
+    fireEvent.keyDown(leafItem, { key: ' ' });
+    expect(onSelectCompetency).toHaveBeenCalledTimes(2);
+  });
+
+  it('marks a group row aria-selected when selectedCompetencyId is set to that group\'s own id', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    // Group A1's own id (see `nestedTagsResponse`) is 2.
+    renderTree({ selectedCompetencyId: '2', onSelectCompetency: jest.fn() });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    const groupItem = (await screen.findByText('Group A1')).closest('li') as HTMLElement;
+
+    expect(groupItem).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('names each treeitem after its own row rather than its whole subtree', async () => {
+    axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+    renderTree({ onSelectCompetency: jest.fn() });
+    await screen.findByText(taxonomyName);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+    await screen.findByText('Leaf A1a');
+
+    // A group's nested `<ul role="group">` lives inside the group's own
+    // `<li role="treeitem">`, so with no explicit name the treeitem's
+    // accessible name would be computed from every descendant's text:
+    // "Root A Competency ID: EXT-001 Group A1 Leaf A1a Competency ID: EXT-003".
+    // `aria-labelledby` points it at its own row instead - label first, then
+    // the visually-hidden Competency ID so that still gets announced. These
+    // name queries are exact, so a leaked descendant would fail them.
+    expect(screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' }))
+      .toBe(screen.getByText('Root A').closest('li'));
+    expect(screen.getByRole('treeitem', { name: 'Leaf A1a Competency ID: EXT-003' }))
+      .toBe(screen.getByText('Leaf A1a').closest('li'));
+
+    // Group A1 has no Competency ID (`externalId: null`), so its name is just
+    // its label - no dangling reference to an id that was never rendered.
+    expect(screen.getByRole('treeitem', { name: 'Group A1' }))
+      .toBe(screen.getByText('Group A1').closest('li'));
+  });
+
+  describe('truncation tooltip', () => {
+    // jsdom has no layout, so every element reports the same widths.
+    const stubWidths = (scrollWidth: number, clientWidth: number) => {
+      jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockReturnValue(scrollWidth);
+      jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(clientWidth);
+    };
+
+    // Only the Competency ID badge overflows; the label fits.
+    const stubOnlyBadgeTruncated = () => {
+      jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockImplementation(function scrollWidth(this: Element) {
+        return this.classList.contains('competency-row__badge') ? 200 : 100;
+      });
+      jest.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(100);
+    };
+
+    const advance = (ms: number) =>
+      act(() => {
+        jest.advanceTimersByTime(ms);
+      });
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+      jest.useRealTimers();
+    });
+
+    const renderExpandedTree = async () => {
+      axiosMock.onGet(tagListUrl).reply(200, nestedTagsResponse);
+      renderTree({ onSelectCompetency: jest.fn() });
+      await screen.findByText(taxonomyName);
+      fireEvent.click(screen.getByRole('button', { name: 'Expand All' }));
+      await screen.findByText('Leaf A1a');
+    };
+
+    const rowOf = (name: string) => screen.getByText(name).closest('.competency-row') as HTMLElement;
+
+    it('shows the complete name and Competency ID in a tooltip on hover of a truncated row', async () => {
+      axiosMock.onGet(tagListUrl).reply(200, buildLongTextResponse());
+      renderTree({ onSelectCompetency: jest.fn() });
+      await screen.findByText(longName);
+      stubWidths(200, 100);
+
+      fireEvent.mouseEnter(rowOf(longName));
+      advance(300);
+
+      const tooltip = await screen.findByRole('tooltip');
+      expect(within(tooltip).getByText(longName, { exact: true })).toBeInTheDocument();
+      expect(within(tooltip).getByText(`Competency ID: ${longExternalId}`, { exact: true })).toBeInTheDocument();
+    });
+
+    it('shows the tooltip when only the Competency ID badge is truncated', async () => {
+      axiosMock.onGet(tagListUrl).reply(200, buildLongTextResponse());
+      renderTree({ onSelectCompetency: jest.fn() });
+      await screen.findByText(longName);
+      stubOnlyBadgeTruncated();
+
+      act(() => screen.getByRole('treeitem', { name: `${longName} Competency ID: ${longExternalId}` }).focus());
+
+      expect(await screen.findByRole('tooltip')).toHaveTextContent(longName);
+    });
+
+    it('does not show an ancestor group\'s tooltip when a nested treeitem gets focus', async () => {
+      await renderExpandedTree();
+      stubWidths(200, 100);
+
+      act(() => screen.getByRole('treeitem', { name: 'Leaf A1a Competency ID: EXT-003' }).focus());
+
+      const tooltips = await screen.findAllByRole('tooltip');
+      expect(tooltips).toHaveLength(1);
+      expect(tooltips[0]).toHaveTextContent('Leaf A1a');
+    });
+
+    it('does not show the tooltip when a truncated row gets focus that is not focus-visible', async () => {
+      await renderExpandedTree();
+      stubWidths(200, 100);
+      mockPointerFocus();
+
+      act(() => screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' }).focus());
+      advance(400);
+
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('shows no tooltip for a row that is not truncated', async () => {
+      await renderExpandedTree();
+      stubWidths(100, 100);
+
+      fireEvent.mouseEnter(rowOf('Root A'));
+      act(() => screen.getByRole('treeitem', { name: 'Root A Competency ID: EXT-001' }).focus());
+      // Past the hover show delay, so a tooltip that was going to open has.
+      advance(400);
+
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
   });
 });

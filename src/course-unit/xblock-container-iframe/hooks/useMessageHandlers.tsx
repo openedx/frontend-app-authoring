@@ -2,6 +2,9 @@ import { useMemo } from 'react';
 import { debounce } from 'lodash';
 
 import { useClipboard } from '@src/generic/clipboard';
+import { getBlockType } from '@src/generic/key-utils';
+import { useWaffleFlags } from '@src/data/apiHooks';
+import { hasBuiltInEditor } from '@src/editors/hasBuiltInEditor';
 import { messageTypes } from '@src/course-unit/constants';
 import { handleResponseErrors } from '@src/generic/saving-error-alert';
 import { updateSavingStatus } from '@src/course-unit/data/slice';
@@ -36,6 +39,7 @@ export const useMessageHandlers = ({
   handleXBlockSelected,
 }: UseMessageHandlersTypes): MessageHandlersTypes => {
   const { copyToClipboard } = useClipboard();
+  const waffleFlags = useWaffleFlags(courseId);
 
   return useMemo(() => ({
     [messageTypes.copyXBlock]: ({ usageId }) => copyToClipboard(usageId),
@@ -48,7 +52,18 @@ export const useMessageHandlers = ({
     [messageTypes.toggleCourseXBlockDropdown]: ({
       courseXBlockDropdownHeight,
     }) => setIframeOffset(courseXBlockDropdownHeight),
-    [messageTypes.editXBlock]: ({ id }) => handleShowLegacyEditXBlockModal(id),
+    // Studio sends `newXBlockEditor` only for the block types it knows this app
+    // edits; every other Edit click arrives here as a legacy-modal request.
+    // This app knows its own editors, so a block it can edit opens here without
+    // Studio having to be told about each new block type.
+    [messageTypes.editXBlock]: ({ id }) => {
+      const blockType = getBlockType(id, 'empty');
+      if (blockType && hasBuiltInEditor(blockType, waffleFlags)) {
+        handleEditXBlock(blockType, id);
+        return;
+      }
+      handleShowLegacyEditXBlockModal(id);
+    },
     [messageTypes.closeXBlockEditorModal]: handleCloseLegacyEditorXBlockModal,
     [messageTypes.saveEditedXBlockData]: handleSaveEditedXBlockData,
     [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),
@@ -77,5 +92,8 @@ export const useMessageHandlers = ({
     handleScrollToXBlock,
     copyToClipboard,
     handleXBlockSelected,
+    handleEditXBlock,
+    handleShowLegacyEditXBlockModal,
+    waffleFlags,
   ]);
 };

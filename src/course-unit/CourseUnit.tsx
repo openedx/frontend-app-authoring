@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import type { MessageDescriptor } from 'react-intl';
 import {
   Alert,
@@ -22,7 +22,10 @@ import {
   QuestionAnswer,
 } from '@openedx/paragon/icons';
 import { useCourseAuthoringContext } from '@src/CourseAuthoringContext';
+import { CONTENT_LIBRARY_PERMISSIONS } from '@src/authz/constants';
+import { useUserPermissions } from '@src/authz/data/apiHooks';
 import DraftIcon from '@src/generic/DraftIcon';
+import { getLibraryId } from '@src/generic/key-utils';
 import { CourseAuthoringUnitSidebarSlot } from '../plugin-slots/CourseAuthoringUnitSidebarSlot';
 
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -217,9 +220,15 @@ const CourseUnit = () => {
 
   const readOnly = !!courseUnit.readOnly;
 
-  useEffect(() => {
-    document.title = getPageHeadTitle('', unitTitle);
-  }, [unitTitle]);
+  const upstreamRef: string | undefined = courseUnit.upstreamInfo?.upstreamRef;
+  const upstreamLibraryId = upstreamRef ? getLibraryId(upstreamRef) : undefined;
+  const { data: libraryPermissions } = useUserPermissions({
+    canViewLibrary: {
+      action: CONTENT_LIBRARY_PERMISSIONS.VIEW_LIBRARY,
+      scope: upstreamLibraryId,
+    },
+  }, !!upstreamLibraryId);
+  const canViewUpstreamLibrary = !!libraryPermissions?.canViewLibrary;
 
   useScrollToLastPosition();
 
@@ -238,6 +247,9 @@ const CourseUnit = () => {
   return (
     <UnitSidebarProvider readOnly={readOnly}>
       <UnitSidebarPagesProvider>
+        <Helmet>
+          <title>{getPageHeadTitle('', unitTitle)}</title>
+        </Helmet>
         <Container fluid className="course-unit px-4">
           <section className="course-unit-container mb-4 mt-5">
             <TransitionReplace>
@@ -281,11 +293,13 @@ const CourseUnit = () => {
                 description={intl.formatMessage(
                   messages.alertLibraryUnitReadOnlyText,
                   {
-                    link: (
-                      <Alert.Link href={courseUnit.upstreamInfo.upstreamLink}>
-                        <FormattedMessage {...messages.alertLibraryUnitReadOnlyLinkText} />
-                      </Alert.Link>
-                    ),
+                    link: canViewUpstreamLibrary ?
+                      (
+                        <Alert.Link href={courseUnit.upstreamInfo.upstreamLink}>
+                          <FormattedMessage {...messages.alertLibraryUnitReadOnlyLinkText} />
+                        </Alert.Link>
+                      ) :
+                      <FormattedMessage {...messages.alertLibraryUnitReadOnlyLinkText} />,
                     learnMore: (
                       <Alert.Link href={urls['syncLibraryUpdates']}>
                         <FormattedMessage {...messages.alertLibraryUnitReadOnlyLearnMoreText} />
@@ -334,7 +348,7 @@ const CourseUnit = () => {
                 showPasteUnit={showPasteUnit}
               />
             )}
-            <div className="d-flex align-items-start">
+            <div className="sidebar-layout">
               <div className="flex-fill">
                 {currentlyVisibleToStudents && (
                   <AlertMessage

@@ -2,6 +2,11 @@ import { ProblemTypeKeys, ShowAnswerTypesKeys } from '../../../../data/constants
 import * as hooks from './hooks';
 import { MockUseState } from '../../../../testUtils';
 
+/** Mock the tinymce editor registry with the given `{ [editorId]: editorMock }` entries */
+const mockEditors = (editors) => {
+  window.tinymce.get = jest.fn(() => Object.entries(editors).map(([id, editor]) => ({ id, ...editor })));
+};
+
 const mockRawMarkdown = 'Raw Markdown';
 const mockMarkdownToXML = '<problem>Raw Markdown</problem>';
 const mockRawOLX = '<problem>rawOLX</problem>';
@@ -106,37 +111,37 @@ describe('EditProblemView hooks parseState', () => {
   describe('fetchEditorContent', () => {
     const getContent = () => '<p>testString</p>';
     test('returns answers', () => {
-      window.tinymce.editors = { 'answer-A': { getContent } };
+      mockEditors({ 'answer-A': { getContent } });
       const editorObject = hooks.fetchEditorContent({ format: '' });
       expect(editorObject).toEqual({ answers: { A: '<p>testString</p>' }, hints: [] });
     });
     test('returns hints', () => {
-      window.tinymce.editors = { 'hint-0': { getContent } };
+      mockEditors({ 'hint-0': { getContent } });
       const editorObject = hooks.fetchEditorContent({ format: '' });
       expect(editorObject).toEqual({ hints: ['<p>testString</p>'] });
     });
     test('returns question', () => {
-      window.tinymce.editors = { question: { getContent } };
+      mockEditors({ question: { getContent } });
       const editorObject = hooks.fetchEditorContent({ format: '' });
       expect(editorObject).toEqual({ question: '<p>testString</p>', hints: [] });
     });
     test('returns selectedFeedback', () => {
-      window.tinymce.editors = { 'selectedFeedback-A': { getContent } };
+      mockEditors({ 'selectedFeedback-A': { getContent } });
       const editorObject = hooks.fetchEditorContent({ format: '' });
       expect(editorObject).toEqual({ selectedFeedback: { A: '<p>testString</p>' }, hints: [] });
     });
     test('returns unselectedFeedback', () => {
-      window.tinymce.editors = { 'unselectedFeedback-A': { getContent } };
+      mockEditors({ 'unselectedFeedback-A': { getContent } });
       const editorObject = hooks.fetchEditorContent({ format: '' });
       expect(editorObject).toEqual({ unselectedFeedback: { A: '<p>testString</p>' }, hints: [] });
     });
     test('returns groupFeedback', () => {
-      window.tinymce.editors = { 'groupFeedback-0': { getContent } };
+      mockEditors({ 'groupFeedback-0': { getContent } });
       const editorObject = hooks.fetchEditorContent({ format: '' });
       expect(editorObject).toEqual({ groupFeedback: { 0: '<p>testString</p>' }, hints: [] });
     });
     test('returns groupFeedback', () => {
-      window.tinymce.editors = {};
+      mockEditors({});
       const editorObject = hooks.fetchEditorContent({ format: '' });
       expect(editorObject).toEqual({ hints: [] });
     });
@@ -219,10 +224,10 @@ describe('EditProblemView hooks parseState', () => {
         jest.clearAllMocks();
       });
       it('should call openSaveWarningModal for single select problem with empty title', () => {
-        window.tinymce.editors = {
+        mockEditors({
           'answer-A': { getContent: () => '' },
           'answer-B': { getContent: () => 'sOmevALUe' },
-        };
+        });
         const expected = hooks.checkForNoAnswers({
           openSaveWarningModal,
           problem: {
@@ -234,7 +239,7 @@ describe('EditProblemView hooks parseState', () => {
         expect(expected).toEqual(true);
       });
       it('returns true for single select with title but no correct answer', () => {
-        window.tinymce.editors = { 'answer-A': { getContent: () => 'sOmevALUe' } };
+        mockEditors({ 'answer-A': { getContent: () => 'sOmevALUe' } });
         const expected = hooks.checkForNoAnswers({
           openSaveWarningModal,
           problem: {
@@ -246,7 +251,7 @@ describe('EditProblemView hooks parseState', () => {
         expect(expected).toEqual(true);
       });
       it('returns true for single select with title and correct answer', () => {
-        window.tinymce.editors = { 'answer-A': { getContent: () => 'sOmevALUe' } };
+        mockEditors({ 'answer-A': { getContent: () => 'sOmevALUe' } });
         const expected = hooks.checkForNoAnswers({
           openSaveWarningModal,
           problem: {
@@ -417,13 +422,13 @@ describe('checkIfEditorsDirty', () => {
     test('should return false if none of editors are dirty', () => {
       windowSpy.mockImplementation(() => ({
         tinymce: {
-          editors: {
-            some_id: { isNotDirty: true },
-            some_id2: { isNotDirty: true },
-            some_id3: { isNotDirty: true },
-            some_id4: { isNotDirty: true },
-            some_id5: { isNotDirty: true },
-          },
+          get: () => [
+            { id: 'some_id', isDirty: () => false },
+            { id: 'some_id2', isDirty: () => false },
+            { id: 'some_id3', isDirty: () => false },
+            { id: 'some_id4', isDirty: () => false },
+            { id: 'some_id5', isDirty: () => false },
+          ],
         },
       }));
       expect(hooks.checkIfEditorsDirty()).toEqual(false);
@@ -431,13 +436,13 @@ describe('checkIfEditorsDirty', () => {
     test('should return true if any editor is dirty', () => {
       windowSpy.mockImplementation(() => ({
         tinymce: {
-          editors: {
-            some_id: { isNotDirty: true },
-            some_id2: { isNotDirty: true },
-            some_id3: { isNotDirty: false },
-            some_id4: { isNotDirty: true },
-            some_id5: { isNotDirty: false },
-          },
+          get: () => [
+            { id: 'some_id', isDirty: () => false },
+            { id: 'some_id2', isDirty: () => false },
+            { id: 'some_id3', isDirty: () => true },
+            { id: 'some_id4', isDirty: () => false },
+            { id: 'some_id5', isDirty: () => true },
+          ],
         },
       }));
       expect(hooks.checkIfEditorsDirty()).toEqual(true);

@@ -28,7 +28,7 @@ const mockConfigureSubsectionMutateAsync = jest.fn();
 const mockConfigureUnitMutateAsync = jest.fn();
 
 jest.mock('../data', () => ({
-  useCourseItemData: jest.fn(() => ({ data: undefined })),
+  useCourseItemData: () => ({ data: undefined }),
   useConfigureSection: () => ({ mutateAsync: mockConfigureSectionMutateAsync }),
   useConfigureSubsection: () => ({ mutateAsync: mockConfigureSubsectionMutateAsync }),
   useConfigureUnit: () => ({ mutateAsync: mockConfigureUnitMutateAsync }),
@@ -51,6 +51,45 @@ describe('useConfigureDialog', () => {
   });
 
   describe('mutation routing', () => {
+    it('routes vertical: omits type when isVisibleToStaffOnly is false (group_access draft save)', async () => {
+      const { result } = renderHook(() => useConfigureDialog(courseId));
+      act(() => {
+        result.current.handleOpenConfigureModal(verticalSelection as any);
+      });
+      await act(async () => {
+        await result.current.handleConfigureItemSubmitWrapper({
+          isVisibleToStaffOnly: false,
+          type: 'republish',
+          groupAccess: { 1: [2, 3] },
+          discussionEnabled: false,
+        });
+      });
+      expect(mockConfigureUnitMutateAsync).toHaveBeenCalledTimes(1);
+      expect(mockConfigureUnitMutateAsync).toHaveBeenCalledWith(expect.objectContaining({
+        type: undefined,
+        groupAccess: { 1: [2, 3] },
+      }));
+    });
+
+    it('routes vertical: uses republish when isVisibleToStaffOnly is true', async () => {
+      const { result } = renderHook(() => useConfigureDialog(courseId));
+      act(() => {
+        result.current.handleOpenConfigureModal(verticalSelection as any);
+      });
+      await act(async () => {
+        await result.current.handleConfigureItemSubmitWrapper({
+          isVisibleToStaffOnly: true,
+          type: 'republish',
+          groupAccess: {},
+          discussionEnabled: false,
+        });
+      });
+      expect(mockConfigureUnitMutateAsync).toHaveBeenCalledTimes(1);
+      expect(mockConfigureUnitMutateAsync).toHaveBeenCalledWith(expect.objectContaining({
+        type: 'republish',
+      }));
+    });
+
     it('routes chapter to configureSectionMutation with correct payload', async () => {
       const { result } = renderHook(() => useConfigureDialog(courseId));
       act(() => {
@@ -112,7 +151,7 @@ describe('useConfigureDialog', () => {
         unitId: verticalSelection.currentId,
         sectionId: verticalSelection.sectionId,
         isVisibleToStaffOnly: false,
-        type: 'make_public',
+        type: undefined,
         groupAccess: null,
         discussionEnabled: false,
       });

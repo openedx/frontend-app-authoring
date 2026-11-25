@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, initializeMocks } from '@src/testUtils';
 import ExplanationWidget from '.';
 
-jest.mock('../../../../../data/redux', () => ({
+jest.mock('@src/editors/data/redux', () => ({
   __esModule: true,
   default: jest.fn(),
   selectors: {
@@ -23,15 +23,15 @@ jest.mock('../../../../../data/redux', () => ({
   },
 }));
 
-jest.mock('../../../../../sharedComponents/TinyMceWidget/hooks', () => ({
-  ...jest.requireActual('../../../../../sharedComponents/TinyMceWidget/hooks'),
-  prepareEditorRef: jest.fn(() => ({
+jest.mock('@src/editors/sharedComponents/TinyMceWidget/hooks', () => ({
+  ...jest.requireActual('@src/editors/sharedComponents/TinyMceWidget/hooks'),
+  useEditorRef: jest.fn(() => ({
     refReady: true,
-    setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
+    setEditorRef: jest.fn().mockName('useEditorRef.setEditorRef'),
   })),
 }));
 
-jest.mock('../../../../../sharedComponents/TinyMceWidget', () => ({
+jest.mock('@src/editors/sharedComponents/TinyMceWidget', () => ({
   __esModule: true,
   default: () => <div>TinyMceWidget</div>,
 }));

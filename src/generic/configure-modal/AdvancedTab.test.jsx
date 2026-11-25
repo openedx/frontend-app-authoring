@@ -710,4 +710,68 @@ describe('<AdvancedTab /> with enableTimedExams prop', () => {
       expect(mockSetFieldValue).toHaveBeenCalledWith('isPracticeExam', false);
     });
   });
+
+  describe('readOnly prop', () => {
+    const mockSetFieldValue = jest.fn();
+
+    beforeEach(() => {
+      mockSetFieldValue.mockClear();
+    });
+
+    it('disables the radio exam options when readOnly is true', () => {
+      renderComponent({ readOnly: true, enableProctoredExams: true });
+
+      expect(screen.getByLabelText('None')).toBeDisabled();
+      expect(screen.getByLabelText('Timed')).toBeDisabled();
+      expect(screen.getByLabelText('Proctored')).toBeDisabled();
+    });
+
+    it('does not fire setFieldValue when a disabled radio option is clicked', async () => {
+      const user = userEvent.setup();
+      renderComponent({ readOnly: true, setFieldValue: mockSetFieldValue });
+
+      await user.click(screen.getByLabelText('Timed'));
+
+      expect(mockSetFieldValue).not.toHaveBeenCalled();
+    });
+
+    it('disables the button-group exam options when readOnly is true', () => {
+      renderComponent({ readOnly: true, useBtnGroup: true, enableProctoredExams: true });
+
+      expect(screen.getByRole('button', { name: 'None' })).toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Timed' })).toBeDisabled();
+    });
+
+    it('disables the time limit input when readOnly is true', () => {
+      renderComponent({
+        readOnly: true,
+        values: { ...defaultProps.values, isTimeLimited: true },
+      });
+
+      expect(screen.getByDisplayValue('00:30')).toBeDisabled();
+    });
+
+    it('leaves exam options enabled when readOnly is false', () => {
+      renderComponent({ readOnly: false });
+
+      expect(screen.getByLabelText('None')).not.toBeDisabled();
+      expect(screen.getByLabelText('Timed')).not.toBeDisabled();
+    });
+
+    it('defaults readOnly to false (exam options enabled) when the prop is omitted', () => {
+      const propsWithoutReadOnly = { ...defaultProps };
+      delete propsWithoutReadOnly.readOnly;
+
+      render(
+        <IntlProvider locale="en">
+          <Formik initialValues={defaultProps.values} onSubmit={() => {}}>
+            <AdvancedTab {...propsWithoutReadOnly} />
+          </Formik>
+        </IntlProvider>,
+      );
+
+      expect(screen.getByLabelText('None')).not.toBeDisabled();
+      expect(screen.getByLabelText('Timed')).not.toBeDisabled();
+    });
+  });
 });

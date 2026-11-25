@@ -65,6 +65,7 @@ const ConfigureModal = ({
     format,
     userPartitionInfo,
     ancestorHasStaffLock,
+    hasExplicitStaffLock,
     isPrereq,
     prereqs,
     prereq,
@@ -82,6 +83,8 @@ const ConfigureModal = ({
     discussionEnabled,
   } = currentItemData;
   const category = _category ?? '';
+  // A staff-locked subsection with a prerequisite reports visibilityState "gated", not "staff_only".
+  const isVisibleToStaffOnly = visibilityState === VisibilityTypes.STAFF_ONLY || !!hasExplicitStaffLock;
 
   const getSelectedGroups = () => {
     if ((userPartitionInfo?.selectedPartitionIndex || 0) >= 0) {
@@ -103,7 +106,7 @@ const ConfigureModal = ({
 
   const initialValues = {
     releaseDate: sectionStartDate,
-    isVisibleToStaffOnly: visibilityState === VisibilityTypes.STAFF_ONLY,
+    isVisibleToStaffOnly,
     graderType: format == null ? 'notgraded' : format,
     dueDate: due == null ? '' : due,
     isTimeLimited,
@@ -186,7 +189,7 @@ const ConfigureModal = ({
               setFieldValue={setFieldValue}
               category={category}
               isSubsection={false}
-              showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
+              showWarning={isVisibleToStaffOnly}
             />
           </Tab>
         </Tabs>
@@ -230,7 +233,7 @@ const ConfigureModal = ({
               setFieldValue={setFieldValue}
               category={category}
               isSubsection
-              showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
+              showWarning={isVisibleToStaffOnly}
               isSelfPaced={isSelfPaced}
             />
           </Tab>

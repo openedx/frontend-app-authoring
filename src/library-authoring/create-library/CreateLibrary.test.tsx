@@ -17,6 +17,7 @@ import { getContentLibraryV2CreateApiUrl } from './data/api';
 import { LibraryRestoreStatus } from './data/restoreConstants';
 import messages from './messages';
 
+const libraryIdTakenReply: [number, object] = [400, { slug: 'A library with that ID already exists.' }];
 const mockNavigate = jest.fn();
 let axiosMock: MockAdapter;
 
@@ -170,36 +171,146 @@ describe('<CreateLibrary />', () => {
     });
   });
 
-  test('show api error', async () => {
-    const user = userEvent.setup();
-    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
-    axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(400, {
-      field: 'Error message',
-    });
-    render(<CreateLibrary />);
-
+  const fillForm = async (
+    user: ReturnType<typeof userEvent.setup>,
+    { org = 'org1', slug = 'test_library_slug' } = {},
+  ) => {
     const titleInput = await screen.findByRole('textbox', { name: /library name/i });
     await user.click(titleInput);
     await user.type(titleInput, 'Test Library Name');
 
     const orgInput = await screen.findByTestId('autosuggest-textbox-input');
     await user.click(orgInput);
-    await user.type(orgInput, 'org1');
+    await user.type(orgInput, org);
     await user.tab();
 
     const slugInput = await screen.findByRole('textbox', { name: /library id/i });
     await user.click(slugInput);
-    await user.type(slugInput, 'test_library_slug');
+    await user.type(slugInput, slug);
+    return { titleInput, orgInput, slugInput };
+  };
 
-    fireEvent.click(await screen.findByRole('button', { name: 'Create' }));
-    await waitFor(async () => {
-      expect(axiosMock.history.post.length).toBe(1);
-      expect(axiosMock.history.post[0].data).toBe(
-        '{"description":"","title":"Test Library Name","org":"org1","slug":"test_library_slug"}',
-      );
-      expect(mockNavigate).not.toHaveBeenCalled();
-      const errorMessage = 'Request failed with status code 400{ "field": "Error message" }';
-      expect(await screen.findByRole('alert')).toHaveTextContent(errorMessage);
+  test('shows a plain error message, without the raw response, when creation fails', async () => {
+    const user = userEvent.setup();
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+    axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(500, {
+      detail: 'Internal server error',
+    });
+    render(<CreateLibrary />);
+
+    await fillForm(user);
+    await user.click(await screen.findByRole('button', { name: 'Create' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(messages.createLibraryError.defaultMessage);
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(screen.queryByText(/status code/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Internal server error/)).not.toBeInTheDocument();
+    expect(screen.queryByText(messages.slugAlreadyExistsError.defaultMessage)).not.toBeInTheDocument();
+  });
+
+  test('shows a taken library ID under the Library ID field and recovers when the ID changes', async () => {
+    const user = userEvent.setup();
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+    axiosMock.onPost(getContentLibraryV2CreateApiUrl())
+      .replyOnce(...libraryIdTakenReply)
+      .onPost(getContentLibraryV2CreateApiUrl())
+      .reply(200, { id: 'library-id' });
+    render(<CreateLibrary />);
+
+    const { titleInput, orgInput, slugInput } = await fillForm(user, { slug: 'taken_slug' });
+    await user.click(await screen.findByRole('button', { name: 'Create' }));
+
+    const slugError = await screen.findByText(messages.slugAlreadyExistsError.defaultMessage);
+    // The message is the field's description, so screen readers announce it with the field.
+    expect(slugInput).toHaveAttribute('aria-describedby', slugError.closest('.pgn__form-control-description')?.id);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.queryByText(/status code/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/already exists\.$/)).not.toBeInTheDocument();
+    expect(titleInput).toHaveValue('Test Library Name');
+    expect(orgInput).toHaveValue('org1');
+    expect(slugInput).toHaveValue('taken_slug');
+    expect(mockNavigate).not.toHaveBeenCalled();
+
+    // The same org + ID is known to be taken, so submitting it again doesn't reach the server.
+    await user.click(await screen.findByRole('button', { name: 'Create' }));
+    expect(axiosMock.history.post.length).toBe(1);
+
+    await user.click(slugInput);
+    await user.type(slugInput, '2');
+    await user.tab();
+    await waitFor(() => {
+      expect(screen.queryByText(messages.slugAlreadyExistsError.defaultMessage)).not.toBeInTheDocument();
+    });
+
+    await user.click(await screen.findByRole('button', { name: 'Create' }));
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(2);
+      expect(JSON.parse(axiosMock.history.post[1].data)).toMatchObject({ org: 'org1', slug: 'taken_slug2' });
+      expect(mockNavigate).toHaveBeenCalledWith('/library/library-id');
+    });
+  });
+
+  test('does not flag an ID the user changed while the rejected request was in flight', async () => {
+    const user = userEvent.setup();
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+    let rejectRequest: () => void = () => {};
+    axiosMock.onPost(getContentLibraryV2CreateApiUrl()).replyOnce(() =>
+      new Promise((resolve) => {
+        rejectRequest = () => resolve(libraryIdTakenReply);
+      })
+    );
+    render(<CreateLibrary />);
+
+    const { slugInput } = await fillForm(user, { slug: 'taken_slug' });
+    await user.click(await screen.findByRole('button', { name: 'Create' }));
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+
+    await user.click(slugInput);
+    await user.type(slugInput, '2');
+    await user.tab();
+    rejectRequest();
+
+    expect(await screen.findByRole('button', { name: 'Create' })).toBeEnabled();
+    expect(screen.queryByText(messages.slugAlreadyExistsError.defaultMessage)).not.toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+
+    // Going back to the rejected ID shows the conflict without another request.
+    await user.clear(slugInput);
+    await user.type(slugInput, 'taken_slug');
+    await user.tab();
+    expect(await screen.findByText(messages.slugAlreadyExistsError.defaultMessage)).toBeInTheDocument();
+    expect(axiosMock.history.post.length).toBe(1);
+  });
+
+  test('allows the same library ID in another organization', async () => {
+    const user = userEvent.setup();
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, {
+      ...studioHomeMock,
+      allowedOrganizationsForLibraries: ['org1', 'org2'],
+    });
+    axiosMock.onPost(getContentLibraryV2CreateApiUrl())
+      .replyOnce(...libraryIdTakenReply)
+      .onPost(getContentLibraryV2CreateApiUrl())
+      .reply(200, { id: 'library-id' });
+    render(<CreateLibrary />);
+
+    const { orgInput } = await fillForm(user, { slug: 'taken_slug' });
+    await user.click(await screen.findByRole('button', { name: 'Create' }));
+    await screen.findByText(messages.slugAlreadyExistsError.defaultMessage);
+
+    await user.clear(orgInput);
+    await user.type(orgInput, 'org2');
+    await user.tab();
+    await waitFor(() => {
+      expect(screen.queryByText(messages.slugAlreadyExistsError.defaultMessage)).not.toBeInTheDocument();
+    });
+
+    await user.click(await screen.findByRole('button', { name: 'Create' }));
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(2);
+      expect(JSON.parse(axiosMock.history.post[1].data)).toMatchObject({ org: 'org2', slug: 'taken_slug' });
+      expect(mockNavigate).toHaveBeenCalledWith('/library/library-id');
     });
   });
 

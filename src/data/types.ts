@@ -208,6 +208,7 @@ type AccessManagedOptional = Partial<
     | 'format'
     | 'userPartitionInfo'
     | 'ancestorHasStaffLock'
+    | 'hasExplicitStaffLock'
     | 'isPrereq'
     | 'prereqs'
     | 'prereq'

@@ -4,6 +4,7 @@ import {
   screen,
   initializeMocks,
   fireEvent,
+  userEvent,
 } from '@src/testUtils';
 import { useDispatch } from 'react-redux';
 import LanguageSelector from './LanguageSelector';
@@ -92,10 +93,68 @@ describe('LanguageSelector', () => {
     render(<LanguageSelector index={1} language={lang1Code} />);
     fireEvent.click(screen.getByRole('button', { name: 'Languages' }));
     fireEvent.click(screen.getByText(lang2));
-    expect(thunkActions.video.updateTranscriptLanguage).toHaveBeenCalledWith({
-      newLanguageCode: lang2Code,
-      languageBeforeChange: lang1Code,
+    expect(mockDispatch).toHaveBeenCalledWith({
+      updateTranscriptLanguage: {
+        newLanguageCode: lang2Code,
+        languageBeforeChange: lang1Code,
+      },
     });
-    expect(mockDispatch).toHaveBeenCalled();
+  });
+
+  describe('on an unset transcript', () => {
+    const chooseLanguage = async (user, name) => {
+      await user.click(screen.getByRole('button', { name: 'Languages' }));
+      await user.click(screen.getByRole('button', { name }));
+    };
+
+    let pickerClick;
+    beforeEach(() => {
+      jest.spyOn(selectors.video, 'openLanguages').mockReturnValue([[lang2Code, lang2], [lang3Code, lang3]]);
+      pickerClick = jest.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(() => {});
+    });
+    afterEach(() => {
+      pickerClick.mockRestore();
+    });
+
+    test('choosing a language opens the file picker without changing the language', async () => {
+      const user = userEvent.setup();
+      render(<LanguageSelector index={1} language="" />);
+      await chooseLanguage(user, lang2);
+      expect(pickerClick).toHaveBeenCalledTimes(1);
+      expect(thunkActions.video.updateTranscriptLanguage).not.toHaveBeenCalled();
+    });
+
+    test('choosing the same language after cancelling the file picker opens it again', async () => {
+      const user = userEvent.setup();
+      render(<LanguageSelector index={1} language="" />);
+      await chooseLanguage(user, lang2);
+      // The author cancels the file picker: no file is selected, so no change event fires.
+      await chooseLanguage(user, lang2);
+      expect(pickerClick).toHaveBeenCalledTimes(2);
+    });
+
+    test('choosing the same language after cancelling the file picker does not change the language', async () => {
+      const user = userEvent.setup();
+      render(<LanguageSelector index={1} language="" />);
+      await chooseLanguage(user, lang2);
+      // The author cancels the file picker: no file is selected, so no change event fires.
+      await chooseLanguage(user, lang2);
+      expect(thunkActions.video.updateTranscriptLanguage).not.toHaveBeenCalled();
+    });
+
+    test('a file picked after cancelling and choosing another language uploads under that language', async () => {
+      const user = userEvent.setup();
+      const { container } = render(<LanguageSelector index={1} language="" />);
+      await chooseLanguage(user, lang2);
+      // The author cancels the file picker and chooses a different language.
+      await chooseLanguage(user, lang3);
+      const file = new File(['1\n00:00:00,000 --> 00:00:01,000\nHi'], 'captions.srt', { type: 'text/plain' });
+      await user.upload(container.querySelector('input.upload[type="file"]'), file);
+      expect(thunkActions.video.uploadTranscript).toHaveBeenCalledWith({
+        file,
+        filename: 'captions.srt',
+        language: lang3Code,
+      });
+    });
   });
 });

@@ -42,7 +42,7 @@ interface SubProps extends Props {
 const GradingSection = ({ subsectionId, onChange }: SubProps) => {
   const intl = useIntl();
   const { data: itemData } = useCourseItemData(subsectionId);
-  const { courseId } = useCourseAuthoringContext();
+  const { courseId, canEditCourseContent } = useCourseAuthoringContext();
   const { data: courseDetails } = useCourseDetails(courseId);
 
   // `graded` follows the server, but allows a transient local override so the
@@ -81,12 +81,14 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
         <Button
           variant={graded ? 'outline-primary' : 'primary'}
           onClick={setUngraded}
+          disabled={!canEditCourseContent}
         >
           <FormattedMessage {...messages.subsectionGradingUngradedBtn} />
         </Button>
         <Button
           variant={graded ? 'primary' : 'outline-primary'}
           onClick={() => setGradedOverride(true)}
+          disabled={!canEditCourseContent}
         >
           <FormattedMessage {...messages.subsectionGradingGradedBtn} />
         </Button>
@@ -102,6 +104,7 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
               value={localState?.graderType}
               onChange={(e) => setLocalState((prev) => ({ ...prev, graderType: e.target.value }))}
               data-testid="grader-type-select"
+              disabled={!canEditCourseContent}
             >
               <option key="notgraded" value="notgraded">
                 {intl.formatMessage(messages.subsectionGradingDropdownPlaceholder)}
@@ -120,6 +123,7 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
               controlName="state-date"
               onChange={(val) => setLocalState((prev) => ({ ...prev, dueDate: val }))}
               data-testid="due-date-picker"
+              readonly={!canEditCourseContent}
             />
             <DatepickerControl
               type={DATEPICKER_TYPES.time}
@@ -127,6 +131,7 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
               label={intl.formatMessage(messages.subsectionGradingDueTimeLabel)}
               controlName="start-time"
               onChange={(val) => setLocalState((prev) => ({ ...prev, dueDate: val }))}
+              readonly={!canEditCourseContent}
             />
           </Stack>
         )}
@@ -137,6 +142,7 @@ const GradingSection = ({ subsectionId, onChange }: SubProps) => {
 const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps) => {
   const intl = useIntl();
   const { data: itemData } = useCourseItemData(subsectionId);
+  const { canEditCourseContent } = useCourseAuthoringContext();
 
   const serverState = useMemo<Partial<ConfigureSubsectionData>>(() => ({
     showCorrectness: itemData?.showCorrectness,
@@ -154,6 +160,7 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
         <Button
           variant={localState?.showCorrectness === 'always' ? 'primary' : 'outline-primary'}
           onClick={() => setLocalState({ showCorrectness: 'always' })}
+          disabled={!canEditCourseContent}
         >
           <FormattedMessage {...messages.subsectionAssessmentResultsShowBtn} />
         </Button>
@@ -164,6 +171,7 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
               setLocalState({ showCorrectness: 'never' });
             }
           }}
+          disabled={!canEditCourseContent}
         >
           <FormattedMessage {...messages.subsectionAssessmentResultsHideBtn} />
         </Button>
@@ -171,6 +179,7 @@ const AssessmentResultVisibilitySection = ({ subsectionId, onChange }: SubProps)
       <Form.Checkbox
         checked={localState?.showCorrectness === 'past_due'}
         className="mt-2"
+        disabled={!canEditCourseContent}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setLocalState({
             showCorrectness: e.target.checked ? 'past_due' : 'never',
@@ -189,6 +198,7 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
     enableTimedExams,
     enableProctoredExams,
   } = useCourseOutlineContext();
+  const { canEditCourseContent } = useCourseAuthoringContext();
   const serverState = useMemo<Partial<ConfigureSubsectionData>>(() => ({
     isProctoredExam: itemData?.isProctoredExam,
     isTimeLimited: itemData?.isTimeLimited,
@@ -231,6 +241,7 @@ const SpecialExamSection = ({ subsectionId, onChange }: SubProps) => {
         onlineProctoringRules={itemData?.onlineProctoringRules}
         hideTitle
         useBtnGroup
+        readOnly={!canEditCourseContent}
       />
     </SidebarSection>
   );

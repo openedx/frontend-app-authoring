@@ -289,7 +289,7 @@ export const StatusBar = ({
   }
 
   return (
-    <Stack direction="horizontal" gap={4}>
+    <Stack direction="horizontal" gap={4} className="flex-wrap">
       <CourseBadge startDate={courseReleaseDateObj} endDate={endDateObj} />
       <UnpublishedBadgeStatus courseId={courseId} />
       <CourseDates

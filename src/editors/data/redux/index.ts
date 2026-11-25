@@ -7,7 +7,6 @@ import * as app from './app';
 import * as requests from './requests';
 import * as video from './video';
 import * as problem from './problem';
-import * as game from './game';
 import type { RequestKeys, RequestStates } from '../constants/requests';
 import { AdvancedProblemType, type GradingMethodKey, ProblemType } from '../constants/problem';
 
@@ -18,7 +17,6 @@ const editorReducer = combineReducers({
   requests: requests.reducer,
   video: video.reducer,
   problem: problem.reducer,
-  game: game.reducer,
 });
 
 const rootReducer = (state: any, action: any) => {
@@ -39,7 +37,6 @@ const actions = StrictDict({
   requests: requests.actions,
   video: video.actions,
   problem: problem.actions,
-  game: game.actions,
 });
 
 const selectors = StrictDict({
@@ -47,7 +44,6 @@ const selectors = StrictDict({
   requests: requests.selectors,
   video: video.selectors,
   problem: problem.selectors,
-  game: game.selectors,
 });
 
 export interface EditorState {
@@ -196,10 +192,6 @@ export interface EditorState {
         type: 'Percent' | 'Number' | 'None';
       };
     };
-  };
-  game: {
-    settings: Record<string, any>;
-    exampleValue: 'this is an example value from the redux state';
   };
 }
 

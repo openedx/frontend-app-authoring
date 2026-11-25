@@ -3,28 +3,23 @@ import {
   getConfig,
 } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { camelCase } from 'lodash';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-const getProctoringErrorsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/proctoring_errors/`;
+export const getProctoringErrorsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/proctoring_errors/`;
+
+export interface ProctoringExamErrors {
+  mfeProctoredExamSettingsUrl: string;
+  proctoringErrors: {
+    key: string;
+    message: string;
+    model: Record<string, any>;
+  }[];
+}
 
 /**
- * Gets proctoring exam errors.
+ * Gets proctoring exam errors and the link to the proctored exam settings page.
  */
-export async function getProctoringExamErrors(courseId: string): Promise<Record<string, any>> {
+export async function getProctoringExamErrors(courseId: string): Promise<ProctoringExamErrors> {
   const { data } = await getAuthenticatedHttpClient().get(`${getProctoringErrorsApiUrl()}${courseId}`);
-  const keepValues = {};
-  Object.keys(data).forEach((key) => {
-    keepValues[camelCase(key)] = { value: data[key].value };
-  });
-  const formattedData = {};
-  const formattedCamelCaseData = camelCaseObject(data);
-  Object.keys(formattedCamelCaseData).forEach((key) => {
-    formattedData[key] = {
-      ...formattedCamelCaseData[key],
-      value: keepValues[key]?.value,
-    };
-  });
-
-  return formattedData;
+  return camelCaseObject(data);
 }

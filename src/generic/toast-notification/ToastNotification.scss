@@ -1,0 +1,15 @@
+.toast-notification-spinner {
+  animation: rotate 1s linear infinite;
+}
+
+.toast-notification-hide-close-button {
+  .btn-icon {
+    display: none;
+  }
+}
+
+.toast-container {
+  right: 1.25rem;
+  left: unset;
+  z-index: var(--pgn-elevation-popover-zindex);
+}

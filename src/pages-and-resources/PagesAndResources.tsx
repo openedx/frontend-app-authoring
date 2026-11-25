@@ -1,4 +1,10 @@
-import { Routes, Route } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -21,17 +27,12 @@ import SettingsComponent from './SettingsComponent';
 
 const PagesAndResources = () => {
   const intl = useIntl();
-  const {
-    courseId,
-    courseDetails,
-  } = useCourseAuthoringContext();
+  const { courseId, courseDetails } = useCourseAuthoringContext();
   const { courseApps, courseAppsStatus, courseAppsError } = useSortedCourseApps(courseId);
-  document.title = getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading));
 
   const {
     isLoading: isLoadingUserPermissions,
     isAuthzEnabled,
-    canViewPagesAndResources,
     canManagePagesAndResources,
   } = useCourseUserPermissions(courseId, getPagesAndResourcesPermissions(courseId));
 
@@ -51,11 +52,8 @@ const PagesAndResources = () => {
     return <></>;
   }
 
-  // Gate: if user has neither VIEW nor MANAGE permission, show permission denied
-  const hasNoAccess = (!isAuthzEnabled && courseAppsError?.response?.status === 403)
-    || (isAuthzEnabled && !canViewPagesAndResources && !canManagePagesAndResources);
-
-  if (hasNoAccess) {
+  // Granular read access is guarded by the router; retain the legacy backend denial here.
+  if (!isAuthzEnabled && courseAppsError?.response?.status === 403) {
     return <PermissionDeniedAlert />;
   }
 
@@ -65,6 +63,9 @@ const PagesAndResources = () => {
 
   return (
     <PagesAndResourcesProvider courseId={courseId} isEditable={isEditable}>
+      <Helmet>
+        <title>{getPageHeadTitle(courseDetails?.name || '', intl.formatMessage(messages.heading))}</title>
+      </Helmet>
       <main className="container container-mw-md px-3">
         <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
           <h3 className="m-0">{intl.formatMessage(messages.heading)}</h3>
@@ -78,38 +79,40 @@ const PagesAndResources = () => {
           </Hyperlink>
         </div>
         <Routes>
-          <Route
-            path="discussion/configure/:appId"
-            element={
-              <PageWrap>
-                <DiscussionsSettings />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="discussion"
-            element={
-              <PageWrap>
-                <DiscussionsSettings />
-              </PageWrap>
-            }
-          />
-          <Route
-            path="discussion/settings"
-            element={
-              <PageWrap>
-                <DiscussionsSettings />
-              </PageWrap>
-            }
-          />
-          <Route
-            path=":appId/settings"
-            element={
-              <PageWrap>
-                <SettingsComponent url={redirectUrl} />
-              </PageWrap>
-            }
-          />
+          <Route element={isEditable ? <Outlet /> : <Navigate to={redirectUrl} replace />}>
+            <Route
+              path="discussion/configure/:appId"
+              element={
+                <PageWrap>
+                  <DiscussionsSettings />
+                </PageWrap>
+              }
+            />
+            <Route
+              path="discussion"
+              element={
+                <PageWrap>
+                  <DiscussionsSettings />
+                </PageWrap>
+              }
+            />
+            <Route
+              path="discussion/settings"
+              element={
+                <PageWrap>
+                  <DiscussionsSettings />
+                </PageWrap>
+              }
+            />
+            <Route
+              path=":appId/settings"
+              element={
+                <PageWrap>
+                  <SettingsComponent url={redirectUrl} />
+                </PageWrap>
+              }
+            />
+          </Route>
         </Routes>
 
         <PageGrid

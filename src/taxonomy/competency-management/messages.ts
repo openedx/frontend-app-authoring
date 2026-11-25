@@ -29,7 +29,58 @@ const messages = defineMessages({
   competencyIdAccessibleLabel: {
     id: 'course-authoring.competency-management.competency-id.accessible-label',
     defaultMessage: 'Competency ID: {externalId}',
-    description: 'Accessible name for the Competency ID badge, read by screen readers since there is no column header to associate it with.',
+    description: 'Screen-reader text naming a Competency ID badge; the visible badge is hidden from screen readers.',
+  },
+  importCompetencyFrameworkButton: {
+    id: 'course-authoring.competency-management.button.import-framework.label',
+    defaultMessage: 'Import Competency Framework',
+    description: 'Label of the button that opens the competency framework import wizard.',
+  },
+  alreadyAssociatedToastMessage: {
+    id: 'course-authoring.competency-management.already-associated-toast-message',
+    defaultMessage: 'This content is already associated with this competency.',
+    description: 'Informational toast shown when the author selects a subsection that already has a '
+      + 'criterion for the active competency, instead of sending a request that would only fail.',
+  },
+  createCriterionFailedToastMessage: {
+    id: 'course-authoring.competency-management.create-criterion-failed-toast-message',
+    defaultMessage: 'There was a problem creating this association. Please try again.',
+    description: 'Toast shown when creating a new criterion (associating a subsection with the active '
+      + 'competency) fails.',
+  },
+  createCriterionHierarchyConflictToastMessage: {
+    id: 'course-authoring.competency-management.create-criterion-hierarchy-conflict-toast-message',
+    defaultMessage: 'This competency can\'t be associated with this content because a parent or child '
+      + 'competency already has criteria in this course.',
+    description: 'Toast shown in place of the generic create-criterion failure when the backend rejects the '
+      + 'new criterion because an ancestor or descendant competency already has criteria in the same course.',
+  },
+  deleteGroupFailedToastMessage: {
+    id: 'course-authoring.competency-management.delete-group-failed-toast-message',
+    defaultMessage: 'There was a problem removing this group. Please try again.',
+    description: 'Toast shown when removing a course group or rule group fails.',
+  },
+  removeCriterionButtonLabel: {
+    id: 'course-authoring.competency-management.remove-criterion-button-label',
+    defaultMessage: 'Remove the association with {subsectionName}',
+    description: 'Accessible label for the "x" icon button that removes a subsection\'s association with the '
+      + 'competency, on a rule box chip and on a subsection row in the course list. {subsectionName} is the name of '
+      + 'the subsection.',
+  },
+  removeAssociationFailedToastMessage: {
+    id: 'course-authoring.competency-management.remove-association-failed-toast-message',
+    defaultMessage: 'There was a problem removing this association. Please try again.',
+    description: 'Toast shown when removing one subsection\'s association with a competency fails.',
+  },
+  updateGroupOperatorFailedToastMessage: {
+    id: 'course-authoring.competency-management.update-group-operator-failed-toast-message',
+    defaultMessage: 'There was a problem updating this group\'s logic. Please try again.',
+    description: 'Toast shown when changing a bottom-tier group\'s any/all combining logic fails.',
+  },
+  updateRuleScoreFailedToastMessage: {
+    id: 'course-authoring.competency-management.update-rule-score-failed-toast-message',
+    defaultMessage: 'There was a problem updating this rule\'s score. Please try again.',
+    description: 'Toast shown when changing a rule box\'s score threshold fails.',
   },
 });
 
