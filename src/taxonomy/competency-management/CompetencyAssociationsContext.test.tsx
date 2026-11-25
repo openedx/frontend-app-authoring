@@ -2132,7 +2132,7 @@ describe('CompetencyAssociationsProvider', () => {
       // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
       // Remove: the 70% box.
       // After: only the 80% box (903) is left. Selection is not checked here.
-      mockDeletes(...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox);
+      mockDeletes(...criterionIdsIn70PercentRuleBox);
       const reads = mockGroupsReads(
         threeCriteriaInOneRuleBoxResponse,
         responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
@@ -2169,7 +2169,7 @@ describe('CompetencyAssociationsProvider', () => {
           ...criterionIdsIn80PercentRuleBox.map((id) => criterionInGroupAtScore(id, 10, 80)),
         ],
       };
-      mockDeletes(...criterionIdsInBoxWhenClicked, ...criterionIdsIn80PercentRuleBox, criterionIdAddedByAnotherSession);
+      mockDeletes(...criterionIdsInBoxWhenClicked);
       const reads = mockGroupsReads(responseWhenClicked, responseAfterAnotherSessionAddedACriterion);
       await renderLoaded();
       await click('Select rule box 10 gte');
@@ -2423,7 +2423,7 @@ describe('CompetencyAssociationsProvider', () => {
       // Remove: the 70% box, but 905 answers 500, so 906 is never sent.
       // After: 901 is gone. 905, 906 and the 80% box (903) are left, and the 70% box is still selected.
       const [firstCriterion, failingCriterion, thirdCriterion] = criterionIdsIn70PercentRuleBox;
-      mockDeletes(firstCriterion, thirdCriterion, ...criterionIdsIn80PercentRuleBox);
+      mockDeletes(firstCriterion);
       axiosMock.onDelete(deleteUrlOf(failingCriterion)).reply(500);
       const reads = mockGroupsReads(
         threeCriteriaInOneRuleBoxResponse,
@@ -2448,10 +2448,9 @@ describe('CompetencyAssociationsProvider', () => {
       // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
       // Remove: the 70% box, but 901 answers 500, so nothing is removed and no other delete is sent.
       // After: all four criteria are still there.
-      const [failingFirstCriterion, ...otherCriteria] = criterionIdsIn70PercentRuleBox;
+      const [failingFirstCriterion] = criterionIdsIn70PercentRuleBox;
       const allCriterionIds = [...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox];
       axiosMock.onDelete(deleteUrlOf(failingFirstCriterion)).reply(500);
-      mockDeletes(...otherCriteria, ...criterionIdsIn80PercentRuleBox);
       const reads = mockGroupsReads(threeCriteriaInOneRuleBoxResponse, threeCriteriaInOneRuleBoxResponse);
       await renderLoaded();
 
@@ -2467,10 +2466,11 @@ describe('CompetencyAssociationsProvider', () => {
     it('keeps the dialog open as partly removed when the refetch after a partial failure fails too', async () => {
       // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
       // Remove: the 70% box, but 905 answers 500, and then the refetch answers 500 too.
-      // After: the panel still shows the data from before the delete, and the dialog reports a partial failure
-      // from the error's count of removed criteria, not from that stale data.
-      const [firstCriterion, failingCriterion, thirdCriterion] = criterionIdsIn70PercentRuleBox;
-      mockDeletes(firstCriterion, thirdCriterion, ...criterionIdsIn80PercentRuleBox);
+      // After: the panel still shows the criteria from before the delete, with the refresh-error alert above them, and
+      // the dialog reports a partial failure from the error's count of removed criteria, not from that stale data.
+      const [firstCriterion, failingCriterion] = criterionIdsIn70PercentRuleBox;
+      const allCriterionIds = [...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox];
+      mockDeletes(firstCriterion);
       axiosMock.onDelete(deleteUrlOf(failingCriterion)).reply(500);
       axiosMock.onGet(groupsUrl).replyOnce(200, threeCriteriaInOneRuleBoxResponse);
       axiosMock.onGet(groupsUrl).reply(500);
@@ -2486,6 +2486,8 @@ describe('CompetencyAssociationsProvider', () => {
       expect(await screen.findByText(pendingRemoval('{"kind":"ruleBox","failure":"partly-removed"}')))
         .toBeInTheDocument();
       expect(mockShowToast).not.toHaveBeenCalled();
+      expect(screen.getByText(criterionIdsShown(allCriterionIds))).toBeInTheDocument();
+      expect(screen.getByText('Groups refresh error: true')).toBeInTheDocument();
     });
 
     it('counts a 404 in the middle as removed: every criterion is tried, no toast, the box is gone', async () => {
@@ -2493,7 +2495,7 @@ describe('CompetencyAssociationsProvider', () => {
       // Remove: the 70% box. 905 answers 404, which counts as removed, so 906 is still sent.
       // After: only the 80% box (903) is left, and it is selected, because the removed box had no box above.
       const [firstCriterion, missingCriterion, thirdCriterion] = criterionIdsIn70PercentRuleBox;
-      mockDeletes(firstCriterion, thirdCriterion, ...criterionIdsIn80PercentRuleBox);
+      mockDeletes(firstCriterion, thirdCriterion);
       axiosMock.onDelete(deleteUrlOf(missingCriterion)).reply(404);
       const reads = mockGroupsReads(
         threeCriteriaInOneRuleBoxResponse,
@@ -2538,7 +2540,7 @@ describe('CompetencyAssociationsProvider', () => {
       // Start: group 10 holds a 70% box (901, 905, 906) and an 80% box (903).
       // Remove: the 70% box, then ask to remove it again while the first run is still deleting.
       // After: one run of three deletes was sent, and no toast was shown.
-      mockDeletes(...criterionIdsIn70PercentRuleBox, ...criterionIdsIn80PercentRuleBox);
+      mockDeletes(...criterionIdsIn70PercentRuleBox);
       const reads = mockGroupsReads(
         threeCriteriaInOneRuleBoxResponse,
         responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, criterionIdsIn70PercentRuleBox),
@@ -3109,7 +3111,7 @@ describe('CompetencyAssociationsProvider', () => {
         kind: RemovalTargetKind.RuleBox,
         initial: threeCriteriaInOneRuleBoxResponse,
         refetched: responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, [901, 905, 906]),
-        mock: () => mockDeletes(901, 905, 906, 903),
+        mock: () => mockDeletes(901, 905, 906),
         urls: [deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(906)],
       },
     ];
@@ -3253,7 +3255,7 @@ describe('CompetencyAssociationsProvider', () => {
     });
 
     it('closes the dialog when a rule box DELETE fails but the refetch has none of its criteria left', async () => {
-      mockDeletes(901, 905, 906, 903);
+      mockDeletes(901, 905);
       axiosMock.onDelete(deleteUrlOf(906)).reply(500);
       const reads = mockGroupsReads(
         threeCriteriaInOneRuleBoxResponse,
@@ -3353,7 +3355,7 @@ describe('CompetencyAssociationsProvider', () => {
     });
 
     it('lets a retry send only what is left after a partial failure', async () => {
-      mockDeletes(901, 906, 903);
+      mockDeletes(901, 906);
       axiosMock.onDelete(deleteUrlOf(905)).replyOnce(500);
       axiosMock.onDelete(deleteUrlOf(905)).reply(200, { id: 905, archived: false });
       axiosMock.onGet(groupsUrl).replyOnce(200, threeCriteriaInOneRuleBoxResponse);

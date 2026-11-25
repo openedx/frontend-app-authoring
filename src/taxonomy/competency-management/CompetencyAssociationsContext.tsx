@@ -536,8 +536,6 @@ function reduceGroupDeleted(
   );
 
   if (target === 'keep-current') {
-    // The selected group takes focus; with nothing or a placeholder group selected, the deleted group does if it
-    // survives.
     const keyboardGroupId = state.selection?.groupId ?? (isDeletedGroupGone ? null : deletedGroupId);
     if (isKeyboardFocusLost && keyboardGroupId !== null) {
       return { ...state, keyboardFocusRequest: { kind: 'group', groupId: keyboardGroupId, selectionMoved: false } };
