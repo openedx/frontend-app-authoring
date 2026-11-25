@@ -542,9 +542,10 @@ describe('CompetencyAssociationsProvider', () => {
       renderProvider();
       await waitForSuccess();
       expect(screen.getByText('Groups refresh error: false')).toBeInTheDocument();
-      const invalidateGroups = () => act(async () => {
-        await queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
-      });
+      const invalidateGroups = () =>
+        act(async () => {
+          await queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
+        });
 
       await invalidateGroups();
       expect(await screen.findByText('Groups refresh error: true')).toBeInTheDocument();
@@ -2556,7 +2557,6 @@ describe('CompetencyAssociationsProvider', () => {
       expect(sentDeleteUrls()).toEqual(criterionIdsIn70PercentRuleBox.map(deleteUrlOf));
       expect(mockShowToast).not.toHaveBeenCalled();
     });
-
   });
 
   describe('removing an association', () => {
