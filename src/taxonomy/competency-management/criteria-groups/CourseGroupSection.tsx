@@ -16,8 +16,8 @@ import { bottomTierGroupsForCourse } from '@src/taxonomy/competency-management/u
 import AddControl from './AddControl';
 import type { AddControlProps } from './AddControl';
 import CriteriaGroupBox from './CriteriaGroupBox';
-import GroupActionsMenu from './GroupActionsMenu';
 import GroupConnector from './GroupConnector';
+import MoreActionsMenu from './MoreActionsMenu';
 import messages from './messages';
 
 export interface CourseGroupSectionProps {
@@ -44,7 +44,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     courseList,
     competencyName,
     deleteGroup,
-    isDeletingGroupOrCriterion,
+    isDeletingGroupOrRuleBoxOrCriterion,
     keyboardFocusRequest,
     consumeKeyboardFocusRequest,
   } = useCompetencyAssociations();
@@ -88,7 +88,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
     }
   }, [holdsFocusRequestTarget, requestMovesSelection, isCollapsed, consumeKeyboardFocusRequest]);
 
-  const isMenuDisabled = isDeletingGroupOrCriterion || isAssociating;
+  const isMenuDisabled = isDeletingGroupOrRuleBoxOrCriterion || isAssociating;
   const canEdit = canEditCourse(courseGroup.courseKey);
   const isRendered = status === 'success' && Boolean(data);
   // Waits for the toggle to render and be enabled again, since a disabled button cannot take focus.
@@ -137,7 +137,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   } else if (courseList.isPlaceholderData) {
     // A reload can list other courses, which would discard an unsaved box started now.
     disabledReason = 'loading';
-  } else if (isDeletingGroupOrCriterion) {
+  } else if (isDeletingGroupOrRuleBoxOrCriterion) {
     disabledReason = 'deleting';
   } else if (hasPlaceholder) {
     disabledReason = 'placeholder';
@@ -166,7 +166,7 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
           </Stack>
         }
         actions={canEdit && (
-          <GroupActionsMenu
+          <MoreActionsMenu
             toggleRef={menuToggleRef}
             id={`course-group-menu-toggle-${courseGroup.id}`}
             toggleLabel={intl.formatMessage(messages.courseGroupMoreActionsLabel, { courseName })}

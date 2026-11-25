@@ -96,8 +96,8 @@
     }
   }
 
-  // Figma draws both ⋮ toggles at 24×24; Paragon's inline size pads them to 2em.
-  .group-actions-menu .btn-icon-inline {
+  // Figma draws all ⋮ toggles at 24×24; Paragon's inline size pads them to 2em.
+  .more-actions-menu .btn-icon-inline {
     --pgn-size-icon-button-diameter-inline: var(--pgn-size-icon-md);
 
     padding: 0;
@@ -228,6 +228,13 @@
       box-shadow: var(--pgn-elevation-box-shadow-centered-2);
     }
 
+    // Lifts only the toggle above `&__select-button`'s overlay; lifting the `.dropdown` wrapper traps the open menu.
+    // Paragon gives an IconButton toggle no `.dropdown-toggle`, so the toggle needs its own class.
+    &__menu-toggle {
+      position: relative;
+      z-index: 1;
+    }
+
     // Stands in for the chips on the not-yet-saved placeholder box.
     &__placeholder-hint {
       padding: var(--pgn-spacing-spacer-2);
@@ -235,11 +242,6 @@
       border-radius: var(--pgn-size-border-radius-base);
       font-size: var(--pgn-typography-font-size-sm);
     }
-  }
-
-  // Hugs the text instead of stretching when the editable variant sits directly in the rule box's column.
-  .score-threshold-field {
-    align-self: flex-start;
   }
 
   .score-threshold-field__sentence {

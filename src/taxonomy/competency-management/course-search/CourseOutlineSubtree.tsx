@@ -42,7 +42,11 @@ interface AddSubsectionPillProps {
   conflictingCompetency: string | undefined;
   /** True while an association is created or a group or criterion is deleted; the pill is disabled meanwhile. */
   isBusy: boolean;
-  buttonRef?: Ref<HTMLButtonElement>;
+  /**
+   * The row's ref to this pill's button, so the row can move keyboard focus to it when a focus request
+   * names this subsection (for example, after its association is removed).
+   */
+  associateButtonRef?: Ref<HTMLButtonElement>;
   onAssociate: () => void;
   /** The pill's icon and external ID, shared with the applied pill. */
   children: ReactNode;
@@ -59,7 +63,7 @@ const AddSubsectionPill = ({
   competencyExternalId,
   conflictingCompetency,
   isBusy,
-  buttonRef,
+  associateButtonRef,
   onAssociate,
   children,
 }: AddSubsectionPillProps) => {
@@ -93,7 +97,7 @@ const AddSubsectionPill = ({
         }
       >
         <Button
-          ref={buttonRef}
+          ref={associateButtonRef}
           variant="tertiary"
           type="button"
           className={classNames(
@@ -149,7 +153,7 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
     conflictingCompetencyName,
     isAssociating,
     groupsIndex,
-    isDeletingGroupOrCriterion,
+    isDeletingGroupOrRuleBoxOrCriterion,
     removeCriterion,
     keyboardFocusRequest,
     consumeKeyboardFocusRequest,
@@ -163,7 +167,7 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
   // mounted takes a focus request.
   const associateButtonRef = useRef<HTMLButtonElement>(null);
   const removeButtonRef = useRef<HTMLButtonElement>(null);
-  const isPillButtonDisabled = isDeletingGroupOrCriterion || isAssociating;
+  const isPillButtonDisabled = isDeletingGroupOrRuleBoxOrCriterion || isAssociating;
   // Waits for the button to be enabled again, since a disabled button cannot take focus.
   const takesKeyboardFocus = keyboardFocusRequest?.kind === 'subsection'
     && keyboardFocusRequest.objectId === subsection.id
@@ -226,7 +230,7 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
   } else if (canAssociate) {
     pill = (
       <AddSubsectionPill
-        buttonRef={associateButtonRef}
+        associateButtonRef={associateButtonRef}
         subsectionName={subsection.displayName}
         competencyExternalId={competencyExternalId}
         conflictingCompetency={conflictingCompetencyName(courseId)}

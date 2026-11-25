@@ -7,7 +7,7 @@ const messages = defineMessages({
   },
   exportedDataItem1: {
     id: 'course-authoring.export.footer.exportedData.item.1',
-    defaultMessage: 'Values from Advanced settings, including MATLAB API keys and LTI passports',
+    defaultMessage: 'Values from Advanced settings, including LTI passports',
   },
   exportedDataItem2: {
     id: 'course-authoring.export.footer.exportedData.item.2',

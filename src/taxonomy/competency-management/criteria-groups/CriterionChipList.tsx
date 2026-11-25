@@ -24,7 +24,7 @@ const CriterionChipList = ({
   canEdit = false,
 }: CriterionChipListProps) => {
   const intl = useIntl();
-  const { removeCriterion, isDeletingGroupOrCriterion, isAssociating } = useCompetencyAssociations();
+  const { removeCriterion, isDeletingGroupOrRuleBoxOrCriterion, isAssociating } = useCompetencyAssociations();
 
   return (
     <div className="criterion-chip-list d-flex flex-wrap">
@@ -37,7 +37,7 @@ const CriterionChipList = ({
             displayName={unavailable ? intl.formatMessage(messages.unknownSubsectionLabel) : subsectionName}
             unavailable={unavailable}
             courseName={courseName}
-            disabled={isDeletingGroupOrCriterion || isAssociating}
+            disabled={isDeletingGroupOrRuleBoxOrCriterion || isAssociating}
             onRemove={canEdit ? () => removeCriterion(criterion.id, 'group') : undefined}
           />
         );

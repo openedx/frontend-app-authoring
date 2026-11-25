@@ -13,7 +13,15 @@ import { getApiBaseUrl, type Course } from '@src/studio-home/data/api';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { CompetencyAssociationsProvider } from '../CompetencyAssociationsContext';
-import { byTextContent, defaultProfileResponse, MockCompetencyAssociationsProvider } from '../__mocks__';
+import {
+  byTextContent,
+  criterion,
+  defaultProfileResponse,
+  group,
+  mockHeldGroupsRefetch,
+  MockCompetencyAssociationsProvider,
+  mockScrollIntoView,
+} from '../__mocks__';
 import type { MockCompetencyAssociationsOverrides } from '@src/taxonomy/competency-management/__mocks__';
 import { apiUrls as competencyManagementApiUrls } from '../data/api';
 import type { CompetencyTreeNode } from '../CompetencyTree';
@@ -1814,6 +1822,74 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
     });
   });
 
+  describe('removing a rule box', () => {
+    mockScrollIntoView();
+
+    it('disables a subsection\'s select button, in the courses panel, until the refetch lands', async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      const course = buildCourse();
+      const tagId = Number(activeCompetency.id);
+      const groupsUrl = competencyManagementApiUrls.competencyCriteriaGroups(tagId);
+      const withOneAssociation = {
+        groups: [
+          group(500, null, null, 0),
+          group(1, 500, course.courseKey, 0),
+          group(10, 1, null, 0),
+        ],
+        criteria: [criterion(901, 'sub-1a', 10)],
+        criteriaCount: 1,
+        totalCriteriaCount: 1,
+      };
+      const withNoAssociations = { groups: [], criteria: [], criteriaCount: 0, totalCriteriaCount: 0 };
+      const reads = mockHeldGroupsRefetch(axiosMock, tagId, withOneAssociation, withNoAssociations);
+      axiosMock.onDelete(competencyManagementApiUrls.deleteCompetencyCriterion(tagId, 901))
+        .reply(200, { id: 901, archived: false });
+      axiosMock.onGet(coursesApiUrl).reply(200, buildResponse([course]));
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(course.courseKey)).reply(
+        200,
+        buildOutlineIndex({
+          sections: [{
+            id: 'section-1',
+            displayName: 'Section 1',
+            children: [
+              { id: 'sub-1a', displayName: 'Subsection 1A', overrides: { graded: true } },
+              { id: 'sub-1b', displayName: 'Subsection 1B', overrides: { graded: true } },
+            ],
+          }],
+        }),
+      );
+      renderCourseSearchBrowse();
+      const coursesContainer = screen.getByText('Courses & Content').closest(
+        '.course-search-browse__container',
+      ) as HTMLElement;
+      await user.click(await within(coursesContainer).findByRole('button', { name: 'Expand' }));
+      await user.click(await within(coursesContainer).findByRole('button', { name: 'Expand' }));
+      const selectButton = await within(coursesContainer).findByRole('button', { name: /Subsection 1B/ });
+      expect(selectButton).toBeEnabled();
+      expect(within(coursesContainer).queryByRole('button', { name: 'Associate this competency with Subsection 1A' }))
+        .not.toBeInTheDocument();
+
+      await user.click(
+        await screen.findByRole('button', {
+          name: 'More actions for the rule with a score of 70% or higher in rule group 1 in Test Course',
+        }),
+      );
+      await user.click(screen.getByRole('button', { name: 'Remove rule' }));
+
+      await waitFor(() => expect(axiosMock.history.get.filter((req) => req.url === groupsUrl)).toHaveLength(2));
+      expect(within(coursesContainer).getByRole('button', { name: /Subsection 1B/ })).toBeDisabled();
+
+      await act(async () => {
+        reads.release();
+      });
+      await waitFor(() =>
+        expect(within(coursesContainer).getByRole('button', { name: /Subsection 1B/ })).toBeEnabled()
+      );
+      expect(within(coursesContainer).getByRole('button', { name: 'Associate this competency with Subsection 1A' }))
+        .toBeEnabled();
+    });
+  });
+
   describe('<CourseRow />', () => {
     it('toggles expansion only via its disclosure control, and title clicks do nothing', async () => {
       const course = buildCourse();
@@ -1898,7 +1974,7 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
 
     it('is kept while a delete is in flight, since its row cannot take focus yet', () => {
       const consumeKeyboardFocusRequest = jest.fn();
-      renderWithRequest({ consumeKeyboardFocusRequest, isDeletingGroupOrCriterion: true });
+      renderWithRequest({ consumeKeyboardFocusRequest, isDeletingGroupOrRuleBoxOrCriterion: true });
 
       expect(consumeKeyboardFocusRequest).not.toHaveBeenCalled();
     });

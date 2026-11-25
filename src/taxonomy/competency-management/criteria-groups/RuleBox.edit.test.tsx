@@ -24,6 +24,8 @@ const renderRuleBox = (
         rule={rule}
         criteria={criteria}
         subsectionNamesByUsageKey={{ 'block-a': 'Subsection A' }}
+        position={1}
+        courseName="Demo Course"
         {...props}
       />
     </MockCompetencyAssociationsProvider>,
@@ -130,5 +132,77 @@ describe('<RuleBox /> editing (#794)', () => {
 
     expect(removeCriterion).toHaveBeenCalledWith(1, 'group');
     expect(selectRuleBox).not.toHaveBeenCalled();
+  });
+
+  describe('rule box menu', () => {
+    const saved70PercentRuleBoxMenuName = 'More actions for the rule with a score of 70% or higher in rule group 1 in '
+      + 'Demo Course';
+    const placeholderMenuName = 'More actions for the new rule';
+
+    it('shows a menu button named after the box\'s score only when the author can edit', () => {
+      const { unmount } = renderRuleBox({}, { canEdit: true });
+      expect(screen.getByRole('button', { name: saved70PercentRuleBoxMenuName })).toBeInTheDocument();
+      unmount();
+
+      renderRuleBox({}, { canEdit: false });
+      expect(screen.queryByRole('button', { name: saved70PercentRuleBoxMenuName })).not.toBeInTheDocument();
+    });
+
+    it('calls deleteRuleBox with its group and key, without focusing the box, when Remove rule is chosen', async () => {
+      const deleteRuleBox = jest.fn();
+      const discardPlaceholderRuleBox = jest.fn();
+      const selectRuleBox = jest.fn();
+      renderRuleBox({ deleteRuleBox, discardPlaceholderRuleBox, selectRuleBox }, { canEdit: true });
+
+      await user.click(screen.getByRole('button', { name: saved70PercentRuleBoxMenuName }));
+      await user.click(screen.getByRole('button', { name: 'Remove rule' }));
+
+      expect(deleteRuleBox).toHaveBeenCalledTimes(1);
+      expect(deleteRuleBox).toHaveBeenCalledWith(10, 'grade:gte:0.7:percent');
+      expect(discardPlaceholderRuleBox).not.toHaveBeenCalled();
+      expect(selectRuleBox).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['a delete', { isDeletingGroupOrRuleBoxOrCriterion: true }],
+      ['a create', { isAssociating: true }],
+    ])('disables the menu button while %s is in flight', (_name, overrides) => {
+      renderRuleBox(overrides, { canEdit: true });
+
+      expect(screen.getByRole('button', { name: saved70PercentRuleBoxMenuName })).toBeDisabled();
+    });
+
+    it('lets the placeholder rule box in a saved group discard itself without calling deleteRuleBox', async () => {
+      const deleteRuleBox = jest.fn();
+      const discardPlaceholderRuleBox = jest.fn();
+      renderRuleBox(
+        { deleteRuleBox, discardPlaceholderRuleBox },
+        { canEdit: true, ruleKey: null, criteria: [] },
+      );
+
+      await user.click(screen.getByRole('button', { name: placeholderMenuName }));
+      await user.click(screen.getByRole('button', { name: 'Remove rule' }));
+
+      expect(discardPlaceholderRuleBox).toHaveBeenCalledTimes(1);
+      expect(deleteRuleBox).not.toHaveBeenCalled();
+    });
+
+    it.each(['{Enter}', ' '])('opens from the keyboard and removes the rule with %j', async (activationKey) => {
+      const deleteRuleBox = jest.fn();
+      renderRuleBox({ deleteRuleBox }, { canEdit: true });
+
+      await user.tab();
+      expect(screen.getByRole('button', { name: 'Select this rule' })).toHaveFocus();
+      await user.tab();
+      expect(screen.getByRole('button', { name: 'With a score of 70% or higher' })).toHaveFocus();
+      await user.tab();
+      expect(screen.getByRole('button', { name: saved70PercentRuleBoxMenuName })).toHaveFocus();
+      await user.keyboard('{Enter}');
+      await user.keyboard('{ArrowDown}');
+      expect(screen.getByRole('button', { name: 'Remove rule' })).toHaveFocus();
+      await user.keyboard(activationKey);
+
+      expect(deleteRuleBox).toHaveBeenCalledWith(10, 'grade:gte:0.7:percent');
+    });
   });
 });

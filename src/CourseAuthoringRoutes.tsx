@@ -7,9 +7,9 @@ import {
 } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
-import { Textbooks } from './textbooks';
+import { Textbooks } from '@src/textbooks';
 import CourseAuthoringPage from './CourseAuthoringPage';
-import { PagesAndResources } from './pages-and-resources';
+import { PagesAndResources, PagesAndResourcesAccess } from '@src/pages-and-resources';
 import EditorContainer from './editors/EditorContainer';
 import VideoSelectorContainer from './selectors/VideoSelectorContainer';
 import CustomPages from './custom-pages';
@@ -109,14 +109,24 @@ const CourseAuthoringRoutes = () => {
                 element={<VideosPage />}
               />
             )}
-            <Route
-              path="pages-and-resources/*"
-              element={<PagesAndResources />}
-            />
-            <Route
-              path="custom-pages/*"
-              element={<CustomPages />}
-            />
+            {
+              /* Custom Pages and Textbooks have separate entry points but use the Pages & Resources
+                permission set, so all three routes share this access guard. */
+            }
+            <Route element={<PagesAndResourcesAccess />}>
+              <Route
+                path="pages-and-resources/*"
+                element={<PagesAndResources />}
+              />
+              <Route
+                path="custom-pages/*"
+                element={<CustomPages />}
+              />
+              <Route
+                path="textbooks"
+                element={<Textbooks />}
+              />
+            </Route>
             <Route
               path="/subsection/:subsectionId"
               element={<SubsectionUnitRedirect />}
@@ -194,10 +204,6 @@ const CourseAuthoringRoutes = () => {
                 }
               />
             )}
-            <Route
-              path="textbooks"
-              element={<Textbooks />}
-            />
           </Route>
           {/* Routes without PageWrap */}
           <Route

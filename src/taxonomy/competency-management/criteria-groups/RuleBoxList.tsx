@@ -12,10 +12,14 @@ export interface RuleBoxListProps {
   groupId: number | null;
   boxes: RuleBoxData[];
   subsectionNamesByUsageKey: Record<string, string>;
-  /** Name of the course these criteria belong to, read aloud for an unavailable chip. */
-  courseName?: string;
-  /** Whether the author can edit the boxes' score thresholds. */
+  /** Whether the author can edit the boxes' score thresholds, and whether their ⋮ menus show. */
   canEdit?: boolean;
+  /** The 1-based position of the boxes' rule group among the rule groups of its course group, which names their
+   * menus. Unused for the placeholder group.
+   */
+  position: number;
+  /** The course the boxes belong to, which names their menus and is read aloud for an unavailable chip. */
+  courseName: string;
 }
 
 /** Renders one `RuleBox` per box and gives each its duplicate-score validation, then the placeholder box if this group has one. */
@@ -23,8 +27,9 @@ const RuleBoxList = ({
   groupId,
   boxes,
   subsectionNamesByUsageKey,
-  courseName,
   canEdit = false,
+  position,
+  courseName,
 }: RuleBoxListProps) => {
   const intl = useIntl();
   const {
@@ -74,8 +79,9 @@ const RuleBoxList = ({
           rule={box.rule}
           criteria={box.criteria}
           subsectionNamesByUsageKey={subsectionNamesByUsageKey}
-          courseName={courseName}
           canEdit={canEdit}
+          position={position}
+          courseName={courseName}
           getInlineValidationMessage={getInlineValidationMessage(box)}
         />
       ))}
@@ -87,8 +93,9 @@ const RuleBoxList = ({
           rule={placeholderRule}
           criteria={[]}
           subsectionNamesByUsageKey={subsectionNamesByUsageKey}
-          courseName={courseName}
           canEdit={canEdit}
+          position={position}
+          courseName={courseName}
           getInlineValidationMessage={getInlineValidationMessage({
             key: '__placeholder__',
             rule: placeholderRule,

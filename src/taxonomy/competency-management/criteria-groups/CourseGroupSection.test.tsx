@@ -246,7 +246,7 @@ describe('<CourseGroupSection />', () => {
     },
   );
 
-  it('names each rule group menu button by its position, and the placeholder group\'s as the new one', async () => {
+  it('names rule group menus by position, and same-score rule box menus by their group', async () => {
     axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
     renderSection({
       selection: { groupId: null, ruleKey: null },
@@ -267,7 +267,9 @@ describe('<CourseGroupSection />', () => {
     expect(names).toEqual([
       'More actions for Demo Course',
       'More actions for rule group 1 in Demo Course',
+      'More actions for the rule with a score of 70% or higher in rule group 1 in Demo Course',
       'More actions for rule group 2 in Demo Course',
+      'More actions for the rule with a score of 70% or higher in rule group 2 in Demo Course',
       'More actions for the new rule group in Demo Course',
     ]);
   });
@@ -307,7 +309,7 @@ describe('<CourseGroupSection />', () => {
     ],
     [
       'a group is being removed',
-      { isDeletingGroupOrCriterion: true },
+      { isDeletingGroupOrRuleBoxOrCriterion: true },
       'Wait for the removal to finish before adding another.',
     ],
     [
@@ -469,7 +471,7 @@ describe('<CourseGroupSection />', () => {
     });
 
     it.each([
-      ['a delete', { isDeletingGroupOrCriterion: true }],
+      ['a delete', { isDeletingGroupOrRuleBoxOrCriterion: true }],
       ['a create', { isAssociating: true }],
     ])('disables the menu button while %s is in flight', async (_name, overrides) => {
       axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
