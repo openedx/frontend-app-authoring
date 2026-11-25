@@ -75,6 +75,7 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
                 as={IconButton}
                 src={Close}
                 iconAs={Icon}
+                alt={intl.formatMessage(messages.advancedEditorCloseButtonAlt)}
               />
               <IconButton
                 src={isFullscreen ? CloseFullscreen : OpenInFull}

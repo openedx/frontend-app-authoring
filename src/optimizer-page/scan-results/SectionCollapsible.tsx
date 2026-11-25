@@ -44,7 +44,7 @@ const SectionCollapsible: FC<Props> = ({
   isPreviousRunLinks = false,
   className,
 }) => {
-  const styling = `card-lg open-section-rounded ${hasPrevAndIsOpen ? 'closed-section-rounded-top' : ''} ${
+  const extraClasses = `open-section-rounded ${hasPrevAndIsOpen ? 'closed-section-rounded-top' : ''} ${
     hasNextAndIsOpen ? 'closed-section-rounded-bottom' : ''
   }`;
   const collapsibleTitle = (
@@ -83,15 +83,15 @@ const SectionCollapsible: FC<Props> = ({
   return (
     <div className={`section px-3 ${isOpen ? 'is-open' : ''}`}>
       <Collapsible
-        className="section-collapsible-item-container"
-        styling={styling}
+        className={`section-collapsible-item-container ${extraClasses}`}
+        styling="card-lg"
         title={
           <p className="flex-grow-1 section-collapsible-item">
             <strong>{collapsibleTitle}</strong>
           </p>
         }
-        iconWhenClosed=""
-        iconWhenOpen=""
+        iconWhenClosed={null}
+        iconWhenOpen={null}
         open={isOpen}
         onToggle={() => handleToggle(index)}
       >
