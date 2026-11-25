@@ -2098,7 +2098,8 @@ describe('CompetencyAssociationsProvider', () => {
     const sentDeleteUrls = () => axiosMock.history.delete.map((request) => request.url);
     const groupsReads = () => axiosMock.history.get.filter((request) => request.url === groupsUrl);
     const keyboardRequest = (request: object | null) => `Keyboard request: ${JSON.stringify(request)}`;
-    // An unmatched URL answers 404, which counts as removed, so every DELETE is mocked and the sent URLs asserted.
+    // An unmatched URL answers 404, which counts as removed, so each test asserts the exact DELETE URLs sent. Mock only
+    // the DELETEs a test expects.
     const mockDeletes = (...criterionIds: number[]) => {
       criterionIds.forEach((id) => {
         axiosMock.onDelete(deleteUrlOf(id)).reply(200, { id, archived: false });
