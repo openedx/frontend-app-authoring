@@ -187,7 +187,6 @@ const updateRuleScoreUrl = apiUrls.updateCompetencyCriteriaRule(10);
 const outlineFixture = buildOutlineIndex();
 
 const createFailedMessage = 'There was a problem creating this association. Please try again.';
-const removeFailedMessage = 'There was a problem removing this association. Please try again.';
 
 /** The body of a 201 from the create endpoint: an override rule when `rule` is
  * given, otherwise the default profile.
@@ -266,16 +265,16 @@ const TestConsumer = () => {
     [
       'Confirm removal twice in one tick',
       () => {
-        ctx.confirmRemoval();
-        ctx.confirmRemoval();
+        void ctx.confirmRemoval();
+        void ctx.confirmRemoval();
       },
     ],
     [
       'Confirm removal, then request removing group 11 and confirm it, in one tick',
       () => {
-        ctx.confirmRemoval();
+        void ctx.confirmRemoval();
         ctx.requestRemoval({ kind: RemovalTargetKind.RuleGroup, groupId: 11 });
-        ctx.confirmRemoval();
+        void ctx.confirmRemoval();
       },
     ],
     [

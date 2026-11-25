@@ -431,7 +431,12 @@ describe('<CriteriaAssociationsSection />', () => {
 
     it('keeps the dialog open until the refetch lands, then closes it with the chip gone', async () => {
       const user = userEvent.setup();
-      const run = mockServerRepliesForRuleBoxDelete(group10With70And80PercentRuleBoxesResponse, without901, 200, namedOutline);
+      const run = mockServerRepliesForRuleBoxDelete(
+        group10With70And80PercentRuleBoxesResponse,
+        without901,
+        200,
+        namedOutline,
+      );
       renderSection();
       await user.click(await screen.findByRole('button', { name: chipRemoveName }));
       const dialog = await screen.findByRole('dialog', { name: dialogName });
@@ -500,7 +505,12 @@ describe('<CriteriaAssociationsSection />', () => {
 
     it('opens the group dialog from "Remove group" with the count and the last-association warning', async () => {
       const user = userEvent.setup();
-      mockServerRepliesForRuleBoxDelete(group10With70And80PercentRuleBoxesResponse, noGroupsOrCriteriaResponse, 200, namedOutline);
+      mockServerRepliesForRuleBoxDelete(
+        group10With70And80PercentRuleBoxesResponse,
+        noGroupsOrCriteriaResponse,
+        200,
+        namedOutline,
+      );
       renderSection();
 
       await user.click(await screen.findByRole('button', { name: 'More actions for rule group 1 in Demo Course' }));
@@ -532,7 +542,12 @@ describe('<CriteriaAssociationsSection />', () => {
 
       it('is the body of the association dialog when the association is the only one in the course', async () => {
         const user = userEvent.setup();
-        mockServerRepliesForRuleBoxDelete(group10With70PercentRuleBoxResponse, noGroupsOrCriteriaResponse, 200, namedOutline);
+        mockServerRepliesForRuleBoxDelete(
+          group10With70PercentRuleBoxResponse,
+          noGroupsOrCriteriaResponse,
+          200,
+          namedOutline,
+        );
         renderSection();
 
         const dialog = await openChipDialog(user);
@@ -552,7 +567,12 @@ describe('<CriteriaAssociationsSection />', () => {
 
       it('is shown for a rule box that holds all of the course\'s associations', async () => {
         const user = userEvent.setup();
-        mockServerRepliesForRuleBoxDelete(group10With70PercentRuleBoxResponse, noGroupsOrCriteriaResponse, 200, namedOutline);
+        mockServerRepliesForRuleBoxDelete(
+          group10With70PercentRuleBoxResponse,
+          noGroupsOrCriteriaResponse,
+          200,
+          namedOutline,
+        );
         renderSection();
 
         await user.click(await screen.findByRole('button', { name: seventyPercentRuleBoxMenuName }));
@@ -590,7 +610,12 @@ describe('<CriteriaAssociationsSection />', () => {
 
       it('is shown for a course group even when it holds one association', async () => {
         const user = userEvent.setup();
-        mockServerRepliesForRuleBoxDelete(group10With70PercentRuleBoxResponse, noGroupsOrCriteriaResponse, 200, namedOutline);
+        mockServerRepliesForRuleBoxDelete(
+          group10With70PercentRuleBoxResponse,
+          noGroupsOrCriteriaResponse,
+          200,
+          namedOutline,
+        );
         renderSection();
 
         await user.click(await screen.findByRole('button', { name: 'More actions for Demo Course' }));
@@ -603,7 +628,12 @@ describe('<CriteriaAssociationsSection />', () => {
 
     it('opens the course dialog from "Remove from Data Literacy" with the course-group body', async () => {
       const user = userEvent.setup();
-      mockServerRepliesForRuleBoxDelete(group10With70And80PercentRuleBoxesResponse, noGroupsOrCriteriaResponse, 200, namedOutline);
+      mockServerRepliesForRuleBoxDelete(
+        group10With70And80PercentRuleBoxesResponse,
+        noGroupsOrCriteriaResponse,
+        200,
+        namedOutline,
+      );
       renderSection();
 
       await user.click(await screen.findByRole('button', { name: 'More actions for Demo Course' }));
