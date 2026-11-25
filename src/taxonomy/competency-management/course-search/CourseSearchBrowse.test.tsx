@@ -173,6 +173,25 @@ describe('<CourseSearchBrowse /> and <CourseRow />', () => {
       );
       expect(screen.getByRole('separator')).toHaveAttribute('aria-valuenow', '55');
     });
+
+    it('keeps each panel at least 16rem tall, following the root font size', async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+      const clientHeightSpy = jest.spyOn(Element.prototype, 'clientHeight', 'get').mockReturnValue(1000);
+      // `setupTest.js` replaces `getComputedStyle` with a mock that reports no font size.
+      const originalGetComputedStyle = window.getComputedStyle;
+      window.getComputedStyle = () =>
+        ({ fontSize: '20px', getPropertyValue: () => '' }) as unknown as CSSStyleDeclaration;
+      try {
+        renderDesktop();
+        const separator = await screen.findByRole('separator', { name: separatorName });
+        separator.focus();
+        await user.keyboard('{ArrowUp>10/}');
+        expect(separator).toHaveAttribute('aria-valuenow', '32'); // 16 * 20px / 1000px
+      } finally {
+        window.getComputedStyle = originalGetComputedStyle;
+        clientHeightSpy.mockRestore();
+      }
+    });
   });
 
   describe('<CourseSearchBrowse />', () => {

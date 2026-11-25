@@ -51,6 +51,12 @@ export interface CourseSearchBrowseProps {
 // read. Keep the filters out of it, or the total would follow them.
 const ACCESSIBLE_COURSES_COUNT_PARAMS = { pageSize: 1 };
 
+// The smallest height either panel of the split can be dragged to. At 16rem the
+// associations panel shows its whole empty-state message, and Courses & Content
+// shows one course row plus pagination. It is in rem so that it grows with the
+// browser's font size.
+const MIN_PANEL_HEIGHT_REM = 16;
+
 // A stable no-op for `SearchField`'s required `onSubmit` prop. Paragon's
 // `SearchFieldAdvanced` re-invokes its own `onChange` handler whenever that
 // prop's reference changes, not only when the search value itself changes
@@ -293,6 +299,7 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
               bottom={content}
               storageKey="competency-associations-panel-split"
               ariaLabel={intl.formatMessage(messages.panelSplitLabel)}
+              minPanelHeight={MIN_PANEL_HEIGHT_REM * parseFloat(getComputedStyle(document.documentElement).fontSize)}
             />
           )
           : (
