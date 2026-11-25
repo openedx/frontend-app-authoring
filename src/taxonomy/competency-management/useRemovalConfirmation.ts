@@ -28,9 +28,10 @@ interface OutlineNames {
 
 /** Rebuilds a failed removal's dialog, so a retry describes and sends only what is left. A rule box's deletes stop at
  * the first failure, and `removedCount` is how many of its criteria were removed before it: the refetched data cannot
- * say, because it is the pre-delete data when the refetch fails too. Returns `null` when the target is gone from the
- * refetched data, which is the outcome the author asked for. `summary` is `null` when there is no fresh data to
- * rebuild it from, and the dialog keeps the one it shows.
+ * say, because it is the pre-delete data when the refetch fails too. Those criteria are dropped from the data before
+ * the summary is built, so the last-association warning counts only what the course still holds. Returns `null` when
+ * the target is gone from the refetched data, which is the outcome the author asked for. `summary` is `null` when
+ * there is no fresh data to rebuild it from, and the dialog keeps the one it shows.
  */
 const pendingRemovalAfterFailure = (
   target: RemovalTarget,
@@ -40,25 +41,32 @@ const pendingRemovalAfterFailure = (
   { courseNamesByKey, subsectionNamesByUsageKey }: OutlineNames,
 ): Omit<PendingRemoval, 'summary'> & { summary: RemovalSummary | null; } | null => {
   let retryTarget: RemovalTarget = target;
+  let dataAfterRemoval = freshData;
   if (target.kind === RemovalTargetKind.RuleBox) {
+    const removedIds = target.criterionIds.slice(0, removedCount);
     const unsentIds = target.criterionIds.slice(removedCount);
+    const remainingData = freshData && {
+      ...freshData,
+      criteria: freshData.criteria.filter((criterion) => !removedIds.includes(criterion.id)),
+    };
+    dataAfterRemoval = remainingData;
     retryTarget = {
       ...target,
-      criterionIds: freshData
-        ? unsentIds.filter((id) => freshData.criteria.some((criterion) => criterion.id === id))
+      criterionIds: remainingData
+        ? unsentIds.filter((id) => remainingData.criteria.some((criterion) => criterion.id === id))
         : unsentIds,
     };
   }
-  const freshSummary = freshData && systemDefaultProfile
+  const freshSummary = dataAfterRemoval && systemDefaultProfile
     ? summarizeRemoval(
       retryTarget,
-      buildCompetencyCriteriaGroupsIndex(freshData),
+      buildCompetencyCriteriaGroupsIndex(dataAfterRemoval),
       systemDefaultProfile,
       courseNamesByKey,
       subsectionNamesByUsageKey,
     )
     : null;
-  if (freshData && systemDefaultProfile && freshSummary === null) {
+  if (dataAfterRemoval && systemDefaultProfile && freshSummary === null) {
     return null;
   }
   return {

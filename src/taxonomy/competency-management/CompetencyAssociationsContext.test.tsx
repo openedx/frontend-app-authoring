@@ -3355,6 +3355,37 @@ describe('CompetencyAssociationsProvider', () => {
       expect(summary().leavesCourseWithoutAssociations).toBe(true);
     });
 
+    it('keeps the last-association warning, and names only what is left, when the refetch after a partial failure fails too', async () => {
+      // Start: group 10 holds a 70% box (901, 905, 906), which is all the course has.
+      // Remove: the 70% box. 901 is deleted, 905 answers 500, and the refetch answers 500 too, so the cached groups
+      //   still list 901.
+      // After: the dialog still warns that the course is left without associations, names only 905 and 906, and a
+      //   retry sends only those two.
+      const onlyTheBoxResponse = responseWithoutCriteria(threeCriteriaInOneRuleBoxResponse, [903]);
+      mockDeletes(901, 906);
+      axiosMock.onDelete(deleteUrlOf(905)).replyOnce(500);
+      axiosMock.onDelete(deleteUrlOf(905)).reply(200, { id: 905, archived: false });
+      axiosMock.onGet(groupsUrl).replyOnce(200, onlyTheBoxResponse);
+      axiosMock.onGet(groupsUrl).reply(500);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, namedOutline);
+      await renderLoaded();
+
+      await click('Delete the 70% rule box in group 10');
+      expect(summary().leavesCourseWithoutAssociations).toBe(true);
+      await click('Confirm removal');
+
+      expect(await screen.findByText(pendingRemoval('{"kind":"ruleBox","failure":"partly-removed"}')))
+        .toBeInTheDocument();
+      expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
+      expect(summary().leavesCourseWithoutAssociations).toBe(true);
+      expect(summary().contentNames).toEqual(['Quiz 905', 'Quiz 906']);
+
+      await click('Confirm removal');
+      await waitFor(() => expect(sentDeleteUrls()).toHaveLength(4));
+      expect(sentDeleteUrls()).toEqual([deleteUrlOf(901), deleteUrlOf(905), deleteUrlOf(905), deleteUrlOf(906)]);
+    });
+
     it('lets a retry send only what is left after a partial failure', async () => {
       mockDeletes(901, 906, 903);
       axiosMock.onDelete(deleteUrlOf(905)).replyOnce(500);
