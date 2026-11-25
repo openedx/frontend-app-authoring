@@ -800,6 +800,8 @@ export const CompetencyAssociationsProvider = ({
   const scopeChanged = listedCourseKeys !== undefined && !isEqual(listedCourseKeys, state.scopeCourseKeys);
   if (scopeChanged) {
     dispatch({ type: 'scopeChanged', courseKeys: listedCourseKeys });
+    // The dialog names a target from the previous groups, which may not be loaded in the new scope.
+    setPendingRemoval(null);
   }
   // The rest of this render reads state that is about to be replaced, so the effects-in-render below skip it; the
   // immediate re-render runs them.

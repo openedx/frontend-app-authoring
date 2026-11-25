@@ -3360,6 +3360,25 @@ describe('CompetencyAssociationsProvider', () => {
       expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
     });
 
+    it('closes an open dialog when the listed courses change, and a later confirm sends nothing', async () => {
+      axiosMock.onGet(groupsUrl).reply(200, threeCriteriaInOneRuleBoxResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      mockDeletes(901);
+      await renderLoaded();
+      await click('Remove sub-a chip');
+      expect(screen.getByText(pendingRemoval('{"kind":"association","failure":null}'))).toBeInTheDocument();
+
+      await click('Search for course B');
+      await screen.findByText(`Listed course keys: ${JSON.stringify([courseB])}`);
+
+      expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
+      await click('Confirm removal');
+      await flushEffects();
+      expect(sentDeleteUrls()).toEqual([]);
+      expect(mockShowToast).not.toHaveBeenCalled();
+    });
+
     it('recomputes the last-association warning from the refetched data after a failure', async () => {
       mockDeletes(901);
       axiosMock.onDelete(deleteUrlOf(905)).reply(500);
