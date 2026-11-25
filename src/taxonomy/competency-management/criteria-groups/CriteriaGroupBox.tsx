@@ -106,20 +106,7 @@ const CriteriaGroupBox = (
     }
   }, [takesKeyboardFocus, selectionMoved, consumeKeyboardFocusRequest]);
 
-  const menuToggleRef = useRef<HTMLButtonElement>(null);
   const isMenuDisabled = isDeletingGroupOrRuleBoxOrCriterion || isAssociating;
-  // Waits for the toggle to be enabled again, since a disabled button cannot take focus.
-  const takesMenuFocus = group !== undefined
-    && keyboardFocusRequest?.kind === 'menu'
-    && keyboardFocusRequest.groupId === group.id
-    && !isMenuDisabled;
-
-  useEffect(() => {
-    if (takesMenuFocus && menuToggleRef.current) {
-      menuToggleRef.current.focus();
-      consumeKeyboardFocusRequest();
-    }
-  }, [takesMenuFocus, consumeKeyboardFocusRequest]);
 
   const sentenceLabel = intl.formatMessage(messages.criteriaGroupBoxLabel, {
     operator: logicOperator === 'AND'
@@ -181,7 +168,6 @@ const CriteriaGroupBox = (
               {sentence}
             </div>
             <MoreActionsMenu
-              toggleRef={menuToggleRef}
               id={`rule-group-menu-toggle-${group?.id ?? 'placeholder'}`}
               toggleLabel={group
                 ? intl.formatMessage(messages.ruleGroupMoreActionsLabel, { position, courseName })

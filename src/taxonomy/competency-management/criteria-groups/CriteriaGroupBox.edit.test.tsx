@@ -311,33 +311,6 @@ describe('<CriteriaGroupBox /> editing (#794)', () => {
       expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
     });
 
-    it('takes keyboard focus on its menu button when a menu request names it, then consumes the request', () => {
-      const consumeKeyboardFocusRequest = jest.fn();
-      renderBox({ keyboardFocusRequest: { kind: 'menu', groupId: 10 }, consumeKeyboardFocusRequest });
-
-      expect(screen.getByRole('button', { name: 'More actions for rule group 2 in Demo Course' })).toHaveFocus();
-      expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
-    });
-
-    it('leaves a menu request pending while the menu button is still disabled', () => {
-      const consumeKeyboardFocusRequest = jest.fn();
-      renderBox({
-        keyboardFocusRequest: { kind: 'menu', groupId: 10 },
-        consumeKeyboardFocusRequest,
-        isDeletingGroupOrRuleBoxOrCriterion: true,
-      });
-
-      expect(consumeKeyboardFocusRequest).not.toHaveBeenCalled();
-    });
-
-    it('ignores a menu request that names another group', () => {
-      const consumeKeyboardFocusRequest = jest.fn();
-      renderBox({ keyboardFocusRequest: { kind: 'menu', groupId: 99 }, consumeKeyboardFocusRequest });
-
-      expect(screen.getByRole('button', { name: 'More actions for rule group 2 in Demo Course' })).not.toHaveFocus();
-      expect(consumeKeyboardFocusRequest).not.toHaveBeenCalled();
-    });
-
     it('ignores a keyboard focus request that names another group', async () => {
       const consumeKeyboardFocusRequest = jest.fn();
       renderBox({

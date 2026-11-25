@@ -167,12 +167,7 @@ export function useRemovalConfirmation({
   const confirmRemoval = useCallback(async () => {
     const pending = pendingRemovalRef.current;
     const startGeneration = generationRef.current;
-    if (
-      !pending
-      || confirmingGenerationRef.current === startGeneration
-      || isDeletingGroupOrRuleBoxOrCriterion
-      || isAssociating
-    ) {
+    if (!pending || confirmingGenerationRef.current === startGeneration || isAssociating) {
       return;
     }
     confirmingGenerationRef.current = startGeneration;
@@ -229,7 +224,6 @@ export function useRemovalConfirmation({
       }
     }
   }, [
-    isDeletingGroupOrRuleBoxOrCriterion,
     isAssociating,
     generationRef,
     setPendingRemoval,

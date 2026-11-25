@@ -229,8 +229,9 @@ export type RemovalTarget =
   | { kind: RemovalTargetKind.RuleBox; groupId: number; criterionIds: number[]; };
 
 /** What the confirmation dialog says about a removal. A `null` name is a subsection that its course outline no longer
- * lists, and the dialog shows a fallback label for it. `leavesCourseWithoutAssociations` is true when no saved
- * association is left in the course's competency group after the removal.
+ * lists. The association dialog then asks about "this unavailable content" in its title, and the rule box dialog lists
+ * it under a fallback label. `leavesCourseWithoutAssociations` is true when no saved association is left in the
+ * course's competency group after the removal.
  */
 export type RemovalSummary =
   | { kind: RemovalTargetKind.Association; contentName: string | null; leavesCourseWithoutAssociations: boolean; }

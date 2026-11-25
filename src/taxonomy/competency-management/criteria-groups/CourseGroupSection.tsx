@@ -51,7 +51,6 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   } = useCompetencyAssociations();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const sectionToggleRef = useRef<HTMLButtonElement>(null);
-  const menuToggleRef = useRef<HTMLButtonElement>(null);
   const { data } = useCourseOutlineIndex(courseGroup.courseKey, { refetchOnMount: false });
 
   const subsectionNamesByUsageKey = useMemo(
@@ -70,13 +69,13 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   const bottomTierGroups = status === 'success' ? bottomTierGroupsForCourse(groupsIndex, courseGroup.courseKey) : [];
 
   // A collapsed section has not mounted its cards. A request that moves selection into it is opened by the selection
-  // effect below. One that keeps the author's collapse, or a menu request, lands on the section's expand toggle instead.
-  const request = (keyboardFocusRequest?.kind === 'group' || keyboardFocusRequest?.kind === 'menu')
+  // effect below. One that keeps the author's collapse lands on the section's expand toggle instead.
+  const request = keyboardFocusRequest?.kind === 'group'
       && bottomTierGroups.some((group) => group.id === keyboardFocusRequest.groupId)
     ? keyboardFocusRequest
     : null;
   const holdsFocusRequestTarget = request !== null;
-  const requestMovesSelection = request?.kind === 'group' && request.selectionMoved;
+  const requestMovesSelection = request !== null && request.selectionMoved;
   useEffect(() => {
     if (holdsFocusRequestTarget && isCollapsed && !requestMovesSelection) {
       sectionToggleRef.current?.focus();
@@ -86,19 +85,6 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
 
   const isMenuDisabled = isDeletingGroupOrRuleBoxOrCriterion || isAssociating;
   const canEdit = canEditCourse(courseGroup.courseKey);
-  const isRendered = status === 'success' && Boolean(data);
-  // Waits for the toggle to render and be enabled again, since a disabled button cannot take focus.
-  const takesMenuFocus = isRendered
-    && canEdit
-    && keyboardFocusRequest?.kind === 'menu'
-    && keyboardFocusRequest.groupId === courseGroup.id
-    && !isMenuDisabled;
-  useEffect(() => {
-    if (takesMenuFocus && menuToggleRef.current) {
-      menuToggleRef.current.focus();
-      consumeKeyboardFocusRequest();
-    }
-  }, [takesMenuFocus, consumeKeyboardFocusRequest]);
 
   const handleToggleCollapsed = () => {
     // A collapsed section hides its placeholder, so it is dropped instead of lingering unseen.
@@ -163,7 +149,6 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
         }
         actions={canEdit && (
           <MoreActionsMenu
-            toggleRef={menuToggleRef}
             id={`course-group-menu-toggle-${courseGroup.id}`}
             toggleLabel={intl.formatMessage(messages.courseGroupMoreActionsLabel, { courseName })}
             removeLabel={intl.formatMessage(messages.removeFromCompetencyMenuItem, { competencyName })}
