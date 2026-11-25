@@ -1,9 +1,7 @@
-import type { Ref } from 'react';
 import { Dropdown, Icon, IconButton } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
 interface MoreActionsMenuProps {
-  toggleRef?: Ref<HTMLButtonElement>;
   toggleClassName?: string;
   id: string;
   toggleLabel: string;
@@ -18,7 +16,6 @@ interface MoreActionsMenuProps {
  * inline size into the header's. Explicit props instead of children keep that `size` off the toggle.
  */
 const MoreActionsMenu = ({
-  toggleRef,
   toggleClassName,
   id,
   toggleLabel,
@@ -28,7 +25,6 @@ const MoreActionsMenu = ({
 }: MoreActionsMenuProps) => (
   <Dropdown className="more-actions-menu">
     <Dropdown.Toggle
-      ref={toggleRef}
       id={id}
       as={IconButton}
       src={MoreVert}
