@@ -292,6 +292,10 @@ export interface CompetencyAssociationsContextBase {
   criteriaCounts: Pick<CompetencyCriteriaGroupsResponse, 'criteriaCount' | 'totalCriteriaCount'> | undefined;
   /** The active competency's name, for the course group menu's "Remove from" item. */
   competencyName: string;
+  /** True while the groups query is in its failed state with groups still loaded, as when the refetch after a write
+   * fails. The loaded groups stay listed, so the panel shows an alert above them: they may not reflect the write.
+   */
+  hasGroupsRefreshError: boolean;
 }
 
 /** Discriminated on `status`. `groupsIndex` and `systemDefaultProfile` are
@@ -303,7 +307,7 @@ export interface CompetencyAssociationsContextBase {
  * outline has not loaded yet. `'error'` if the course list, the profile or any course
  * outline failed, including a failure after `'success'`, or if the groups failed before
  * any groups data loaded. A groups refetch that fails after data loaded keeps the last
- * loaded groups and `status`. An outline that fails with a 403 or 404 only hides its
+ * loaded groups and `status`, and sets `hasGroupsRefreshError`. An outline that fails with a 403 or 404 only hides its
  * course and does not affect `status`.
  */
 export type CompetencyAssociationsContextValue =
@@ -844,9 +848,11 @@ export const CompetencyAssociationsProvider = ({
     () => (groupsQuery.data ? associatedObjectIds(groupsQuery.data) : new Set<string>()),
     [groupsQuery.data],
   );
-  // `data` outlives a failed refetch under the same key, so after a write
-  // whose refetch failed it holds the pre-write counts beside the panel's error.
+  // `data` outlives a failed refetch under the same key, so after a write whose refetch failed it still holds the
+  // pre-write counts. They are dropped: the empty states they pick between would describe data the write may have
+  // changed, so an empty list shows the load error instead, and a listed one shows the refresh alert.
   const countsData = groupsQuery.isError ? undefined : groupsQuery.data;
+  const hasGroupsRefreshError = groupsQuery.isError && groupsQuery.data !== undefined;
   const criteriaCount = countsData?.criteriaCount;
   const totalCriteriaCount = countsData?.totalCriteriaCount;
   const criteriaCounts = useMemo(
@@ -1428,6 +1434,7 @@ export const CompetencyAssociationsProvider = ({
       setCourseDateRange,
       criteriaCounts,
       competencyName,
+      hasGroupsRefreshError,
     };
     if (status === 'success' && groupsIndex && systemDefaultProfile) {
       return { ...shared, status, groupsIndex, systemDefaultProfile };
@@ -1480,6 +1487,7 @@ export const CompetencyAssociationsProvider = ({
     setCourseDateRange,
     criteriaCounts,
     competencyName,
+    hasGroupsRefreshError,
   ]);
 
   return (

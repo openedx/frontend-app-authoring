@@ -369,6 +369,7 @@ describe('<CriteriaAssociationsSection />', () => {
       totalCriteriaCount: 1,
     };
     const chipRemoveName = 'Remove the association with Subsection A';
+    const loadErrorMessage = 'There was a problem loading this competency\'s associations. Please try again.';
     const dialogName = 'Remove Subsection A from Data Literacy?';
 
     it('opens the dialog from a chip\'s "x" and sends nothing', async () => {
@@ -483,7 +484,7 @@ describe('<CriteriaAssociationsSection />', () => {
       expect(mockShowToast).not.toHaveBeenCalled();
     });
 
-    it('keeps the cached groups listed, with no failed state, when a refetch fails', async () => {
+    it('keeps the cached groups listed below an alert when a refetch fails', async () => {
       const user = userEvent.setup();
       mockProfileAndOutline(namedOutline);
       axiosMock.onGet(groupsUrl).replyOnce(200, group10With70And80PercentRuleBoxesResponse);
@@ -499,8 +500,25 @@ describe('<CriteriaAssociationsSection />', () => {
 
       await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
       expect(screen.getByRole('button', { name: chipRemoveName })).toBeInTheDocument();
-      expect(screen.queryByText('There was a problem loading this competency\'s associations. Please try again.'))
-        .not.toBeInTheDocument();
+      expect(screen.getByText(loadErrorMessage)).toBeInTheDocument();
+    });
+
+    it('shows the alert above the still-listed chip when the DELETE succeeds but the refetch fails', async () => {
+      const user = userEvent.setup();
+      mockProfileAndOutline(namedOutline);
+      axiosMock.onGet(groupsUrl).replyOnce(200, group10With70And80PercentRuleBoxesResponse);
+      axiosMock.onGet(groupsUrl).reply(500);
+      axiosMock.onDelete(apiUrls.deleteCompetencyCriterion(tagId, 901)).reply(200, { id: 901, archived: false });
+      renderSection();
+      await user.click(await screen.findByRole('button', { name: chipRemoveName }));
+      const dialog = await screen.findByRole('dialog', { name: dialogName });
+
+      await user.click(within(dialog).getByRole('button', { name: 'Remove' }));
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      const alert = await screen.findByText(loadErrorMessage);
+      const chip = screen.getByRole('button', { name: chipRemoveName });
+      expect(alert.compareDocumentPosition(chip) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     });
 
     it('opens the group dialog from "Remove group" with the count and the last-association warning', async () => {

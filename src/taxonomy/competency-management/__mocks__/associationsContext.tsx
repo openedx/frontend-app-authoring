@@ -74,6 +74,7 @@ export const buildMockCompetencyAssociationsContextValue = (
     setCourseDateRange: jest.fn(),
     criteriaCounts: { criteriaCount: 0, totalCriteriaCount: 0 },
     competencyName: 'Competency',
+    hasGroupsRefreshError: false,
     ...overrides,
   };
   if (overrides.status === 'pending' || overrides.status === 'error') {

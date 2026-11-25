@@ -124,7 +124,8 @@ const messages = defineMessages({
     id: 'course-authoring.competency-management.criteria-groups.course-group-list-error-message',
     defaultMessage: 'There was a problem loading this competency\'s associations. Please try again.',
     description: 'Inline error message shown when loading a competency\'s existing criteria groups, or the '
-      + 'system default rule profile, fails.',
+      + 'system default rule profile, fails, and above the groups still listed when refreshing them after a '
+      + 'change fails.',
   },
   noAssociationsMessage: {
     id: 'course-authoring.competency-management.criteria-groups.no-associations-message',

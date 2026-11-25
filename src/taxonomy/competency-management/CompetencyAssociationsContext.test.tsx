@@ -339,6 +339,7 @@ const TestConsumer = () => {
       <p>Course page: {ctx.coursePage}</p>
       <p>Course search: {JSON.stringify(ctx.courseSearch)}</p>
       <p>Criteria counts: {JSON.stringify(ctx.criteriaCounts ?? null)}</p>
+      <p>Groups refresh error: {String(ctx.hasGroupsRefreshError)}</p>
       <p>Competency: {String(ctx.competencyExternalId)}</p>
       <p>Conflict in course A: {ctx.conflictingCompetencyName(courseA) ?? 'none'}</p>
       <p>Conflict in course B: {ctx.conflictingCompetencyName(courseB) ?? 'none'}</p>
@@ -527,8 +528,29 @@ describe('CompetencyAssociationsProvider', () => {
       await waitFor(() => expect(axiosMock.history.get.filter((request) => request.url === groupsUrl)).toHaveLength(2));
       expect(screen.getByText('Status: success')).toBeInTheDocument();
       expect(screen.getByText('Error: none')).toBeInTheDocument();
+      expect(screen.getByText('Groups refresh error: true')).toBeInTheDocument();
       expect(screen.getByText('Groups index: loaded')).toBeInTheDocument();
       expect(accessibleCourses()).toHaveTextContent(courseA);
+    });
+
+    it('clears the refresh error once a later groups load succeeds', async () => {
+      axiosMock.onGet(groupsUrl).replyOnce(200, singleGroupResponse);
+      axiosMock.onGet(groupsUrl).replyOnce(500);
+      axiosMock.onGet(groupsUrl).reply(200, singleGroupResponse);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      renderProvider();
+      await waitForSuccess();
+      expect(screen.getByText('Groups refresh error: false')).toBeInTheDocument();
+      const invalidateGroups = () => act(async () => {
+        await queryClient.invalidateQueries({ queryKey: competencyQueryKeys.competencyCriteriaGroups(tagId) });
+      });
+
+      await invalidateGroups();
+      expect(await screen.findByText('Groups refresh error: true')).toBeInTheDocument();
+      await invalidateGroups();
+
+      expect(await screen.findByText('Groups refresh error: false')).toBeInTheDocument();
     });
 
     it('reports an error when a course outline refetch fails after the status was success', async () => {
@@ -1763,6 +1785,7 @@ describe('CompetencyAssociationsProvider', () => {
       await waitFor(() => expect(groupsReads()).toHaveLength(2));
       expect(screen.getByText('Status: success')).toBeInTheDocument();
       expect(screen.getByText('Error: none')).toBeInTheDocument();
+      expect(screen.getByText('Groups refresh error: true')).toBeInTheDocument();
       expect(screen.getByText('Groups index: loaded')).toBeInTheDocument();
       expect(noSelection()).toBeInTheDocument();
     });
@@ -2971,6 +2994,7 @@ describe('CompetencyAssociationsProvider', () => {
         await waitFor(() => expect(groupsReads()).toHaveLength(2));
         expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
         expect(screen.getByText('Status: success')).toBeInTheDocument();
+        expect(screen.getByText('Groups refresh error: true')).toBeInTheDocument();
         expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
         expect(mockShowToast).not.toHaveBeenCalled();
       });
@@ -3657,6 +3681,21 @@ describe('CompetencyAssociationsProvider', () => {
       await click('Associate in course A');
 
       expect(await screen.findByText(selectionOn(999, eqKey))).toBeInTheDocument();
+    });
+
+    it('flags a groups refresh error when the refetch after a successful create fails', async () => {
+      axiosMock.onGet(groupsUrl).replyOnce(200, singleGroupResponse).onGet(groupsUrl).reply(500);
+      axiosMock.onGet(profileUrl).reply(200, profileResponse);
+      axiosMock.onGet(courseAOutlineUrl).reply(200, outlineFixture);
+      axiosMock.onPost(createUrl).reply(201, createdCriterion(10));
+      renderProvider();
+      await waitForSuccess();
+      expect(screen.getByText('Groups refresh error: false')).toBeInTheDocument();
+
+      await click('Associate in course A');
+
+      expect(await screen.findByText('Groups refresh error: true')).toBeInTheDocument();
+      expect(screen.getByText('Status: success')).toBeInTheDocument();
     });
 
     it.each([

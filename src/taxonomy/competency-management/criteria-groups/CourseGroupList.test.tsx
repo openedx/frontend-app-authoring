@@ -54,6 +54,51 @@ describe('<CourseGroupList />', () => {
     expect(screen.queryByText(byTextContent(noAssociationsMessage))).not.toBeInTheDocument();
   });
 
+  describe('when the groups refresh failed', () => {
+    const loadErrorMessage = 'There was a problem loading this competency\'s associations. Please try again.';
+
+    it('lists the loaded groups below an alert', async () => {
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(
+        200,
+        buildOutlineIndex({ overrides: { courseStructure: { displayName: 'Course A' } } }),
+      );
+      const groupsIndex = buildCompetencyCriteriaGroupsIndex(twoCoursesResponse);
+      renderList({
+        groupsIndex,
+        accessibleCourseGroups: groupsIndex.courseGroups.filter((courseGroup) => courseGroup.courseKey === courseA),
+        hasGroupsRefreshError: true,
+      });
+
+      const alert = screen.getByRole('alert');
+      expect(alert).toHaveTextContent(loadErrorMessage);
+      const heading = await screen.findByRole('heading', { name: 'From within Course A ...' });
+      expect(alert.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    });
+
+    it('shows no alert while the groups are fresh', async () => {
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(
+        200,
+        buildOutlineIndex({ overrides: { courseStructure: { displayName: 'Course A' } } }),
+      );
+      const groupsIndex = buildCompetencyCriteriaGroupsIndex(twoCoursesResponse);
+      renderList({
+        groupsIndex,
+        accessibleCourseGroups: groupsIndex.courseGroups.filter((courseGroup) => courseGroup.courseKey === courseA),
+      });
+
+      await screen.findByRole('heading', { name: 'From within Course A ...' });
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
+    it('shows a single alert, and no empty state, when no group is listed', () => {
+      renderList({ accessibleCourseGroups: [], criteriaCounts: undefined, hasGroupsRefreshError: true });
+
+      expect(screen.getAllByRole('alert')).toHaveLength(1);
+      expect(screen.getByRole('alert')).toHaveTextContent(loadErrorMessage);
+      expect(screen.queryByText(noAssociationsPromptMessage)).not.toBeInTheDocument();
+    });
+  });
+
   it('renders the empty state when no course group is accessible, whatever the groups index holds', () => {
     renderList({
       groupsIndex: buildCompetencyCriteriaGroupsIndex(twoCoursesResponse),

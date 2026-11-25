@@ -25,6 +25,10 @@ import './criteria-groups.scss';
  *
  * While the course list reloads, the previous groups stay on screen and the
  * empty states give way to a spinner: both would describe the previous list.
+ *
+ * A groups refetch that fails while groups are loaded, as after a write, keeps
+ * them listed and shows the load error above them, since they may not reflect
+ * the write.
  */
 const CourseGroupList = () => {
   const intl = useIntl();
@@ -36,6 +40,7 @@ const CourseGroupList = () => {
     competencyName,
     keyboardFocusRequest,
     consumeKeyboardFocusRequest,
+    hasGroupsRefreshError,
   } = useCompetencyAssociations();
   const emptyStateRef = useRef<HTMLDivElement>(null);
   const takesKeyboardFocus = keyboardFocusRequest?.kind === 'empty';
@@ -105,6 +110,7 @@ const CourseGroupList = () => {
 
   return (
     <Stack gap={3} className="course-group-list">
+      {hasGroupsRefreshError && loadError}
       {accessibleCourseGroups.map((courseGroup) => (
         <CourseGroupSection
           key={courseGroup.id}
