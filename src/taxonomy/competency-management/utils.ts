@@ -219,7 +219,7 @@ export function subsectionNamesFromOutline(courseStructure: CourseStructure): Re
   return names;
 }
 
-/** One removal the author asked for, before confirmation (`#786`). It holds ids only, and `summarizeRemoval`
+/** One removal the author asked for, before confirmation. It holds ids only, and `summarizeRemoval`
  * resolves them to names.
  */
 export type RemovalTarget =
@@ -230,8 +230,9 @@ export type RemovalTarget =
 
 /** What the confirmation dialog says about a removal. A `null` name is a subsection that its course outline no longer
  * lists. The association dialog then asks about "this unavailable content" in its title, and the rule box dialog lists
- * it under a fallback label. `leavesCourseWithoutAssociations` is true when no saved association is left in the
- * course's competency group after the removal.
+ * it under a fallback label. Where present, `leavesCourseWithoutAssociations` is true when the removal leaves the
+ * course with no saved association for the competency. A `CourseGroup` removal always does, so that kind has no
+ * such field.
  */
 export type RemovalSummary =
   | { kind: RemovalTargetKind.Association; contentName: string | null; leavesCourseWithoutAssociations: boolean; }
@@ -258,7 +259,7 @@ export function summarizeRemoval(
     const parentId = index.groupsById.get(groupId)?.parentId;
     return (parentId == null ? null : index.groupsById.get(parentId)?.courseKey) ?? null;
   };
-  // Saved criteria only: a placeholder has none.
+  // Counts saved criteria only, because a placeholder group has no criteria.
   const associationCountInCourse = (courseKey: string) =>
     bottomTierGroupsForCourse(index, courseKey)
       .reduce((total, group) => total + (index.criteriaByGroupId.get(group.id) ?? []).length, 0);

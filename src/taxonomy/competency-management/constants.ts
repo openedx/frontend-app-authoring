@@ -1,4 +1,4 @@
-/** What a removal deletes */
+/** The kind of thing a removal deletes. */
 export enum RemovalTargetKind {
   /** One criterion, which links a subsection to a rule group. */
   Association = 'association',
@@ -10,7 +10,7 @@ export enum RemovalTargetKind {
   RuleBox = 'ruleBox',
 }
 
-/** What a failed removal left, which picks the dialog's error text. */
+/** What a failed removal left behind. It decides which error text the dialog shows. */
 export enum RemovalFailure {
   /** Everything the dialog named is still listed. */
   NothingRemoved = 'nothing-removed',

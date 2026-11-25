@@ -59,7 +59,7 @@ export const describeRemoval = (
           competencyName,
         }),
         failedTitle: intl.formatMessage(messages.removeCourseGroupFailedTitle),
-        // Removing a course always leaves it without associations.
+        // A course group removal deletes every association the course has for this competency, so the warning applies.
         details: withWarning(
           intl.formatMessage(messages.removeRuleGroupDialogBody, { ...bold, count: summary.associationCount }),
           true,

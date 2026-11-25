@@ -99,7 +99,7 @@ const CriteriaGroupBox = (
     if (takesKeyboardFocus && selectButtonRef.current) {
       // Moving focus off a text field would interrupt the author's typing.
       if (!isInputOrEditableElement(document.activeElement)) {
-        // After the dialog's own focus return, which runs in a microtask when it unmounts.
+        // The dialog's own focus return runs in a microtask when it unmounts, so this one is queued to land after it.
         queueMicrotask(() => selectButtonRef.current?.focus({ preventScroll: selectionMoved }));
       }
       consumeKeyboardFocusRequest();

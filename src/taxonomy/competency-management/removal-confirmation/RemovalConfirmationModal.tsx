@@ -9,8 +9,8 @@ import messages from './messages';
 import { describeRemoval } from './utils';
 
 /** Confirms removals on the Competency Management page, driven by the provider's `pendingRemoval`.
- * A failed request keeps the dialog open with an alert, and Remove retries. The wording doesn't say
- * deleted vs. archived, since the page ignores the delete endpoints' `archived` flag.
+ * A failed request keeps the dialog open with an alert, and Remove retries. The wording does not say whether a
+ * removal deletes or archives, because the page ignores the delete endpoints' `archived` flag.
  */
 const RemovalConfirmationModal = () => {
   const intl = useIntl();

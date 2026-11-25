@@ -138,7 +138,7 @@ interface SubsectionRowProps {
 /**
  * One graded subsection: its name plus the competency pill. The applied pill shows regardless of
  * `canEditCourse`, and holds a remove button when the author can edit, including in a blocked course.
- * Takes keyboard focus back after a confirmed remove.
+ * After a confirmed removal started from this row, focus returns to whichever of its pill buttons is mounted.
  *
  * A course is blocked for the competency being edited when one of its ancestors or descendants
  * already has associations there. A blocked row's associate button is disabled, grey, and has a
@@ -176,7 +176,7 @@ const SubsectionRow = ({ subsection, courseId }: SubsectionRowProps) => {
   useEffect(() => {
     const target = isAssociated ? removeButtonRef.current : associateButtonRef.current;
     if (takesKeyboardFocus && target) {
-      // After the dialog's own focus return, which runs in a microtask when it unmounts.
+      // The dialog's own focus return runs in a microtask when it unmounts, so this one is queued to land after it.
       queueMicrotask(() => target.focus());
       consumeKeyboardFocusRequest();
     }

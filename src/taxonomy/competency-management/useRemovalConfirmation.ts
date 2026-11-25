@@ -5,8 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Error as ErrorIcon } from '@openedx/paragon/icons';
 
 import type { CourseOutline } from '@src/course-outline/data';
-// Bypasses the public barrel for the same reason the provider does: this is
-// the key its outline fetches are cached under.
+// The `data` barrel does not export the query keys. This is the key the provider's outline fetches are cached under.
 import { courseOutlineQueryKeys } from '@src/course-outline/data/queryKeys';
 import { useToastContext } from '@src/generic/toast-context';
 
@@ -27,12 +26,15 @@ interface OutlineNames {
   subsectionNamesByUsageKey: Record<string, string>;
 }
 
-/** Rebuilds a failed removal's dialog, so a retry describes and sends only what is left. A rule box's deletes stop at
- * the first failure, and `removedCount` is how many of its criteria were removed before it: the refetched data cannot
- * say, because it is the pre-delete data when the refetch fails too. Those criteria are dropped from the data before
- * the summary is built, so the last-association warning counts only what the course still holds. Returns `null` when
- * the target is gone from the refetched data, which is the outcome the author asked for. `summary` is `null` when
- * there is no fresh data to rebuild it from, and the dialog keeps the one it shows.
+/** Rebuilds a failed removal's dialog, so a retry describes and sends only what is left.
+ *
+ * A rule box's deletes stop at the first failure, and `removedCount` is how many of its criteria were removed before
+ * it. The refetched data cannot say, because it is the pre-delete data when the refetch fails too. Those criteria are
+ * dropped from the data before the summary is built, so the last-association warning counts only what the course
+ * still holds.
+ *
+ * Returns `null` when the target is gone from the refetched data, which is the outcome the author asked for.
+ * `summary` is `null` when there is no fresh data to rebuild it from, and the dialog keeps the one it shows.
  */
 const pendingRemovalAfterFailure = (
   target: RemovalTarget,
@@ -85,21 +87,23 @@ interface UseRemovalConfirmationArgs {
   systemDefaultProfile: CompetencyRuleProfile | undefined;
   /** The courses whose cached outlines name the dialog's courses and subsections. */
   courseIdsWithGroups: string[];
-  /** Kept in the provider, whose `tagId` reset clears it during render, before the delete callbacks below exist. */
+  /** Held by the provider because its `tagId` reset clears it during render, before the delete callbacks below are
+   * created. */
   pendingRemoval: PendingRemoval | null;
   setPendingRemoval: Dispatch<SetStateAction<PendingRemoval | null>>;
   isDeletingGroupOrRuleBoxOrCriterion: boolean;
-  /** True while an association is being created, when deletes are dropped. */
+  /** True while an association is being created. Removal requests and confirmations are ignored then. */
   isAssociating: boolean;
-  /** The provider's latest generation, read to tell a failure that lands after a competency switch. */
+  /** The provider's latest generation, a counter bumped on every competency change. A failure that lands after a
+   * competency switch is told apart by comparing against it. */
   generationRef: { readonly current: number; };
-  /** The delete functions throw when the request fails, which `confirmRemoval` reports in the dialog. */
+  /** The delete functions throw when their request fails, and `confirmRemoval` reports that failure in the dialog. */
   removeCriterion: (criterionId: number, returnFocusTo: 'group' | 'subsection') => Promise<void>;
   deleteRuleBox: (groupId: number, criterionIds: number[]) => Promise<void>;
   deleteGroup: (groupId: number) => Promise<void>;
 }
 
-/** Owns the removal confirmation flow (`#786`): opening it, running the delete it names, and reporting a failure. */
+/** Owns the removal confirmation flow: opening it, running the delete it names, and reporting a failure. */
 export function useRemovalConfirmation({
   tagId,
   listedCourseKeys,
@@ -119,18 +123,18 @@ export function useRemovalConfirmation({
   const { showToast } = useToastContext();
   const queryClient = useQueryClient();
 
-  // Read once the delete settles, to see a cancel made while it ran.
+  // The latest `pendingRemoval`, read after the delete settles to detect a cancel made while it ran.
   const pendingRemovalRef = useRef(pendingRemoval);
   useLayoutEffect(() => {
     pendingRemovalRef.current = pendingRemoval;
   }, [pendingRemoval]);
-  // Closes the gap between a confirm click and the render that disables the dialog's button, so a second call in the
-  // same tick cannot run another delete or close the dialog as if its own delete had succeeded. It holds the
-  // generation that started the confirm, so a confirm still pending for the previous competency does not block this
-  // one.
+  // Closes the gap between a confirm click and the render that disables the dialog's button. Without it, a second call
+  // in the same tick could start another delete, or close the dialog as if its own delete had succeeded. It holds the
+  // generation that started the confirm, so a confirm still pending for the previous competency does not block one
+  // for the current competency.
   const confirmingGenerationRef = useRef<number | null>(null);
 
-  // Reuses the outline fetches that decide which courses are accessible.
+  // Reads names from the cached course outlines, the same responses that decide which courses are accessible.
   const outlineNames = useCallback(() => {
     const courseNamesByKey = new Map<string, string>();
     let subsectionNamesByUsageKey: Record<string, string> = {};
@@ -190,7 +194,7 @@ export function useRemovalConfirmation({
           break;
       }
       if (generationRef.current === startGeneration) {
-        // After a competency switch the open dialog, if any, belongs to the new competency.
+        // Closes only a dialog from this competency. After a competency switch, an open dialog belongs to the new one.
         setPendingRemoval(null);
       }
     } catch (error) {

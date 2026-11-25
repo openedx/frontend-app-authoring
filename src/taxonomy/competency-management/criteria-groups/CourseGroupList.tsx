@@ -70,7 +70,7 @@ const CourseGroupList = () => {
   }
 
   if (accessibleCourseGroups.length === 0) {
-    // The groups stay listed, without counts, after a groups refetch fails; the empty states cannot do without them.
+    // A failed groups refetch drops the counts, and each empty state below needs them, so the load error shows instead.
     if (!criteriaCounts) {
       return loadError;
     }

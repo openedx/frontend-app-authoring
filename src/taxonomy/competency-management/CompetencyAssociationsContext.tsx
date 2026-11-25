@@ -149,8 +149,9 @@ export type KeyboardFocusRequest =
   | { kind: 'empty'; }
   | { kind: 'subsection'; objectId: string; };
 
-/** Where focus goes after one association is removed: back to the Courses & Content row it was removed from, else to
- * its group's header while the group still exists. `null` keeps the request `resolveSelectionAfterDelete` made. */
+/** Where focus goes after one association is removed. A removal started from a Courses & Content row returns focus to
+ * that row. Any other removal sends focus to the header of the association's group while that group still exists.
+ * `null` leaves the request `resolveSelectionAfterDelete` made in place. */
 const focusRequestAfterAssociationRemoval = (
   returnFocusTo: 'group' | 'subsection',
   objectId: string,
@@ -171,8 +172,8 @@ export interface PendingRemoval {
 }
 
 export interface CompetencyAssociationsContextBase {
-  /** The course list or profile failure, a groups failure before any groups loaded, or the first course-outline
-   * failure other than a 403 or 404, behind `status === 'error'`.
+  /** The error behind `status === 'error'`: the course list or profile failure, a groups failure before any groups
+   * loaded, or the first course-outline failure other than a 403 or 404.
    */
   error: Error | null;
   selection: CriteriaSelection | null;
@@ -207,8 +208,10 @@ export interface CompetencyAssociationsContextBase {
    * association is being created, or when the loaded data no longer has the target.
    */
   requestRemoval: (target: RemovalTarget) => void;
-  /** Runs the pending removal. Closes the dialog on success, and on failure leaves it open with `failure` set so a
-   * second call retries. Ignored while a delete is in flight or an association is being created.
+  /** Runs the pending removal. Closes the dialog on success, and also when the refetch after a failure shows the target
+   * is already gone. Any other failure, while the dialog still belongs to this competency, leaves it open with
+   * `failure` set so a second call retries. A failure after the author cancelled shows a toast instead. Ignored while
+   * a delete is in flight or an association is being created.
    */
   confirmRemoval: () => Promise<void>;
   /** Closes the confirmation without a request. */
@@ -292,7 +295,7 @@ export interface CompetencyAssociationsContextBase {
   /** The active competency's name, for the course group menu's "Remove from" item. */
   competencyName: string;
   /** True while the groups query is in its failed state with groups still loaded, as when the refetch after a write
-   * fails. The loaded groups stay listed, so the panel shows an alert above them: they may not reflect the write.
+   * fails. The loaded groups stay listed with an alert above them, because they may not reflect the write.
    */
   hasGroupsRefreshError: boolean;
 }
@@ -301,13 +304,13 @@ export interface CompetencyAssociationsContextBase {
  * always defined when `status` is `'success'`, and may be missing otherwise.
  *
  * `'pending'` until the course list, the groups, the default rule profile and
- * every course outline have settled, then `'success'` until the competency or the set of
+ * every course outline have settled. Then `'success'` until the competency or the set of
  * listed courses changes, even when a later groups refetch adds a course whose
  * outline has not loaded yet. `'error'` if the course list, the profile or any course
  * outline failed, including a failure after `'success'`, or if the groups failed before
  * any groups data loaded. A groups refetch that fails after data loaded keeps the last
- * loaded groups and `status`, and sets `hasGroupsRefreshError`. An outline that fails with a 403 or 404 only hides its
- * course and does not affect `status`.
+ * loaded groups and the current `status`, and sets `hasGroupsRefreshError`. An outline that fails with a 403 or 404
+ * only hides its course and does not affect `status`.
  */
 export type CompetencyAssociationsContextValue =
   & CompetencyAssociationsContextBase
@@ -436,8 +439,8 @@ export type ProviderAction =
     /** Whether a course group added since the snapshot has an outline that is neither loaded nor failed. */
     hasUnsettledNewCourse: boolean;
     systemDefaultProfile: CompetencyRuleProfile;
-    /** The dialog that held keyboard focus closed after a successful rule box delete, and the ⋮ toggle that opened it is
-     * disabled for the run, so the browser dropped its focus even if the group survives.
+    /** True when the browser dropped keyboard focus, whether or not the group survives: the dialog that held focus
+     * closed after a successful rule box delete, and the ⋮ toggle that opened it is disabled while the delete runs.
      */
     triggerLosesKeyboardFocus: boolean;
   }
@@ -524,7 +527,7 @@ function reduceGroupDeleted(
     accessibleCourseKeys,
   );
   const isDeletedGroupGone = !freshIndex.groupsById.has(deletedGroupId);
-  // A vanished group strands the browser's focus, and so does a disabled trigger.
+  // Keyboard focus is lost when the group is gone, and also when the trigger that held it is disabled.
   const isKeyboardFocusLost = isDeletedGroupGone || triggerLosesKeyboardFocus;
   const requestWithoutSelectionMove = () => (
     isKeyboardFocusLost
@@ -840,9 +843,9 @@ export const CompetencyAssociationsProvider = ({
     () => (groupsQuery.data ? associatedObjectIds(groupsQuery.data) : new Set<string>()),
     [groupsQuery.data],
   );
-  // `data` outlives a failed refetch under the same key, so after a write whose refetch failed it still holds the
-  // pre-write counts. They are dropped: the empty states they pick between would describe data the write may have
-  // changed, so an empty list shows the load error instead, and a listed one shows the refresh alert.
+  // A failed refetch leaves the old `data` under the same key, so after a write whose refetch failed it still holds the
+  // pre-write counts. The counts are dropped because the empty states they choose between could describe data the
+  // write changed. An empty list of groups then shows the load error, and a list with groups shows the refresh alert.
   const countsData = groupsQuery.isError ? undefined : groupsQuery.data;
   const hasGroupsRefreshError = groupsQuery.isError && groupsQuery.data !== undefined;
   const criteriaCount = countsData?.criteriaCount;
@@ -921,8 +924,8 @@ export const CompetencyAssociationsProvider = ({
 
   // A failed list hides the panel, and `status` follows it. A list that failed with no data leaves
   // `listedCourseKeys` undefined and the groups query skipped, which would otherwise read as `'pending'` for good.
-  // A groups refetch that fails after data loaded keeps the loaded groups, so an item whose delete failed stays
-  // listed behind the removal dialog.
+  // A groups error counts only before any groups data loaded. After a failed refetch the loaded groups stay listed, so
+  // an item whose delete failed stays visible behind the removal dialog.
   const error = courseListQuery.error
     ?? (groupsQuery.data ? null : groupsQuery.error)
     ?? profileQuery.error
@@ -1137,9 +1140,9 @@ export const CompetencyAssociationsProvider = ({
    * @param deletedGroupId The group that was deleted, or the group that held the deleted criterion or rule box.
    * @param snapshot The page order captured at click time, which decides where selection moves if the group is gone.
    * @param profile The system default rule profile, used to derive rule boxes from the fresh criteria.
-   * @param triggerLosesKeyboardFocus Whether the control that started the delete was disabled for the run, so the
-   * browser dropped its keyboard focus even though its group may survive. When true, keyboard focus goes to the group
-   * (or to a neighbor, or the empty state, when the group is gone).
+   * @param triggerLosesKeyboardFocus Whether the browser dropped keyboard focus because the control that started the
+   * delete was disabled while it ran, even though its group may survive. When true, focus goes to the group, or to a
+   * neighbor or the empty state when the group is gone.
    */
   const resolveSelectionAfterDelete = useCallback((
     deletedGroupId: number,
@@ -1207,8 +1210,8 @@ export const CompetencyAssociationsProvider = ({
     resolveSelectionAfterDelete,
   ]);
 
-  // Keyboard focus returns to the group box or the subsection row; when the group goes with it,
-  // `selectionTargetAfterRemoval` picks the neighbor.
+  // Focus returns to the group's card or the subsection row, whichever `returnFocusTo` names. When the group is gone
+  // too, `selectionTargetAfterRemoval` picks the neighbor that takes focus.
   const removeCriterion = useCallback(async (
     criterionId: number,
     returnFocusTo: 'group' | 'subsection',
@@ -1229,7 +1232,7 @@ export const CompetencyAssociationsProvider = ({
     } finally {
       resolveSelectionAfterDelete(groupId, snapshot, systemDefaultProfile);
     }
-    // Only where focus lands depends on this key, which was captured at click time.
+    // The query key here is the one captured at click time. It only decides where focus lands.
     const groupsQueryState = queryClient.getQueryState<CompetencyCriteriaGroupsResponse>(
       competencyQueryKeys.competencyCriteriaGroups(tagId, listedCourseKeys),
     );
@@ -1268,8 +1271,8 @@ export const CompetencyAssociationsProvider = ({
       await mutateDeleteRuleBox({ tagId, criterionIds });
       isDeleted = true;
     } finally {
-      // On success the dialog closes and the ⋮ toggle that opened it is disabled, so keyboard focus is lost. On
-      // failure the dialog stays open and keeps it.
+      // After a successful delete the dialog closes and the ⋮ toggle that opened it is disabled, so keyboard focus is
+      // lost. After a failure the dialog stays open and keeps focus.
       resolveSelectionAfterDelete(groupId, snapshot, systemDefaultProfile, isDeleted);
       const dataAfterDelete = queryClient.getQueryData<CompetencyCriteriaGroupsResponse>(
         competencyQueryKeys.competencyCriteriaGroups(tagId, listedCourseKeys),

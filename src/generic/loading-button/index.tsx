@@ -42,8 +42,8 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
 
   const componentMounted = useRef(true);
 
-  // Guards against setting state after unmount. The body sets the ref too, since StrictMode runs the cleanup once at
-  // mount in development.
+  // Guards against setting state after unmount. The effect body sets the ref to true again because StrictMode runs
+  // the cleanup once right after the first mount in development.
   useEffect(() => {
     componentMounted.current = true;
     return () => {
