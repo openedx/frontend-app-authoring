@@ -64,9 +64,9 @@ const messages = defineMessages({
   },
   removalFailedAfterCancelToastMessage: {
     id: 'course-authoring.competency-management.removal-failed-after-cancel-toast-message',
-    defaultMessage: 'The removal you confirmed didn\'t go through. The panel was refreshed.',
-    description: 'Toast shown when a removal fails after the author already dismissed its confirmation dialog, so '
-      + 'the dialog\'s own error alert is no longer on screen.',
+    defaultMessage: 'There was a problem with the removal you confirmed. Please try again.',
+    description: 'Error toast shown when a removal fails after the author already dismissed its confirmation dialog, '
+      + 'so the dialog\'s own error alert is no longer on screen. Asks the author to try the removal again.',
   },
   updateGroupOperatorFailedToastMessage: {
     id: 'course-authoring.competency-management.update-group-operator-failed-toast-message',

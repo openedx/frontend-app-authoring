@@ -1,7 +1,8 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useQueryClient } from '@tanstack/react-query';
+import { Error as ErrorIcon } from '@openedx/paragon/icons';
 
 import type { CourseOutline } from '@src/course-outline/data';
 // Bypasses the public barrel for the same reason the provider does: this is
@@ -120,7 +121,9 @@ export function useRemovalConfirmation({
 
   // Read once the delete settles, to see a cancel made while it ran.
   const pendingRemovalRef = useRef(pendingRemoval);
-  pendingRemovalRef.current = pendingRemoval;
+  useLayoutEffect(() => {
+    pendingRemovalRef.current = pendingRemoval;
+  }, [pendingRemoval]);
   // Closes the gap between a confirm click and the render that disables the dialog's button, so a second call in the
   // same tick cannot run another delete or close the dialog as if its own delete had succeeded. It holds the
   // generation that started the confirm, so a confirm still pending for the previous competency does not block this
@@ -186,7 +189,10 @@ export function useRemovalConfirmation({
           await deleteGroup(target.groupId);
           break;
       }
-      setPendingRemoval(null);
+      if (generationRef.current === startGeneration) {
+        // After a competency switch the open dialog, if any, belongs to the new competency.
+        setPendingRemoval(null);
+      }
     } catch (error) {
       if (generationRef.current !== startGeneration) {
         // A competency switch cleared the dialog, and the failure belongs to the competency the author left.
@@ -194,7 +200,7 @@ export function useRemovalConfirmation({
       }
       if (pendingRemovalRef.current === null) {
         // Cancelled while the request ran, so there is no dialog left to report the failure in.
-        showToast(intl.formatMessage(messages.removalFailedAfterCancelToastMessage));
+        showToast(intl.formatMessage(messages.removalFailedAfterCancelToastMessage), undefined, undefined, ErrorIcon);
         return;
       }
       // The error's count says how far a rule box delete got. The refetch cannot: when it fails too, React Query keeps

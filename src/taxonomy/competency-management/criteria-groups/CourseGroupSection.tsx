@@ -78,7 +78,8 @@ const CourseGroupSection = ({ courseGroup }: CourseGroupSectionProps) => {
   const requestMovesSelection = request !== null && request.selectionMoved;
   useEffect(() => {
     if (holdsFocusRequestTarget && isCollapsed && !requestMovesSelection) {
-      sectionToggleRef.current?.focus();
+      // After the dialog's own focus return, which runs in a microtask when it unmounts.
+      queueMicrotask(() => sectionToggleRef.current?.focus());
       consumeKeyboardFocusRequest();
     }
   }, [holdsFocusRequestTarget, requestMovesSelection, isCollapsed, consumeKeyboardFocusRequest]);

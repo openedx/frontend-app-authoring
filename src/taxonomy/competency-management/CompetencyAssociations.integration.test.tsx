@@ -2,6 +2,7 @@ import { buildOutlineIndex } from '@src/course-outline/__mocks__';
 import { getCourseOutlineIndexApiUrl } from '@src/course-outline/data';
 import type { Course } from '@src/studio-home/data/api';
 import {
+  act,
   initializeMocks,
   render,
   screen,
@@ -694,6 +695,35 @@ describe('competency associations over the real provider', () => {
       await waitFor(() => expect(groupHeaders()).toHaveLength(1));
       await waitFor(() => expect(groupHeaders()[0]).toHaveFocus());
       expect(screen.getByRole('button', { name: 'Collapse Course A' })).toBeInTheDocument();
+    });
+
+    it('keeps focus on a collapsed course group\'s expand button after the dialog closes on another course\'s group', async () => {
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseA)).reply(200, outlineOf('Course A', {}));
+      axiosMock.onGet(getCourseOutlineIndexApiUrl(courseB)).reply(200, outlineOf('Course B', {}));
+      // Course A's group holds a criterion, so selecting it is not a placeholder that collapsing its course discards.
+      const withCriterionInCourseA: CompetencyCriteriaGroupsResponse = {
+        ...courseBGroupsResponse,
+        criteria: [criterion(900, 'a-sub-1', 10), ...courseBGroupsResponse.criteria],
+      };
+      let reply = withCriterionInCourseA;
+      axiosMock.onGet(groupsUrl).reply(() => [200, reply]);
+      axiosMock.onDelete(apiUrls.competencyCriteriaGroup(tagId, 20)).reply(() => {
+        reply = { ...withCriterionInCourseA, groups: withCriterionInCourseA.groups.filter((item) => item.id !== 20) };
+        return [200];
+      });
+      renderPanel([courseARow, courseBRow]);
+      await screen.findAllByRole('heading', { name: /^From within Course/ });
+      await user.click(groupHeaders()[0]);
+      await user.click(screen.getByRole('button', { name: 'Collapse Course A' }));
+
+      await user.click(screen.getByRole('button', { name: 'More actions for rule group 1 in Course B' }));
+      await user.click(screen.getByRole('button', { name: 'Remove group' }));
+      await confirmRemoval();
+
+      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      await act(async () => {});
+      expect(groupHeaders()).toHaveLength(1);
+      expect(screen.getByRole('button', { name: 'Expand Course A' })).toHaveFocus();
     });
   });
 });

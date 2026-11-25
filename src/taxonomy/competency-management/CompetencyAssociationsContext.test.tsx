@@ -2981,6 +2981,29 @@ describe('CompetencyAssociationsProvider', () => {
         expect(await screen.findByText('Criterion ids: [903]')).toBeInTheDocument();
       });
 
+      it('leaves a dialog opened in the new competency open when the earlier removal finishes', async () => {
+        const deleteGate = deferred();
+        mockGroupsReadsAroundDelete(deleteGate);
+        const { rerender } = renderProvider();
+        await waitForSuccess();
+        await requestAndConfirm('Remove sub-a chip');
+        await waitFor(() => expect(axiosMock.history.delete).toHaveLength(1));
+        await click('Cancel removal');
+        rerender(providerFor(otherTagId));
+        await screen.findByText(selectionOnGroup(30));
+        await click('Delete group 30');
+        expect(screen.getByText(pendingRemoval('{"kind":"ruleGroup","failure":null}'))).toBeInTheDocument();
+
+        await act(async () => {
+          deleteGate.release();
+        });
+        await flushEffects(50);
+
+        expect(screen.getByText(pendingRemoval('{"kind":"ruleGroup","failure":null}'))).toBeInTheDocument();
+        expect(axiosMock.history.delete).toHaveLength(1);
+        expect(mockShowToast).not.toHaveBeenCalled();
+      });
+
       it('shows no toast when the refetch after the removal fails', async () => {
         axiosMock.onDelete(deleteUrl).reply(200, { id: 901 });
         axiosMock.onGet(groupsUrl).replyOnce(200, twoCriteriaInGroupResponse).onGet(groupsUrl).reply(500);
@@ -3241,9 +3264,7 @@ describe('CompetencyAssociationsProvider', () => {
       expect(await screen.findByText('Deleting: false')).toBeInTheDocument();
       expect(screen.getByText(pendingRemoval('closed'))).toBeInTheDocument();
       await waitFor(() => {
-        expect(mockShowToast).toHaveBeenCalledWith(
-          'The removal you confirmed didn\'t go through. The panel was refreshed.',
-        );
+        expectToast('There was a problem with the removal you confirmed. Please try again.', ErrorIcon);
       });
     });
 

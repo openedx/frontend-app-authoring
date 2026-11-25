@@ -519,7 +519,7 @@ describe('<CourseGroupSection />', () => {
         </MockCompetencyAssociationsProvider>,
       );
 
-      expect(screen.getByRole('button', { name: 'Expand Demo Course' })).toHaveFocus();
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Expand Demo Course' })).toHaveFocus());
       expect(screen.queryByText('Subsection 1A')).not.toBeInTheDocument();
       expect(consumeKeyboardFocusRequest).toHaveBeenCalledTimes(1);
     });
