@@ -11,7 +11,7 @@ import {
 import {
   Add as AddIcon,
   Minus as MinusIcon,
-} from '@openedx/paragon/icons/es5';
+} from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { RequestStatus } from '../../data/constants';
