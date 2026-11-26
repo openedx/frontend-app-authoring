@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { camelCase } from 'lodash';
-import { Icon } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
@@ -116,7 +115,8 @@ const LiveSettings = ({
               {availableProviders.map((provider) => (
                 <SelectableBox value={provider} type="checkbox" key={provider}>
                   <div className="d-flex flex-column align-items-center">
-                    <Icon src={iconsSrc[`${camelCase(provider)}`]} alt={provider} />
+                    {/* The provider name is shown right below, so the logo is decorative (empty alt). */}
+                    <img src={iconsSrc[`${camelCase(provider)}`]} alt="" height={24} />
                     <span>{intl.formatMessage(messages[`appName-${camelCase(provider)}`])}</span>
                   </div>
                 </SelectableBox>

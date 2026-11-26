@@ -36,6 +36,11 @@ const messages = defineMessages({
     defaultMessage: 'An unexpected error occurred in the editor',
     description: 'Generic error message shown when an error occurs in the Advanced Editor.',
   },
+  advancedEditorCloseButtonAlt: {
+    id: 'authoring.advancedEditor.closeButton.alt',
+    defaultMessage: 'Close',
+    description: 'Alt text for the Close button',
+  },
   advancedEditorFullscreenButtonAlt: {
     id: 'authoring.advancedEditor.fullscreenButton.alt',
     defaultMessage: 'Toggle Fullscreen',

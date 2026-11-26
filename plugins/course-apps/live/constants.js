@@ -1,15 +1,15 @@
-import {
-  GoogleMeet,
-  MicrosoftTeams,
-  Zoom,
-  Bbb,
-} from '@openedx/paragon/icons';
+// These logos are full-color raster images, so they are stored here as PNGs rather than being
+// rendered via Paragon's (monochrome, SVG-only) <Icon> component.
+import bbbLogo from './images/bbb.png';
+import googleMeetLogo from './images/google-meet.png';
+import microsoftTeamsLogo from './images/microsoft-teams.png';
+import zoomLogo from './images/zoom.png';
 
 export const iconsSrc = {
-  googleMeet: GoogleMeet,
-  microsoftTeams: MicrosoftTeams,
-  zoom: Zoom,
-  bigBlueButton: Bbb,
+  googleMeet: googleMeetLogo,
+  microsoftTeams: microsoftTeamsLogo,
+  zoom: zoomLogo,
+  bigBlueButton: bbbLogo,
 };
 
 export const providerNames = {
