@@ -154,9 +154,9 @@ describe('CourseOptimizerPage', () => {
 
     it('does not fetch rerun status when the scan found no previous-run links', async () => {
       render(<OptimizerPage />);
-      // Wait for the scan results (and their empty previous-run section) to render.
-      expect(await screen.findByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
-      expect(screen.getByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
+      // Wait for the scan results to render.
+      expect(await screen.findByText(scanResultsMessages.brokenLinksHeader.defaultMessage)).toBeInTheDocument();
+      expect(screen.queryByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).not.toBeInTheDocument();
       expect(axiosMock.history.get.filter(({ url }) => url === getRerunLinkUpdateStatusApiUrl(courseId))).toHaveLength(
         0,
       );
@@ -254,7 +254,7 @@ describe('CourseOptimizerPage', () => {
         .onGet(getLinkCheckStatusApiUrl(courseId))
         .reply(200, { LinkCheckStatus: 'Succeeded' });
       render(<OptimizerPage />);
-      expect(await screen.findAllByText(scanResultsMessages.noResultsFound.defaultMessage)).toHaveLength(2);
+      expect(await screen.findByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
     });
 
     it('shows the connection error when starting a scan fails', async () => {
@@ -374,7 +374,6 @@ describe('CourseOptimizerPage', () => {
     it('should show no results found message when filter with no links is selected', async () => {
       const {
         getByText,
-        getAllByText,
         getByLabelText,
       } = await setupOptimizerPage(mockApiResponseForNoResultFound);
       // Check if the modal is opened
@@ -383,16 +382,16 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(getByLabelText(scanResultsMessages.lockedLabel.defaultMessage));
 
       await waitFor(() => {
-        expect(getAllByText(scanResultsMessages.noResultsFound.defaultMessage)).toHaveLength(2);
+        expect(getByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
       });
     });
 
     it('should always show no scan data message when data is empty', async () => {
       axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseEmpty);
-      const { getAllByText } = render(<OptimizerPage />);
+      const { getByText } = render(<OptimizerPage />);
 
       await waitFor(() => {
-        expect(getAllByText(scanResultsMessages.noResultsFound.defaultMessage)).toHaveLength(2);
+        expect(getByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
       }, { timeout: 5000 });
     });
 
@@ -561,16 +560,14 @@ describe('CourseOptimizerPage', () => {
         await waitFor(() => expect(screen.queryByTestId('update-all-course')).not.toBeInTheDocument());
       });
 
-      it('should show no results found for previous run links when no links exist', async () => {
+      it('should not show previous run links section when no links exist', async () => {
         axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseForNoResultFound);
-        const { getByText, getAllByText } = render(<OptimizerPage />);
+        const { getByText, queryByText } = render(<OptimizerPage />);
 
         await waitFor(() => {
-          expect(getByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
-          // Should show "No results found" for previous run section
-          const noResultsElements = getAllByText(scanResultsMessages.noResultsFound.defaultMessage);
-          expect(noResultsElements.length).toBeGreaterThan(0);
+          expect(getByText(scanResultsMessages.brokenLinksHeader.defaultMessage)).toBeInTheDocument();
         }, { timeout: 5000 });
+        expect(queryByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).not.toBeInTheDocument();
       });
     });
   });

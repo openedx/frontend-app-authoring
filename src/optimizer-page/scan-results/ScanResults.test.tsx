@@ -268,7 +268,7 @@ describe('ScanResults', () => {
   ])('renders the no-results state for %s', (_name, data) => {
     renderScanResults(data);
 
-    expect(screen.getAllByText(messages.noResultsFound.defaultMessage)).toHaveLength(2);
+    expect(screen.getByText(messages.noResultsFound.defaultMessage)).toBeInTheDocument();
   });
 
   it('opens the filter modal and applies and clears filters', async () => {
@@ -314,7 +314,7 @@ describe('ScanResults', () => {
     it('does not enable the rerun status query when the scan found no previous-run links', () => {
       renderScanResults({ ...mockData, courseUpdates: [] });
 
-      expect(screen.getByText(messages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
+      expect(screen.queryByText(messages.linkToPrevCourseRun.defaultMessage)).not.toBeInTheDocument();
       expect(screen.queryByTestId('update-all-course')).not.toBeInTheDocument();
       expect(mockedUseRerunLinkUpdateStatus).toHaveBeenCalledWith(courseId, {
         enabled: false,
@@ -1066,7 +1066,7 @@ describe('ScanResults', () => {
 
     await user.click(screen.getByRole('button', { name: messages.filterButtonLabel.defaultMessage }));
     await user.click(screen.getByLabelText(messages.lockedLabel.defaultMessage));
-    expect(screen.getAllByText(messages.noResultsFound.defaultMessage)).toHaveLength(2);
+    expect(screen.getByText(messages.noResultsFound.defaultMessage)).toBeInTheDocument();
   });
 
   it('hides a filtered unit but keeps the section visible when other units remain', async () => {

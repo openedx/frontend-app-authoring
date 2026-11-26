@@ -664,16 +664,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
             <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
           </div>
         </div>
-        <div className="scan-results">
-          <div className="scan-header-second-title-container px-3">
-            <header className="sub-header-content">
-              <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
-            </header>
-          </div>
-          <div className="no-results-found-container">
-            <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
-          </div>
-        </div>
       </>
     );
   }
@@ -886,20 +876,6 @@ const ScanResults: FC<Props> = ({ data, courseId }) => {
               ))}
             </SectionCollapsible>
           ))}
-        </div>
-      )}
-
-      {/* Show an empty previous-run section when there are no previous-run links to display. */}
-      {!hasPreviousRunLinksInSections && (
-        <div className="scan-results">
-          <div className="scan-header-second-title-container px-3">
-            <header className="sub-header-content">
-              <h2 className="broken-links-header-title pt-2">{intl.formatMessage(messages.linkToPrevCourseRun)}</h2>
-            </header>
-          </div>
-          <div className="no-results-found-container">
-            <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
-          </div>
         </div>
       )}
     </>
