@@ -22,6 +22,7 @@ import {
 import {
   mockApiResponse,
   mockApiResponseForNoResultFound,
+  mockApiResponseWithPreviousRunLinks,
   mockApiResponseEmpty,
 } from './mocks/mockApiResponse';
 import { useCourseUserPermissions } from '@src/authz/hooks';
@@ -153,10 +154,21 @@ describe('CourseOptimizerPage', () => {
 
     it('does not fetch rerun status when the scan found no previous-run links', async () => {
       render(<OptimizerPage />);
-      await waitFor(() => expect(screen.getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument());
+      // Wait for the scan results (and their empty previous-run section) to render.
+      expect(await screen.findByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
       expect(axiosMock.history.get.filter(({ url }) => url === getRerunLinkUpdateStatusApiUrl(courseId))).toHaveLength(
         0,
       );
+    });
+
+    it('fetches rerun status when the scan found previous-run links', async () => {
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseWithPreviousRunLinks);
+      render(<OptimizerPage />);
+      await waitFor(() => {
+        expect(axiosMock.history.get.filter(({ url }) => url === getRerunLinkUpdateStatusApiUrl(courseId)))
+          .not.toHaveLength(0);
+      });
     });
 
     it('should render the component', () => {
