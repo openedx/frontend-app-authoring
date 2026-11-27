@@ -10,13 +10,11 @@ import NeverShowAssessmentResultMessage from './NeverShowAssessmentResultMessage
 
 interface XBlockStatusProps {
   isSelfPaced: boolean;
-  isCustomRelativeDatesActive: boolean;
   blockData: XBlock | UnitXBlock;
 }
 
 const XBlockStatus = ({
   isSelfPaced,
-  isCustomRelativeDatesActive,
   blockData,
 }: XBlockStatusProps) => {
   const {
@@ -62,7 +60,6 @@ const XBlockStatus = ({
         <GradingTypeAndDueDate
           isSelfPaced={isSelfPaced}
           isInstructorPaced={isInstructorPaced}
-          isCustomRelativeDatesActive={isCustomRelativeDatesActive}
           isTimeLimited={isTimeLimited}
           isProctoredExam={isProctoredExam}
           isOnboardingExam={isOnboardingExam}

@@ -32,7 +32,6 @@ export interface CourseOutline {
   proctoringErrors: string[];
   reindexLink: string;
   rerunNotificationId: null;
-  isCustomRelativeDatesActive?: boolean;
   createdOn?: string;
 }
 

@@ -247,8 +247,8 @@ export function buildTestOutline(
  *   buildOutlineIndex({ sections: [...], overrides: { ... } })
  *
  * Optional `CourseOutline` fields (discussionsSettings, advanceSettingsUrl,
- * isCustomRelativeDatesActive, createdOn) are absent by default; tests that
- * need them pass them via `overrides`.
+ * createdOn) are absent by default; tests that need them pass them via
+ * `overrides`.
  */
 export function buildOutlineIndex(
   arg?: NodeSpec[] | { sections?: NodeSpec[]; overrides?: Record<string, unknown>; },

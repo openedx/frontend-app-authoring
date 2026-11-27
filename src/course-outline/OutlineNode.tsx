@@ -54,7 +54,6 @@ export interface OutlineNodeProps {
   depth: Depth;
   index: number;
   isSelfPaced: boolean;
-  isCustomRelativeDatesActive: boolean;
   isSectionsExpanded: boolean;
   getPossibleMoves?: (index: number, step: number) => MoveDetails | null;
   onOrderChange: (
@@ -79,7 +78,6 @@ const OutlineNode = ({
   depth,
   index,
   isSelfPaced,
-  isCustomRelativeDatesActive,
   isSectionsExpanded,
   getPossibleMoves,
   onOrderChange,
@@ -371,7 +369,6 @@ const OutlineNode = ({
                 )}
                 <XBlockStatus
                   isSelfPaced={isSelfPaced}
-                  isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                   blockData={liveBlock}
                 />
               </div>

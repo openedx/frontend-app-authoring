@@ -186,7 +186,6 @@ describe('buildOutlineIndex', () => {
     const outline = buildOutlineIndex();
     expect(outline.discussionsSettings).toBeUndefined();
     expect(outline.advanceSettingsUrl).toBeUndefined();
-    expect(outline.isCustomRelativeDatesActive).toBeUndefined();
     expect(outline.createdOn).toBeUndefined();
   });
 
@@ -195,13 +194,11 @@ describe('buildOutlineIndex', () => {
       overrides: {
         discussionsSettings: { providerType: 'test', enableGradedUnits: true },
         advanceSettingsUrl: '/some/path',
-        isCustomRelativeDatesActive: true,
         createdOn: '2025-01-01',
       },
     });
     expect(outline.discussionsSettings).toEqual({ providerType: 'test', enableGradedUnits: true });
     expect(outline.advanceSettingsUrl).toBe('/some/path');
-    expect(outline.isCustomRelativeDatesActive).toBe(true);
     expect(outline.createdOn).toBe('2025-01-01');
   });
 });
