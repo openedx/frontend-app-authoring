@@ -204,15 +204,25 @@ export function useStickyState<T>(
   key: string,
 ): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [value, setValue] = useState<T>(() => {
-    const stickyValue = window.localStorage.getItem(key);
+    try {
+      const stickyValue = window.localStorage.getItem(key);
 
-    return stickyValue !== null
-      ? JSON.parse(stickyValue)
-      : defaultValue;
+      return stickyValue !== null
+        ? JSON.parse(stickyValue)
+        : defaultValue;
+    } catch {
+      // Storage can be unavailable (private browsing, blocked cookies) or hold a value that
+      // is not valid JSON. Neither should break the page; fall back to the default.
+      return defaultValue;
+    }
   });
 
   useEffect(() => {
-    window.localStorage.setItem(key, JSON.stringify(value));
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // Writing to storage is best-effort; a failure is ignored.
+    }
   }, [key, value]);
 
   return [value, setValue];
