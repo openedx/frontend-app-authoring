@@ -23,7 +23,9 @@ import DatePicker from 'react-datepicker';
 
 import AlertMessage from '@src/generic/alert-message';
 import { LoadingSpinner } from '@src/generic/Loading';
+import { ResizableSplit } from '@src/generic/resizable/ResizableSplit';
 import { DATE_FORMAT } from '@src/constants';
+import { useIsDesktop } from '@src/utils';
 import { useStudioHomeCoursesV2 } from '@src/studio-home/data/apiHooks';
 import { useCompetencyAssociations } from '@src/taxonomy/competency-management/CompetencyAssociationsContext';
 import type { CompetencyTreeNode } from '@src/taxonomy/competency-management/CompetencyTree';
@@ -48,6 +50,12 @@ export interface CourseSearchBrowseProps {
 // author can access, and the smallest page it serves, since only `count` is
 // read. Keep the filters out of it, or the total would follow them.
 const ACCESSIBLE_COURSES_COUNT_PARAMS = { pageSize: 1 };
+
+// The smallest height either panel of the split can be dragged to. At 16rem the
+// associations panel shows its whole empty-state message, and Courses & Content
+// shows one course row plus pagination. It is in rem so that it grows with the
+// browser's font size.
+const MIN_PANEL_HEIGHT_REM = 16;
 
 // A stable no-op for `SearchField`'s required `onSubmit` prop. Paragon's
 // `SearchFieldAdvanced` re-invokes its own `onChange` handler whenever that
@@ -114,6 +122,7 @@ DateRangeTrigger.displayName = 'DateRangeTrigger';
  */
 const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
   const intl = useIntl();
+  const isDesktop = useIsDesktop();
   const {
     courseList,
     coursePage: page,
@@ -218,6 +227,28 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
     hasPagination = numPages > 1;
   }
 
+  const associations = <CriteriaAssociationsSection competency={activeCompetency} />;
+  const content = (
+    <div className="course-search-browse__container">
+      <div className="course-search-browse__section-label">
+        {intl.formatMessage(messages.coursesAndContentLabel)}
+      </div>
+      <div className="course-search-browse__list">
+        {body}
+      </div>
+      {hasPagination && (
+        <Pagination
+          pageCount={numPages}
+          currentPage={page}
+          onPageSelect={setCoursePage}
+          paginationLabel="pagination navigation"
+          size="small"
+          className="course-search-browse__pagination d-flex justify-content-center w-100"
+        />
+      )}
+    </div>
+  );
+
   return (
     <div className="course-search-browse">
       <div className="course-search-browse__toolbar">
@@ -277,25 +308,22 @@ const CourseSearchBrowse = ({ activeCompetency }: CourseSearchBrowseProps) => {
         </div>
       </div>
       <div className="course-search-browse__panel">
-        <CriteriaAssociationsSection competency={activeCompetency} />
-        <div className="course-search-browse__container">
-          <div className="course-search-browse__section-label">
-            {intl.formatMessage(messages.coursesAndContentLabel)}
-          </div>
-          <div className="course-search-browse__list">
-            {body}
-          </div>
-          {hasPagination && (
-            <Pagination
-              pageCount={numPages}
-              currentPage={page}
-              onPageSelect={setCoursePage}
-              paginationLabel="pagination navigation"
-              size="small"
-              className="course-search-browse__pagination d-flex justify-content-center w-100"
+        {isDesktop
+          ? (
+            <ResizableSplit
+              top={associations}
+              bottom={content}
+              storageKey="competency-associations-panel-split"
+              ariaLabel={intl.formatMessage(messages.panelSplitLabel)}
+              minPanelHeight={MIN_PANEL_HEIGHT_REM * parseFloat(getComputedStyle(document.documentElement).fontSize)}
             />
+          )
+          : (
+            <>
+              {associations}
+              {content}
+            </>
           )}
-        </div>
       </div>
     </div>
   );

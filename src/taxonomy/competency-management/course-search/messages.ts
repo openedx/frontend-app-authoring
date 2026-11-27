@@ -206,6 +206,12 @@ const messages = defineMessages({
     description: 'Screen-reader-only text inside the pill on a subsection that is already associated with the '
       + 'active competency.',
   },
+  panelSplitLabel: {
+    id: 'course-authoring.competency-management.course-search.panel-split-label',
+    defaultMessage: 'Resize the associations and content panels',
+    description: 'Screen-reader name of the draggable divider between the associations panel and the courses '
+      + 'and content panel.',
+  },
 });
 
 export default messages;

@@ -38,3 +38,39 @@
   padding-right: 20px;
 }
 
+.resizable-split {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.resizable-split__pane {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 0;
+  min-height: 0;
+}
+
+.resizable-split__bar {
+  --pgn-size-icon-xs: 14px;
+
+  flex: 0 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: row-resize;
+  touch-action: none;
+  user-select: none;
+  background-color: var(--pgn-color-light-300);
+  color: var(--pgn-color-gray-500);
+
+  &:hover {
+    background-color: var(--pgn-color-light-500);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--pgn-color-info-600);
+    outline-offset: -2px;
+  }
+}
