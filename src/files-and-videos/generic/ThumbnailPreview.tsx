@@ -20,14 +20,14 @@ interface ThumbnailPreviewProps extends ThumbnailPreviewData {
 }
 
 const ThumbnailPreview = ({
-  thumbnail = null,
-  wrapperType = null,
-  contentType = null,
-  externalUrl = null,
-  displayName = null,
+  thumbnail,
+  wrapperType,
+  contentType,
+  externalUrl,
+  displayName,
   imageSize,
-  id = null,
-  status = null,
+  id,
+  status,
   thumbnailPreview,
 }: ThumbnailPreviewProps) => (
   <>

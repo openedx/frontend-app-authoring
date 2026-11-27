@@ -17,11 +17,11 @@ export interface FileThumbnailProps {
 }
 
 const FileThumbnail = ({
-  thumbnail = null,
-  wrapperType = null,
-  contentType = null,
-  externalUrl = null,
-  displayName = null,
+  thumbnail,
+  wrapperType,
+  contentType,
+  externalUrl,
+  displayName,
   imageSize,
 }: FileThumbnailProps) => {
   const intl = useIntl();
