@@ -28,7 +28,7 @@ const { studioShortName } = studioHomeMock;
 
 let axiosMock;
 let store;
-const courseApiLinkV2 = `${getApiBaseUrl()}/api/contentstore/v2/home/courses`;
+const courseApiLinkV2 = `${getApiBaseUrl()}/api/contentstore/v4/home/courses/`;
 
 const tabSectionComponent = (overrideProps) => (
   <TabsSection
