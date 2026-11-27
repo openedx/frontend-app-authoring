@@ -94,3 +94,20 @@
 .spinner-icon {
   animation: rotate 2s infinite linear;
 }
+
+
+@media (width <= 767px) {
+  .studio-home-new-course-btn {
+    background-color: #6D28D9;
+    border-color: #6D28D9;
+    color: #FFFFFF;
+  }
+}
+
+@media (width <= 767px) {
+  .studio-home-new-course-btn {
+    background-color: #6D28D9;
+    border-color: #6D28D9;
+    color: #FFFFFF;
+  }
+}
