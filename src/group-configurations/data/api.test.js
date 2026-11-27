@@ -1,8 +1,9 @@
 import MockAdapter from 'axios-mock-adapter';
 import { camelCaseObject, initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { paginatedListPage } from '@src/generic/data/paginatedList';
 
-import { groupConfigurationResponseMock } from '../__mocks__';
+import { courseSettingsMock, groupConfigurationResponseMock, groupConfigurationsListMock } from '../__mocks__';
 import { initialContentGroupObject } from '../content-groups-section/utils';
 import { initialExperimentConfiguration } from '../experiment-configurations-section/constants';
 import {
@@ -10,8 +11,9 @@ import {
   createExperimentConfiguration,
   deleteContentGroup,
   editContentGroup,
-  getContentStoreApiUrl,
+  getCourseSettingsApiUrl,
   getGroupConfigurations,
+  getGroupConfigurationsApiUrl,
   getLegacyApiUrl,
 } from './api';
 
@@ -37,17 +39,121 @@ describe('group configurations API calls', () => {
     jest.clearAllMocks();
   });
 
-  it('should fetch group configurations', async () => {
-    const response = { ...groupConfigurationResponseMock };
-    axiosMock.onGet(getContentStoreApiUrl(courseId)).reply(200, response);
+  describe('getGroupConfigurations', () => {
+    const mockList = (configurations, settings = courseSettingsMock) => {
+      axiosMock.onGet(getGroupConfigurationsApiUrl(courseId)).reply(200, paginatedListPage(configurations));
+      axiosMock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, settings);
+    };
 
-    const result = await getGroupConfigurations(courseId);
-    const expected = camelCaseObject(response);
+    it('should fetch group configurations', async () => {
+      mockList(groupConfigurationsListMock());
 
-    expect(axiosMock.history.get[0].url).toEqual(
-      getContentStoreApiUrl(courseId),
-    );
-    expect(result).toEqual(expected);
+      const result = await getGroupConfigurations(courseId);
+
+      expect(axiosMock.history.get.map(({ url }) => url).sort()).toEqual([
+        'http://localhost:18010/api/authoring/v2/courses/course-v1:org+101+101/group_configurations/',
+        'http://localhost:18010/api/authoring/v2/courses/course-v1:org+101+101/settings/',
+      ]);
+      expect(result).toEqual(groupConfigurationResponseMock);
+    });
+
+    it('should ask for the full view, which includes usage', async () => {
+      mockList(groupConfigurationsListMock());
+
+      await getGroupConfigurations(courseId);
+
+      const listRequest = axiosMock.history.get.find(({ url }) => url === getGroupConfigurationsApiUrl(courseId));
+      expect(listRequest.params).toEqual({ view: 'full', page: 1, page_size: 100 });
+    });
+
+    it('should return the configurations of every page, in order', async () => {
+      const configurations = groupConfigurationsListMock();
+      axiosMock
+        .onGet(getGroupConfigurationsApiUrl(courseId), { params: { view: 'full', page: 1, page_size: 100 } })
+        .reply(200, paginatedListPage(configurations.slice(0, 3), { page: 1, numPages: 2 }))
+        .onGet(getGroupConfigurationsApiUrl(courseId), { params: { view: 'full', page: 2, page_size: 100 } })
+        .reply(200, paginatedListPage(configurations.slice(3), { page: 2, numPages: 2 }))
+        .onGet(getCourseSettingsApiUrl(courseId))
+        .reply(200, courseSettingsMock);
+
+      const result = await getGroupConfigurations(courseId);
+
+      expect(result).toEqual(groupConfigurationResponseMock);
+    });
+
+    it('should tell experiment configurations apart by their random scheme', async () => {
+      const [enrollmentTrack, contentGroups, team, experimentA, experimentB] = groupConfigurationsListMock();
+      mockList([experimentA, enrollmentTrack, contentGroups, experimentB, team]);
+
+      const result = await getGroupConfigurations(courseId);
+
+      expect(result.allGroupConfigurations.map(({ id }) => id)).toEqual(
+        [enrollmentTrack.id, contentGroups.id, team.id],
+      );
+      expect(result.experimentGroupConfigurations.map(({ id }) => id)).toEqual([experimentA.id, experimentB.id]);
+    });
+
+    it('should show the enrollment track only when its configuration is listed', async () => {
+      mockList(groupConfigurationsListMock().filter(({ scheme }) => scheme !== 'enrollment_track'));
+
+      const result = await getGroupConfigurations(courseId);
+
+      expect(result.shouldShowEnrollmentTrack).toBe(false);
+      expect(result.allGroupConfigurations.map(({ scheme }) => scheme)).toEqual(['cohort', 'team']);
+    });
+
+    it('should read the experiments flag and proctored exam settings link from the course settings', async () => {
+      const proctoredExamSettingsUrl = '/course/course-v1:org+101+101/pages-and-resources/proctoring/settings';
+      mockList(
+        groupConfigurationsListMock().filter(({ scheme }) => scheme !== 'random'),
+        {
+          ...courseSettingsMock,
+          content_experiments_enabled: false,
+          mfe_proctored_exam_settings_url: proctoredExamSettingsUrl,
+        },
+      );
+
+      const result = await getGroupConfigurations(courseId);
+
+      expect(result.shouldShowExperimentGroups).toBe(false);
+      expect(result.experimentGroupConfigurations).toEqual([]);
+      expect(result.mfeProctoredExamSettingsUrl).toEqual(proctoredExamSettingsUrl);
+    });
+
+    it('should leave out whether the user may manage each configuration', async () => {
+      mockList(groupConfigurationsListMock(false));
+
+      const result = await getGroupConfigurations(courseId);
+
+      [...result.allGroupConfigurations, ...result.experimentGroupConfigurations].forEach((configuration) => {
+        expect(configuration).not.toHaveProperty('canManage');
+      });
+    });
+
+    it('should convert the server\'s snake_case keys', async () => {
+      mockList(groupConfigurationsListMock());
+
+      const result = await getGroupConfigurations(courseId);
+
+      const [enrollmentTrack, contentGroups, team] = result.allGroupConfigurations;
+      expect(enrollmentTrack.readOnly).toBe(true);
+      expect(enrollmentTrack.parameters).toEqual({ courseId: 'course-v1:org+101+101' });
+      expect(contentGroups.readOnly).toBe(false);
+      expect(team.parameters).toHaveProperty('teamSetId');
+    });
+
+    it('should fail when the user may not view the group configurations', async () => {
+      axiosMock.onGet(getGroupConfigurationsApiUrl(courseId)).reply(403, {
+        type: 'https://docs.openedx.org/errors/authz',
+        title: 'Forbidden',
+        status: 403,
+        detail: 'You do not have permission to perform this action.',
+        instance: '/api/authoring/v2/courses/course-v1:org+101+101/group_configurations/',
+      });
+      axiosMock.onGet(getCourseSettingsApiUrl(courseId)).reply(200, courseSettingsMock);
+
+      await expect(getGroupConfigurations(courseId)).rejects.toHaveProperty('response.status', 403);
+    });
   });
 
   it('should create content group', async () => {

@@ -7,6 +7,7 @@ import {
   render,
   screen,
 } from '@src/testUtils';
+import { paginatedListPage } from '@src/generic/data/paginatedList';
 import { getTextbooksApiUrl } from './data/api';
 import { textbooksMock } from './__mocks__';
 import { Textbooks } from '.';
@@ -15,7 +16,7 @@ import messages from './messages';
 let axiosMock;
 let validateUserPermissionsMock;
 const courseId = 'course-v1:org+101+101';
-const emptyTextbooksMock = { textbooks: [] };
+const emptyTextbooksMock = paginatedListPage([]);
 
 const renderComponent = () =>
   render(
@@ -33,7 +34,7 @@ describe('<Textbooks />', () => {
     mockWaffleFlags();
     axiosMock
       .onGet(getTextbooksApiUrl(courseId))
-      .reply(200, textbooksMock);
+      .reply(200, paginatedListPage(textbooksMock.textbooks));
   });
 
   it('renders Textbooks component correctly', async () => {
