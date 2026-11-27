@@ -390,6 +390,8 @@ export type CreateCourseXBlockType = {
   stagedContent?: string;
   /** component key from library if being imported. */
   libraryContentKey?: string;
+  /** Settings to apply to the block when it is created. */
+  metadata?: Record<string, unknown>;
 };
 
 /**
@@ -404,6 +406,7 @@ export async function createCourseXblock({
   boilerplate,
   stagedContent,
   libraryContentKey,
+  metadata,
 }: CreateCourseXBlockType) {
   const body = {
     type,
@@ -413,6 +416,7 @@ export async function createCourseXblock({
     display_name: displayName,
     staged_content: stagedContent,
     library_content_key: libraryContentKey,
+    metadata,
   };
 
   const { data } = await getAuthenticatedHttpClient()

@@ -1,6 +1,15 @@
-const getStyles = () => (
+const fontImport =
   `@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap");
 
+`;
+
+/**
+ * Editor mechanics and accessibility. Always injected: these rules are what make
+ * TinyMCE usable (cursors, resize handles, placeholder) and what makes focus and
+ * selection visible to keyboard and screen reader users. They are editor-only
+ * and never touch the author's content styling.
+ */
+const editorStyles = `
   .mce-content-body *[contentEditable=false] {
     cursor: default;
   }
@@ -97,6 +106,31 @@ const getStyles = () => (
   .mce-content-body img::selection {
     background: none;
   }
+  .mce-content-body img {
+    max-width: 100%;
+  }
+  .mce-content-body[data-mce-placeholder] {
+    position: relative;
+  }
+  .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
+    color: rgba(34, 47, 62, 0.7);
+    content: attr(data-mce-placeholder);
+    position: absolute;
+  }
+  .mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before {
+    margin: 0;
+  }
+  .mce-content-body[dir=rtl][data-mce-placeholder]:not(.mce-visualblocks)::before {
+    margin: 0;
+  }
+`;
+
+/**
+ * Fallback typography for content that is not themed. A themed block gets the
+ * deployment's Paragon styles instead, so these rules would out-specify the
+ * theme and must not be injected alongside it.
+ */
+const contentStyles = `
   .mce-content-body {
       padding: 0;
       background-color: #fff;
@@ -197,9 +231,6 @@ const getStyles = () => (
       color: #0075b4;
       text-decoration: none;
   }
-  .mce-content-body img {
-      max-width: 100%;
-  }
   .mce-content-body pre {
     margin: 1em 0;
     color: #3c3c3c;
@@ -214,22 +245,13 @@ const getStyles = () => (
       color: #3c3c3c;
       padding: 0;
   }
-  .mce-content-body[data-mce-placeholder] {
-    position: relative;
-  }
-  .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
-    color: rgba(34, 47, 62, 0.7);
-    content: attr(data-mce-placeholder);
-    position: absolute;
-  }
-  .mce-content-body:not([dir=rtl])[data-mce-placeholder]:not(.mce-visualblocks)::before {
-    margin: 0;
-  }
-  .mce-content-body[dir=rtl][data-mce-placeholder]:not(.mce-visualblocks)::before {
-    margin: 0;
-  }`
-);
+`;
 
-export { getStyles };
+const getEditorStyles = () => editorStyles;
 
-export default getStyles({});
+const getContentStyles = () => `${fontImport}${contentStyles}`;
+
+const getStyles = () => `${fontImport}${editorStyles}${contentStyles}`;
+
+export { getEditorStyles, getContentStyles, getStyles };
+export default getStyles();
