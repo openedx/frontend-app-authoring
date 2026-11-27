@@ -1,4 +1,5 @@
 import fetchMock from 'fetch-mock-jest';
+import { StandardModal } from '@openedx/paragon';
 
 import { getContentSearchConfigUrl } from '@src/search-manager/data/api';
 import {
@@ -64,6 +65,13 @@ const withLibraryId = (libraryId: string) => ({
 let axiosMock: MockAdapter;
 
 describe('<LibraryHome />', () => {
+  const originalGetComputedStyle = window.getComputedStyle;
+  const originalScrollProperties: [object, string, PropertyDescriptor | undefined][] = [
+    [window, 'innerHeight', Object.getOwnPropertyDescriptor(window, 'innerHeight')],
+    [window, 'scrollY', Object.getOwnPropertyDescriptor(window, 'scrollY')],
+    [document.body, 'scrollHeight', Object.getOwnPropertyDescriptor(document.body, 'scrollHeight')],
+  ];
+
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
@@ -81,6 +89,14 @@ describe('<LibraryHome />', () => {
   afterEach(() => {
     fetchMock.reset();
     mockFetchNextPage.mockReset();
+    window.getComputedStyle = originalGetComputedStyle;
+    originalScrollProperties.forEach(([target, property, descriptor]) => {
+      if (descriptor) {
+        Object.defineProperty(target, property, descriptor);
+      } else {
+        Reflect.deleteProperty(target, property);
+      }
+    });
   });
 
   it('should render a spinner while loading', async () => {
@@ -106,15 +122,65 @@ describe('<LibraryHome />', () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
+      totalHits: 160,
       hasNextPage: true,
     });
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 800 });
+    Object.defineProperty(window, 'scrollY', { configurable: true, writable: true, value: 0 });
+    Object.defineProperty(document.body, 'scrollHeight', { configurable: true, value: 1600 });
     render(<LibraryContent />, withLibraryId(mockContentLibrary.libraryId));
 
-    Object.defineProperty(window, 'innerHeight', { value: 800 });
-    Object.defineProperty(document.body, 'scrollHeight', { value: 1600 });
-
+    expect(mockFetchNextPage).not.toHaveBeenCalled();
     fireEvent.scroll(window, { target: { scrollY: 1000 } });
-    expect(mockFetchNextPage).toHaveBeenCalled();
+    expect(mockFetchNextPage).toHaveBeenCalledTimes(1);
+  });
+
+  it('loads more results from the modal scrollbar after pending content appears', () => {
+    const searchResults = {
+      ...data,
+      hits: libraryComponentsMock,
+      totalHits: 160,
+      hasNextPage: true,
+    };
+    mockUseSearchContext.mockReturnValue({ ...searchResults, isPending: true });
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 800 });
+    Object.defineProperty(window, 'scrollY', { configurable: true, writable: true, value: 0 });
+    Object.defineProperty(document.body, 'scrollHeight', { configurable: true, value: 6000 });
+
+    const modal = () => (
+      <StandardModal title="Select library questions" isOpen onClose={jest.fn()}>
+        <LibraryContent />
+      </StandardModal>
+    );
+    const { rerender } = render(modal(), withLibraryId(mockContentLibrary.libraryId));
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    const modalBody = screen.getByRole('dialog').querySelector('.pgn__modal-body') as HTMLElement;
+    // JSDOM has no layout or loaded Paragon styles. Model the actual scrolling modal body.
+    window.getComputedStyle = jest.fn((element) =>
+      Object.assign({}, originalGetComputedStyle(element), {
+        overflowY: element === modalBody ? 'auto' : 'visible',
+      })
+    );
+    Object.defineProperties(modalBody, {
+      clientHeight: { configurable: true, value: 600 },
+      scrollHeight: { configurable: true, value: 2000 },
+      scrollTop: { configurable: true, writable: true, value: 0 },
+    });
+
+    mockUseSearchContext.mockReturnValue(searchResults);
+    rerender(modal());
+    expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+    expect(mockFetchNextPage).not.toHaveBeenCalled();
+    fireEvent.scroll(modalBody, { target: { scrollTop: 500 } });
+    expect(mockFetchNextPage).not.toHaveBeenCalled();
+
+    // Background and unrelated scroll events must not drive the modal's pagination.
+    fireEvent.scroll(window, { target: { scrollY: 5200 } });
+    fireEvent.scroll(screen.getByRole('dialog'));
+    expect(mockFetchNextPage).not.toHaveBeenCalled();
+
+    fireEvent.scroll(modalBody, { target: { scrollTop: 1150 } });
+    expect(mockFetchNextPage).toHaveBeenCalledTimes(1);
   });
 
   it('should show placeholderBlocks', async () => {
