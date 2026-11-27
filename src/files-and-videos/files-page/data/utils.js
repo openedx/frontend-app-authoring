@@ -42,9 +42,50 @@ export const updateFileValues = (files) => {
   return updatedFiles;
 };
 
-export const getSrc = ({ thumbnail, wrapperType, externalUrl }) => {
+/**
+ * Whether a file has an image preview (as opposed to a generic icon): either Studio generated a
+ * thumbnail for it, or it is itself an image we can show directly (e.g. when thumbnail generation
+ * failed, or for files stored in the openedx_content backend, which never has thumbnails).
+ */
+// Image types that browsers generally can't display (TIFF), or that look poor scaled up (ICO). These
+// are only previewed if Studio generated a thumbnail for them; otherwise they get the default icon.
+const NON_PREVIEWABLE_IMAGE_TYPES = [
+  'image/tiff',
+  'image/tif',
+  'image/x-icon',
+  'image/vnd.microsoft.icon',
+];
+
+const canShowFullImage = ({ wrapperType, contentType, externalUrl }) => (
+  wrapperType === 'image' && !!externalUrl && !NON_PREVIEWABLE_IMAGE_TYPES.includes(contentType)
+);
+
+export const hasImagePreview = ({
+  thumbnail,
+  wrapperType,
+  contentType,
+  externalUrl,
+}) => (
+  !!thumbnail || canShowFullImage({ wrapperType, contentType, externalUrl })
+);
+
+/**
+ * Returns the preview for a file: a URL string if `hasImagePreview()` is true, otherwise a
+ * Paragon icon component for its wrapperType.
+ */
+export const getSrc = ({
+  thumbnail,
+  wrapperType,
+  contentType,
+  externalUrl,
+}) => {
   if (thumbnail) {
-    return externalUrl || `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
+    // `thumbnail` is a root-relative Studio path to a small generated JPEG.
+    return `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
+  }
+  if (canShowFullImage({ wrapperType, contentType, externalUrl })) {
+    // No thumbnail, so fall back to the full-size image.
+    return externalUrl;
   }
   switch (wrapperType) {
     case 'document':

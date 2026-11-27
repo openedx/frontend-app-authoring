@@ -71,6 +71,7 @@ const InfoModal = ({
                 externalUrl={file?.externalUrl}
                 displayName={file?.displayName}
                 wrapperType={file?.wrapperType}
+                contentType={file?.contentType}
                 id={file?.id}
                 status={file?.status}
                 thumbnailPreview={thumbnailPreview}

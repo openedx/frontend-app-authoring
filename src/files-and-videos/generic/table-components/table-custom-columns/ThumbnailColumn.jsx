@@ -6,6 +6,7 @@ const ThumbnailColumn = ({ row, thumbnailPreview }) => {
   const {
     thumbnail,
     wrapperType,
+    contentType,
     externalUrl,
     displayName,
     id,
@@ -16,6 +17,7 @@ const ThumbnailColumn = ({ row, thumbnailPreview }) => {
       {...{
         thumbnail,
         wrapperType,
+        contentType,
         externalUrl,
         displayName,
         id,

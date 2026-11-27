@@ -1,3 +1,5 @@
+import type React from 'react';
+
 export interface RawFile {
   id: string;
   displayName: string;
@@ -19,11 +21,16 @@ export interface UpdatedFile extends Omit<RawFile, 'dateAdded'> {
 
 export declare function updateFileValues(files: RawFile[]): UpdatedFile[];
 
-export declare function getSrc(file: {
+interface FilePreviewFields {
   thumbnail?: string | null;
-  wrapperType: string;
-  externalUrl?: string;
-}): string;
+  wrapperType?: string | null;
+  contentType?: string | null;
+  externalUrl?: string | null;
+}
+
+export declare function hasImagePreview(file: FilePreviewFields): boolean;
+
+export declare function getSrc(file: FilePreviewFields): string | React.ComponentType;
 
 export declare function getUploadConflicts(
   filesToUpload: File[],
