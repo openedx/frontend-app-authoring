@@ -90,6 +90,8 @@ export const UnitInfoSettings = () => {
   const {
     id,
     visibilityState,
+    ancestorHasStaffLock,
+    hasExplicitStaffLock,
     discussionEnabled,
     userPartitionInfo,
   } = useSelector(getCourseUnitData);
@@ -102,6 +104,8 @@ export const UnitInfoSettings = () => {
     <GenericUnitInfoSettings
       id={id}
       visibilityState={visibilityState}
+      ancestorHasStaffLock={ancestorHasStaffLock}
+      hasExplicitStaffLock={hasExplicitStaffLock}
       discussionEnabled={discussionEnabled}
       userPartitionInfo={userPartitionInfo}
       updateCallback={updateCallback}

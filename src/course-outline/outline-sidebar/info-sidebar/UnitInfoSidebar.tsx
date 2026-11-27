@@ -61,6 +61,8 @@ const UnitSettingsTab = ({ unitId }: Props) => {
       key={unitData.id}
       id={unitData.id}
       visibilityState={unitData.visibilityState}
+      ancestorHasStaffLock={unitData.ancestorHasStaffLock}
+      hasExplicitStaffLock={unitData.hasExplicitStaffLock}
       discussionEnabled={unitData.discussionEnabled}
       userPartitionInfo={unitData.userPartitionInfo}
       updateCallback={onUpdate}

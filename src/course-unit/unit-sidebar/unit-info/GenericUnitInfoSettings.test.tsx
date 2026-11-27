@@ -12,6 +12,7 @@ import { GenericUnitInfoSettings } from './GenericUnitInfoSettings';
 // Mock UnitTab subcomponents: Access is irrelevant here; Discussion becomes a simple
 // checkbox so we can trigger handleDiscussionChange.
 jest.mock('@src/generic/configure-modal/UnitTab', () => ({
+  ...jest.requireActual('@src/generic/configure-modal/UnitTab'),
   AccessEditComponent: () => null,
   DiscussionEditComponent: ({ discussionEnabled, handleDiscussionChange }: any) => (
     <input
@@ -154,6 +155,60 @@ describe('GenericUnitInfoSettings', () => {
         expect.anything(),
       )
     );
+  });
+
+  describe('unit hidden by its section or subsection', () => {
+    const hiddenByParentMessage = /This unit is hidden from learners because its section or subsection is hidden/;
+
+    it('explains why the unit is hidden and does not add a lock when discussion is toggled', async () => {
+      const user = userEvent.setup();
+      renderWithWrapper(
+        <GenericUnitInfoSettings
+          {...baseProps}
+          visibilityState="staff_only"
+          ancestorHasStaffLock
+          hasExplicitStaffLock={false}
+        />,
+      );
+
+      await user.click(screen.getByRole('checkbox', { name: 'discussion' }));
+
+      await waitFor(() =>
+        expect(mutate).toHaveBeenCalledWith(
+          expect.objectContaining({ isVisibleToStaffOnly: false, discussionEnabled: true }),
+          expect.anything(),
+        )
+      );
+      expect(screen.getByText(hiddenByParentMessage)).toBeInTheDocument();
+    });
+
+    it('keeps the unit\'s own lock when it also has one', async () => {
+      const user = userEvent.setup();
+      renderWithWrapper(
+        <GenericUnitInfoSettings
+          {...baseProps}
+          visibilityState="staff_only"
+          ancestorHasStaffLock
+          hasExplicitStaffLock
+        />,
+      );
+
+      expect(screen.getByText(hiddenByParentMessage)).toBeInTheDocument();
+      await user.click(screen.getByRole('checkbox', { name: 'discussion' }));
+
+      await waitFor(() =>
+        expect(mutate).toHaveBeenCalledWith(
+          expect.objectContaining({ isVisibleToStaffOnly: true, discussionEnabled: true }),
+          expect.anything(),
+        )
+      );
+    });
+
+    it('does not show the message for a unit that is not hidden by its parent', () => {
+      renderWithWrapper(<GenericUnitInfoSettings {...baseProps} visibilityState="staff_only" hasExplicitStaffLock />);
+
+      expect(screen.queryByText(hiddenByParentMessage)).not.toBeInTheDocument();
+    });
   });
 
   it('disables both visibility buttons when the user cannot edit course content', async () => {

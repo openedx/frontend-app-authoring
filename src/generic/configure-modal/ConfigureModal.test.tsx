@@ -258,6 +258,64 @@ describe('<ConfigureModal /> for Unit', () => {
     expect(queryByText(messages.discussionEnabledCheckbox.defaultMessage)).toBeInTheDocument();
     expect(queryByText(messages.discussionEnabledDescription.defaultMessage)).toBeInTheDocument();
   });
+
+  describe('when a parent section or subsection hides the unit', () => {
+    beforeEach(() => {
+      onConfigureSubmitMock.mockClear();
+    });
+
+    const renderHiddenByParent = (hasExplicitStaffLock: boolean) =>
+      renderUnitComponent({
+        currentItemData: {
+          ...currentUnitMock,
+          visibilityState: 'staff_only',
+          ancestorHasStaffLock: true,
+          hasExplicitStaffLock,
+        } as unknown as AccessManagedXBlockDataTypes,
+      });
+
+    it('leaves "Hide from learners" unticked, explains why, and does not add a lock on save', async () => {
+      const user = userEvent.setup();
+      const { getByRole, getByText } = renderHiddenByParent(false);
+
+      expect(getByRole('checkbox', { name: messages.hideFromLearners.defaultMessage })).not.toBeChecked();
+      expect(getByText(messages.unitHiddenByParent.defaultMessage)).toBeInTheDocument();
+
+      await user.click(getByRole('button', { name: messages.saveButton.defaultMessage }));
+      await waitFor(() =>
+        expect(onConfigureSubmitMock).toHaveBeenCalledWith(expect.objectContaining({ isVisibleToStaffOnly: false }))
+      );
+    });
+
+    it('ticks "Hide from learners" when the unit also has its own lock, and lets the author remove it', async () => {
+      const user = userEvent.setup();
+      const { getByRole, getByText } = renderHiddenByParent(true);
+
+      const checkbox = getByRole('checkbox', { name: messages.hideFromLearners.defaultMessage });
+      expect(checkbox).toBeChecked();
+      expect(getByText(messages.unitHiddenByParent.defaultMessage)).toBeInTheDocument();
+
+      await user.click(checkbox);
+      await user.click(getByRole('button', { name: messages.saveButton.defaultMessage }));
+      await waitFor(() =>
+        expect(onConfigureSubmitMock).toHaveBeenCalledWith(expect.objectContaining({ isVisibleToStaffOnly: false }))
+      );
+    });
+  });
+
+  it('ticks "Hide from learners" for a unit with its own lock and no hidden parent', () => {
+    const { getByRole, queryByText } = renderUnitComponent({
+      currentItemData: {
+        ...currentUnitMock,
+        visibilityState: 'staff_only',
+        ancestorHasStaffLock: false,
+        hasExplicitStaffLock: true,
+      } as unknown as AccessManagedXBlockDataTypes,
+    });
+
+    expect(getByRole('checkbox', { name: messages.hideFromLearners.defaultMessage })).toBeChecked();
+    expect(queryByText(messages.unitHiddenByParent.defaultMessage)).not.toBeInTheDocument();
+  });
 });
 
 const renderXBlockComponent = (props?: object) =>
