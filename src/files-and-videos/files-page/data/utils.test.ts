@@ -1,4 +1,11 @@
-import { updateFileValues, RawFile } from './utils';
+import { getConfig } from '@edx/frontend-platform';
+import { InsertDriveFile } from '@openedx/paragon/icons';
+import {
+  getSrc,
+  hasImagePreview,
+  updateFileValues,
+  RawFile,
+} from './utils';
 
 // Minimal shape needed by updateFileValues: contentType (for wrapperType
 // classification), dateAdded (the field under test), locked, usageLocations.
@@ -57,5 +64,28 @@ describe('updateFileValues - dateAdded conversion', () => {
     const [updatedA, updatedB] = updateFileValues([fileA, fileB]);
 
     expect(updatedA.dateAdded).toBe(updatedB.dateAdded);
+  });
+});
+
+describe('getSrc / hasImagePreview', () => {
+  const thumbnail = '/asset-v1:Org+Course+Run+type@thumbnail+block@photo-png.jpg';
+  const externalUrl = 'https://studio.example.com/asset-v1:Org+Course+Run+type@asset+block@photo.png';
+
+  it('uses the real thumbnail (not the full-size file) for an image with a thumbnail', () => {
+    const file = { thumbnail, wrapperType: 'image', externalUrl };
+    expect(hasImagePreview(file)).toBe(true);
+    expect(getSrc(file)).toBe(`${getConfig().STUDIO_BASE_URL}${thumbnail}`);
+  });
+
+  it('uses the full-size image for an image without a thumbnail', () => {
+    const file = { thumbnail: null, wrapperType: 'image', externalUrl };
+    expect(hasImagePreview(file)).toBe(true);
+    expect(getSrc(file)).toBe(externalUrl);
+  });
+
+  it('uses an icon for a non-image file without a thumbnail', () => {
+    const file = { thumbnail: null, wrapperType: 'document', externalUrl: 'https://studio.example.com/doc.pdf' };
+    expect(hasImagePreview(file)).toBe(false);
+    expect(getSrc(file)).toBe(InsertDriveFile);
   });
 });

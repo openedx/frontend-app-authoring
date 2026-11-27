@@ -42,9 +42,27 @@ export const updateFileValues = (files) => {
   return updatedFiles;
 };
 
+/**
+ * Whether a file has an image preview (as opposed to a generic icon): either Studio generated a
+ * thumbnail for it, or it is itself an image we can show directly (e.g. when thumbnail generation
+ * failed, or for files stored in the openedx_content backend, which never has thumbnails).
+ */
+export const hasImagePreview = ({ thumbnail, wrapperType, externalUrl }) => (
+  !!thumbnail || (wrapperType === 'image' && !!externalUrl)
+);
+
+/**
+ * Returns the preview for a file: a URL string if `hasImagePreview()` is true, otherwise a
+ * Paragon icon component for its wrapperType.
+ */
 export const getSrc = ({ thumbnail, wrapperType, externalUrl }) => {
   if (thumbnail) {
-    return externalUrl || `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
+    // `thumbnail` is a root-relative Studio path to a small generated JPEG.
+    return `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
+  }
+  if (wrapperType === 'image' && externalUrl) {
+    // No thumbnail, so fall back to the full-size image.
+    return externalUrl;
   }
   switch (wrapperType) {
     case 'document':

@@ -5,7 +5,7 @@ import {
   Icon,
   Image,
 } from '@openedx/paragon';
-import { getSrc } from './data/utils';
+import { getSrc, hasImagePreview } from './data/utils';
 import messages from './messages';
 
 const FileThumbnail = ({
@@ -26,7 +26,7 @@ const FileThumbnail = ({
 
   return (
     <div className="row justify-content-center align-itmes-center">
-      {thumbnail ?
+      {hasImagePreview({ thumbnail, externalUrl, wrapperType }) ?
         (
           <Image
             style={{
