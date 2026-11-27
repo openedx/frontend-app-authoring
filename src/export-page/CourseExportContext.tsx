@@ -57,13 +57,17 @@ export const CourseExportProvider = ({ children }: CourseExportProviderProps) =>
     setSuccessDate(undefined);
   };
 
+  const exportMutation = useStartCourseExporting(courseId);
+  // Only ask for the export status once Studio has accepted the request to start the export.
+  // Until then, the status endpoint still reports the previous export of this course (if any),
+  // which would show up as an immediate success with a link to the old file.
+  const isExportStarted = exportTriggered && !exportMutation.isPending && !exportMutation.isError;
   const {
     data: exportStatus,
     isPending: isPendingExportStatus,
     isError: isErrorExportStatus,
     failureReason: exportStatusError,
-  } = useExportStatus(courseId, isStopFetching, exportTriggered);
-  const exportMutation = useStartCourseExporting(courseId);
+  } = useExportStatus(courseId, isStopFetching, isExportStarted);
   const invalidateExportStatus = useInvalidateExportStatus(courseId);
 
   const currentStage = exportStatus?.exportStatus ?? 0;

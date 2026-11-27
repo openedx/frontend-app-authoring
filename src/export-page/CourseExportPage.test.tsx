@@ -109,6 +109,44 @@ describe('<CourseExportPage />', () => {
     expect(screen.getByText(stepperMessages.stepperPreparingDescription.defaultMessage)).toBeInTheDocument();
   });
 
+  it('should not fetch the export status before the export has started', async () => {
+    let finishStartingExport: (response: [number, unknown]) => void = () => {};
+    let isExportStarted = false;
+    axiosMock
+      .onPost(postExportCourseApiUrl(courseId))
+      .reply(() =>
+        new Promise((resolve) => {
+          finishStartingExport = (response) => {
+            isExportStarted = true;
+            resolve(response);
+          };
+        })
+      );
+    // Until the new export task exists, Studio reports the previous export of the course.
+    axiosMock
+      .onGet(getExportStatusApiUrl(courseId))
+      .reply(() => (isExportStarted
+        ? [200, { exportStatus: EXPORT_STAGES.EXPORTING }]
+        : [200, { exportStatus: EXPORT_STAGES.SUCCESS, exportOutput: '/previous-export.tar.gz' }])
+      );
+    const user = userEvent.setup();
+    const { container } = renderComponent();
+
+    await user.click(container.querySelector('.btn-primary')!);
+    await waitFor(() => expect(axiosMock.history.post).toHaveLength(1));
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise((r) => setTimeout(r, 100));
+
+    expect(axiosMock.history.get.filter((req) => req.url === getExportStatusApiUrl(courseId))).toHaveLength(0);
+    expect(screen.queryByText(stepperMessages.downloadCourseButtonTitle.defaultMessage)).not.toBeInTheDocument();
+
+    finishStartingExport([200, exportPageMock]);
+
+    await waitFor(() => {
+      expect(axiosMock.history.get.filter((req) => req.url === getExportStatusApiUrl(courseId))).toHaveLength(1);
+    });
+  });
+
   it('should show modal error', async () => {
     axiosMock
       .onGet(getExportStatusApiUrl(courseId))
