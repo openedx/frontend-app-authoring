@@ -1,8 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
-import PropTypes from 'prop-types';
+import { useContext, useEffect, useState, useRef } from 'react';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useDispatch, useSelector } from 'react-redux';
 
 import {
   ActionRow,
@@ -14,58 +12,49 @@ import {
   StatefulButton,
 } from '@openedx/paragon';
 import { Info } from '@openedx/paragon/icons';
-import { updateModel, useModel } from 'CourseAuthoring/generic/model-store';
 
-import { RequestStatus } from 'CourseAuthoring/data/constants';
 import FormSwitchGroup from 'CourseAuthoring/generic/FormSwitchGroup';
 import Loading from 'CourseAuthoring/generic/Loading';
 import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
 import ConnectionErrorAlert from 'CourseAuthoring/generic/ConnectionErrorAlert';
 import { useAppSetting, useIsMobile } from 'CourseAuthoring/utils';
-import { getLoadingStatus, getSavingStatus } from 'CourseAuthoring/pages-and-resources/data/selectors';
-import { updateSavingStatus } from 'CourseAuthoring/pages-and-resources/data/slice';
+import { useUpdateCourseAdvancedSettings } from 'CourseAuthoring/data/apiHooks';
+import { useCourseAuthoringContext } from 'CourseAuthoring/CourseAuthoringContext';
+import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 
 import messages from './messages';
 
-const ORASettings = ({ onClose }) => {
-  const dispatch = useDispatch();
+const ORASettings = ({ onClose }: { onClose: () => void; }) => {
   const { formatMessage } = useIntl();
-  const alertRef = useRef(null);
-  const updateSettingsRequestStatus = useSelector(getSavingStatus);
-  const loadingStatus = useSelector(getLoadingStatus);
+  const alertRef = useRef<HTMLDivElement>(null);
+  const { courseId } = useCourseAuthoringContext();
+  const { courseApps, courseAppsStatus, courseAppsError } = useContext(PagesAndResourcesContext);
+
   const isMobile = useIsMobile();
   const modalVariant = isMobile ? 'dark' : 'default';
   const appId = 'ora_settings';
-  const appInfo = useModel('courseApps', appId);
+  const appInfo = courseApps.find((app) => app.id === appId);
 
-  const [enableFlexiblePeerGrade, saveSetting] = useAppSetting(
-    'forceOnFlexiblePeerOpenassessments',
-  );
-  const initialFormValues = { enableFlexiblePeerGrade };
+  const updateCourseAdvancedSettingsMutation = useUpdateCourseAdvancedSettings(courseId);
+  const settingName = 'forceOnFlexiblePeerOpenassessments';
 
-  const [formValues, setFormValues] = useState(initialFormValues);
-  const [saveError, setSaveError] = useState(false);
+  const { value: enableFlexiblePeerGrade, isLoading } = useAppSetting(settingName);
 
-  const submitButtonState = updateSettingsRequestStatus === RequestStatus.IN_PROGRESS ? 'pending' : 'default';
-  const handleSettingsSave = (values) => saveSetting(values.enableFlexiblePeerGrade);
+  const [formValues, setFormValues] = useState({ enableFlexiblePeerGrade });
+
+  useEffect(() => {
+    setFormValues({ enableFlexiblePeerGrade });
+  }, [enableFlexiblePeerGrade]);
+
+  const submitButtonState = updateCourseAdvancedSettingsMutation.isPending ? 'pending' : 'default';
+  const handleSettingsSave = (values) =>
+    updateCourseAdvancedSettingsMutation.mutate({
+      [settingName]: values.enableFlexiblePeerGrade,
+    });
 
   const handleSubmit = async (event) => {
-    let success = true;
     event.preventDefault();
-
-    success = success && await handleSettingsSave(formValues);
-    setSaveError(!success);
-    if ((initialFormValues.enableFlexiblePeerGrade !== formValues.enableFlexiblePeerGrade) && success) {
-      // oxlint-disable-next-line @typescript-eslint/await-thenable - this dispatch() IS returning a promise.
-      success = await dispatch(updateModel({
-        modelType: 'courseApps',
-        model: {
-          id: appId,
-          enabled: formValues.enableFlexiblePeerGrade,
-        },
-      }));
-    }
-    !success && alertRef?.current.scrollIntoView(); // eslint-disable-line @typescript-eslint/no-unused-expressions
+    handleSettingsSave(formValues);
   };
 
   const handleChange = (e) => {
@@ -73,18 +62,26 @@ const ORASettings = ({ onClose }) => {
   };
 
   useEffect(() => {
-    if (updateSettingsRequestStatus === RequestStatus.SUCCESSFUL) {
-      dispatch(updateSavingStatus({ status: '' }));
+    if (updateCourseAdvancedSettingsMutation.isSuccess) {
       onClose();
     }
-  }, [updateSettingsRequestStatus]);
+  }, [updateCourseAdvancedSettingsMutation.isSuccess]);
+
+  useEffect(() => {
+    if (updateCourseAdvancedSettingsMutation.isError) {
+      alertRef?.current?.scrollIntoView?.();
+    }
+  }, [updateCourseAdvancedSettingsMutation.isError]);
 
   const renderBody = () => {
-    switch (loadingStatus) {
-      case RequestStatus.SUCCESSFUL:
+    switch (courseAppsStatus) {
+      case 'success':
+        if (isLoading) {
+          return <Loading />;
+        }
         return (
           <>
-            {saveError && (
+            {updateCourseAdvancedSettingsMutation.isError && (
               <Alert variant="danger" icon={Info} ref={alertRef}>
                 <Alert.Heading>
                   {formatMessage(messages.errorSavingTitle)}
@@ -111,7 +108,7 @@ const ORASettings = ({ onClose }) => {
                   <span className="py-3">
                     <Hyperlink
                       className="text-primary-500 small"
-                      destination={appInfo.documentationLinks?.learnMoreConfiguration}
+                      destination={appInfo?.documentationLinks?.learnMoreConfiguration}
                       target="_blank"
                       rel="noreferrer noopener"
                     >
@@ -125,10 +122,8 @@ const ORASettings = ({ onClose }) => {
             />
           </>
         );
-      case RequestStatus.DENIED:
-        return <PermissionDeniedAlert />;
-      case RequestStatus.FAILED:
-        return <ConnectionErrorAlert />;
+      case 'error':
+        return courseAppsError?.response?.status === 403 ? <PermissionDeniedAlert /> : <ConnectionErrorAlert />;
       default:
         return <Loading />;
     }
@@ -144,6 +139,7 @@ const ORASettings = ({ onClose }) => {
       hasCloseButton={isMobile}
       isFullscreenScroll
       isFullscreenOnMobile
+      isOverflowVisible
     >
       <Form onSubmit={handleSubmit} data-testid="proctoringForm">
         <ModalDialog.Header>
@@ -166,7 +162,7 @@ const ORASettings = ({ onClose }) => {
               }}
               description="Form save button"
               data-testid="submissionButton"
-              disabled={submitButtonState === RequestStatus.IN_PROGRESS}
+              disabled={submitButtonState === 'pending'}
               state={submitButtonState}
               type="submit"
             />
@@ -175,10 +171,6 @@ const ORASettings = ({ onClose }) => {
       </Form>
     </ModalDialog>
   );
-};
-
-ORASettings.propTypes = {
-  onClose: PropTypes.func.isRequired,
 };
 
 export default ORASettings;

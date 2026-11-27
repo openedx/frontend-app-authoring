@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import { useRef } from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -7,9 +8,21 @@ import {
   screen,
   render,
   waitFor,
+  makeQueryClientWrapper,
 } from '../testUtils';
-import { createGlobalState, useWaffleFlags } from './apiHooks';
-import { getApiWaffleFlagsUrl } from './api';
+import {
+  useWaffleFlags,
+  useCourseApps,
+  useUpdateCourseAppStatus,
+  createGlobalState,
+  advancedSettingsQueryKeys,
+  useCourseAdvancedSettings,
+  useUpdateCourseAdvancedSettings,
+  useSortedCourseApps,
+} from './apiHooks';
+import { getApiWaffleFlagsUrl, getCourseAppsApiUrl, getCourseAdvancedSettingsApiUrl } from './api';
+
+const courseId = 'course-v1:edX+DemoX+Demo_Course';
 
 // A little component for testing our waffle flag hooks.
 const FlagComponent = ({ courseId }: { courseId?: string; }) => {
@@ -111,6 +124,152 @@ describe('useWaffleFlags', () => {
     });
     expect(await screen.findByLabelText('isError')).toHaveTextContent('false');
     expect(await screen.findByLabelText('useReactMarkdownEditor')).toHaveTextContent('enabled');
+  });
+});
+
+describe('useUpdateCourseAppStatus', () => {
+  it('sends a PATCH request and invalidates the course apps query on success', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onPatch(`${getCourseAppsApiUrl()}/${courseId}`).reply(200);
+    const invalidateQueriesSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useUpdateCourseAppStatus(courseId),
+      { wrapper: makeQueryClientWrapper(queryClient) },
+    );
+
+    result.current.mutate({ appId: 'discussion', state: true });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(axiosMock.history.patch[0].url).toBe(`${getCourseAppsApiUrl()}/${courseId}`);
+    expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({ id: 'discussion', enabled: true });
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['courseApps', courseId] });
+  });
+});
+
+describe('useCourseApps', () => {
+  it('sorts course apps according to their display order', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(200, [
+      {
+        id: 'wiki',
+        name: 'Wiki',
+        description: '',
+        enabled: true,
+        allowed_operations: { enable: true, configure: true },
+      },
+      {
+        id: 'discussion',
+        name: 'Discussion',
+        description: '',
+        enabled: true,
+        allowed_operations: { enable: true, configure: true },
+      },
+    ]);
+
+    const { result } = renderHook(
+      () => useCourseApps(courseId),
+      { wrapper: makeQueryClientWrapper(queryClient) },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.map(app => app.id)).toEqual(['discussion', 'wiki']);
+  });
+});
+
+describe('useSortedCourseApps', () => {
+  it('reports an error status with the 403 response on a denied request', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(403);
+
+    const { result } = renderHook(
+      () => useSortedCourseApps(courseId),
+      { wrapper: makeQueryClientWrapper(queryClient) },
+    );
+
+    await waitFor(() => expect(result.current.courseAppsStatus).toBe('error'));
+    expect(result.current.courseAppsError?.response?.status).toBe(403);
+    expect(result.current.courseApps).toEqual([]);
+  });
+
+  it('reports an error status on a non-403 error response', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(500);
+
+    const { result } = renderHook(
+      () => useSortedCourseApps(courseId),
+      { wrapper: makeQueryClientWrapper(queryClient) },
+    );
+
+    await waitFor(() => expect(result.current.courseAppsStatus).toBe('error'));
+    expect(result.current.courseAppsError?.response?.status).toBe(500);
+    expect(result.current.courseApps).toEqual([]);
+  });
+});
+
+describe('useCourseAdvancedSettings', () => {
+  it('fetches all the settings when no filter is given', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(getCourseAdvancedSettingsApiUrl(courseId)).reply(200, {
+      course_display_name: { display_name: 'Course Display Name', value: 'Demo' },
+    });
+
+    const { result } = renderHook(
+      () => useCourseAdvancedSettings(courseId),
+      { wrapper: makeQueryClientWrapper(queryClient) },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosMock.history.get[0].params).toEqual({ fetch_all: 0 });
+    expect(result.current.data).toEqual({
+      courseDisplayName: { displayName: 'Course Display Name', value: 'Demo' },
+    });
+    expect(queryClient.getQueryData(advancedSettingsQueryKeys.courseAdvancedSettings(courseId))).toBeDefined();
+  });
+
+  it('fetches only the given settings, cached separately from the unfiltered ones', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onGet(getCourseAdvancedSettingsApiUrl(courseId)).reply(200, {
+      teams_configuration: { value: { max_team_size: 4 } },
+    });
+
+    const { result } = renderHook(
+      () => useCourseAdvancedSettings(courseId, ['teamsConfiguration']),
+      { wrapper: makeQueryClientWrapper(queryClient) },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(axiosMock.history.get[0].params).toEqual({ filter_fields: 'teams_configuration' });
+    // The value is kept as the server sent it
+    expect(result.current.data).toEqual({ teamsConfiguration: { value: { max_team_size: 4 } } });
+    expect(queryClient.getQueryData(
+      advancedSettingsQueryKeys.courseAdvancedSettings(courseId, ['teamsConfiguration']),
+    )).toBeDefined();
+    expect(queryClient.getQueryData(advancedSettingsQueryKeys.courseAdvancedSettings(courseId))).toBeUndefined();
+  });
+});
+
+describe('useUpdateCourseAdvancedSettings', () => {
+  it('sends a PATCH request and invalidates the advanced settings and course apps queries', async () => {
+    const { axiosMock, queryClient } = initializeMocks();
+    axiosMock.onPatch(getCourseAdvancedSettingsApiUrl(courseId)).reply(200, {});
+    const invalidateQueriesSpy = jest.spyOn(queryClient, 'invalidateQueries');
+
+    const { result } = renderHook(
+      () => useUpdateCourseAdvancedSettings(courseId),
+      { wrapper: makeQueryClientWrapper(queryClient) },
+    );
+
+    result.current.mutate({ courseDisplayName: 'New Name', maxAttempts: 3 });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(axiosMock.history.patch[0].url).toBe(getCourseAdvancedSettingsApiUrl(courseId));
+    expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
+      course_display_name: { value: 'New Name' },
+      max_attempts: { value: 3 },
+    });
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['advancedSettings', courseId] });
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['courseApps', courseId] });
   });
 });
 

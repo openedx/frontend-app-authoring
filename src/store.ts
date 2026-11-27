@@ -6,7 +6,6 @@ import { reducer as liveReducer } from '@openedx-plugins/course-app-live/data/sl
 
 import { reducer as modelsReducer } from './generic/model-store';
 import { reducer as discussionsReducer } from './pages-and-resources/discussions/data/slice';
-import { reducer as pagesAndResourcesReducer } from './pages-and-resources/data/slice';
 import { reducer as studioHomeReducer } from './studio-home/data/slice';
 import { reducer as filesReducer } from './files-and-videos/files-page/data/slice';
 import { reducer as genericReducer } from './generic/data/slice';
@@ -23,7 +22,6 @@ type InferState<ReducerType> = ReducerType extends Reducer<infer T> ? T : never;
 export interface DeprecatedReduxState {
   discussions: Record<string, any>;
   assets: Record<string, any>;
-  pagesAndResources: Record<string, any>;
   studioHome: InferState<typeof studioHomeReducer>;
   models: Record<string, any>;
   live: Record<string, any>;
@@ -38,7 +36,6 @@ export default function initializeStore(preloadedState: Partial<DeprecatedReduxS
     reducer: {
       discussions: discussionsReducer,
       assets: filesReducer,
-      pagesAndResources: pagesAndResourcesReducer,
       studioHome: studioHomeReducer,
       models: modelsReducer,
       live: liveReducer,

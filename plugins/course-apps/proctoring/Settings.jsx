@@ -27,7 +27,6 @@ import StudioApiService from 'CourseAuthoring/data/services/StudioApiService';
 import Loading from 'CourseAuthoring/generic/Loading';
 import ConnectionErrorAlert from 'CourseAuthoring/generic/ConnectionErrorAlert';
 import FormSwitchGroup from 'CourseAuthoring/generic/FormSwitchGroup';
-import { useModel } from 'CourseAuthoring/generic/model-store';
 import PermissionDeniedAlert from 'CourseAuthoring/generic/PermissionDeniedAlert';
 import { useIsMobile } from 'CourseAuthoring/utils';
 import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
@@ -74,10 +73,11 @@ const ProctoringSettings = ({ onClose }) => {
     return ltiProctoringProviders.find(p => p.name === provider)?.verbose_name || provider;
   }
 
-  const { courseId } = useContext(PagesAndResourcesContext);
+  const { courseId, courseApps } = useContext(PagesAndResourcesContext);
   const { courseDetails } = useCourseAuthoringContext();
   const org = courseDetails?.org;
-  const appInfo = useModel('courseApps', 'proctoring');
+  const appId = 'proctoring';
+  const appInfo = courseApps.find((app) => app.id === appId);
   const alertRef = React.createRef();
   const saveStatusAlertRef = React.createRef();
   const proctoringEscalationEmailInputRef = useRef(null);

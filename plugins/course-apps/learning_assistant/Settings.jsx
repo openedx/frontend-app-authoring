@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Hyperlink } from '@openedx/paragon';
 
 import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
-import { useModel } from 'CourseAuthoring/generic/model-store';
+import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 
 import messages from './messages';
 
 const LearningAssistantSettings = ({ onClose }) => {
+  const { courseApps } = useContext(PagesAndResourcesContext);
   const appId = 'learning_assistant';
-  const appInfo = useModel('courseApps', appId);
+  const appInfo = courseApps.find((app) => app.id === appId);
   const intl = useIntl();
 
   // We need to render more than one link, so we use the bodyChildren prop.

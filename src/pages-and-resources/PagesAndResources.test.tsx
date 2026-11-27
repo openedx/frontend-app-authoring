@@ -11,12 +11,11 @@ import {
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-framework';
 import { CourseAuthoringProvider } from '@src/CourseAuthoringContext';
-import { getCourseDetailsUrl } from '@src/data/api';
+import { getCourseAdvancedSettingsApiUrl, getCourseAppsApiUrl, getCourseDetailsUrl } from '@src/data/api';
 import { mockWaffleFlags } from '@src/data/apiHooks.mock';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 
 import { PagesAndResources, PagesAndResourcesAccess } from '.';
-import { getCourseAdvancedSettingsApiUrl, getCourseAppsApiUrl } from './data/api';
 import { getDiscussionsProvidersUrl, getDiscussionsSettingsUrl } from './discussions/data/api';
 
 import messages from './messages';
@@ -55,6 +54,8 @@ const renderComponent = () =>
   );
 
 describe('PagesAndResources', () => {
+  let axiosMock;
+
   beforeEach(() => {
     jest.clearAllMocks();
     setConfig({
@@ -77,6 +78,10 @@ describe('PagesAndResources', () => {
       canViewPagesAndResources: true,
       canManagePagesAndResources: true,
     } as ReturnType<typeof useCourseUserPermissions>);
+
+    ({ axiosMock } = initializeMocks());
+    // Default: no course apps installed. Override per-test with axiosMock as needed.
+    axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(200, []);
   });
 
   // Helper to set up permission mocks
@@ -91,12 +96,6 @@ describe('PagesAndResources', () => {
   };
 
   it('sets the page title through Helmet', async () => {
-    initializeMocks({
-      initialState: {
-        models: { courseApps: {} },
-        pagesAndResources: { courseAppIds: [] },
-      },
-    });
     renderComponent();
 
     await waitFor(() => {
@@ -105,16 +104,6 @@ describe('PagesAndResources', () => {
   });
 
   it('doesn\'t show content permissions section if relevant apps are not enabled', async () => {
-    const initialState = {
-      models: {
-        courseApps: {},
-      },
-      pagesAndResources: {
-        courseAppIds: [],
-      },
-    };
-
-    initializeMocks({ initialState });
     renderComponent();
 
     await waitFor(() => expect(screen.queryByRole('heading', { name: 'Content permissions' })).not.toBeInTheDocument());
@@ -123,28 +112,20 @@ describe('PagesAndResources', () => {
   });
 
   it('show content permissions section if Learning Assistant app is enabled', async () => {
-    const initialState = {
-      models: {
-        courseApps: {
-          learning_assistant: {
-            id: 'learning_assistant',
-            enabled: true,
-            name: 'Learning Assistant',
-            description: 'Learning Assistant description',
-            allowedOperations: {
-              configure: false,
-              enable: true,
-            },
-            documentationLinks: {},
-          },
+    axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(200, [
+      {
+        id: 'learning_assistant',
+        enabled: true,
+        name: 'Learning Assistant',
+        description: 'Learning Assistant description',
+        allowed_operations: {
+          configure: false,
+          enable: true,
         },
+        documentation_links: {},
       },
-      pagesAndResources: {
-        courseAppIds: ['learning_assistant'],
-      },
-    };
+    ]);
 
-    initializeMocks({ initialState });
     renderComponent();
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Content permissions' })).toBeInTheDocument());
@@ -154,30 +135,22 @@ describe('PagesAndResources', () => {
   });
 
   it('show content permissions section if Xpert learning summaries app is enabled', async () => {
-    const initialState = {
-      models: {
-        courseApps: {
-          xpert_unit_summary: {
-            id: 'xpert_unit_summary',
-            enabled: false,
-            name: 'Xpert unit summaries',
-            description: 'Use generative AI to summarize course content and reinforce learning.',
-            allowedOperations: {
-              enable: true,
-              configure: true,
-            },
-            documentationLinks: {
-              learnMoreConfiguration: 'https://openai.com/',
-            },
-          },
+    axiosMock.onGet(`${getCourseAppsApiUrl()}/${courseId}`).reply(200, [
+      {
+        id: 'xpert_unit_summary',
+        enabled: false,
+        name: 'Xpert unit summaries',
+        description: 'Use generative AI to summarize course content and reinforce learning.',
+        allowed_operations: {
+          enable: true,
+          configure: true,
+        },
+        documentation_links: {
+          learn_more_configuration: 'https://openai.com/',
         },
       },
-      pagesAndResources: {
-        courseAppIds: ['xpert_unit_summary'],
-      },
-    };
+    ]);
 
-    initializeMocks({ initialState });
     renderComponent();
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Content permissions' })).toBeInTheDocument());
@@ -190,16 +163,6 @@ describe('PagesAndResources', () => {
     it('shows PermissionDeniedAlert when user has no VIEW or EDIT permissions', async () => {
       mockPermissions(false, false);
 
-      const initialState = {
-        models: {
-          courseApps: {},
-        },
-        pagesAndResources: {
-          courseAppIds: [],
-        },
-      };
-
-      initializeMocks({ initialState });
       renderComponent();
 
       await waitFor(() => expect(screen.getByTestId('permissionDeniedAlert')).toBeInTheDocument());
@@ -208,16 +171,6 @@ describe('PagesAndResources', () => {
     it('does NOT show PermissionDeniedAlert when user has VIEW permission', async () => {
       mockPermissions(true, false);
 
-      const initialState = {
-        models: {
-          courseApps: {},
-        },
-        pagesAndResources: {
-          courseAppIds: [],
-        },
-      };
-
-      initializeMocks({ initialState });
       renderComponent();
 
       await waitFor(() => expect(screen.queryByTestId('permissionDeniedAlert')).not.toBeInTheDocument());
@@ -226,16 +179,6 @@ describe('PagesAndResources', () => {
     it('does NOT show PermissionDeniedAlert when user has EDIT permission', async () => {
       mockPermissions(true, true);
 
-      const initialState = {
-        models: {
-          courseApps: {},
-        },
-        pagesAndResources: {
-          courseAppIds: [],
-        },
-      };
-
-      initializeMocks({ initialState });
       renderComponent();
 
       await waitFor(() => expect(screen.queryByTestId('permissionDeniedAlert')).not.toBeInTheDocument());
@@ -287,7 +230,7 @@ describe('PagesAndResources', () => {
         { id: 'calculator', name: 'Calculator', description: 'Course calculator', enabled: true },
         { id: 'ora_settings', name: 'ORA', description: 'Open response assessments', enabled: true },
       ]);
-      axiosMock.onGet(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`).reply(200, {
+      axiosMock.onGet(getCourseAdvancedSettingsApiUrl(courseId)).reply(200, {
         force_on_flexible_peer_openassessments: { value: false },
       });
       axiosMock.onGet(getDiscussionsProvidersUrl(courseId)).reply(200, {
@@ -329,7 +272,7 @@ describe('PagesAndResources', () => {
       await waitFor(() => expect(screen.getByLabelText('Current location').textContent).toBe(listingPath));
       expect(await screen.findByRole('heading', { name: 'Pages & Resources' })).toBeVisible();
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-      expect(requested(`${getCourseAdvancedSettingsApiUrl()}/${courseId}`)).toBe(false);
+      expect(requested(getCourseAdvancedSettingsApiUrl(courseId))).toBe(false);
       expect(requested(getDiscussionsProvidersUrl(courseId))).toBe(false);
       expect(requested(getDiscussionsSettingsUrl(courseId))).toBe(false);
       expect(mockShowToast).not.toHaveBeenCalled();
