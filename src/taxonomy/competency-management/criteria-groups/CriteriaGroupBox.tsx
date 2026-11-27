@@ -30,7 +30,9 @@ export interface CriteriaGroupBoxProps {
    * menus. Unused for the placeholder.
    */
   position: number;
-  /** The course the group belongs to, which names its menu and its rule boxes' menus. */
+  /** The course the group belongs to, which names its menu and its rule boxes' menus, and is read aloud for an
+   * unavailable chip.
+   */
   courseName: string;
 }
 

@@ -428,6 +428,17 @@ describe('<CourseGroupSection />', () => {
     expect(other.querySelector('.course-group-section')).not.toHaveClass('course-group-section--selected');
   });
 
+  it('names the course in the unavailable chip for a criterion missing from the outline', async () => {
+    axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);
+    const missingIndex = buildCompetencyCriteriaGroupsIndex({
+      ...response,
+      criteria: [criterion(101, 'sub-deleted', 10)],
+    });
+    renderSection({ groupsIndex: missingIndex });
+
+    expect(await screen.findByText('Content unavailable in Demo Course')).toBeInTheDocument();
+  });
+
   describe('delete control', () => {
     it('calls deleteGroup with the course group id when Remove from the competency is chosen', async () => {
       axiosMock.onGet(outlineApiUrl).reply(200, outlineFixture);

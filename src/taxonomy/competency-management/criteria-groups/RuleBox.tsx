@@ -24,7 +24,7 @@ export interface RuleBoxProps {
    * of a saved box. Unused for the placeholder group.
    */
   position: number;
-  /** The course the box belongs to, which names the menu of a saved box. */
+  /** The course the box belongs to, which names the menu of a saved box and is read aloud for an unavailable chip. */
   courseName: string;
   /** Duplicate-score check for this box, used only when `canEdit`. */
   getInlineValidationMessage?: (candidate: GradeRulePayload) => string;
@@ -188,6 +188,7 @@ const RuleBox = ({
           <CriterionChipList
             criteria={criteria}
             subsectionNamesByUsageKey={subsectionNamesByUsageKey}
+            courseName={courseName}
             canEdit={canEdit}
           />
         )}

@@ -18,7 +18,7 @@ export interface RuleBoxListProps {
    * menus. Unused for the placeholder group.
    */
   position: number;
-  /** The course the boxes belong to, which names their menus. */
+  /** The course the boxes belong to, which names their menus and is read aloud for an unavailable chip. */
   courseName: string;
 }
 

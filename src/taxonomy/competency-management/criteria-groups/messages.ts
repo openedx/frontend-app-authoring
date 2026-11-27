@@ -96,8 +96,13 @@ const messages = defineMessages({
   unknownSubsectionLabel: {
     id: 'course-authoring.competency-management.criteria-groups.unknown-subsection-label',
     defaultMessage: 'Content unavailable',
-    description: 'Fallback chip text for a criterion whose associated subsection isn\'t found in its '
-      + 'course\'s outline (deleted content or search-index lag, not a permission boundary).',
+    description: 'Chip text for a criterion whose subsection isn\'t found in its course\'s outline.',
+  },
+  unavailableCriterionAccessibleLabel: {
+    id: 'course-authoring.competency-management.criteria-groups.unavailable-criterion-accessible-label',
+    defaultMessage: 'Content unavailable in {courseName}',
+    description: 'Screen-reader text for a criterion chip whose subsection can\'t be found in its course\'s '
+      + 'outline. {courseName} is the name of the course the chip belongs to.',
   },
   fromWithinCourseLabel: {
     id: 'course-authoring.competency-management.criteria-groups.from-within-course-label',
