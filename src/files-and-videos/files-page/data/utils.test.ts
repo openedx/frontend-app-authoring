@@ -83,6 +83,21 @@ describe('getSrc / hasImagePreview', () => {
     expect(getSrc(file)).toBe(externalUrl);
   });
 
+  it.each(['image/tiff', 'image/tif', 'image/x-icon', 'image/vnd.microsoft.icon'])(
+    'uses an icon, not the full-size file, for a %s image without a thumbnail',
+    (contentType) => {
+      const file = { thumbnail: null, wrapperType: 'image', contentType, externalUrl };
+      expect(hasImagePreview(file)).toBe(false);
+      expect(getSrc(file)).toBe(InsertDriveFile);
+    },
+  );
+
+  it('still uses the thumbnail for a TIFF image that has one', () => {
+    const file = { thumbnail, wrapperType: 'image', contentType: 'image/tiff', externalUrl };
+    expect(hasImagePreview(file)).toBe(true);
+    expect(getSrc(file)).toBe(`${getConfig().STUDIO_BASE_URL}${thumbnail}`);
+  });
+
   it('uses an icon for a non-image file without a thumbnail', () => {
     const file = { thumbnail: null, wrapperType: 'document', externalUrl: 'https://studio.example.com/doc.pdf' };
     expect(hasImagePreview(file)).toBe(false);

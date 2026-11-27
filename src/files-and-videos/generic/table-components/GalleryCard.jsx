@@ -63,6 +63,7 @@ const GalleryCard = ({
           <FileThumbnail
             thumbnail={original.thumbnail}
             wrapperType={original.wrapperType}
+            contentType={original.contentType}
             externalUrl={original.externalUrl}
             displayName={original.displayName}
             id={original.id}

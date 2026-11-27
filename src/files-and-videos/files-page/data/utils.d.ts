@@ -24,6 +24,7 @@ export declare function updateFileValues(files: RawFile[]): UpdatedFile[];
 interface FilePreviewFields {
   thumbnail?: string | null;
   wrapperType: string;
+  contentType?: string | null;
   externalUrl?: string | null;
 }
 

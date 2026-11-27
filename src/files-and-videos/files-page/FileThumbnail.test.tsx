@@ -16,6 +16,7 @@ describe('<FileThumbnail />', () => {
       <FileThumbnail
         thumbnail={thumbnail}
         wrapperType="image"
+        contentType="image/png"
         externalUrl={externalUrl}
         displayName="photo.png"
         imageSize={imageSize}
@@ -32,12 +33,27 @@ describe('<FileThumbnail />', () => {
       <FileThumbnail
         thumbnail={null}
         wrapperType="image"
+        contentType="image/png"
         externalUrl={externalUrl}
         displayName="photo.png"
         imageSize={imageSize}
       />,
     );
     expect(screen.getByRole('img', { name: 'photo.png file preview' })).toHaveAttribute('src', externalUrl);
+  });
+
+  it('shows an icon, not the full-size file, for a TIFF image without a thumbnail', () => {
+    render(
+      <FileThumbnail
+        thumbnail={null}
+        wrapperType="image"
+        contentType="image/tiff"
+        externalUrl="https://studio.example.com/scan.tiff"
+        displayName="scan.tiff"
+        imageSize={imageSize}
+      />,
+    );
+    expect(screen.queryByRole('img', { name: 'scan.tiff file preview' })).not.toBeInTheDocument();
   });
 
   it('shows an icon, not an image, for a non-image file', () => {

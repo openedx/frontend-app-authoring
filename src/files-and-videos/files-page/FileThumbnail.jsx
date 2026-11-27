@@ -11,6 +11,7 @@ import messages from './messages';
 const FileThumbnail = ({
   thumbnail,
   wrapperType,
+  contentType,
   externalUrl,
   displayName,
   imageSize,
@@ -21,12 +22,18 @@ const FileThumbnail = ({
     thumbnail,
     externalUrl,
     wrapperType,
+    contentType,
   });
   const { width, height } = imageSize;
 
   return (
     <div className="row justify-content-center align-itmes-center">
-      {hasImagePreview({ thumbnail, externalUrl, wrapperType }) ?
+      {hasImagePreview({
+          thumbnail,
+          externalUrl,
+          wrapperType,
+          contentType,
+        }) ?
         (
           <Image
             style={{
@@ -55,12 +62,14 @@ const FileThumbnail = ({
 FileThumbnail.defaultProps = {
   thumbnail: null,
   wrapperType: null,
+  contentType: null,
   externalUrl: null,
   displayName: null,
 };
 FileThumbnail.propTypes = {
   thumbnail: PropTypes.string,
   wrapperType: PropTypes.string,
+  contentType: PropTypes.string,
   externalUrl: PropTypes.string,
   displayName: PropTypes.string,
   imageSize: PropTypes.shape({

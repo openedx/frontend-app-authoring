@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 const ThumbnailPreview = ({
   thumbnail,
   wrapperType,
+  contentType,
   externalUrl,
   displayName,
   imageSize,
@@ -15,6 +16,7 @@ const ThumbnailPreview = ({
     {thumbnailPreview({
       thumbnail,
       wrapperType,
+      contentType,
       externalUrl,
       displayName,
       imageSize,
@@ -26,6 +28,7 @@ const ThumbnailPreview = ({
 ThumbnailPreview.defaultProps = {
   thumbnail: null,
   wrapperType: null,
+  contentType: null,
   externalUrl: null,
   displayName: null,
   id: null,
@@ -34,6 +37,7 @@ ThumbnailPreview.defaultProps = {
 ThumbnailPreview.propTypes = {
   thumbnail: PropTypes.string,
   wrapperType: PropTypes.string,
+  contentType: PropTypes.string,
   externalUrl: PropTypes.string,
   displayName: PropTypes.string,
   id: PropTypes.string,
