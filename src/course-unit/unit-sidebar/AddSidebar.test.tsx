@@ -45,21 +45,6 @@ jest.mock('../hooks', () => ({
   useHandleCreateNewCourseXBlock: () => () => jest.fn(),
 }));
 
-jest.mock('@src/editors/EditorPage', () => ({
-  __esModule: true,
-  default: () => <div data-testid="editor-page">Editor</div>,
-}));
-
-jest.mock('@src/editors/VideoSelectorPage', () => ({
-  __esModule: true,
-  default: () => <div data-testid="video-selector">Video Selector</div>,
-}));
-
-jest.mock('@src/library-authoring', () => ({
-  ...jest.requireActual('@src/library-authoring'),
-  ComponentPicker: () => <div data-testid="component-picker">ComponentPicker</div>,
-}));
-
 const courseId = '123';
 const blockId = courseSectionVerticalMock.xblock_info.id;
 
