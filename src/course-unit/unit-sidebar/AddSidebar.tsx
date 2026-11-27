@@ -232,7 +232,7 @@ const AddNewContent = () => {
   return (
     <>
       <Stack gap={2}>
-        {blockTypes.map((blockTypeObj) => (
+        {blockTypes.filter((blockTypeObj) => templatesByType[blockTypeObj.blockType]).map((blockTypeObj) => (
           <BlockCardButton
             {...blockTypeObj}
             key={blockTypeObj.blockType}
