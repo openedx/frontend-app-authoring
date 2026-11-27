@@ -31,10 +31,18 @@ import { useCourseUserPermissions } from '@src/authz/hooks';
 let axiosMock: MockAdapter;
 const courseId = '123';
 const previousRunLink = 'https://example.com/old-course-run/link';
+// A link check read with view=full; the report is only sent once the run succeeded.
+const linkCheckApiResponse = (status: string, output: object | null = null) => ({
+  status,
+  created_at: status === 'Uninitiated' ? null : '2024-12-14T00:26:50.838350Z',
+  error: status === 'Failed' ? 'The link check could not be completed.' : null,
+  output,
+});
 const previousRunLinksApiResponse = {
-  LinkCheckStatus: 'Succeeded',
-  LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
-  LinkCheckOutput: {
+  status: 'Succeeded',
+  created_at: '2024-12-14T00:26:50.838350Z',
+  error: null,
+  output: {
     sections: [],
     courseUpdates: [{
       id: 'update-1',
@@ -52,22 +60,23 @@ const terminalRerunResponse = {
   status: 'Succeeded',
   results: [{
     id: 'update-1',
-    success: true,
-    originalUrl: previousRunLink,
-    newUrl: 'https://example.com/new-course-run/link',
     type: 'course_updates',
+    original_url: previousRunLink,
+    new_url: 'https://example.com/new-course-run/link',
+    success: true,
+    error_message: null,
   }],
 };
 const terminalRerunResponseWithoutClientUpdate = {
   ...terminalRerunResponse,
-  results: [{ ...terminalRerunResponse.results[0], newUrl: undefined }],
+  results: [{ ...terminalRerunResponse.results[0], new_url: undefined }],
 };
 const authoritativeCompletedLinksApiResponse = {
   ...previousRunLinksApiResponse,
-  LinkCheckOutput: {
-    ...previousRunLinksApiResponse.LinkCheckOutput,
+  output: {
+    ...previousRunLinksApiResponse.output,
     courseUpdates: [{
-      ...previousRunLinksApiResponse.LinkCheckOutput.courseUpdates[0],
+      ...previousRunLinksApiResponse.output.courseUpdates[0],
       previousRunLinks: [{
         originalLink: previousRunLink,
         isUpdated: true,
@@ -129,13 +138,13 @@ describe('CourseOptimizerPage', () => {
       axiosMock = mocks.axiosMock;
       axiosMock
         .onPost(postLinkCheckCourseApiUrl(courseId))
-        .reply(200, { LinkCheckStatus: 'In-Progress' });
+        .reply(202, { status: 'Pending' });
       axiosMock
         .onGet(getLinkCheckStatusApiUrl(courseId))
         .reply(200, mockApiResponse);
       axiosMock
         .onGet(getRerunLinkUpdateStatusApiUrl(courseId))
-        .reply(200, { UpdateStatus: 'Succeeded', Results: [] });
+        .reply(200, { status: 'Succeeded', results: [] });
       mockPermissions();
     });
 
@@ -178,7 +187,7 @@ describe('CourseOptimizerPage', () => {
     });
 
     it('hides previous scan results while rescanning', async () => {
-      let resolvePost: (value: [number, { LinkCheckStatus: string; }]) => void;
+      let resolvePost: (value: [number, { status: string; }]) => void;
       axiosMock.onPost(postLinkCheckCourseApiUrl(courseId)).reply(() =>
         new Promise(resolve => {
           resolvePost = resolve;
@@ -190,13 +199,13 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(screen.getByRole('button', { name: messages.buttonTitle.defaultMessage }));
 
       await waitFor(() => expect(screen.queryByText('Introduction to Programming')).not.toBeInTheDocument());
-      resolvePost!([200, { LinkCheckStatus: 'Pending' }]);
+      resolvePost!([202, { status: 'Pending' }]);
     });
 
     it('shows the current scan stage and disables the scan button while scanning', async () => {
       axiosMock
         .onGet(getLinkCheckStatusApiUrl(courseId))
-        .reply(200, { LinkCheckStatus: 'In Progress' });
+        .reply(200, linkCheckApiResponse('In Progress'));
       render(<OptimizerPage />);
 
       expect(await screen.findByText(messages.scanningStepDescription.defaultMessage)).toBeInTheDocument();
@@ -215,7 +224,7 @@ describe('CourseOptimizerPage', () => {
 
       // Answer the status request and flush its macrotask so the assertions below run after React has the response.
       await act(async () => {
-        respondToStatus([200, {}]);
+        respondToStatus([200, linkCheckApiResponse('Uninitiated')]);
         await new Promise(resolve => setTimeout(resolve, 0));
       });
 
@@ -229,8 +238,8 @@ describe('CourseOptimizerPage', () => {
       axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(() => {
         statusRequestCount += 1;
         return statusRequestCount === 1
-          ? [200, { LinkCheckStatus: 'Failed' }]
-          : [200, { LinkCheckStatus: 'Pending' }];
+          ? [200, linkCheckApiResponse('Failed')]
+          : [200, linkCheckApiResponse('Pending')];
       });
       render(<OptimizerPage />);
       expect(await screen.findByText('Link Check Failed')).toBeInTheDocument();
@@ -251,7 +260,7 @@ describe('CourseOptimizerPage', () => {
     it('should show no broken links found message', async () => {
       axiosMock
         .onGet(getLinkCheckStatusApiUrl(courseId))
-        .reply(200, { LinkCheckStatus: 'Succeeded' });
+        .reply(200, linkCheckApiResponse('Succeeded', { sections: [], course_updates: [], custom_pages: [] }));
       render(<OptimizerPage />);
       expect(await screen.findByText(scanResultsMessages.noResultsFound.defaultMessage)).toBeInTheDocument();
     });
@@ -410,7 +419,7 @@ describe('CourseOptimizerPage', () => {
       });
 
       const setupTerminalRerun = (
-        initialRerunResponse: object = { status: null, results: [] },
+        initialRerunResponse: object = { status: 'Uninitiated', results: [] },
         completedLinkCheckResponse: object = mockApiResponseEmpty,
         terminalResponse: object = terminalRerunResponse,
       ) => {
@@ -425,12 +434,12 @@ describe('CourseOptimizerPage', () => {
           rerunStatusRequests += 1;
           return [200, rerunStatusRequests === 1 ? initialRerunResponse : terminalResponse];
         });
-        axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(200, { status: 'Pending' });
+        axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(202, { status: 'Pending' });
       };
 
       it('refreshes authoritative results after a bulk rerun reaches a terminal status', async () => {
         setupTerminalRerun(
-          { status: null, results: [] },
+          { status: 'Uninitiated', results: [] },
           authoritativeCompletedLinksApiResponse,
           terminalRerunResponseWithoutClientUpdate,
         );
@@ -483,7 +492,7 @@ describe('CourseOptimizerPage', () => {
           rerunStatusRequests += 1;
           return [200, { status: 'In Progress', results: [] }];
         });
-        axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(200, { status: 'Pending' });
+        axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(202, { status: 'Pending' });
 
         jest.useFakeTimers();
         try {
@@ -533,7 +542,7 @@ describe('CourseOptimizerPage', () => {
             rerunStatusRequests <= 2 ? { status: 'In Progress', results: [] } : { status: 'Succeeded', results: [] },
           ];
         });
-        axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(200, { status: 'Pending' });
+        axiosMock.onPost(postRerunLinkUpdateApiUrl(courseId)).reply(202, { status: 'Pending' });
 
         jest.useFakeTimers();
         try {
