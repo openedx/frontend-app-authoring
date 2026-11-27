@@ -364,6 +364,41 @@ describe('header utils', () => {
       );
     });
 
+    it('should open the roles and permissions link in a new tab when authz is enabled', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: true });
+      setConfig({
+        ...getConfig(),
+        ADMIN_CONSOLE_URL: 'http://admin-console.example.com',
+      });
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
+        isLoading: false,
+        isAuthzEnabled: true,
+        canViewCourseTeam: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
+      const actualItems =
+        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const rolesPermissionsItem = actualItems.find(item => item.title === 'Roles and Permissions');
+      expect(rolesPermissionsItem).toEqual({
+        href: 'http://admin-console.example.com/authz?scope=course-123',
+        title: 'Roles and Permissions',
+        target: '_blank',
+      });
+    });
+
+    it('should not open the course team link in a new tab when authz is disabled', () => {
+      mockWaffleFlags({ enableAuthzCourseAuthoring: false });
+      jest.mocked(useCourseUserPermissions).mockReturnValue({
+        isLoading: false,
+        isAuthzEnabled: false,
+        canViewCourseTeam: true,
+      } as ReturnType<typeof useCourseUserPermissions>);
+      const actualItems =
+        renderHook(() => useSettingMenuItems('course-123'), { wrapper: createWrapper() }).result.current;
+      const courseTeamItem = actualItems.find(item => item.title === 'Course Team');
+      expect(courseTeamItem).toBeDefined();
+      expect(courseTeamItem).not.toHaveProperty('target');
+    });
+
     it('when authz.enable_course_authoring flag is enabled and user has no access to advanced settings should not include advanced settings option', async () => {
       mockWaffleFlags({ enableAuthzCourseAuthoring: true });
       jest.mocked(useCourseUserPermissions).mockReturnValue({
@@ -477,6 +512,7 @@ describe('header utils', () => {
       expect(rolesPermissionsItem).toEqual({
         href: 'http://admin-console.example.com/authz?scope=course-123',
         title: 'Roles and Permissions',
+        target: '_blank',
       });
     });
 
