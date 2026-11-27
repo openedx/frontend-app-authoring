@@ -272,6 +272,8 @@ describe('InfoSidebar component', () => {
     renderComponent();
     await user.click(await screen.findByRole('tab', { name: 'Settings' }));
     expect(await screen.findByRole('link', { name: 'Proctored exam settings' })).toBeInTheDocument();
+    const settingsRequest = axiosMock.history.get.find(({ url }) => url === getCourseSettingsApiUrl(courseId));
+    expect(settingsRequest?.params).toBeUndefined();
   });
 
   it('hides the proctored exam settings link when the user cannot manage pages and resources', async () => {

@@ -123,6 +123,14 @@ describe('<ScheduleAndDetails />', () => {
     ).toBeInTheDocument();
   });
 
+  it('should ask for the full course settings, which hold the languages, prerequisites and credit requirements', async () => {
+    renderComponent();
+    await screen.findByText(pacingMessages.pacingTitle.defaultMessage);
+    const settingsRequests = axiosMock.history.get.filter(({ url }) => url === getCourseSettingsApiUrl(courseId));
+    expect(settingsRequests.length).toBeGreaterThan(0);
+    settingsRequests.forEach(({ params }) => expect(params).toEqual({ view: 'full' }));
+  });
+
   it('should hide credit section with condition', async () => {
     const updatedResponse = {
       ...courseSettingsMock,

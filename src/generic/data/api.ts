@@ -9,7 +9,7 @@ export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getCreateOrRerunCourseUrl = () => new URL('course/', getApiBaseUrl()).href;
 export const getCourseRerunUrl = (courseId: string) =>
   new URL(
-    `/api/contentstore/v1/course_rerun/${courseId}`,
+    `/api/authoring/v2/courses/${courseId}/rerun_defaults/`,
     getApiBaseUrl(),
   ).href;
 export const getOrganizationsUrl = () => new URL('organizations', getApiBaseUrl()).href;
