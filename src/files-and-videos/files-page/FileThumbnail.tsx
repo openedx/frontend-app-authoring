@@ -1,39 +1,43 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import type React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Icon,
-  Image,
-} from '@openedx/paragon';
+import { Icon, Image } from '@openedx/paragon';
 import { getSrc, hasImagePreview } from './data/utils';
 import messages from './messages';
 
+export interface FileThumbnailProps {
+  thumbnail?: string | null;
+  wrapperType?: string | null;
+  contentType?: string | null;
+  externalUrl?: string | null;
+  displayName?: string | null;
+  imageSize: {
+    width?: string;
+    height: string;
+  };
+}
+
 const FileThumbnail = ({
-  thumbnail,
-  wrapperType,
-  contentType,
-  externalUrl,
-  displayName,
+  thumbnail = null,
+  wrapperType = null,
+  contentType = null,
+  externalUrl = null,
+  displayName = null,
   imageSize,
-}) => {
+}: FileThumbnailProps) => {
   const intl = useIntl();
 
-  const src = getSrc({
+  const previewFields = {
     thumbnail,
     externalUrl,
     wrapperType,
     contentType,
-  });
+  };
+  const src = getSrc(previewFields);
   const { width, height } = imageSize;
 
   return (
     <div className="row justify-content-center align-itmes-center">
-      {hasImagePreview({
-          thumbnail,
-          externalUrl,
-          wrapperType,
-          contentType,
-        }) ?
+      {hasImagePreview(previewFields) ?
         (
           <Image
             style={{
@@ -44,7 +48,7 @@ const FileThumbnail = ({
               maxHeight: '100%',
             }}
             className="border rounded p-1"
-            src={src}
+            src={src as string}
             alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
           />
         ) :
@@ -53,29 +57,11 @@ const FileThumbnail = ({
             className="row justify-content-center align-items-center m-0 border rounded"
             style={imageSize}
           >
-            <Icon src={src} style={{ height: '48px', width: '48px' }} />
+            <Icon src={src as React.ComponentType} style={{ height: '48px', width: '48px' }} />
           </div>
         )}
     </div>
   );
-};
-FileThumbnail.defaultProps = {
-  thumbnail: null,
-  wrapperType: null,
-  contentType: null,
-  externalUrl: null,
-  displayName: null,
-};
-FileThumbnail.propTypes = {
-  thumbnail: PropTypes.string,
-  wrapperType: PropTypes.string,
-  contentType: PropTypes.string,
-  externalUrl: PropTypes.string,
-  displayName: PropTypes.string,
-  imageSize: PropTypes.shape({
-    width: PropTypes.string,
-    height: PropTypes.string.isRequired,
-  }).isRequired,
 };
 
 export default FileThumbnail;

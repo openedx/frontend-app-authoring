@@ -23,7 +23,7 @@ export declare function updateFileValues(files: RawFile[]): UpdatedFile[];
 
 interface FilePreviewFields {
   thumbnail?: string | null;
-  wrapperType: string;
+  wrapperType?: string | null;
   contentType?: string | null;
   externalUrl?: string | null;
 }
