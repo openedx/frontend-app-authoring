@@ -60,7 +60,7 @@ const mockStore = async ({
 }) => {
   const settings = ['forceOnFlexiblePeerOpenassessments'];
   const fetchCourseAppsUrl = `${getCourseAppsApiUrl()}/${courseId}`;
-  const fetchAdvancedSettingsUrl = `${getCourseAdvancedSettingsApiUrl()}/${courseId}`;
+  const fetchAdvancedSettingsUrl = getCourseAdvancedSettingsApiUrl(courseId);
 
   axiosMock.onGet(fetchCourseAppsUrl).reply(
     200,

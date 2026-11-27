@@ -112,7 +112,7 @@ export const replaceTranscript = (({ studioEndpointUrl, parameters }) => (
 )) satisfies UrlFunction;
 
 export const courseAdvanceSettings = (({ studioEndpointUrl, learningContextId }) => (
-  `${studioEndpointUrl}/api/contentstore/v0/advanced_settings/${learningContextId}`
+  `${studioEndpointUrl}/api/authoring/v1/courses/${learningContextId}/advanced_settings/`
 )) satisfies UrlFunction;
 
 export const videoFeatures = (({ studioEndpointUrl }) => (

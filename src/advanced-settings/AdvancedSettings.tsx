@@ -29,6 +29,7 @@ import SettingsSidebar from './settings-sidebar/SettingsSidebar';
 import validateAdvancedSettingsData from './utils';
 import messages from './messages';
 import ModalError from './modal-error/ModalError';
+import { type AdvancedSettingError, getAdvancedSettingsErrors } from './data/api';
 import { useCourseAdvancedSettings, useProctoringExamErrors, useUpdateCourseAdvancedSettings } from './data/apiHooks';
 
 const AdvancedSettings = () => {
@@ -37,7 +38,7 @@ const AdvancedSettings = () => {
   const [showDeprecated, setShowDeprecated] = useState(false);
   const [errorModal, showErrorModal] = useState(false);
   const [editedSettings, setEditedSettings] = useState({});
-  const [errorFields, setErrorFields] = useState([]);
+  const [errorFields, setErrorFields] = useState<AdvancedSettingError[]>([]);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [isEditableState, setIsEditableState] = useState(false);
   const [hasInternetConnectionError, setInternetConnectionError] = useState(false);
@@ -86,8 +87,7 @@ const AdvancedSettings = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       showSaveSettingsPrompt(false);
     } else if (queryError && !hasInternetConnectionError) {
-      // @ts-ignore
-      setErrorFields(queryError?.response?.data ?? []);
+      setErrorFields(getAdvancedSettingsErrors(queryError));
       showErrorModal(true);
     }
   }, [isQuerySuccess, queryError]);

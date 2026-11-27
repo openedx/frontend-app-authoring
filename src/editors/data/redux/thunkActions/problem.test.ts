@@ -14,6 +14,7 @@ import {
   blankProblemOLX,
 } from '../../../containers/ProblemEditor/data/mockData/olxTestData';
 import { ProblemTypeKeys } from '../../constants/problem';
+import { RequestKeys } from '../../constants/requests';
 
 const mockOlx = 'SOmEVALue';
 const mockBuildOlx = jest.fn(() => mockOlx);
@@ -80,6 +81,40 @@ describe('problem thunkActions', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+  });
+
+  describe('initializeProblem', () => {
+    // Runs the thunks initializeProblem dispatches and returns every plain action dispatched along the way.
+    const plainActionsFor = (learningContextId) => {
+      const plainActions: any[] = [];
+      const recordingDispatch = jest.fn((action) => {
+        if (typeof action === 'function') {
+          return action(recordingDispatch, getState);
+        }
+        plainActions.push(action);
+        return action;
+      });
+      getState = jest.fn(() => ({ ...mockProblemState(true), app: { learningContextId, blockValue } }));
+      initializeProblem(blockValue)(recordingDispatch, getState);
+      return plainActions;
+    };
+
+    test('requests the course advanced settings for a course', () => {
+      expect(plainActionsFor('course-v1:org+course+run')).toContainEqual(
+        expect.objectContaining({ fetchAdvanceSettings: expect.anything() }),
+      );
+    });
+
+    test.each([
+      'lib:org:library',
+      'library-v1:org+library',
+    ])('does not request advanced settings for the library %s', (learningContextId) => {
+      const plainActions = plainActionsFor(learningContextId);
+      expect(plainActions).not.toContainEqual(expect.objectContaining({ fetchAdvanceSettings: expect.anything() }));
+      expect(plainActions).toContainEqual(
+        actions.requests.completeRequest({ requestKey: RequestKeys.fetchAdvancedSettings, response: {} }),
+      );
+    });
   });
 
   describe('when markdown editor is enabled', () => {

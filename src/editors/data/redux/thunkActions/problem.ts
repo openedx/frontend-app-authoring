@@ -5,7 +5,7 @@ import { OLXParser } from '@src/editors/containers/ProblemEditor/data/OLXParser'
 import { parseSettings } from '@src/editors/containers/ProblemEditor/data/SettingsParser';
 import { fetchEditorContent } from '@src/editors/containers/ProblemEditor/components/EditProblemView/hooks';
 import ReactStateOLXParser from '@src/editors/containers/ProblemEditor/data/ReactStateOLXParser';
-import { isLibraryKey } from '@src/generic/key-utils';
+import { isLibraryKey, isLibraryV1Key } from '@src/generic/key-utils';
 import { actions as problemActions } from '../problem';
 import { actions as requestActions } from '../requests';
 import { selectors as appSelectors } from '../app';
@@ -152,7 +152,7 @@ export const initializeProblem = (blockValue) => (dispatch, getState) => {
   const rawSettings = get(blockValue, 'data.metadata', {});
   const isMarkdownEditorEnabled = get(blockValue, 'data.metadata.markdown_edited', false);
   const learningContextId = selectors.app.learningContextId(getState());
-  if (isLibraryKey(learningContextId)) {
+  if (isLibraryKey(learningContextId) || isLibraryV1Key(learningContextId)) {
     // Content libraries don't yet support defaults for fields like max_attempts, showanswer, etc.
     // So proceed with loading the problem.
     // Though first we need to fake the request or else the problem type selection UI won't display:
