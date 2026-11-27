@@ -25,7 +25,6 @@ import {
   mockApiResponseWithPreviousRunLinks,
   mockApiResponseEmpty,
 } from './mocks/mockApiResponse';
-import { useWaffleFlags } from '../data/apiHooks';
 import { useCourseUserPermissions } from '@src/authz/hooks';
 
 let axiosMock: MockAdapter;
@@ -77,19 +76,10 @@ const authoritativeCompletedLinksApiResponse = {
   },
 };
 
-// Mock the waffle flags hook
-jest.mock('../data/apiHooks', () => ({
-  ...jest.requireActual('../data/apiHooks'),
-  useWaffleFlags: jest.fn(() => ({
-    enableCourseOptimizerCheckPrevRunLinks: false,
-  })),
-}));
-
 jest.mock('@src/authz/hooks', () => ({
   useCourseUserPermissions: jest.fn(),
 }));
 
-const mockedUseWaffleFlags = jest.mocked(useWaffleFlags);
 const mockedUseCourseUserPermissions = jest.mocked(useCourseUserPermissions);
 
 const mockPermissions = (overrides: Partial<ReturnType<typeof useCourseUserPermissions>> = {}) =>
@@ -162,12 +152,23 @@ describe('CourseOptimizerPage', () => {
       expect(optimizerStatusRequests).toHaveLength(0);
     });
 
-    it('does not fetch rerun status when the optional feature is disabled', async () => {
+    it('does not fetch rerun status when the scan found no previous-run links', async () => {
       render(<OptimizerPage />);
-      await waitFor(() => expect(screen.getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument());
+      // Wait for the scan results to render.
+      expect(await screen.findByText(scanResultsMessages.brokenLinksHeader.defaultMessage)).toBeInTheDocument();
+      expect(screen.queryByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).not.toBeInTheDocument();
       expect(axiosMock.history.get.filter(({ url }) => url === getRerunLinkUpdateStatusApiUrl(courseId))).toHaveLength(
         0,
       );
+    });
+
+    it('fetches rerun status when the scan found previous-run links', async () => {
+      axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseWithPreviousRunLinks);
+      render(<OptimizerPage />);
+      await waitFor(() => {
+        expect(axiosMock.history.get.filter(({ url }) => url === getRerunLinkUpdateStatusApiUrl(courseId)))
+          .not.toHaveLength(0);
+      });
     });
 
     it('should render the component', () => {
@@ -395,20 +396,6 @@ describe('CourseOptimizerPage', () => {
     });
 
     describe('Previous Run Links Feature', () => {
-      beforeEach(() => {
-        // Enable the waffle flag for previous run links
-        mockedUseWaffleFlags.mockReturnValue({
-          enableCourseOptimizerCheckPrevRunLinks: true,
-        } as ReturnType<typeof useWaffleFlags>);
-      });
-
-      afterEach(() => {
-        // Reset to default (disabled)
-        mockedUseWaffleFlags.mockReturnValue({
-          enableCourseOptimizerCheckPrevRunLinks: false,
-        } as ReturnType<typeof useWaffleFlags>);
-      });
-
       const setupTerminalRerun = (
         initialRerunResponse: object = { status: null, results: [] },
         completedLinkCheckResponse: object = mockApiResponseEmpty,
@@ -573,32 +560,14 @@ describe('CourseOptimizerPage', () => {
         await waitFor(() => expect(screen.queryByTestId('update-all-course')).not.toBeInTheDocument());
       });
 
-      it('should show no results found for previous run links when flag is enabled but no links exist', async () => {
+      it('should not show previous run links section when no links exist', async () => {
         axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseForNoResultFound);
-        const { getByText, getAllByText } = render(<OptimizerPage />);
-
-        await waitFor(() => {
-          expect(getByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).toBeInTheDocument();
-          // Should show "No results found" for previous run section
-          const noResultsElements = getAllByText(scanResultsMessages.noResultsFound.defaultMessage);
-          expect(noResultsElements.length).toBeGreaterThan(0);
-        }, { timeout: 5000 });
-      });
-
-      it('should not show previous run links section when waffle flag is disabled', async () => {
-        // Disable the flag
-        mockedUseWaffleFlags.mockReturnValue({
-          enableCourseOptimizerCheckPrevRunLinks: false,
-        } as ReturnType<typeof useWaffleFlags>);
-
-        axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponseWithPreviousRunLinks);
         const { getByText, queryByText } = render(<OptimizerPage />);
 
-        fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
-
         await waitFor(() => {
-          expect(queryByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).not.toBeInTheDocument();
-        });
+          expect(getByText(scanResultsMessages.brokenLinksHeader.defaultMessage)).toBeInTheDocument();
+        }, { timeout: 5000 });
+        expect(queryByText(scanResultsMessages.linkToPrevCourseRun.defaultMessage)).not.toBeInTheDocument();
       });
     });
   });
