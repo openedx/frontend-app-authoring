@@ -3,6 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 
 import { initializeMocks } from '@src/testUtils';
+import { paginatedListPage } from '@src/generic/data/paginatedList';
 import {
   getTextbooksApiUrl,
   getUpdateTextbooksApiUrl,
@@ -41,7 +42,7 @@ describe('textbooks apiHooks', () => {
 
   describe('useTextbooks', () => {
     it('should fetch textbooks for a course', async () => {
-      axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(200, mockTextbookResponse);
+      axiosMock.onGet(getTextbooksApiUrl(courseId)).reply(200, paginatedListPage([mockTextbook]));
 
       const { result } = renderHook(() => useTextbooks(courseId), { wrapper });
 
