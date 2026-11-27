@@ -1,12 +1,17 @@
 module.exports = {
-  showTransferOwnershipHint: true,
-  users: [
+  members: [
     {
-      email: 'staff@example.com',
-      id: '2',
-      role: 'staff',
+      id: 2,
       username: 'Staff_Name',
+      email: 'staff@example.com',
+      role: 'staff',
     },
   ],
-  allowActions: true,
+  me: {
+    username: 'Global_Staff',
+    email: 'global.staff@example.com',
+    role: null,
+    can_manage_team: true,
+    is_only_instructor: false,
+  },
 };
