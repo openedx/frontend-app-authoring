@@ -22,20 +22,30 @@ const messages = defineMessages({
     defaultMessage: 'Replace',
     description: 'Dropdown menu item to replace an uploaded file.',
   },
+  uploadFile: {
+    id: 'authoring.sharedComponents.uploadWidget.uploadFile',
+    defaultMessage: 'Upload',
+    description: 'Dropdown menu item to upload a new file.',
+  },
   downloadFile: {
     id: 'authoring.sharedComponents.uploadWidget.downloadFile',
     defaultMessage: 'Download',
     description: 'Dropdown menu item to download the currently uploaded file for a block.',
   },
-  manualUrl: {
-    id: 'authoring.sharedComponents.uploadWidget.manualUrl',
-    defaultMessage: 'Manually specify URL',
-    description: 'Dropdown menu item to switch to manually inputting a URL for a file\'s location.',
+  manualUrlChange: {
+    id: 'authoring.sharedComponents.uploadWidget.manualUrlChange',
+    defaultMessage: 'Change file URL',
+    description: 'Dropdown menu item to switch to manually inputting a URL for a file\'s location, when there is a file url set already.',
+  },
+  manualUrlAdd: {
+    id: 'authoring.sharedComponents.uploadWidget.manualUrlChange',
+    defaultMessage: 'Add file URL',
+    description: 'Dropdown menu item to switch to manually inputting a URL for a file\'s location, when there is no file url set already.',
   },
   simpleMode: {
     id: 'authoring.sharedComponents.uploadWidget.simpleMode',
-    defaultMessage: 'Simple Mode',
-    description: 'Button text to switch to simple upload mode.',
+    defaultMessage: 'Return',
+    description: 'Button text to switch from manual url mode back to the main widget.',
   },
   fileTooLarge: {
     id: 'authoring.sharedComponents.uploadWidget.fileTooLarge',

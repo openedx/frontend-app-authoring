@@ -1,0 +1,67 @@
+import { v4 as uuidv4 } from 'uuid';
+import { createContext, useEffect, useMemo, useState } from 'react';
+import { useBlockHandlerData } from './api';
+import { useSelector } from 'react-redux';
+import { selectors } from '@src/editors/data/redux';
+import { useQueryClient } from '@tanstack/react-query';
+import { MatchingState, initialMatchingState } from './types';
+import { getConfig } from '@edx/frontend-platform';
+
+interface MatchingEditorContextInterface {
+  fields: MatchingState;
+  fetchError: Error | null;
+  isPending: boolean;
+  blockId: string;
+  isLibrary: boolean;
+  staticRootUrl: string;
+}
+
+export const MatchingEditorContext = createContext<MatchingEditorContextInterface>({
+  fields: initialMatchingState(),
+  fetchError: null,
+  isPending: true,
+  blockId: '',
+  isLibrary: false,
+  staticRootUrl: '',
+});
+
+export const MatchingEditorContextProvider: React.FC<{ blockId: string; children: React.ReactNode; }> = (
+  { blockId, children },
+) => {
+  const [uniqueId] = useState(() => uuidv4());
+  const defaultData = useMemo(initialMatchingState, []);
+  const { data, error, isPending } = useBlockHandlerData<MatchingState>({
+    blockId,
+    uniqueId,
+    handlerName: 'load_data',
+    defaultData,
+  });
+  const isLibrary = useSelector(selectors.app.isLibrary);
+  let staticRootUrl = '';
+  if (isLibrary) {
+    staticRootUrl = `${getConfig().STUDIO_BASE_URL}/library_assets/blocks/${blockId}`;
+  }
+
+  const queryClient = useQueryClient();
+  // Drop state on unmount so that when we open again we have revised state.
+  useEffect(() => () => {
+    // We use a unique ID because a component higher up in the chain remounts quickly on
+    // startup (possibly related to React strict mode),
+    // and cancelling or invalidating that transaction immediately results in
+    // the query key being recreated immediately, and then being populated with the result
+    // of being canceled.
+    const queryKey = ['blockHandlerData', blockId, uniqueId, 'load_data'];
+    queryClient.removeQueries({ queryKey });
+  }, []);
+
+  const value = useMemo(() => ({
+    fields: data || defaultData,
+    fetchError: error,
+    isPending,
+    blockId,
+    isLibrary,
+    staticRootUrl,
+  }), [data, error, isPending]);
+
+  return <MatchingEditorContext.Provider value={value}>{children}</MatchingEditorContext.Provider>;
+};

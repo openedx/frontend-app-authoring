@@ -11,7 +11,7 @@ import {
   Col,
   Card,
 } from '@openedx/paragon';
-import { MoreHoriz } from '@openedx/paragon/icons';
+import { Add, MoreHoriz } from '@openedx/paragon/icons';
 import React, { useState } from 'react';
 import { useField } from 'formik';
 import type { AxiosResponse } from 'axios';
@@ -27,6 +27,7 @@ export interface UploadWidgetProps {
   messages?: typeof defaultMessages;
   blockId: string;
   isLibrary: boolean;
+  className?: string; // class name overrides for the main component; does not apply to error states
 }
 
 type LibraryAsset = { path: string; };
@@ -43,6 +44,7 @@ const UploadWidget = ({
   messages = defaultMessages,
   blockId,
   isLibrary,
+  className = '',
 }: UploadWidgetProps) => {
   const intl = useIntl();
   const [manualMode, setManualMode] = useState(false);
@@ -115,8 +117,15 @@ const UploadWidget = ({
   const fileHint = isLibrary ? messages.libraryFileHint : messages.courseFileHint;
 
   return (
-    <Form.Group as={Col} controlId={id}>
-      {manualMode && <TextField label={intl.formatMessage(messages.urlFieldLabel)} id={id} name="url" />}
+    <Form.Group className={className} as={Col} controlId={id}>
+      {manualMode && (
+        <div>
+          <TextField label={intl.formatMessage(messages.urlFieldLabel)} id={id} name={urlFieldName} />
+          <Button variant="secondary" onClick={() => setManualMode(false)}>
+            <FormattedMessage {...messages.simpleMode} />
+          </Button>
+        </div>
+      )}
       {!manualMode && (
         <>
           <Form.Label htmlFor={id}>{label}</Form.Label>
@@ -132,7 +141,7 @@ const UploadWidget = ({
                 <Dropdown.Toggle
                   id={`dropdown-toggle-with-iconbutton-${urlFieldName}-widget`}
                   as={IconButton}
-                  src={MoreHoriz}
+                  src={urlField.value ? MoreHoriz : Add}
                   iconAs={Icon}
                   variant="primary"
                   alt={intl.formatMessage(messages.actionsDropdown)}
@@ -142,30 +151,26 @@ const UploadWidget = ({
                     key="asset-actions-replace"
                     onClick={fileInput.click}
                   >
-                    <FormattedMessage {...messages.replaceFile} />
-                  </Dropdown.Item>
-                  <Dropdown.Item key="asset-actions-download" target="_blank" href={urlField.value}>
-                    <FormattedMessage {...messages.downloadFile} />
+                    <FormattedMessage {...(urlField.value ? messages.replaceFile : messages.uploadFile)} />
                   </Dropdown.Item>
                   <Dropdown.Item
                     key="asset-actions-manual"
                     onClick={() => setManualMode(true)}
                   >
-                    <FormattedMessage {...messages.manualUrl} />
+                    <FormattedMessage {...(urlField.value ? messages.manualUrlChange : messages.manualUrlAdd)} />
                   </Dropdown.Item>
+                  {urlField.value &&
+                    (
+                      <Dropdown.Item key="asset-actions-download" target="_blank" href={urlField.value}>
+                        <FormattedMessage {...messages.downloadFile} />
+                      </Dropdown.Item>
+                    )}
                 </Dropdown.Menu>
               </Dropdown>
             </ActionRow>
             {urlFieldMeta.error && <Form.Control.Feedback type="invalid">{urlFieldMeta.error}</Form.Control.Feedback>}
           </Stack>
         </>
-      )}
-      {manualMode && (
-        <ActionRow>
-          <Button onClick={() => setManualMode(false)}>
-            <FormattedMessage {...messages.simpleMode} />
-          </Button>
-        </ActionRow>
       )}
     </Form.Group>
   );

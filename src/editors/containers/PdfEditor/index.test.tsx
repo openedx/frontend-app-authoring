@@ -130,7 +130,7 @@ describe('PdfEditor', () => {
     await waitFor(() => screen.getByText(uploadMessages.courseFileHint.defaultMessage));
     const dropdown = screen.getByLabelText(uploadMessages.actionsDropdown.defaultMessage);
     await user.click(dropdown);
-    const toggle = await waitFor(() => screen.getByText(uploadMessages.manualUrl.defaultMessage));
+    const toggle = await waitFor(() => screen.getByText(uploadMessages.manualUrlChange.defaultMessage));
     await user.click(toggle);
     const field = await waitFor(() => screen.getByLabelText(uploadMessages.urlFieldLabel.defaultMessage));
     fireEvent.change(field, { target: { value: 'https://somewhere.com/stuff.pdf' } });

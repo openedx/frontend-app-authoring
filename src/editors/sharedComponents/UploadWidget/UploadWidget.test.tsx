@@ -121,7 +121,7 @@ describe('UploadWidget', () => {
     screen.getByText('example.pdf');
     const dropdown = screen.getByLabelText(messages.actionsDropdown.defaultMessage);
     await user.click(dropdown);
-    const toggle = await waitFor(() => screen.getByText(messages.manualUrl.defaultMessage));
+    const toggle = await waitFor(() => screen.getByText(messages.manualUrlChange.defaultMessage));
     await user.click(toggle);
     // Should be able to see the input now.
     await waitFor(() => screen.getByDisplayValue('http://example.com/example.pdf'));
